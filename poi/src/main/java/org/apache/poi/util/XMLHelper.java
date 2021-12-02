@@ -221,7 +221,7 @@ public final class XMLHelper {
     public static TransformerFactory getTransformerFactory() {
         TransformerFactory factory = TransformerFactory.newInstance();
         trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);
-        trySet(factory::setAttribute, ACCESS_EXTERNAL_DTD, "");
+        quietSet(factory::setAttribute, ACCESS_EXTERNAL_DTD, "");
         trySet(factory::setAttribute, ACCESS_EXTERNAL_STYLESHEET, "");
         quietSet(factory::setAttribute, ACCESS_EXTERNAL_SCHEMA, "");
         return factory;

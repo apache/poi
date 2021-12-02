@@ -46,6 +46,7 @@ import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.sl.usermodel.SimpleShape;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
 
@@ -259,7 +260,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
      * @return set of records inside {@code SlideListWithtext} container
      *  which hold text data for this slide (typically for placeholders).
      */
-    protected SlideAtomsSet getSlideAtomsSet() { return _atomSet;  }
+    public SlideAtomsSet getSlideAtomsSet() { return _atomSet;  }
 
     /**
      * Returns master sheet associated with this slide.
@@ -495,15 +496,38 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
             (slt == SlideLayoutType.TITLE_SLIDE || slt == SlideLayoutType.TITLE_ONLY || slt == SlideLayoutType.MASTER_TITLE);
         switch (placeholder) {
         case DATETIME:
-            return hf.isDateTimeVisible() && !isTitle;
+            return (hf.isDateTimeVisible() && (hf.isTodayDateVisible() || (hf.isUserDateVisible() && hf.getUserDateAtom() != null))) && !isTitle;
         case SLIDE_NUMBER:
             return hf.isSlideNumberVisible() && !isTitle;
         case HEADER:
-            return hf.isHeaderVisible() && !isTitle;
+            return hf.isHeaderVisible() && hf.getHeaderAtom() != null && !isTitle;
         case FOOTER:
-            return hf.isFooterVisible() && !isTitle;
+            return hf.isFooterVisible() && hf.getFooterAtom() != null && !isTitle;
         default:
             return false;
+        }
+    }
+
+    @Override
+    public boolean getDisplayPlaceholder(final SimpleShape<?,?> placeholderRef) {
+        Placeholder placeholder = placeholderRef.getPlaceholder();
+        if (placeholder == null) {
+            return false;
+        }
+
+        final HeadersFooters hf = getHeadersFooters();
+        final SlideLayoutType slt = getSlideRecord().getSlideAtom().getSSlideLayoutAtom().getGeometryType();
+        final boolean isTitle =
+            (slt == SlideLayoutType.TITLE_SLIDE || slt == SlideLayoutType.TITLE_ONLY || slt == SlideLayoutType.MASTER_TITLE);
+        switch (placeholder) {
+            case HEADER:
+                return hf.isHeaderVisible() && hf.getHeaderAtom() != null && !isTitle;
+            case FOOTER:
+                return hf.isFooterVisible() && hf.getFooterAtom() != null && !isTitle;
+            case DATETIME:
+            case SLIDE_NUMBER:
+            default:
+                return false;
         }
     }
 

@@ -73,7 +73,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
 
     /**
      * The contract of this method is to deserialize an escher record including
-     * it's children.
+     * its children.
      *
      * @param data      The byte array containing the serialized escher
      *                  records.

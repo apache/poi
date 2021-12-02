@@ -112,13 +112,13 @@ public interface Comment {
     void setString(RichTextString string);
 
     /**
-     * Return defines position of this anchor in the sheet.
+     * Return defined position of this anchor in the sheet.
      * The anchor is the yellow box/balloon that is rendered on top of the sheets
      * when the comment is visible.
      *
      * To associate a comment with a different cell, use {@link #setAddress}.
      *
-     * @return defines position of this anchor in the sheet
+     * @return defined position of this anchor in the sheet, can be null
      */
     ClientAnchor getClientAnchor();
 }

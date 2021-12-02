@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.extractor;
 
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,13 +26,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
-import java.util.Date;
-import java.util.regex.Matcher;
+import java.util.*;
 import java.util.regex.Pattern;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
@@ -46,6 +50,9 @@ import org.apache.poi.xssf.model.MapInfo;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -186,26 +193,30 @@ public final class TestXSSFExportToXML {
                     assertNotNull(map);
 
                     XSSFExportToXml exporter = new XSSFExportToXml(map);
-                    UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
-                    exporter.exportToXML(os, true);
-                    String xml = os.toString("UTF-8");
-
+                    String xml;
+                    try (UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream()) {
+                        exporter.exportToXML(os, true);
+                        xml = os.toString("UTF-8");
+                    }
                     assertNotNull(xml);
 
-                    String[] regexConditions = {
-                            "<MapInfo", "</MapInfo>",
-                            "<Schema ID=\"1\" Namespace=\"\" SchemaRef=\"\"/>",
-                            "<Schema ID=\"4\" Namespace=\"\" SchemaRef=\"\"/>",
-                            "DataBinding",
-                            "Map Append=\"false\" AutoFit=\"false\" ID=\"1\"",
-                            "Map Append=\"false\" AutoFit=\"false\" ID=\"5\"",
-                    };
+                    Document xmlDoc = XMLHelper.newDocumentBuilder().parse(new InputSource(new StringReader(xml)));
 
-                    for (String condition : regexConditions) {
-                        Pattern pattern = Pattern.compile(condition);
-                        Matcher matcher = pattern.matcher(xml);
-                        assertTrue(matcher.find());
-                    }
+                    XPathFactory xpathFactory = XPathFactory.newInstance();
+                    XPath xpath = xpathFactory.newXPath();
+                    xpath.setNamespaceContext(new XPathNSContext());
+                    assertNotNull(xpath.evaluate("/ss:MapInfo", xmlDoc, XPathConstants.NODE));
+                    assertNotNull(xpath.evaluate(
+                            "/ss:MapInfo/ss:Schema[@ID=\"1\" and @Namespace=\"\" and @SchemaRef=\"\"]", xmlDoc, XPathConstants.NODE));
+                    assertNotNull(xpath.evaluate(
+                            "/ss:MapInfo/ss:Schema[@ID=\"4\" and @Namespace=\"\" and @SchemaRef=\"\"]", xmlDoc, XPathConstants.NODE));
+                    NodeList databindingList = (NodeList) xpath.evaluate(
+                            "/ss:MapInfo/ss:Map/ss:DataBinding", xmlDoc, XPathConstants.NODESET);
+                    assertEquals(5, databindingList.getLength());
+                    assertNotNull(xpath.evaluate(
+                            "/ss:MapInfo/ss:Map[@ID=\"1\" and @Append=\"false\" and @AutoFit=\"false\"]", xmlDoc, XPathConstants.NODE));
+                    assertNotNull(xpath.evaluate(
+                            "/ss:MapInfo/ss:Map[@ID=\"5\" and @Append=\"false\" and @AutoFit=\"false\"]", xmlDoc, XPathConstants.NODE));
                 }
 
                 found = true;
@@ -223,7 +234,7 @@ public final class TestXSSFExportToXML {
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 SAXParseException ex = assertThrows(SAXParseException.class, () -> exporter.exportToXML(os, true));
                 assertTrue(p.matcher(ex.getMessage()).find(),
-						"Did not find pattern " + p + " in " + ex.getMessage());
+                        "Did not find pattern " + p + " in " + ex.getMessage());
             }
         }
     }
@@ -663,6 +674,26 @@ public final class TestXSSFExportToXML {
                 UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
                 assertThrows(SAXParseException.class, () -> exporter.exportToXML(bos, true));
             }
+        }
+    }
+
+    private class XPathNSContext implements NamespaceContext {
+        final Map<String,String> nsMap = new HashMap<>();
+
+        XPathNSContext() {
+            nsMap.put("ss", NS_SPREADSHEETML);
+        }
+
+        public String getNamespaceURI(String prefix) {
+            return nsMap.get(prefix);
+        }
+        @SuppressWarnings("rawtypes")
+        @Override
+        public Iterator getPrefixes(String val) {
+            return null;
+        }
+        public String getPrefix(String uri) {
+            return null;
         }
     }
 }

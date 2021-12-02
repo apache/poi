@@ -16,11 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ooxml.dev;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -47,7 +43,7 @@ import org.xml.sax.InputSource;
  * Reads a zipped OOXML file and produces a copy with the included
  * pretty-printed XML files.
  *
- *  This is useful for comparing OOXML files produced by different tools as the often
+ *  This is useful for comparing OOXML files produced by different tools as they often
  *  use different formatting of the XML.
  */
 public class OOXMLPrettyPrint {
@@ -108,7 +104,9 @@ public class OOXMLPrettyPrint {
                     pretty(document, out, 2);
                 } else {
                     System.out.println("Not pretty-printing non-XML file " + name);
-                    IOUtils.copy(file.getInputStream(entry), out);
+                    try (InputStream in = file.getInputStream(entry)) {
+                        IOUtils.copy(in, out);
+                    }
                 }
             } catch (Exception e) {
                 throw new IOException("While handling entry " + name, e);

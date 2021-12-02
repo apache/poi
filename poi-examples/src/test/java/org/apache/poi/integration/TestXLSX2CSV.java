@@ -87,7 +87,7 @@ public class TestXLSX2CSV {
         }
 
         String errorOutput = errorBytes.toString(StandardCharsets.UTF_8);
-        assertEquals(0, errorOutput.length());
+        assertEquals("", errorOutput);
 
         String output = outputBytes.toString(StandardCharsets.UTF_8);
         assertTrue(output.contains("\"Lorem\",111"), "Had: " + output);
@@ -106,7 +106,7 @@ public class TestXLSX2CSV {
         }
 
         String errorOutput = errorBytes.toString(StandardCharsets.UTF_8);
-        assertEquals(0, errorOutput.length());
+        assertEquals("", errorOutput);
 
         String output = outputBytes.toString(StandardCharsets.UTF_8);
         assertTrue(output.contains("\"Lorem\",111,,,"), "Had: " + output);

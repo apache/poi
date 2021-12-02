@@ -201,7 +201,10 @@ public class XLSX2CSV {
             SharedStrings strings,
             SheetContentsHandler sheetHandler,
             InputStream sheetInputStream) throws IOException, SAXException {
-        DataFormatter formatter = new DataFormatter();
+        // set emulateCSV=true on DataFormatter - it is also possible to provide a Locale
+        // when POI 5.2.0 is released, you can call formatter.setUse4DigitYearsInAllDateFormats(true)
+        // to ensure all dates are formatted with 4 digit years
+        DataFormatter formatter = new DataFormatter(true);
         InputSource sheetSource = new InputSource(sheetInputStream);
         try {
             XMLReader sheetParser = XMLHelper.newXMLReader();

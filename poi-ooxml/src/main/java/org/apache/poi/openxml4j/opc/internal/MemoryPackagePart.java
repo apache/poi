@@ -112,10 +112,10 @@ public final class MemoryPackagePart extends PackagePart {
     }
 
     @Override
-    public boolean load(InputStream ios) throws InvalidFormatException {
+    public boolean load(InputStream is) throws InvalidFormatException {
         try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
             // Grab the data
-            IOUtils.copy(ios, baos);
+            IOUtils.copy(is, baos);
             // Save it
             data = baos.toByteArray();
         } catch (IOException e) {

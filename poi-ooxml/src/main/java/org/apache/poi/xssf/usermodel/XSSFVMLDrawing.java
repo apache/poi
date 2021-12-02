@@ -49,6 +49,7 @@ import com.microsoft.schemas.vml.STStrokeJoinStyle;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.schemas.vmldrawing.XmlDocument;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.ReplacingInputStream;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -200,7 +201,7 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
     }
 
     /**
-     * Initialize a new Speadsheet VML drawing
+     * Initialize a new Spreadsheet VML drawing
      */
     private void newDrawing(){
         root = XmlDocument.Factory.newInstance();
@@ -236,7 +237,11 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
         grpCur.dispose();
     }
 
-    protected CTShape newCommentShape(){
+    /**
+     * This method is for internal POI use only.
+     */
+    @Internal
+    public CTShape newCommentShape() {
         CTGroup grp = CTGroup.Factory.newInstance();
 
         CTShape shape = grp.addNewShape();

@@ -464,8 +464,11 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
                 closeImpl();
             }
         } else if (this.output != null) {
-            save(this.output);
-            output.close();
+            try {
+                save(this.output);
+            } finally {
+                output.close();
+            }
         }
 
         // ensure all held resources are freed
@@ -1562,9 +1565,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      *      "application/vnd.ms-excel.sheet.macroEnabled.main+xml",
      *      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
      *
-     *  FileOutputStream out = new FileOutputStream("workbook.xlsx");
-     *  pkg.save(out);
-     *  out.close();
+     *  try (FileOutputStream out = new FileOutputStream("workbook.xlsx")) {
+     *    pkg.save(out);
+     *  }
      *
      * }</pre>
      *

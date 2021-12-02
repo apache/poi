@@ -42,7 +42,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="5.1.1-SNAPSHOT"/>
+    <property name="version.id" value="5.2.0-SNAPSHOT"/>
     <property name="release.rc" value=""/>
 
     <property environment="env"/>
@@ -268,11 +268,11 @@ under the License.
     <dependency prefix="main.commons-math3" artifact="org.apache.commons:commons-math3:3.6.1" usage="main"/>
     <dependency prefix="main.commons-io" artifact="commons-io:commons-io:2.11.0" usage="main"/>
     <dependency prefix="main.com.zaxxer" artifact="com.zaxxer:SparseBitSet:1.2" usage="main"/>
-    <dependency prefix="main.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.14.0" usage="main"/>
+    <dependency prefix="main.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.14.1" usage="main"/>
 
-    <dependency prefix="main.junit-api" artifact="org.junit.jupiter:junit-jupiter-api:5.8.1" usage="main-tests"/>
-    <dependency prefix="main.junit-jengine" artifact="org.junit.jupiter:junit-jupiter-engine:5.8.1" usage="main-tests"/>
-    <dependency prefix="main.junit-params" artifact="org.junit.jupiter:junit-jupiter-params:5.8.1" usage="main-tests"/>
+    <dependency prefix="main.junit-api" artifact="org.junit.jupiter:junit-jupiter-api:5.8.2" usage="main-tests"/>
+    <dependency prefix="main.junit-jengine" artifact="org.junit.jupiter:junit-jupiter-engine:5.8.2" usage="main-tests"/>
+    <dependency prefix="main.junit-params" artifact="org.junit.jupiter:junit-jupiter-params:5.8.2" usage="main-tests"/>
     <dependency prefix="main.junit-opentest4j" artifact="org.opentest4j:opentest4j:1.2.0" usage="main-tests"/>
     <dependency prefix="main.junit-apiguardian" artifact="org.apiguardian:apiguardian-api:1.1.0" usage="main-tests"/>
     <dependency prefix="main.junit-pcommons" artifact="org.junit.platform:junit-platform-commons:1.8.1" usage="main-tests"/>
@@ -284,9 +284,9 @@ under the License.
     <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.33" usage="main-tests"/>
     <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest:2.2" usage="main-tests"/>
     <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.8.3" usage="main-tests"/>
-    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:4.0.0" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.12.1" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.12.1" usage="main-tests"/>
+    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:4.1.0" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.12.2" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.12.2" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
     <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.14.1" usage="main-tests"/>
     <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="main-tests"/>
@@ -296,11 +296,11 @@ under the License.
 
     <!-- xml signature libs - not part of the distribution -->
     <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.3.0" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk15on:1.69" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk15on:1.69" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk15on:1.69" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk15on:1.70" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk15on:1.70" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk15on:1.70" usage="ooxml-provided"/>
     <!-- only used for signing the release - not used with the ooxml signatures -->
-    <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk15on:1.69" usage="util"/>
+    <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk15on:1.70" usage="util"/>
 
     <!-- svg/batik/pdf libs - not part of the distribution - move batik to its own directory because of JPMS module-path issues -->
     <dependency prefix="svg.xml-apis-ext" artifact="xml-apis:xml-apis-ext:1.3.04" usage="ooxml-batik"/>
@@ -675,6 +675,7 @@ under the License.
             </fileset>
             <fileset dir="${basedir}/lib/main-tests">
                 <include name="mockito-core-3*.jar"/>
+                <include name="mockito-core-4.0*.jar"/>
                 <include name="hamcrest-core*"/>
                 <include name="junit-4*.jar"/>
                 <include name="*slf4j*.jar"/>
@@ -2437,7 +2438,7 @@ under the License.
         <echo>Use "ant dist-checksum" to create sha256/sha512 checksums and GPG signatures</echo>
     </target>
 
-    <target name="osgi" depends="mvn-install">
+    <target name="osgi">
        <echo message="Building OSGi bundle via Maven" />
        <mvn:mvn pom="osgi/pom.xml">
           <arg value="-Dpoi.version=${version.id}" />
@@ -2451,7 +2452,7 @@ under the License.
 
     <!-- continuous integration targets -->
     <target name="jenkins"
-        depends="replaceVersion, compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check, help, fetch-svn-jars, maven-poms, maventask, mvn-install"
+        depends="replaceVersion, compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check, help, fetch-svn-jars, maven-poms, maventask"
         description="Target run by Jenkins on a continuous basis. Builds and tests POI, generates artifacts and documentation, and searches for problems."/>
 
     <target name="maventask" depends="init">
@@ -2464,27 +2465,6 @@ under the License.
         <taskdef uri="antlib:org.apache.maven.artifact.ant" resource="org/apache/maven/artifact/ant/antlib.xml">
             <classpath refid="maven-ant-tasks.classpath"/>
         </taskdef>
-    </target>
-
-    <macrodef name="m2-install">
-        <attribute name="artifactId"/>
-        <attribute name="versionId" default="${version.id}"/>
-
-        <sequential>
-            <mvn:install file="${dist.dir}/maven/@{artifactId}/@{artifactId}-@{versionId}.jar">
-                <pom file="${dist.dir}/maven/@{artifactId}/@{artifactId}-@{versionId}.pom"/>
-            </mvn:install>
-        </sequential>
-    </macrodef>
-
-    <target name="mvn-install" depends="maventask,jar,maven-poms" description="Install POI artifacts into the local repository. Equivalent of 'mvn install'">
-        <m2-install artifactId="poi"/>
-        <m2-install artifactId="poi-scratchpad"/>
-        <m2-install artifactId="poi-ooxml"/>
-        <m2-install artifactId="poi-examples"/>
-        <m2-install artifactId="poi-ooxml-lite"/>
-        <m2-install artifactId="poi-ooxml-full"/>
-        <m2-install artifactId="poi-excelant"/>
     </target>
 
     <target name="rat-check" depends="init" description="Runs the Apache Creadur Rat check against the source code, to spot any files which are missing the correct license headers">

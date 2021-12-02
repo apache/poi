@@ -71,7 +71,7 @@ public class KeyData {
 
     void write(Element encryption) {
         Document doc = encryption.getOwnerDocument();
-        Element keyData = (Element)encryption.appendChild(doc.createElement("keyData"));
+        Element keyData = (Element)encryption.appendChild(doc.createElementNS(ENC_NS, "keyData"));
         setIntAttr(keyData, "saltSize", saltSize);
         setIntAttr(keyData, "blockSize", blockSize);
         setIntAttr(keyData, "keyBits", keyBits);

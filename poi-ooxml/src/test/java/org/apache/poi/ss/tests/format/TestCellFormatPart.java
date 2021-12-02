@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.JLabel;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.format.CellFormat;
 import org.apache.poi.ss.format.CellFormatPart;
@@ -215,6 +216,24 @@ class TestCellFormatPart {
                 valueGetter.equivalent(expectedText, actualText, cellFormatPart);
                 assertEquals(expectedColor, actualColor, "no color");
             }
+        }
+    }
+
+    @Test
+    void testDecimalFormat() throws Exception {
+        // Create a workbook, row and cell to test with
+        try (Workbook wb = new HSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+
+            CellFormat cf = CellFormat.getInstance("[<=.01]0.00%;#,##0");
+
+            cell.setCellValue(1);
+            assertEquals("1", cf.apply(cell).text);
+
+            cell.setCellValue(.001);
+            assertEquals("0.10%", cf.apply(cell).text);
         }
     }
 }

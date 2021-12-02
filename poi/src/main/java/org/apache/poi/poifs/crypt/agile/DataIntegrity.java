@@ -59,7 +59,7 @@ public class DataIntegrity {
 
     void write(Element encryption) {
         Document doc = encryption.getOwnerDocument();
-        Element dataIntegrity = (Element)encryption.appendChild(doc.createElement("dataIntegrity"));
+        Element dataIntegrity = (Element)encryption.appendChild(doc.createElementNS(ENC_NS, "dataIntegrity"));
         setBinAttr(dataIntegrity, "encryptedHmacKey", encryptedHmacKey);
         setBinAttr(dataIntegrity, "encryptedHmacValue", encryptedHmacValue);
     }

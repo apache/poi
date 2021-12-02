@@ -167,6 +167,7 @@ public final class WorkbookFactory {
      *
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the Workbook given is password protected
+	 *  @throws EmptyFileException If the given data is empty
      */
     public static Workbook create(InputStream inp) throws IOException, EncryptedDocumentException {
         return create(inp, null);
@@ -193,6 +194,7 @@ public final class WorkbookFactory {
      *
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
+	 *  @throws EmptyFileException If the given data is empty
      */
     public static Workbook create(InputStream inp, String password) throws IOException, EncryptedDocumentException {
         InputStream is = FileMagic.prepareToCheckMagic(inp);
@@ -231,6 +233,7 @@ public final class WorkbookFactory {
      *
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the Workbook given is password protected
+	 *  @throws EmptyFileException If the given data is empty
      */
     public static Workbook create(File file) throws IOException, EncryptedDocumentException {
         return create(file, null);
@@ -250,6 +253,7 @@ public final class WorkbookFactory {
      *
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
+	 *  @throws EmptyFileException If the given data is empty
      */
     public static Workbook create(File file, String password) throws IOException, EncryptedDocumentException {
         return create(file, password, false);
@@ -271,6 +275,7 @@ public final class WorkbookFactory {
      *
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
+	 *  @throws EmptyFileException If the given data is empty
      */
     public static Workbook create(File file, String password, boolean readOnly) throws IOException, EncryptedDocumentException {
         if (!file.exists()) {

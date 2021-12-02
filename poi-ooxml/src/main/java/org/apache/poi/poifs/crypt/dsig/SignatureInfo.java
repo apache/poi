@@ -111,7 +111,7 @@ import org.w3c.dom.events.MutationEvent;
  *
  * <pre>
  * // loading the keystore - pkcs12 is used here, but of course jks &amp; co are also valid
- * // the keystore needs to contain a private key and it's certificate having a
+ * // the keystore needs to contain a private key and its certificate having a
  * // 'digitalSignature' key usage
  * char password[] = "test".toCharArray();
  * File file = new File("test.pfx");

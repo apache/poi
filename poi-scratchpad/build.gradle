@@ -45,7 +45,11 @@ dependencies {
     testImplementation project(path: ':poi', configuration: 'tests')
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
-    testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
+    testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
+
+    if (SAXON_TEST) {
+        testRuntimeOnly "net.sf.saxon:Saxon-HE:${saxonVersion}"
+    }
 
     javadocs project(':poi')
     javadocs project(':poi-ooxml')

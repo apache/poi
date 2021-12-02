@@ -77,12 +77,12 @@ public class XSSFPivotCacheRecords extends POIXMLDocumentPart {
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
-        //Sets the pivotCacheDefinition tag
-        xmlOptions.setSaveSyntheticDocumentElement(new QName(CTPivotCacheRecords.type.getName().
-                getNamespaceURI(), "pivotCacheRecords"));
-        ctPivotCacheRecords.save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
+            //Sets the pivotCacheDefinition tag
+            xmlOptions.setSaveSyntheticDocumentElement(new QName(CTPivotCacheRecords.type.getName().
+                    getNamespaceURI(), "pivotCacheRecords"));
+            ctPivotCacheRecords.save(out, xmlOptions);
+        }
     }
 }

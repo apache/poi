@@ -115,28 +115,28 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor 
             SheetTextExtractor sheetExtractor = new SheetTextExtractor();
             XSSFBHyperlinksTable hyperlinksTable = null;
             while (iter.hasNext()) {
-                InputStream stream = iter.next();
-                if (getIncludeSheetNames()) {
-                    text.append(iter.getSheetName());
-                    text.append('\n');
+                try (InputStream stream = iter.next()) {
+                    if (getIncludeSheetNames()) {
+                        text.append(iter.getSheetName());
+                        text.append('\n');
+                    }
+                    if (handleHyperlinksInCells) {
+                        hyperlinksTable = new XSSFBHyperlinksTable(iter.getSheetPart());
+                    }
+                    XSSFBCommentsTable comments = getIncludeCellComments() ? iter.getXSSFBSheetComments() : null;
+                    processSheet(sheetExtractor, styles, comments, strings, stream);
+                    if (getIncludeHeadersFooters()) {
+                        sheetExtractor.appendHeaderText(text);
+                    }
+                    sheetExtractor.appendCellText(text);
+                    if (getIncludeTextBoxes()) {
+                        processShapes(iter.getShapes(), text);
+                    }
+                    if (getIncludeHeadersFooters()) {
+                        sheetExtractor.appendFooterText(text);
+                    }
+                    sheetExtractor.reset();
                 }
-                if (handleHyperlinksInCells) {
-                    hyperlinksTable = new XSSFBHyperlinksTable(iter.getSheetPart());
-                }
-                XSSFBCommentsTable comments = getIncludeCellComments() ? iter.getXSSFBSheetComments() : null;
-                processSheet(sheetExtractor, styles, comments, strings, stream);
-                if (getIncludeHeadersFooters()) {
-                    sheetExtractor.appendHeaderText(text);
-                }
-                sheetExtractor.appendCellText(text);
-                if (getIncludeTextBoxes()) {
-                    processShapes(iter.getShapes(), text);
-                }
-                if (getIncludeHeadersFooters()) {
-                    sheetExtractor.appendFooterText(text);
-                }
-                sheetExtractor.reset();
-                stream.close();
             }
 
             return text.toString();

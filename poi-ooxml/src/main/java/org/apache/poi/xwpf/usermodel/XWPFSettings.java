@@ -396,9 +396,9 @@ public class XWPFSettings extends POIXMLDocumentPart {
         xmlOptions.setSaveSyntheticDocumentElement(new QName(CTSettings.type.getName().getNamespaceURI(), "settings"));
 
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        ctSettings.save(out, xmlOptions);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            ctSettings.save(out, xmlOptions);
+        }
     }
 
     private CTDocProtect safeGetDocumentProtection() {

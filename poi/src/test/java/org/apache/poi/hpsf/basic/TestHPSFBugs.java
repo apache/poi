@@ -17,26 +17,20 @@
 
 package org.apache.poi.hpsf.basic;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.POIDocument;
+import org.apache.poi.hpsf.*;
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
-import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.POIDocument;
-import org.apache.poi.hpsf.DocumentSummaryInformation;
-import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
-import org.apache.poi.hpsf.NoPropertySetStreamException;
-import org.apache.poi.hpsf.PropertySetFactory;
-import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests various bugs have been fixed
@@ -112,12 +106,12 @@ final class TestHPSFBugs {
    @Test
    void test54233() throws IOException, NoPropertySetStreamException {
        try (InputStream is = _samples.openResourceAsStream("TestNon4ByteBoundary.doc");
-        POIFSFileSystem fs = new POIFSFileSystem(is)) {
+            POIFSFileSystem fs = new POIFSFileSystem(is)) {
 
            SummaryInformation si = (SummaryInformation)
-               PropertySetFactory.create(fs.getRoot(), SummaryInformation.DEFAULT_STREAM_NAME);
+                   PropertySetFactory.create(fs.getRoot(), SummaryInformation.DEFAULT_STREAM_NAME);
            DocumentSummaryInformation dsi = (DocumentSummaryInformation)
-               PropertySetFactory.create(fs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+                   PropertySetFactory.create(fs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
            // Test
            assertEquals("Microsoft Word 10.0", si.getApplicationName());

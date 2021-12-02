@@ -207,7 +207,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
 
     /**
      * Helper function for overriding the cipher invocation, i.e. XOR doesn't use a cipher
-     * and uses it's own implementation
+     * and uses its own implementation
      */
     protected int invokeCipher(int posInChunk, boolean doFinal) throws GeneralSecurityException, IOException {
         byte[] plain = (plainByteFlags.isEmpty()) ? null : chunk.clone();

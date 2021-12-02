@@ -70,7 +70,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
      * Construct a SpreadsheetML slide from a package part
      *
      * @param part the package part holding the slide data,
-     * the content type must be <code>application/vnd.openxmlformats-officedocument.slide+xml</code>
+     * the content type must be {@code application/vnd.openxmlformats-officedocument.slide+xml}
      *
      * @since POI 3.14-Beta1
      */
@@ -376,12 +376,6 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         Drawable draw = drawFact.getDrawable(this);
         draw.draw(graphics);
     }
-
-    @Override
-    public boolean getDisplayPlaceholder(Placeholder placeholder) {
-        return false;
-    }
-
 
     @Override
     public void setHidden(boolean hidden) {

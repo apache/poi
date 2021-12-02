@@ -74,6 +74,7 @@ import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.model.Comments;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
@@ -267,7 +268,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             XSSFComment comment = dg.createCellComment(new XSSFClientAnchor());
 
             Cell cell = sheet.createRow(0).createCell(0);
-            CommentsTable comments = sheet.getCommentsTable(false);
+            CommentsTable comments = (CommentsTable) sheet.getCommentsTable(false);
             CTComments ctComments = comments.getCTComments();
 
             cell.setCellComment(comment);
@@ -917,10 +918,10 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     void commentsTable() throws IOException {
         try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             XSSFSheet sheet1 = wb1.createSheet();
-            CommentsTable comment1 = sheet1.getCommentsTable(false);
+            CommentsTable comment1 = (CommentsTable) sheet1.getCommentsTable(false);
             assertNull(comment1);
 
-            comment1 = sheet1.getCommentsTable(true);
+            comment1 = (CommentsTable) sheet1.getCommentsTable(true);
             assertNotNull(comment1);
             assertEquals("/xl/comments1.xml", comment1.getPackagePart().getPartName().getName());
 
@@ -928,10 +929,10 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
             //second sheet
             XSSFSheet sheet2 = wb1.createSheet();
-            CommentsTable comment2 = sheet2.getCommentsTable(false);
+            CommentsTable comment2 = (CommentsTable) sheet2.getCommentsTable(false);
             assertNull(comment2);
 
-            comment2 = sheet2.getCommentsTable(true);
+            comment2 = (CommentsTable) sheet2.getCommentsTable(true);
             assertNotNull(comment2);
 
             assertSame(comment2, sheet2.getCommentsTable(true));
@@ -944,7 +945,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         //now test against a workbook containing cell comments
         try (XSSFWorkbook wb2 = XSSFTestDataSamples.openSampleWorkbook("WithMoreVariousData.xlsx")) {
             XSSFSheet sheet1 = wb2.getSheetAt(0);
-            CommentsTable comment1 = sheet1.getCommentsTable(true);
+            CommentsTable comment1 = (CommentsTable) sheet1.getCommentsTable(true);
             assertNotNull(comment1);
             assertEquals("/xl/comments1.xml", comment1.getPackagePart().getPartName().getName());
             assertSame(comment1, sheet1.getCommentsTable(true));

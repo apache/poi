@@ -18,7 +18,6 @@
 package org.apache.poi.hslf.record;
 
 import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
-import static org.apache.poi.util.GenericRecordUtil.safeEnum;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -36,30 +35,6 @@ import org.apache.poi.util.LittleEndian;
  */
 
 public final class HeadersFootersAtom extends RecordAtom {
-
-    /** FormatIndex enum without LCID mapping */
-    public enum FormatIndex {
-        SHORT_DATE,
-        LONG_DATE,
-        LONG_DATE_WITHOUT_WEEKDAY,
-        ALTERNATE_SHORT_DATE,
-        ISO_STANDARD_DATE,
-        SHORT_DATE_WITH_ABBREVIATED_MONTH,
-        SHORT_DATE_WITH_SLASHES,
-        ALTERNATE_SHORT_DATE_WITH_ABBREVIATED_MONTH,
-        ENGLISH_DATE,
-        MONTH_AND_YEAR,
-        ABBREVIATED_MONTH_AND_YEAR,
-        DATE_AND_HOUR12_TIME,
-        DATE_AND_HOUR12_TIME_WITH_SECONDS,
-        HOUR12_TIME,
-        HOUR12_TIME_WITH_SECONDS,
-        HOUR24_TIME,
-        HOUR24_TIME_WITH_SECONDS,
-        CHINESE1,
-        CHINESE2,
-        CHINESE3
-    }
 
     /**
      * A bit that specifies whether the date is displayed in the footer.
@@ -136,7 +111,7 @@ public final class HeadersFootersAtom extends RecordAtom {
     /**
      * Build an instance of {@code HeadersFootersAtom} from on-disk data
      */
-    protected HeadersFootersAtom(byte[] source, int start, int len) {
+    HeadersFootersAtom(byte[] source, int start, int len) {
         // Get the header
         _header = Arrays.copyOfRange(source, start, start+8);
 
@@ -181,6 +156,7 @@ public final class HeadersFootersAtom extends RecordAtom {
     public int getFormatId(){
         return LittleEndian.getShort(_recdata, 0);
     }
+
 
     /**
      * A signed integer that specifies the format ID to be used to style the datetime.
@@ -258,7 +234,7 @@ public final class HeadersFootersAtom extends RecordAtom {
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
-            "formatIndex", safeEnum(FormatIndex.values(), this::getFormatId),
+            "formatIndex", this::getFormatId,
             "flags", getBitsAsString(this::getMask, PLACEHOLDER_MASKS, PLACEHOLDER_NAMES)
         );
     }

@@ -33,7 +33,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.junit.jupiter.api.Test;
 
 /**
- * Class to test that we handle embeded bits in OOXML files properly
+ * Class to test that we handle embedded bits in OOXML files properly
  */
 class TestEmbedded {
     @Test

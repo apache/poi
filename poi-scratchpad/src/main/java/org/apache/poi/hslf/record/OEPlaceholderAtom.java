@@ -52,7 +52,7 @@ public final class OEPlaceholderAtom extends RecordAtom{
      */
     public static final int PLACEHOLDER_QUARTSIZE = 2;
 
-    private byte[] _header;
+    private final byte[] _header;
 
     private int placementId;
     private int placeholderId;
@@ -77,7 +77,7 @@ public final class OEPlaceholderAtom extends RecordAtom{
     /**
      * Build an instance of {@code OEPlaceholderAtom} from on-disk data
      */
-    protected OEPlaceholderAtom(byte[] source, int start, int len) {
+    OEPlaceholderAtom(byte[] source, int start, int len) {
         _header = Arrays.copyOfRange(source, start, start+8);
         int offset = start+8;
 
@@ -135,7 +135,7 @@ public final class OEPlaceholderAtom extends RecordAtom{
      * Sets the placeholder Id.<p>
      *
      * placeholder Id specifies the type of the placeholder shape.
-     * The value MUST be one of the static constants defined in this class
+     * The value MUST be one of the static constants defined in {@link Placeholder}
      *
      * @param id the placeholder Id.
      */

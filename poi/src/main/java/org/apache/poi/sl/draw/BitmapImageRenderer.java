@@ -85,11 +85,12 @@ public class BitmapImageRenderer implements ImageRenderer {
     public void loadImage(InputStream data, String contentType) throws IOException {
         InputStream in = data;
         if (doCache) {
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-            IOUtils.copy(data, bos);
-            cachedImage = bos.toByteArray();
-            cachedContentType = contentType;
-            in = bos.toInputStream();
+            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+                IOUtils.copy(data, bos);
+                cachedImage = bos.toByteArray();
+                cachedContentType = contentType;
+                in = bos.toInputStream();
+            }
         }
         img = readImage(in, contentType);
     }

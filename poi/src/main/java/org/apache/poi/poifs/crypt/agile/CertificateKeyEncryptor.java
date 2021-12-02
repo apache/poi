@@ -17,12 +17,11 @@
 
 package org.apache.poi.poifs.crypt.agile;
 
-import static org.apache.poi.poifs.crypt.agile.EncryptionDocument.getBinAttr;
-import static org.apache.poi.poifs.crypt.agile.EncryptionDocument.setBinAttr;
-
 import org.apache.poi.EncryptedDocumentException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import static org.apache.poi.poifs.crypt.agile.EncryptionDocument.*;
 
 public class CertificateKeyEncryptor {
 
@@ -60,9 +59,9 @@ public class CertificateKeyEncryptor {
 
     void write(Element encryption) {
         Document doc = encryption.getOwnerDocument();
-        Element keyEncryptor = (Element) encryption.appendChild(doc.createElement("keyEncryptor"));
+        Element keyEncryptor = (Element) encryption.appendChild(doc.createElementNS(ENC_NS, "keyEncryptor"));
         keyEncryptor.setAttribute("uri", KeyEncryptor.CERT_NS);
-        Element encryptedKey = (Element) keyEncryptor.appendChild(doc.createElement("c:encryptedKey"));
+        Element encryptedKey = (Element) keyEncryptor.appendChild(doc.createElementNS(KeyEncryptor.CERT_NS, "c:encryptedKey"));
 
         setBinAttr(encryptedKey, "encryptedKeyValue", encryptedKeyValue);
         setBinAttr(encryptedKey, "x509Certificate", x509Certificate);

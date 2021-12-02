@@ -134,7 +134,7 @@ public enum RecordTypes {
     InteractiveInfoAtom(4083,InteractiveInfoAtom::new),
     UserEditAtom(4085,UserEditAtom::new),
     CurrentUserAtom(4086,null),
-    DateTimeMCAtom(4087,null),
+    DateTimeMCAtom(4087,DateTimeMCAtom::new),
     GenericDateMCAtom(4088,null),
     FooterMCAtom(4090,null),
     ExControlAtom(4091,ExControlAtom::new),

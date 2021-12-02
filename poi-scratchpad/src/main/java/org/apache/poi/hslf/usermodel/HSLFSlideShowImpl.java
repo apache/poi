@@ -718,7 +718,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     /**
      * Writes out the slideshow file the is represented by an instance
      * of this class.
-     * If you require all streams to be written out (eg Marcos, embeded
+     * If you require all streams to be written out (eg Marcos, embedded
      * documents), then set {@code preserveNodes} set to {@code true}
      *
      * @param newFile       The File to write to.
@@ -757,7 +757,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     /**
      * Writes out the slideshow file the is represented by an instance
      * of this class.
-     * If you require all streams to be written out (eg Marcos, embeded
+     * If you require all streams to be written out (eg Macros, embedded
      * documents), then set {@code preserveNodes} set to {@code true}
      *
      * @param out           The OutputStream to write to.

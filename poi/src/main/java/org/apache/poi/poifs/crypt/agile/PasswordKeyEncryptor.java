@@ -17,18 +17,15 @@
 
 package org.apache.poi.poifs.crypt.agile;
 
-import static org.apache.poi.poifs.crypt.agile.EncryptionDocument.getBinAttr;
-import static org.apache.poi.poifs.crypt.agile.EncryptionDocument.getIntAttr;
-import static org.apache.poi.poifs.crypt.agile.EncryptionDocument.setAttr;
-import static org.apache.poi.poifs.crypt.agile.EncryptionDocument.setBinAttr;
-import static org.apache.poi.poifs.crypt.agile.EncryptionDocument.setIntAttr;
-
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import static org.apache.poi.poifs.crypt.agile.EncryptionDocument.*;
+import static org.apache.poi.poifs.crypt.agile.KeyEncryptor.PASS_NS;
 
 public class PasswordKeyEncryptor {
 
@@ -124,9 +121,9 @@ public class PasswordKeyEncryptor {
 
     void write(Element encryption) {
         Document doc = encryption.getOwnerDocument();
-        Element keyEncryptor = (Element) encryption.appendChild(doc.createElement("keyEncryptor"));
-        keyEncryptor.setAttribute("uri", KeyEncryptor.PASS_NS);
-        Element encryptedKey = (Element) keyEncryptor.appendChild(doc.createElement("p:encryptedKey"));
+        Element keyEncryptor = (Element) encryption.appendChild(doc.createElementNS(ENC_NS, "keyEncryptor"));
+        keyEncryptor.setAttribute("uri", PASS_NS);
+        Element encryptedKey = (Element) keyEncryptor.appendChild(doc.createElementNS(PASS_NS, "p:encryptedKey"));
 
         setIntAttr(encryptedKey, "saltSize", saltSize);
         setIntAttr(encryptedKey, "blockSize", blockSize);

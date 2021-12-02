@@ -118,9 +118,9 @@ public final class EncryptedTempFilePackagePart extends PackagePart {
     }
 
     @Override
-    public boolean load(InputStream ios) throws InvalidFormatException {
+    public boolean load(InputStream is) throws InvalidFormatException {
        try (OutputStream os = getOutputStreamImpl()) {
-            IOUtils.copy(ios, os);
+            IOUtils.copy(is, os);
        } catch(IOException e) {
             throw new InvalidFormatException(e.getMessage(), e);
        }

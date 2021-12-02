@@ -24,18 +24,7 @@ import static org.apache.poi.xssf.usermodel.helpers.XSSFPasswordHelper.validateP
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamException;
@@ -67,7 +56,7 @@ import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
-import org.apache.poi.xssf.model.CommentsTable;
+import org.apache.poi.xssf.model.Comments;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigurator;
 import org.apache.poi.xssf.usermodel.helpers.ColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.XSSFColumnShifter;
@@ -88,7 +77,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  * contain text, numbers, dates, and formulas. Cells can also be formatted.
  * </p>
  */
-public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
+public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetExtensions  {
     private static final Logger LOG = LogManager.getLogger(XSSFSheet.class);
 
     private static final double DEFAULT_ROW_HEIGHT = 15.0;
@@ -106,7 +95,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     private final SortedMap<Integer, XSSFRow> _rows = new TreeMap<>();
     private List<XSSFHyperlink> hyperlinks;
     private ColumnHelper columnHelper;
-    private CommentsTable sheetComments;
+    private Comments sheetComments;
     /**
      * cache of master shared formulas in this sheet.
      * Master shared formula is the first formula in a group of shared formulas is saved in the f element.
@@ -115,6 +104,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     private SortedMap<String,XSSFTable> tables;
     private List<CellRangeAddress> arrayFormulas;
     private final XSSFDataValidationHelper dataValidationHelper;
+    private XSSFVMLDrawing xssfvmlDrawing;
 
     /**
      * Creates new XSSFSheet   - called by XSSFWorkbook to create a sheet from scratch.
@@ -174,8 +164,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         // Look for bits we're interested in
         for(RelationPart rp : getRelationParts()){
             POIXMLDocumentPart p = rp.getDocumentPart();
-            if(p instanceof CommentsTable) {
-                sheetComments = (CommentsTable)p;
+            if(p instanceof Comments) {
+                sheetComments = (Comments)p;
+                sheetComments.setSheet(this);
             }
             if(p instanceof XSSFTable) {
                 tables.put( rp.getRelationship().getId(), (XSSFTable)p );
@@ -533,7 +524,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                     if (drId.equals(ctDrawing.getId())){
                         return dr;
                     }
-                    break;
                 }
             }
             LOG.atError().log("Can't find drawing with id={} in the list of the sheet's relationships", ctDrawing.getId());
@@ -548,9 +538,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public XSSFDrawing createDrawingPatriarch() {
-        CTDrawing ctDrawing = getCTDrawing();
-        if (ctDrawing != null) {
-            return getDrawingPatriarch();
+        XSSFDrawing existingDrawing = getDrawingPatriarch();
+        if (existingDrawing != null) {
+            return existingDrawing;
         }
 
         // Default drawingNumber = #drawings.size() + 1
@@ -562,7 +552,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
         //add CT_Drawing element which indicates that this sheet contains drawing components built on the drawingML platform.
         //The relationship Id references the part containing the drawingML definitions.
-        ctDrawing = worksheet.addNewDrawing();
+        CTDrawing ctDrawing = worksheet.addNewDrawing();
         ctDrawing.setId(relId);
 
         // Return the newly created drawing
@@ -570,48 +560,52 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     /**
-     * Get VML drawing for this sheet (aka 'legacy' drawing)
+     * Get VML drawing for this sheet (aka 'legacy' drawing).
      *
      * @param autoCreate if true, then a new VML drawing part is created
      *
      * @return the VML drawing of {@code null} if the drawing was not found and autoCreate=false
      */
-    protected XSSFVMLDrawing getVMLDrawing(boolean autoCreate) {
-        XSSFVMLDrawing drawing = null;
-        CTLegacyDrawing ctDrawing = getCTLegacyDrawing();
-        if(ctDrawing == null) {
-            if(autoCreate) {
-                int drawingNumber = getNextPartNumber(XSSFRelation.VML_DRAWINGS,
-                        getPackagePart().getPackage().getPartsByContentType(XSSFRelation.VML_DRAWINGS.getContentType()).size());
-                RelationPart rp = createRelationship(XSSFRelation.VML_DRAWINGS, getWorkbook().getXssfFactory(), drawingNumber, false);
-                drawing = rp.getDocumentPart();
-                String relId = rp.getRelationship().getId();
+    @Override
+    public XSSFVMLDrawing getVMLDrawing(boolean autoCreate) {
+        if (xssfvmlDrawing == null) {
+            XSSFVMLDrawing drawing = null;
+            CTLegacyDrawing ctDrawing = getCTLegacyDrawing();
+            if(ctDrawing == null) {
+                if(autoCreate) {
+                    int drawingNumber = getNextPartNumber(XSSFRelation.VML_DRAWINGS,
+                            getPackagePart().getPackage().getPartsByContentType(XSSFRelation.VML_DRAWINGS.getContentType()).size());
+                    RelationPart rp = createRelationship(XSSFRelation.VML_DRAWINGS, getWorkbook().getXssfFactory(), drawingNumber, false);
+                    drawing = rp.getDocumentPart();
+                    String relId = rp.getRelationship().getId();
 
-                //add CTLegacyDrawing element which indicates that this sheet contains drawing components built on the drawingML platform.
-                //The relationship Id references the part containing the drawing definitions.
-                ctDrawing = worksheet.addNewLegacyDrawing();
-                ctDrawing.setId(relId);
-            }
-        } else {
-            //search the referenced drawing in the list of the sheet's relations
-            final String id = ctDrawing.getId();
-            for (RelationPart rp : getRelationParts()){
-                POIXMLDocumentPart p = rp.getDocumentPart();
-                if(p instanceof XSSFVMLDrawing) {
-                    XSSFVMLDrawing dr = (XSSFVMLDrawing)p;
-                    String drId = rp.getRelationship().getId();
-                    if (drId.equals(id)) {
-                        drawing = dr;
-                        break;
+                    //add CTLegacyDrawing element which indicates that this sheet contains drawing components built on the drawingML platform.
+                    //The relationship Id references the part containing the drawing definitions.
+                    ctDrawing = worksheet.addNewLegacyDrawing();
+                    ctDrawing.setId(relId);
+                }
+            } else {
+                //search the referenced drawing in the list of the sheet's relations
+                final String id = ctDrawing.getId();
+                for (RelationPart rp : getRelationParts()){
+                    POIXMLDocumentPart p = rp.getDocumentPart();
+                    if(p instanceof XSSFVMLDrawing) {
+                        XSSFVMLDrawing dr = (XSSFVMLDrawing)p;
+                        String drId = rp.getRelationship().getId();
+                        if (drId.equals(id)) {
+                            drawing = dr;
+                            break;
+                        }
+                        // do not break here since drawing has not been found yet (see bug 52425)
                     }
-                    // do not break here since drawing has not been found yet (see bug 52425)
+                }
+                if(drawing == null){
+                    LOG.atError().log("Can't find VML drawing with id={} in the list of the sheet's relationships", id);
                 }
             }
-            if(drawing == null){
-                LOG.atError().log("Can't find VML drawing with id={} in the list of the sheet's relationships", id);
-            }
+            xssfvmlDrawing = drawing;
         }
-        return drawing;
+        return xssfvmlDrawing;
     }
 
     protected CTDrawing getCTDrawing() {
@@ -765,7 +759,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Return cell comment at row, column, if one exists. Otherwise returns null.
      *
      * @param address the location of the cell comment
-     * @return the cell comment, if one exists. Otherwise return null.
+     * @return the cell comment, if one exists. Otherwise, return null.
      */
     @Override
     public XSSFComment getCellComment(CellAddress address) {
@@ -773,14 +767,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             return null;
         }
 
-        CTComment ctComment = sheetComments.getCTComment(address);
-        if(ctComment == null) {
-            return null;
-        }
-
-        XSSFVMLDrawing vml = getVMLDrawing(false);
-        return new XSSFComment(sheetComments, ctComment,
-                vml == null ? null : vml.findCommentShape(address.getRow(), address.getColumn()));
+        return sheetComments.findCellComment(address);
     }
 
     /**
@@ -2973,14 +2960,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void shiftRows(int startRow, int endRow, final int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
-        XSSFVMLDrawing vml = getVMLDrawing(false);
-
         int sheetIndex = getWorkbook().getSheetIndex(this);
         String sheetName = getWorkbook().getSheetName(sheetIndex);
         FormulaShifter formulaShifter = FormulaShifter.createForRowShift(
                 sheetIndex, sheetName, startRow, endRow, n, SpreadsheetVersion.EXCEL2007);
-        removeOverwritten(vml, startRow, endRow, n);
-        shiftCommentsAndRows(vml, startRow, endRow, n);
+        removeOverwritten(startRow, endRow, n);
+        shiftCommentsAndRows(startRow, endRow, n);
 
         XSSFRowShifter rowShifter = new XSSFRowShifter(this);
         rowShifter.shiftMergedRegions(startRow, endRow, n);
@@ -3040,13 +3025,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     // remove all rows which will be overwritten
-    private void removeOverwritten(XSSFVMLDrawing vml, int startRow, int endRow, final int n){
+    private void removeOverwritten(int startRow, int endRow, final int n) {
+        XSSFVMLDrawing vml = getVMLDrawing(false);
+        HashSet<Integer> rowsToRemoveSet = new HashSet<>();
         for (Iterator<Row> it = rowIterator() ; it.hasNext() ; ) {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
 
             // check if we should remove this row as it will be overwritten by the data later
             if (shouldRemoveRow(startRow, endRow, n, rownum)) {
+                rowsToRemoveSet.add(rownum);
                 for (Cell c : row) {
                     if (!c.isPartOfArrayFormulaGroup()) {
                         //the support for deleting cells that are part of array formulas is not implemented yet
@@ -3062,38 +3050,41 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
                 // remove row from _rows
                 it.remove();
+            }
+        }
 
-                // FIXME: (performance optimization) this should be moved outside the for-loop so that comments only needs to be iterated over once.
-                // also remove any comments associated with this row
-                if(sheetComments != null){
-                    CTCommentList lst = sheetComments.getCTComments().getCommentList();
-                    for (CTComment comment : lst.getCommentArray()) {
-                        String strRef = comment.getRef();
-                        CellAddress ref = new CellAddress(strRef);
-
-                        // is this comment part of the current row?
-                        if(ref.getRow() == rownum) {
-                            sheetComments.removeComment(ref);
-                            vml.removeCommentShape(ref.getRow(), ref.getColumn());
-                        }
-                    }
+        // also remove any comments associated with this row
+        if (sheetComments != null) {
+            ArrayList<CellAddress> refsToRemove = new ArrayList<>();
+            Iterator<CellAddress> commentAddressIterator = sheetComments.getCellAddresses();
+            while (commentAddressIterator.hasNext()) {
+                CellAddress ref = commentAddressIterator.next();
+                // is this comment part of the current row?
+                if(rowsToRemoveSet.contains(ref.getRow())) {
+                    refsToRemove.add(ref);
                 }
-                // FIXME: (performance optimization) this should be moved outside the for-loop so that hyperlinks only needs to be iterated over once.
-                // also remove any hyperlinks associated with this row
-                if (hyperlinks != null) {
-                    for (XSSFHyperlink link : new ArrayList<>(hyperlinks)) {
-                        CellReference ref = new CellReference(link.getCellRef());
-                        if (ref.getRow() == rownum) {
-                            hyperlinks.remove(link);
-                        }
-                    }
+            }
+            for (CellAddress ref : refsToRemove) {
+                sheetComments.removeComment(ref);
+                if (vml != null) {
+                    vml.removeCommentShape(ref.getRow(), ref.getColumn());
+                }
+            }
+        }
+
+        // also remove any hyperlinks associated with this row
+        if (hyperlinks != null) {
+            for (XSSFHyperlink link : new ArrayList<>(hyperlinks)) {
+                CellReference ref = new CellReference(link.getCellRef());
+                if (rowsToRemoveSet.contains(ref.getRow())) {
+                    hyperlinks.remove(link);
                 }
             }
         }
 
     }
 
-    private void shiftCommentsAndRows(XSSFVMLDrawing vml, int startRow, int endRow, final int n){
+    private void shiftCommentsAndRows(int startRow, int endRow, final int n) {
         // then do the actual moving and also adjust comments/rowHeight
         // we need to sort it in a way so the shifting does not mess up the structures,
         // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
@@ -3121,25 +3112,27 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             XSSFRow row = (XSSFRow)it.next();
             int rownum = row.getRowNum();
 
-            if(sheetComments != null){
+            if(sheetComments != null) {
                 // calculate the new rownum
                 int newrownum = shiftedRowNum(startRow, endRow, n, rownum);
 
                 // is there a change necessary for the current row?
                 if(newrownum != rownum) {
-                    CTCommentList lst = sheetComments.getCTComments().getCommentList();
-                    for (CTComment comment : lst.getCommentArray()) {
-                        String oldRef = comment.getRef();
-                        CellReference ref = new CellReference(oldRef);
+                    Iterator<CellAddress> commentAddressIterator = sheetComments.getCellAddresses();
+                    while (commentAddressIterator.hasNext()) {
+                        CellAddress cellAddress = commentAddressIterator.next();
 
                         // is this comment part of the current row?
-                        if(ref.getRow() == rownum) {
-                            XSSFComment xssfComment = new XSSFComment(sheetComments, comment,
-                                    vml == null ? null : vml.findCommentShape(rownum, ref.getCol()));
+                        if(cellAddress.getRow() == rownum) {
+                            XSSFComment oldComment = sheetComments.findCellComment(cellAddress);
+                            if (oldComment != null) {
+                                XSSFComment xssfComment = new XSSFComment(sheetComments, oldComment.getCTComment(),
+                                        oldComment.getCTShape());
 
-                            // we should not perform the shifting right here as we would then find
-                            // already shifted comments and would shift them again...
-                            commentsToShift.put(xssfComment, newrownum);
+                                // we should not perform the shifting right here as we would then find
+                                // already shifted comments and would shift them again...
+                                commentsToShift.put(xssfComment, newrownum);
+                            }
                         }
                     }
                 }
@@ -3211,18 +3204,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         });
 
 
-        if(sheetComments != null){
-            CTCommentList lst = sheetComments.getCTComments().getCommentList();
-            for (CTComment comment : lst.getCommentArray()) {
-                String oldRef = comment.getRef();
-                CellReference ref = new CellReference(oldRef);
+        if (sheetComments != null) {
+            Iterator<CellAddress> commentAddressIterator = sheetComments.getCellAddresses();
+            while (commentAddressIterator.hasNext()) {
+                CellAddress oldCommentAddress = commentAddressIterator.next();
 
-                int columnIndex =ref.getCol();
+                int columnIndex = oldCommentAddress.getColumn();
                 int newColumnIndex = shiftedRowNum(startColumnIndex, endColumnIndex, n, columnIndex);
-                if(newColumnIndex != columnIndex){
-                    XSSFComment xssfComment = new XSSFComment(sheetComments, comment,
-                            vml == null ? null : vml.findCommentShape(ref.getRow(), columnIndex));
-                    commentsToShift.put(xssfComment, newColumnIndex);
+                if(newColumnIndex != columnIndex) {
+                    XSSFComment oldComment = sheetComments.findCellComment(oldCommentAddress);
+                    if (oldComment != null) {
+                        XSSFComment xssfComment = new XSSFComment(sheetComments, oldComment.getCTComment(),
+                                oldComment.getCTShape());
+                        commentsToShift.put(xssfComment, newColumnIndex);
+                    }
                 }
             }
         }
@@ -3518,19 +3513,22 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      *
      * @param create create a new comments table if it does not exist
      */
-    protected CommentsTable getCommentsTable(boolean create) {
+    protected Comments getCommentsTable(boolean create) {
         if(sheetComments == null && create){
             // Try to create a comments table with the same number as
             //  the sheet has (i.e. sheet 1 -> comments 1)
             try {
-                sheetComments = (CommentsTable)createRelationship(
+                sheetComments = (Comments)createRelationship(
                         XSSFRelation.SHEET_COMMENTS, getWorkbook().getXssfFactory(), Math.toIntExact(sheet.getSheetId()));
             } catch(PartAlreadyExistsException e) {
                 // Technically a sheet doesn't need the same number as
-                //  it's comments, and clearly someone has already pinched
+                //  its comments, and clearly someone has already pinched
                 //  our number! Go for the next available one instead
-                sheetComments = (CommentsTable)createRelationship(
+                sheetComments = (Comments)createRelationship(
                         XSSFRelation.SHEET_COMMENTS, getWorkbook().getXssfFactory(), -1);
+            }
+            if (sheetComments != null) {
+                sheetComments.setSheet(this);
             }
         }
         return sheetComments;
@@ -3606,9 +3604,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        write(out);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            write(out);
+        }
     }
 
     protected void write(OutputStream out) throws IOException {

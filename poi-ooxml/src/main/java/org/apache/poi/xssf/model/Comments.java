@@ -16,7 +16,10 @@
 ==================================================================== */
 package org.apache.poi.xssf.model;
 
+import org.apache.poi.ss.usermodel.ClientAnchor;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 
 import java.util.Iterator;
@@ -27,6 +30,15 @@ import java.util.Iterator;
  * all the comments in memory
  */
 public interface Comments {
+
+    /**
+     * This method is for internal POI use only. POI uses it to link the sheet and comments table.
+     * This method will not move comments from one sheet to another (if a user tries to use this method for that purpose).
+     * @param sheet the sheet that this comments table is associated with
+     * @since POI 5.2.0
+     */
+    @Internal
+    void setSheet(Sheet sheet);
 
     int getNumberOfComments();
 
@@ -58,4 +70,31 @@ public interface Comments {
      * @since 4.0.0
      */
     Iterator<CellAddress> getCellAddresses();
+
+    /**
+     * Create a new comment and add to the CommentTable.
+     * @param clientAnchor the anchor for this comment
+     * @return new XSSFComment
+     * @since POI 5.2.0
+     */
+    XSSFComment createNewComment(ClientAnchor clientAnchor);
+
+    /**
+     * Called after the reference is updated, so that
+     *  we can reflect that in our cache
+     * @param oldReference the comment to remove from the commentRefs map
+     * @param comment the comment to replace in the commentRefs map
+     * @see #commentUpdated(XSSFComment)                
+     * @since POI 5.2.0
+     */
+    void referenceUpdated(CellAddress oldReference, XSSFComment comment);
+
+    /**
+     * Called after the comment is updated, so that
+     *  we can reflect that in our cache
+     * @param comment the comment to replace in the commentRefs map
+     * @since POI 5.2.0
+     * @see #referenceUpdated(CellAddress, XSSFComment)
+     */
+    void commentUpdated(XSSFComment comment);
 }

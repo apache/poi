@@ -70,7 +70,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *  to all rows in the document. Older rows that are no longer in the window
  *  become inaccessible, as they are written to the disk.
  *
- * @see <a href="https://poi.apache.org/spreadsheet/how-to.html#sxssf">SXSSF (Streaming Usermodel API)</a>.
+ * See <a href="https://poi.apache.org/spreadsheet/how-to.html#sxssf">SXSSF (Streaming Usermodel API)</a>.
  */
 public final class BigGridDemo {
     private static final String XML_ENCODING = "UTF-8";

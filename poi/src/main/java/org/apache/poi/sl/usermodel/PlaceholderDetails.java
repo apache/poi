@@ -18,6 +18,8 @@
 package org.apache.poi.sl.usermodel;
 
 
+import java.time.format.DateTimeFormatter;
+
 /**
  * Extended details about placholders
  *
@@ -27,7 +29,7 @@ public interface PlaceholderDetails {
     enum PlaceholderSize {
         quarter, half, full
     }
-    
+
     Placeholder getPlaceholder();
 
     /**
@@ -40,13 +42,13 @@ public interface PlaceholderDetails {
      * @param placeholder The shape to use as placeholder or null if no placeholder should be set.
      */
     void setPlaceholder(Placeholder placeholder);
-    
+
     boolean isVisible();
-    
+
     void setVisible(boolean isVisible);
-    
+
     PlaceholderSize getSize();
-    
+
     void setSize(PlaceholderSize size);
 
     /**
@@ -66,4 +68,23 @@ public interface PlaceholderDetails {
      * @since POI 4.0.0
      */
     void setText(String text);
+
+
+    /**
+     * @return the stored / fixed user specified date
+     *
+     * @since POI 5.2.0
+     */
+    default String getUserDate() {
+        return null;
+    }
+
+    /**
+     * @return Get the date format for the datetime placeholder
+     *
+     * @since POI 5.2.0
+     */
+    default DateTimeFormatter getDateFormat() {
+        return DateTimeFormatter.ISO_LOCAL_DATE;
+    }
 }

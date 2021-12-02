@@ -330,14 +330,17 @@ public final class ZipPackage extends OPCPackage {
 
             final String entryName = zipArchiveEntry.getName();
             PackagePartName ppn = null;
-            try {
-                // We get an error when we parse [Content_Types].xml
-                // because it's not a valid URI.
-                ppn = (CONTENT_TYPES_PART_NAME.equalsIgnoreCase(entryName)) ? null
-                    : PackagingURIHelper.createPartName(ZipHelper.getOPCNameFromZipItemName(entryName));
-            } catch (Exception e) {
-                // We assume we can continue, even in degraded mode ...
-                LOG.atWarn().withThrowable(e).log("Entry {} is not valid, so this part won't be add to the package.", entryName);
+            // ignore trash parts
+            if (!entryName.startsWith("[trash]")) {
+                try {
+                    // We get an error when we parse [Content_Types].xml
+                    // because it's not a valid URI.
+                    ppn = (CONTENT_TYPES_PART_NAME.equalsIgnoreCase(entryName)) ? null
+                            : PackagingURIHelper.createPartName(ZipHelper.getOPCNameFromZipItemName(entryName));
+                } catch (Exception e) {
+                    // We assume we can continue, even in degraded mode ...
+                    LOG.atWarn().withThrowable(e).log("Entry {} is not valid, so this part won't be added to the package.", entryName);
+                }
             }
 
             this.partName = ppn;

@@ -131,7 +131,7 @@ dependencies {
     }
     testImplementation project(path:':poi', configuration:'tests')
     testImplementation project(path:':poi-ooxml-lite-agent', configuration: 'archives')
-    testImplementation 'org.apiguardian:apiguardian-api:1.1.2'
+    testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
     testImplementation 'org.xmlunit:xmlunit-core:2.8.3'
     testImplementation 'org.reflections:reflections:0.10.2'
     testImplementation 'org.openjdk.jmh:jmh-core:1.33'
@@ -143,6 +143,9 @@ dependencies {
     // see https://logging.apache.org/log4j/2.x/log4j-slf4j-impl/
     testImplementation "org.apache.logging.log4j:log4j-slf4j18-impl:${log4jVersion}"
 
+    if (SAXON_TEST) {
+        testRuntimeOnly "net.sf.saxon:Saxon-HE:${saxonVersion}"
+    }
 
     broken("org.apache.xmlgraphics:batik-script:${batikVersion}"){
         exclude group: 'xalan', module: 'xalan'

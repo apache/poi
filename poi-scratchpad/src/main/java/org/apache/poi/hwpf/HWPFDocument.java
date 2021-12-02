@@ -234,7 +234,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
     /**
      * This constructor loads a Word document from a specific point
      * in a POIFSFileSystem, probably not the default.
-     * Used typically to open embeded documents.
+     * Used typically to open embedded documents.
      *
      * @param directory The DirectoryNode that contains the Word document.
      * @throws IOException If there is an unexpected IOException from the passed

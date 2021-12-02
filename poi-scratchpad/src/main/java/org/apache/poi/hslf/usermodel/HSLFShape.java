@@ -90,7 +90,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     private HSLFFill _fill;
 
     /**
-     * Create a Shape object. This constructor is used when an existing Shape is read from from a PowerPoint document.
+     * Create a Shape object. This constructor is used when an existing Shape is read from a PowerPoint document.
      *
      * @param escherRecord       {@code EscherSpContainer} container which holds information about this shape
      * @param parent             the parent of this Shape
@@ -402,7 +402,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     }
 
     /**
-     * @return  The shape container and it's children that can represent this
+     * @return  The shape container and its children that can represent this
      *          shape.
      */
     public EscherContainerRecord getSpContainer(){

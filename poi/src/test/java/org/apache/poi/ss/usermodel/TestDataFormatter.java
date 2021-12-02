@@ -1020,6 +1020,54 @@ class TestDataFormatter {
 
     }
 
+    @Test
+    void bug63211() {
+        DataFormatter formatter = new DataFormatter();
+        // https://bz.apache.org/bugzilla/show_bug.cgi?id=63211
+        // this format is an escaped % so is not the built-in percent which treats 0.125 as 12.5%
+        // this escaped format just appends a % to the raw decimal - so 12.5 becomes 12.5%
+        assertEquals("12.5%",
+                formatter.formatRawCellContents(12.5, -1, "0.0\\%;\\-0.0\\%"));
+        assertEquals("-12.5%",
+                formatter.formatRawCellContents(-12.5, -1, "0.0\\%;\\-0.0\\%"));
+    }
+
+    @Test
+    void testAdjustTo4DigitYearsIfConfigured() {
+        DataFormatter dataFormatter = new DataFormatter();
+        assertEquals("d/m/yy", dataFormatter.adjustTo4DigitYearsIfConfigured("d/m/yy"));
+
+        dataFormatter.setUse4DigitYearsInAllDateFormats(true);
+        assertEquals("d/m/yyyy", dataFormatter.adjustTo4DigitYearsIfConfigured("d/m/yy"));
+        assertEquals("d/m/yyyy", dataFormatter.adjustTo4DigitYearsIfConfigured("d/m/yyyy"));
+        //fake case with 3 digit year - just leave format as is
+        assertEquals("d/m/yyy", dataFormatter.adjustTo4DigitYearsIfConfigured("d/m/yyy"));
+
+        assertEquals("yyyy-mm-dd", dataFormatter.adjustTo4DigitYearsIfConfigured("yy-mm-dd"));
+        assertEquals("yyyy-mm-dd", dataFormatter.adjustTo4DigitYearsIfConfigured("yyyy-mm-dd"));
+
+        assertEquals("m/d/yyyy h:mm", dataFormatter.adjustTo4DigitYearsIfConfigured("m/d/yy h:mm"));
+        assertEquals("m/d/yyyy h:mm", dataFormatter.adjustTo4DigitYearsIfConfigured("m/d/yyyy h:mm"));
+
+        assertEquals("h:mm:ss AM/PM", dataFormatter.adjustTo4DigitYearsIfConfigured("h:mm:ss AM/PM"));
+
+        assertEquals("yyyy/mmm/dd yyyy", dataFormatter.adjustTo4DigitYearsIfConfigured("yyyy/mmm/dd yy"));
+        assertEquals("yyyy/mmm/dd yyyy", dataFormatter.adjustTo4DigitYearsIfConfigured("yy/mmm/dd yy"));
+        assertEquals("yyyy/mmm/dd yyyy", dataFormatter.adjustTo4DigitYearsIfConfigured("yyyy/mmm/dd yyyy"));
+
+        String formatString4 = "[$-F400]m/d/yy h:mm:ss\\ AM/PM;[$-F400]m/d/yy h:mm:ss\\ AM/PM;_-* \"\"??_-;_-@_-";
+        assertEquals(formatString4.replace("yy", "yyyy"), dataFormatter.adjustTo4DigitYearsIfConfigured(formatString4));
+    }
+
+    @Test
+    void testDataFormatterWithAdjustTo4DigitYears() {
+        DataFormatter dataFormatter = new DataFormatter();
+        dataFormatter.setUse4DigitYearsInAllDateFormats(true);
+        double date = 42747.412892397523;
+        assertEquals("12/1/2017",
+                dataFormatter.formatRawCellContents(date, -1, "d/m/yy"));
+    }
+
     private void doFormatTestSequential(DataFormatter formatter) {
         for (int i = 0; i < 1_000; i++) {
             assertTrue(doFormatTest(formatter, 43551.50990171296, "3/27/19 12:14:15 PM", i));

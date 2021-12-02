@@ -40,12 +40,16 @@ def poijobs = [
 //          disabled: true
 //        ],
         [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true, gradle: true,
-//          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
+          // let's save some CPU cycles here, 15 is not a LTS and JDK 16 is GA
           disabled: true
         ],
-        [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: 'H */12 * * *', skipcigame: true, gradle: true
+        [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: 'H */12 * * *', skipcigame: true, gradle: true,
+          // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
+          disabled: true
         ],
         [ name: 'POI-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true, gradle: true
+        ],
+        [ name: 'POI-DSL-1.18', jdk: '1.18', trigger: 'H */12 * * *', skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, gradle: true
         ],
@@ -67,6 +71,8 @@ def poijobs = [
 //        ],
         [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true, gradle: true
         ],
+        [ name: 'POI-DSL-saxon-test', trigger: triggerSundays, saxonTest: true, gradle: true
+        ],
 //        [ name: 'POI-DSL-SonarQube', jdk: '1.11', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
 //          email: 'kiwiwings@apache.org',
 //		  // replaced by Gradle-based build now
@@ -85,12 +91,16 @@ def poijobs = [
 //		  disabled: true
 //        ],
         [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
-//          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
+          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
           disabled: true
         ],
-        [ name: 'POI-DSL-Windows-1.16', jdk: '1.16', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true, gradle: true
+        [ name: 'POI-DSL-Windows-1.16', jdk: '1.16', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
+          // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
+          disabled: true
         ],
         [ name: 'POI-DSL-Windows-1.17', jdk: '1.17', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true, gradle: true
+        ],
+        [ name: 'POI-DSL-Windows-1.18', jdk: '1.18', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
           // ensure the file which is needed from the separate documentation module does exist
@@ -117,8 +127,12 @@ def xmlbeansjobs = [
           disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
+          disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true,
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true,
         ]
 ]
 
@@ -144,6 +158,7 @@ def jdkMapping = [
         '1.15': 'jdk_15_latest',
         '1.16': 'jdk_16_latest',
         '1.17': 'jdk_17_latest',
+        '1.18': 'jdk_18_latest',
         'OpenJDK 1.8': 'adoptopenjdk_hotspot_8u282',
         'IBMJDK': 'ibmjdk_1.8.0_261',
 ]
@@ -273,7 +288,7 @@ poijobs.each { poijob ->
 
         wrappers {
             timeout {
-                absolute(180)
+                absolute(300)
                 abortBuild()
                 writeDescription('Build was aborted due to timeout')
             }
@@ -423,6 +438,9 @@ poijobs.each { poijob ->
                         useWrapper(true)
                         if (poijob.noScratchpad) {
                             switches('-Pscratchpad.ignore=true')
+                        }
+                        if (poijob.saxonTest) {
+                            switches('-Psaxon.test=true')
                         }
                     }
                 } else {
@@ -612,12 +630,14 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'jdk_1.8_latest',
                 'jdk_10_latest',
                 'jdk_11_latest',
+                /* don't look for JDKs that are out of support
                 'jdk_12_latest',
                 'jdk_13_latest',
                 'jdk_14_latest',
                 'jdk_15_latest',
-                'jdk_16_latest',
+                'jdk_16_latest',*/
                 'jdk_17_latest',
+                'jdk_18_latest',
                 'adoptopenjdk_hotspot_8u282',
                 'ibmjdk_1.8.0_261'
         )

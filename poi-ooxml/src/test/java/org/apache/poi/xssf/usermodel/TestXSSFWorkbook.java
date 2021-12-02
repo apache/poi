@@ -1289,6 +1289,16 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
+    @Test
+    void testIgnoreTrashParts() throws Exception {
+        try (XSSFWorkbook workbook = openSampleWorkbook("Excel_file_with_trash_item.xlsx")) {
+            for (PackagePart packagePart : workbook.getPackage().getParts()) {
+                assertFalse(packagePart.getPartName().toString().contains("trash"),
+                        "should ignore part " + packagePart.getPartName());
+            }
+        }
+    }
+
     private static void expectFormattedContent(Cell cell, String value) {
         assertEquals(value, new DataFormatter().formatCellValue(cell),
                 "Cell " + ref(cell) + " has wrong formatted content.");

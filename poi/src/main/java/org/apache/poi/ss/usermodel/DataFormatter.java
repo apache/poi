@@ -203,7 +203,11 @@ public class DataFormatter {
      */
     private final Map<String,Format> formats = new HashMap<>();
 
+    /** whether CSV friendly adjustments should be made to the formatted text **/
     private final boolean emulateCSV;
+
+    /** whether years in dates should be displayed with 4 digits even if the formatString specifies only 2 **/
+    private boolean use4DigitYearsInAllDateFormats = false;
 
     /** stores the locale valid it the last formatting call */
     private Locale locale;
@@ -267,6 +271,15 @@ public class DataFormatter {
     }
 
     /**
+     * @param use4DigitYearsInAllDateFormats set to true if you want to have all dates formatted with 4 digit
+     *                                       years (even if the format associated with the cell specifies just 2)
+     * @since POI 5.2.0
+     */
+    public void setUse4DigitYearsInAllDateFormats(boolean use4DigitYearsInAllDateFormats) {
+        this.use4DigitYearsInAllDateFormats = use4DigitYearsInAllDateFormats;
+    }
+
+    /**
      * Return a Format for the given cell if one exists, otherwise try to
      * create one. This method will return {@code null} if any of the
      * following is true:
@@ -313,7 +326,8 @@ public class DataFormatter {
         // int i = cellValue > 0.0 ? 0 : cellValue < 0.0 ? 1 : 2;
         // String formatStr = (i < formatBits.length) ? formatBits[i] : formatBits[0];
 
-        String formatStr = formatStrIn;
+        // this replace is done to fix https://bz.apache.org/bugzilla/show_bug.cgi?id=63211
+        String formatStr = formatStrIn.replace("\\%", "\'%\'");
 
         // Excel supports 2+ part conditional data formats, eg positive/negative/zero,
         //  or (>1000),(>0),(0),(negative). As Java doesn't handle these kinds
@@ -461,10 +475,32 @@ public class DataFormatter {
         return null;
     }
 
-
+    String adjustTo4DigitYearsIfConfigured(String format) {
+        if (use4DigitYearsInAllDateFormats) {
+            int ypos2 = format.indexOf("yy");
+            if (ypos2 < 0) {
+                return format;
+            } else {
+                int ypos3 = format.indexOf("yyy");
+                int ypos4 = format.indexOf("yyyy");
+                if (ypos4 == ypos2) {
+                    String part1 = format.substring(0, ypos2 + 4);
+                    String part2 = format.substring(ypos2 + 4);
+                    return part1 + adjustTo4DigitYearsIfConfigured(part2);
+                } else if (ypos3 == ypos2) {
+                    return format;
+                } else {
+                    String part1 = format.substring(0, ypos2 + 2);
+                    String part2 = format.substring(ypos2 + 2);
+                    return part1 + "yy" + adjustTo4DigitYearsIfConfigured(part2);
+                }
+            }
+        }
+        return format;
+    }
 
     private Format createDateFormat(String pFormatStr, double cellValue) {
-        String formatStr = pFormatStr;
+        String formatStr = adjustTo4DigitYearsIfConfigured(pFormatStr);
         formatStr = formatStr.replace("\\-","-");
         formatStr = formatStr.replace("\\,",",");
         formatStr = formatStr.replace("\\.","."); // . is a special regexp char
@@ -605,7 +641,10 @@ public class DataFormatter {
 
     }
 
-    private String cleanFormatForNumber(String formatStr) {
+    private String cleanFormatForNumber(String formatStrIn) {
+        // this replace is done to fix https://bz.apache.org/bugzilla/show_bug.cgi?id=63211
+        String formatStr = formatStrIn.replace("\\%", "\'%\'");
+
         StringBuilder sb = new StringBuilder(formatStr);
 
         if (emulateCSV) {

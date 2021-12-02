@@ -21,14 +21,7 @@ import static org.apache.poi.sl.draw.DrawTextParagraph.HYPERLINK_HREF;
 import static org.apache.poi.sl.draw.DrawTextParagraph.HYPERLINK_LABEL;
 import static org.apache.poi.xslf.XSLFTestDataSamples.openSampleDocument;
 import static org.apache.poi.xslf.XSLFTestDataSamples.writeOutAndReadBack;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.Color;
@@ -288,7 +281,7 @@ class TestXSLFBugs {
                         assertEquals("rId1", rel0.getRelationship().getId());
                         assertEquals(XSLFRelation.SLIDE_LAYOUT.getRelation(), rel0.getRelationship().getRelationshipType());
                         RelationPart rel1 = rels.get(1);
-                        assertEquals("rId2", rel1.getRelationship().getId());
+                        assertNotEquals("rId1", rel1.getRelationship().getId());
                         assertEquals(XSLFRelation.IMAGES.getRelation(), rel1.getRelationship().getRelationshipType());
                     }
                 }

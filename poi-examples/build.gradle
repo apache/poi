@@ -45,6 +45,10 @@ dependencies {
         }
     }
     testImplementation project(path: ':poi', configuration: 'tests')
+
+    if (SAXON_TEST) {
+         testRuntimeOnly "net.sf.saxon:Saxon-HE:${saxonVersion}"
+    }
 }
 
 final String MODULE_NAME = 'org.apache.poi.examples'

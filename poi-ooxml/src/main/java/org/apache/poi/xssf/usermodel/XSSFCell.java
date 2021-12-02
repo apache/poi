@@ -212,8 +212,8 @@ public final class XSSFCell extends CellBase {
     /**
      * Set a boolean value for the cell
      *
-     * @param value the boolean value to set this cell to.  For formulas we'll set the
-     *        precalculated value, for booleans we'll set its value. For other types we
+     * @param value the boolean value to set this cell to.  For formulas, we'll set the
+     *        precalculated value, for booleans we'll set its value. For other types, we
      *        will change the cell to a boolean cell and set its value.
      */
     @Override
@@ -766,9 +766,9 @@ public final class XSSFCell extends CellBase {
     /**
      * Set a error value for the cell
      *
-     * @param errorCode the error value to set this cell to.  For formulas we'll set the
+     * @param errorCode the error value to set this cell to.  For formulas, we'll set the
      *        precalculated value , for errors we'll set
-     *        its value. For other types we will change the cell to an error
+     *        its value. For other types, we will change the cell to an error
      *        cell and set its value.
      * @see FormulaError
      */
@@ -781,9 +781,9 @@ public final class XSSFCell extends CellBase {
     /**
      * Set a error value for the cell
      *
-     * @param error the error value to set this cell to.  For formulas we'll set the
+     * @param error the error value to set this cell to.  For formulas, we'll set the
      *        precalculated value , for errors we'll set
-     *        its value. For other types we will change the cell to an error
+     *        its value. For other types, we will change the cell to an error
      *        cell and set its value.
      */
     public void setCellErrorValue(FormulaError error) {

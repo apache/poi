@@ -92,13 +92,6 @@ class TestWrite {
         "LANG environment variable to a proper value, e.g. " +
         "\"de_DE\".";
 
-    /*
-    @BeforeClass
-    public static void setUpClass() {
-        VariantSupport.setLogUnsupportedTypes(false);
-    }
-     */
-
     /**
      * Writes an empty property set to a POIFS and reads it back in.
      *
@@ -134,9 +127,7 @@ class TestWrite {
     @Test
     void writeEmptyPropertySet()
     throws IOException, UnsupportedVariantTypeException {
-        final File dataDir = _samples.getFile("");
-        final File filename = new File(dataDir, POI_FS);
-        filename.deleteOnExit();
+        final File filename = TempFile.createTempFile(POI_FS, ".doc");
 
         /* Create a mutable property set and write it to a POIFS: */
         try (OutputStream out = new FileOutputStream(filename);
@@ -172,9 +163,8 @@ class TestWrite {
     throws IOException, UnsupportedVariantTypeException {
         final String AUTHOR = "Rainer Klute";
         final String TITLE = "Test Document";
-        final File dataDir = _samples.getFile("");
-        final File filename = new File(dataDir, POI_FS);
-        filename.deleteOnExit();
+        final File filename = TempFile.createTempFile(POI_FS, ".doc");
+
         try (OutputStream out = new FileOutputStream(filename);
             POIFSFileSystem poiFs = new POIFSFileSystem()) {
 
@@ -227,9 +217,7 @@ class TestWrite {
         final String SECTION2 = "Section 2";
         final ClassID FORMATID = ClassIDPredefined.EXCEL_V12.getClassID();
 
-        final File dataDir = _samples.getFile("");
-        final File filename = new File(dataDir, POI_FS);
-        filename.deleteOnExit();
+        final File filename = TempFile.createTempFile(POI_FS, ".doc");
 
         try (OutputStream out = new FileOutputStream(filename);
             POIFSFileSystem poiFs = new POIFSFileSystem()) {

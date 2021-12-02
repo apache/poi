@@ -76,7 +76,7 @@ public final class TestExtractor {
         "\nThese are the notes on page two, again lacking formatting\n";
 
     /**
-     * Where our embeded files live
+     * Where our embedded files live
      */
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
@@ -197,7 +197,7 @@ public final class TestExtractor {
     }
 
     /**
-     * A powerpoint file with embeded powerpoint files
+     * A powerpoint file with embedded powerpoint files
      */
     @Test
     void testExtractFromOwnEmbeded() throws IOException {
@@ -230,7 +230,7 @@ public final class TestExtractor {
     }
 
     /**
-     * A powerpoint file with embeded powerpoint files
+     * A powerpoint file with embedded powerpoint files
      */
     @Test
     void test52991() throws IOException {

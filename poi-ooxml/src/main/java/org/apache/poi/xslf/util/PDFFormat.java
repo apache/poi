@@ -61,11 +61,14 @@ public class PDFFormat implements OutputFormat {
 
     @Override
     public void writeSlide(MFProxy proxy, File outFile) throws IOException {
-        pdfBoxGraphics2D.dispose();
+        try {
+            pdfBoxGraphics2D.dispose();
 
-        PDFormXObject appearanceStream = pdfBoxGraphics2D.getXFormObject();
-        contentStream.drawForm(appearanceStream);
-        contentStream.close();
+            PDFormXObject appearanceStream = pdfBoxGraphics2D.getXFormObject();
+            contentStream.drawForm(appearanceStream);
+        } finally {
+            contentStream.close();
+        }
     }
 
     @Override
@@ -75,9 +78,12 @@ public class PDFFormat implements OutputFormat {
 
     @Override
     public void close() throws IOException {
-        document.close();
-        if (fontTextDrawer != null) {
-            fontTextDrawer.close();
+        try {
+            document.close();
+        } finally {
+            if (fontTextDrawer != null) {
+                fontTextDrawer.close();
+            }
         }
     }
 
