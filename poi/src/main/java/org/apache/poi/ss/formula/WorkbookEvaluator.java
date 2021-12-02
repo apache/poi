@@ -526,7 +526,7 @@ public final class WorkbookEvaluator {
                             }
                         } catch (NotImplementedException ne) {
                             //FunctionEval.getBasicFunction can throw NotImplementedException
-                            // if the fucntion is not yet supported.
+                            // if the function is not yet supported.
                         }
                         break;
                     }
