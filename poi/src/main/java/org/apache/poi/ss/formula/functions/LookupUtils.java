@@ -633,7 +633,7 @@ public final class LookupUtils {
                             bestMatchEval = valueEval;
                         } else {
                             LookupValueComparer matchComparer = createTolerantLookupComparer(valueEval, true, true);
-                            if (matchComparer.compareTo(bestMatchEval).isGreaterThan()) {
+                            if (matchComparer.compareTo(bestMatchEval).isLessThan()) {
                                 bestMatchIdx = i;
                                 bestMatchEval = valueEval;
                             }
@@ -647,7 +647,7 @@ public final class LookupUtils {
                             bestMatchEval = valueEval;
                         } else {
                             LookupValueComparer matchComparer = createTolerantLookupComparer(valueEval, true, true);
-                            if (matchComparer.compareTo(bestMatchEval).isLessThan()) {
+                            if (matchComparer.compareTo(bestMatchEval).isGreaterThan()) {
                                 bestMatchIdx = i;
                                 bestMatchEval = valueEval;
                             }
@@ -682,7 +682,7 @@ public final class LookupUtils {
             }
             switch (matchMode) {
                 case ExactMatchFallbackToLargerValue:
-                    if (result.isGreaterThan()) {
+                    if (result.isLessThan()) {
                         if (bestMatchEval == null) {
                             bestMatchIdx = i;
                             bestMatchEval = valueEval;
@@ -696,7 +696,7 @@ public final class LookupUtils {
                     }
                     break;
                 case ExactMatchFallbackToSmallerValue:
-                    if (result.isLessThan()) {
+                    if (result.isGreaterThan()) {
                         if (bestMatchEval == null) {
                             bestMatchIdx = i;
                             bestMatchEval = valueEval;
