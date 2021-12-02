@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula.atp;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.functions.ArrayFunction;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.LookupUtils;
 
@@ -36,20 +37,30 @@ import java.util.Optional;
  *
  * @since POI 5.2.0
  */
-final class XLookupFunction implements FreeRefFunction {
+final class XLookupFunction implements FreeRefFunction, ArrayFunction {
 
     public static final FreeRefFunction instance = new XLookupFunction(ArgumentsEvaluator.instance);
 
-    private ArgumentsEvaluator evaluator;
+    private final ArgumentsEvaluator evaluator;
 
     private XLookupFunction(ArgumentsEvaluator anEvaluator) {
         // enforces singleton
         this.evaluator = anEvaluator;
     }
 
+    @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         int srcRowIndex = ec.getRowIndex();
         int srcColumnIndex = ec.getColumnIndex();
+        return _evaluate(args, srcRowIndex, srcColumnIndex, ec.isSingleValue());
+    }
+
+    @Override
+    public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        return _evaluate(args, srcRowIndex, srcColumnIndex, false);
+    }
+
+    private ValueEval _evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex, boolean isSingleValue) {
         if (args.length < 3) {
             return ErrorEval.VALUE_INVALID;
         }
@@ -92,7 +103,7 @@ final class XLookupFunction implements FreeRefFunction {
                 return ErrorEval.VALUE_INVALID;
             }
         }
-        return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], notFound, matchMode, searchMode, ec.isSingleValue());
+        return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], notFound, matchMode, searchMode, isSingleValue);
     }
 
     private ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval lookupEval, ValueEval indexEval,
