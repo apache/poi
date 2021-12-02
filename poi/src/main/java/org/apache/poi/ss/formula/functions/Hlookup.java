@@ -55,7 +55,7 @@ public final class Hlookup extends Var3or4ArgFunction  {
             ValueEval lookupValue = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
             TwoDEval tableArray = LookupUtils.resolveTableArrayArg(arg1);
             boolean isRangeLookup = LookupUtils.resolveRangeLookupArg(arg3, srcRowIndex, srcColumnIndex);
-            int colIndex = LookupUtils.lookupIndexOfValue(lookupValue, LookupUtils.createRowVector(tableArray, 0), isRangeLookup);
+            int colIndex = LookupUtils.lookupFirstIndexOfValue(lookupValue, LookupUtils.createRowVector(tableArray, 0), isRangeLookup);
             int rowIndex = LookupUtils.resolveRowOrColIndexArg(arg2, srcRowIndex, srcColumnIndex);
             ValueVector resultCol = createResultColumnVector(tableArray, rowIndex);
             return resultCol.getItem(colIndex);
