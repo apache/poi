@@ -41,6 +41,11 @@ public class TestXLookupFunction {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             assertString(fe, cell, "XLOOKUP(F2,B2:B11,D2:D11)", "+55");
+            assertString(fe, cell, "XLOOKUP(\"Brazil\",B2:B11,D2:D11)", "+55");
+            assertString(fe, cell, "XLOOKUP(\"brazil\",B2:B11,D2:D11)", "+55");
+            //wildcard lookups
+            assertString(fe, cell, "XLOOKUP(\"brazil\",B2:B11,D2:D11,,2)", "+55");
+            assertString(fe, cell, "XLOOKUP(\"b*l\",B2:B11,D2:D11,,2)", "+55");
         }
     }
 
