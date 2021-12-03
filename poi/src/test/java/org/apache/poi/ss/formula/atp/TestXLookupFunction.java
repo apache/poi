@@ -94,7 +94,6 @@ public class TestXLookupFunction {
         }
     }
 
-
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();

@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -624,7 +625,9 @@ public final class LookupUtils {
     public static int xlookupIndexOfValue(ValueEval lookupValue, ValueVector vector, MatchMode matchMode, SearchMode searchMode) throws EvaluationException {
         LookupValueComparer lookupComparer = createTolerantLookupComparer(lookupValue, true, true);
         int result;
-        if (searchMode == SearchMode.IterateBackward || searchMode == SearchMode.BinarySearchBackward) {
+        if (searchMode == SearchMode.BinarySearchForward || searchMode == SearchMode.BinarySearchBackward) {
+            result = binarySearchIndexOfValue(lookupComparer, vector, matchMode);
+        } else if (searchMode == SearchMode.IterateBackward) {
             result = lookupLastIndexOfValue(lookupComparer, vector, matchMode);
         } else {
             result = lookupFirstIndexOfValue(lookupComparer, vector, matchMode);
@@ -705,6 +708,57 @@ public final class LookupUtils {
             }
         }
         return bestMatchIdx;
+    }
+
+    private static int binarySearchIndexOfValue(LookupValueComparer lookupComparer, ValueVector vector,
+                                                MatchMode matchMode) {
+        int bestMatchIdx = -1;
+        ValueEval bestMatchEval = null;
+        HashSet<Integer> alreadySearched = new HashSet<>();
+        BinarySearchIndexes bsi = new BinarySearchIndexes(vector.getSize());
+        while (true) {
+            int i = bsi.getMidIx();
+            if(i < 0 || alreadySearched.contains(i)) {
+                return bestMatchIdx;
+            }
+            alreadySearched.add(i);
+            ValueEval valueEval = vector.getItem(i);
+            CompareResult result = lookupComparer.compareTo(valueEval);
+            if (result.isEqual()) {
+                return i;
+            }
+            switch (matchMode) {
+                case ExactMatchFallbackToLargerValue:
+                    if (result.isLessThan()) {
+                        if (bestMatchEval == null) {
+                            bestMatchIdx = i;
+                            bestMatchEval = valueEval;
+                        } else {
+                            LookupValueComparer matchComparer = createTolerantLookupComparer(valueEval, true, true);
+                            if (matchComparer.compareTo(bestMatchEval).isLessThan()) {
+                                bestMatchIdx = i;
+                                bestMatchEval = valueEval;
+                            }
+                        }
+                    }
+                    break;
+                case ExactMatchFallbackToSmallerValue:
+                    if (result.isGreaterThan()) {
+                        if (bestMatchEval == null) {
+                            bestMatchIdx = i;
+                            bestMatchEval = valueEval;
+                        } else {
+                            LookupValueComparer matchComparer = createTolerantLookupComparer(valueEval, true, true);
+                            if (matchComparer.compareTo(bestMatchEval).isGreaterThan()) {
+                                bestMatchIdx = i;
+                                bestMatchEval = valueEval;
+                            }
+                        }
+                    }
+                    break;
+            }
+            bsi.narrowSearch(i, result.isLessThan());
+        }
     }
 
     /**
