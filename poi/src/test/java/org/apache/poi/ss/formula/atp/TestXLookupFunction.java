@@ -46,6 +46,7 @@ public class TestXLookupFunction {
             //wildcard lookups
             assertString(fe, cell, "XLOOKUP(\"brazil\",B2:B11,D2:D11,,2)", "+55");
             assertString(fe, cell, "XLOOKUP(\"b*l\",B2:B11,D2:D11,,2)", "+55");
+            assertString(fe, cell, "XLOOKUP(\"i???a\",B2:B11,D2:D11,,2)", "+91");
         }
     }
 
