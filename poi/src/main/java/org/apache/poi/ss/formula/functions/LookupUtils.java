@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,8 +107,37 @@ public final class LookupUtils {
     public interface ValueVector {
         ValueEval getItem(int index);
         int getSize();
-    }
+        default Iterator<Integer> indexIterator() {
+            return new Iterator<Integer>() {
+                int pos = 0;
 
+                @Override
+                public boolean hasNext() {
+                    return pos < getSize();
+                }
+
+                @Override
+                public Integer next() {
+                    return pos++;
+                }
+            };
+        }
+        default Iterator<Integer> reverseIndexIterator() {
+            return new Iterator<Integer>() {
+                int pos = getSize() - 1;
+
+                @Override
+                public boolean hasNext() {
+                    return pos >= 0;
+                }
+
+                @Override
+                public Integer next() {
+                    return pos--;
+                }
+            };
+        }
+    }
 
     private static final class RowVector implements ValueVector {
 
@@ -134,6 +164,7 @@ public final class LookupUtils {
             }
             return _tableArray.getValue(_rowIndex, index);
         }
+
         @Override
         public int getSize() {
             return _size;
@@ -614,49 +645,7 @@ public final class LookupUtils {
      */
     private static int lookupFirstIndexOfValue(LookupValueComparer lookupComparer, ValueVector vector,
                                                MatchMode matchMode) {
-
-        // find first occurrence of lookup value
-        int size = vector.getSize();
-        int bestMatchIdx = -1;
-        ValueEval bestMatchEval = null;
-        for (int i = 0; i < size; i++) {
-            ValueEval valueEval = vector.getItem(i);
-            CompareResult result = lookupComparer.compareTo(valueEval);
-            if(result.isEqual()) {
-                return i;
-            }
-            switch (matchMode) {
-                case ExactMatchFallbackToLargerValue:
-                    if (result.isLessThan()) {
-                        if (bestMatchEval == null) {
-                            bestMatchIdx = i;
-                            bestMatchEval = valueEval;
-                        } else {
-                            LookupValueComparer matchComparer = createTolerantLookupComparer(valueEval, true, true);
-                            if (matchComparer.compareTo(bestMatchEval).isLessThan()) {
-                                bestMatchIdx = i;
-                                bestMatchEval = valueEval;
-                            }
-                        }
-                    }
-                    break;
-                case ExactMatchFallbackToSmallerValue:
-                    if (result.isGreaterThan()) {
-                        if (bestMatchEval == null) {
-                            bestMatchIdx = i;
-                            bestMatchEval = valueEval;
-                        } else {
-                            LookupValueComparer matchComparer = createTolerantLookupComparer(valueEval, true, true);
-                            if (matchComparer.compareTo(bestMatchEval).isGreaterThan()) {
-                                bestMatchIdx = i;
-                                bestMatchEval = valueEval;
-                            }
-                        }
-                    }
-                    break;
-            }
-        }
-        return bestMatchIdx;
+        return lookupIndexOfValue(lookupComparer, vector, matchMode, false);
     }
 
     /**
@@ -669,12 +658,16 @@ public final class LookupUtils {
      */
     private static int lookupLastIndexOfValue(LookupValueComparer lookupComparer, ValueVector vector,
                                               MatchMode matchMode) {
+        return lookupIndexOfValue(lookupComparer, vector, matchMode, true);
+    }
 
-        // find last occurrence of lookup value
-        int size = vector.getSize();
+    private static int lookupIndexOfValue(LookupValueComparer lookupComparer, ValueVector vector,
+                                          MatchMode matchMode, boolean reverse) {
         int bestMatchIdx = -1;
         ValueEval bestMatchEval = null;
-        for (int i = size - 1; i >= 0; i--) {
+        Iterator<Integer> idxIter = reverse ? vector.reverseIndexIterator() : vector.indexIterator();
+        while (idxIter.hasNext()) {
+            int i = idxIter.next();
             ValueEval valueEval = vector.getItem(i);
             CompareResult result = lookupComparer.compareTo(valueEval);
             if (result.isEqual()) {
