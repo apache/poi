@@ -623,7 +623,7 @@ public final class LookupUtils {
     }
 
     public static int xlookupIndexOfValue(ValueEval lookupValue, ValueVector vector, MatchMode matchMode, SearchMode searchMode) throws EvaluationException {
-        LookupValueComparer lookupComparer = createTolerantLookupComparer(lookupValue, true, true);
+        LookupValueComparer lookupComparer = createTolerantLookupComparer(lookupValue, matchMode != MatchMode.WildcardMatch, true);
         int result;
         if (searchMode == SearchMode.BinarySearchForward || searchMode == SearchMode.BinarySearchBackward) {
             result = binarySearchIndexOfValue(lookupComparer, vector, matchMode);
@@ -757,7 +757,11 @@ public final class LookupUtils {
                     }
                     break;
             }
-            bsi.narrowSearch(i, result.isLessThan());
+            if (result.isTypeMismatch()) {
+                handleMidValueTypeMismatch(lookupComparer, vector, bsi, i);
+            } else {
+                bsi.narrowSearch(i, result.isLessThan());
+            }
         }
     }
 
