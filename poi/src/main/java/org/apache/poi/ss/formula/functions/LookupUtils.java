@@ -625,8 +625,10 @@ public final class LookupUtils {
     public static int xlookupIndexOfValue(ValueEval lookupValue, ValueVector vector, MatchMode matchMode, SearchMode searchMode) throws EvaluationException {
         LookupValueComparer lookupComparer = createTolerantLookupComparer(lookupValue, matchMode != MatchMode.WildcardMatch, true);
         int result;
-        if (searchMode == SearchMode.BinarySearchForward || searchMode == SearchMode.BinarySearchBackward) {
-            result = binarySearchIndexOfValue(lookupComparer, vector, matchMode);
+        if (searchMode == SearchMode.BinarySearchForward) {
+            result = binarySearchIndexOfValue(lookupComparer, vector, matchMode, false);
+        } else if (searchMode == SearchMode.BinarySearchBackward) {
+            result = binarySearchIndexOfValue(lookupComparer, vector, matchMode, true);
         } else if (searchMode == SearchMode.IterateBackward) {
             result = lookupLastIndexOfValue(lookupComparer, vector, matchMode);
         } else {
@@ -711,7 +713,7 @@ public final class LookupUtils {
     }
 
     private static int binarySearchIndexOfValue(LookupValueComparer lookupComparer, ValueVector vector,
-                                                MatchMode matchMode) {
+                                                MatchMode matchMode, boolean reverse) {
         int bestMatchIdx = -1;
         ValueEval bestMatchEval = null;
         HashSet<Integer> alreadySearched = new HashSet<>();
@@ -758,7 +760,9 @@ public final class LookupUtils {
                     break;
             }
             if (result.isTypeMismatch()) {
-                handleMidValueTypeMismatch(lookupComparer, vector, bsi, i);
+                handleMidValueTypeMismatch(lookupComparer, vector, bsi, i, reverse);
+            } else if (reverse) {
+                bsi.narrowSearch(i, result.isGreaterThan());
             } else {
                 bsi.narrowSearch(i, result.isLessThan());
             }
@@ -820,7 +824,7 @@ public final class LookupUtils {
             }
             CompareResult cr = lookupComparer.compareTo(vector.getItem(midIx));
             if(cr.isTypeMismatch()) {
-                int newMidIx = handleMidValueTypeMismatch(lookupComparer, vector, bsi, midIx);
+                int newMidIx = handleMidValueTypeMismatch(lookupComparer, vector, bsi, midIx, false);
                 if(newMidIx < 0) {
                     continue;
                 }
@@ -837,11 +841,12 @@ public final class LookupUtils {
      * Excel seems to handle mismatched types initially by just stepping 'mid' ix forward to the
      * first compatible value.
      * @param midIx 'mid' index (value which has the wrong type)
+     * @param reverse the data is sorted in reverse order
      * @return usually -1, signifying that the BinarySearchIndex has been narrowed to the new mid
      * index.  Zero or greater signifies that an exact match for the lookup value was found
      */
     private static int handleMidValueTypeMismatch(LookupValueComparer lookupComparer, ValueVector vector,
-            BinarySearchIndexes bsi, int midIx) {
+            BinarySearchIndexes bsi, int midIx, boolean reverse) {
         int newMid = midIx;
         int highIx = bsi.getHighIx();
 
@@ -854,7 +859,13 @@ public final class LookupUtils {
                 return -1;
             }
             CompareResult cr = lookupComparer.compareTo(vector.getItem(newMid));
-            if(cr.isLessThan() && newMid == highIx-1) {
+            if(cr.isLessThan() && !reverse && newMid == highIx-1) {
+                // move highIx down to the low end of the mid values
+                bsi.narrowSearch(midIx, true);
+                return -1;
+                // but only when "newMid == highIx-1"? slightly weird.
+                // It would seem more efficient to always do this.
+            } else if(cr.isGreaterThan() && reverse && newMid == highIx-1) {
                 // move highIx down to the low end of the mid values
                 bsi.narrowSearch(midIx, true);
                 return -1;
@@ -871,7 +882,11 @@ public final class LookupUtils {
             // Note - if moving highIx down (due to lookup<vector[newMid]),
             // this execution path only moves highIx it down as far as newMid, not midIx,
             // which would be more efficient.
-            bsi.narrowSearch(newMid, cr.isLessThan());
+            if (reverse) {
+                bsi.narrowSearch(newMid, cr.isGreaterThan());
+            } else {
+                bsi.narrowSearch(newMid, cr.isLessThan());
+            }
             return -1;
         }
     }
