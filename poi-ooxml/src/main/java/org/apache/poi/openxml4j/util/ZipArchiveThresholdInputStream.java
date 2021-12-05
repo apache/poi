@@ -110,7 +110,18 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
 
         final InputStreamStatistics stats = (InputStreamStatistics)in;
         final long payloadSize = stats.getUncompressedCount();
-        final long rawSize = stats.getCompressedCount();
+
+        long rawSize;
+        try {
+            rawSize = stats.getCompressedCount();
+        } catch (NullPointerException e) {
+            // this can happen with a very specially crafted file
+            // see https://issues.apache.org/jira/browse/COMPRESS-598 for a related bug-report
+            // therefore we try to handle this gracefully for now
+            // this try/catch can be removed when COMPRESS-598 is fixed
+            rawSize = 0;
+        }
+
         final String entryName = entry == null ? "not set" : entry.getName();
 
         // check the file size first, in case we are working on uncompressed streams
