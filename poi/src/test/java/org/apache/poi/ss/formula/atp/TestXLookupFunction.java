@@ -74,9 +74,9 @@ public class TestXLookupFunction {
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             assertError(fe, cell, "XLOOKUP(B2,B5:B14,C5:D14)", FormulaError.NA);
 
-            String formulaText = "XLOOKUP(B2,B5:B14,C5:D14,\"not found\")";
             assertString(fe, cell, "XLOOKUP(B2,B5:B14,C5:C14,\"not found\")", "not found");
 
+            String formulaText = "XLOOKUP(B2,B5:B14,C5:D14,\"not found\")";
             HSSFSheet sheet = wb.getSheetAt(0);
             HSSFRow row1 = sheet.getRow(1);
             String col1 = CellReference.convertNumToColString(2);
