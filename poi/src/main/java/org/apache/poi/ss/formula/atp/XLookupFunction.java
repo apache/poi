@@ -105,9 +105,15 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
         try {
             ValueEval lookupValue = OperandResolver.getSingleValue(lookupEval, srcRowIndex, srcColumnIndex);
             TwoDEval tableArray = LookupUtils.resolveTableArrayArg(indexEval);
-            int matchedRow;
+            LookupUtils.ValueVector vector;
+            if (tableArray.isColumn()) {
+                vector = LookupUtils.createColumnVector(tableArray, 0);
+            } else {
+                vector = LookupUtils.createRowVector(tableArray, 0);
+            }
+            int matchedIdx;
             try {
-                matchedRow = LookupUtils.xlookupIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), matchMode, searchMode);
+                matchedIdx = LookupUtils.xlookupIndexOfValue(lookupValue, vector, matchMode, searchMode);
             } catch (EvaluationException e) {
                 if (ErrorEval.NA.equals(e.getErrorEval())) {
                     if (notFound != BlankEval.instance) {
@@ -130,9 +136,17 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
             if (returnEval instanceof AreaEval) {
                 AreaEval area = (AreaEval)returnEval;
                 if (isSingleValue) {
-                    return area.getRelativeValue(matchedRow, 0);
+                    if (tableArray.isColumn()) {
+                        return area.getRelativeValue(matchedIdx, 0);
+                    } else {
+                        return area.getRelativeValue(0, matchedIdx);
+                    }
                 }
-                return area.offset(matchedRow, matchedRow,0, area.getWidth() - 1);
+                if (tableArray.isColumn()) {
+                    return area.offset(matchedIdx, matchedIdx,0, area.getWidth() - 1);
+                } else {
+                    return area.offset(0, area.getHeight() - 1,matchedIdx, matchedIdx);
+                }
             } else {
                 return returnEval;
             }

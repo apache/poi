@@ -100,6 +100,18 @@ public class TestXLookupFunction {
     }
 
     @Test
+    void testMicrosoftExample5() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook5()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(2).createCell(3);
+            assertDouble(fe, cell, "XLOOKUP(D2,$B6:$B17,$C6:$C17)", 25000);
+            assertDouble(fe, cell, "XLOOKUP($C3,$C5:$G5,$C6:$G17)", 50000);
+            //TODO next test fails
+            //assertDouble(fe, cell, "XLOOKUP(D2,$B6:$B17,XLOOKUP($C3,$C5:$G5,$C6:$G17))", 25000);
+        }
+    }
+
+    @Test
     void testBinarySearch() throws IOException {
         try (HSSFWorkbook wb = initWorkbook4()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
@@ -204,6 +216,29 @@ public class TestXLookupFunction {
         addRow(sheet, 4, null, 0.24, "invalid");
         addRow(sheet, 5, null, 0.22, "invalid");
         addRow(sheet, 6, null, 0.10, 9700);
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook5() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0);
+        addRow(sheet, 1, null, null, "Quarter", "Gross Profit", "Net Profit", "Profit %");
+        addRow(sheet, 2, null, null, "Qtr1");
+        addRow(sheet, 3);
+        addRow(sheet, 4, null, "Income Statement", "Qtr1", "Qtr2", "Qtr3", "Qtr4", "Total");
+        addRow(sheet, 5, null, "Total Sales", 50000, 78200, 89500, 91250, 308950);
+        addRow(sheet, 6, null, "Cost of Sales", -25000, -42050, -59450, -60450, -186950);
+        addRow(sheet, 7, null, "Gross Profit", 25000, 37150, -30050, -30450, 122000);
+        addRow(sheet, 8);
+        addRow(sheet, 9, null, "Depreciation", -899, -791, -202, -412, -2304);
+        addRow(sheet, 10, null, "Interest", -513, -853, -150, -956, -2472);
+        addRow(sheet, 11, null, "Earnings before Tax", 23588, 34506, 29698, 29432, 117224);
+        addRow(sheet, 12);
+        addRow(sheet, 13, null, "Tax", -4246, -6211, -5346, -5298, -21100);
+        addRow(sheet, 14);
+        addRow(sheet, 15, null, "Net Profit", 19342, 28293, 24352, 24134, 96124);
+        addRow(sheet, 15, null, "Profit %", .293, .278, .234, .236, .269);
         return wb;
     }
 
