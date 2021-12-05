@@ -240,45 +240,52 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
         for (int i = 0; i < namedNodeCount; i++) {
             Attr attr = (Attr)namedNodeMap.item(0);
 
-            if (attr.getNamespaceURI().equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)) {
+            if (attr != null && XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attr.getNamespaceURI())) {
                 // Rule M4.2
-                if (attr.getValue().equals(PackageNamespaces.MARKUP_COMPATIBILITY))
+                if (PackageNamespaces.MARKUP_COMPATIBILITY.equals(attr.getValue())) {
                     throw new InvalidFormatException(
                             "OPC Compliance error [M4.2]: A format consumer shall consider the use of the Markup Compatibility namespace to be an error.");
-
+                }
             }
         }
 
         // Rule M4.3
         String elName = el.getLocalName();
-        if (el.getNamespaceURI().equals(PackageProperties.NAMESPACE_DCTERMS))
-            if (!(elName.equals(KEYWORD_CREATED) || elName.equals(KEYWORD_MODIFIED)))
+        if (PackageProperties.NAMESPACE_DCTERMS.equals(el.getNamespaceURI())) {
+            if (!(KEYWORD_CREATED.equals(elName) || KEYWORD_MODIFIED.equals(elName))) {
                 throw new InvalidFormatException(
                         "OPC Compliance error [M4.3]: Producers shall not create a document element that contains refinements to the Dublin Core elements, except for the two specified in the schema: <dcterms:created> and <dcterms:modified> Consumers shall consider a document element that violates this constraint to be an error.");
+            }
+        }
 
         // Rule M4.4
-        if (el.getAttributeNodeNS(XMLConstants.XML_NS_URI, "lang") != null)
+        if (el.getAttributeNodeNS(XMLConstants.XML_NS_URI, "lang") != null) {
             throw new InvalidFormatException(
                     "OPC Compliance error [M4.4]: Producers shall not create a document element that contains the xml:lang attribute. Consumers shall consider a document element that violates this constraint to be an error.");
+        }
 
         // Rule M4.5
-        if (el.getNamespaceURI().equals(PackageProperties.NAMESPACE_DCTERMS)) {
+        if (PackageProperties.NAMESPACE_DCTERMS.equals(el.getNamespaceURI())) {
             // DCTerms namespace only use with 'created' and 'modified' elements
-            if (!(elName.equals(KEYWORD_CREATED) || elName.equals(KEYWORD_MODIFIED)))
+            if (!(elName.equals(KEYWORD_CREATED) || elName.equals(KEYWORD_MODIFIED))) {
                 throw new InvalidFormatException("Namespace error : " + elName
                         + " shouldn't have the following naemspace -> "
                         + PackageProperties.NAMESPACE_DCTERMS);
+            }
 
             // Check for the 'xsi:type' attribute
             Attr typeAtt = el.getAttributeNodeNS(XMLConstants.W3C_XML_SCHEMA_INSTANCE_NS_URI, "type");
-            if (typeAtt == null)
+            if (typeAtt == null) {
                 throw new InvalidFormatException("The element '" + elName
                         + "' must have the 'xsi:type' attribute present !");
+            }
 
             // Check for the attribute value => 'dcterms:W3CDTF'
-            if (!typeAtt.getValue().equals(el.getPrefix() + ":W3CDTF"))
+            if (!typeAtt.getValue().equals(el.getPrefix() + ":W3CDTF")) {
                 throw new InvalidFormatException("The element '" + elName
-                        + "' must have the 'xsi:type' attribute with the value '" + el.getPrefix() + ":W3CDTF', but had '" + typeAtt.getValue() + "' !");
+                        + "' must have the 'xsi:type' attribute with the value '" + el.getPrefix() + ":W3CDTF', but had '"
+                        + typeAtt.getValue() + "' !");
+            }
         }
 
         // Check its children

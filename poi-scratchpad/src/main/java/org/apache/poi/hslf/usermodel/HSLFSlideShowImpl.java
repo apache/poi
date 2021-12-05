@@ -310,10 +310,17 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private void initRecordOffsets(byte[] docstream, int usrOffset, NavigableMap<Integer, Record> recordMap, Map<Integer, Integer> offset2id) {
         while (usrOffset != 0) {
             UserEditAtom usr = (UserEditAtom) Record.buildRecordAtOffset(docstream, usrOffset);
+            if (usr == null) {
+                throw new CorruptPowerPointFileException("Powerpoint document contains no user edit atom");
+            }
+
             recordMap.put(usrOffset, usr);
 
             int psrOffset = usr.getPersistPointersOffset();
             PersistPtrHolder ptr = (PersistPtrHolder) Record.buildRecordAtOffset(docstream, psrOffset);
+            if (ptr == null) {
+                throw new CorruptPowerPointFileException("Powerpoint document is missing a PersistPtrHolder at " + psrOffset);
+            }
             recordMap.put(psrOffset, ptr);
 
             for (Map.Entry<Integer, Integer> entry : ptr.getSlideLocationsLookup().entrySet()) {

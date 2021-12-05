@@ -29,6 +29,7 @@ import org.apache.poi.poifs.property.RootProperty;
 import org.apache.poi.poifs.storage.BATBlock;
 import org.apache.poi.poifs.storage.BATBlock.BATBlockAndIndex;
 import org.apache.poi.poifs.storage.HeaderBlock;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * This class handles the MiniStream (small block store)
@@ -43,6 +44,9 @@ public class POIFSMiniStore extends BlockStore {
 
     POIFSMiniStore(POIFSFileSystem filesystem, RootProperty root,
                    List<BATBlock> sbats, HeaderBlock header) {
+        if (root == null) {
+            throw new RecordFormatException("Invalid argument to POIFSMiniStore: root is null");
+        }
         this._filesystem = filesystem;
         this._sbat_blocks = sbats;
         this._header = header;

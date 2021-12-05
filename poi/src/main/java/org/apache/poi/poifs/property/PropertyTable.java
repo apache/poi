@@ -105,7 +105,9 @@ public final class PropertyTable implements BATManaged {
             PropertyFactory.convertToProperties(data, _properties);
         }
 
-        populatePropertyTree( (DirectoryProperty)_properties.get(0));
+        if (_properties.get(0) != null) {
+            populatePropertyTree((DirectoryProperty) _properties.get(0));
+        }
     }
 
 

@@ -403,6 +403,12 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             // Load individual sheets. The order of sheets is defined by the order
             //  of CTSheet elements in the workbook
             sheets = new ArrayList<>(shIdMap.size());
+
+            if (this.workbook == null || this.workbook.getSheets() == null ||
+                    this.workbook.getSheets().getSheetArray() == null) {
+                throw new POIXMLException("Cannot read a workbook without sheets");
+            }
+
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 parseSheet(shIdMap, ctSheet);
             }
@@ -671,22 +677,22 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             clonedDg.getCTDrawing().set(dg.getCTDrawing().copy());
 
             // Clone drawing relations
-			XSSFDrawing drawingPatriarch = srcSheet.getDrawingPatriarch();
-			if (drawingPatriarch != null) {
-				List<RelationPart> srcRels = drawingPatriarch.getRelationParts();
-				for (RelationPart rp : srcRels) {
-					POIXMLDocumentPart r = rp.getDocumentPart();
-					if (r instanceof XSSFChart) {
-						// Replace chart relation part with new relationship, cloning the chart's content
-						RelationPart chartPart = clonedDg.createChartRelationPart();
-						XSSFChart chart = chartPart.getDocumentPart();
-						chart.importContent((XSSFChart) r);
-						chart.replaceReferences(clonedSheet);
-					} else {
-						addRelation(rp, clonedDg);
-					}
-				}
-			}
+            XSSFDrawing drawingPatriarch = srcSheet.getDrawingPatriarch();
+            if (drawingPatriarch != null) {
+                List<RelationPart> srcRels = drawingPatriarch.getRelationParts();
+                for (RelationPart rp : srcRels) {
+                    POIXMLDocumentPart r = rp.getDocumentPart();
+                    if (r instanceof XSSFChart) {
+                        // Replace chart relation part with new relationship, cloning the chart's content
+                        RelationPart chartPart = clonedDg.createChartRelationPart();
+                        XSSFChart chart = chartPart.getDocumentPart();
+                        chart.importContent((XSSFChart) r);
+                        chart.replaceReferences(clonedSheet);
+                    } else {
+                        addRelation(rp, clonedDg);
+                    }
+                }
+            }
         }
         return clonedSheet;
     }
@@ -875,11 +881,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         if(sheetname.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
             String trimmedSheetname = sheetname.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
 
-			// we still need to warn about the trimming as the original sheet name won't be available
-			// e.g. when referenced by formulas
-			LOG.atWarn().log("Sheet '{}' will be added with a trimmed name '{}' for MS Excel compliance.",
-					sheetname, trimmedSheetname);
-			sheetname = trimmedSheetname;
+            // we still need to warn about the trimming as the original sheet name won't be available
+            // e.g. when referenced by formulas
+            LOG.atWarn().log("Sheet '{}' will be added with a trimmed name '{}' for MS Excel compliance.",
+                    sheetname, trimmedSheetname);
+            sheetname = trimmedSheetname;
         }
         WorkbookUtil.validateSheetName(sheetname);
 

@@ -55,6 +55,9 @@ public class XDGFPageContents extends XDGFBaseContents {
                 //throw new POIXMLException("Unexpected page relation: " + part);
 
                 XDGFMaster master = ((XDGFMasterContents)part).getMaster();
+                if (master == null) {
+                    throw new POIXMLException("Master entry is missing in XDGFPageContents");
+                }
                 _masters.put(master.getID(), master);
             }
 

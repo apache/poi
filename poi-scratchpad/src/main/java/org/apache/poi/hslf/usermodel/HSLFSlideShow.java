@@ -276,7 +276,9 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
                 // Find the Document, and interesting things in it
                 if (record.getRecordType() == RecordTypes.Document.typeID) {
                     _documentRecord = (Document) record;
-                    _fonts = _documentRecord.getEnvironment().getFontCollection();
+                    if (_documentRecord.getEnvironment() != null) {
+                        _fonts = _documentRecord.getEnvironment().getFontCollection();
+                    }
                 }
             } /*else {
                 // No record at this number
@@ -414,6 +416,10 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
             int slideId = spa.getSlideIdentifier();
             slideIdToNotes.put(slideId, idx);
 
+            if (notesRecord.getNotesAtom() == null) {
+                throw new IllegalStateException("Could not read NotesAtom from the NotesRecord for " + idx);
+            }
+
             HSLFNotes hn = new HSLFNotes(notesRecord);
             hn.setSlideShow(this);
             _notes.add(hn);
@@ -436,11 +442,16 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
             // Ensure it really is a slide record
             if (!(r instanceof Slide)) {
-                LOG.atError().log("A Slide SlideAtomSet at {} said its record was at refID {}, but that was actually a {}", box(idx),box(spa.getRefID()),r);
+                LOG.atError().log("A Slide SlideAtomSet at {} said its record was at refID {}, but that was actually a {}",
+                        box(idx), box(spa.getRefID()), r);
                 continue;
             }
 
             Slide slide = (Slide)r;
+            if (slide.getSlideAtom() == null) {
+                LOG.atError().log("SlideAtomSet at {} at refID {} is null", box(idx), box(spa.getRefID()));
+                continue;
+            }
 
             // Do we have a notes for this?
             HSLFNotes notes = null;

@@ -196,6 +196,10 @@ public class AgileDecryptor extends Decryptor {
         Cipher cipher = getCipher(skey, cipherAlgo, chainMode, iv, cipherMode);
         byte[] hashFinal;
 
+        if (inputKey == null) {
+            throw new EncryptedDocumentException("Cannot has input without inputKey");
+        }
+
         try {
             inputKey = getBlock0(inputKey, getNextBlockSize(inputKey.length, blockSize));
             hashFinal = cipher.doFinal(inputKey);

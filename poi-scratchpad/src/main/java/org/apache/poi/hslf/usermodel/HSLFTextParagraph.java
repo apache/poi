@@ -1322,14 +1322,18 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      * For a given PPDrawing, grab all the TextRuns
      */
    public static List<List<HSLFTextParagraph>> findTextParagraphs(PPDrawing ppdrawing, HSLFSheet sheet) {
-        List<List<HSLFTextParagraph>> runsV = new ArrayList<>();
-        for (EscherTextboxWrapper wrapper : ppdrawing.getTextboxWrappers()) {
-            List<HSLFTextParagraph> p = findTextParagraphs(wrapper, sheet);
-            if (p != null) {
-                runsV.add(p);
-            }
-        }
-        return runsV;
+       if (ppdrawing == null) {
+           throw new IllegalArgumentException("Did not receive a valid drawing for sheet " + sheet._getSheetNumber());
+       }
+
+       List<List<HSLFTextParagraph>> runsV = new ArrayList<>();
+       for (EscherTextboxWrapper wrapper : ppdrawing.getTextboxWrappers()) {
+           List<HSLFTextParagraph> p = findTextParagraphs(wrapper, sheet);
+           if (p != null) {
+               runsV.add(p);
+           }
+       }
+       return runsV;
     }
 
     /**

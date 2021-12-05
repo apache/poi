@@ -87,7 +87,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     private static final double DEFAULT_MARGIN_BOTTOM = 0.75;
     private static final double DEFAULT_MARGIN_LEFT = 0.7;
     private static final double DEFAULT_MARGIN_RIGHT = 0.7;
-    
+
     //TODO make the two variable below private!
     protected CTSheet sheet;
     protected CTWorksheet worksheet;
@@ -192,6 +192,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     private void initRows(CTWorksheet worksheetParam) {
+        if (worksheetParam.getSheetData() == null || worksheetParam.getSheetData().getRowArray() == null) {
+            throw new IllegalArgumentException("Had empty sheet data when initializing the sheet");
+        }
+
         _rows.clear();
         tables = new TreeMap<>();
         sharedFormulas = new HashMap<>();

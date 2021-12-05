@@ -45,7 +45,7 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
         }
 
         if (keyData == null) {
-            throw new NullPointerException("encryptedKey not set");
+            throw new IllegalArgumentException("encryptedKey not set");
         }
 
         setCipherAlgorithm(keyData.getCipherAlgorithm());
@@ -64,14 +64,17 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
                     keyData.getHashAlgorithm() + " @ " + hashSize + " bytes");
         }
 
-        setSpinCount(keyData.getSpinCount());
+        Integer spinCount = keyData.getSpinCount();
+        if (spinCount != null) {
+            setSpinCount(spinCount);
+        }
         setEncryptedVerifier(keyData.getEncryptedVerifierHashInput());
         setSalt(keyData.getSaltValue());
         setEncryptedKey(keyData.getEncryptedKeyValue());
         setEncryptedVerifierHash(keyData.getEncryptedVerifierHashValue());
 
-        int saltSize = keyData.getSaltSize();
-        if (saltSize != getSalt().length) {
+        Integer saltSize = keyData.getSaltSize();
+        if (saltSize == null || saltSize != getSalt().length) {
             throw new EncryptedDocumentException("Invalid salt size");
         }
 

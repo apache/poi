@@ -38,18 +38,18 @@ import com.microsoft.schemas.office.visio.x2012.main.VisioDocumentType;
 /**
  * This is your high-level starting point for working with Visio XML
  * documents (.vsdx).
- * 
+ *
  * Currently, only read support has been implemented, and the API is
  * not mature and is subject to change.
- * 
+ *
  * For more information about the visio XML format (with an XSD 1.0
  * schema), you can find documentation at
  * https://msdn.microsoft.com/en-us/library/hh645006(v=office.12).aspx
- * 
+ *
  * That document lacks in some areas, but you can find additional
  * documentation and an updated XSD 1.1 schema at
  * https://msdn.microsoft.com/en-us/library/office/jj684209(v=office.15).aspx
- * 
+ *
  * Each provides different details, but the SharePoint reference
  * has better documentation and is more useful.
  */
@@ -101,7 +101,9 @@ public class XmlVisioDocument extends POIXMLDocument {
             _masters.onDocumentRead();
         }
 
-        _pages.onDocumentRead();
+        if (_pages != null) {
+            _pages.onDocumentRead();
+        }
     }
 
     /**
@@ -115,7 +117,7 @@ public class XmlVisioDocument extends POIXMLDocument {
     //
     // Useful public API goes here
     //
-    
+
     /**
      * @return pages ordered by page number
      */

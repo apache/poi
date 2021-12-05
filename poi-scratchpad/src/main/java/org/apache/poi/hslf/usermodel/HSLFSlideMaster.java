@@ -143,14 +143,23 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
         assert (_txmaster == null);
         _txmaster = new TxMasterStyleAtom[9];
 
+        if (getSlideShow() == null || getSlideShow().getDocumentRecord() == null ||
+                getSlideShow().getDocumentRecord().getEnvironment() == null) {
+            throw new IllegalStateException("Did not find a TxMasterStyleAtom in the current slide show");
+        }
+
         TxMasterStyleAtom txdoc = getSlideShow().getDocumentRecord().getEnvironment().getTxMasterStyleAtom();
+        if (txdoc == null) {
+            throw new IllegalStateException("Did not find a TxMasterStyleAtom in the current slide show");
+        }
+
         _txmaster[txdoc.getTextType()] = txdoc;
 
         TxMasterStyleAtom[] txrec = ((MainMaster)getSheetContainer()).getTxMasterStyleAtoms();
-        for (int i = 0; i < txrec.length; i++) {
-            int txType = txrec[i].getTextType();
+        for (TxMasterStyleAtom txMasterStyleAtom : txrec) {
+            int txType = txMasterStyleAtom.getTextType();
             if (txType < _txmaster.length && _txmaster[txType] == null) {
-                _txmaster[txType] = txrec[i];
+                _txmaster[txType] = txMasterStyleAtom;
             }
         }
 
