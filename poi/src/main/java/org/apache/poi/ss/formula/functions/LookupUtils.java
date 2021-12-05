@@ -760,7 +760,10 @@ public final class LookupUtils {
                     break;
             }
             if (result.isTypeMismatch()) {
-                handleMidValueTypeMismatch(lookupComparer, vector, bsi, i, reverse);
+                int newIdx = handleMidValueTypeMismatch(lookupComparer, vector, bsi, i, reverse);
+                if (newIdx >= 0) {
+                    return newIdx;
+                }
             } else if (reverse) {
                 bsi.narrowSearch(i, result.isGreaterThan());
             } else {
