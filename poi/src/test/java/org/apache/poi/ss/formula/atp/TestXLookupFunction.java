@@ -95,8 +95,29 @@ public class TestXLookupFunction {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(1).createCell(6);
             assertDouble(fe, cell, "XLOOKUP(E2,C2:C7,B2:B7,0,1,1)", 0.24);
-            assertDouble(fe, cell, "XLOOKUP(E2,C2:C7,B2:B7,0,1,2)", 0.24);
             assertDouble(fe, cell, "XLOOKUP(E2,C2:C7,B2:B7,0,1,-1)", 0.24);
+        }
+    }
+
+    @Test
+    void testBinarySearch() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook4()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(1).createCell(6);
+            assertDouble(fe, cell, "XLOOKUP(E2,C2:C7,B2:B7,0,1,2)", 0.24);
+            assertDouble(fe, cell, "XLOOKUP(39475,C2:C7,B2:B7,0,0,2)", 0.22);
+            assertDouble(fe, cell, "XLOOKUP(39474,C2:C7,B2:B7,0,0,2)", 0);
+        }
+    }
+
+    @Test
+    void testReverseBinarySearch() throws IOException {
+        try (HSSFWorkbook wb = initReverseWorkbook4()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(1).createCell(6);
+            assertDouble(fe, cell, "XLOOKUP(E2,C2:C7,B2:B7,0,1,-2)", 0.24);
+            assertDouble(fe, cell, "XLOOKUP(39475,C2:C7,B2:B7,0,0,-2)", 0.22);
+            assertDouble(fe, cell, "XLOOKUP(39474,C2:C7,B2:B7,0,0,-2)", 0);
         }
     }
 
@@ -145,7 +166,20 @@ public class TestXLookupFunction {
         addRow(sheet, 3, null, 0.24, 84200);
         addRow(sheet, 4, null, 0.32, 160726);
         addRow(sheet, 5, null, 0.35, 204100);
-        addRow(sheet, 5, null, 0.37, 510300);
+        addRow(sheet, 6, null, 0.37, 510300);
+        return wb;
+    }
+
+    private HSSFWorkbook initReverseWorkbook4() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, null, "Tax Rate", "Max Income", null, "Income", "Tax Rate");
+        addRow(sheet, 1, null, 0.37, 510300, null, 46523);
+        addRow(sheet, 2, null, 0.35, 204100);
+        addRow(sheet, 3, null, 0.32, 160726);
+        addRow(sheet, 4, null, 0.24, 84200);
+        addRow(sheet, 5, null, 0.22, 39475);
+        addRow(sheet, 6, null, 0.10, 9700);
         return wb;
     }
 
