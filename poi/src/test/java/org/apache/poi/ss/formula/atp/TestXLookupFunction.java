@@ -75,7 +75,7 @@ public class TestXLookupFunction {
             assertError(fe, cell, "XLOOKUP(B2,B5:B14,C5:D14)", FormulaError.NA);
 
             String formulaText = "XLOOKUP(B2,B5:B14,C5:D14,\"not found\")";
-            assertString(fe, cell, formulaText, "not found");
+            assertString(fe, cell, "XLOOKUP(B2,B5:B14,C5:C14,\"not found\")", "not found");
 
             HSSFSheet sheet = wb.getSheetAt(0);
             HSSFRow row1 = sheet.getRow(1);
@@ -105,9 +105,7 @@ public class TestXLookupFunction {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(2).createCell(3);
             assertDouble(fe, cell, "XLOOKUP(D2,$B6:$B17,$C6:$C17)", 25000);
-            assertDouble(fe, cell, "XLOOKUP($C3,$C5:$G5,$C6:$G17)", 50000);
-            //TODO next test fails
-            //assertDouble(fe, cell, "XLOOKUP(D2,$B6:$B17,XLOOKUP($C3,$C5:$G5,$C6:$G17))", 25000);
+            assertDouble(fe, cell, "XLOOKUP(D2,$B6:$B17,XLOOKUP($C3,$C5:$G5,$C6:$G17))", 25000);
         }
     }
 

@@ -49,15 +49,15 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         int srcRowIndex = ec.getRowIndex();
         int srcColumnIndex = ec.getColumnIndex();
-        return _evaluate(args, srcRowIndex, srcColumnIndex, ec.isSingleValue());
+        return _evaluate(args, srcRowIndex, srcColumnIndex);
     }
 
     @Override
     public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-        return _evaluate(args, srcRowIndex, srcColumnIndex, false);
+        return _evaluate(args, srcRowIndex, srcColumnIndex);
     }
 
-    private ValueEval _evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex, boolean isSingleValue) {
+    private ValueEval _evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
         if (args.length < 3) {
             return ErrorEval.VALUE_INVALID;
         }
@@ -96,12 +96,12 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
                 return ErrorEval.VALUE_INVALID;
             }
         }
-        return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], notFound, matchMode, searchMode, isSingleValue);
+        return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2], notFound, matchMode, searchMode);
     }
 
     private ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval lookupEval, ValueEval indexEval,
                                ValueEval returnEval, ValueEval notFound, LookupUtils.MatchMode matchMode,
-                               LookupUtils.SearchMode searchMode, boolean isSingleValue) {
+                               LookupUtils.SearchMode searchMode) {
         try {
             ValueEval lookupValue = OperandResolver.getSingleValue(lookupEval, srcRowIndex, srcColumnIndex);
             TwoDEval tableArray = LookupUtils.resolveTableArrayArg(indexEval);
@@ -120,7 +120,7 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
                         if (returnEval instanceof AreaEval) {
                             AreaEval area = (AreaEval)returnEval;
                             int width = area.getWidth();
-                            if (isSingleValue || width <= 1) {
+                            if (width <= 1) {
                                 return notFound;
                             }
                             return notFoundAreaEval(notFound, width);
@@ -135,13 +135,6 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
             }
             if (returnEval instanceof AreaEval) {
                 AreaEval area = (AreaEval)returnEval;
-                if (isSingleValue) {
-                    if (tableArray.isColumn()) {
-                        return area.getRelativeValue(matchedIdx, 0);
-                    } else {
-                        return area.getRelativeValue(0, matchedIdx);
-                    }
-                }
                 if (tableArray.isColumn()) {
                     return area.offset(matchedIdx, matchedIdx,0, area.getWidth() - 1);
                 } else {
