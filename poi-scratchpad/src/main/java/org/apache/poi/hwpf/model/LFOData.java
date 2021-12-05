@@ -43,8 +43,11 @@ public class LFOData
         _rgLfoLvl = new ListFormatOverrideLevel[0];
     }
 
-    LFOData( byte[] buf, int startOffset, int cLfolvl )
-    {
+    LFOData( byte[] buf, int startOffset, int cLfolvl ) {
+        if (cLfolvl < 0) {
+            throw new IllegalArgumentException("Cannot create LFOData with negative count");
+        }
+
         int offset = startOffset;
 
         _cp = LittleEndian.getInt( buf, offset );

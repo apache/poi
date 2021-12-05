@@ -78,6 +78,9 @@ public final class ChartFRTInfoRecord extends StandardRecord {
         verOriginator = in.readByte();
         verWriter = in.readByte();
         int cCFRTID = in.readShort();
+        if (cCFRTID < 0) {
+            throw new IllegalArgumentException("Had negative CFRTID: " + cCFRTID);
+        }
 
         rgCFRTID = new CFRTID[cCFRTID];
         for (int i = 0; i < cCFRTID; i++) {

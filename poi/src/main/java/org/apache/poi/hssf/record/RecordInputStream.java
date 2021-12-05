@@ -330,7 +330,10 @@ public final class RecordInputStream implements LittleEndianInput {
                 } else {
                     nextRecord();
                     nextChunk = Math.min(available(),len);
-                    assert(nextChunk > 0);
+                    if (nextChunk <= 0) {
+                        throw new RecordFormatException("Need to have a valid next chunk, but had: " + nextChunk +
+                                " with len: " + len + " and available: " + available());
+                    }
                 }
             }
             checkRecordPosition(nextChunk);

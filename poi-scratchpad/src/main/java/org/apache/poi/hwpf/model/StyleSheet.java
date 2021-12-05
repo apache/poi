@@ -88,6 +88,10 @@ public final class StyleSheet {
 
         _stshif = new Stshif(tableStream, offset);
 
+        if (_stshif.getCstd() < 0) {
+            throw new IllegalArgumentException("Cannot create StyleSheet, invalid Cstd: " + _stshif.getCstd());
+        }
+
         // shall we discard cbLSD and mpstilsd?
 
         offset = startOffset + LittleEndianConsts.SHORT_SIZE + _cbStshi;

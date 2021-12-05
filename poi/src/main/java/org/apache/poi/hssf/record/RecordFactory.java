@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.poi.util.RecordFormatException;
+
 /**
  * Title:  Record Factory<p>
  * Description:  Takes a stream and outputs an array of Record objects.
@@ -103,6 +105,10 @@ public final class RecordFactory {
      * @return the equivalent array of {@link NumberRecord NumberRecords}
      */
     public static NumberRecord[] convertRKRecords(MulRKRecord mrk) {
+        if (mrk.getNumColumns() < 0) {
+            throw new RecordFormatException("Cannot create RKRecords with negative number of columns: " + mrk.getNumColumns());
+        }
+
         NumberRecord[] mulRecs = new NumberRecord[mrk.getNumColumns()];
         for (int k = 0; k < mrk.getNumColumns(); k++) {
             NumberRecord nr = new NumberRecord();
@@ -156,7 +162,7 @@ public final class RecordFactory {
      *
      * @exception org.apache.poi.util.RecordFormatException on error processing the InputStream
      */
-    public static List<org.apache.poi.hssf.record.Record> createRecords(InputStream in) throws org.apache.poi.util.RecordFormatException {
+    public static List<org.apache.poi.hssf.record.Record> createRecords(InputStream in) throws RecordFormatException {
 
         List<org.apache.poi.hssf.record.Record> records = new ArrayList<>(NUM_RECORDS);
 

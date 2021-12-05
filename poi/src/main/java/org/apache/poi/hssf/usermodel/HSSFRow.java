@@ -96,6 +96,10 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
         row = record;
         setRowNum(record.getRowNumber());
 
+        if (record.getLastCol() < 0 || INITIAL_CAPACITY < 0) {
+            throw new IllegalArgumentException("Had invalid column counts: " + record.getLastCol() + " and " + INITIAL_CAPACITY);
+        }
+
         // Size the initial cell list such that a read only case won't waste
         //  lots of memory, and a create/read followed by adding new cells can
         //  add a bit without needing a resize

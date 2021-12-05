@@ -76,6 +76,11 @@ public final class Ffn {
 
         offsetTmp = offset - offsetTmp;
         _xszFfnLength = (this.getSize() - offsetTmp) / 2;
+
+        if (_xszFfnLength < 0) {
+            throw new IllegalArgumentException("Had invalid computed size: " + _xszFfnLength + " with size " + getSize() + " and offsetTmp: " + offsetTmp);
+        }
+
         _xszFfn = new char[_xszFfnLength];
 
         for (int i = 0; i < _xszFfnLength; i++) {

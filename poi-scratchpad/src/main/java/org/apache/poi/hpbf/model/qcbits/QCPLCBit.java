@@ -45,6 +45,9 @@ public abstract class QCPLCBit extends QCBit {
 
         // First four bytes are the number
         numberOfPLCs = (int)LittleEndian.getUInt(data, 0);
+        if (numberOfPLCs < 0) {
+            throw new IllegalArgumentException("Invalid number of PLCs: " + numberOfPLCs);
+        }
 
         // Next four bytes are the type
         typeOfPLCS = (int)LittleEndian.getUInt(data, 4);
@@ -86,7 +89,7 @@ public abstract class QCPLCBit extends QCBit {
         this.plcValB = plcValB.clone();
     }
 
-    
+
 
     public static QCPLCBit createQCPLCBit(String thingType, String bitType, byte[] data) {
         // Grab the type
@@ -217,7 +220,7 @@ public abstract class QCPLCBit extends QCBit {
             super(thingType, bitType, data);
 
             int cntPlcs = getNumberOfPLCs();
-            
+
             // How many hyperlinks do we really have?
             // (zero hyperlinks gets numberOfPLCs=1)
             hyperlinks = new String[data.length == 0x34 ? 0 : cntPlcs];

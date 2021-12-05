@@ -85,6 +85,10 @@ public abstract class BlockStore {
     protected class ChainLoopDetector {
        private final boolean[] used_blocks;
        protected ChainLoopDetector(long rawSize) {
+           if (rawSize < 0) {
+               throw new IllegalArgumentException("Cannot create a ChainLoopDetector with negative size, but had: " + rawSize);
+           }
+
           int blkSize = getBlockStoreBlockSize();
           int numBlocks = (int)(rawSize / blkSize);
           if ((rawSize % blkSize) != 0) {

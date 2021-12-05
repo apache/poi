@@ -58,7 +58,7 @@ public final class CompressedStreamStore extends StreamStore {
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;
     }
-    
+
     /**
      * Creates a new compressed StreamStore, which will handle
      *  the decompression.
@@ -97,6 +97,10 @@ public final class CompressedStreamStore extends StreamStore {
         // Decompress
         HDGFLZW lzw = new HDGFLZW();
         byte[] decompressed = lzw.decompress(bais);
+
+        if (decompressed.length < 4) {
+            throw new IllegalArgumentException("Could not read enough data to decompress: " + decompressed.length);
+        }
 
         // Split into header and contents
         byte[][] ret = new byte[2][];

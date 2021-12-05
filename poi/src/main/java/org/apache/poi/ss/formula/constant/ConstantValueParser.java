@@ -45,6 +45,10 @@ public final class ConstantValueParser {
     }
 
     public static Object[] parse(LittleEndianInput in, int nValues) {
+        if (nValues < 0) {
+            throw new IllegalArgumentException("Invalid number of values to parse: " + nValues);
+        }
+
         Object[] result = new Object[nValues];
         for (int i = 0; i < result.length; i++) {
             result[i] = readAConstantValue(in);
