@@ -121,6 +121,18 @@ public class TestXLookupFunction {
         }
     }
 
+    @Test
+    void testReverseBinarySearchWithInvalidValues() throws IOException {
+        try (HSSFWorkbook wb = initReverseWorkbook4WithInvalidIncomes()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(1).createCell(6);
+            assertDouble(fe, cell, "XLOOKUP(E2,C2:C7,B2:B7,0,1,-2)", 0.37);
+            //TODO next assertion is not working and needs investigation
+            //assertDouble(fe, cell, "XLOOKUP(9700,C2:C7,B2:B7,0,0,-2)", 0.1);
+            assertDouble(fe, cell, "XLOOKUP(39474,C2:C7,B2:B7,0,0,-2)", 0);
+        }
+    }
+
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -179,6 +191,19 @@ public class TestXLookupFunction {
         addRow(sheet, 3, null, 0.32, 160726);
         addRow(sheet, 4, null, 0.24, 84200);
         addRow(sheet, 5, null, 0.22, 39475);
+        addRow(sheet, 6, null, 0.10, 9700);
+        return wb;
+    }
+
+    private HSSFWorkbook initReverseWorkbook4WithInvalidIncomes() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, null, "Tax Rate", "Max Income", null, "Income", "Tax Rate");
+        addRow(sheet, 1, null, 0.37, 510300, null, 46523);
+        addRow(sheet, 2, null, 0.35, "invalid");
+        addRow(sheet, 3, null, 0.32, "invalid");
+        addRow(sheet, 4, null, 0.24, "invalid");
+        addRow(sheet, 5, null, 0.22, "invalid");
         addRow(sheet, 6, null, 0.10, 9700);
         return wb;
     }

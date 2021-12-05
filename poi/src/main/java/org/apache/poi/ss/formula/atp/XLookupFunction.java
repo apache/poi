@@ -24,8 +24,6 @@ import org.apache.poi.ss.formula.functions.ArrayFunction;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.LookupUtils;
 
-import java.util.Optional;
-
 /**
  * Implementation of Excel function XLOOKUP()
  *
@@ -63,16 +61,12 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
         if (args.length < 3) {
             return ErrorEval.VALUE_INVALID;
         }
-        Optional<String> notFound = Optional.empty();
+        ValueEval notFound = BlankEval.instance;
         if (args.length > 3) {
             try {
                 ValueEval notFoundValue = OperandResolver.getSingleValue(args[3], srcRowIndex, srcColumnIndex);
-                String notFoundText = laxValueToString(notFoundValue);
-                if (notFoundText != null) {
-                    String trimmedText = notFoundText.trim();
-                    if (trimmedText.length() > 0) {
-                        notFound = Optional.of(trimmedText);
-                    }
+                if (notFoundValue != null) {
+                    notFound = notFoundValue;
                 }
             } catch (EvaluationException e) {
                 return e.getErrorEval();
@@ -106,7 +100,7 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
     }
 
     private ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval lookupEval, ValueEval indexEval,
-                               ValueEval returnEval, Optional<String> notFound, LookupUtils.MatchMode matchMode,
+                               ValueEval returnEval, ValueEval notFound, LookupUtils.MatchMode matchMode,
                                LookupUtils.SearchMode searchMode, boolean isSingleValue) {
         try {
             ValueEval lookupValue = OperandResolver.getSingleValue(lookupEval, srcRowIndex, srcColumnIndex);
@@ -116,16 +110,16 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
                 matchedRow = LookupUtils.xlookupIndexOfValue(lookupValue, LookupUtils.createColumnVector(tableArray, 0), matchMode, searchMode);
             } catch (EvaluationException e) {
                 if (ErrorEval.NA.equals(e.getErrorEval())) {
-                    if (notFound.isPresent()) {
+                    if (notFound != BlankEval.instance) {
                         if (returnEval instanceof AreaEval) {
                             AreaEval area = (AreaEval)returnEval;
                             int width = area.getWidth();
                             if (isSingleValue || width <= 1) {
-                                return new StringEval(notFound.get());
+                                return notFound;
                             }
-                            return notFoundAreaEval(notFound.get(), width);
+                            return notFoundAreaEval(notFound, width);
                         } else {
-                            return new StringEval(notFound.get());
+                            return notFound;
                         }
                     }
                     return ErrorEval.NA;
@@ -147,11 +141,7 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
         }
     }
 
-    private String laxValueToString(ValueEval eval) {
-        return  (eval instanceof MissingArgEval) ? "" : OperandResolver.coerceValueToString(eval);
-    }
-
-    private AreaEval notFoundAreaEval(String notFound, int width) {
+    private AreaEval notFoundAreaEval(ValueEval notFound, int width) {
         return new AreaEval() {
             @Override
             public int getFirstRow() {
@@ -176,7 +166,7 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
             @Override
             public ValueEval getAbsoluteValue(int row, int col) {
                 if (col == 0) {
-                    return new StringEval(notFound);
+                    return notFound;
                 }
                 return new StringEval("");
             }
