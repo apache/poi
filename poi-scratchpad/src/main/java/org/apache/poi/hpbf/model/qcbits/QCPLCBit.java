@@ -207,7 +207,7 @@ public abstract class QCPLCBit extends QCBit {
      *  of the text area that this applies to.
      */
     public static class Type12 extends QCPLCBit {
-        private String[] hyperlinks;
+        private final String[] hyperlinks;
 
         private static final int oneStartsAt = 0x4c;
         private static final int twoStartsAt = 0x68;

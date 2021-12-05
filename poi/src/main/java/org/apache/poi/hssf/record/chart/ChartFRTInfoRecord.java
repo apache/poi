@@ -34,16 +34,16 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class ChartFRTInfoRecord extends StandardRecord {
     public static final short sid = 0x850;
 
-    private short rt;
-    private short grbitFrt;
-    private byte verOriginator;
-    private byte verWriter;
+    private final short rt;
+    private final short grbitFrt;
+    private final byte verOriginator;
+    private final byte verWriter;
     private CFRTID[] rgCFRTID;
 
     private static final class CFRTID {
         public static final int ENCODED_SIZE = 4;
-        private int rtFirst;
-        private int rtLast;
+        private final int rtFirst;
+        private final int rtLast;
 
         public CFRTID(CFRTID other) {
             rtFirst = other.rtFirst;

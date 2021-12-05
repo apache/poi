@@ -55,7 +55,7 @@ import org.apache.poi.util.TempFile;
             } else {
                 tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
                 LOG.atInfo().log("created for temp file {} for zip entry {} of size {} bytes",
-                        () -> tempFile.getAbsolutePath(), () -> entry.getName(), () -> entrySize);
+                        () -> tempFile.getAbsolutePath(), entry::getName, () -> entrySize);
                 IOUtils.copy(inp, tempFile);
             }
         } else {
@@ -97,7 +97,7 @@ import org.apache.poi.util.TempFile;
 
     /**
      * Deletes any temp files and releases any byte arrays.
-     * @throws IOException
+     * @throws IOException If closing the entry fails.
      * @since POI 5.1.0
      */
     @Override

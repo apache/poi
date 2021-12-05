@@ -100,7 +100,7 @@ public class EncryptedTempData {
      */
     public void dispose() {
         if (!tempFile.delete()) {
-            LOG.atWarn().log("{} can't be removed (or was already removed).", () -> tempFile.getAbsolutePath());
+            LOG.atWarn().log("{} can't be removed (or was already removed).", tempFile::getAbsolutePath);
         }
     }
 }

@@ -52,6 +52,7 @@ class TestXWPFBugs {
         assertThrows(IOException.class, () -> {
             try (InputStream fis = samples.openResourceAsStream("truncated62886.docx");
                 OPCPackage opc = OPCPackage.open(fis)) {
+                assertNotNull(opc);
                 //XWPFWordExtractor ext = new XWPFWordExtractor(opc)) {
                 //assertNotNull(ext.getText());
             }
@@ -59,7 +60,7 @@ class TestXWPFBugs {
     }
 
     /**
-     * A word document that's encrypted with non-standard
+     * A Word document that's encrypted with non-standard
      * Encryption options, and no cspname section. See bug 53475
      */
     @Test
@@ -77,7 +78,7 @@ class TestXWPFBugs {
         Decryptor d = Decryptor.getInstance(info);
         assertTrue(d.verifyPassword("solrcell"), "Unable to process: document is encrypted");
 
-        // Check we can read the word document in that
+        // Check we can read the Word document in that
         InputStream dataStream = d.getDataStream(filesystem);
         OPCPackage opc = OPCPackage.open(dataStream);
         XWPFDocument doc = new XWPFDocument(opc);
@@ -91,7 +92,7 @@ class TestXWPFBugs {
     }
 
     /**
-     * A word document with aes-256, i.e. aes is always 128 bit (= 128 bit block size),
+     * A Word document with aes-256, i.e. aes is always 128 bit (= 128 bit block size),
      * but the key can be 128/192/256 bits
      */
     @Test
@@ -113,7 +114,7 @@ class TestXWPFBugs {
         Decryptor d = Decryptor.getInstance(info);
         assertTrue(d.verifyPassword("pass"), "Unable to process: document is encrypted");
 
-        // Check we can read the word document in that
+        // Check we can read the Word document in that
         InputStream dataStream = d.getDataStream(filesystem);
         OPCPackage opc = OPCPackage.open(dataStream);
         XWPFDocument doc = new XWPFDocument(opc);

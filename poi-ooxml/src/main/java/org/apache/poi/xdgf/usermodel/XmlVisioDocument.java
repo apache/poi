@@ -82,7 +82,6 @@ public class XmlVisioDocument extends POIXMLDocument {
 
     @Override
     protected void onDocumentRead() {
-
         // by the time this gets called, all other document parts should
         // have been loaded, so it's safe to build the document structure
 
@@ -90,17 +89,17 @@ public class XmlVisioDocument extends POIXMLDocument {
         // loaded yet, so it's not quite safe
 
         for (POIXMLDocumentPart part : getRelations()) {
-
             // organize the document pieces
-            if (part instanceof XDGFPages)
+            if (part instanceof XDGFPages) {
                 _pages = (XDGFPages) part;
-
-            else if (part instanceof XDGFMasters)
+            } else if (part instanceof XDGFMasters) {
                 _masters = (XDGFMasters) part;
+            }
         }
 
-        if (_masters != null)
+        if (_masters != null) {
             _masters.onDocumentRead();
+        }
 
         _pages.onDocumentRead();
     }

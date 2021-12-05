@@ -214,6 +214,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
      * @param istream The InputStream that contains the Word document.
      * @throws IOException If there is an unexpected IOException from the passed
      *                     in InputStream.
+	 * @throws org.apache.poi.EmptyFileException If the given stream is empty
      */
     public HWPFDocument(InputStream istream) throws IOException {
         //do Ole stuff

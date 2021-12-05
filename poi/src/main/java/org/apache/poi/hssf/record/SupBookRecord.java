@@ -242,7 +242,7 @@ public final class SupBookRecord extends StandardRecord {
 
     public void setURL(String pUrl) {
         //Keep the first marker character!
-        field_2_encoded_url = field_2_encoded_url.substring(0, 1) + pUrl;
+        field_2_encoded_url = field_2_encoded_url.charAt(0) + pUrl;
     }
 
     @Override

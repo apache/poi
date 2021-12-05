@@ -46,6 +46,7 @@ import org.apache.poi.sl.usermodel.BaseTestSlideShow;
 import org.apache.poi.sl.usermodel.PlaceholderDetails;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
+import org.opentest4j.AssertionFailedError;
 
 /**
  * Tests for TextRuns
@@ -603,16 +604,21 @@ public final class TestTextRun {
                 .mapToInt(r -> ((DateTimeMCAtom)r).getIndex()).toArray();
             assertArrayEquals(expFormatId, actFormatId);
 
-            List<HSLFShapePlaceholderDetails> phs = shapes.stream().map(HSLFSimpleShape::getPlaceholderDetails).collect(Collectors.toList());
+            List<HSLFShapePlaceholderDetails> phs =
+                    shapes.stream().map(HSLFSimpleShape::getPlaceholderDetails).collect(Collectors.toList());
 
             for (Map.Entry<Locale,String[]> me : formats.entrySet()) {
                 LocaleUtil.setUserLocale(me.getKey());
 
-                // refresh internal members
-                phs.forEach(PlaceholderDetails::getPlaceholder);
+                try {
+                    // refresh internal members
+                    phs.forEach(PlaceholderDetails::getPlaceholder);
 
-                String[] actDate = phs.stream().map(PlaceholderDetails::getDateFormat).map(ldt::format).toArray(String[]::new);
-                assertArrayEquals(me.getValue(), actDate);
+                    String[] actDate = phs.stream().map(PlaceholderDetails::getDateFormat).map(ldt::format).toArray(String[]::new);
+                    assertArrayEquals(me.getValue(), actDate);
+                } catch (AssertionFailedError e) {
+                    throw new AssertionFailedError("While handling local " + me.getKey());
+                }
             }
         } finally {
             LocaleUtil.resetUserLocale();
