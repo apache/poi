@@ -47,9 +47,6 @@ public class TestXLookupFunction {
             String cellRef = String.format(Locale.ENGLISH, "%s2:%s2", col1, col2);
             sheet.setArrayFormula(formulaText, CellRangeAddress.valueOf(cellRef));
             fe.evaluateAll();
-            try (java.io.FileOutputStream fos = new java.io.FileOutputStream("/tmp/xlook.xlsx")) {
-                wb.write(fos);
-            }
             assertEquals("Dianne Pugh", row1.getCell(2).getStringCellValue());
             assertEquals("Finance", row1.getCell(3).getStringCellValue());
         }
