@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -440,6 +441,52 @@ final class TestIOUtils {
         assertEquals(3057449933L, IOUtils.calculateChecksum(new ByteArrayInputStream(new byte[] { 1, 2, 3, 4})));
         assertThrows(EOFException.class,
                 () -> IOUtils.calculateChecksum(new NullInputStream(1, true)));
+    }
+
+    @Test
+    void testSafelyCloneNull() {
+        assertNull(IOUtils.safelyClone(null, 0, 0, 0));
+    }
+
+    @Test
+    void testSafelyCloneInvalid() {
+        assertThrows( RecordFormatException.class,
+                () -> IOUtils.safelyClone(new byte[0], -1, 0, 0));
+        assertThrows( RecordFormatException.class,
+                () -> IOUtils.safelyClone(new byte[0], 0, -2, 0));
+        assertThrows( RecordFormatException.class,
+                () -> IOUtils.safelyClone(new byte[0], 0, 0, -3));
+    }
+
+    @Test
+    void testSafelyCloneEmpty() {
+        byte[] bytes = new byte[0];
+        byte[] ret = IOUtils.safelyClone(bytes, 0, 0, 0);
+        assertNotNull(ret);
+        assertEquals(0, ret.length);
+    }
+
+    @Test
+    void testSafelyCloneDataButLengthLimit() {
+        byte[] bytes = new byte[] { 1, 2, 3, 4 };
+        assertThrows( RecordFormatException.class,
+                () -> IOUtils.safelyClone(bytes, 0, bytes.length, 0));
+    }
+
+    @Test
+    void testSafelyCloneData() {
+        byte[] bytes = new byte[] { 1, 2, 3, 4 };
+        byte[] ret = IOUtils.safelyClone(bytes, 0, bytes.length, 100);
+        assertNotNull(ret);
+        assertEquals(4, ret.length);
+    }
+
+    @Test
+    void testSafelyCloneDataHugeLength() {
+        byte[] bytes = new byte[] { 1, 2, 3, 4 };
+        byte[] ret = IOUtils.safelyClone(bytes, 0, Integer.MAX_VALUE, 100);
+        assertNotNull(ret);
+        assertEquals(4, ret.length);
     }
 
     /**

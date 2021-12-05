@@ -501,9 +501,15 @@ public final class IOUtils {
         if (src == null) {
             return null;
         }
-        assert(offset >= 0 && length >= 0 && maxLength >= 0);
-        safelyAllocateCheck(Math.min(src.length-offset,length), maxLength);
-        return Arrays.copyOfRange(src, offset, offset+length);
+
+        if (offset < 0 || length < 0 || maxLength < 0) {
+            throw new RecordFormatException("Invalid offset/length specified: "
+                    + "offset: " + offset + ", lenght: " + length + ", maxLength: " + maxLength);
+        }
+
+        int realLength = Math.min(src.length - offset, length);
+        safelyAllocateCheck(realLength, maxLength);
+        return Arrays.copyOfRange(src, offset, offset+realLength);
     }
 
 
