@@ -2152,40 +2152,6 @@ under the License.
         </javadoc>
     </target>
 
-
-    <target name="maven-poms"
-            description="Builds the POM files for a maven distribution, and copies these and the jars to the appropriate locations">
-
-        <!-- Build the org.apache.poi poms -->
-        <copy todir="${dist.dir}/maven">
-            <fileset dir="maven" includes="poi*.pom"/>
-            <chainedmapper>
-                <firstmatchmapper>
-                    <regexpmapper from="^(.*).pom$$" to="\1/\1.pom"/>
-                    <globmapper from="poi.pom" to="poi/poi.pom"/>
-                </firstmatchmapper>
-                <globmapper from="*.pom" to="*-${version.id}.pom"/>
-            </chainedmapper>
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-
-        <mkdir dir="${dist.dir}/maven/poi-ooxml-full"/>
-        <copy tofile="${dist.dir}/maven/poi-ooxml-full/poi-ooxml-full-${version.id}.pom" file="maven/poi-ooxml-full.pom">
-            <filterchain>
-                <replacetokens>
-                    <token key="VERSION" value="${version.id}"/>
-                </replacetokens>
-            </filterchain>
-        </copy>
-
-        <echo>Maven POMs are located in ${dist.dir}</echo>
-        <echo>Use ant dist-nexus to deploy the artifacts in the remote repository</echo>
-    </target>
-
     <macrodef name="maven-jar">
         <attribute name="src"/>
         <attribute name="module"/>
@@ -2431,9 +2397,6 @@ under the License.
             <union refid="src-files"/>
         </tar>
 
-        <echo>Creating Maven POMs</echo>
-        <antcall target="maven-poms"/>
-
         <echo>Distribution located in ${dist.dir}</echo>
         <echo>Use "ant dist-checksum" to create sha256/sha512 checksums and GPG signatures</echo>
     </target>
@@ -2452,7 +2415,7 @@ under the License.
 
     <!-- continuous integration targets -->
     <target name="jenkins"
-        depends="replaceVersion, compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check, help, fetch-svn-jars, maven-poms, maventask"
+        depends="replaceVersion, compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check, help, fetch-svn-jars, maventask"
         description="Target run by Jenkins on a continuous basis. Builds and tests POI, generates artifacts and documentation, and searches for problems."/>
 
     <target name="maventask" depends="init">
