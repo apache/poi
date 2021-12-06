@@ -45,11 +45,11 @@ public class TestXMatchFunction {
 
     @Test
     void testMicrosoftExample1() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook("Gra?")) {
+        try (HSSFWorkbook wb = initWorkbook("Gra")) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(2).createCell(5);
-            //TODO investigate issue
-            //assertDouble(fe, cell, "XMATCH(E3,C3:C7,1)", 2);
+            //TODO investigate issue with `Gra?`
+            assertDouble(fe, cell, "XMATCH(E3,C3:C7,1)", 2);
         }
     }
 
