@@ -149,8 +149,7 @@ public class TestXLookupFunction {
             HSSFCell cell = wb.getSheetAt(0).getRow(2).createCell(3);
             assertDouble(fe, cell, "XLOOKUP(B3,B6:B10,E6:E10)", 75.28);
             assertDouble(fe, cell, "XLOOKUP(C3,B6:B10,E6:E10)", 17.25);
-            //TODO next to fix FormulaParser to get this to work
-            //assertDouble(fe, cell, "SUM(XLOOKUP(B3,B6:B10,E6:E10):XLOOKUP(C3,B6:B10,E6:E10))", 110.70);
+            assertDouble(fe, cell, "SUM(XLOOKUP(B3,B6:B10,E6:E10):XLOOKUP(C3,B6:B10,E6:E10))", 110.69);
         }
     }
 
