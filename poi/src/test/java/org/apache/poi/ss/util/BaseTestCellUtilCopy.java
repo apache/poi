@@ -19,6 +19,7 @@ package org.apache.poi.ss.util;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.*;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -29,6 +30,16 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class BaseTestCellUtilCopy {
 
     protected Cell srcCell, destCell; //used for testCopyCellFrom_CellCopyPolicy
+
+    @AfterEach
+    public void tearDown() throws IOException {
+        if (srcCell != null) {
+            srcCell.getRow().getSheet().getWorkbook().close();
+        }
+        if (destCell != null) {
+            destCell.getRow().getSheet().getWorkbook().close();
+        }
+    }
 
     @Test
     public final void testCopyCellFrom_CellCopyPolicy_default() {

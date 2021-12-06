@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
@@ -65,13 +66,13 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      * Construct XSSFPictureData from a package part
      *
      * @param part the package part holding the drawing data,
-     * 
+     *
      * @since POI 3.14-Beta1
      */
     protected XSSFPictureData(PackagePart part) {
         super(part);
     }
-    
+
     /**
      * Gets the picture data as a byte array.
      * <p>
@@ -86,8 +87,8 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      * @return the picture data.
      */
     public byte[] getData() {
-        try {
-            return IOUtils.toByteArray(getPackagePart().getInputStream());
+        try (InputStream inputStream = getPackagePart().getInputStream()) {
+            return IOUtils.toByteArray(inputStream);
         } catch(IOException e) {
             throw new POIXMLException(e);
         }
@@ -116,7 +117,7 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
     }
 
     /**
-     * *PictureData objects store the actual content in the part directly without keeping a 
+     * *PictureData objects store the actual content in the part directly without keeping a
      * copy like all others therefore we need to handle them differently.
      */
     @Override
