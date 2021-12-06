@@ -29,15 +29,16 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.security.Permission;
 
+import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.property.PropertyTable;
-import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -151,6 +152,9 @@ public class TestPOIFSDump {
 
     @Test
     void testMainNoArgs() {
+        Assumptions.assumeFalse(System.getProperty("java.version").startsWith("18"),
+                "SecurityManager does not work any more since JDK 18");
+
         SecurityManager sm = System.getSecurityManager();
         try {
             System.setSecurityManager(new SecurityManager() {

@@ -286,29 +286,30 @@ subprojects {
         isCIBuild |= Boolean.valueOf(System.getenv("CI_BUILD"));
 
         if (isCIBuild) {
-        	jvmArgs += [
-        	    // Strictly serial
-        	    // '-Djunit.jupiter.execution.parallel.enabled=false',
+            System.out.println("Run with reduced parallelism for CI build");
 
-        	    // OR parallel on 2 threads
-				'-Djunit.jupiter.execution.parallel.config.strategy=fixed',
-				'-Djunit.jupiter.execution.parallel.config.fixed.parallelism=2'
-			]
-			maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
-		} else {
-			jvmArgs += [
-			    '-Djunit.jupiter.execution.parallel.enabled=true',
-			    '-Djunit.jupiter.execution.parallel.config.strategy=dynamic',
+            jvmArgs += [
+                // Strictly serial
+                // '-Djunit.jupiter.execution.parallel.enabled=false',
+
+                // OR parallel on 2 threads
+                '-Djunit.jupiter.execution.parallel.config.strategy=fixed',
+                '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=2'
+            ]
+            maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+        } else {
+            jvmArgs += [
+                '-Djunit.jupiter.execution.parallel.enabled=true',
+                '-Djunit.jupiter.execution.parallel.config.strategy=dynamic',
 
                 // this setting breaks the test builds, do not use it!
-				//'-Djunit.jupiter.execution.parallel.mode.default=concurrent'
-			]
+                //'-Djunit.jupiter.execution.parallel.mode.default=concurrent'
+            ]
 
-			 // Explicitly defining the maxParallelForks was always slower than not setting it
-			 // So we leave this to Gradle itself, which seems to be very smart
-			 // maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
-			 // maxParallelForks = Math.max( Runtime.runtime.availableProcessors() - 1, 1 )
-
+             // Explicitly defining the maxParallelForks was always slower than not setting it
+             // So we leave this to Gradle itself, which seems to be very smart
+             // maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
+             // maxParallelForks = Math.max( Runtime.runtime.availableProcessors() - 1, 1 )
         }
 
         // show standard out and standard error of the test JVM(s) on the console
@@ -324,11 +325,16 @@ subprojects {
 
         doFirst {
             if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
-                jvmArgs += [
-                    '-Dsun.reflect.debugModuleAccessChecks=true',
-                    '-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true',
-                    '--illegal-access=warn',
+                // some options were removed in JDK 18
+                if (JavaVersion.current().ordinal() < JavaVersion.VERSION_18.ordinal()) {
+                    jvmArgs += [
+                        '--illegal-access=warn',
+                    ]
+                } else {
+                    System.out.println("Configuring for JDK 18 or higher")
+                }
 
+                jvmArgs += [
                     // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
                     // opposed to the recommendation there, it doesn't work to add ... to the dependencies
                     // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.7.1'
@@ -336,8 +342,19 @@ subprojects {
                     '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=org.apache.poi.poi',
                     '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
                     '--add-exports','org.junit.platform.commons/org.junit.platform.commons.logging=ALL-UNNAMED',
+
+                    '-Dsun.reflect.debugModuleAccessChecks=true',
+                    '-Dcom.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize=true',
                 ]
             }
+        }
+
+        jacoco {
+            excludes = [
+                // this is necessary to make JaCoCo work with JDK 18 for now
+                'sun/**',
+                'javax/**',
+            ]
         }
     }
 
@@ -478,6 +495,11 @@ subprojects {
     }
 
     signing {
+        setRequired {
+            // signing is only required if this is a release version
+            // and the artifacts are to be published
+            gradle.taskGraph.allTasks.any { it instanceof PublishToMavenRepository }
+        }
         sign publishing.publications.POI
     }
     signPOIPublication.dependsOn('generatePomFileForPOIPublication')
