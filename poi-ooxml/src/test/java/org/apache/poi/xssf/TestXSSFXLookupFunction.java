@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Testcase for function XLOOKUP()
  */
-public class TestXLookupFunction {
+public class TestXSSFXLookupFunction {
 
     //https://support.microsoft.com/en-us/office/xlookup-function-b7fd680e-6d10-43e6-84f9-88eae8bf5929
 
@@ -52,6 +52,20 @@ public class TestXLookupFunction {
         }
     }
 
+    @Test
+    void testXLookupFile() throws Exception {
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("xlookup.xlsx")) {
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            XSSFFormulaEvaluator fe = new XSSFFormulaEvaluator(workbook);
+            XSSFRow row1 = sheet.getRow(1);
+            assertEquals("Dianne Pugh", row1.getCell(2).getStringCellValue());
+            assertEquals("Finance", row1.getCell(3).getStringCellValue());
+            fe.evaluateAll();
+            row1 = sheet.getRow(1);
+            assertEquals("Dianne Pugh", row1.getCell(2).getStringCellValue());
+            assertEquals("Finance", row1.getCell(3).getStringCellValue());
+        }
+    }
 
     private XSSFWorkbook initWorkbook2() {
         XSSFWorkbook wb = new XSSFWorkbook();
