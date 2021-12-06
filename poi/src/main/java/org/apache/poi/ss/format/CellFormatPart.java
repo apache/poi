@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.util.CodepointsUtil;
 import org.apache.poi.util.LocaleUtil;
@@ -25,7 +27,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -45,8 +46,9 @@ import static org.apache.poi.ss.format.CellFormatter.quote;
  * specification.  These are used internally, but are made public in case other
  * code has use for them.
  */
+@SuppressWarnings("RegExpRepeatedSpace")
 public class CellFormatPart {
-    private static final Logger LOG = Logger.getLogger(CellFormat.class.getName());
+    private static final Logger LOG = LogManager.getLogger(CellFormat.class.getName());
 
     static final Map<String, Color> NAMED_COLORS;
 
@@ -104,25 +106,26 @@ public class CellFormatPart {
     static {
         // A condition specification
         String condition = "([<>=]=?|!=|<>)    # The operator\n" +
-                "  \\s*(-?([0-9]+(?:\\.[0-9]*)?)|(\\.[0-9]*))\\s*  # The constant to test against\n";;
+                "  \\s*(-?([0-9]+(?:\\.[0-9]*)?)|(\\.[0-9]*))\\s*  # The constant to test against\n";
 
         // A currency symbol / string, in a specific locale
-        String currency = "(\\[\\$.{0,3}(-[0-9a-f]{3,4})?\\])";
+        String currency = "(\\[\\$.{0,3}(-[0-9a-f]{3,4})?])";
 
         String color =
-                "\\[(black|blue|cyan|green|magenta|red|white|yellow|color [0-9]+)\\]";
+                "\\[(black|blue|cyan|green|magenta|red|white|yellow|color [0-9]+)]";
 
         // A number specification
         // Note: careful that in something like ##, that the trailing comma is not caught up in the integer part
 
         // A part of a specification
-        String part = "\\\\.                 # Quoted single character\n" +
+        //noinspection RegExpRedundantEscape
+        String part = "\\\\.                     # Quoted single character\n" +
                 "|\"([^\\\\\"]|\\\\.)*\"         # Quoted string of characters (handles escaped quotes like \\\") \n" +
                 "|"+currency+"                   # Currency symbol in a given locale\n" +
                 "|_.                             # Space as wide as a given character\n" +
                 "|\\*.                           # Repeating fill character\n" +
                 "|@                              # Text: cell text\n" +
-                "|([0?\\#](?:[0?\\#,]*))         # Number: digit + other digits and commas\n" +
+                "|([0?\\#][0?\\#,]*)             # Number: digit + other digits and commas\n" +
                 "|e[-+]                          # Number: Scientific: Exponent\n" +
                 "|m{1,5}                         # Date: month or minute spec\n" +
                 "|d{1,4}                         # Date: day/date spec\n" +
@@ -130,16 +133,16 @@ public class CellFormatPart {
                 "|h{1,2}                         # Date: hour spec\n" +
                 "|s{1,2}                         # Date: second spec\n" +
                 "|am?/pm?                        # Date: am/pm spec\n" +
-                "|\\[h{1,2}\\]                   # Elapsed time: hour spec\n" +
-                "|\\[m{1,2}\\]                   # Elapsed time: minute spec\n" +
-                "|\\[s{1,2}\\]                   # Elapsed time: second spec\n" +
+                "|\\[h{1,2}]                     # Elapsed time: hour spec\n" +
+                "|\\[m{1,2}]                     # Elapsed time: minute spec\n" +
+                "|\\[s{1,2}]                     # Elapsed time: second spec\n" +
                 "|[^;]                           # A character\n" + "";
 
         String format = "(?:" + color + ")?                 # Text color\n" +
-                "(?:\\[" + condition + "\\])?               # Condition\n" +
+                "(?:\\[" + condition + "])?               # Condition\n" +
                 // see https://msdn.microsoft.com/en-ca/goglobal/bb964664.aspx and https://bz.apache.org/ooo/show_bug.cgi?id=70003
                 // we ignore these for now though
-                "(?:\\[\\$-[0-9a-fA-F]+\\])?                # Optional locale id, ignored currently\n" +
+                "(?:\\[\\$-[0-9a-fA-F]+])?                # Optional locale id, ignored currently\n" +
                 "((?:" + part + ")+)                        # Format spec\n";
 
         int flags = Pattern.COMMENTS | Pattern.CASE_INSENSITIVE;
@@ -253,7 +256,7 @@ public class CellFormatPart {
             return null;
         Color c = NAMED_COLORS.get(cdesc);
         if (c == null) {
-            LOG.warning("Unknown color: " + quote(cdesc));
+            LOG.warn("Unknown color: " + quote(cdesc));
         }
         return c;
     }
@@ -408,7 +411,7 @@ public class CellFormatPart {
 
         while (codePoints.hasNext()) {
             String ch = codePoints.next();
-            if ("\'".equals(ch) && type.isSpecial('\'')) {
+            if ("'".equals(ch) && type.isSpecial('\'')) {
                 sb.append('\u0000');
                 continue;
             }
