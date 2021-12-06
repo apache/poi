@@ -623,7 +623,30 @@ public final class LookupUtils {
     }
 
     public static int xlookupIndexOfValue(ValueEval lookupValue, ValueVector vector, MatchMode matchMode, SearchMode searchMode) throws EvaluationException {
-        LookupValueComparer lookupComparer = createTolerantLookupComparer(lookupValue, matchMode != MatchMode.WildcardMatch, true);
+        ValueEval modifiedLookup = lookupValue;
+        if (lookupValue instanceof StringEval &&
+                (matchMode == MatchMode.ExactMatchFallbackToLargerValue || matchMode == MatchMode.ExactMatchFallbackToSmallerValue)) {
+            String lookupText = ((StringEval)lookupValue).getStringValue();
+            StringBuilder sb = new StringBuilder(lookupText.length());
+            boolean containsWildcard = false;
+            for (char c : lookupText.toCharArray()) {
+                switch (c) {
+                    case '~':
+                    case '?':
+                    case '*':
+                        containsWildcard = true;
+                        break;
+                    default:
+                        sb.append(c);
+                }
+                if (containsWildcard)
+                    break;
+            }
+            if (containsWildcard) {
+                modifiedLookup = new StringEval(sb.toString());
+            }
+        }
+        LookupValueComparer lookupComparer = createTolerantLookupComparer(modifiedLookup, matchMode != MatchMode.WildcardMatch, true);
         int result;
         if (searchMode == SearchMode.BinarySearchForward) {
             result = binarySearchIndexOfValue(lookupComparer, vector, matchMode, false);

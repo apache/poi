@@ -21,12 +21,12 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.apache.poi.ss.util.Utils.addRow;
-import static org.apache.poi.ss.util.Utils.assertDouble;
+import static org.apache.poi.ss.util.Utils.*;
 
 /**
  * Testcase for function XMATCH()
@@ -40,16 +40,20 @@ public class TestXMatchFunction {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(2).createCell(5);
             assertDouble(fe, cell, "XMATCH(E3,C3:C7)", 2);
+            assertError(fe, cell, "XMATCH(\"Gra\",C3:C7)", FormulaError.NA);
         }
     }
 
     @Test
     void testMicrosoftExample1() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook("Gra")) {
+        try (HSSFWorkbook wb = initWorkbook("Gra?")) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(2).createCell(5);
-            //TODO investigate issue with `Gra?`
             assertDouble(fe, cell, "XMATCH(E3,C3:C7,1)", 2);
+            assertDouble(fe, cell, "XMATCH(E3,C3:C7,-1)", 5);
+            assertDouble(fe, cell, "XMATCH(\"Gra\",C3:C7,1)", 2);
+            assertDouble(fe, cell, "XMATCH(\"Graz\",C3:C7,1)", 3);
+            assertDouble(fe, cell, "XMATCH(\"Graz\",C3:C7,-1)", 2);
         }
     }
 
