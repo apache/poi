@@ -142,6 +142,18 @@ public class TestXLookupFunction {
         }
     }
 
+    @Test
+    void testMicrosoftExample6() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook6()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(2).createCell(3);
+            assertDouble(fe, cell, "XLOOKUP(B3,B6:B10,E6:E10)", 75.28);
+            assertDouble(fe, cell, "XLOOKUP(C3,B6:B10,E6:E10)", 17.25);
+            //TODO next to fix FormulaParser to get this to work
+            //assertDouble(fe, cell, "SUM(XLOOKUP(B3,B6:B10,E6:E10):XLOOKUP(C3,B6:B10,E6:E10))", 110.70);
+        }
+    }
+
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -237,6 +249,23 @@ public class TestXLookupFunction {
         addRow(sheet, 14);
         addRow(sheet, 15, null, "Net Profit", 19342, 28293, 24352, 24134, 96124);
         addRow(sheet, 15, null, "Profit %", .293, .278, .234, .236, .269);
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook6() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0);
+        addRow(sheet, 1, null, "Start", "End", "Total");
+        addRow(sheet, 2, null, "Grape", "Banana");
+        addRow(sheet, 3, null, "United States", "US", "+1");
+        addRow(sheet, 4);
+        addRow(sheet, 5, null, "Product", "Qty", "Price", "Total");
+        addRow(sheet, 6, null, "Apple", 23, 0.52, 11.90);
+        addRow(sheet, 7, null, "Grape", 98, 0.77, 75.28);
+        addRow(sheet, 8, null, "Pear", 75, 0.24, 18.16);
+        addRow(sheet, 9, null, "Banana", 95, 0.18, 17.25);
+        addRow(sheet, 10, null, "Cherry", 42, 0.16, 6.80);
         return wb;
     }
 
