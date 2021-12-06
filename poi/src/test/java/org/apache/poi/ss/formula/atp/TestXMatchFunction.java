@@ -72,6 +72,16 @@ public class TestXMatchFunction {
         }
     }
 
+    @Test
+    void testMicrosoftExample4() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            assertDouble(fe, cell, "XMATCH(4,{5,4,3,2,1})", 2);
+            assertDouble(fe, cell, "XMATCH(4.5,{5,4,3,2,1},1)", 1);
+        }
+    }
+
     private HSSFWorkbook initNumWorkbook(String lookup) {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
