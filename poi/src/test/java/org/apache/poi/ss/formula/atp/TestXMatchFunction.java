@@ -73,6 +73,15 @@ public class TestXMatchFunction {
     }
 
     @Test
+    void testMicrosoftExample3() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook3()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(2).createCell(3);
+            assertDouble(fe, cell, "INDEX(C6:E12,XMATCH(B3,B6:B12),XMATCH(C3,C5:E5))", 8492);
+        }
+    }
+
+    @Test
     void testMicrosoftExample4() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
@@ -107,6 +116,24 @@ public class TestXMatchFunction {
         addRow(sheet, 6, null, "Anne Hellung-Larsen", 13801);
         addRow(sheet, 7, null, "Nancy Freehafer", 12181);
         addRow(sheet, 8, null, "Mariya Sergienko", 9201);
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook3() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0);
+        addRow(sheet, 1, null, "Sales Rep", "Month", "Total");
+        addRow(sheet, 2, null, "Andrew Cencini", "Feb");
+        addRow(sheet, 3);
+        addRow(sheet, 4, null, "Sales Rep", "Jan", "Feb", "Mar");
+        addRow(sheet, 5, null, "Michael Neipper", 3174, 6804, 4713);
+        addRow(sheet, 6, null, "Jan Kotas", 1656, 8643, 3445);
+        addRow(sheet, 7, null, "Nancy Freehafer", 2706, 2310, 6606);
+        addRow(sheet, 8, null, "Andrew Cencini", 4930, 8492, 4474);
+        addRow(sheet, 9, null, "Anne Hellung-Larsen", 6394, 9846, 4368);
+        addRow(sheet, 10, null, "Nancy Freehafer", 2539, 8996, 4084);
+        addRow(sheet, 11, null, "Mariya Sergienko", 4468, 5206, 7343);
         return wb;
     }
 
