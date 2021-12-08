@@ -107,4 +107,17 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
             assertEquals("1000", formatter.formatCellValue(cell, evaluator));
         }
     }
+
+    @Test
+    void testSetUseCachedValuesForFormulaCells() throws Exception {
+        try (XSSFWorkbook wb = openSampleWorkbook("formula-eval.xlsx")) {
+            final DataFormatter formatter = new DataFormatter();
+            XSSFSheet sheet = wb.getSheetAt(0);
+            XSSFRow row = sheet.getRow(0);
+            XSSFCell d1 = row.getCell(3);
+            assertEquals("SUM(A1:C1)", formatter.formatCellValue(d1));
+            formatter.setUseCachedValuesForFormulaCells(true);
+            assertEquals("6.75", formatter.formatCellValue(d1));
+        }
+    }
 }
