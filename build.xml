@@ -619,8 +619,8 @@ under the License.
         <echo message="Using Ant: ${ant.version} from ${ant.home}, Ant detected Java ${ant.java.version} (may be different than actual Java sometimes...)" />
         <echo message="Using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}" />
         <echo message="Building Apache POI version ${version.id} and RC: ${release.rc}, isJava8: ${isJava8}" />
-		<echo if:true="${isJava8}">Compiling for Java 8</echo>
-		<echo unless:true="${isJava8}">Compiling for Java 9+</echo>
+        <echo if:true="${isJava8}">Compiling for Java 8</echo>
+        <echo unless:true="${isJava8}">Compiling for Java 9+</echo>
 
         <loadresource property="RELEASE_TAG">
             <string>REL_${version.id}</string>
@@ -679,10 +679,10 @@ under the License.
                 <include name="hamcrest-core*"/>
                 <include name="junit-4*.jar"/>
                 <include name="*slf4j*.jar"/>
-				<include name="junit-jupiter-*-5.8.0.jar"/>
-				<include name="junit-jupiter-*-5.7.*.jar"/>
-				<include name="junit-platform-*-1.7.*.jar"/>
-			</fileset>
+                <include name="junit-jupiter-*-5.8.0.jar"/>
+                <include name="junit-jupiter-*-5.7.*.jar"/>
+                <include name="junit-platform-*-1.7.*.jar"/>
+            </fileset>
             <fileset dir="${basedir}/lib/ooxml">
                 <include name="xmlbeans-3*.jar"/>
                 <include name="xmlbeans-4*.jar"/>
@@ -902,10 +902,10 @@ under the License.
         </condition>
     </target>
     <target name="fetch-svn-jars" depends="check-svn-jars" unless="svn.jars.present">
-		<!-- some jars are gone since bintray.dl is shutting down, so we started to include them in the sources for now -->
-		<copy todir="lib/util">
-			<fileset dir="lib.stored/" includes="*.jar"/>
-		</copy>
+        <!-- some jars are gone since bintray.dl is shutting down, so we started to include them in the sources for now -->
+        <copy todir="lib/util">
+            <fileset dir="lib.stored/" includes="*.jar"/>
+        </copy>
         <downloadfile src="${dist.svnkit.url}" dest="${dist.svnkit.jar}"/>
         <downloadfile src="${dist.svnkit-javahl16.url}" dest="${dist.svnkit-javahl16.jar}"/>
         <downloadfile src="${dist.sqljet.url}" dest="${dist.sqljet.jar}"/>
@@ -1075,15 +1075,15 @@ under the License.
                 </classpath>
             </javac>
 
-			<local name="module-name"/>
-			<loadresource property="module-name">
-				<string>@{module}</string>
-				<filterchain>
-					<replacestring from="poi-" to=""/>
-				</filterchain>
-			</loadresource>
+            <local name="module-name"/>
+            <loadresource property="module-name">
+                <string>@{module}</string>
+                <filterchain>
+                    <replacestring from="poi-" to=""/>
+                </filterchain>
+            </loadresource>
 
-			<!-- compile jigsaw files to sources, so we don't forget to update/provide them for Java 8 builds -->
+            <!-- compile jigsaw files to sources, so we don't forget to update/provide them for Java 8 builds -->
             <javac release="9"
                    srcdir="${basedir}/@{module}/src/main/java9"
                    destdir="${basedir}/@{module}/src/main/java9"
@@ -1098,7 +1098,7 @@ under the License.
 
             <mkdir dir="build/dist/maven/${maven-name}"/>
 
-			<echo message="Building jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8}"/>
+            <echo message="Building jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8}"/>
 
             <!-- create classes jar -->
             <jar destfile="build/dist/maven/${maven-name}/${maven-name}-@{version}.jar">
@@ -1157,7 +1157,7 @@ under the License.
                 </modulepath>
             </javac>
 
-			<echo message="Building test-jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8}"/>
+            <echo message="Building test-jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8}"/>
 
             <!-- create test classes jar - using the module-info of the tests -->
             <jar destfile="build/dist/maven/${maven-name}-tests/${maven-name}-@{version}-tests.jar" unless:blank="@{test}">
@@ -1532,7 +1532,7 @@ under the License.
     </target>
 
     <target name="-version-java-check">
-		<!-- recompile Version.java from the template whenever source or the version in build.xml changes -->
+        <!-- recompile Version.java from the template whenever source or the version in build.xml changes -->
         <uptodate property="version.java.notRequired" targetfile="${main.output.dir}/org/apache/poi/Version.class">
             <srcfiles file="poi/src/main/version/Version.java.template"/>
             <srcfiles file="build.xml"/>
@@ -1540,8 +1540,8 @@ under the License.
     </target>
 
     <target name="compile-version"
-			unless="version.java.notRequired"
-			depends="init, -version-java-check"
+            unless="version.java.notRequired"
+            depends="init, -version-java-check"
             description="Compiles the version class">
         <!-- Generate the .java file -->
         <local name="version.dir"/>
@@ -2183,15 +2183,15 @@ under the License.
 
             <mkdir dir="@{src}/META-INF/versions/9"/>
 
-			<local name="module-name"/>
-			<loadresource property="module-name">
-				<string>@{module}</string>
-				<filterchain>
-					<replacestring from="poi-" to=""/>
-				</filterchain>
-			</loadresource>
+            <local name="module-name"/>
+            <loadresource property="module-name">
+                <string>@{module}</string>
+                <filterchain>
+                    <replacestring from="poi-" to=""/>
+                </filterchain>
+            </loadresource>
 
-			<echo message="Building maven-jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8} and src: @{src}"/>
+            <echo message="Building maven-jar for @{module}, module-name: ${module-name} with isJava8: ${isJava8} and src: @{src}"/>
 
             <javac release="9"
                    srcdir="${basedir}/@{module}/src/main/java9"
@@ -2550,7 +2550,6 @@ under the License.
             <fileset dir="${ooxml.output.dir}"/>
             <fileset dir="${scratchpad.output.dir}"/>
             <fileset dir="${excelant.output.dir}"/>
-            <fileset dir="${integration.output.test.dir}"/>
         </forbiddenapis>
     </target>
 
@@ -3214,20 +3213,20 @@ under the License.
       <echo>Using Ant: ${ant.version} from ${ant.home}</echo>
     </target>
 
-	<target name="replaceVersion" description="Apply the version from build.xml in all other places">
-		<replaceregexp
+    <target name="replaceVersion" description="Apply the version from build.xml in all other places">
+        <replaceregexp
                match=" version = '[0-9.]+(?:-SNAPSHOT)?'"
                replace=" version = '${version.id}'">
-			<fileset dir=".">
-				<include name="build.gradle"/>
-			</fileset>
+            <fileset dir=".">
+                <include name="build.gradle"/>
+            </fileset>
         </replaceregexp>
-		<replaceregexp
+        <replaceregexp
                match="&lt;poi.version>[0-9.]+(?:-SNAPSHOT)?&lt;/poi.version>"
                replace="&lt;poi.version>${version.id}&lt;/poi.version>">
-			<fileset dir=".">
-				<include name="osgi/pom.xml"/>
-			</fileset>
+            <fileset dir=".">
+                <include name="osgi/pom.xml"/>
+            </fileset>
         </replaceregexp>
-	</target>
+    </target>
 </project>
