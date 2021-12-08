@@ -827,19 +827,34 @@ class TestDataFormatter {
 
     @Test
     void testFormulaEvaluation() throws IOException {
-        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("FormulaEvalTestData.xls");
+        try (Workbook wb = HSSFTestDataSamples.openSampleWorkbook("FormulaEvalTestData.xls")) {
+            CellReference ref = new CellReference("D47");
 
-        CellReference ref = new CellReference("D47");
+            Cell cell = wb.getSheetAt(0).getRow(ref.getRow()).getCell(ref.getCol());
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals("G9:K9 I7:I12", cell.getCellFormula());
 
-        Cell cell = wb.getSheetAt(0).getRow(ref.getRow()).getCell(ref.getCol());
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals("G9:K9 I7:I12", cell.getCellFormula());
+            DataFormatter formatter = new DataFormatter();
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            assertEquals("5.6789", formatter.formatCellValue(cell, evaluator));
+        }
+    }
 
-        DataFormatter formatter = new DataFormatter();
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-        assertEquals("5.6789", formatter.formatCellValue(cell, evaluator));
+    @Test
+    void testFormulaEvaluationWithoutFormulaEvaluator() throws IOException {
+        String formula = "G9:K9 I7:I12";
+        try (Workbook wb = HSSFTestDataSamples.openSampleWorkbook("FormulaEvalTestData.xls")) {
+            CellReference ref = new CellReference("D47");
 
-        wb.close();
+            Cell cell = wb.getSheetAt(0).getRow(ref.getRow()).getCell(ref.getCol());
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals(formula, cell.getCellFormula());
+
+            DataFormatter formatter = new DataFormatter();
+            assertEquals(formula, formatter.formatCellValue(cell));
+            formatter.setUseCachedValuesForFormulaCells(true);
+            assertEquals("5.6789", formatter.formatCellValue(cell));
+        }
     }
 
     @Test
