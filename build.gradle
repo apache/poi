@@ -407,7 +407,7 @@ subprojects {
     }
 
     forbiddenApisMain {
-        signaturesFiles = files('../src/resources/devtools/forbidden-signatures-prod.txt')
+        signaturesFiles += files('../src/resources/devtools/forbidden-signatures-prod.txt')
     }
 
     task jenkins
