@@ -1045,7 +1045,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
             assertEquals("A1:D100", sheet.getCTWorksheet().getAutoFilter().getRef());
 
-            // auto-filter must be registered in workboook.xml, see Bugzilla 50315
+            // auto-filter must be registered in workbook.xml, see Bugzilla 50315
             XSSFName nm = wb.getBuiltInName(XSSFName.BUILTIN_FILTER_DB, 0);
             assertNotNull(nm);
 
