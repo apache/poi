@@ -209,7 +209,12 @@ public class DataFormatter {
     /** whether years in dates should be displayed with 4 digits even if the formatString specifies only 2 **/
     private boolean use4DigitYearsInAllDateFormats = false;
 
-    /** stores the locale valid it the last formatting call */
+    /**
+     * if set to true, avoid recalculating the values if there is a cached value available (default is false)
+     */
+    private boolean useCachedValuesForFormulaCells = false;
+
+    /** stores the locale set by updateLocale method */
     private Locale locale;
 
     /** stores if the locale should change according to {@link LocaleUtil#getUserLocale()} */
@@ -271,12 +276,43 @@ public class DataFormatter {
     }
 
     /**
+     * @param useCachedValuesForFormulaCells if set to true, when you do not provide a {@link FormulaEvaluator},
+     *                                       for cells with formulas, we will return the cached value for the cell (if available),
+     *                                       otherwise - we return the formula itself.
+     *                                       The default is false and this means we return the formula itself.
+     * @since POI 5.2.0
+     */
+    public void setUseCachedValuesForFormulaCells(boolean useCachedValuesForFormulaCells) {
+        this.useCachedValuesForFormulaCells = useCachedValuesForFormulaCells;
+    }
+
+    /**
+     * @return useCachedValuesForFormulaCells if set to true, when you do not provide a {@link FormulaEvaluator},
+     *                                        for cells with formulas, we will return the cached value for the cell (if available),
+     *                                        otherwise - we return the formula itself.
+     *                                        The default is false and this means we return the formula itself.
+     * @since POI 5.2.0
+     */
+    public boolean useCachedValuesForFormulaCells() {
+        return useCachedValuesForFormulaCells;
+    }
+
+    /**
      * @param use4DigitYearsInAllDateFormats set to true if you want to have all dates formatted with 4 digit
      *                                       years (even if the format associated with the cell specifies just 2)
      * @since POI 5.2.0
      */
     public void setUse4DigitYearsInAllDateFormats(boolean use4DigitYearsInAllDateFormats) {
         this.use4DigitYearsInAllDateFormats = use4DigitYearsInAllDateFormats;
+    }
+
+    /**
+     * @return use4DigitYearsInAllDateFormats set to true if you want to have all dates formatted with 4 digit
+     *                                        years (even if the format associated with the cell specifies just 2)
+     * @since POI 5.2.0
+     */
+    public boolean use4DigitYearsInAllDateFormats() {
+        return use4DigitYearsInAllDateFormats;
     }
 
     /**
@@ -973,10 +1009,14 @@ public class DataFormatter {
      * </p>
      * <p>When passed a null or blank cell, this method will return an empty
      * String (""). Formulas in formula type cells will not be evaluated.
+     * {@link #setUseCachedValuesForFormulaCells} controls how these cells are evaluated.
      * </p>
      *
      * @param cell The cell
      * @return the formatted cell value as a String
+     * @see #setUseCachedValuesForFormulaCells(boolean)
+     * @see #formatCellValue(Cell, FormulaEvaluator)
+     * @see #formatCellValue(Cell, FormulaEvaluator, ConditionalFormattingEvaluator)
      */
     public String formatCellValue(Cell cell) {
         return formatCellValue(cell, null);
@@ -992,12 +1032,14 @@ public class DataFormatter {
      * String (""). Formula cells will be evaluated using the given
      * {@link FormulaEvaluator} if the evaluator is non-null. If the
      * evaluator is null, then the formula String will be returned. The caller
-     * is responsible for setting the currentRow on the evaluator
+     * is responsible for setting the currentRow on the evaluator.
      *</p>
      *
      * @param cell The cell (can be null)
      * @param evaluator The FormulaEvaluator (can be null)
      * @return a string value of the cell
+     * @see #formatCellValue(Cell)
+     * @see #formatCellValue(Cell, FormulaEvaluator, ConditionalFormattingEvaluator)
      */
     public String formatCellValue(Cell cell, FormulaEvaluator evaluator) {
         return formatCellValue(cell, evaluator, null);
@@ -1029,6 +1071,8 @@ public class DataFormatter {
      * @param evaluator The FormulaEvaluator (can be null)
      * @param cfEvaluator ConditionalFormattingEvaluator (can be null)
      * @return a string value of the cell
+     * @see #formatCellValue(Cell)
+     * @see #formatCellValue(Cell, FormulaEvaluator)
      */
     public String formatCellValue(Cell cell, FormulaEvaluator evaluator, ConditionalFormattingEvaluator cfEvaluator) {
         checkForLocaleChange();
@@ -1040,9 +1084,18 @@ public class DataFormatter {
         CellType cellType = cell.getCellType();
         if (cellType == CellType.FORMULA) {
             if (evaluator == null) {
-                return cell.getCellFormula();
+                if (useCachedValuesForFormulaCells) {
+                    try {
+                        cellType = cell.getCachedFormulaResultType();
+                    } catch (Exception e) {
+                        return cell.getCellFormula();
+                    }
+                } else {
+                    return cell.getCellFormula();
+                }
+            } else {
+                cellType = evaluator.evaluateFormulaCell(cell);
             }
-            cellType = evaluator.evaluateFormulaCell(cell);
         }
         switch (cellType) {
             case NUMERIC :
