@@ -83,6 +83,36 @@ class TestDataFormatter {
                     + "Having: " + System.getProperty("user.language") + "/" + System.getProperty("user.country"));
     }
 
+    @Test
+    void setEmulateCSV() {
+        DataFormatter dataFormatter = new DataFormatter();
+        assertFalse(dataFormatter.isEmulateCSV());
+        dataFormatter.setEmulateCSV(true);
+        assertTrue(dataFormatter.isEmulateCSV());
+        dataFormatter.setEmulateCSV(false);
+        assertFalse(dataFormatter.isEmulateCSV());
+    }
+
+    @Test
+    void setUse4DigitYearsInAllDateFormats() {
+        DataFormatter dataFormatter = new DataFormatter();
+        assertFalse(dataFormatter.use4DigitYearsInAllDateFormats());
+        dataFormatter.setUse4DigitYearsInAllDateFormats(true);
+        assertTrue(dataFormatter.use4DigitYearsInAllDateFormats());
+        dataFormatter.setUse4DigitYearsInAllDateFormats(false);
+        assertFalse(dataFormatter.use4DigitYearsInAllDateFormats());
+    }
+
+    @Test
+    void useCachedValuesForFormulaCells() {
+        DataFormatter dataFormatter = new DataFormatter();
+        assertFalse(dataFormatter.useCachedValuesForFormulaCells());
+        dataFormatter.setUseCachedValuesForFormulaCells(true);
+        assertTrue(dataFormatter.useCachedValuesForFormulaCells());
+        dataFormatter.setUseCachedValuesForFormulaCells(false);
+        assertFalse(dataFormatter.useCachedValuesForFormulaCells());
+    }
+
     /**
      * Test that we use the specified locale when deciding
      *   how to format normal numbers

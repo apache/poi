@@ -204,7 +204,7 @@ public class DataFormatter {
     private final Map<String,Format> formats = new HashMap<>();
 
     /** whether CSV friendly adjustments should be made to the formatted text **/
-    private final boolean emulateCSV;
+    private boolean emulateCSV = false;
 
     /** whether years in dates should be displayed with 4 digits even if the formatString specifies only 2 **/
     private boolean use4DigitYearsInAllDateFormats = false;
@@ -273,6 +273,22 @@ public class DataFormatter {
         // adapt to the current user locale as the locale changes)
         this.localeIsAdapting = localeIsAdapting;
         this.emulateCSV = emulateCSV;
+    }
+
+    /**
+     * @param emulateCSV whether to emulate CSV output (default false).
+     * @since POI 5.2.0
+     */
+    public void setEmulateCSV(boolean emulateCSV) {
+        this.emulateCSV = emulateCSV;
+    }
+
+    /**
+     * @return whether to emulate CSV output (default false).
+     * @since POI 5.2.0
+     */
+    public boolean isEmulateCSV() {
+        return emulateCSV;
     }
 
     /**
