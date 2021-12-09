@@ -544,9 +544,9 @@ public class XDGFShape extends XDGFSheet {
     }
 
     public Double getTxtPinY() {
-        if (_txtLocPinY == null && _masterShape != null
-                && _masterShape._txtLocPinY != null) {
-            return _masterShape._txtLocPinY;
+        if (_txtPinY == null && _masterShape != null
+                && _masterShape._txtPinY != null) {
+            return _masterShape._txtPinY;
         }
 
         if (_txtPinY == null) {
