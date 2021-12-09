@@ -32,6 +32,7 @@ ctcolumn1f12type
 ctcontrol7455type
 ctcustomerdata407dtype
 ctcustomshowlist3419type
+ctcustomxmlblockd3c1type
 ctdatarefsb753type
 ctdiagramc1cctype
 cteastasianlayout0841type
