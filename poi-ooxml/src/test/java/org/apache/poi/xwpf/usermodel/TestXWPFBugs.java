@@ -238,7 +238,7 @@ class TestXWPFBugs {
 
             assertThrows(NullPointerException.class,
                     () -> styles.getUsedStyleList(null),
-                    "Pasisng in 'null' triggers an exception");
+                    "Passing in 'null' triggers an exception");
 
             XWPFStyle style = doc.getStyles().getStyle("TableauGrille41");
             doc.getStyles().getUsedStyleList(style);

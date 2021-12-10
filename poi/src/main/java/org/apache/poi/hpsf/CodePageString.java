@@ -16,18 +16,13 @@
 ==================================================================== */
 package org.apache.poi.hpsf;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.util.*;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.poi.util.CodePageUtil;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianByteArrayInputStream;
-import org.apache.poi.util.LittleEndianConsts;
 
 import static org.apache.logging.log4j.util.Unbox.box;
 
@@ -91,11 +86,11 @@ public class CodePageString {
         final int terminator = result.indexOf( '\0' );
         if ( terminator == -1 ) {
             LOG.atWarn().log("String terminator (\\0) for CodePageString property value not found. " +
-            "Continue without trimming and hope for the best.");
+                    "Continue without trimming and hope for the best.");
             return result;
         }
         if ( terminator != result.length() - 1 ) {
-            LOG.atWarn().log("String terminator (\\0) for CodePageString property value occurred before the end of " +
+            LOG.atDebug().log("String terminator (\\0) for CodePageString property value occurred before the end of " +
                     "string. Trimming and hope for the best.");
         }
         return result.substring( 0, terminator );
