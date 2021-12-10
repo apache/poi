@@ -119,7 +119,7 @@ subprojects {
         commonsIoVersion = '2.11.0'
         commonsMathVersion = '3.6.1'
         junitVersion = '5.8.2'
-        log4jVersion = '2.14.1'
+        log4jVersion = '2.15.0'
         mockitoVersion = '4.1.0'
         hamcrestVersion = '2.2'
         xmlbeansVersion = '5.0.2'
