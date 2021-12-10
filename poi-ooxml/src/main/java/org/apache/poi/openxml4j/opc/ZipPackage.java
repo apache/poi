@@ -308,6 +308,7 @@ public final class ZipPackage extends OPCPackage {
         //  its relationship exists, and then it won't tie up)
         final List<EntryTriple> entries =
                 Collections.list(zipArchive.getEntries()).stream()
+                        .filter(zipArchiveEntry -> !ignoreEntry(zipArchiveEntry))
                         .map(zae -> new EntryTriple(zae, contentTypeManager))
                         .filter(mm -> mm.partName != null)
                         .sorted()
@@ -318,6 +319,11 @@ public final class ZipPackage extends OPCPackage {
         }
 
         return newPartList;
+    }
+
+    private static boolean ignoreEntry(ZipArchiveEntry zipArchiveEntry) {
+        String name = zipArchiveEntry.getName();
+        return name.startsWith("[trash]") || name.endsWith("/");
     }
 
     private class EntryTriple implements Comparable<EntryTriple> {
@@ -331,7 +337,7 @@ public final class ZipPackage extends OPCPackage {
             final String entryName = zipArchiveEntry.getName();
             PackagePartName ppn = null;
             // ignore trash parts
-            if (!entryName.startsWith("[trash]")) {
+            if (!ignoreEntry(zipArchiveEntry)) {
                 try {
                     // We get an error when we parse [Content_Types].xml
                     // because it's not a valid URI.
