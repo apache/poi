@@ -216,18 +216,6 @@ class TestXWPFBugs {
         }
     }
 
-    private static void addNumberingWithAbstractId(XWPFNumbering documentNumbering, int id){
-        // create a numbering scheme
-        CTAbstractNum cTAbstractNum = CTAbstractNum.Factory.newInstance();
-        // give the scheme an ID
-        cTAbstractNum.setAbstractNumId(BigInteger.valueOf(id));
-
-        XWPFAbstractNum abstractNum = new XWPFAbstractNum(cTAbstractNum);
-        BigInteger abstractNumID = documentNumbering.addAbstractNum(abstractNum);
-
-        documentNumbering.addNum(abstractNumID);
-    }
-
     @Test
     public void test65099() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("65099.docx")) {
@@ -255,5 +243,26 @@ class TestXWPFBugs {
             XWPFStyle style = doc.getStyles().getStyle("TableauGrille41");
             doc.getStyles().getUsedStyleList(style);
         }
+    }
+
+    @Test
+    void bug65738() throws Exception {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("bug65738.docx")) {
+            XWPFStyles styles = doc.getStyles();
+            assertNotNull(styles);
+            assertEquals(22, doc.getParagraphs().size());
+        }
+    }
+
+    private static void addNumberingWithAbstractId(XWPFNumbering documentNumbering, int id){
+        // create a numbering scheme
+        CTAbstractNum cTAbstractNum = CTAbstractNum.Factory.newInstance();
+        // give the scheme an ID
+        cTAbstractNum.setAbstractNumId(BigInteger.valueOf(id));
+
+        XWPFAbstractNum abstractNum = new XWPFAbstractNum(cTAbstractNum);
+        BigInteger abstractNumID = documentNumbering.addAbstractNum(abstractNum);
+
+        documentNumbering.addNum(abstractNumID);
     }
 }
