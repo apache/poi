@@ -67,7 +67,7 @@ public final class IOUtils {
      *
      * It also allows to impose a lower limit than used for very memory constrained systems.
      *
-     * Note: This is an per-allocation limit and does not allow to limit overall sum of allocations!
+     * Note: This is a per-allocation limit and does not allow you to limit the overall sum of allocations!
      *
      * Use -1 for using the limits specified per record-type.
      *
