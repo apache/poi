@@ -130,6 +130,13 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     private XWPFHeaderFooterPolicy headerFooterPolicy;
 
+    /**
+     * @param pkg OPC package
+     * @throws IOException
+     * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
+     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     */
     public XWPFDocument(OPCPackage pkg) throws IOException {
         super(pkg);
 
@@ -137,6 +144,13 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         load(XWPFFactory.getInstance());
     }
 
+    /**
+     * @param is InputStream
+     * @throws IOException
+     * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
+     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     */
     public XWPFDocument(InputStream is) throws IOException {
         super(PackageHelper.open(is));
 
