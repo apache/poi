@@ -17,6 +17,8 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+
 import java.util.Date;
 import java.util.Optional;
 
@@ -102,8 +104,10 @@ public interface PackageProperties {
 
     /**
      * Set the date of creation of the resource.
+     * @throws InvalidFormatException only since POI 5.2.0, used to throw unchecked exception
+     * IllegalArgumentException if format was invalid
      */
-    void setCreatedProperty(String created);
+    void setCreatedProperty(String created) throws InvalidFormatException;
 
     /**
      * Set the date of creation of the resource.
@@ -227,8 +231,10 @@ public interface PackageProperties {
 
     /**
      * Set the date and time of the last printing.
+     * @throws InvalidFormatException only since POI 5.2.0, used to throw unchecked exception
+     * IllegalArgumentException if format was invalid
      */
-    void setLastPrintedProperty(String lastPrinted);
+    void setLastPrintedProperty(String lastPrinted) throws InvalidFormatException;
 
     /**
      * Set the date and time of the last printing.
@@ -243,8 +249,10 @@ public interface PackageProperties {
 
     /**
      * Set the date on which the resource was changed.
+     * @throws InvalidFormatException only since POI 5.2.0, used to throw unchecked exception
+     * IllegalArgumentException if format was invalid
      */
-    void setModifiedProperty(String modified);
+    void setModifiedProperty(String modified) throws InvalidFormatException;
 
     /**
      * Set the date on which the resource was changed.

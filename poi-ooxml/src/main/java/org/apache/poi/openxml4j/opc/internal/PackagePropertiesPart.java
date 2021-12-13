@@ -427,12 +427,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      * @see org.apache.poi.openxml4j.opc.PackageProperties#setCreatedProperty(java.util.Optional)
      */
     @Override
-    public void setCreatedProperty(String created) {
-        try {
-            this.created = parseDateValue(created);
-        } catch (InvalidFormatException e) {
-            throw new IllegalArgumentException("Date for created could not be parsed: " + created, e);
-        }
+    public void setCreatedProperty(String created) throws InvalidFormatException {
+        this.created = parseDateValue(created);
     }
 
     /**
@@ -548,13 +544,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      * @see org.apache.poi.openxml4j.opc.PackageProperties#setLastPrintedProperty(java.util.Optional)
      */
     @Override
-    public void setLastPrintedProperty(String lastPrinted) {
-        try {
-            this.lastPrinted = parseDateValue(lastPrinted);
-        } catch (InvalidFormatException e) {
-            throw new IllegalArgumentException("lastPrinted  : "
-                    + e.getLocalizedMessage(), e);
-        }
+    public void setLastPrintedProperty(String lastPrinted) throws InvalidFormatException {
+        this.lastPrinted = parseDateValue(lastPrinted);
     }
 
     /**
@@ -572,13 +563,8 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      * @see org.apache.poi.openxml4j.opc.PackageProperties#setModifiedProperty(java.util.Optional)
      */
     @Override
-    public void setModifiedProperty(String modified) {
-        try {
-            this.modified = parseDateValue(modified);
-        } catch (InvalidFormatException e) {
-            throw new IllegalArgumentException("modified  : "
-                    + e.getLocalizedMessage(), e);
-        }
+    public void setModifiedProperty(String modified) throws InvalidFormatException {
+        this.modified = parseDateValue(modified);
     }
 
     /**

@@ -276,7 +276,7 @@ public class POIXMLProperties {
         public void setCreated(Optional<Date> date) {
             part.setCreatedProperty(date);
         }
-        public void setCreated(String date) {
+        public void setCreated(String date) throws InvalidFormatException {
             part.setCreatedProperty(date);
         }
         public String getCreator() {
@@ -309,7 +309,7 @@ public class POIXMLProperties {
         public void setLastPrinted(Optional<Date> date) {
             part.setLastPrintedProperty(date);
         }
-        public void setLastPrinted(String date) {
+        public void setLastPrinted(String date) throws InvalidFormatException {
             part.setLastPrintedProperty(date);
         }
         /** @since POI 3.15 beta 3 */
@@ -326,7 +326,7 @@ public class POIXMLProperties {
         public void setModified(Optional<Date> date) {
             part.setModifiedProperty(date);
         }
-        public void setModified(String date) {
+        public void setModified(String date) throws InvalidFormatException {
             part.setModifiedProperty(date);
         }
         public String getSubject() {
