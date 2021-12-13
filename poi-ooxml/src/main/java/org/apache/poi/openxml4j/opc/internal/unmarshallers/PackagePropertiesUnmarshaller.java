@@ -269,7 +269,7 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
             // DCTerms namespace only use with 'created' and 'modified' elements
             if (!(elName.equals(KEYWORD_CREATED) || elName.equals(KEYWORD_MODIFIED))) {
                 throw new InvalidFormatException("Namespace error : " + elName
-                        + " shouldn't have the following naemspace -> "
+                        + " shouldn't have the following namespace -> "
                         + PackageProperties.NAMESPACE_DCTERMS);
             }
 
