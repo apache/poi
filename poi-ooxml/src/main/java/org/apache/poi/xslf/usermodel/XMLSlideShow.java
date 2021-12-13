@@ -105,6 +105,12 @@ public class XMLSlideShow extends POIXMLDocument
         this(empty());
     }
 
+    /**
+     * @param pkg OPC package
+     * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
+     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     */
     public XMLSlideShow(OPCPackage pkg) {
         super(pkg);
 
@@ -120,6 +126,13 @@ public class XMLSlideShow extends POIXMLDocument
         }
     }
 
+    /**
+     * @param is InputStream
+     * @throws IOException
+     * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
+     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     */
     public XMLSlideShow(InputStream is) throws IOException {
         this(PackageHelper.open(is));
     }
