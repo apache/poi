@@ -670,6 +670,7 @@ under the License.
             </fileset>
             <fileset dir="${basedir}/lib/main">
                 <include name="log4j-1.2*.jar"/>
+                <include name="log4j-api-2.14*.jar"/>
                 <include name="commons-logging-1.2.jar"/>
                 <include name="*slf4j*.jar"/>
             </fileset>
@@ -682,6 +683,7 @@ under the License.
                 <include name="junit-jupiter-*-5.8.0.jar"/>
                 <include name="junit-jupiter-*-5.7.*.jar"/>
                 <include name="junit-platform-*-1.7.*.jar"/>
+                <include name="log4j-core-2.14*.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml">
                 <include name="xmlbeans-3*.jar"/>
