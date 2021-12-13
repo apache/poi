@@ -428,10 +428,12 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setCreatedProperty(String created) {
-        try {
-            this.created = setDateValue(created);
-        } catch (InvalidFormatException e) {
-            throw new IllegalArgumentException("Date for created could not be parsed: " + created, e);
+        if (created != null) {
+            try {
+                this.created = setDateValue(created);
+            } catch (InvalidFormatException e) {
+                throw new IllegalArgumentException("Date for created could not be parsed: " + created, e);
+            }
         }
     }
 
@@ -550,11 +552,13 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setLastPrintedProperty(String lastPrinted) {
-        try {
-            this.lastPrinted = setDateValue(lastPrinted);
-        } catch (InvalidFormatException e) {
-            throw new IllegalArgumentException("lastPrinted  : "
-                    + e.getLocalizedMessage(), e);
+        if (lastPrinted != null) {
+            try {
+                this.lastPrinted = setDateValue(lastPrinted);
+            } catch (InvalidFormatException e) {
+                throw new IllegalArgumentException("lastPrinted  : "
+                        + e.getLocalizedMessage(), e);
+            }
         }
     }
 
@@ -575,11 +579,13 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setModifiedProperty(String modified) {
-        try {
-            this.modified = setDateValue(modified);
-        } catch (InvalidFormatException e) {
-            throw new IllegalArgumentException("modified  : "
-                    + e.getLocalizedMessage(), e);
+        if (modified != null) {
+            try {
+                this.modified = setDateValue(modified);
+            } catch (InvalidFormatException e) {
+                throw new IllegalArgumentException("modified  : "
+                        + e.getLocalizedMessage(), e);
+            }
         }
     }
 
@@ -670,7 +676,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      * Convert a string value represented a date into a {@code Optional<Date>}
      *
      * @throws InvalidFormatException
-     *             Throws if the date format isnot valid.
+     *             Throws if the date format is not valid.
      */
     private Optional<Date> setDateValue(String dateStr) throws InvalidFormatException {
         if (dateStr == null || dateStr.isEmpty()) {
