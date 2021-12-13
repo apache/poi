@@ -268,7 +268,7 @@ under the License.
     <dependency prefix="main.commons-math3" artifact="org.apache.commons:commons-math3:3.6.1" usage="main"/>
     <dependency prefix="main.commons-io" artifact="commons-io:commons-io:2.11.0" usage="main"/>
     <dependency prefix="main.com.zaxxer" artifact="com.zaxxer:SparseBitSet:1.2" usage="main"/>
-    <dependency prefix="main.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.15.0" usage="main"/>
+    <dependency prefix="main.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.16.0" usage="main"/>
 
     <dependency prefix="main.junit-api" artifact="org.junit.jupiter:junit-jupiter-api:5.8.2" usage="main-tests"/>
     <dependency prefix="main.junit-jengine" artifact="org.junit.jupiter:junit-jupiter-engine:5.8.2" usage="main-tests"/>
@@ -288,7 +288,7 @@ under the License.
     <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.12.3" usage="main-tests"/>
     <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.12.3" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
-    <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.15.0" usage="main-tests"/>
+    <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.16.0" usage="main-tests"/>
     <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="main-tests"/>
 
     <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.9" usage="excelant"/>
@@ -671,6 +671,7 @@ under the License.
             <fileset dir="${basedir}/lib/main">
                 <include name="log4j-1.2*.jar"/>
                 <include name="log4j-api-2.14*.jar"/>
+                <include name="log4j-api-2.15*.jar"/>
                 <include name="commons-logging-1.2.jar"/>
                 <include name="*slf4j*.jar"/>
             </fileset>
@@ -2579,9 +2580,9 @@ under the License.
         <dependency prefix="spotbugs.commons-text" artifact="org.apache.commons:commons-text:1.9" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.jcip-annotations" artifact="net.jcip:jcip-annotations:1.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.icu4j" artifact="com.ibm.icu:icu4j:68.2" usage="${spotbugs.lib}" target="icu4j-63.1.jar"/>
-        <dependency prefix="spotbugs.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.15.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.15.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.log4j-slf4j18-impl" artifact="org.apache.logging.log4j:log4j-slf4j18-impl:2.15.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.16.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.16.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-slf4j18-impl" artifact="org.apache.logging.log4j:log4j-slf4j18-impl:2.16.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.saxon" artifact="net.sf.saxon:Saxon-HE:9.9.1-8" usage="${spotbugs.lib}"/>
 
         <mkdir dir="${basedir}${spotbugs.lib}/config"/>
