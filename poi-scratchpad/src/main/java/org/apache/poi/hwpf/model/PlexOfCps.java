@@ -37,6 +37,7 @@ public final class PlexOfCps {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 10_485_760;
+    private static final int MAX_NUMBER_OF_PROPERTIES = 100_000;
 
     private int _iMac;
     private final int _cbStruct;
@@ -56,6 +57,8 @@ public final class PlexOfCps {
     public PlexOfCps(byte[] buf, int start, int cb, int cbStruct) {
         // Figure out the number we hold
         _iMac = (cb - 4) / (4 + cbStruct);
+
+        IOUtils.safelyAllocateCheck(_iMac, MAX_NUMBER_OF_PROPERTIES);
 
         _cbStruct = cbStruct;
         _props = new ArrayList<>(_iMac);

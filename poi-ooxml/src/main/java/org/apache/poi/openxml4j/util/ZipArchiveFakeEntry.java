@@ -35,7 +35,12 @@ import org.apache.poi.util.TempFile;
  * @see ZipInputStreamZipEntrySource#setThresholdBytesForTempFiles(int)
  */
 /* package */ class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closeable {
-    private static Logger LOG = LogManager.getLogger(ZipArchiveFakeEntry.class);
+    private static final Logger LOG = LogManager.getLogger(ZipArchiveFakeEntry.class);
+
+    // how large a single entry in a zip-file should become at max
+    // can be overwritten via IOUtils.setByteArrayMaxOverride()
+    private static final int MAX_ENTRY_SIZE = 100_000_000;
+
     private byte[] data;
     private File tempFile;
     private EncryptedTempData encryptedTempData;
@@ -64,7 +69,7 @@ import org.apache.poi.util.TempFile;
             }
 
             // Grab the de-compressed contents for later
-            data = (entrySize == -1) ? IOUtils.toByteArray(inp) : IOUtils.toByteArray(inp, (int)entrySize);
+            data = (entrySize == -1) ? IOUtils.toByteArray(inp) : IOUtils.toByteArray(inp, (int)entrySize, MAX_ENTRY_SIZE);
         }
     }
 

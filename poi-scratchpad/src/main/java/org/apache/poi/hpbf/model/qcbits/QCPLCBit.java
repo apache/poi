@@ -17,6 +17,7 @@
 
 package org.apache.poi.hpbf.model.qcbits;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
@@ -26,8 +27,10 @@ import org.apache.poi.util.StringUtil;
  *  format is determined by the type of the PLCs.
  */
 public abstract class QCPLCBit extends QCBit {
-    private int numberOfPLCs;
-    private int typeOfPLCS;
+    private static final int MAX_NUMBER_OF_PLCS = 1000;
+
+    private final int numberOfPLCs;
+    private final int typeOfPLCS;
     /**
      * The data which goes before the main PLC entries.
      * This is apparently always made up of 2 byte
@@ -53,6 +56,7 @@ public abstract class QCPLCBit extends QCBit {
         typeOfPLCS = (int)LittleEndian.getUInt(data, 4);
 
         // Init the arrays that we can
+        IOUtils.safelyAllocateCheck(numberOfPLCs, MAX_NUMBER_OF_PLCS);
         plcValA = new long[numberOfPLCs];
         plcValB = new long[numberOfPLCs];
     }

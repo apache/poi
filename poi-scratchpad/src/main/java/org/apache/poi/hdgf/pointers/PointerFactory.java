@@ -18,6 +18,7 @@
 package org.apache.poi.hdgf.pointers;
 
 import org.apache.poi.hdgf.streams.PointerContainingStream;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -25,10 +26,14 @@ import org.apache.poi.util.LittleEndian;
  *  of the file
  */
 public final class PointerFactory {
-    private int version;
+    private static final int MAX_NUMBER_OF_POINTERS = 100_000;
+
+    private final int version;
+
     public PointerFactory(int version) {
         this.version = version;
     }
+
     public int getVersion() { return version; }
 
     /**
@@ -70,6 +75,12 @@ public final class PointerFactory {
         int numPointers = parent.getNumPointers(numPointersOffset, data);
         // How much to skip for the num pointers + any extra data?
         int skip = parent.getPostNumPointersSkip();
+
+        if (numPointers < 0) {
+            throw new IllegalArgumentException("Cannot create container pointers with negative count: " + numPointers);
+        }
+
+        IOUtils.safelyAllocateCheck(numPointers, MAX_NUMBER_OF_POINTERS);
 
         // Create
         int pos = numPointersOffset + skip;

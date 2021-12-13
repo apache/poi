@@ -86,6 +86,8 @@ import org.apache.poi.util.Units;
 public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFTextParagraph,HSLFTextRun> {
     private static final Logger LOG = LogManager.getLogger(HSLFTextParagraph.class);
 
+    private static final int MAX_NUMBER_OF_STYLES = 10_000;
+
     // Note: These fields are protected to help with unit testing
     // Other classes shouldn't really go playing with them!
     private final TextHeaderAtom _headerAtom;
@@ -1551,7 +1553,11 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
         for (int csIdx = 0; csIdx < charStyles.size(); csIdx++) {
             TextPropCollection p = charStyles.get(csIdx);
-            for (int ccRun = 0, ccStyle = p.getCharactersCovered(); ccRun < ccStyle;) {
+            int ccStyle = p.getCharactersCovered();
+            if (ccStyle > MAX_NUMBER_OF_STYLES) {
+                throw new IllegalStateException("Cannot process more than " + MAX_NUMBER_OF_STYLES + " styles, but had paragraph with " + ccStyle);
+            }
+            for (int ccRun = 0; ccRun < ccStyle;) {
                 HSLFTextParagraph para = paragraphs.get(paraIdx);
                 List<HSLFTextRun> runs = para.getTextRuns();
                 trun = runs.get(runIdx);

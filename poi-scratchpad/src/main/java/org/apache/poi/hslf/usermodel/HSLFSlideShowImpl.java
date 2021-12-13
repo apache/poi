@@ -91,6 +91,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 200_000_000;
+    private static final int MAX_DOCUMENT_SIZE = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     // Holds metadata on where things are in our document
@@ -233,7 +234,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         // Grab the document stream
         int len = docProps.getSize();
         try (InputStream is = dir.createDocumentInputStream(docProps)) {
-            _docstream = IOUtils.toByteArray(is, len);
+            _docstream = IOUtils.toByteArray(is, len, MAX_DOCUMENT_SIZE);
         }
     }
 
