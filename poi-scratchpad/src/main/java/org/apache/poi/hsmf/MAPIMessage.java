@@ -269,7 +269,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
 
    /**
     * Gets the display value of the "FROM" line of the outlook message
-    * This is not the actual address that was sent from but the formated display of the user name.
+    * This is not the actual address that was sent from but the formatted display of the user name.
     * @throws ChunkNotFoundException If the from-chunk does not exist and
     *       returnNullOnMissingChunk is set
     */

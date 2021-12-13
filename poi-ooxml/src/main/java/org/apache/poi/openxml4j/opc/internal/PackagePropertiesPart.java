@@ -236,7 +236,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     }
 
     /**
-     * Get created date formated into a String.
+     * Get created date formatted into a String.
      *
      * @return A string representation of the created date.
      */
@@ -308,7 +308,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     }
 
     /**
-     * Get last printed date formated into a String.
+     * Get last printed date formatted into a String.
      *
      * @return A string representation of the last printed date.
      */
@@ -326,7 +326,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     }
 
     /**
-     * Get modified date formated into a String.
+     * Get modified date formatted into a String.
      *
      * @return A string representation of the modified date.
      */
@@ -379,7 +379,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setCategoryProperty(String category) {
-        this.category = setStringValue(category);
+        this.category = parseStringValue(category);
     }
 
     /**
@@ -395,7 +395,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setContentStatusProperty(String contentStatus) {
-        this.contentStatus = setStringValue(contentStatus);
+        this.contentStatus = parseStringValue(contentStatus);
     }
 
     /**
@@ -411,7 +411,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setContentTypeProperty(String contentType) {
-        this.contentType = setStringValue(contentType);
+        this.contentType = parseStringValue(contentType);
     }
 
     /**
@@ -428,12 +428,10 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setCreatedProperty(String created) {
-        if (created != null) {
-            try {
-                this.created = setDateValue(created);
-            } catch (InvalidFormatException e) {
-                throw new IllegalArgumentException("Date for created could not be parsed: " + created, e);
-            }
+        try {
+            this.created = parseDateValue(created);
+        } catch (InvalidFormatException e) {
+            throw new IllegalArgumentException("Date for created could not be parsed: " + created, e);
         }
     }
 
@@ -443,8 +441,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setCreatedProperty(Optional<Date> created) {
-        if (created.isPresent())
-            this.created = created;
+        this.created = created;
     }
 
     /**
@@ -453,7 +450,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setCreatorProperty(String creator) {
-        this.creator = setStringValue(creator);
+        this.creator = parseStringValue(creator);
     }
 
     /**
@@ -469,7 +466,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setDescriptionProperty(String description) {
-        this.description = setStringValue(description);
+        this.description = parseStringValue(description);
     }
 
     /**
@@ -485,7 +482,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setIdentifierProperty(String identifier) {
-        this.identifier = setStringValue(identifier);
+        this.identifier = parseStringValue(identifier);
     }
 
     /**
@@ -501,7 +498,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setKeywordsProperty(String keywords) {
-        this.keywords = setStringValue(keywords);
+        this.keywords = parseStringValue(keywords);
     }
 
     /**
@@ -517,7 +514,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setLanguageProperty(String language) {
-        this.language = setStringValue(language);
+        this.language = parseStringValue(language);
     }
 
     /**
@@ -533,7 +530,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setLastModifiedByProperty(String lastModifiedBy) {
-        this.lastModifiedBy = setStringValue(lastModifiedBy);
+        this.lastModifiedBy = parseStringValue(lastModifiedBy);
     }
 
     /**
@@ -552,13 +549,11 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setLastPrintedProperty(String lastPrinted) {
-        if (lastPrinted != null) {
-            try {
-                this.lastPrinted = setDateValue(lastPrinted);
-            } catch (InvalidFormatException e) {
-                throw new IllegalArgumentException("lastPrinted  : "
-                        + e.getLocalizedMessage(), e);
-            }
+        try {
+            this.lastPrinted = parseDateValue(lastPrinted);
+        } catch (InvalidFormatException e) {
+            throw new IllegalArgumentException("lastPrinted  : "
+                    + e.getLocalizedMessage(), e);
         }
     }
 
@@ -568,8 +563,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setLastPrintedProperty(Optional<Date> lastPrinted) {
-        if (lastPrinted.isPresent())
-            this.lastPrinted = lastPrinted;
+        this.lastPrinted = lastPrinted;
     }
 
     /**
@@ -579,13 +573,11 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setModifiedProperty(String modified) {
-        if (modified != null) {
-            try {
-                this.modified = setDateValue(modified);
-            } catch (InvalidFormatException e) {
-                throw new IllegalArgumentException("modified  : "
-                        + e.getLocalizedMessage(), e);
-            }
+        try {
+            this.modified = parseDateValue(modified);
+        } catch (InvalidFormatException e) {
+            throw new IllegalArgumentException("modified  : "
+                    + e.getLocalizedMessage(), e);
         }
     }
 
@@ -595,8 +587,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setModifiedProperty(Optional<Date> modified) {
-        if (modified.isPresent())
-            this.modified = modified;
+        this.modified = modified;
     }
 
     /**
@@ -612,7 +603,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setRevisionProperty(String revision) {
-        this.revision = setStringValue(revision);
+        this.revision = parseStringValue(revision);
     }
     /**
      * Set subject.
@@ -620,7 +611,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setSubjectProperty(String subject) {
-        this.subject = setStringValue(subject);
+        this.subject = parseStringValue(subject);
     }
 
     /**
@@ -636,7 +627,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setTitleProperty(String title) {
-        this.title = setStringValue(title);
+        this.title = parseStringValue(title);
     }
 
     /**
@@ -652,7 +643,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      */
     @Override
     public void setVersionProperty(String version) {
-        this.version = setStringValue(version);
+        this.version = parseStringValue(version);
     }
 
     /**
@@ -665,7 +656,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
     /**
      * Convert a string value into a {@code Optional<String>}
      */
-    private Optional<String> setStringValue(String s) {
+    private Optional<String> parseStringValue(String s) {
         if (s == null || s.isEmpty()) {
             return Optional.empty();
         }
@@ -678,7 +669,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      * @throws InvalidFormatException
      *             Throws if the date format is not valid.
      */
-    private Optional<Date> setDateValue(String dateStr) throws InvalidFormatException {
+    private Optional<Date> parseDateValue(String dateStr) throws InvalidFormatException {
         if (dateStr == null || dateStr.isEmpty()) {
             return Optional.empty();
         }
@@ -720,7 +711,7 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      *
      * @param d
      *            The Date to convert.
-     * @return The formated date or null.
+     * @return The formatted date or null.
      * @see java.text.SimpleDateFormat
      */
     private static String getDateValue(Optional<Date> d) {

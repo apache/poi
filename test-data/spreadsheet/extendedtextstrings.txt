@@ -21,9 +21,9 @@
 41 74 20
 41 74 20
 
-00 00                                               # Formatting run 1, first formated char at 0
+00 00                                               # Formatting run 1, first formatted char at 0
 00 00                                               # Formatting run 1, Index to font record
-02 00                                               # Formatting run 2, first formated char at 2
+02 00                                               # Formatting run 2, first formatted char at 2
 00 00                                               # Formatting run 2, Index to font record
 
 FF FF FF                                            # extended data

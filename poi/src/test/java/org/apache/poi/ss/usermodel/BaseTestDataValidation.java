@@ -421,7 +421,7 @@ public abstract class BaseTestDataValidation {
         CellStyle cellStyle_time = wb.createCellStyle();
         cellStyle_time.setDataFormat(fmtTime);
 
-        wf.createDVTypeRow("Date ( cells are already formated as date - m/d/yyyy)");
+        wf.createDVTypeRow("Date ( cells are already formatted as date - m/d/yyyy)");
         wf.createHeaderRow();
 
         ValidationAdder va = wf.createValidationAdder(cellStyle_date, ValidationType.DATE);
@@ -435,7 +435,7 @@ public abstract class BaseTestDataValidation {
         va.addValidation(OperatorType.LESS_OR_EQUAL, "2004/03/04", null, ErrorStyle.STOP, "Less than or equal to 3/4/2004", "-", false, true, false);
 
         // "Time" validation type
-        wf.createDVTypeRow("Time ( cells are already formated as time - h:mm)");
+        wf.createDVTypeRow("Time ( cells are already formatted as time - h:mm)");
         wf.createHeaderRow();
 
         va = wf.createValidationAdder(cellStyle_time, ValidationType.TIME);

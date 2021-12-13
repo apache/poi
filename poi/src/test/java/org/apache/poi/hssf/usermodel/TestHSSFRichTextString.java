@@ -75,7 +75,7 @@ final class TestHSSFRichTextString {
 
 
     /**
-     * Test case proposed in Bug 40520:  formated twice => will format whole String
+     * Test case proposed in Bug 40520:  formatted twice => will format whole String
      */
     @Test
     void test40520_1() {
@@ -109,7 +109,7 @@ final class TestHSSFRichTextString {
     }
 
     /**
-     * Test case proposed in Bug 40520:  formated twice => will format whole String
+     * Test case proposed in Bug 40520:  formatted twice => will format whole String
      */
     @Test
     void test40520_3() {
