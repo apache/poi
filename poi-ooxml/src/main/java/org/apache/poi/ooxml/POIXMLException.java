@@ -22,7 +22,7 @@ package org.apache.poi.ooxml;
 public final class POIXMLException extends RuntimeException{
     /**
      * Create a new {@code POIXMLException} with no
-     * detail mesage.
+     * detail message.
      */
     public POIXMLException() {
         super();
