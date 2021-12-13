@@ -33,6 +33,7 @@ import java.util.Optional;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -368,6 +369,30 @@ public final class TestPOIXMLProperties {
             assertNotNull(wbBack.getProperties(), "Third writeOutAndReadBack");
             assertEquals(propValue, wbBack.getProperties().getCustomProperties().getProperty(propName).getLpwstr(), "Third prop check");
             assertEquals(propValue, wbBack.getProperties().getCustomProperties().getProperty(propName + "1").getLpwstr(), "Third prop check1");
+        }
+    }
+
+    @Test
+    void testSetInvalidCreatedDate() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CoreProperties cp = doc.getProperties().getCoreProperties();
+            assertThrows(InvalidFormatException.class, () -> cp.setCreated("not a date"));
+        }
+    }
+
+    @Test
+    void testSetInvalidLastPrintedDate() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CoreProperties cp = doc.getProperties().getCoreProperties();
+            assertThrows(InvalidFormatException.class, () -> cp.setLastPrinted("not a date"));
+        }
+    }
+
+    @Test
+    void testSetInvalidModifiedDate() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            CoreProperties cp = doc.getProperties().getCoreProperties();
+            assertThrows(InvalidFormatException.class, () -> cp.setModified("not a date"));
         }
     }
 }
