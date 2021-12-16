@@ -122,7 +122,7 @@ subprojects {
         log4jVersion = '2.16.0'
         mockitoVersion = '4.1.0'
         hamcrestVersion = '2.2'
-        xmlbeansVersion = '5.0.3'
+        xmlbeansVersion = '5.0.2'
         batikVersion = '1.14'
         saxonVersion = '10.6'
         apiGuardianVersion = '1.1.2'
