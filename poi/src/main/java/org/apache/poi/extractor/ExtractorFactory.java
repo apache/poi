@@ -243,8 +243,9 @@ public final class ExtractorFactory {
             throw new IOException("Can't create extractor - unsupported file type: "+fm);
         }
 
-        POIFSFileSystem poifs = new POIFSFileSystem(file, true);
+        POIFSFileSystem poifs = null;
         try {
+            poifs = new POIFSFileSystem(file, true);
             DirectoryNode root = poifs.getRoot();
             boolean isOOXML = root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
             return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(root, password));

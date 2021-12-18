@@ -269,6 +269,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * preserve nodes set to true.
      *
      * @throws IOException if the stream cannot be read
+     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
      * @see #HSSFWorkbook(POIFSFileSystem, boolean)
      * @see POIFSFileSystem
      */
@@ -286,6 +288,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      *                      need to. If set, will store all of the POIFSFileSystem
      *                      in memory
      * @throws IOException if the stream cannot be read
+     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
      * @see POIFSFileSystem
      */
     public HSSFWorkbook(POIFSFileSystem fs, boolean preserveNodes)
@@ -333,6 +337,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      *                      need to. If set, will store all of the POIFSFileSystem
      *                      in memory
      * @throws IOException if the stream cannot be read
+     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
      * @see POIFSFileSystem
      */
     public HSSFWorkbook(DirectoryNode directory, POIFSFileSystem fs, boolean preserveNodes)
@@ -351,6 +357,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      *                      need to. If set, will store all of the POIFSFileSystem
      *                      in memory
      * @throws IOException if the stream cannot be read
+     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
      * @see POIFSFileSystem
      */
     public HSSFWorkbook(DirectoryNode directory, boolean preserveNodes)
@@ -406,6 +414,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * preserve nodes set to true.
      *
      * @throws IOException if the stream cannot be read
+     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
      * @see #HSSFWorkbook(InputStream, boolean)
      * @see #HSSFWorkbook(POIFSFileSystem)
      * @see POIFSFileSystem
@@ -423,6 +433,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      *                      macros.  This takes more memory, so only say yes if you
      *                      need to.
      * @throws IOException if the stream cannot be read
+     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
      * @see POIFSFileSystem
      * @see #HSSFWorkbook(POIFSFileSystem)
      */
