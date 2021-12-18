@@ -126,7 +126,7 @@ public class DirectoryNode
      *
      * @return a newly opened DocumentInputStream
      *
-     * @exception IOException if the document does not exist or the
+     * @throws IOException if the document does not exist or the
      *            name is that of a DirectoryEntry
      */
     public DocumentInputStream createDocumentInputStream(
@@ -143,7 +143,7 @@ public class DirectoryNode
      *
      * @return a newly opened DocumentInputStream or DocumentInputStream
      *
-     * @exception IOException if the document does not exist or the
+     * @throws IOException if the document does not exist or the
      *            name is that of a DirectoryEntry
      */
     public DocumentInputStream createDocumentInputStream(
@@ -166,7 +166,7 @@ public class DirectoryNode
      *
      * @return the new DocumentEntry
      *
-     * @exception IOException if the document can't be created
+     * @throws IOException if the document can't be created
      */
     DocumentEntry createDocument(final POIFSDocument document)
         throws IOException
@@ -311,7 +311,7 @@ public class DirectoryNode
      * @return the specified Entry, if it is directly contained in
      *         this DirectoryEntry
      *
-     * @exception FileNotFoundException if no Entry with the specified
+     * @throws FileNotFoundException if no Entry with the specified
      *            name exists in this DirectoryEntry
      */
 
@@ -348,7 +348,7 @@ public class DirectoryNode
      *
      * @return the new DocumentEntry
      *
-     * @exception IOException if the document can't be created
+     * @throws IOException if the document can't be created
      */
 
     @Override
@@ -368,7 +368,7 @@ public class DirectoryNode
      *
      * @return the new DocumentEntry
      *
-     * @exception IOException if the document can't be created
+     * @throws IOException if the document can't be created
      */
 
     @Override
@@ -386,7 +386,7 @@ public class DirectoryNode
      *
      * @return the new DirectoryEntry
      *
-     * @exception IOException if the directory can't be created
+     * @throws IOException if the directory can't be created
      */
 
     @Override
@@ -413,7 +413,7 @@ public class DirectoryNode
      *
      * @return the new or updated DocumentEntry
      *
-     * @exception IOException if the document can't be created or its content be replaced
+     * @throws IOException if the document can't be created or its content be replaced
      */
     @SuppressWarnings("WeakerAccess")
     public DocumentEntry createOrUpdateDocument(final String name,

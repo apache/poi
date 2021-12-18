@@ -82,7 +82,7 @@ public class IntList
      * @param index the index where the new value is to be added
      * @param value the new value
      *
-     * @exception IndexOutOfBoundsException if the index is out of
+     * @throws IndexOutOfBoundsException if the index is out of
      *            range (index &lt; 0 || index &gt; size()).
      */
 
@@ -176,7 +176,7 @@ public class IntList
      *
      * @return true if this list changed as a result of the call.
      *
-     * @exception IndexOutOfBoundsException if the index is out of
+     * @throws IndexOutOfBoundsException if the index is out of
      *            range (index &lt; 0 || index &gt; size())
      */
 
@@ -309,7 +309,7 @@ public class IntList
      *
      * @return the element at the specified position in this list.
      *
-     * @exception IndexOutOfBoundsException if the index is out of
+     * @throws IndexOutOfBoundsException if the index is out of
      *            range (index &lt; 0 || index &gt;= size()).
      */
 
@@ -422,7 +422,7 @@ public class IntList
      *
      * @return the element previously at the specified position.
      *
-     * @exception IndexOutOfBoundsException if the index is out of
+     * @throws IndexOutOfBoundsException if the index is out of
      *            range (index &lt; 0 || index &gt;= size()).
      */
 
@@ -531,7 +531,7 @@ public class IntList
      *
      * @return the element previously at the specified position.
      *
-     * @exception IndexOutOfBoundsException if the index is out of
+     * @throws IndexOutOfBoundsException if the index is out of
      *            range (index &lt; 0 || index &gt;= size()).
      */
 

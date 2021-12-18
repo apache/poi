@@ -56,10 +56,10 @@ final class Util {
      * @return The POI files. The elements are ordered in the same way
      * as the files in the POI filesystem.
      *
-     * @exception FileNotFoundException if the file containing the POI
+     * @throws FileNotFoundException if the file containing the POI
      * filesystem does not exist
      *
-     * @exception IOException if an I/O exception occurs
+     * @throws IOException if an I/O exception occurs
      */
     static List<POIFile> readPOIFiles(final File poiFs, final String... poiFiles) throws IOException {
         final List<POIFile> files = new ArrayList<>();
@@ -100,7 +100,7 @@ final class Util {
      * @return The property sets. The elements are ordered in the same way
      * as the files in the POI filesystem.
      *
-     * @exception IOException if an I/O exception occurs
+     * @throws IOException if an I/O exception occurs
      */
     static List<POIFile> readPropertySets(final File poiFs) throws IOException {
         final List<POIFile> files = new ArrayList<>(7);

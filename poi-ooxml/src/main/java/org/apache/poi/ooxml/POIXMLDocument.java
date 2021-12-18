@@ -81,7 +81,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
      * @param path the path to the document
      * @return the new OPCPackage
      *
-     * @exception IOException if there was a problem opening the document
+     * @throws IOException if there was a problem opening the document
      */
     public static OPCPackage openPackage(String path) throws IOException {
         try {
@@ -206,7 +206,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
      *
      * @param stream - the java OutputStream you wish to write the file to
      *
-     * @exception IOException if anything can't be written.
+     * @throws IOException if anything can't be written.
      */
     @SuppressWarnings("resource")
     public final void write(OutputStream stream) throws IOException {

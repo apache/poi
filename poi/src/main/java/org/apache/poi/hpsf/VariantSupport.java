@@ -152,9 +152,9 @@ public class VariantSupport extends Variant {
      * @return A Java object that corresponds best to the variant field. For
      *         example, a VT_I4 is returned as a {@link Long}, a VT_LPSTR as a
      *         {@link String}.
-     * @exception ReadingNotSupportedException if a property is to be written
+     * @throws ReadingNotSupportedException if a property is to be written
      *            who's variant type HPSF does not yet support
-     * @exception UnsupportedEncodingException if the specified codepage is not
+     * @throws UnsupportedEncodingException if the specified codepage is not
      *            supported.
      * @see Variant
      */
@@ -268,8 +268,8 @@ public class VariantSupport extends Variant {
      * @param codepage The codepage to use to write non-wide strings
      * @return The number of entities that have been written. In many cases an
      * "entity" is a byte but this is not always the case.
-     * @exception IOException if an I/O exceptions occurs
-     * @exception WritingNotSupportedException if a property is to be written
+     * @throws IOException if an I/O exceptions occurs
+     * @throws WritingNotSupportedException if a property is to be written
      * who's variant type HPSF does not yet support
      */
     public static int write(final OutputStream out, final long type,

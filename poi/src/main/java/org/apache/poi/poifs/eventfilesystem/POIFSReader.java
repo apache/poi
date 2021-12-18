@@ -55,7 +55,7 @@ public class POIFSReader
      *
      * @param stream the InputStream from which to read the data
      *
-     * @exception IOException on errors reading, or on invalid data
+     * @throws IOException on errors reading, or on invalid data
      */
 
     public void read(final InputStream stream) throws IOException {
@@ -69,7 +69,7 @@ public class POIFSReader
      *
      * @param poifsFile the file from which to read the data
      *
-     * @exception IOException on errors reading, or on invalid data
+     * @throws IOException on errors reading, or on invalid data
      */
     public void read(final File poifsFile) throws IOException {
         try (POIFSFileSystem poifs = new POIFSFileSystem(poifsFile, true)) {
@@ -82,7 +82,7 @@ public class POIFSReader
      *
      * @param poifs the POIFSFileSystem from which to read the data
      *
-     * @exception IOException on errors reading, or on invalid data
+     * @throws IOException on errors reading, or on invalid data
      */
     public void read(final POIFSFileSystem poifs) throws IOException {
         registryClosed = true;
@@ -100,8 +100,8 @@ public class POIFSReader
      *
      * @param listener the listener to be registered
      *
-     * @exception NullPointerException if listener is null
-     * @exception IllegalStateException if read() has already been
+     * @throws NullPointerException if listener is null
+     * @throws IllegalStateException if read() has already been
      *                                  called
      */
 
@@ -122,9 +122,9 @@ public class POIFSReader
      * @param listener the listener to be registered
      * @param name the document name
      *
-     * @exception NullPointerException if listener is null or name is
+     * @throws NullPointerException if listener is null or name is
      *                                 null or empty
-     * @exception IllegalStateException if read() has already been
+     * @throws IllegalStateException if read() has already been
      *                                  called
      */
 
@@ -141,9 +141,9 @@ public class POIFSReader
      *             assumed
      * @param name the document name
      *
-     * @exception NullPointerException if listener is null or name is
+     * @throws NullPointerException if listener is null or name is
      *                                 null or empty
-     * @exception IllegalStateException if read() has already been
+     * @throws IllegalStateException if read() has already been
      *                                  called
      */
 
@@ -176,7 +176,7 @@ public class POIFSReader
      *
      * @param args names of the files
      *
-     * @exception IOException if the files can't be read or have invalid content
+     * @throws IOException if the files can't be read or have invalid content
      */
 
     public static void main(String[] args) throws IOException {

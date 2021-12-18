@@ -45,11 +45,11 @@ public final class HexDump {
      * @param index initial index into the byte array
      * @param length number of characters to output
      *
-     * @exception IOException is thrown if anything goes wrong writing
+     * @throws IOException is thrown if anything goes wrong writing
      *            the data to stream
-     * @exception ArrayIndexOutOfBoundsException if the index is
+     * @throws ArrayIndexOutOfBoundsException if the index is
      *            outside the data array's bounds
-     * @exception IllegalArgumentException if the output stream is
+     * @throws IllegalArgumentException if the output stream is
      *            null
      */
     public static void dump(final byte [] data, final long offset,
@@ -73,11 +73,11 @@ public final class HexDump {
      *               written
      * @param index initial index into the byte array
      *
-     * @exception IOException is thrown if anything goes wrong writing
+     * @throws IOException is thrown if anything goes wrong writing
      *            the data to stream
-     * @exception ArrayIndexOutOfBoundsException if the index is
+     * @throws ArrayIndexOutOfBoundsException if the index is
      *            outside the data array's bounds
-     * @exception IllegalArgumentException if the output stream is
+     * @throws IllegalArgumentException if the output stream is
      *            null
      */
 
@@ -94,7 +94,7 @@ public final class HexDump {
      * @param offset its offset, whatever that might mean
      * @param index initial index into the byte array
      *
-     * @exception ArrayIndexOutOfBoundsException if the index is
+     * @throws ArrayIndexOutOfBoundsException if the index is
      *            outside the data array's bounds
      * @return output string
      */
@@ -111,7 +111,7 @@ public final class HexDump {
      * @param index initial index into the byte array
      * @param length number of characters to output
      *
-     * @exception ArrayIndexOutOfBoundsException if the index is
+     * @throws ArrayIndexOutOfBoundsException if the index is
      *            outside the data array's bounds
      * @return output string
      */

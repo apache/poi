@@ -33,7 +33,7 @@ public interface BlockWritable {
      * @param stream the OutputStream to which the stored data should
      *               be written
      *
-     * @exception IOException on problems writing to the specified
+     * @throws IOException on problems writing to the specified
      *            stream
      */
 

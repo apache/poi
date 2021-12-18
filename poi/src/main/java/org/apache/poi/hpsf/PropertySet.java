@@ -179,9 +179,9 @@ public class PropertySet {
      * stream.
      * @throws IOException
      *    if the {@link InputStream} cannot be accessed as needed.
-     * @exception NoPropertySetStreamException
+     * @throws NoPropertySetStreamException
      *    if the input stream does not contain a property set.
-     * @exception UnsupportedEncodingException
+     * @throws UnsupportedEncodingException
      *    if a character encoding is not supported.
      */
     public PropertySet(final InputStream stream)
@@ -208,7 +208,7 @@ public class PropertySet {
      * @throws NoPropertySetStreamException if the byte array is not a
      * property set stream.
      *
-     * @exception UnsupportedEncodingException if the codepage is not supported.
+     * @throws UnsupportedEncodingException if the codepage is not supported.
      */
     public PropertySet(final byte[] stream, final int offset, final int length)
     throws NoPropertySetStreamException, UnsupportedEncodingException {
@@ -227,7 +227,7 @@ public class PropertySet {
      * @throws NoPropertySetStreamException if the byte array is not a
      * property set stream.
      *
-     * @exception UnsupportedEncodingException if the codepage is not supported.
+     * @throws UnsupportedEncodingException if the codepage is not supported.
      */
     public PropertySet(final byte[] stream)
     throws NoPropertySetStreamException, UnsupportedEncodingException {
@@ -376,7 +376,7 @@ public class PropertySet {
      * {@link InputStream#mark} method.
      * @return {@code true} if the stream is a property set
      * stream, else {@code false}.
-     * @exception IOException if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     public static boolean isPropertySetStream(final InputStream stream) throws IOException {
         /*
@@ -500,9 +500,9 @@ public class PropertySet {
      * Writes the property set to an output stream.
      *
      * @param out the output stream to write the section to
-     * @exception IOException if an error when writing to the output stream
+     * @throws IOException if an error when writing to the output stream
      * occurs
-     * @exception WritingNotSupportedException if HPSF does not yet support
+     * @throws WritingNotSupportedException if HPSF does not yet support
      * writing a property's variant type.
      */
     public void write(final OutputStream out) throws IOException, WritingNotSupportedException {

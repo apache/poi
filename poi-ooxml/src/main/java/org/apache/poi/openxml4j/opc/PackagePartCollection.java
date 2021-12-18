@@ -57,7 +57,7 @@ public final class PackagePartCollection implements Serializable {
      * @param part part to put
      * @return the previous value associated with {@code partName}, or
      *         {@code null} if there was no mapping for {@code partName}.
-     * @exception InvalidOperationException
+     * @throws InvalidOperationException
      *                Throws if you try to add a part with a name derived from
      *                another part name.
      */

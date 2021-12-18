@@ -47,7 +47,13 @@ public final class HMEFMessage {
     private final List<TNEFAttribute> messageAttributes = new ArrayList<>();
     private final List<MAPIAttribute> mapiAttributes = new ArrayList<>();
     private final List<Attachment> attachments = new ArrayList<>();
-    
+
+    /**
+     * @param inp input stream
+     * @throws IOException
+     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     */
     public HMEFMessage(InputStream inp) throws IOException {
         try {
             // Check the signature matches

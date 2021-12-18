@@ -162,7 +162,7 @@ public class ClassID implements Duplicatable, GenericRecord {
      *
      * @param offset The offset within the {@code dst} byte array.
      *
-     * @exception ArrayStoreException if there is not enough room for the class
+     * @throws ArrayStoreException if there is not enough room for the class
      * ID 16 bytes in the byte array after the {@code offset} position.
      */
     @SuppressWarnings("PointlessArithmeticExpression")

@@ -95,7 +95,7 @@ class TestWrite {
     /**
      * Writes an empty property set to a POIFS and reads it back in.
      *
-     * @exception IOException if an I/O exception occurs
+     * @throws IOException if an I/O exception occurs
      */
     @Test
     void withoutAFormatID() throws Exception {
@@ -120,8 +120,8 @@ class TestWrite {
     /**
      * Writes an empty property set to a POIFS and reads it back in.
      *
-     * @exception IOException if an I/O exception occurs
-     * @exception UnsupportedVariantTypeException if HPSF does not yet support
+     * @throws IOException if an I/O exception occurs
+     * @throws UnsupportedVariantTypeException if HPSF does not yet support
      * a variant type to be written
      */
     @Test
@@ -154,8 +154,8 @@ class TestWrite {
      * <p>Writes a simple property set with a SummaryInformation section to a
      * POIFS and reads it back in.</p>
      *
-     * @exception IOException if an I/O exception occurs
-     * @exception UnsupportedVariantTypeException if HPSF does not yet support
+     * @throws IOException if an I/O exception occurs
+     * @throws UnsupportedVariantTypeException if HPSF does not yet support
      * a variant type to be written
      */
     @Test
@@ -206,8 +206,8 @@ class TestWrite {
      * Writes a simple property set with two sections to a POIFS and reads it
      * back in.
      *
-     * @exception IOException if an I/O exception occurs
-     * @exception WritingNotSupportedException if HPSF does not yet support
+     * @throws IOException if an I/O exception occurs
+     * @throws WritingNotSupportedException if HPSF does not yet support
      * a variant type to be written
      */
     @Test

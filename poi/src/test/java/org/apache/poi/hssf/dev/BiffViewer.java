@@ -154,7 +154,7 @@ public final class BiffViewer {
      * @param is the InputStream from which the records will be obtained
      * @param ps the PrintWriter to output the record data
      *
-     * @exception  RecordFormatException  on error processing the InputStream
+     * @throws  RecordFormatException  on error processing the InputStream
      */
     private void createRecords(InputStream is, PrintWriter ps) throws RecordFormatException {
         RecordInputStream recStream = new RecordInputStream(is);

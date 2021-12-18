@@ -45,8 +45,8 @@ class TestUnicode {
      * property set: the first one is a {@link SummaryInformation},
      * the second one is a {@link DocumentSummaryInformation}.
      *
-     * @exception IOException if an I/O exception occurs
-     * @exception HPSFException if an HPSF exception occurs
+     * @throws IOException if an I/O exception occurs
+     * @throws HPSFException if an HPSF exception occurs
      */
     @Test
     void testPropertySetMethods() throws IOException, HPSFException {

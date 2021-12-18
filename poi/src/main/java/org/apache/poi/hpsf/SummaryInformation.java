@@ -87,9 +87,9 @@ public final class SummaryInformation extends PropertySet {
      * stream.
      * @throws IOException
      *    if the {@link InputStream} cannot be accessed as needed.
-     * @exception NoPropertySetStreamException
+     * @throws NoPropertySetStreamException
      *    if the input stream does not contain a property set.
-     * @exception UnsupportedEncodingException
+     * @throws UnsupportedEncodingException
      *    if a character encoding is not supported.
      */
     public SummaryInformation(final InputStream stream)

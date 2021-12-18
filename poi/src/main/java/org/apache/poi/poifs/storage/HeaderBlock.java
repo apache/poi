@@ -95,7 +95,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
      *
      * @param stream the source InputStream
      *
-     * @exception IOException on errors or bad data
+     * @throws IOException on errors or bad data
      */
     public HeaderBlock(InputStream stream) throws IOException {
         // Grab the first 512 bytes
@@ -366,7 +366,7 @@ public final class HeaderBlock implements HeaderBlockConstants {
     * @param stream the OutputStream to which the stored data should
     *               be written
     *
-    * @exception IOException on problems writing to the specified
+    * @throws IOException on problems writing to the specified
     *            stream
     */
    public void writeData(final OutputStream stream) throws IOException {

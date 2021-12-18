@@ -215,6 +215,8 @@ public final class HWPFDocument extends HWPFDocumentCore {
      * @throws IOException If there is an unexpected IOException from the passed
      *                     in InputStream.
 	 * @throws org.apache.poi.EmptyFileException If the given stream is empty
+     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * input format
      */
     public HWPFDocument(InputStream istream) throws IOException {
         //do Ole stuff
@@ -227,6 +229,8 @@ public final class HWPFDocument extends HWPFDocumentCore {
      * @param pfilesystem The POIFSFileSystem that contains the Word document.
      * @throws IOException If there is an unexpected IOException from the passed
      *                     in POIFSFileSystem.
+     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
      */
     public HWPFDocument(POIFSFileSystem pfilesystem) throws IOException {
         this(pfilesystem.getRoot());
@@ -240,6 +244,8 @@ public final class HWPFDocument extends HWPFDocumentCore {
      * @param directory The DirectoryNode that contains the Word document.
      * @throws IOException If there is an unexpected IOException from the passed
      *                     in POIFSFileSystem.
+     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
      */
     public HWPFDocument(DirectoryNode directory) throws IOException {
         // Load the main stream and FIB

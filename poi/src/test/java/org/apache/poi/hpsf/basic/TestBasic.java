@@ -73,8 +73,8 @@ final class TestBasic {
     /**
      * <p>Read a the test file from the "data" directory.</p>
      *
-     * @exception FileNotFoundException if the file to be read does not exist.
-     * @exception IOException if any other I/O exception occurs.
+     * @throws FileNotFoundException if the file to be read does not exist.
+     * @throws IOException if any other I/O exception occurs.
      */
     @BeforeEach
     void setUp() throws IOException {
@@ -103,9 +103,9 @@ final class TestBasic {
      * NoPropertySetStreamException} will be thrown when trying to
      * create a {@link PropertySet}.</p>
      *
-     * @exception IOException if an I/O exception occurs.
+     * @throws IOException if an I/O exception occurs.
      *
-     * @exception UnsupportedEncodingException if a character encoding is not
+     * @throws UnsupportedEncodingException if a character encoding is not
      * supported.
      */
     @Test
@@ -135,8 +135,8 @@ final class TestBasic {
      * property sets: the first one is a {@link SummaryInformation},
      * the second one is a {@link DocumentSummaryInformation}.</p>
      *
-     * @exception IOException if an I/O exception occurs
-     * @exception HPSFException if any HPSF exception occurs
+     * @throws IOException if an I/O exception occurs
+     * @throws HPSFException if any HPSF exception occurs
      */
     @Test
     void testPropertySetMethods() throws IOException, HPSFException {
@@ -159,8 +159,8 @@ final class TestBasic {
      * property sets: the first one is a {@link SummaryInformation},
      * the second one is a {@link DocumentSummaryInformation}.</p>
      *
-     * @exception IOException if an I/O exception occurs
-     * @exception HPSFException if any HPSF exception occurs
+     * @throws IOException if an I/O exception occurs
+     * @throws HPSFException if any HPSF exception occurs
      */
     @Test
     void testSectionMethods() throws IOException, HPSFException {

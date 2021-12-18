@@ -81,7 +81,7 @@ public final class EventRecordFactory {
      * @param in the InputStream from which the records will be
      *         obtained
      *
-     * @exception RecordFormatException on error processing the
+     * @throws RecordFormatException on error processing the
      *          InputStream
      */
     public void processRecords(InputStream in) throws RecordFormatException {

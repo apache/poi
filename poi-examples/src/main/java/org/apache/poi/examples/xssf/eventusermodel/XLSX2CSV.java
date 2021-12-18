@@ -191,7 +191,7 @@ public class XLSX2CSV {
      * @param strings The table of strings that may be referenced by cells in the sheet
      * @param sheetInputStream The stream to read the sheet-data from.
 
-     * @exception java.io.IOException An IO exception from the parser,
+     * @throws java.io.IOException An IO exception from the parser,
      *            possibly from a byte stream or character stream
      *            supplied by the application.
      * @throws SAXException if parsing the XML data fails.

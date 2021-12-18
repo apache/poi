@@ -230,7 +230,7 @@ public final class XSSFCell extends CellBase {
      * </p>
      * @return the value of the cell as a number
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
-     * @exception NumberFormatException if the cell value isn't a parsable {@code double}.
+     * @throws NumberFormatException if the cell value isn't a parsable {@code double}.
      * @see DataFormatter for turning this number into a string similar to that which Excel would render this number as.
      */
     @Override
@@ -671,7 +671,7 @@ public final class XSSFCell extends CellBase {
      * </p>
      * @return the value of the cell as a date
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
-     * @exception NumberFormatException if the cell value isn't a parsable {@code double}.
+     * @throws NumberFormatException if the cell value isn't a parsable {@code double}.
      * @see DataFormatter for formatting  this date into a string similar to how excel does.
      */
     @Override
@@ -692,7 +692,7 @@ public final class XSSFCell extends CellBase {
      * </p>
      * @return the value of the cell as a LocalDateTime
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is {@link CellType#STRING}
-     * @exception NumberFormatException if the cell value isn't a parsable {@code double}.
+     * @throws NumberFormatException if the cell value isn't a parsable {@code double}.
      * @see DataFormatter for formatting  this date into a string similar to how excel does.
      */
     @Override

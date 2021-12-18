@@ -309,7 +309,7 @@ public class SXSSFCell extends CellBase {
      * </p>
      * @return the value of the cell as a number
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CellType.STRING
-     * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
+     * @throws NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see org.apache.poi.ss.usermodel.DataFormatter for turning this number into a string similar to that which Excel would render this number as.
      */
     @Override
@@ -341,7 +341,7 @@ public class SXSSFCell extends CellBase {
      * </p>
      * @return the value of the cell as a date
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CellType.STRING
-     * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
+     * @throws NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see org.apache.poi.ss.usermodel.DataFormatter for formatting  this date into a string similar to how excel does.
      */
     @Override
@@ -365,7 +365,7 @@ public class SXSSFCell extends CellBase {
      * </p>
      * @return the value of the cell as a date
      * @throws IllegalStateException if the cell type returned by {@link #getCellType()} is CellType.STRING
-     * @exception NumberFormatException if the cell value isn't a parsable <code>double</code>.
+     * @throws NumberFormatException if the cell value isn't a parsable <code>double</code>.
      * @see org.apache.poi.ss.usermodel.DataFormatter for formatting  this date into a string similar to how excel does.
      */
     @Override

@@ -65,9 +65,9 @@ final class TestEmptyProperties {
     /**
      * <p>Read a the test file from the "data" directory.</p>
      *
-     * @exception FileNotFoundException if the file containing the test data
+     * @throws FileNotFoundException if the file containing the test data
      * does not exist
-     * @exception IOException if an I/O exception occurs
+     * @throws IOException if an I/O exception occurs
      */
     @BeforeEach
     void setUp() throws IOException {
@@ -95,9 +95,9 @@ final class TestEmptyProperties {
      * NoPropertySetStreamException} will be thrown when trying to
      * create a {@link PropertySet}.</p>
      *
-     * @exception IOException if an I/O exception occurs.
+     * @throws IOException if an I/O exception occurs.
      *
-     * @exception UnsupportedEncodingException if a character encoding is not
+     * @throws UnsupportedEncodingException if a character encoding is not
      * supported.
      */
     @Test
@@ -125,8 +125,8 @@ final class TestEmptyProperties {
      * property sets: the first one is a {@link SummaryInformation},
      * the second one is a {@link DocumentSummaryInformation}.</p>
      *
-     * @exception IOException if an I/O exception occurs
-     * @exception HPSFException if an HPSF operation fails
+     * @throws IOException if an I/O exception occurs
+     * @throws HPSFException if an HPSF operation fails
      */
     @Test
     void testPropertySetMethods() throws IOException, HPSFException {

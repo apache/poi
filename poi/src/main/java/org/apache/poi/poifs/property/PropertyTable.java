@@ -64,7 +64,7 @@ public final class PropertyTable implements BATManaged {
      * @param headerBlock the header block of the file
      * @param filesystem the filesystem to read from
      *
-     * @exception IOException if anything goes wrong (which should be
+     * @throws IOException if anything goes wrong (which should be
      *            a result of the input being NFG)
      */
     public PropertyTable(final HeaderBlock headerBlock, final POIFSFileSystem filesystem)

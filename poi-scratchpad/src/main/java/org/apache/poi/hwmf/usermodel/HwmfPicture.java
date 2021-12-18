@@ -80,6 +80,12 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
         return MAX_RECORD_LENGTH;
     }
 
+    /**
+     * @param inputStream
+     * @throws IOException
+     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     */
     public HwmfPicture(InputStream inputStream) throws IOException {
 
         try (LittleEndianInputStream leis = new LittleEndianInputStream(inputStream)) {

@@ -90,7 +90,7 @@ public interface DirectoryEntry extends Entry, Iterable<Entry> {
      * @return the specified Entry, if it is directly contained in
      *         this DirectoryEntry
      *
-     * @exception FileNotFoundException if no Entry with the specified
+     * @throws FileNotFoundException if no Entry with the specified
      *            name exists in this DirectoryEntry
      */
 

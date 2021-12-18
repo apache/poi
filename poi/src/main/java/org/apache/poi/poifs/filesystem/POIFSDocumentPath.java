@@ -59,7 +59,7 @@ public class POIFSDocumentPath {
      *      If the components parameter is null or has zero length, the POIFSDocumentPath is appropriate
      *      for a document that is in the root of a POIFSFileSystem
      *
-     * @exception IllegalArgumentException
+     * @throws IllegalArgumentException
      *      if any of the elements in the components parameter are null or have zero length
      */
     public POIFSDocumentPath(final String [] components) throws IllegalArgumentException {
@@ -72,7 +72,7 @@ public class POIFSDocumentPath {
      * @param path the existing path
      * @param components the additional subdirectory names to be added
      *
-     * @exception IllegalArgumentException
+     * @throws IllegalArgumentException
      *      if any of the Strings in components is null or zero length
      */
     public POIFSDocumentPath(final POIFSDocumentPath path, final String[] components) throws IllegalArgumentException {
@@ -134,7 +134,7 @@ public class POIFSDocumentPath {
      *
      * @return the nth component;
      *
-     * @exception ArrayIndexOutOfBoundsException if n &lt; 0 or n &gt;= length()
+     * @throws ArrayIndexOutOfBoundsException if n &lt; 0 or n &gt;= length()
      */
     public String getComponent(int n) throws ArrayIndexOutOfBoundsException {
         return components[ n ];

@@ -361,7 +361,7 @@ public final class RecordInputStream implements LittleEndianInput {
      *
      * @param requestedLength the length of the final string
      * @return                                     the converted string
-     * @exception  IllegalArgumentException        if len is too large (i.e.,
+     * @throws  IllegalArgumentException        if len is too large (i.e.,
      *      there is not enough data in string to create a String of that
      *      length)
      */

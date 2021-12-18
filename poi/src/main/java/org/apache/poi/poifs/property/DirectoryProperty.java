@@ -249,7 +249,7 @@ public class DirectoryProperty extends Property implements Parent, Iterable<Prop
      *
      * @param property the new child to be added; must not be null
      *
-     * @exception IOException if we already have a child with the same
+     * @throws IOException if we already have a child with the same
      *                        name
      */
     public void addChild(final Property property)

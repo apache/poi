@@ -814,7 +814,7 @@ public class DateUtil {
      *
      * @return days number of days since 1900/12/31
      * @param  cal the Calendar
-     * @exception IllegalArgumentException if date is invalid
+     * @throws IllegalArgumentException if date is invalid
      */
     protected static int absoluteDay(Calendar cal, boolean use1904windowing)
     {
@@ -826,7 +826,7 @@ public class DateUtil {
      *
      * @return days number of days since 1900/12/31
      * @param  date the Date
-     * @exception IllegalArgumentException if date is invalid
+     * @throws IllegalArgumentException if date is invalid
      */
     protected static int absoluteDay(LocalDateTime date, boolean use1904windowing)
     {
@@ -839,7 +839,7 @@ public class DateUtil {
      * @return days number of days since 1900/12/31
      * @param  dayOfYear the day of the year
      * @param  year the year
-     * @exception IllegalArgumentException if date is invalid
+     * @throws IllegalArgumentException if date is invalid
      */
     private static int absoluteDay(int year, int dayOfYear, boolean use1904windowing) {
         return dayOfYear + daysInPriorYears(year, use1904windowing);
@@ -851,7 +851,7 @@ public class DateUtil {
      * @return    days  number of days in years prior to yr.
      * @param     yr    a year (1900 < yr < 4000)
      * @param use1904windowing Should 1900 or 1904 date windowing be used?
-     * @exception IllegalArgumentException if year is outside of range.
+     * @throws IllegalArgumentException if year is outside of range.
      */
 
     static int daysInPriorYears(int yr, boolean use1904windowing)

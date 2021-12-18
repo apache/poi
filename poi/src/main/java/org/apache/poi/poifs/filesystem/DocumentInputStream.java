@@ -66,7 +66,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
      *
      * @param document the DocumentEntry to be read
      *
-     * @exception IOException if the DocumentEntry cannot be opened (like, maybe it has
+     * @throws IOException if the DocumentEntry cannot be opened (like, maybe it has
      *                been deleted?)
      */
     public DocumentInputStream(DocumentEntry document) throws IOException {

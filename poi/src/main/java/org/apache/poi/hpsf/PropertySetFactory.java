@@ -47,7 +47,7 @@ public class PropertySetFactory {
      * @throws NoPropertySetStreamException if the stream does not
      * contain a property set.
      * @throws IOException if some I/O problem occurs.
-     * @exception UnsupportedEncodingException if the specified codepage is not
+     * @throws UnsupportedEncodingException if the specified codepage is not
      * supported.
      */
     public static PropertySet create(final DirectoryEntry dir, final String name)
@@ -70,7 +70,7 @@ public class PropertySetFactory {
      * @throws NoPropertySetStreamException if the stream does not
      * contain a property set.
      * @throws IOException if some I/O problem occurs.
-     * @exception UnsupportedEncodingException if the specified codepage is not
+     * @throws UnsupportedEncodingException if the specified codepage is not
      * supported.
      */
     public static PropertySet create(final InputStream stream)

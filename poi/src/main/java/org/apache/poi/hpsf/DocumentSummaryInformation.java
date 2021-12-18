@@ -97,7 +97,7 @@ public class DocumentSummaryInformation extends PropertySet {
      * stream.
      * @throws IOException
      *    if the {@link InputStream} cannot be accessed as needed.
-     * @exception NoPropertySetStreamException
+     * @throws NoPropertySetStreamException
      *    if the input stream does not contain a property set.
      */
     public DocumentSummaryInformation(final InputStream stream)

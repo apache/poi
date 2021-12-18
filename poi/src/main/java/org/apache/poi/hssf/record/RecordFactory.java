@@ -160,7 +160,7 @@ public final class RecordFactory {
      *
      * @return an array of Records created from the InputStream
      *
-     * @exception org.apache.poi.util.RecordFormatException on error processing the InputStream
+     * @throws org.apache.poi.util.RecordFormatException on error processing the InputStream
      */
     public static List<org.apache.poi.hssf.record.Record> createRecords(InputStream in) throws RecordFormatException {
 

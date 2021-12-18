@@ -319,7 +319,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * Write out this workbook to an OutputStream.
      *
      * @param stream - the java OutputStream you wish to write to
-     * @exception IOException if anything can't be written.
+     * @throws IOException if anything can't be written.
      */
     void write(OutputStream stream) throws IOException;
 

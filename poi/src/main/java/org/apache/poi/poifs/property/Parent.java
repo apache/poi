@@ -40,7 +40,7 @@ public interface Parent extends Child, Iterable<Property> {
      *
      * @param property the new child to be added; must not be null
      *
-     * @exception IOException if the Parent already has a child with
+     * @throws IOException if the Parent already has a child with
      *                        the same name
      */
 

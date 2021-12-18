@@ -103,7 +103,9 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * Constructor for reading MSG Files from the file system.
     *
     * @param filename Name of the file to read
-    * @exception IOException on errors reading, or invalid data
+    * @throws IOException on errors reading, or invalid data
+    * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+    * input format
     */
    public MAPIMessage(String filename) throws IOException {
       this(new File(filename));
@@ -112,7 +114,9 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * Constructor for reading MSG Files from the file system.
     *
     * @param file The file to read from
-    * @exception IOException on errors reading, or invalid data
+    * @throws IOException on errors reading, or invalid data
+    * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+    * input format
     */
    public MAPIMessage(File file) throws IOException {
       this(new POIFSFileSystem(file));
@@ -124,8 +128,10 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * <p>Note - this will buffer the whole message into memory
     *  in order to process. For lower memory use, use {@link #MAPIMessage(File)}
     *
-    * @param in The InputStream to buffer then read from
-    * @exception IOException on errors reading, or invalid data
+    * @param in The InputStream to buffer and then read from
+    * @throws IOException on errors reading, or invalid data
+    * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+    * input format
     */
    public MAPIMessage(InputStream in) throws IOException {
       this(new POIFSFileSystem(in));
@@ -134,7 +140,9 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * Constructor for reading MSG Files from a POIFS filesystem
     *
     * @param fs Open POIFS FileSystem containing the message
-    * @exception IOException on errors reading, or invalid data
+    * @throws IOException on errors reading, or invalid data
+    * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+    * input format
     */
    public MAPIMessage(POIFSFileSystem fs) throws IOException {
       this(fs.getRoot());
@@ -143,7 +151,9 @@ public class MAPIMessage extends POIReadOnlyDocument {
     * Constructor for reading MSG Files from a certain
     *  point within a POIFS filesystem
     * @param poifsDir Directory containing the message
-    * @exception IOException on errors reading, or invalid data
+    * @throws IOException on errors reading, or invalid data
+    * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+    * input format
     */
    public MAPIMessage(DirectoryNode poifsDir) throws IOException {
       super(poifsDir);

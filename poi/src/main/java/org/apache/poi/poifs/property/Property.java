@@ -167,7 +167,7 @@ public abstract class Property implements Child, POIFSViewable {
      * @param stream the OutputStream to which the data should be
      *               written.
      *
-     * @exception IOException on problems writing to the specified
+     * @throws IOException on problems writing to the specified
      *            stream.
      */
     public void writeData(OutputStream stream)

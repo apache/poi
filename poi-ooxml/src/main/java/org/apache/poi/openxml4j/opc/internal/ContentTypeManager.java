@@ -208,7 +208,7 @@ public abstract class ContentTypeManager {
      * @param partName
      *            The part URI associated with the override content type to
      *            delete.
-     * @exception InvalidOperationException
+     * @throws InvalidOperationException
      *                Throws if
      */
     public void removeContentType(PackagePartName partName)
@@ -323,7 +323,7 @@ public abstract class ContentTypeManager {
      *         content type) or the extension (in case of default content type),
      *         else <code>null</code>.
      *
-     * @exception OpenXML4JRuntimeException
+     * @throws OpenXML4JRuntimeException
      *                Throws if the content type manager is not able to find the
      *                content from an existing part.
      */

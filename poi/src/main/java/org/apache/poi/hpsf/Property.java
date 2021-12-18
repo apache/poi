@@ -125,7 +125,7 @@ public class Property {
      * @param length The property's type/value pair's length in bytes.
      * @param codepage The section's and thus the property's
      * codepage. It is needed only when reading string values.
-     * @exception UnsupportedEncodingException if the specified codepage is not
+     * @throws UnsupportedEncodingException if the specified codepage is not
      * supported.
      */
     public Property(final long id, final byte[] src, final long offset, final int length, final int codepage)
@@ -161,7 +161,7 @@ public class Property {
      * @param length The property's type/value pair's length in bytes.
      * @param codepage The section's and thus the property's
      * codepage. It is needed only when reading string values.
-     * @exception UnsupportedEncodingException if the specified codepage is not
+     * @throws UnsupportedEncodingException if the specified codepage is not
      * supported.
      */
     public Property(final long id, LittleEndianByteArrayInputStream leis, final int length, final int codepage)
@@ -255,7 +255,7 @@ public class Property {
      *
      * @return the property's size in bytes
      *
-     * @exception WritingNotSupportedException if HPSF does not yet support the
+     * @throws WritingNotSupportedException if HPSF does not yet support the
      * property's variant type.
      */
     protected int getSize(int property) throws WritingNotSupportedException
@@ -487,8 +487,8 @@ public class Property {
      * @param codepage The codepage to use for writing non-wide strings
      * @return the number of bytes written to the stream
      *
-     * @exception IOException if an I/O error occurs
-     * @exception WritingNotSupportedException if a variant type is to be
+     * @throws IOException if an I/O error occurs
+     * @throws WritingNotSupportedException if a variant type is to be
      * written that is not yet supported
      */
     public int write(final OutputStream out, final int codepage)

@@ -116,7 +116,7 @@ public class Section {
      * @param offset The position in the stream that points to the
      * section's format ID.
      *
-     * @exception UnsupportedEncodingException if the section's codepage is not
+     * @throws UnsupportedEncodingException if the section's codepage is not
      * supported.
      */
     public Section(final byte[] src, final int offset) throws UnsupportedEncodingException {
@@ -711,8 +711,8 @@ public class Section {
      * @param out The stream to write into.
      *
      * @return The number of bytes written, i.e. the section's size.
-     * @exception IOException if an I/O error occurs
-     * @exception WritingNotSupportedException if HPSF does not yet support
+     * @throws IOException if an I/O error occurs
+     * @throws WritingNotSupportedException if HPSF does not yet support
      * writing a property's variant type.
      */
     public int write(final OutputStream out) throws WritingNotSupportedException, IOException {
@@ -855,7 +855,7 @@ public class Section {
      *
      * @param out The output stream to write to.
      * @param codepage The codepage to be used to write the dictionary items.
-     * @exception IOException if an I/O exception occurs.
+     * @throws IOException if an I/O exception occurs.
      */
     private void writeDictionary(final OutputStream out, final int codepage)
     throws IOException {
@@ -899,7 +899,7 @@ public class Section {
      *
      * @param dictionary The dictionary
      *
-     * @exception IllegalPropertySetDataException if the dictionary's key and
+     * @throws IllegalPropertySetDataException if the dictionary's key and
      * value types are not correct.
      *
      * @see Section#getDictionary()
