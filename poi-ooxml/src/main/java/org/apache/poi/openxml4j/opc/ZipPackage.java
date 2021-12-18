@@ -130,7 +130,7 @@ public final class ZipPackage extends OPCPackage {
         ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(in); // NOSONAR
         try {
             this.zipArchive = new ZipInputStreamZipEntrySource(zis);
-        } catch (final IOException e) {
+        } catch (final IOException | RuntimeException e) {
             IOUtils.closeQuietly(zis);
             throw e;
         }

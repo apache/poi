@@ -739,24 +739,31 @@ public class POIXMLDocumentPart {
      * Since POI 4.1.2 - pkg is closed if this method throws an exception
      */
     private static PackagePart getPartFromOPCPackage(OPCPackage pkg, String coreDocumentRel) {
-        PackageRelationship coreRel = pkg.getRelationshipsByType(coreDocumentRel).getRelationship(0);
+        try {
+            PackageRelationship coreRel = pkg.getRelationshipsByType(coreDocumentRel).getRelationship(0);
 
-        if (coreRel != null) {
-            PackagePart pp = pkg.getPart(coreRel);
-            if (pp == null) {
-                IOUtils.closeQuietly(pkg);
-                throw new POIXMLException("OOXML file structure broken/invalid - core document '" + coreRel.getTargetURI() + "' not found.");
+            if (coreRel != null) {
+                PackagePart pp = pkg.getPart(coreRel);
+                if (pp == null) {
+                    IOUtils.closeQuietly(pkg);
+                    throw new POIXMLException("OOXML file structure broken/invalid - core document '" + coreRel.getTargetURI() + "' not found.");
+                }
+                return pp;
             }
-            return pp;
-        }
 
-        coreRel = pkg.getRelationshipsByType(PackageRelationshipTypes.STRICT_CORE_DOCUMENT).getRelationship(0);
-        if (coreRel != null) {
+            coreRel = pkg.getRelationshipsByType(PackageRelationshipTypes.STRICT_CORE_DOCUMENT).getRelationship(0);
+            if (coreRel != null) {
+                IOUtils.closeQuietly(pkg);
+                throw new POIXMLException("Strict OOXML isn't currently supported, please see bug #57699");
+            }
+
             IOUtils.closeQuietly(pkg);
-            throw new POIXMLException("Strict OOXML isn't currently supported, please see bug #57699");
+            throw new POIXMLException("OOXML file structure broken/invalid - no core document found!");
+        } catch (POIXMLException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            IOUtils.closeQuietly(pkg);
+            throw new POIXMLException("OOXML file structure broken/invalid", e);
         }
-
-        IOUtils.closeQuietly(pkg);
-        throw new POIXMLException("OOXML file structure broken/invalid - no core document found!");
     }
 }

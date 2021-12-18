@@ -105,14 +105,17 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
     }
 
     public static AesZipFileZipEntrySource createZipEntrySource(InputStream is) throws IOException {
-        // generate session key
-        byte[] ivBytes = new byte[16], keyBytes = new byte[16];
-        RandomSingleton.getInstance().nextBytes(ivBytes);
-        RandomSingleton.getInstance().nextBytes(keyBytes);
-        final File tmpFile = TempFile.createTempFile("protectedXlsx", ".zip");
-        copyToFile(is, tmpFile, keyBytes, ivBytes);
-        IOUtils.closeQuietly(is);
-        return fileToSource(tmpFile, keyBytes, ivBytes);
+        try {
+            // generate session key
+            byte[] ivBytes = new byte[16], keyBytes = new byte[16];
+            RandomSingleton.getInstance().nextBytes(ivBytes);
+            RandomSingleton.getInstance().nextBytes(keyBytes);
+            final File tmpFile = TempFile.createTempFile("protectedXlsx", ".zip");
+            copyToFile(is, tmpFile, keyBytes, ivBytes);
+            return fileToSource(tmpFile, keyBytes, ivBytes);
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
     }
 
     private static void copyToFile(InputStream is, File tmpFile, byte[] keyBytes, byte[] ivBytes) throws IOException {
