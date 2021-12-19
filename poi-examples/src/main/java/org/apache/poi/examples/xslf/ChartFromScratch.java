@@ -75,7 +75,8 @@ public final class ChartFromScratch {
         try (BufferedReader modelReader = Files.newBufferedReader(Paths.get(args[0]), StandardCharsets.UTF_8)) {
 
             String chartTitle = modelReader.readLine();  // first line is chart title
-            String[] series = modelReader.readLine().split(",");
+            String seriesText = modelReader.readLine();
+            String[] series = seriesText == null ? new String[0] : seriesText.split(",");
 
             // Category Axis Data
             List<String> listLanguages = new ArrayList<>(10);
