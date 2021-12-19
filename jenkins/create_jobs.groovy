@@ -464,7 +464,7 @@ poijobs.each { poijob ->
                 recordIssues {
                     tools {
                         spotBugs {
-                            pattern('*/build/reports/spotbugs/*.txt')
+                            pattern('*/build/reports/spotbugs/*.xml')
                             reportEncoding('UTF-8')
                         }
                     }
