@@ -31,7 +31,6 @@ buildscript {
     dependencies {
         classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.3'
         classpath 'de.thetaphi:forbiddenapis:3.2'
-        classpath 'com.github.spotbugs.snom:spotbugs-gradle-plugin:5.0.3'
     }
 }
 
@@ -40,6 +39,7 @@ plugins {
     id "com.dorongold.task-tree" version "2.1.0"
     id('org.nosphere.apache.rat') version '0.7.0'
     id 'distribution'
+    id "com.github.spotbugs" version "5.0.3"
 }
 
 repositories {
