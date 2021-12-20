@@ -82,7 +82,7 @@ dependencies {
     rendersignImplementation "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
     rendersignImplementation "org.bouncycastle:bcutil-jdk15on:${bouncyCastleVersion}"
 
-    renderImplementation 'de.rototor.pdfbox:graphics2d:0.33'
+    renderImplementation 'de.rototor.pdfbox:graphics2d:0.34'
     renderImplementation "org.apache.xmlgraphics:batik-svggen:${batikVersion}"
     renderImplementation("org.apache.xmlgraphics:batik-svgrasterizer:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
