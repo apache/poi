@@ -77,7 +77,7 @@ public final class SSPerformanceTest {
         runWithArgs(type, rows, cols, saveFile);
         long timeFinished = System.currentTimeMillis();
 
-        System.out.printf(Locale.ROOT, "Elapsed %.2f seconds for arguments %s\n", ((double)timeFinished - timeStarted) / 1000, Arrays.toString(args));
+        System.out.printf(Locale.ROOT, "Elapsed %.2f seconds for arguments %s%n", ((double)timeFinished - timeStarted) / 1000, Arrays.toString(args));
     }
 
     private static void runWithArgs(String type, int rows, int cols, boolean saveFile) throws IOException {
@@ -170,10 +170,8 @@ public final class SSPerformanceTest {
     }
 
     private static void saveFile(Workbook workBook, String fileName) {
-        try {
-            FileOutputStream out = new FileOutputStream(fileName);
+        try (FileOutputStream out = new FileOutputStream(fileName)) {
             workBook.write(out);
-            out.close();
         } catch (IOException ioe) {
             System.err.println("Error: failed to write to file \"" + fileName + "\", reason=" + ioe.getMessage());
         }

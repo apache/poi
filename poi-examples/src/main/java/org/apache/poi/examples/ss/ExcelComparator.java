@@ -19,12 +19,7 @@ package org.apache.poi.examples.ss;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -96,7 +91,7 @@ public class ExcelComparator {
         Cell cell;
     }
 
-    List<String> listOfDifferences = new ArrayList<>();
+    private List<String> listOfDifferences = new ArrayList<>();
     private final DateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ROOT);
 
 
@@ -133,7 +128,7 @@ public class ExcelComparator {
         excelComparator.compareSheetNames(loc1, loc2);
         excelComparator.compareSheetData(loc1, loc2);
 
-        return excelComparator.listOfDifferences;
+        return Collections.unmodifiableList(excelComparator.listOfDifferences);
     }
 
     /**
@@ -248,7 +243,7 @@ public class ExcelComparator {
             int num2 = (ri2.hasNext()) ? ri2.next().getPhysicalNumberOfCells() : 0;
 
             if (num1 != num2) {
-                String str = String.format(Locale.ROOT, "%s\nworkbook1 -> %s [%d] != workbook2 -> %s [%d]",
+                String str = String.format(Locale.ROOT, "%s%nworkbook1 -> %s [%d] != workbook2 -> %s [%d]",
                     "Number Of Columns does not Match ::",
                     loc1.sheet.getSheetName(), num1,
                     loc2.sheet.getSheetName(), num2
@@ -274,7 +269,7 @@ public class ExcelComparator {
             int num2 = loc2.sheet.getPhysicalNumberOfRows();
 
             if (num1 != num2) {
-                String str = String.format(Locale.ROOT, "%s\nworkbook1 -> %s [%d] != workbook2 -> %s [%d]",
+                String str = String.format(Locale.ROOT, "%s%nworkbook1 -> %s [%d] != workbook2 -> %s [%d]",
                     "Number Of Rows does not Match ::",
                     loc1.sheet.getSheetName(), num1,
                     loc2.sheet.getSheetName(), num2
@@ -292,7 +287,7 @@ public class ExcelComparator {
         int num1 = loc1.workbook.getNumberOfSheets();
         int num2 = loc2.workbook.getNumberOfSheets();
         if (num1 != num2) {
-            String str = String.format(Locale.ROOT, "%s\nworkbook1 [%d] != workbook2 [%d]",
+            String str = String.format(Locale.ROOT, "%s%nworkbook1 [%d] != workbook2 [%d]",
                 "Number of Sheets do not match ::",
                 num1, num2
             );
@@ -321,7 +316,7 @@ public class ExcelComparator {
             String name2 = (loc2.workbook.getNumberOfSheets() > i) ? loc2.workbook.getSheetName(i) : "";
 
             if (!name1.equals(name2)) {
-                String str = String.format(Locale.ROOT, "%s\nworkbook1 -> %s [%d] != workbook2 -> %s [%d]",
+                String str = String.format(Locale.ROOT, "%s%nworkbook1 -> %s [%d] != workbook2 -> %s [%d]",
                     "Name of the sheets do not match ::", name1, i+1, name2, i+1
                 );
                 listOfDifferences.add(str);
@@ -334,7 +329,7 @@ public class ExcelComparator {
      */
     private void addMessage(Locator loc1, Locator loc2, String messageStart, String value1, String value2) {
         String str =
-            String.format(Locale.ROOT, "%s\nworkbook1 -> %s -> %s [%s] != workbook2 -> %s -> %s [%s]",
+            String.format(Locale.ROOT, "%s%nworkbook1 -> %s -> %s [%s] != workbook2 -> %s -> %s [%s]",
                 messageStart,
                 loc1.sheet.getSheetName(), new CellReference(loc1.cell).formatAsString(), value1,
                 loc2.sheet.getSheetName(), new CellReference(loc2.cell).formatAsString(), value2

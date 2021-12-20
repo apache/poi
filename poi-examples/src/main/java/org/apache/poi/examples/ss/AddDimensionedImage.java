@@ -860,7 +860,7 @@ public class AddDimensionedImage {
      *
      * @version 1.00 5th August 2009.
      */
-    public class ClientAnchorDetail {
+    public static class ClientAnchorDetail {
 
         private int fromIndex;
         private int toIndex;
