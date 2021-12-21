@@ -803,7 +803,10 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
                 for (CTTableColumn col : ctTableColumns.getTableColumnList()) {
                     XSSFCell cell = row.getCell(cellnum);
                     if (cell != null) {
-                        col.setName(formatter.formatCellValue(cell));
+                        String colName = formatter.formatCellValue(cell);
+                        colName = colName.replace("\n", "_x000a_");
+                        colName = colName.replace("\r", "_x000d_");
+                        col.setName(colName);
                     }
                     cellnum++;
                 }
