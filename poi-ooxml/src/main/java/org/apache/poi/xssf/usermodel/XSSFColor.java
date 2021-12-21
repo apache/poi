@@ -22,7 +22,6 @@ import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.ExtendedColor;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
 /**
@@ -34,11 +33,20 @@ public class XSSFColor extends ExtendedColor {
 
     /**
      * @param color The ooxml color object to use
-     * @param map The IndexedColorMap to use instead of the default one
+     * @param map The IndexedColorMap to use instead of the default one (can be null)
      * @return null if color is null, new instance otherwise
      */
     public static XSSFColor from(CTColor color, IndexedColorMap map) {
         return color == null ? null : new XSSFColor(color, map);
+    }
+
+    /**
+     * @param color The ooxml color object to use
+     * @return null if color is null, new instance otherwise
+     * @since POI 5.2.0
+     */
+    public static XSSFColor from(CTColor color) {
+        return color == null ? null : new XSSFColor(color, null);
     }
 
     private XSSFColor(CTColor color, IndexedColorMap map) {
@@ -47,8 +55,15 @@ public class XSSFColor extends ExtendedColor {
     }
 
     /**
+     * @since POI 5.2.0
+     */
+    public XSSFColor() {
+        this(CTColor.Factory.newInstance(), null);
+    }
+
+    /**
      * new color with the given indexed color map
-     * @param colorMap The IndexedColorMap to use instead of the default one
+     * @param colorMap The IndexedColorMap to use instead of the default one (can be null)
      */
     public XSSFColor(IndexedColorMap colorMap) {
         this(CTColor.Factory.newInstance(), colorMap);
@@ -57,7 +72,7 @@ public class XSSFColor extends ExtendedColor {
     /**
      * TEST ONLY
      * @param clr awt Color
-     * @param map The IndexedColorMap to use instead of the default one
+     * @param map The IndexedColorMap to use instead of the default one (can be null)
      */
     public XSSFColor(java.awt.Color clr, IndexedColorMap map) {
         this(map);
@@ -65,13 +80,20 @@ public class XSSFColor extends ExtendedColor {
     }
 
     /**
-     *
      * @param rgb The RGB-byte-values for the Color
-     * @param colorMap The IndexedColorMap to use instead of the default one
+     * @param colorMap The IndexedColorMap to use instead of the default one (can be null)
      */
     public XSSFColor(byte[] rgb, IndexedColorMap colorMap) {
         this(CTColor.Factory.newInstance(), colorMap);
         ctColor.setRgb(rgb);
+    }
+
+    /**
+     * @param rgb The RGB-byte-values for the Color
+     * @since POI 5.2.0
+     */
+    public XSSFColor(byte[] rgb) {
+        this(rgb, null);
     }
 
     /**
@@ -90,6 +112,7 @@ public class XSSFColor extends ExtendedColor {
     public boolean isAuto() {
         return ctColor.getAuto();
     }
+
     /**
      * @param auto true if the ctColor is automatic and system ctColor dependent.
      */
