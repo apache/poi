@@ -221,6 +221,14 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     Iterator<Sheet> sheetIterator();
 
     /**
+     * Alias for {@link #sheetIterator()} to allow foreach loops
+     */
+    @Override
+    default Iterator<Sheet> iterator() {
+        return sheetIterator();
+    }
+
+    /**
      * Get the number of spreadsheets in the workbook
      *
      * @return the number of sheets

@@ -987,15 +987,6 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         return new SheetIterator<>();
     }
 
-    /**
-     * Alias for {@link #sheetIterator()} to allow
-     * foreach loops
-     */
-    @Override
-    public Iterator<Sheet> iterator() {
-        return sheetIterator();
-    }
-
     private final class SheetIterator<T extends Sheet> implements Iterator<T> {
         final private Iterator<T> it;
 

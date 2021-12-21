@@ -787,15 +787,6 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Alias for {@link #sheetIterator()} to allow
-     * foreach loops
-     */
-    @Override
-    public Iterator<Sheet> iterator() {
-        return sheetIterator();
-    }
-
-    /**
      * Get the Sheet object at the given index.
      *
      * @param index of the sheet number (0-based physical and logical)
