@@ -963,16 +963,6 @@ public final class HSSFSheet implements Sheet {
     }
 
     /**
-     * Alias for {@link #rowIterator()} to allow
-     * foreach loops
-     */
-    @Override
-    public Iterator<Row> iterator() {
-        return rowIterator();
-    }
-
-
-    /**
      * used internally in the API to get the low level Sheet record represented by this
      * Object.
      *

@@ -376,6 +376,14 @@ public interface Sheet extends Iterable<Row> {
     Iterator<Row> rowIterator();
 
     /**
+     * Alias for {@link #rowIterator()} to allow foreach loops
+     */
+    @Override
+    default Iterator<Row> iterator() {
+        return rowIterator();
+    }
+
+    /**
      * Control if Excel should be asked to recalculate all formulas on this sheet
      * when the workbook is opened.
      *

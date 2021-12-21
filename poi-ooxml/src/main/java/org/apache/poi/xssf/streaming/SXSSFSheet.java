@@ -100,11 +100,6 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     }
 
     //start of interface implementation
-    @Override
-    public Iterator<Row> iterator() {
-        return rowIterator();
-    }
-
     /**
      * Create a new row within the sheet and return the high level representation
      *

@@ -2058,15 +2058,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     /**
-     * Alias for {@link #rowIterator()} to
-     *  allow foreach loops
-     */
-    @Override
-    public Iterator<Row> iterator() {
-        return rowIterator();
-    }
-
-    /**
      * Flag indicating whether the sheet displays Automatic Page Breaks.
      *
      * @return {@code true} if the sheet displays Automatic Page Breaks.
