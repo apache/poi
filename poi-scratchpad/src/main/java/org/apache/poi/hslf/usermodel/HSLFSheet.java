@@ -22,6 +22,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
 
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDgRecord;
@@ -360,6 +361,13 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
         return getShapes().iterator();
     }
 
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<HSLFShape> spliterator() {
+        return getShapes().spliterator();
+    }
 
     /**
      * @return whether shapes on the master sheet should be shown. By default master graphics is turned off.

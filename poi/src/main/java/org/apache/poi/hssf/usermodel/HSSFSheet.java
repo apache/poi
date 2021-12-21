@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -960,6 +961,19 @@ public final class HSSFSheet implements Sheet {
         @SuppressWarnings("unchecked") // can this clumsy generic syntax be improved?
                 Iterator<Row> result = (Iterator<Row>) (Iterator<? extends Row>) _rows.values().iterator();
         return result;
+    }
+
+    /**
+     * @return a spliterator of the PHYSICAL rows.  Meaning the 3rd element may not
+     *         be the third row if say for instance the second row is undefined.
+     *         Call getRowNum() on each row if you care which one it is.
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    @SuppressWarnings("unchecked") // can this clumsy generic syntax be improved?
+    public Spliterator<Row> spliterator() {
+        return (Spliterator<Row>)(Spliterator<? extends Row>) _rows.values().spliterator();
     }
 
     /**

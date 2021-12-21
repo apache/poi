@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Spliterator;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -322,6 +323,16 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
         return field_4_format_runs.iterator();
       }
       return null;
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    public Spliterator<FormatRun> formatSpliterator() {
+        if (field_4_format_runs != null) {
+            return field_4_format_runs.spliterator();
+        }
+        return null;
     }
 
     public void removeFormatRun(FormatRun r) {

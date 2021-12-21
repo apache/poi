@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterator;
 
 import org.apache.poi.common.Duplicatable;
 
@@ -88,6 +89,13 @@ public class IntMapper<T> implements Duplicatable, Iterable<T> {
 
     public Iterator<T> iterator() {
         return elements.iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    public Spliterator<T> spliterator() {
+        return elements.spliterator();
     }
 
     @Override

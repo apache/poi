@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBoolProperty;
@@ -409,5 +410,13 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     @Override
     public Iterator<HSSFShape> iterator() {
         return shapes.iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<HSSFShape> spliterator() {
+        return shapes.spliterator();
     }
 }

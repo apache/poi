@@ -19,6 +19,8 @@ package org.apache.poi.hssf.record.aggregates;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.Spliterators;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.BlankRecord;
@@ -353,5 +355,15 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
     /** value iterator */
     public Iterator<CellValueRecordInterface> iterator() {
         return new ValueIterator();
+    }
+
+    /**
+     * value spliterator
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<CellValueRecordInterface> spliterator() {
+        return Spliterators.spliterator(iterator(), getPhysicalNumberOfCells(), 0);
     }
 }

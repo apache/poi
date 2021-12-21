@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterator;
+import java.util.Spliterators;
 
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -381,6 +383,19 @@ public interface Sheet extends Iterable<Row> {
     @Override
     default Iterator<Row> iterator() {
         return rowIterator();
+    }
+
+    /**
+     *  Returns a spliterator of the physical rows
+     *
+     * @return a spliterator of the PHYSICAL rows.  Meaning the 3rd element may not
+     * be the third row if say for instance the second row is undefined.
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    default Spliterator<Row> spliterator() {
+        return Spliterators.spliterator(rowIterator(), getPhysicalNumberOfRows(), 0);
     }
 
     /**

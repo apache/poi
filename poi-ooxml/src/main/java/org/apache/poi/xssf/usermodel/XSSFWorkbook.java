@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Spliterator;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
@@ -1267,6 +1268,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     @Override
     public Iterator<Sheet> iterator() {
         return sheetIterator();
+    }
+
+    /**
+     * Returns a spliterator of the sheets in the workbook
+     * in sheet order. Includes hidden and very hidden sheets.
+     *
+     * @return a spliterator of the sheets.
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Spliterator<Sheet> spliterator() {
+        return (Spliterator<Sheet>)(Spliterator<? extends Sheet>) sheets.spliterator();
     }
 
     private final class SheetIterator<T extends Sheet> implements Iterator<T> {

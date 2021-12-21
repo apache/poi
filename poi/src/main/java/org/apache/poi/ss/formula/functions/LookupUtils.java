@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -123,6 +125,12 @@ public final class LookupUtils {
                 }
             };
         }
+        /**
+         * @since POI 5.2.0
+         */
+        default Spliterator<Integer> indexSpliterator() {
+            return Spliterators.spliterator(indexIterator(), getSize(), 0);
+        }
         default Iterator<Integer> reverseIndexIterator() {
             return new Iterator<Integer>() {
                 int pos = getSize() - 1;
@@ -137,6 +145,12 @@ public final class LookupUtils {
                     return pos--;
                 }
             };
+        }
+        /**
+         * @since POI 5.2.0
+         */
+        default Spliterator<Integer> reverseIndexSpliterator() {
+            return Spliterators.spliterator(reverseIndexIterator(), getSize(), 0);
         }
     }
 

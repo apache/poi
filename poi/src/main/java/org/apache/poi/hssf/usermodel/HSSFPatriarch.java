@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Spliterator;
 
 import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -552,6 +553,14 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
     @Override
     public Iterator<HSSFShape> iterator() {
         return _shapes.iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<HSSFShape> spliterator() {
+        return _shapes.spliterator();
     }
 
     protected HSSFSheet getSheet() {

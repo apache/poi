@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 
 import org.apache.poi.hpsf.ClassID;
 
@@ -113,6 +115,14 @@ public class FilteringDirectoryNode implements DirectoryEntry
    @Override
    public Iterator<Entry> iterator() {
       return getEntries();
+   }
+
+   /**
+    * @since POI 5.2.0
+    */
+   @Override
+   public Spliterator<Entry> spliterator() {
+      return Spliterators.spliterator(iterator(), getEntryCount(), 0);
    }
 
    @Override

@@ -20,6 +20,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
@@ -110,6 +111,17 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     @Override
     public Iterator<XWPFParagraph> iterator() {
         return paragraphs.iterator();
+    }
+
+    /**
+     * Get a spliterator over the {@link XWPFParagraph}s in the footnote.
+     * @return Spliterator over the paragraph list.
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<XWPFParagraph> spliterator() {
+        return paragraphs.spliterator();
     }
 
     /**

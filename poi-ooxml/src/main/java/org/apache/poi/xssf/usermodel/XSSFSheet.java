@@ -2058,6 +2058,19 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     /**
+     * @return a spliterator of the PHYSICAL rows.  Meaning the 3rd element may not
+     * be the third row if say for instance the second row is undefined.
+     * Call getRowNum() on each row if you care which one it is.
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Spliterator<Row> spliterator() {
+        return (Spliterator<Row>)(Spliterator<? extends Row>) _rows.values().spliterator();
+    }
+
+    /**
      * Flag indicating whether the sheet displays Automatic Page Breaks.
      *
      * @return {@code true} if the sheet displays Automatic Page Breaks.

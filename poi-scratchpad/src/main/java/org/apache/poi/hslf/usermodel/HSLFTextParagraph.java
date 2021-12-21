@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -339,6 +340,14 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     @Override
     public Iterator<HSLFTextRun> iterator() {
         return _runs.iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<HSLFTextRun> spliterator() {
+        return _runs.spliterator();
     }
 
     @Override

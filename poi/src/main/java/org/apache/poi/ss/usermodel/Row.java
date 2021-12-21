@@ -18,6 +18,8 @@
 package org.apache.poi.ss.usermodel;
 
 import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
 
 /**
  * High level representation of a row of a spreadsheet.
@@ -224,6 +226,17 @@ public interface Row extends Iterable<Cell> {
     @Override
     default Iterator<Cell> iterator() {
         return cellIterator();
+    }
+
+    /**
+     * @return Cell spliterator of the physically defined cells.  Note element 4 may
+     * actually be row cell depending on how many are defined!
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    default Spliterator<Cell> spliterator() {
+        return Spliterators.spliterator(cellIterator(), getPhysicalNumberOfCells(), 0);
     }
 
     /**

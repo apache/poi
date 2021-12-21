@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Spliterator;
 
 /**
  * Definition of a custom geometric shape
@@ -108,6 +109,14 @@ public final class CustomGeometry implements Iterable<PathIf>{
     @Override
     public Iterator<PathIf> iterator() {
         return paths.iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<PathIf> spliterator() {
+        return paths.spliterator();
     }
 
     public Path getTextBounds(){

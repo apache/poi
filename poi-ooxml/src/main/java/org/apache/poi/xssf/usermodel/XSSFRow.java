@@ -22,6 +22,7 @@ import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.TreeMap;
 
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -117,6 +118,19 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     @SuppressWarnings("unchecked")
     public Iterator<Cell> cellIterator() {
         return (Iterator<Cell>)(Iterator<? extends Cell>)_cells.values().iterator();
+    }
+
+    /**
+     * Cell spliterator over the physically defined cells
+     *
+     * @return a spliterator over cells in this row.
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Spliterator<Cell> spliterator() {
+        return (Spliterator<Cell>)(Spliterator<? extends Cell>)_cells.values().spliterator();
     }
 
     /**

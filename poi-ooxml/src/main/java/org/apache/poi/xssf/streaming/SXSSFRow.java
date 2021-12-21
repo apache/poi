@@ -21,6 +21,8 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.SortedMap;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.TreeMap;
 
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -59,6 +61,11 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     public Iterator<Cell> allCellsIterator()
     {
         return new CellIterator();
+    }
+
+    public Spliterator<Cell> allCellsSpliterator()
+    {
+        return Spliterators.spliterator(allCellsIterator(), getLastCellNum(), 0);
     }
 
     public boolean hasCustomHeight()
@@ -419,6 +426,22 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     public Iterator<Cell> cellIterator()
     {
         return new FilledCellIterator();
+    }
+
+    /**
+     * Create a spliterator over the cells from [0, getLastCellNum()).
+     * Includes blank cells, excludes empty cells
+     *
+     * Returns a spliterator over all filled cells (created via Row.createCell())
+     * Throws ConcurrentModificationException if cells are added, moved, or
+     * removed after the spliterator is created.
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Spliterator<Cell> spliterator() {
+        return (Spliterator<Cell>)(Spliterator<? extends Cell>) _cells.values().spliterator();
     }
 
     /**
