@@ -34,6 +34,7 @@ import java.util.Locale;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.TempFile;
@@ -652,5 +653,59 @@ public final class TestXSSFTable {
         final CellReference lowerRight = new CellReference(nNumRows - 1, nNumCols - 1);
         final AreaReference area = new AreaReference(upperLeft, lowerRight, SpreadsheetVersion.EXCEL2007);
         return sheet.createTable(area);
+    }
+
+    @Test
+    void testNamesWithNewLines() throws IOException {
+        try (
+                XSSFWorkbook wb = new XSSFWorkbook();
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            XSSFSheet sheet = wb.createSheet();
+
+            // headers
+            XSSFRow headersRow = sheet.createRow(0);
+            headersRow.createCell(0).setCellValue("Column1");
+            headersRow.createCell(1).setCellValue("Column2");
+
+            // a second row
+            XSSFRow row = sheet.createRow(1);
+            row.createCell(0).setCellValue(1);
+            row.createCell(1).setCellValue(2);
+
+            // create a table
+            AreaReference area = wb.getCreationHelper().createAreaReference(
+                    new CellReference(sheet.getRow(0).getCell(0)),
+                    new CellReference(sheet.getRow(1).getCell(1))
+            );
+            XSSFTable table = sheet.createTable(area);
+
+            // styling (no problem here)
+            sheet.setColumnWidth(0, 5000);
+            sheet.setColumnWidth(1, 5000);
+            CTTable cttable = table.getCTTable();
+            cttable.addNewTableStyleInfo();
+            XSSFTableStyleInfo style = (XSSFTableStyleInfo) table.getStyle();
+            style.setName("TableStyleMedium6");
+            style.setShowColumnStripes(false);
+            style.setShowRowStripes(true);
+            cttable.addNewAutoFilter().setRef(area.formatAsString());
+            CellStyle cellStyle = wb.createCellStyle();
+            cellStyle.setWrapText(true);
+            headersRow.getCell(0).setCellStyle(cellStyle);
+            headersRow.getCell(0).setCellValue("Column1\nwith a line break");
+
+            wb.write(bos);
+
+            try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
+                XSSFSheet wb2Sheet = wb2.getSheetAt(0);
+                List<XSSFTable> tables = wb2Sheet.getTables();
+                assertEquals(1, tables.size());
+                XSSFTable wb2Table = tables.get(0);
+                List<XSSFTableColumn> tabColumns = wb2Table.getColumns();
+                assertEquals(2, tabColumns.size());
+                assertEquals("Column1_x000a_with a line break", tabColumns.get(0).getName());
+            }
+        }
     }
 }
