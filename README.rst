@@ -89,7 +89,9 @@ Building jar files
 
 To build the jar files for poi, poi-ooxml, poi-ooxml-lite, poi-ooxml-full and poi-examples::
 
-    ant jar
+    ./gradlew jar
+
+    gradlew jar
 
 .. _Mailing lists: https://poi.apache.org/mailinglists.html
 .. _Developers: https://lists.apache.org/list.html?dev@poi.apache.org
