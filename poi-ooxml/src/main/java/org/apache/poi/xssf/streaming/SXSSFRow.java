@@ -101,15 +101,6 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     }
 //begin of interface implementation
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Iterator<Cell> iterator()
-    {
-        return new FilledCellIterator();
-    }
-
-    /**
      * Use this to create new cells within the row and return it.
      * <p>
      * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
@@ -427,7 +418,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     @Override
     public Iterator<Cell> cellIterator()
     {
-        return iterator();
+        return new FilledCellIterator();
     }
 
     /**

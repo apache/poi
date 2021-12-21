@@ -120,21 +120,6 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
     }
 
     /**
-     * Alias for {@link #cellIterator()} to allow  foreach loops:
-     * <blockquote><pre>
-     * for(Cell cell : row){
-     *     ...
-     * }
-     * </pre></blockquote>
-     *
-     * @return an iterator over cells in this row.
-     */
-    @Override
-    public Iterator<Cell> iterator() {
-        return cellIterator();
-    }
-
-    /**
      * Compares two {@code XSSFRow} objects.  Two rows are equal if they belong to the same worksheet and
      * their row indexes are equal.
      *

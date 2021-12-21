@@ -212,6 +212,21 @@ public interface Row extends Iterable<Cell> {
     Iterator<Cell> cellIterator();
 
     /**
+     * Alias for {@link #cellIterator()} to allow  foreach loops:
+     * <blockquote><pre>
+     * for(Cell cell : row){
+     *     ...
+     * }
+     * </pre></blockquote>
+     *
+     * @return an iterator over cells in this row.
+     */
+    @Override
+    default Iterator<Cell> iterator() {
+        return cellIterator();
+    }
+
+    /**
      * Returns the Sheet this row belongs to
      *
      * @return the Sheet that owns this row

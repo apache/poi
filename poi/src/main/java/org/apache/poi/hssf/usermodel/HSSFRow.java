@@ -630,14 +630,6 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
     {
       return new CellIterator();
     }
-    /**
-     * Alias for {@link #cellIterator} to allow
-     *  foreach loops
-     */
-    @Override
-    public Iterator<Cell> iterator() {
-       return cellIterator();
-    }
 
     /**
      * An iterator over the (physical) cells in the row.
