@@ -37,7 +37,7 @@ import org.apache.poi.common.Duplicatable;
  * update
  */
 
-public class IntMapper<T> implements Duplicatable {
+public class IntMapper<T> implements Duplicatable, Iterable<T> {
     private final List<T> elements;
     private final Map<T, Integer> valueKeyMap;
 

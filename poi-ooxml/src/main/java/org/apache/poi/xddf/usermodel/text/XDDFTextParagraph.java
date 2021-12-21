@@ -48,7 +48,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
  * is the highest level text separation mechanism.
  */
 @Beta
-public class XDDFTextParagraph {
+public class XDDFTextParagraph implements Iterable<XDDFTextRun> {
     private XDDFTextBody _parent;
     private XDDFParagraphProperties _properties;
     private final CTTextParagraph _p;
@@ -115,6 +115,7 @@ public class XDDFTextParagraph {
         return _runs;
     }
 
+    @Override
     public Iterator<XDDFTextRun> iterator() {
         return _runs.iterator();
     }
