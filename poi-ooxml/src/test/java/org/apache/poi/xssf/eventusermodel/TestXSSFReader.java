@@ -102,7 +102,7 @@ public final class TestXSSFReader {
 
             XSSFReader r = new XSSFReader(pkg);
 
-            assertEquals(11, r.getSharedStringsTable().getSharedStringItems().size());
+            assertEquals(11, r.getSharedStringsTable().getCount());
             assertEquals("Test spreadsheet", r.getSharedStringsTable().getItemAt(0).toString());
         }
     }

@@ -120,7 +120,7 @@ public class XSSFReader {
      * returns a handy object for working with
      * shared strings.
      */
-    public SharedStringsTable getSharedStringsTable() throws IOException, InvalidFormatException {
+    public SharedStrings getSharedStringsTable() throws IOException, InvalidFormatException {
         ArrayList<PackagePart> parts = pkg.getPartsByContentType(XSSFRelation.SHARED_STRINGS.getContentType());
         return parts.size() == 0 ? null : new SharedStringsTable(parts.get(0));
     }

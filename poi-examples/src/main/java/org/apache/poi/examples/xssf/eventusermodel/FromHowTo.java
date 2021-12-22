@@ -27,7 +27,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.model.SharedStrings;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -45,7 +45,7 @@ public class FromHowTo {
     public void processFirstSheet(String filename) throws Exception {
         try (OPCPackage pkg = OPCPackage.open(filename, PackageAccess.READ)) {
             XSSFReader r = new XSSFReader(pkg);
-            SharedStringsTable sst = r.getSharedStringsTable();
+            SharedStrings sst = r.getSharedStringsTable();
 
             XMLReader parser = fetchSheetParser(sst);
 
@@ -60,7 +60,7 @@ public class FromHowTo {
     public void processAllSheets(String filename) throws Exception {
         try (OPCPackage pkg = OPCPackage.open(filename, PackageAccess.READ)) {
             XSSFReader r = new XSSFReader(pkg);
-            SharedStringsTable sst = r.getSharedStringsTable();
+            SharedStrings sst = r.getSharedStringsTable();
 
             XMLReader parser = fetchSheetParser(sst);
 
@@ -76,7 +76,7 @@ public class FromHowTo {
         }
     }
 
-    public XMLReader fetchSheetParser(SharedStringsTable sst) throws SAXException, ParserConfigurationException {
+    public XMLReader fetchSheetParser(SharedStrings sst) throws SAXException, ParserConfigurationException {
         XMLReader parser = XMLHelper.newXMLReader();
         ContentHandler handler = new SheetHandler(sst);
         parser.setContentHandler(handler);
@@ -87,7 +87,7 @@ public class FromHowTo {
      * See org.xml.sax.helpers.DefaultHandler javadocs
      */
     private static class SheetHandler extends DefaultHandler {
-        private final SharedStringsTable sst;
+        private final SharedStrings sst;
         private String lastContents;
         private boolean nextIsString;
         private boolean inlineStr;
@@ -107,7 +107,7 @@ public class FromHowTo {
             }
         }
 
-        private SheetHandler(SharedStringsTable sst) {
+        private SheetHandler(SharedStrings sst) {
             this.sst = sst;
         }
 
