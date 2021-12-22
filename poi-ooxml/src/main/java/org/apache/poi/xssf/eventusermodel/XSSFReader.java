@@ -74,6 +74,7 @@ public class XSSFReader {
 
     protected OPCPackage pkg;
     protected PackagePart workbookPart;
+    protected boolean useReadOnlySharedStringsTable;
 
     /**
      * Creates a new XSSFReader, for the given package
@@ -116,13 +117,39 @@ public class XSSFReader {
     }
 
     /**
+     * Controls whether {@link #getSharedStringsTable()} uses {@link SharedStringsTable}
+     * or {@link ReadOnlySharedStringsTable}.
+     * @param useReadOnlySharedStringsTable
+     * @since POI 5.2.0
+     */
+    public void setUseReadOnlySharedStringsTable(boolean useReadOnlySharedStringsTable) {
+        this.useReadOnlySharedStringsTable = useReadOnlySharedStringsTable;
+    }
+
+    /**
+     * @return whether {@link #getSharedStringsTable()} uses {@link SharedStringsTable}
+     * or {@link ReadOnlySharedStringsTable}.
+     * @since POI 5.2.0
+     */
+    public boolean useReadOnlySharedStringsTable(boolean useReadOnlySharedStringsTable) {
+        return useReadOnlySharedStringsTable;
+    }
+
+    /**
      * Opens up the Shared Strings Table, parses it, and
      * returns a handy object for working with
      * shared strings.
+     * @see #setUseReadOnlySharedStringsTable(boolean)
      */
     public SharedStrings getSharedStringsTable() throws IOException, InvalidFormatException {
         ArrayList<PackagePart> parts = pkg.getPartsByContentType(XSSFRelation.SHARED_STRINGS.getContentType());
-        return parts.size() == 0 ? null : new SharedStringsTable(parts.get(0));
+        try {
+            return parts.size() == 0 ? null :
+                    useReadOnlySharedStringsTable ? new ReadOnlySharedStringsTable(parts.get(0)) :
+                            new SharedStringsTable(parts.get(0));
+        } catch (SAXException se) {
+            throw new InvalidFormatException("Failed to parse SharedStringsTable", se);
+        }
     }
 
     /**
