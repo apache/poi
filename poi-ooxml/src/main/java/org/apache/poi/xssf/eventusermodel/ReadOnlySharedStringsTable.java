@@ -194,7 +194,7 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
                 sheetParser.setContentHandler(this);
                 sheetParser.parse(sheetSource);
             } catch(ParserConfigurationException e) {
-                throw new RuntimeException("SAX parser appears to be broken - " + e.getMessage());
+                throw new SAXException("SAX parser appears to be broken - " + e.getMessage());
             }
         }
     }

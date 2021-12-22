@@ -22,6 +22,7 @@ package org.apache.poi.xssf.eventusermodel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -48,16 +49,22 @@ public final class TestReadOnlySharedStringsTable {
 
             SharedStringsTable stbl = new SharedStringsTable(parts.get(0));
             ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0));
+            ReadOnlySharedStringsTable rtbl2;
+            try (InputStream stream = parts.get(0).getInputStream()){
+                rtbl2 = new ReadOnlySharedStringsTable(stream);
+            }
 
             assertEquals(stbl.getCount(), rtbl.getCount());
             assertEquals(stbl.getUniqueCount(), rtbl.getUniqueCount());
+            assertEquals(stbl.getUniqueCount(), rtbl2.getUniqueCount());
 
             assertEquals(stbl.getCount(), stbl.getUniqueCount());
             assertEquals(rtbl.getCount(), rtbl.getUniqueCount());
+            assertEquals(rtbl.getCount(), rtbl2.getUniqueCount());
             for (int i = 0; i < stbl.getUniqueCount(); i++) {
                 RichTextString i1 = stbl.getItemAt(i);
-                RichTextString i2 = rtbl.getItemAt(i);
-                assertEquals(i1.getString(), i2.getString());
+                assertEquals(i1.getString(), rtbl.getItemAt(i).getString());
+                assertEquals(i1.getString(), rtbl2.getItemAt(i).getString());
             }
         }
     }

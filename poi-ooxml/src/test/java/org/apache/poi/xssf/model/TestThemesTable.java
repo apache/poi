@@ -17,32 +17,25 @@
 
 package org.apache.poi.xssf.model;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.ThemesTable.ThemeElement;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestThemesTable {
     private static final String testFileComplex = "Themes2.xlsx";
@@ -165,6 +158,16 @@ class TestThemesTable {
     void themedAndNonThemedColours() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook(testFileComplex)) {
             XSSFSheet sheet = wb.getSheetAt(0);
+            ThemesTable themesTable = wb.getTheme();
+            XSSFColor color1 = themesTable.getThemeColor(0);
+            assertNotNull(color1);
+            assertNotEquals(0, color1.getRGB().length);
+            List<PackagePart> themeParts = wb.getPackage().getPartsByContentType(XSSFRelation.THEME.getContentType());
+            assertEquals(1, themeParts.size());
+            try (InputStream themeStream = themeParts.get(0).getInputStream()) {
+                ThemesTable themesTable2 = new ThemesTable(themeStream);
+                assertArrayEquals(color1.getRGB(), themesTable2.getThemeColor(0).getRGB());
+            }
 
             String[] names = {"White", "Black", "Grey", "Dark Blue", "Blue", "Red", "Green"};
             String[] explicitFHexes = {"FFFFFFFF", "FF000000", "FFC0C0C0", "FF002060",
