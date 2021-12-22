@@ -19,6 +19,7 @@ package org.apache.poi.xssf.model;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
@@ -62,7 +63,7 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
    }
 
     private IndexedColorMap colorMap;
-    private final ThemeDocument theme;
+    private ThemeDocument theme;
 
     /**
      * Create a new, empty ThemesTable
@@ -81,12 +82,20 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
      */
     public ThemesTable(PackagePart part) throws IOException {
         super(part);
-
-        try {
-           theme = ThemeDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS);
-        } catch(XmlException e) {
-           throw new IOException(e.getLocalizedMessage(), e);
+        try (InputStream stream = part.getInputStream()) {
+            readFrom(stream);
         }
+    }
+
+    /**
+     * Construct a ThemesTable.
+     * @param stream input stream.
+     *
+     * @since POI 5.2.0
+     */
+    public ThemesTable(InputStream stream) throws IOException {
+        super();
+        readFrom(stream);
     }
 
     /**
@@ -95,6 +104,21 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
      */
     public ThemesTable(ThemeDocument theme) {
         this.theme = theme;
+    }
+
+    /**
+     * Read this themes table from an XML file.
+     *
+     * @param is The input stream containing the XML document.
+     * @throws IOException if an error occurs while reading.
+     * @since POI 5.2.0
+     */
+    public void readFrom(InputStream is) throws IOException {
+        try {
+            theme = ThemeDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
+        } catch(XmlException e) {
+            throw new IOException(e.getLocalizedMessage(), e);
+        }
     }
 
     /**
