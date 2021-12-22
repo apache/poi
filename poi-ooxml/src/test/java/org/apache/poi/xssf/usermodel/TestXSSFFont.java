@@ -299,7 +299,7 @@ public final class TestXSSFFont extends BaseTestFont{
 
         byte[] bytes = Integer.toHexString(0xF1F1F1).getBytes(LocaleUtil.CHARSET_1252);
         color.setRgb(bytes);
-        XSSFColor newColor=XSSFColor.from(color, null);
+        XSSFColor newColor = XSSFColor.from(color);
         xssfFont.setColor(newColor);
         assertEquals(ctFont.getColorArray(0).getRgb()[2],newColor.getRGB()[2]);
 

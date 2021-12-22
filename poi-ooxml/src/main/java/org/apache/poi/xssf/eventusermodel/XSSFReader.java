@@ -131,7 +131,7 @@ public class XSSFReader {
      * or {@link ReadOnlySharedStringsTable}.
      * @since POI 5.2.0
      */
-    public boolean useReadOnlySharedStringsTable(boolean useReadOnlySharedStringsTable) {
+    public boolean useReadOnlySharedStringsTable() {
         return useReadOnlySharedStringsTable;
     }
 

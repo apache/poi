@@ -44,9 +44,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.model.Comments;
-import org.apache.poi.xssf.model.CommentsTable;
-import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.model.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.poi.xssf.usermodel.XSSFShape;
@@ -72,9 +70,18 @@ public final class TestXSSFReader {
             assertNotNull(r.getWorkbookData());
             assertNotNull(r.getSharedStringsData());
             assertNotNull(r.getStylesData());
-
-            assertNotNull(r.getSharedStringsTable());
             assertNotNull(r.getStylesTable());
+
+            SharedStrings sst1 = r.getSharedStringsTable();
+            assertNotNull(sst1);
+            assertTrue(sst1 instanceof SharedStringsTable, "instanceof SharedStringsTable");
+
+            assertFalse(r.useReadOnlySharedStringsTable(), "useReadOnlySharedStringsTable defaults to false");
+            r.setUseReadOnlySharedStringsTable(true);
+            assertTrue(r.useReadOnlySharedStringsTable(), "useReadOnlySharedStringsTable changed to true");
+            SharedStrings sst2 = r.getSharedStringsTable();
+            assertNotNull(sst2);
+            assertTrue(sst2 instanceof ReadOnlySharedStringsTable, "instanceof ReadOnlySharedStringsTable");
         }
     }
 
