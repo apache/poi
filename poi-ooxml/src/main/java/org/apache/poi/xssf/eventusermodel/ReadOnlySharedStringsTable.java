@@ -148,14 +148,31 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
     }
 
     /**
-     * Like POIXMLDocumentPart constructor
-     *
      * @since POI 3.14-Beta3
      */
     public ReadOnlySharedStringsTable(PackagePart part, boolean includePhoneticRuns)
         throws IOException, SAXException {
         this.includePhoneticRuns = includePhoneticRuns;
-        readFrom(part.getInputStream());
+        try (InputStream stream = part.getInputStream()) {
+            readFrom(stream);
+        }
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    public ReadOnlySharedStringsTable(InputStream stream)
+            throws IOException, SAXException {
+        this(stream, true);
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    public ReadOnlySharedStringsTable(InputStream stream, boolean includePhoneticRuns)
+            throws IOException, SAXException {
+        this.includePhoneticRuns = includePhoneticRuns;
+        readFrom(stream);
     }
 
     /**
