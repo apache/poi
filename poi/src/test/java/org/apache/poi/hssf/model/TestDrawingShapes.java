@@ -25,10 +25,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
 
 import org.apache.poi.ddf.EscherBoolProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -700,6 +702,11 @@ class TestDrawingShapes {
             assertEquals(s1, iter.next());
             assertEquals(s2, iter.next());
             assertFalse(iter.hasNext());
+
+            Spliterator<HSSFShape> spliter = patriarch.spliterator();
+            spliter.tryAdvance(s -> assertEquals(s1, s));
+            spliter.tryAdvance(s -> assertEquals(s2, s));
+            assertFalse(spliter.tryAdvance(s -> fail()));
         }
     }
 

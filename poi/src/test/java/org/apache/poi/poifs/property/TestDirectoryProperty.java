@@ -110,6 +110,7 @@ final class TestDirectoryProperty {
             children.add(iter.next());
         }
         assertEquals(count, children.size());
+        assertEquals(count, _property.spliterator().getExactSizeIfKnown());
         if (count != 0)
         {
             boolean[] found = new boolean[ count ];

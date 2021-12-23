@@ -24,7 +24,9 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
+import java.util.stream.StreamSupport;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 class TestPresetGeometries {
@@ -41,6 +43,9 @@ class TestPresetGeometries {
                 Path2D path = p.getPath(ctx);
                 assertNotNull(path);
             }
+            StreamSupport.stream(geom.spliterator(), true)
+                    .map(p -> p.getPath(ctx))
+                    .forEach(Assertions::assertNotNull);
         }
 
         // we get the same instance on further calls

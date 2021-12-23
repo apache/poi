@@ -179,7 +179,9 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
         assertEquals(2, row0.getRowNum(), "Row 2 knows its row number");
         assertEquals(1, sheet.getRowNum(row1), "Sheet knows Row 1's row number");
         assertEquals(2, sheet.getRowNum(row0), "Sheet knows Row 2's row number");
-        assertEquals(row1, sheet.iterator().next(), "Sheet row iteratation order should be ascending");
+        assertEquals(row1, sheet.iterator().next(), "Sheet row iteration order should be ascending");
+        sheet.spliterator().tryAdvance(row ->
+                assertEquals(row1, row, "Sheet row iteration order should be ascending"));
 
         wb.close();
     }

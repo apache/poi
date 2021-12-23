@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.Spliterator;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -83,6 +84,9 @@ public abstract class BaseTestSheet {
             assertSame(row1, it.next());
             assertTrue(it.hasNext());
             assertSame(row2, it.next());
+            Spliterator<Row> split = sheet.spliterator();
+            assertTrue(split.tryAdvance(row -> assertSame(row1, row)));
+            assertTrue(split.tryAdvance(row -> assertSame(row2, row)));
             assertEquals(1, sheet.getLastRowNum());
 
             // Test row creation with non consecutive index
@@ -102,6 +106,12 @@ public abstract class BaseTestSheet {
             Row row2_ovrewritten_ref = it2.next();
             assertSame(row2_ovrewritten, row2_ovrewritten_ref);
             assertEquals(100.0, row2_ovrewritten_ref.getCell(0).getNumericCellValue(), 0.0);
+            Spliterator<Row> split2 = sheet.spliterator();
+            assertTrue(split2.tryAdvance(row -> assertSame(row1, row)));
+            assertTrue(split2.tryAdvance(row -> {
+                assertSame(row2_ovrewritten, row);
+                assertEquals(100.0, row.getCell(0).getNumericCellValue(), 0.0);
+            }));
         }
     }
 
