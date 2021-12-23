@@ -2058,12 +2058,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     /**
-     * Alias for {@link #rowIterator()} to
-     *  allow foreach loops
+     * @return a spliterator of the PHYSICAL rows.  Meaning the 3rd element may not
+     * be the third row if say for instance the second row is undefined.
+     * Call getRowNum() on each row if you care which one it is.
+     *
+     * @since POI 5.2.0
      */
     @Override
-    public Iterator<Row> iterator() {
-        return rowIterator();
+    @SuppressWarnings("unchecked")
+    public Spliterator<Row> spliterator() {
+        return (Spliterator<Row>)(Spliterator<? extends Row>) _rows.values().spliterator();
     }
 
     /**

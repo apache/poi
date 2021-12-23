@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -30,6 +31,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Spliterator;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,6 +79,12 @@ final class TestFilteringDirectoryNode {
         assertEquals(dirB, i.next());
         assertEquals(eRoot, i.next());
         assertThrows(NoSuchElementException.class, i::next, "Should throw NoSuchElementException when depleted");
+
+        Spliterator<Entry> s = d.spliterator();
+        s.tryAdvance(entry -> assertEquals(dirA, entry));
+        s.tryAdvance(entry -> assertEquals(dirB, entry));
+        s.tryAdvance(entry -> assertEquals(eRoot, entry));
+        assertFalse(s.tryAdvance(entry -> fail("Should be depleted")), "Should return false when depleted");
     }
 
     @Test
@@ -98,6 +106,11 @@ final class TestFilteringDirectoryNode {
         assertEquals(dirB, i.next());
         assertThrows(NoSuchElementException.class, i::next, "Should throw NoSuchElementException when depleted");
 
+        Spliterator<Entry> s1 = d1.spliterator();
+        s1.tryAdvance(entry -> assertEquals(dirA, entry));
+        s1.tryAdvance(entry -> assertEquals(dirB, entry));
+        assertFalse(s1.tryAdvance(entry -> fail("Should be depleted")), "Should return false when depleted");
+
 
         // Filter more
         excl = Arrays.asList("NotThere", "AlsoNotThere", eRoot.getName(), dirA.getName());
@@ -115,6 +128,10 @@ final class TestFilteringDirectoryNode {
         assertEquals(dirB, i.next());
         assertThrows(NoSuchElementException.class, i::next, "Should throw NoSuchElementException when depleted");
 
+        Spliterator<Entry> s2 = d2.spliterator();
+        s2.tryAdvance(entry -> assertEquals(dirB, entry));
+        assertFalse(s2.tryAdvance(entry -> fail("Should be depleted")), "Should return false when depleted");
+
         // Filter everything
         excl = Arrays.asList("NotThere", eRoot.getName(), dirA.getName(), dirB.getName());
         FilteringDirectoryNode d3 = new FilteringDirectoryNode(fs.getRoot(), excl);
@@ -129,6 +146,9 @@ final class TestFilteringDirectoryNode {
 
         i = d3.getEntries();
         assertThrows(NoSuchElementException.class, i::next, "Should throw NoSuchElementException when depleted");
+
+        Spliterator<Entry> s3 = d3.spliterator();
+        assertFalse(s3.tryAdvance(entry -> fail("Should be depleted")), "Should return false when depleted");
     }
 
     @Test

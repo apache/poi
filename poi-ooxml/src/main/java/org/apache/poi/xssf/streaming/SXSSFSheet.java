@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.TreeMap;
 
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -100,11 +101,6 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     }
 
     //start of interface implementation
-    @Override
-    public Iterator<Row> iterator() {
-        return rowIterator();
-    }
-
     /**
      * Create a new row within the sheet and return the high level representation
      *
@@ -506,6 +502,20 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         @SuppressWarnings("unchecked")
         Iterator<Row> result = (Iterator<Row>)(Iterator<? extends Row>)_rows.values().iterator();
         return result;
+    }
+
+    /**
+     *  Returns a spliterator of the physical rows
+     *
+     * @return a spliterator of the PHYSICAL rows.  Meaning the 3rd element may not
+     * be the third row if say for instance the second row is undefined.
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    @SuppressWarnings("unchecked")
+    public Spliterator<Row> spliterator() {
+        return (Spliterator<Row>)(Spliterator<? extends Row>) _rows.values().spliterator();
     }
 
     /**

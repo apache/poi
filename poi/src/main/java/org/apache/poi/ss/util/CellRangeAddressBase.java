@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Supplier;
 
 import org.apache.poi.common.Duplicatable;
@@ -287,6 +289,15 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
     @Override
     public Iterator<CellAddress> iterator() {
         return new RowMajorCellAddressIterator(this);
+    }
+
+    /**
+     * Returns a spliterator over the CellAddresses in this cell range in row-major order.
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<CellAddress> spliterator() {
+        return Spliterators.spliterator(iterator(), getNumberOfCells(), 0);
     }
 
     /**

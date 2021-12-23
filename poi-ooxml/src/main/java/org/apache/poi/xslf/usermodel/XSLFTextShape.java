@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Spliterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -85,6 +86,14 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
     @Override
     public Iterator<XSLFTextParagraph> iterator() {
         return getTextParagraphs().iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<XSLFTextParagraph> spliterator() {
+        return getTextParagraphs().spliterator();
     }
 
     @Override

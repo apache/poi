@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterator;
 import java.util.function.Supplier;
 
 import org.apache.logging.log4j.LogManager;
@@ -170,6 +171,15 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
         return Collections.unmodifiableList(_childRecords).iterator();
     }
 
+    /**
+     * @return a spliterator over the child records
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<EscherRecord> spliterator() {
+        return _childRecords.spliterator();
+    }
 
     /**
      * replaces the internal child list with the contents of the supplied {@code childRecords}

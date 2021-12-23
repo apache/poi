@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Spliterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -48,7 +49,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
  * is the highest level text separation mechanism.
  */
 @Beta
-public class XDDFTextParagraph {
+public class XDDFTextParagraph implements Iterable<XDDFTextRun> {
     private XDDFTextBody _parent;
     private XDDFParagraphProperties _properties;
     private final CTTextParagraph _p;
@@ -115,8 +116,17 @@ public class XDDFTextParagraph {
         return _runs;
     }
 
+    @Override
     public Iterator<XDDFTextRun> iterator() {
         return _runs.iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<XDDFTextRun> spliterator() {
+        return _runs.spliterator();
     }
 
     /**

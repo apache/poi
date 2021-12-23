@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Spliterator;
 import java.util.function.Supplier;
 
 import org.apache.poi.common.usermodel.GenericRecord;
@@ -144,6 +145,13 @@ public abstract class PageBreakRecord extends StandardRecord {
 
     public final Iterator<Break> getBreaksIterator() {
         return _breaks.iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    public final Spliterator<Break> getBreaksSpliterator() {
+        return _breaks.spliterator();
     }
 
    /**

@@ -20,6 +20,7 @@ package org.apache.poi.ss.util;
 import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
 import java.util.stream.Stream;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -118,5 +119,13 @@ public final class SSCellRange<K extends Cell> implements CellRange<K> {
     @Override
     public Iterator<K> iterator() {
         return Stream.of(_flattenedArray).iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<K> spliterator() {
+        return Stream.of(_flattenedArray).spliterator();
     }
 }

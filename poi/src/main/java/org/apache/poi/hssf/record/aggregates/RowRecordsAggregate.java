@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterator;
 import java.util.TreeMap;
 
 import org.apache.poi.hssf.model.RecordStream;
@@ -307,6 +308,13 @@ public final class RowRecordsAggregate extends RecordAggregate {
         return _rowRecords.values().iterator();
     }
 
+    /**
+     * @since POI 5.2.0
+     */
+    public Spliterator<RowRecord> getSpliterator() {
+        return _rowRecords.values().spliterator();
+    }
+
     public int findStartOfRowOutlineGroup(int row) {
         // Find the start of the group.
         RowRecord rowRecord = this.getRow( row );
@@ -459,6 +467,15 @@ public final class RowRecordsAggregate extends RecordAggregate {
      */
     public Iterator<CellValueRecordInterface> getCellValueIterator() {
         return _valuesAgg.iterator();
+    }
+
+    /**
+     * Returns a spliterator for the cell values
+     *
+     * @since POI 5.2.0
+     */
+    public Spliterator<CellValueRecordInterface> getCellValueSpliterator() {
+        return _valuesAgg.spliterator();
     }
 
     public IndexRecord createIndexRecord(int indexRecordOffset, int sizeOfInitialSheetRecords) {

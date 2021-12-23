@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.Spliterator;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.ITestDataProvider;
@@ -74,11 +75,15 @@ public abstract class BaseTestWorkbook {
             wb.createSheet("Sheet2");
 
             Iterator<Sheet> it = wb.sheetIterator();
+            Spliterator<Sheet> split = wb.spliterator();
             it.next();
+            split.tryAdvance(sheet -> {});
             wb.setSheetOrder("Sheet2", 1);
 
             // Iterator order should be fixed when iterator is created
             assertThrows(ConcurrentModificationException.class, it::next);
+            // Spliterator order should be fixed when spliterator is created
+            assertThrows(ConcurrentModificationException.class, () -> split.tryAdvance(sheet -> {}));
         }
     }
 
@@ -95,10 +100,15 @@ public abstract class BaseTestWorkbook {
             wb.createSheet("Sheet2");
 
             Iterator<Sheet> it = wb.sheetIterator();
+            Spliterator<Sheet> split = wb.spliterator();
+            it.next();
+            split.tryAdvance(sheet -> {});
             wb.removeSheetAt(1);
 
             // Iterator order should be fixed when iterator is created
             assertThrows(ConcurrentModificationException.class, it::next);
+            // Spliterator order should be fixed when spliterator is created
+            assertThrows(ConcurrentModificationException.class, () -> split.tryAdvance(sheet -> {}));
         }
     }
 

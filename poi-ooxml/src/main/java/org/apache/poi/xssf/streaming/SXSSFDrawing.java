@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.streaming;
 
 import java.util.Iterator;
+import java.util.Spliterator;
 
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.Comment;
@@ -66,6 +67,14 @@ public class SXSSFDrawing implements Drawing<XSSFShape> {
     public Iterator<XSSFShape> iterator() {
         return _drawing.getShapes().iterator();
     }
-    
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<XSSFShape> spliterator() {
+        return _drawing.getShapes().spliterator();
+    }
+
 }
 

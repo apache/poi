@@ -32,6 +32,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Spliterator;
 
 import javax.xml.namespace.QName;
 
@@ -346,6 +347,15 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     public Iterator<IBodyElement> getBodyElementsIterator() {
         return bodyElements.iterator();
+    }
+
+    /**
+     * returns a Spliterator with paragraphs and tables
+     *
+     * @since POI 5.2.0
+     */
+    public Spliterator<IBodyElement> getBodyElementsSpliterator() {
+        return bodyElements.spliterator();
     }
 
     @Override
@@ -1582,8 +1592,22 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return tables.iterator();
     }
 
+    /**
+     * @since POI 5.2.0
+     */
+    public Spliterator<XWPFTable> getTablesSpliterator() {
+        return tables.spliterator();
+    }
+
     public Iterator<XWPFParagraph> getParagraphsIterator() {
         return paragraphs.iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    public Spliterator<XWPFParagraph> getParagraphsSpliterator() {
+        return paragraphs.spliterator();
     }
 
     /**

@@ -20,6 +20,8 @@ package org.apache.poi.ddf;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.Spliterators;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -261,6 +263,14 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
                 throw new UnsupportedOperationException("not yet implemented");
             }
         };
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<byte[]> spliterator() {
+        return Spliterators.spliterator(iterator(), getNumberOfElementsInArray(), 0);
     }
 
     @Override

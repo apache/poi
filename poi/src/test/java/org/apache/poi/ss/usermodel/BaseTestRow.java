@@ -25,9 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.Spliterator;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
@@ -404,6 +406,54 @@ public abstract class BaseTestRow {
         assertSame(cell5, it.next());
         assertTrue(it.hasNext());
         assertSame(cell2, it.next());
+        assertEquals(CellType.STRING, cell5.getCellType());
+        wb.close();
+    }
+
+    /**
+     * Test adding cells to a row in various places and see if we can find them again.
+     */
+    @Test
+    void testSpliterator() throws IOException {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+
+        // One cell at the beginning
+        Cell cell1 = row.createCell(1);
+        Spliterator<Cell> split = row.spliterator();
+        assertTrue(split.tryAdvance(cell -> assertSame(cell1, cell)));
+        assertFalse(split.tryAdvance(cell -> fail()));
+
+        // Add another cell at the end
+        Cell cell2 = row.createCell(99);
+        split = row.spliterator();
+        assertTrue(split.tryAdvance(cell -> assertSame(cell1, cell)));
+        assertTrue(split.tryAdvance(cell -> assertSame(cell2, cell)));
+
+        // Add another cell at the beginning
+        Cell cell3 = row.createCell(0);
+        split = row.spliterator();
+        assertTrue(split.tryAdvance(cell -> assertSame(cell3, cell)));
+        assertTrue(split.tryAdvance(cell -> assertSame(cell1, cell)));
+        assertTrue(split.tryAdvance(cell -> assertSame(cell2, cell)));
+
+        // Replace cell1
+        Cell cell4 = row.createCell(1);
+        split = row.spliterator();
+        assertTrue(split.tryAdvance(cell -> assertSame(cell3, cell)));
+        assertTrue(split.tryAdvance(cell -> assertSame(cell4, cell)));
+        assertTrue(split.tryAdvance(cell -> assertSame(cell2, cell)));
+        assertFalse(split.tryAdvance(cell -> fail()));
+
+        // Add another cell, specifying the cellType
+        Cell cell5 = row.createCell(2, CellType.STRING);
+        split = row.spliterator();
+        assertNotNull(cell5);
+        assertTrue(split.tryAdvance(cell -> assertSame(cell3, cell)));
+        assertTrue(split.tryAdvance(cell -> assertSame(cell4, cell)));
+        assertTrue(split.tryAdvance(cell -> assertSame(cell5, cell)));
+        assertTrue(split.tryAdvance(cell -> assertSame(cell2, cell)));
         assertEquals(CellType.STRING, cell5.getCellType());
         wb.close();
     }

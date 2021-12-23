@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Spliterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -83,6 +84,14 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
     @Override
     public Iterator<EscherRecord> iterator() {
         return getEscherRecords().iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<EscherRecord> spliterator() {
+        return getEscherRecords().spliterator();
     }
 
     /**

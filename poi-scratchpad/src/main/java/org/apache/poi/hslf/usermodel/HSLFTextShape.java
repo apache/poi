@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -702,6 +703,14 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     @Override
     public Iterator<HSLFTextParagraph> iterator() {
         return _paragraphs.iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<HSLFTextParagraph> spliterator() {
+        return _paragraphs.spliterator();
     }
 
     @Override

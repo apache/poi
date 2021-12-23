@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
+import java.util.Spliterators;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
@@ -219,6 +221,27 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @return an iterator of the sheets.
      */
     Iterator<Sheet> sheetIterator();
+
+    /**
+     * Alias for {@link #sheetIterator()} to allow foreach loops
+     */
+    @Override
+    default Iterator<Sheet> iterator() {
+        return sheetIterator();
+    }
+
+    /**
+     *  Returns a spliterator of the sheets in the workbook
+     *  in sheet order. Includes hidden and very hidden sheets.
+     *
+     * @return a spliterator of the sheets.
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    default Spliterator<Sheet> spliterator() {
+        return Spliterators.spliterator(sheetIterator(), getNumberOfSheets(), 0);
+    }
 
     /**
      * Get the number of spreadsheets in the workbook

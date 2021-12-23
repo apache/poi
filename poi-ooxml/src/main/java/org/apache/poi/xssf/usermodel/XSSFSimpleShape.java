@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Spliterator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -165,6 +166,14 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     @Override
     public Iterator<XSSFTextParagraph> iterator() {
         return _paragraphs.iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<XSSFTextParagraph> spliterator() {
+        return _paragraphs.spliterator();
     }
 
     /**

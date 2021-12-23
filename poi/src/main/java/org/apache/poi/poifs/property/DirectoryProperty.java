@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Spliterator;
 
 /**
  * Directory property
@@ -242,6 +243,18 @@ public class DirectoryProperty extends Property implements Parent, Iterable<Prop
      */
     public Iterator<Property> iterator() {
         return getChildren();
+    }
+    /**
+     * Get a spliterator over the children of this Parent; all elements
+     * are instances of Property.
+     *
+     * @return Spliterator of children; may refer to an empty collection
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<Property> spliterator() {
+        return _children.spliterator();
     }
 
     /**

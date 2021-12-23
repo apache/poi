@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import java.util.Iterator;
+import java.util.Spliterator;
 
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.ShapeContainer;
@@ -228,6 +229,14 @@ public final class XSSFShapeGroup extends XSSFShape implements ShapeContainer<XS
     @Override
     public Iterator<XSSFShape> iterator() {
         return getDrawing().getShapes(this).iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<XSSFShape> spliterator() {
+        return getDrawing().getShapes(this).spliterator();
     }
 
     @Override

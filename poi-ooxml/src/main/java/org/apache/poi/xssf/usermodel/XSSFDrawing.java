@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
 
 import javax.xml.namespace.QName;
 
@@ -722,6 +723,14 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
     @Override
     public Iterator<XSSFShape> iterator() {
         return getShapes().iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<XSSFShape> spliterator() {
+        return getShapes().spliterator();
     }
 
     /**

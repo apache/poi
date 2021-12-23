@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Spliterator;
 
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.Zip64Mode;
@@ -758,6 +759,19 @@ public class SXSSFWorkbook implements Workbook {
         return new SheetIterator<>();
     }
 
+    /**
+     *  Returns a spliterator of the sheets in the workbook
+     *  in sheet order. Includes hidden and very hidden sheets.
+     *
+     * @return a spliterator of the sheets.
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<Sheet> spliterator() {
+        return _wb.spliterator();
+    }
+
     protected final class SheetIterator<T extends Sheet> implements Iterator<T> {
         final private Iterator<XSSFSheet> it;
         @SuppressWarnings("unchecked")
@@ -784,15 +798,6 @@ public class SXSSFWorkbook implements Workbook {
             throw new UnsupportedOperationException("remove method not supported on XSSFWorkbook.iterator(). "+
                     "Use Sheet.removeSheetAt(int) instead.");
         }
-    }
-
-    /**
-     * Alias for {@link #sheetIterator()} to allow
-     * foreach loops
-     */
-    @Override
-    public Iterator<Sheet> iterator() {
-        return sheetIterator();
     }
 
     /**

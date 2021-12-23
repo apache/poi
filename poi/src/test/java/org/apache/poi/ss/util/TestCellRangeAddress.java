@@ -28,10 +28,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 final class TestCellRangeAddress {
@@ -272,6 +275,29 @@ final class TestCellRangeAddress {
             assertNotNull(addr);
             count++;
         }
+        assertEquals(4, count);
+    }
+
+    @Test
+    void spliterator() {
+        final CellRangeAddress A1_B2 = new CellRangeAddress(0, 1, 0, 1);
+
+        // the cell address iterator iterates in row major order
+        final Spliterator<CellAddress> spliter = A1_B2.spliterator();
+        spliter.tryAdvance(addr ->
+                assertEquals(new CellAddress(0, 0), addr, "A1"));
+        spliter.tryAdvance(addr ->
+                assertEquals(new CellAddress(0, 1), addr, "B1"));
+        spliter.tryAdvance(addr ->
+                assertEquals(new CellAddress(1, 0), addr, "A2"));
+        spliter.tryAdvance(addr ->
+                assertEquals(new CellAddress(1, 1), addr, "B2"));
+        assertFalse(spliter.tryAdvance(addr -> fail()));
+
+        // stream
+        long count = StreamSupport.stream(A1_B2.spliterator(), false)
+                .peek(Assertions::assertNotNull)
+                .count();
         assertEquals(4, count);
     }
 

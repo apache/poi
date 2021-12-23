@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.regex.Pattern;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -988,12 +989,17 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
-     * Alias for {@link #sheetIterator()} to allow
-     * foreach loops
+     * Returns a spliterator of the sheets in the workbook
+     * in sheet order. Includes hidden and very hidden sheets.
+     *
+     * @return a spliterator of the sheets.
+     *
+     * @since POI 5.2.0
      */
     @Override
-    public Iterator<Sheet> iterator() {
-        return sheetIterator();
+    @SuppressWarnings("unchecked")
+    public Spliterator<Sheet> spliterator() {
+        return (Spliterator<Sheet>)(Spliterator<? extends Sheet>) _sheets.spliterator();
     }
 
     private final class SheetIterator<T extends Sheet> implements Iterator<T> {

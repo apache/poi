@@ -21,6 +21,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Spliterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -259,6 +260,14 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
     @Override
     public Iterator<HSLFShape> iterator() {
         return getShapes().iterator();
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<HSLFShape> spliterator() {
+        return getShapes().spliterator();
     }
 
     @Override

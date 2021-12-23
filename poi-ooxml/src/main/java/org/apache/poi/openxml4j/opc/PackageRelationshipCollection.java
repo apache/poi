@@ -374,6 +374,16 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
     }
 
     /**
+     * Get this collection's spliterator.
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<PackageRelationship> spliterator() {
+        return relationshipsByID.values().spliterator();
+    }
+
+    /**
      * Get an iterator of a collection with all relationship with the specified
      * type.
      *

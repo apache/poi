@@ -63,6 +63,9 @@ final class TestDirectoryNode {
             }
             assertEquals(0, count);
 
+            // verify that spliterator behaves correctly
+            assertEquals(0, node.spliterator().getExactSizeIfKnown());
+
             // verify behavior of isEmpty
             assertTrue(node.isEmpty());
 
@@ -110,6 +113,9 @@ final class TestDirectoryNode {
                 iter.next();
             }
             assertEquals(2, count);
+
+            // verify that spliterator behaves correctly
+            assertEquals(2, node.spliterator().getExactSizeIfKnown());
 
             // verify behavior of isEmpty
             assertFalse(node.isEmpty());

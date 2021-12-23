@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Spliterator;
 
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.poifs.dev.POIFSViewable;
@@ -551,6 +552,16 @@ public class DirectoryNode
     @Override
     public Iterator<Entry> iterator() {
         return getEntries();
+    }
+
+    /**
+     * Returns a Spliterator over all the entries
+     *
+     * @since POI 5.2.0
+     */
+    @Override
+    public Spliterator<Entry> spliterator() {
+        return _entries.spliterator();
     }
 
     /* **********  END  begin implementation of POIFSViewable ********** */
