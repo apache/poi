@@ -65,6 +65,26 @@ public abstract class BaseTestCellUtilCopy {
     }
 
     @Test
+    public final void testCopyCellFrom_CellCopyPolicy_richTextValue() {
+        setUp_testCopyCellFrom_CellCopyPolicy();
+        Workbook wb = srcCell.getSheet().getWorkbook();
+        CreationHelper creationHelper = wb.getCreationHelper();
+        RichTextString rts = creationHelper.createRichTextString("text 123");
+        Font font = wb.createFont();
+        font.setFontHeight((short) 999);
+        font.setFontName("Muriel");
+        rts.applyFont(0, 3, font);
+        srcCell.setCellFormula(null);
+        srcCell.setCellValue(rts);
+
+        // Paste values only
+        final CellCopyPolicy policy = new CellCopyPolicy.Builder().cellFormula(false).build();
+        CellUtil.copyCell(srcCell, destCell, policy, new CellCopyContext());
+        assertEquals(CellType.STRING, destCell.getCellType());
+        assertTrue(compareRichText(rts, destCell.getRichStringCellValue()));
+    }
+
+    @Test
     public final void testCopyCellFrom_CellCopyPolicy_formulaWithUnregisteredUDF() {
         setUp_testCopyCellFrom_CellCopyPolicy();
 
@@ -165,4 +185,7 @@ public abstract class BaseTestCellUtilCopy {
 
     protected abstract Workbook createNewWorkbook();
 
+    protected boolean compareRichText(RichTextString rts1, RichTextString rts2) {
+        return rts1.getString().equals(rts2.getString());
+    }
 }

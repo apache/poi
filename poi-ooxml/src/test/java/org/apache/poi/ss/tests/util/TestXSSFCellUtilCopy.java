@@ -17,8 +17,10 @@
 
 package org.apache.poi.ss.tests.util;
 
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.BaseTestCellUtilCopy;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class TestXSSFCellUtilCopy extends BaseTestCellUtilCopy {
@@ -26,5 +28,16 @@ public class TestXSSFCellUtilCopy extends BaseTestCellUtilCopy {
     @Override
     protected Workbook createNewWorkbook() {
         return new XSSFWorkbook();
+    }
+
+    @Override
+    protected boolean compareRichText(RichTextString rts1, RichTextString rts2) {
+        if (rts1 instanceof XSSFRichTextString && rts2 instanceof XSSFRichTextString) {
+            XSSFRichTextString xrts1 = (XSSFRichTextString)rts1;
+            XSSFRichTextString xrts2 = (XSSFRichTextString)rts2;
+            return xrts1.getCTRst().xmlText().equals(xrts2.getCTRst().xmlText());
+        } else {
+            return super.compareRichText(rts1, rts2);
+        }
     }
 }
