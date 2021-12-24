@@ -218,7 +218,7 @@ public final class CellUtil {
                         }
                         break;
                     case STRING:
-                        destCell.setCellValue(srcCell.getStringCellValue());
+                        destCell.setCellValue(srcCell.getRichStringCellValue());
                         break;
                     case FORMULA:
                         destCell.setCellFormula(srcCell.getCellFormula());
