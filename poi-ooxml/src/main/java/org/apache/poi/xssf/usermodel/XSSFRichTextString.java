@@ -17,15 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.xml.namespace.QName;
-
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.util.Internal;
@@ -33,11 +24,15 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STXstring;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+
+import javax.xml.namespace.QName;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -569,34 +564,34 @@ public class XSSFRichTextString implements RichTextString {
     }
 
     void applyFont(TreeMap<Integer, CTRPrElt> formats, int startIndex, int endIndex, CTRPrElt fmt) {
-            // delete format runs that fit between startIndex and endIndex
-            // runs intersecting startIndex and endIndex remain
-            int runStartIdx = 0;
-            for (Iterator<Integer> it = formats.keySet().iterator(); it.hasNext();) {
-                int runEndIdx = it.next();
-                if (runStartIdx >= startIndex && runEndIdx < endIndex) {
-                   it.remove();
-                }
-                runStartIdx = runEndIdx;
+        // delete format runs that fit between startIndex and endIndex
+        // runs intersecting startIndex and endIndex remain
+        int runStartIdx = 0;
+        for (Iterator<Integer> it = formats.keySet().iterator(); it.hasNext(); ) {
+            int runEndIdx = it.next();
+            if (runStartIdx >= startIndex && runEndIdx < endIndex) {
+                it.remove();
             }
-
-            if(startIndex > 0 && !formats.containsKey(startIndex)) {
-                // If there's a format that starts later in the string, make it start now
-                for(Map.Entry<Integer, CTRPrElt> entry : formats.entrySet()) {
-                   if(entry.getKey() > startIndex) {
-                      formats.put(startIndex, entry.getValue());
-                      break;
-                   }
-                }
-            }
-            formats.put(endIndex, fmt);
-
-            // assure that the range [startIndex, endIndex] consists if a single run
-            // there can be two or three runs depending whether startIndex or endIndex
-            // intersected existing format runs
-            SortedMap<Integer, CTRPrElt> sub = formats.subMap(startIndex, endIndex);
-            while(sub.size() > 1) sub.remove(sub.lastKey());
+            runStartIdx = runEndIdx;
         }
+
+        if (startIndex > 0 && !formats.containsKey(startIndex)) {
+            // If there's a format that starts later in the string, make it start now
+            for (Map.Entry<Integer, CTRPrElt> entry : formats.entrySet()) {
+                if (entry.getKey() > startIndex) {
+                    formats.put(startIndex, entry.getValue());
+                    break;
+                }
+            }
+        }
+        formats.put(endIndex, fmt);
+
+        // assure that the range [startIndex, endIndex] consists if a single run
+        // there can be two or three runs depending whether startIndex or endIndex
+        // intersected existing format runs
+        SortedMap<Integer, CTRPrElt> sub = formats.subMap(startIndex, endIndex);
+        while (sub.size() > 1) sub.remove(sub.lastKey());
+    }
 
     TreeMap<Integer, CTRPrElt> getFormatMap(CTRst entry){
         int length = 0;
