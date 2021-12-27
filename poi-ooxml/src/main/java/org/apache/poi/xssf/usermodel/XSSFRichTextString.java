@@ -24,7 +24,11 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STXstring;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
 import javax.xml.namespace.QName;
 import java.util.Iterator;
