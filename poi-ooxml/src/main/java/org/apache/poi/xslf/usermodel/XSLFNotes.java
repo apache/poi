@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,9 +55,10 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
     XSLFNotes(PackagePart part) throws IOException, XmlException {
         super(part);
 
-        NotesDocument doc =
-            NotesDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
-        _notes = doc.getNotes();
+        try (InputStream stream = getPackagePart().getInputStream()) {
+            NotesDocument doc = NotesDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+            _notes = doc.getNotes();
+        }
     }
 
     private static CTNotesSlide prototype(){

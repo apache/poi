@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.openxml4j.opc;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -298,7 +299,10 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
             throws InvalidFormatException {
         try {
             LOG.atDebug().log("Parsing relationship: {}", relPart.getPartName());
-            Document xmlRelationshipsDoc = DocumentHelper.readDocument(relPart.getInputStream());
+            Document xmlRelationshipsDoc;
+            try (InputStream partStream = relPart.getInputStream()) {
+                xmlRelationshipsDoc = DocumentHelper.readDocument(partStream);
+            }
 
             // Browse default types
             Element root = xmlRelationshipsDoc.getDocumentElement();

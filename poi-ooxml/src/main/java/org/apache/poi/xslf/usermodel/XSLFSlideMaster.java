@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -61,9 +62,11 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
      */
     protected XSLFSlideMaster(PackagePart part) throws IOException, XmlException {
         super(part);
-        SldMasterDocument doc =
-            SldMasterDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
-        _slide = doc.getSldMaster();
+        try (InputStream stream = getPackagePart().getInputStream()) {
+            SldMasterDocument doc = SldMasterDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+            _slide = doc.getSldMaster();
+
+        }
     }
 
     @Override

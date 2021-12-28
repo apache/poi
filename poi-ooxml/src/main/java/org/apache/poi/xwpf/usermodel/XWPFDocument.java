@@ -191,8 +191,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     @Override
     protected void onDocumentRead() throws IOException {
         try {
-            DocumentDocument doc = DocumentDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
-            ctDocument = doc.getDocument();
+            DocumentDocument doc;
+            try (InputStream stream = getPackagePart().getInputStream()) {
+                doc = DocumentDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+                ctDocument = doc.getDocument();
+            }
 
             initFootnotes();
 
@@ -584,8 +587,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             throw new IllegalStateException("Expecting one Styles document part, but found " + parts.length);
         }
 
-        StylesDocument sd = StylesDocument.Factory.parse(parts[0].getInputStream(), DEFAULT_XML_OPTIONS);
-        return sd.getStyles();
+        try (InputStream stream = parts[0].getInputStream()) {
+            StylesDocument sd = StylesDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+            return sd.getStyles();
+        }
     }
 
     /**

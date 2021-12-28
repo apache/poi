@@ -20,6 +20,7 @@
 package org.apache.poi.poifs.crypt.temp;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.logging.log4j.LogManager;
@@ -51,7 +52,9 @@ public class SXSSFWorkbookWithCustomZipEntrySource extends SXSSFWorkbook {
                 getXSSFWorkbook().write(os);
             }
             // provide ZipEntrySource to poi which decrypts on the fly
-            source = AesZipFileZipEntrySource.createZipEntrySource(tempData.getInputStream());
+            try (InputStream tempStream = tempData.getInputStream()) {
+                source = AesZipFileZipEntrySource.createZipEntrySource(tempStream);
+            }
             injectData(source, stream);
         } finally {
             tempData.dispose();

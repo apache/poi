@@ -22,6 +22,7 @@ import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.MS_DIGSIG_NS
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XML_DIGSIG_NS;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -99,7 +100,9 @@ public class SignaturePart {
      */
     public SignatureDocument getSignatureDocument() throws IOException, XmlException {
         // TODO: check for XXE
-        return SignatureDocument.Factory.parse(signaturePart.getInputStream(), DEFAULT_XML_OPTIONS);
+        try (InputStream stream = signaturePart.getInputStream()) {
+            return SignatureDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+        }
     }
 
     /**
@@ -113,7 +116,11 @@ public class SignaturePart {
         xpath.setNamespaceContext(new XPathNSContext());
 
         try {
-            Document doc = DocumentHelper.readDocument(signaturePart.getInputStream());
+            Document doc;
+            try (InputStream stream = signaturePart.getInputStream()) {
+                doc = DocumentHelper.readDocument(stream);
+            }
+
             NodeList nl = (NodeList)xpath.compile("//*[@Id]").evaluate(doc, XPathConstants.NODESET);
             final int length = nl.getLength();
             for (int i=0; i<length; i++) {

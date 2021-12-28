@@ -119,7 +119,9 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
      */
     protected XSSFVMLDrawing(PackagePart part) throws IOException, XmlException {
         super(part);
-        read(getPackagePart().getInputStream());
+        try (InputStream stream = getPackagePart().getInputStream()) {
+            read(stream);
+        }
     }
 
     public XmlDocument getDocument() {

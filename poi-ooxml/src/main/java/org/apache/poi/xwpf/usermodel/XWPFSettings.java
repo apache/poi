@@ -63,7 +63,9 @@ public class XWPFSettings extends POIXMLDocumentPart {
     @Override
     protected void onDocumentRead() throws IOException {
         super.onDocumentRead();
-        readFrom(getPackagePart().getInputStream());
+        try (InputStream stream = getPackagePart().getInputStream()) {
+            readFrom(stream);
+        }
     }
 
     /**

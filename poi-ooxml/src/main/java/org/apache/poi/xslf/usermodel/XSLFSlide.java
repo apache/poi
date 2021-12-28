@@ -20,6 +20,7 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.awt.Graphics2D;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,8 +79,8 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         super(part);
 
         Document _doc;
-        try {
-            _doc = DocumentHelper.readDocument(getPackagePart().getInputStream());
+        try (InputStream stream = getPackagePart().getInputStream()) {
+            _doc = DocumentHelper.readDocument(stream);
         } catch (SAXException e) {
             throw new IOException(e);
         }

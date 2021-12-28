@@ -93,8 +93,8 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      * @return the Picture data.
      */
     public byte[] getData() {
-        try {
-            return IOUtils.toByteArray(getPackagePart().getInputStream());
+        try (InputStream stream = getPackagePart().getInputStream()) {
+            return IOUtils.toByteArray(stream);
         } catch (IOException e) {
             throw new POIXMLException(e);
         }

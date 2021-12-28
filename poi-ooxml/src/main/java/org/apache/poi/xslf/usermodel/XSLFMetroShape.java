@@ -21,6 +21,7 @@ package org.apache.poi.xslf.usermodel;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -49,9 +50,11 @@ public class XSLFMetroShape implements MetroShapeProvider {
             if (shapePart == null) {
                 return null;
             }
-            CTGroupShape gs = CTGroupShape.Factory.parse(shapePart.getInputStream(), DEFAULT_XML_OPTIONS);
-            XSLFGroupShape xgs = new XSLFGroupShape(gs, null);
-            return xgs.getShapes().get(0);
+            try (InputStream stream = shapePart.getInputStream()) {
+                CTGroupShape gs = CTGroupShape.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+                XSLFGroupShape xgs = new XSLFGroupShape(gs, null);
+                return xgs.getShapes().get(0);
+            }
         } catch (InvalidFormatException | XmlException e) {
             throw new IOException("can't parse metro shape", e);
         }

@@ -145,8 +145,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      */
     @Override
     protected void onDocumentRead() {
-        try {
-            read(getPackagePart().getInputStream());
+        try (InputStream stream = getPackagePart().getInputStream()) {
+            read(stream);
         } catch (IOException e){
             throw new POIXMLException(e);
         }

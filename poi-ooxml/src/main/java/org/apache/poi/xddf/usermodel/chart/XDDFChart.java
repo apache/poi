@@ -1009,7 +1009,9 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
                     workbook = new XSSFWorkbook();
                     workbook.createSheet();
                 } else {
-                    workbook = new XSSFWorkbook(worksheetPart.getInputStream());
+                    try (InputStream stream = worksheetPart.getInputStream()){
+                        workbook = new XSSFWorkbook(stream);
+                    }
                 }
             } catch (NotOfficeXmlFileException e) {
                 workbook = new XSSFWorkbook();

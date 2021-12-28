@@ -382,8 +382,10 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     @Override
     protected void onDocumentRead() throws IOException {
         try {
-            WorkbookDocument doc = WorkbookDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
-            this.workbook = doc.getWorkbook();
+            try (InputStream stream = getPackagePart().getInputStream()) {
+                WorkbookDocument doc = WorkbookDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+                this.workbook = doc.getWorkbook();
+            }
 
             ThemesTable theme = null;
             Map<String, XSSFSheet> shIdMap = new HashMap<>();

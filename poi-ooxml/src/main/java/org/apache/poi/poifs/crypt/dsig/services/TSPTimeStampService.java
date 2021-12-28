@@ -27,6 +27,7 @@ package org.apache.poi.poifs.crypt.dsig.services;
 import static org.apache.logging.log4j.util.Unbox.box;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.HttpURLConnection;
@@ -163,7 +164,9 @@ public class TSPTimeStampService implements TimeStampService {
                 throw new RuntimeException("missing Content-Type header");
             }
 
-            responseBytes = IOUtils.toByteArray(huc.getInputStream());
+            try (InputStream stream = huc.getInputStream()) {
+                responseBytes = IOUtils.toByteArray(stream);
+            }
             LOG.atDebug().log(() -> new SimpleMessage("response content: " + HexDump.dump(responseBytes, 0, 0)));
         } finally {
             huc.disconnect();

@@ -759,8 +759,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 
                 if (partUnmarshaller != null) {
                     UnmarshallContext context = new UnmarshallContext(this, part._partName);
-                    try {
-                        PackagePart unmarshallPart = partUnmarshaller.unmarshall(context, part.getInputStream());
+                    try (InputStream partStream = part.getInputStream()) {
+                        PackagePart unmarshallPart = partUnmarshaller.unmarshall(context, partStream);
                         partList.remove(part.getPartName());
                         partList.put(unmarshallPart._partName, unmarshallPart);
 

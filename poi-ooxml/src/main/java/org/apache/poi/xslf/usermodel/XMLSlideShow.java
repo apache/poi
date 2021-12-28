@@ -154,9 +154,10 @@ public class XMLSlideShow extends POIXMLDocument
     @Override
     protected void onDocumentRead() throws IOException {
         try {
-            PresentationDocument doc =
-                    PresentationDocument.Factory.parse(getCorePart().getInputStream(), DEFAULT_XML_OPTIONS);
-            _presentation = doc.getPresentation();
+            try (InputStream stream = getCorePart().getInputStream()) {
+                PresentationDocument doc = PresentationDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+                _presentation = doc.getPresentation();
+            }
 
             Map<String, XSLFSlideMaster> masterMap = new HashMap<>();
             Map<String, XSLFSlide> shIdMap = new HashMap<>();

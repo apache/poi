@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class XSLFSlideShow extends POIXMLDocument {
     /**
      * The embedded OLE2 files in the OPC package
      */
-    private final List<PackagePart> embedds;
+    private final List<PackagePart> embeddedParts;
 
     public XSLFSlideShow(OPCPackage container) throws OpenXML4JException, IOException, XmlException {
         super(container);
@@ -74,10 +75,12 @@ public class XSLFSlideShow extends POIXMLDocument {
             rebase(getPackage());
         }
 
-        presentationDoc =
-            PresentationDocument.Factory.parse(getCorePart().getInputStream(), DEFAULT_XML_OPTIONS);
+        try (InputStream stream = getCorePart().getInputStream()) {
+            presentationDoc =
+                    PresentationDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+        }
 
-        embedds = new LinkedList<>();
+        embeddedParts = new LinkedList<>();
         for (CTSlideIdListEntry ctSlide : getSlideReferences().getSldIdArray()) {
             PackagePart corePart = getCorePart();
             PackagePart slidePart = corePart.getRelatedPart(corePart.getRelationship(ctSlide.getId2()));
@@ -87,14 +90,15 @@ public class XSLFSlideShow extends POIXMLDocument {
                     continue;
                 }
                 // TODO: Add this reference to each slide as well
-                embedds.add(slidePart.getRelatedPart(rel));
+                embeddedParts.add(slidePart.getRelatedPart(rel));
             }
 
             for (PackageRelationship rel : slidePart.getRelationshipsByType(PACK_OBJECT_REL_TYPE)) {
-                embedds.add(slidePart.getRelatedPart(rel));
+                embeddedParts.add(slidePart.getRelatedPart(rel));
             }
         }
     }
+
     public XSLFSlideShow(String file) throws OpenXML4JException, IOException, XmlException {
         this(openPackage(file));
     }
@@ -149,9 +153,11 @@ public class XSLFSlideShow extends POIXMLDocument {
     @Internal
     public CTSlideMaster getSlideMaster(CTSlideMasterIdListEntry master) throws IOException, XmlException {
         PackagePart masterPart = getSlideMasterPart(master);
-        SldMasterDocument masterDoc =
-            SldMasterDocument.Factory.parse(masterPart.getInputStream(), DEFAULT_XML_OPTIONS);
-        return masterDoc.getSldMaster();
+        try (InputStream stream = masterPart.getInputStream()) {
+            SldMasterDocument masterDoc =
+                    SldMasterDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+            return masterDoc.getSldMaster();
+        }
     }
 
     public PackagePart getSlidePart(CTSlideIdListEntry slide) throws IOException, XmlException {
@@ -169,9 +175,10 @@ public class XSLFSlideShow extends POIXMLDocument {
     @Internal
     public CTSlide getSlide(CTSlideIdListEntry slide) throws IOException, XmlException {
         PackagePart slidePart = getSlidePart(slide);
-        SldDocument slideDoc =
-            SldDocument.Factory.parse(slidePart.getInputStream(), DEFAULT_XML_OPTIONS);
-        return slideDoc.getSld();
+        try (InputStream stream = slidePart.getInputStream()) {
+            SldDocument slideDoc = SldDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+            return slideDoc.getSld();
+        }
     }
 
     /**
@@ -212,10 +219,10 @@ public class XSLFSlideShow extends POIXMLDocument {
         if(notesPart == null)
             return null;
 
-        NotesDocument notesDoc =
-            NotesDocument.Factory.parse(notesPart.getInputStream(), DEFAULT_XML_OPTIONS);
-
-        return notesDoc.getNotes();
+        try (InputStream stream = notesPart.getInputStream()) {
+            NotesDocument notesDoc = NotesDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+            return notesDoc.getNotes();
+        }
     }
 
     /**
@@ -244,9 +251,10 @@ public class XSLFSlideShow extends POIXMLDocument {
             PackagePart cPart = slidePart.getRelatedPart(
                     commentRels.getRelationship(0)
             );
-            CmLstDocument commDoc =
-                CmLstDocument.Factory.parse(cPart.getInputStream(), DEFAULT_XML_OPTIONS);
-            return commDoc.getCmLst();
+            try (InputStream stream = cPart.getInputStream()) {
+                CmLstDocument commDoc = CmLstDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+                return commDoc.getCmLst();
+            }
         } catch(InvalidFormatException e) {
             throw new IllegalStateException(e);
         }
@@ -257,7 +265,7 @@ public class XSLFSlideShow extends POIXMLDocument {
      */
     @Override
     public List<PackagePart> getAllEmbeddedParts() throws OpenXML4JException {
-        return embedds;
+        return embeddedParts;
     }
 
 }

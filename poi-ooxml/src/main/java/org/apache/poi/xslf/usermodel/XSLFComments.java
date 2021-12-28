@@ -20,6 +20,7 @@ package org.apache.poi.xslf.usermodel;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -50,7 +51,9 @@ public class XSLFComments extends POIXMLDocumentPart {
     XSLFComments(PackagePart part) throws IOException, XmlException {
         super(part);
 
-        doc = CmLstDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
+        try (InputStream stream = getPackagePart().getInputStream()) {
+            doc = CmLstDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+        }
     }
 
     public CTCommentList getCTCommentsList() {

@@ -78,9 +78,11 @@ public class POIXMLProperties {
             if (extPart == null) {
                 ext = new ExtendedProperties((org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument)NEW_EXT_INSTANCE.copy());
             } else {
-                org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument.Factory.parse(
-                        extPart.getInputStream(), DEFAULT_XML_OPTIONS);
-                ext = new ExtendedProperties(props);
+                try (InputStream stream = extPart.getInputStream()) {
+                    org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument.Factory.parse(
+                            stream, DEFAULT_XML_OPTIONS);
+                    ext = new ExtendedProperties(props);
+                }
             }
         } else {
             extPart = null;
@@ -95,9 +97,11 @@ public class POIXMLProperties {
             if (custPart == null) {
                 cust = new CustomProperties((org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument)NEW_CUST_INSTANCE.copy());
             } else {
-                org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument.Factory.parse(
-                        custPart.getInputStream(), DEFAULT_XML_OPTIONS);
-                cust = new CustomProperties(props);
+                try (InputStream stream = custPart.getInputStream()) {
+                    org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props = org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument.Factory.parse(
+                            stream, DEFAULT_XML_OPTIONS);
+                    cust = new CustomProperties(props);
+                }
             }
         } else {
             custPart = null;

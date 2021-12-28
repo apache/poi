@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -42,9 +43,10 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
      */
     public XSLFSlideLayout(PackagePart part) throws IOException, XmlException {
         super(part);
-        SldLayoutDocument doc =
-                SldLayoutDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
-        _layout = doc.getSldLayout();
+        try (InputStream stream = getPackagePart().getInputStream()) {
+            SldLayoutDocument doc = SldLayoutDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+            _layout = doc.getSldLayout();
+        }
     }
 
     public String getName() {

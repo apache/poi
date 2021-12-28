@@ -20,6 +20,7 @@ package org.apache.poi.xslf.usermodel;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -52,9 +53,10 @@ public class XSLFCommentAuthors extends POIXMLDocumentPart {
      */
     XSLFCommentAuthors(PackagePart part) throws IOException, XmlException {
         super(part);
-        CmAuthorLstDocument doc =
-           CmAuthorLstDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
-        _authors = doc.getCmAuthorLst();
+        try (InputStream stream = getPackagePart().getInputStream()) {
+            CmAuthorLstDocument doc = CmAuthorLstDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+            _authors = doc.getCmAuthorLst();
+        }
     }
     
     public CTCommentAuthorList getCTCommentAuthorsList() {

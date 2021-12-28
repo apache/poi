@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
@@ -51,9 +52,10 @@ public class XSLFTheme extends POIXMLDocumentPart {
      */
     public XSLFTheme(PackagePart part) throws IOException, XmlException {
         super(part);
-        ThemeDocument doc =
-            ThemeDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
-        _theme = doc.getTheme();
+        try (InputStream stream = getPackagePart().getInputStream()) {
+            ThemeDocument doc = ThemeDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+            _theme = doc.getTheme();
+        }
     }
 
     @SuppressWarnings("WeakerAccess")

@@ -58,9 +58,10 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
      */
     protected XSLFNotesMaster(PackagePart part) throws IOException, XmlException {
         super(part);
-        NotesMasterDocument doc =
-            NotesMasterDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
-        _slide = doc.getNotesMaster();
+        try (InputStream stream = getPackagePart().getInputStream()) {
+            NotesMasterDocument doc = NotesMasterDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
+            _slide = doc.getNotesMaster();
+        }
     }
 
     private static CTNotesMaster prototype() {

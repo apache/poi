@@ -296,8 +296,8 @@ public class XSSFReader {
                 throw new POIXMLException(e);
             }
             xmlReader.setContentHandler(xmlSheetRefReader);
-            try {
-                xmlReader.parse(new InputSource(wb.getInputStream()));
+            try (InputStream stream = wb.getInputStream()) {
+                xmlReader.parse(new InputSource(stream));
             } catch (SAXException e) {
                 throw new POIXMLException(e);
             }
