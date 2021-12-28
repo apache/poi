@@ -83,11 +83,14 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
             CTOfficeArtExtension ext = extLst.addNewExt();
             ext.setUri("{63B3BB69-23CF-44E3-9099-C40C66FF867C}");
             XmlCursor cur = ext.newCursor();
-            cur.toEndToken();
-            cur.beginElement(new QName(drawNS, "compatExt", "a14"));
-            cur.insertNamespace("a14", drawNS);
-            cur.insertAttributeWithValue("spid", "_x0000_s1");
-            cur.dispose();
+            try {
+                cur.toEndToken();
+                cur.beginElement(new QName(drawNS, "compatExt", "a14"));
+                cur.insertNamespace("a14", drawNS);
+                cur.insertAttributeWithValue("spid", "_x0000_s1");
+            } finally {
+                cur.dispose();
+            }
 
             nv.addNewCNvSpPr();
 

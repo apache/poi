@@ -50,41 +50,43 @@ public final class XSSFPasswordHelper {
      */
     public static void setPassword(XmlObject xobj, String password, HashAlgorithm hashAlgo, String prefix) {
         XmlCursor cur = xobj.newCursor();
+        try {
+            if (password == null) {
+                cur.removeAttribute(getAttrName(prefix, "password"));
+                cur.removeAttribute(getAttrName(prefix, "algorithmName"));
+                cur.removeAttribute(getAttrName(prefix, "hashValue"));
+                cur.removeAttribute(getAttrName(prefix, "saltValue"));
+                cur.removeAttribute(getAttrName(prefix, "spinCount"));
+                return;
+            }
 
-        if (password == null) {
-            cur.removeAttribute(getAttrName(prefix, "password"));
-            cur.removeAttribute(getAttrName(prefix, "algorithmName"));
-            cur.removeAttribute(getAttrName(prefix, "hashValue"));
-            cur.removeAttribute(getAttrName(prefix, "saltValue"));
-            cur.removeAttribute(getAttrName(prefix, "spinCount"));
-            return;
-        } 
-        
-        cur.toFirstContentToken();
-        if (hashAlgo == null) {
-            int hash = CryptoFunctions.createXorVerifier1(password);
-            cur.insertAttributeWithValue(getAttrName(prefix, "password"),
-                                         String.format(Locale.ROOT, "%04X", hash).toUpperCase(Locale.ROOT));
-        } else {
-            byte[] salt = RandomSingleton.getInstance().generateSeed(16);
-    
-            // Iterations specifies the number of times the hashing function shall be iteratively run (using each
-            // iteration's result as the input for the next iteration).
-            int spinCount = 100000;
+            cur.toFirstContentToken();
+            if (hashAlgo == null) {
+                int hash = CryptoFunctions.createXorVerifier1(password);
+                cur.insertAttributeWithValue(getAttrName(prefix, "password"),
+                        String.format(Locale.ROOT, "%04X", hash).toUpperCase(Locale.ROOT));
+            } else {
+                byte[] salt = RandomSingleton.getInstance().generateSeed(16);
 
-            // Implementation Notes List:
-            // --> In this third stage, the reversed byte order legacy hash from the second stage shall
-            //     be converted to Unicode hex string representation
-            byte[] hash = CryptoFunctions.hashPassword(password, hashAlgo, salt, spinCount, false);
+                // Iterations specifies the number of times the hashing function shall be iteratively run (using each
+                // iteration's result as the input for the next iteration).
+                int spinCount = 100000;
 
-            Base64.Encoder enc64 = Base64.getEncoder();
+                // Implementation Notes List:
+                // --> In this third stage, the reversed byte order legacy hash from the second stage shall
+                //     be converted to Unicode hex string representation
+                byte[] hash = CryptoFunctions.hashPassword(password, hashAlgo, salt, spinCount, false);
 
-            cur.insertAttributeWithValue(getAttrName(prefix, "algorithmName"), hashAlgo.jceId); 
-            cur.insertAttributeWithValue(getAttrName(prefix, "hashValue"), enc64.encodeToString(hash));
-            cur.insertAttributeWithValue(getAttrName(prefix, "saltValue"), enc64.encodeToString(salt));
-            cur.insertAttributeWithValue(getAttrName(prefix, "spinCount"), ""+spinCount);
+                Base64.Encoder enc64 = Base64.getEncoder();
+
+                cur.insertAttributeWithValue(getAttrName(prefix, "algorithmName"), hashAlgo.jceId);
+                cur.insertAttributeWithValue(getAttrName(prefix, "hashValue"), enc64.encodeToString(hash));
+                cur.insertAttributeWithValue(getAttrName(prefix, "saltValue"), enc64.encodeToString(salt));
+                cur.insertAttributeWithValue(getAttrName(prefix, "spinCount"), ""+spinCount);
+            }
+        } finally {
+            cur.dispose();
         }
-        cur.dispose();
     }
 
     /**
@@ -103,30 +105,32 @@ public final class XSSFPasswordHelper {
         if (password == null) return false;
         
         XmlCursor cur = xobj.newCursor();
-        String xorHashVal = cur.getAttributeText(getAttrName(prefix, "password"));
-        String algoName = cur.getAttributeText(getAttrName(prefix, "algorithmName"));
-        String hashVal = cur.getAttributeText(getAttrName(prefix, "hashValue"));
-        String saltVal = cur.getAttributeText(getAttrName(prefix, "saltValue"));
-        String spinCount = cur.getAttributeText(getAttrName(prefix, "spinCount"));
-        cur.dispose();
+        try {
+            String xorHashVal = cur.getAttributeText(getAttrName(prefix, "password"));
+            String algoName = cur.getAttributeText(getAttrName(prefix, "algorithmName"));
+            String hashVal = cur.getAttributeText(getAttrName(prefix, "hashValue"));
+            String saltVal = cur.getAttributeText(getAttrName(prefix, "saltValue"));
+            String spinCount = cur.getAttributeText(getAttrName(prefix, "spinCount"));
+            if (xorHashVal != null) {
+                int hash1 = Integer.parseInt(xorHashVal, 16);
+                int hash2 = CryptoFunctions.createXorVerifier1(password);
+                return hash1 == hash2;
+            } else {
+                if (hashVal == null || algoName == null || saltVal == null || spinCount == null) {
+                    return false;
+                }
 
-        if (xorHashVal != null) {
-            int hash1 = Integer.parseInt(xorHashVal, 16);
-            int hash2 = CryptoFunctions.createXorVerifier1(password);
-            return hash1 == hash2;
-        } else {
-            if (hashVal == null || algoName == null || saltVal == null || spinCount == null) {
-                return false;
+                Base64.Decoder dec64 = Base64.getDecoder();
+
+                byte[] hash1 = dec64.decode(hashVal);
+                HashAlgorithm hashAlgo = HashAlgorithm.fromString(algoName);
+                byte[] salt = dec64.decode(saltVal);
+                int spinCnt = Integer.parseInt(spinCount);
+                byte[] hash2 = CryptoFunctions.hashPassword(password, hashAlgo, salt, spinCnt, false);
+                return Arrays.equals(hash1, hash2);
             }
-
-            Base64.Decoder dec64 = Base64.getDecoder();
-
-            byte[] hash1 = dec64.decode(hashVal);
-            HashAlgorithm hashAlgo = HashAlgorithm.fromString(algoName);
-            byte[] salt = dec64.decode(saltVal);
-            int spinCnt = Integer.parseInt(spinCount);
-            byte[] hash2 = CryptoFunctions.hashPassword(password, hashAlgo, salt, spinCnt, false);
-            return Arrays.equals(hash1, hash2);
+        } finally {
+            cur.dispose();
         }
     }
     

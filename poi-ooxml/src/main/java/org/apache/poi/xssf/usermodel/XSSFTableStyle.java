@@ -59,27 +59,31 @@ public class XSSFTableStyle implements TableStyle {
         List<CTDxf> dxfList = new ArrayList<>();
 
         // CT* classes don't handle "mc:AlternateContent" elements, so get the Dxf instances manually
-        XmlCursor cur = dxfs.newCursor();
-        // sometimes there are namespaces sometimes not.
-        String xquery = "declare namespace x='"+XSSFRelation.NS_SPREADSHEETML+"' .//x:dxf | .//dxf";
-        cur.selectPath(xquery);
-        while (cur.toNextSelection()) {
-            XmlObject obj = cur.getObject();
-            String parentName = obj.getDomNode().getParentNode().getNodeName();
-            // ignore alternate content choices, we won't know anything about their namespaces
-            if (parentName.equals("mc:Fallback") || parentName.equals("x:dxfs") || parentName.contentEquals("dxfs")) {
-                CTDxf dxf;
-                try {
-                    if (obj instanceof CTDxf) {
-                        dxf = (CTDxf) obj;
-                    } else {
-                        dxf = CTDxf.Factory.parse(obj.newXMLStreamReader(), new XmlOptions().setDocumentType(CTDxf.type));
+        final XmlCursor cur = dxfs.newCursor();
+        try {
+            // sometimes there are namespaces sometimes not.
+            String xquery = "declare namespace x='"+XSSFRelation.NS_SPREADSHEETML+"' .//x:dxf | .//dxf";
+            cur.selectPath(xquery);
+            while (cur.toNextSelection()) {
+                XmlObject obj = cur.getObject();
+                String parentName = obj.getDomNode().getParentNode().getNodeName();
+                // ignore alternate content choices, we won't know anything about their namespaces
+                if (parentName.equals("mc:Fallback") || parentName.equals("x:dxfs") || parentName.contentEquals("dxfs")) {
+                    CTDxf dxf;
+                    try {
+                        if (obj instanceof CTDxf) {
+                            dxf = (CTDxf) obj;
+                        } else {
+                            dxf = CTDxf.Factory.parse(obj.newXMLStreamReader(), new XmlOptions().setDocumentType(CTDxf.type));
+                        }
+                        if (dxf != null) dxfList.add(dxf);
+                    } catch (XmlException e) {
+                        LOG.atWarn().withThrowable(e).log("Error parsing XSSFTableStyle");
                     }
-                    if (dxf != null) dxfList.add(dxf);
-                } catch (XmlException e) {
-                    LOG.atWarn().withThrowable(e).log("Error parsing XSSFTableStyle");
                 }
             }
+        } finally {
+            cur.dispose();
         }
 
         for (CTTableStyleElement element : tableStyle.getTableStyleElementList()) {

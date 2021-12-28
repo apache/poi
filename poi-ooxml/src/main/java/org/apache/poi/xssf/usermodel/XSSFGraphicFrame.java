@@ -193,10 +193,13 @@ public final class XSSFGraphicFrame extends XSSFShape {
         String r_namespaceUri = STRelationshipId.type.getName().getNamespaceURI();
         String c_namespaceUri = XSSFDrawing.NAMESPACE_C;
         XmlCursor cursor = data.newCursor();
-        cursor.toNextToken();
-        cursor.beginElement(new QName(c_namespaceUri, "chart", "c"));
-        cursor.insertAttributeWithValue(new QName(r_namespaceUri, "id", "r"), id);
-        cursor.dispose();
+        try {
+            cursor.toNextToken();
+            cursor.beginElement(new QName(c_namespaceUri, "chart", "c"));
+            cursor.insertAttributeWithValue(new QName(r_namespaceUri, "id", "r"), id);
+        } finally {
+            cursor.dispose();
+        }
         data.setUri(c_namespaceUri);
     }
 
