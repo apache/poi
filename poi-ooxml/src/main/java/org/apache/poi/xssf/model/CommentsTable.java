@@ -76,7 +76,9 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
      */
     public CommentsTable(PackagePart part) throws IOException {
         super(part);
-        readFrom(part.getInputStream());
+        try (InputStream stream = part.getInputStream()) {
+            readFrom(stream);
+        }
     }
     
     public void readFrom(InputStream is) throws IOException {

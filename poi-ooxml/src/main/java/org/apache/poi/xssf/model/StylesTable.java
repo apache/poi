@@ -155,7 +155,17 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      */
     public StylesTable(PackagePart part) throws IOException {
         super(part);
-        readFrom(part.getInputStream());
+        try (InputStream stream = part.getInputStream()) {
+            readFrom(stream);
+        }
+    }
+
+    /**
+     * @since POI 5.2.0
+     */
+    public StylesTable(InputStream stream) throws IOException {
+        super();
+        readFrom(stream);
     }
 
     public void setWorkbook(XSSFWorkbook wb) {

@@ -52,7 +52,9 @@ public class XSSFPivotCacheRecords extends POIXMLDocumentPart {
     @Beta
     protected XSSFPivotCacheRecords(PackagePart part) throws IOException {
         super(part);
-        readFrom(part.getInputStream());
+        try (InputStream stream = part.getInputStream()) {
+            readFrom(stream);
+        }
     }
     
     @Beta

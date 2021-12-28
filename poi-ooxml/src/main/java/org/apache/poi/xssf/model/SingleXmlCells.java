@@ -56,7 +56,9 @@ public class SingleXmlCells extends POIXMLDocumentPart {
      */
     public SingleXmlCells(PackagePart part) throws IOException {
         super(part);
-        readFrom(part.getInputStream());
+        try (InputStream stream = part.getInputStream()) {
+            readFrom(stream);
+        }
     }
 
     public void readFrom(InputStream is) throws IOException {

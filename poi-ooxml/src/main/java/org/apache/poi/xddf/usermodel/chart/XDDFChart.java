@@ -22,6 +22,7 @@ package org.apache.poi.xddf.usermodel.chart;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -147,7 +148,9 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     protected XDDFChart(PackagePart part) throws IOException, XmlException {
         super(part);
 
-        chartSpace = ChartSpaceDocument.Factory.parse(part.getInputStream(), DEFAULT_XML_OPTIONS).getChartSpace();
+        try (InputStream stream = part.getInputStream()) {
+            chartSpace = ChartSpaceDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS).getChartSpace();
+        }
     }
 
     /**

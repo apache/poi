@@ -17,6 +17,9 @@
 
 package org.apache.poi.xssf.model;
 
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.apache.poi.ss.usermodel.BuiltinFormats;
@@ -88,6 +93,18 @@ public final class TestStylesTable {
             doTestExisting(st);
 
             assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
+        }
+    }
+
+    @Test
+    void testLoadStream() throws IOException {
+        try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage(testFile)) {
+            ArrayList<PackagePart> parts = pkg.getPartsByContentType(XSSFRelation.STYLES.getContentType());
+            assertEquals(1, parts.size());
+            try (InputStream stream = parts.get(0).getInputStream()) {
+                StylesTable st = new StylesTable(stream);
+                doTestExisting(st);
+            }
         }
     }
 

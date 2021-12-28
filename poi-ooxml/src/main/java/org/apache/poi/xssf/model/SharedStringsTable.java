@@ -108,7 +108,9 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
      */
     public SharedStringsTable(PackagePart part) throws IOException {
         super(part);
-        readFrom(part.getInputStream());
+        try (InputStream stream = part.getInputStream()) {
+            readFrom(stream);
+        }
     }
 
     /**

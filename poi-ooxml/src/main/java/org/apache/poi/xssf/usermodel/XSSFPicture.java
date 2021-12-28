@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import java.awt.Dimension;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -239,8 +240,8 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      * @return image dimension in pixels
      */
     protected static Dimension getImageDimension(PackagePart part, int type){
-        try {
-            return ImageUtils.getImageDimension(part.getInputStream(), type);
+        try (InputStream stream = part.getInputStream()) {
+            return ImageUtils.getImageDimension(stream, type);
         } catch (IOException e){
             //return a "singulariry" if ImageIO failed to read the image
             LOG.atWarn().withThrowable(e).log("Failed to read image");

@@ -81,7 +81,9 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      */
     public XSSFTable(PackagePart part) throws IOException {
         super(part);
-        readFrom(part.getInputStream());
+        try (InputStream stream = part.getInputStream()) {
+            readFrom(stream);
+        }
     }
 
     /**

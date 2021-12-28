@@ -16,21 +16,9 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
-
-import javax.xml.namespace.QName;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -41,26 +29,17 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCacheSource;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTItems;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLocation;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCacheDefinition;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotField;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableDefinition;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotTableStyle;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRowFields;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheetSource;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STAxis;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataConsolidateFunction;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STItemType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSourceType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+
+import javax.xml.namespace.QName;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 public class XSSFPivotTable extends POIXMLDocumentPart {
 
@@ -95,13 +74,15 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
     @Beta
     protected XSSFPivotTable(PackagePart part) throws IOException {
         super(part);
-        readFrom(part.getInputStream());
+        try (InputStream stream = part.getInputStream()) {
+            readFrom(stream);
+        }
     }
-    
+
     @Beta
     public void readFrom(InputStream is) throws IOException {
-    try {
-            XmlOptions options  = new XmlOptions(DEFAULT_XML_OPTIONS);
+        try {
+            XmlOptions options = new XmlOptions(DEFAULT_XML_OPTIONS);
             //Removing root element
             options.setLoadReplaceDocumentElement(null);
             pivotTableDefinition = CTPivotTableDefinition.Factory.parse(is, options);

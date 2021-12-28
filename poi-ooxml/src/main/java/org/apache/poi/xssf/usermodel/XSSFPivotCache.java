@@ -16,17 +16,17 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
-
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 public class XSSFPivotCache extends POIXMLDocumentPart {
 
@@ -55,16 +55,18 @@ public class XSSFPivotCache extends POIXMLDocumentPart {
     @Beta
     protected XSSFPivotCache(PackagePart part) throws IOException {
         super(part);
-        readFrom(part.getInputStream());
+        try (InputStream stream = part.getInputStream()) {
+            readFrom(stream);
+        }
     }
     
     @Beta
     protected void readFrom(InputStream is) throws IOException {
-    try {
-        XmlOptions options  = new XmlOptions(DEFAULT_XML_OPTIONS);
-        //Removing root element
-        options.setLoadReplaceDocumentElement(null);
-        ctPivotCache = CTPivotCache.Factory.parse(is, options);
+        try {
+            XmlOptions options = new XmlOptions(DEFAULT_XML_OPTIONS);
+            //Removing root element
+            options.setLoadReplaceDocumentElement(null);
+            ctPivotCache = CTPivotCache.Factory.parse(is, options);
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
         }

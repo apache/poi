@@ -77,7 +77,9 @@ public class XSSFBSharedStringsTable implements SharedStrings {
      * Like POIXMLDocumentPart constructor
      */
     XSSFBSharedStringsTable(PackagePart part) throws IOException, SAXException {
-        readFrom(part.getInputStream());
+        try (InputStream stream = part.getInputStream()) {
+            readFrom(stream);
+        }
     }
 
     private void readFrom(InputStream inputStream) throws IOException {

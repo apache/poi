@@ -297,7 +297,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * input format
      */
     public XSSFWorkbook(InputStream is) throws IOException {
-        this(PackageHelper.open(is));
+        this(is, false);
+    }
+
+    private XSSFWorkbook(InputStream is, boolean closeStream) throws IOException {
+        this(PackageHelper.open(is, closeStream));
     }
 
     /**
@@ -353,7 +357,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @since POI 4.0.0
      */
     public XSSFWorkbook(PackagePart part) throws IOException {
-        this(part.getInputStream());
+        this(part.getInputStream(), true);
     }
 
     /**

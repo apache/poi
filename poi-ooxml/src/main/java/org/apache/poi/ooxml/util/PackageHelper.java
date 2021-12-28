@@ -43,10 +43,25 @@ import org.apache.poi.util.IOUtils;
 public final class PackageHelper {
 
     public static OPCPackage open(InputStream is) throws IOException {
+        return open(is, false);
+    }
+
+    /**
+     * @param stream
+     * @param closeStream whether to close the stream (default is false)
+     * @since POI 5.2.0
+     * @return OPCPackage
+     * @throws IOException
+     */
+    public static OPCPackage open(InputStream stream, boolean closeStream) throws IOException {
         try {
-            return OPCPackage.open(is);
+            return OPCPackage.open(stream);
         } catch (InvalidFormatException e){
             throw new POIXMLException(e);
+        } finally {
+            if (closeStream) {
+                stream.close();
+            }
         }
     }
 
