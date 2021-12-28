@@ -85,12 +85,14 @@ public final class LinkVideoToPptx {
 
             String p14Ns = "http://schemas.microsoft.com/office/powerpoint/2010/main";
             XmlCursor cur = ext.newCursor();
-            cur.toEndToken();
-            cur.beginElement(new QName(p14Ns, "media", "p14"));
-            cur.insertNamespace("p14", p14Ns);
-            cur.insertAttributeWithValue(new QName(CORE_PROPERTIES_ECMA376_NS, "link"), prsEmbed1.getId());
-            cur.dispose();
-
+            try {
+                cur.toEndToken();
+                cur.beginElement(new QName(p14Ns, "media", "p14"));
+                cur.insertNamespace("p14", p14Ns);
+                cur.insertAttributeWithValue(new QName(CORE_PROPERTIES_ECMA376_NS, "link"), prsEmbed1.getId());
+            } finally {
+                cur.dispose();
+            }
 
             CTSlide xslide = slide1.getXmlObject();
             CTTimeNodeList ctnl;

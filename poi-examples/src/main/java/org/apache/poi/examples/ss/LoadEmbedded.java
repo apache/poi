@@ -101,33 +101,46 @@ public final class LoadEmbedded {
            String contentType = pPart.getContentType();
            if (contentType.equals("application/vnd.ms-excel")) {
                // Excel Workbook - either binary or OpenXML
-               HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(pPart.getInputStream());
-               embeddedWorkbook.close();
+               try (InputStream stream = pPart.getInputStream()) {
+                   HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(stream);
+                   embeddedWorkbook.close();
+               }
            } else if (contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
                // Excel Workbook - OpenXML file format
-               XSSFWorkbook embeddedWorkbook = new XSSFWorkbook(pPart.getInputStream());
-               embeddedWorkbook.close();
+               try (InputStream stream = pPart.getInputStream()) {
+                   XSSFWorkbook embeddedWorkbook = new XSSFWorkbook(stream);
+                   embeddedWorkbook.close();
+               }
            } else if (contentType.equals("application/msword")) {
                // Word Document - binary (OLE2CDF) file format
-               HWPFDocument document = new HWPFDocument(pPart.getInputStream());
-               document.close();
+               try (InputStream stream = pPart.getInputStream()) {
+                   HWPFDocument document = new HWPFDocument(stream);
+                   document.close();
+               }
            } else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
                // Word Document - OpenXML file format
-               XWPFDocument document = new XWPFDocument(pPart.getInputStream());
-               document.close();
+               try (InputStream stream = pPart.getInputStream()) {
+                   XWPFDocument document = new XWPFDocument(stream);
+                   document.close();
+               }
            } else if (contentType.equals("application/vnd.ms-powerpoint")) {
                // PowerPoint Document - binary file format
-               HSLFSlideShow slideShow = new HSLFSlideShow(pPart.getInputStream());
-               slideShow.close();
+               try (InputStream stream = pPart.getInputStream()) {
+                   HSLFSlideShow slideShow = new HSLFSlideShow(stream);
+                   slideShow.close();
+               }
            } else if (contentType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
                // PowerPoint Document - OpenXML file format
-               XMLSlideShow slideShow = new XMLSlideShow(pPart.getInputStream());
-               slideShow.close();
+               try (InputStream stream = pPart.getInputStream()) {
+                   XMLSlideShow slideShow = new XMLSlideShow(stream);
+                   slideShow.close();
+               }
            } else {
                // Any other type of embedded object.
                System.out.println("Unknown Embedded Document: " + contentType);
-               InputStream inputStream = pPart.getInputStream();
-               inputStream.close();
+               try (InputStream inputStream = pPart.getInputStream()) {
+
+               }
            }
        }
    }
