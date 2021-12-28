@@ -68,8 +68,9 @@ public class XSSFBSharedStringsTable implements SharedStrings {
         // Some workbooks have no shared strings table.
         if (parts.size() > 0) {
             PackagePart sstPart = parts.get(0);
-
-            readFrom(sstPart.getInputStream());
+            try (InputStream stream = sstPart.getInputStream()) {
+                readFrom(stream);
+            }
         }
     }
 

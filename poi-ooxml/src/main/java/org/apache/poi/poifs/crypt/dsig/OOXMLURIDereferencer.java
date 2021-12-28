@@ -36,6 +36,7 @@ import javax.xml.crypto.URIReference;
 import javax.xml.crypto.URIReferenceException;
 import javax.xml.crypto.XMLCryptoContext;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -81,7 +82,7 @@ public class OOXMLURIDereferencer implements URIDereferencer {
             return baseUriDereferencer.dereference(uriReference, context);
         }
 
-        InputStream dataStream;
+        InputStream dataStream = null;
         try {
             dataStream = part.getInputStream();
 
@@ -99,6 +100,7 @@ public class OOXMLURIDereferencer implements URIDereferencer {
                 }
             }
         } catch (IOException e) {
+            IOUtils.closeQuietly(dataStream);
             throw new URIReferenceException("I/O error: " + e.getMessage(), e);
         }
 

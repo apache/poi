@@ -165,7 +165,9 @@ public class XSSFBReader extends XSSFReader {
                     }
                     PackagePartName commentsName = PackagingURIHelper.createPartName(comments.getTargetURI());
                     PackagePart commentsPart = sheetPkg.getPackage().getPart(commentsName);
-                    return new XSSFBCommentsTable(commentsPart.getInputStream());
+                    try (InputStream stream = commentsPart.getInputStream()) {
+                        return new XSSFBCommentsTable(stream);
+                    }
                 }
             } catch (InvalidFormatException | IOException e) {
                 return null;
