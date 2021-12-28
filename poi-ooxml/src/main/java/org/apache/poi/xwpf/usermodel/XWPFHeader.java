@@ -56,19 +56,22 @@ public class XWPFHeader extends XWPFHeaderFooter {
     public XWPFHeader(XWPFDocument doc, CTHdrFtr hdrFtr) {
         super(doc, hdrFtr);
         XmlCursor cursor = headerFooter.newCursor();
-        cursor.selectPath("./*");
-        while (cursor.toNextSelection()) {
-            XmlObject o = cursor.getObject();
-            if (o instanceof CTP) {
-                XWPFParagraph p = new XWPFParagraph((CTP) o, this);
-                paragraphs.add(p);
+        try {
+            cursor.selectPath("./*");
+            while (cursor.toNextSelection()) {
+                XmlObject o = cursor.getObject();
+                if (o instanceof CTP) {
+                    XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+                    paragraphs.add(p);
+                }
+                if (o instanceof CTTbl) {
+                    XWPFTable t = new XWPFTable((CTTbl) o, this);
+                    tables.add(t);
+                }
             }
-            if (o instanceof CTTbl) {
-                XWPFTable t = new XWPFTable((CTTbl) o, this);
-                tables.add(t);
-            }
+        } finally {
+            cursor.dispose();
         }
-        cursor.dispose();
     }
 
     /**

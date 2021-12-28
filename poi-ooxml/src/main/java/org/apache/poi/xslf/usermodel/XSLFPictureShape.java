@@ -241,11 +241,14 @@ public class XSLFPictureShape extends XSLFSimpleShape
             extBitmap = extLst.addNewExt();
             extBitmap.setUri(BITMAP_URI);
             XmlCursor cur = extBitmap.newCursor();
-            cur.toEndToken();
-            cur.beginElement(new QName(MS_DML_NS, "useLocalDpi", "a14"));
-            cur.insertNamespace("a14", MS_DML_NS);
-            cur.insertAttributeWithValue("val", "0");
-            cur.dispose();
+            try {
+                cur.toEndToken();
+                cur.beginElement(new QName(MS_DML_NS, "useLocalDpi", "a14"));
+                cur.insertNamespace("a14", MS_DML_NS);
+                cur.insertAttributeWithValue("val", "0");
+            } finally {
+                cur.dispose();
+            }
         }
 
         final int svgId = getExt(extLst, SVG_URI);
@@ -261,11 +264,14 @@ public class XSLFPictureShape extends XSLFSimpleShape
         CTOfficeArtExtension svgBitmap = extLst.addNewExt();
         svgBitmap.setUri(SVG_URI);
         XmlCursor cur = svgBitmap.newCursor();
-        cur.toEndToken();
-        cur.beginElement(new QName(MS_SVG_NS, "svgBlip", "asvg"));
-        cur.insertNamespace("asvg", MS_SVG_NS);
-        cur.insertAttributeWithValue(EMBED_TAG, svgRelId);
-        cur.dispose();
+        try {
+            cur.toEndToken();
+            cur.beginElement(new QName(MS_SVG_NS, "svgBlip", "asvg"));
+            cur.insertNamespace("asvg", MS_SVG_NS);
+            cur.insertAttributeWithValue(EMBED_TAG, svgRelId);
+        } finally {
+            cur.dispose();
+        }
     }
 
     @Override
@@ -424,12 +430,15 @@ public class XSLFPictureShape extends XSLFSimpleShape
             for(CTOfficeArtExtension ext : extLst.getExtArray()){
                 String xpath = "declare namespace a14='"+ MS_DML_NS +"' $this//a14:imgProps/a14:imgLayer";
                 XmlObject[] obj = ext.selectPath(xpath);
-                if(obj != null && obj.length == 1){
+                if(obj != null && obj.length == 1) {
                     XmlCursor c = obj[0].newCursor();
-                    String id = c.getAttributeText(EMBED_TAG);
-                    String newId = getSheet().importBlip(id, p.getSheet());
-                    c.setAttributeText(EMBED_TAG, newId);
-                    c.dispose();
+                    try {
+                        String id = c.getAttributeText(EMBED_TAG);
+                        String newId = getSheet().importBlip(id, p.getSheet());
+                        c.setAttributeText(EMBED_TAG, newId);
+                    } finally {
+                        c.dispose();
+                    }
                 }
             }
         }

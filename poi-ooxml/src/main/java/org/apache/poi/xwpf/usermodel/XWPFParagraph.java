@@ -73,33 +73,36 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             // Check for bits that only apply when attached to a core document
             // TODO Make this nicer by tracking the XWPFFootnotes directly
             XmlCursor c = r.newCursor();
-            c.selectPath("child::*");
-            while (c.toNextSelection()) {
-                XmlObject o = c.getObject();
-                if (o instanceof CTFtnEdnRef) {
-                    CTFtnEdnRef ftn = (CTFtnEdnRef) o;
-                    footnoteText.append(" [").append(ftn.getId()).append(": ");
-                    XWPFAbstractFootnoteEndnote footnote =
-                            ftn.getDomNode().getLocalName().equals("footnoteReference") ?
-                                    document.getFootnoteByID(ftn.getId().intValue()) :
-                                    document.getEndnoteByID(ftn.getId().intValue());
-                    if (null != footnote) {
-                        boolean first = true;
-                        for (XWPFParagraph p : footnote.getParagraphs()) {
-                            if (!first) {
-                                footnoteText.append("\n");
+            try {
+                c.selectPath("child::*");
+                while (c.toNextSelection()) {
+                    XmlObject o = c.getObject();
+                    if (o instanceof CTFtnEdnRef) {
+                        CTFtnEdnRef ftn = (CTFtnEdnRef) o;
+                        footnoteText.append(" [").append(ftn.getId()).append(": ");
+                        XWPFAbstractFootnoteEndnote footnote =
+                                ftn.getDomNode().getLocalName().equals("footnoteReference") ?
+                                        document.getFootnoteByID(ftn.getId().intValue()) :
+                                        document.getEndnoteByID(ftn.getId().intValue());
+                        if (null != footnote) {
+                            boolean first = true;
+                            for (XWPFParagraph p : footnote.getParagraphs()) {
+                                if (!first) {
+                                    footnoteText.append("\n");
+                                }
+                                first = false;
+                                footnoteText.append(p.getText());
                             }
-                            first = false;
-                            footnoteText.append(p.getText());
+                        } else {
+                            footnoteText.append("!!! End note with ID \"").append(ftn.getId()).append("\" not found in document.");
                         }
-                    } else {
-                        footnoteText.append("!!! End note with ID \"").append(ftn.getId()).append("\" not found in document.");
-                    }
-                    footnoteText.append("] ");
+                        footnoteText.append("] ");
 
+                    }
                 }
+            } finally {
+                c.dispose();
             }
-            c.dispose();
         }
     }
 
@@ -111,58 +114,61 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     @SuppressWarnings("deprecation")
     private void buildRunsInOrderFromXml(XmlObject object) {
         XmlCursor c = object.newCursor();
-        c.selectPath("child::*");
-        while (c.toNextSelection()) {
-            XmlObject o = c.getObject();
-            if (o instanceof CTR) {
-                XWPFRun r = new XWPFRun((CTR) o, this);
-                runs.add(r);
-                iruns.add(r);
-            }
-            if (o instanceof CTHyperlink) {
-                CTHyperlink link = (CTHyperlink)o;
-                for (CTR r : link.getRArray()) {
-                    XWPFHyperlinkRun hr = new XWPFHyperlinkRun(link, r, this);
-                    runs.add(hr);
-                    iruns.add(hr);
+        try {
+            c.selectPath("child::*");
+            while (c.toNextSelection()) {
+                XmlObject o = c.getObject();
+                if (o instanceof CTR) {
+                    XWPFRun r = new XWPFRun((CTR) o, this);
+                    runs.add(r);
+                    iruns.add(r);
+                }
+                if (o instanceof CTHyperlink) {
+                    CTHyperlink link = (CTHyperlink)o;
+                    for (CTR r : link.getRArray()) {
+                        XWPFHyperlinkRun hr = new XWPFHyperlinkRun(link, r, this);
+                        runs.add(hr);
+                        iruns.add(hr);
+                    }
+                }
+                if (o instanceof CTSimpleField) {
+                    CTSimpleField field = (CTSimpleField)o;
+                    for (CTR r : field.getRArray()) {
+                        XWPFFieldRun fr = new XWPFFieldRun(field, r, this);
+                        runs.add(fr);
+                        iruns.add(fr);
+                    }
+                }
+                if (o instanceof CTSdtBlock) {
+                    XWPFSDT cc = new XWPFSDT((CTSdtBlock) o, part);
+                    iruns.add(cc);
+                }
+                if (o instanceof CTSdtRun) {
+                    XWPFSDT cc = new XWPFSDT((CTSdtRun) o, part);
+                    iruns.add(cc);
+                }
+                if (o instanceof CTRunTrackChange) {
+                    for (CTR r : ((CTRunTrackChange) o).getRArray()) {
+                        XWPFRun cr = new XWPFRun(r, this);
+                        runs.add(cr);
+                        iruns.add(cr);
+                    }
+                }
+                if (o instanceof CTSmartTagRun) {
+                    // Smart Tags can be nested many times.
+                    // This implementation does not preserve the tagging information
+                    buildRunsInOrderFromXml(o);
+                }
+                if (o instanceof CTRunTrackChange) {
+                    // add all the insertions as text
+                    for (CTRunTrackChange change : ((CTRunTrackChange) o).getInsArray()) {
+                        buildRunsInOrderFromXml(change);
+                    }
                 }
             }
-            if (o instanceof CTSimpleField) {
-                CTSimpleField field = (CTSimpleField)o;
-                for (CTR r : field.getRArray()) {
-                    XWPFFieldRun fr = new XWPFFieldRun(field, r, this);
-                    runs.add(fr);
-                    iruns.add(fr);
-                }
-            }
-            if (o instanceof CTSdtBlock) {
-                XWPFSDT cc = new XWPFSDT((CTSdtBlock) o, part);
-                iruns.add(cc);
-            }
-            if (o instanceof CTSdtRun) {
-                XWPFSDT cc = new XWPFSDT((CTSdtRun) o, part);
-                iruns.add(cc);
-            }
-            if (o instanceof CTRunTrackChange) {
-                for (CTR r : ((CTRunTrackChange) o).getRArray()) {
-                    XWPFRun cr = new XWPFRun(r, this);
-                    runs.add(cr);
-                    iruns.add(cr);
-                }
-            }
-            if (o instanceof CTSmartTagRun) {
-                // Smart Tags can be nested many times.
-                // This implementation does not preserve the tagging information
-                buildRunsInOrderFromXml(o);
-            }
-            if (o instanceof CTRunTrackChange) {
-                // add all the insertions as text
-                for (CTRunTrackChange change : ((CTRunTrackChange) o).getInsArray()) {
-                    buildRunsInOrderFromXml(change);
-                }
-            }
+        } finally {
+            c.dispose();
         }
-        c.dispose();
     }
 
     @Internal

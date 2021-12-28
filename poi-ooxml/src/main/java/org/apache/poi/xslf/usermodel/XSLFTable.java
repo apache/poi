@@ -261,17 +261,22 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         frame.addNewXfrm();
         CTGraphicalObjectData gr = frame.addNewGraphic().addNewGraphicData();
         XmlCursor grCur = gr.newCursor();
-        grCur.toNextToken();
-        grCur.beginElement(new QName(XSLFRelation.NS_DRAWINGML, "tbl"));
+        try {
+            grCur.toNextToken();
+            grCur.beginElement(new QName(XSLFRelation.NS_DRAWINGML, "tbl"));
 
-        CTTable tbl = CTTable.Factory.newInstance();
-        tbl.addNewTblPr();
-        tbl.addNewTblGrid();
-        XmlCursor tblCur = tbl.newCursor();
-
-        tblCur.moveXmlContents(grCur);
-        tblCur.dispose();
-        grCur.dispose();
+            CTTable tbl = CTTable.Factory.newInstance();
+            tbl.addNewTblPr();
+            tbl.addNewTblGrid();
+            XmlCursor tblCur = tbl.newCursor();
+            try {
+                tblCur.moveXmlContents(grCur);
+            } finally {
+                tblCur.dispose();
+            }
+        } finally {
+            grCur.dispose();
+        }
         gr.setUri(TABLE_URI);
         return frame;
     }

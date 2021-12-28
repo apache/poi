@@ -251,44 +251,46 @@ public class XSLFObjectShape extends XSLFGraphicFrame implements ObjectShape<XSL
         CTGraphicalObjectData gr = frame.addNewGraphic().addNewGraphicData();
         gr.setUri(OLE_URI);
         XmlCursor grCur = gr.newCursor();
-        grCur.toEndToken();
-        grCur.beginElement(new QName(PML_NS, "oleObj"));
-        grCur.insertElement(new QName(PML_NS, "embed"));
+        try {
+            grCur.toEndToken();
+            grCur.beginElement(new QName(PML_NS, "oleObj"));
+            grCur.insertElement(new QName(PML_NS, "embed"));
+
+            CTGroupShape grpShp = CTGroupShape.Factory.newInstance();
+            CTPicture pic = grpShp.addNewPic();
+            CTPictureNonVisual nvPicPr = pic.addNewNvPicPr();
+            CTNonVisualDrawingProps cNvPr = nvPicPr.addNewCNvPr();
+            cNvPr.setName("");
+            cNvPr.setId(0);
+            nvPicPr.addNewCNvPicPr();
+            nvPicPr.addNewNvPr();
 
 
-        CTGroupShape grpShp = CTGroupShape.Factory.newInstance();
-        CTPicture pic = grpShp.addNewPic();
-        CTPictureNonVisual nvPicPr = pic.addNewNvPicPr();
-        CTNonVisualDrawingProps cNvPr = nvPicPr.addNewCNvPr();
-        cNvPr.setName("");
-        cNvPr.setId(0);
-        nvPicPr.addNewCNvPicPr();
-        nvPicPr.addNewNvPr();
+            CTBlipFillProperties blip = pic.addNewBlipFill();
+            blip.addNewBlip().setEmbed(picRel);
+            blip.addNewStretch().addNewFillRect();
 
+            CTShapeProperties spPr = pic.addNewSpPr();
+            CTTransform2D xfrm = spPr.addNewXfrm();
+            CTPoint2D off = xfrm.addNewOff();
+            off.setX(1270000);
+            off.setY(1270000);
+            CTPositiveSize2D xext = xfrm.addNewExt();
+            xext.setCx(1270000);
+            xext.setCy(1270000);
 
-        CTBlipFillProperties blip = pic.addNewBlipFill();
-        blip.addNewBlip().setEmbed(picRel);
-        blip.addNewStretch().addNewFillRect();
+            spPr.addNewPrstGeom().setPrst(STShapeType.RECT);
 
-        CTShapeProperties spPr = pic.addNewSpPr();
-        CTTransform2D xfrm = spPr.addNewXfrm();
-        CTPoint2D off = xfrm.addNewOff();
-        off.setX(1270000);
-        off.setY(1270000);
-        CTPositiveSize2D xext = xfrm.addNewExt();
-        xext.setCx(1270000);
-        xext.setCy(1270000);
-
-        spPr.addNewPrstGeom().setPrst(STShapeType.RECT);
-
-
-        XmlCursor picCur = grpShp.newCursor();
-        picCur.toStartDoc();
-        picCur.moveXmlContents(grCur);
-        picCur.dispose();
-
-        grCur.dispose();
-
+            XmlCursor picCur = grpShp.newCursor();
+            try {
+                picCur.toStartDoc();
+                picCur.moveXmlContents(grCur);
+            } finally {
+                picCur.dispose();
+            }
+        } finally {
+            grCur.dispose();
+        }
 
         return frame;
     }

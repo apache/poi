@@ -1651,16 +1651,21 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     @Override
     public XWPFTableCell getTableCell(CTTc cell) {
-        XmlCursor cursor = cell.newCursor();
-        cursor.toParent();
-        XmlObject o = cursor.getObject();
-        if (!(o instanceof CTRow)) {
-            return null;
+        XmlObject o;
+        CTRow row;
+        final XmlCursor cursor = cell.newCursor();
+        try {
+            cursor.toParent();
+            o = cursor.getObject();
+            if (!(o instanceof CTRow)) {
+                return null;
+            }
+            row = (CTRow) o;
+            cursor.toParent();
+            o = cursor.getObject();
+        } finally {
+            cursor.dispose();
         }
-        CTRow row = (CTRow) o;
-        cursor.toParent();
-        o = cursor.getObject();
-        cursor.dispose();
         if (!(o instanceof CTTbl)) {
             return null;
         }

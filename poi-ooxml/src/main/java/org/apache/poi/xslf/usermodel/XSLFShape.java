@@ -255,15 +255,18 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
      */
     @SuppressWarnings({"unchecked", "WeakerAccess", "unused", "SameParameterValue"})
     protected <T extends XmlObject> T getChild(Class<T> childClass, String namespace, String nodename) {
-        XmlCursor cur = getXmlObject().newCursor();
         T child = null;
-        if (cur.toChild(namespace, nodename)) {
-            child = (T)cur.getObject();
+        XmlCursor cur = getXmlObject().newCursor();
+        try {
+            if (cur.toChild(namespace, nodename)) {
+                child = (T)cur.getObject();
+            }
+            if (cur.toChild(XSLFRelation.NS_DRAWINGML, nodename)) {
+                child = (T)cur.getObject();
+            }
+        } finally {
+            cur.dispose();
         }
-        if (cur.toChild(XSLFRelation.NS_DRAWINGML, nodename)) {
-            child = (T)cur.getObject();
-        }
-        cur.dispose();
         return child;
     }
 
@@ -457,12 +460,15 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         } else {
             return null;
         }
-        XmlCursor cur = styleLst.newCursor();
         XSLFFillProperties fp = null;
-        if (cur.toChild(Math.toIntExact(childIdx))) {
-            fp = XSLFPropertiesDelegate.getFillDelegate(cur.getObject());
+        XmlCursor cur = styleLst.newCursor();
+        try {
+            if (cur.toChild(Math.toIntExact(childIdx))) {
+                fp = XSLFPropertiesDelegate.getFillDelegate(cur.getObject());
+            }
+        } finally {
+            cur.dispose();
         }
-        cur.dispose();
 
         CTSchemeColor phClr = fillRef.getSchemeClr();
         PaintStyle res =  selectPaint(fp, phClr, theme.getPackagePart(), theme, hasPlaceholder);

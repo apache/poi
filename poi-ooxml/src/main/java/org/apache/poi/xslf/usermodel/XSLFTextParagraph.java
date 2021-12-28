@@ -768,11 +768,17 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         }
 
         XmlCursor thisC = thisP.newCursor();
-        thisC.toEndToken();
-        XmlCursor otherC = otherP.newCursor();
-        otherC.copyXmlContents(thisC);
-        otherC.dispose();
-        thisC.dispose();
+        try {
+            thisC.toEndToken();
+            XmlCursor otherC = otherP.newCursor();
+            try {
+                otherC.copyXmlContents(thisC);
+            } finally {
+                otherC.dispose();
+            }
+        } finally {
+            thisC.dispose();
+        }
 
         for (XSLFTextRun tr : other.getTextRuns()) {
             XmlObject xo = tr.getXmlObject();

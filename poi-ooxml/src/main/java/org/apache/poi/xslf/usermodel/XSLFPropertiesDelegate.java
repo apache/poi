@@ -1155,9 +1155,12 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperti
         @Override
         public boolean isLineStyle() {
             XmlCursor cur = props.newCursor();
-            String name = cur.getName().getLocalPart();
-            cur.dispose();
-            return "lnRef".equals(name);
+            try {
+                String name = cur.getName().getLocalPart();
+                return "lnRef".equals(name);
+            } finally {
+                cur.dispose();
+            }
         }
     }
 

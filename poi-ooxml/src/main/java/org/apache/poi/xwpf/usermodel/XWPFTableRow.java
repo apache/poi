@@ -181,16 +181,19 @@ public class XWPFTableRow {
         //Can't use ctRow.getTcList because that only gets table cells
         //Can't use ctRow.getSdtList because that only gets sdts that are at cell level
         XmlCursor cursor = ctRow.newCursor();
-        cursor.selectPath("./*");
-        while (cursor.toNextSelection()) {
-            XmlObject o = cursor.getObject();
-            if (o instanceof CTTc) {
-                cells.add(new XWPFTableCell((CTTc) o, this, table.getBody()));
-            } else if (o instanceof CTSdtCell) {
-                cells.add(new XWPFSDTCell((CTSdtCell) o, this, table.getBody()));
+        try {
+            cursor.selectPath("./*");
+            while (cursor.toNextSelection()) {
+                XmlObject o = cursor.getObject();
+                if (o instanceof CTTc) {
+                    cells.add(new XWPFTableCell((CTTc) o, this, table.getBody()));
+                } else if (o instanceof CTSdtCell) {
+                    cells.add(new XWPFSDTCell((CTSdtCell) o, this, table.getBody()));
+                }
             }
+        } finally {
+            cursor.dispose();
         }
-        cursor.dispose();
         return cells;
     }
 

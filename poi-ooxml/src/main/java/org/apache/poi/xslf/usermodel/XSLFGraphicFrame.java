@@ -191,9 +191,12 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
             XmlObject[] obj = getGraphicalData().selectPath(xpath);
             if (obj != null && obj.length == 1) {
                 XmlCursor c = obj[0].newCursor();
-                QName idQualifiedName = new QName(CORE_PROPERTIES_ECMA376_NS, "id");
-                id = c.getAttributeText(idQualifiedName);
-                c.dispose();
+                try {
+                    QName idQualifiedName = new QName(CORE_PROPERTIES_ECMA376_NS, "id");
+                    id = c.getAttributeText(idQualifiedName);
+                } finally {
+                    c.dispose();
+                }
             }
             if (id == null) {
                 return null;
@@ -251,8 +254,9 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
                 }
             } catch (InvalidFormatException | IOException e) {
                 throw new POIXMLException(e);
+            } finally {
+                c.dispose();
             }
-            c.dispose();
         }
     }
 
@@ -287,8 +291,9 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
 
             } catch (InvalidFormatException e){
                 throw new POIXMLException(e);
+            } finally {
+                c.dispose();
             }
-            c.dispose();
         }
     }
 

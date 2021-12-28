@@ -461,27 +461,33 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         ole1.setShapeId(shapeId);
         ole1.setId(olePR.getId());
 
-        XmlCursor cur1 = ole1.newCursor();
-        cur1.toEndToken();
-        cur1.beginElement("objectPr", XSSFRelation.NS_SPREADSHEETML);
-        cur1.insertAttributeWithValue("id", PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS, imgSheetPR.getId());
-        cur1.insertAttributeWithValue("defaultSize", "0");
-        cur1.beginElement("anchor", XSSFRelation.NS_SPREADSHEETML);
-        cur1.insertAttributeWithValue("moveWithCells", "1");
+        CTTwoCellAnchor ctAnchor;
+        final XmlCursor cur1 = ole1.newCursor();
+        try {
+            cur1.toEndToken();
+            cur1.beginElement("objectPr", XSSFRelation.NS_SPREADSHEETML);
+            cur1.insertAttributeWithValue("id", PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS, imgSheetPR.getId());
+            cur1.insertAttributeWithValue("defaultSize", "0");
+            cur1.beginElement("anchor", XSSFRelation.NS_SPREADSHEETML);
+            cur1.insertAttributeWithValue("moveWithCells", "1");
 
-        CTTwoCellAnchor ctAnchor = createTwoCellAnchor((XSSFClientAnchor) anchor);
+            ctAnchor = createTwoCellAnchor((XSSFClientAnchor) anchor);
 
-        XmlCursor cur2 = ctAnchor.newCursor();
-        cur2.copyXmlContents(cur1);
-        cur2.dispose();
+            final XmlCursor cur2 = ctAnchor.newCursor();
+            try {
+                cur2.copyXmlContents(cur1);
+            } finally {
+                cur2.dispose();
+            }
 
-        cur1.toParent();
-        cur1.toFirstChild();
-        cur1.setName(new QName(XSSFRelation.NS_SPREADSHEETML, "from"));
-        cur1.toNextSibling();
-        cur1.setName(new QName(XSSFRelation.NS_SPREADSHEETML, "to"));
-
-        cur1.dispose();
+            cur1.toParent();
+            cur1.toFirstChild();
+            cur1.setName(new QName(XSSFRelation.NS_SPREADSHEETML, "from"));
+            cur1.toNextSibling();
+            cur1.setName(new QName(XSSFRelation.NS_SPREADSHEETML, "to"));
+        } finally {
+            cur1.dispose();
+        }
 
         // add a new shape and link OLE & image part
         CTShape ctShape = ctAnchor.addNewSp();
@@ -498,9 +504,12 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         cNvPr.setName("Object " + shapeId);
 
         XmlCursor extCur = cNvPr.getExtLst().getExtArray(0).newCursor();
-        extCur.toFirstChild();
-        extCur.setAttributeText(new QName("spid"), "_x0000_s" + shapeId);
-        extCur.dispose();
+        try {
+            extCur.toFirstChild();
+            extCur.setAttributeText(new QName("spid"), "_x0000_s" + shapeId);
+        } finally {
+            extCur.dispose();
+        }
 
         XSSFObjectData shape = new XSSFObjectData(this, ctShape);
         shape.anchor = (XSSFClientAnchor) anchor;
@@ -682,8 +691,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         QName uriName = new QName(null, "uri");
         String xquery = "declare namespace a='" + XSSFRelation.NS_DRAWINGML + "' .//a:extLst/a:ext";
         XmlCursor cur = shape.newCursor();
-        cur.selectPath(xquery);
         try {
+            cur.selectPath(xquery);
             while (cur.toNextSelection()) {
                 String uri = cur.getAttributeText(uriName);
                 if ("{63B3BB69-23CF-44E3-9099-C40C66FF867C}".equals(uri)) {
@@ -701,10 +710,13 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
 
         XmlObject parentXbean = null;
         XmlCursor cursor = obj.newCursor();
-        if (cursor.toParent()) {
-            parentXbean = cursor.getObject();
+        try {
+            if (cursor.toParent()) {
+                parentXbean = cursor.getObject();
+            }
+        } finally {
+            cursor.dispose();
         }
-        cursor.dispose();
         if (parentXbean != null) {
             if (parentXbean instanceof CTTwoCellAnchor) {
                 CTTwoCellAnchor ct = (CTTwoCellAnchor) parentXbean;

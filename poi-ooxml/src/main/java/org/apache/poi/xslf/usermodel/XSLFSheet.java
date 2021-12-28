@@ -142,7 +142,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         List<XSLFShape> shapes = new ArrayList<>();
         XmlCursor cur = spTree.newCursor();
         try {
-            for (boolean b=cur.toFirstChild();b;b=cur.toNextSibling()) {
+            for (boolean b = cur.toFirstChild(); b; b = cur.toNextSibling()) {
                 XmlObject ch = cur.getObject();
                 if(ch instanceof CTShape){
                     // simple shape

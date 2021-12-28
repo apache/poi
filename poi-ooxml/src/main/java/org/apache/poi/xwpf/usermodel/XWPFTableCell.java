@@ -87,29 +87,32 @@ public class XWPFTableCell implements IBody, ICell {
         tables = new ArrayList<>();
 
         XmlCursor cursor = ctTc.newCursor();
-        cursor.selectPath("./*");
-        while (cursor.toNextSelection()) {
-            XmlObject o = cursor.getObject();
-            if (o instanceof CTP) {
-                XWPFParagraph p = new XWPFParagraph((CTP) o, this);
-                paragraphs.add(p);
-                bodyElements.add(p);
+        try {
+            cursor.selectPath("./*");
+            while (cursor.toNextSelection()) {
+                XmlObject o = cursor.getObject();
+                if (o instanceof CTP) {
+                    XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+                    paragraphs.add(p);
+                    bodyElements.add(p);
+                }
+                if (o instanceof CTTbl) {
+                    XWPFTable t = new XWPFTable((CTTbl) o, this);
+                    tables.add(t);
+                    bodyElements.add(t);
+                }
+                if (o instanceof CTSdtBlock) {
+                    XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
+                    bodyElements.add(c);
+                }
+                if (o instanceof CTSdtRun) {
+                    XWPFSDT c = new XWPFSDT((CTSdtRun) o, this);
+                    bodyElements.add(c);
+                }
             }
-            if (o instanceof CTTbl) {
-                XWPFTable t = new XWPFTable((CTTbl) o, this);
-                tables.add(t);
-                bodyElements.add(t);
-            }
-            if (o instanceof CTSdtBlock) {
-                XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
-                bodyElements.add(c);
-            }
-            if (o instanceof CTSdtRun) {
-                XWPFSDT c = new XWPFSDT((CTSdtRun) o, this);
-                bodyElements.add(c);
-            }
+        } finally {
+            cursor.dispose();
         }
-        cursor.dispose();
     }
 
     @Internal
@@ -276,18 +279,24 @@ public class XWPFTableCell implements IBody, ICell {
             paragraphs.add(pos, newP);
         }
         int i = 0;
-        XmlCursor p2 = p.newCursor();
-        cursor.toCursor(p2);
-        p2.dispose();
+        final XmlCursor p2 = p.newCursor();
+        try {
+            cursor.toCursor(p2);
+        } finally {
+            p2.dispose();
+        }
         while (cursor.toPrevSibling()) {
             o = cursor.getObject();
             if (o instanceof CTP || o instanceof CTTbl)
                 i++;
         }
         bodyElements.add(i, newP);
-        p2 = p.newCursor();
-        cursor.toCursor(p2);
-        p2.dispose();
+        final XmlCursor p3 = p.newCursor();
+        try {
+            cursor.toCursor(p3);
+        } finally {
+            p3.dispose();
+        }
         cursor.toEndToken();
         return newP;
     }
@@ -313,18 +322,24 @@ public class XWPFTableCell implements IBody, ICell {
                 tables.add(pos, newT);
             }
             int i = 0;
-            XmlCursor cursor2 = t.newCursor();
-            while (cursor2.toPrevSibling()) {
-                o = cursor2.getObject();
-                if (o instanceof CTP || o instanceof CTTbl)
-                    i++;
+            final XmlCursor cursor2 = t.newCursor();
+            try {
+                while (cursor2.toPrevSibling()) {
+                    o = cursor2.getObject();
+                    if (o instanceof CTP || o instanceof CTTbl)
+                        i++;
+                }
+            } finally {
+                cursor2.dispose();
             }
-            cursor2.dispose();
             bodyElements.add(i, newT);
-            cursor2 = t.newCursor();
-            cursor.toCursor(cursor2);
-            cursor.toEndToken();
-            cursor2.dispose();
+            final XmlCursor cursor3 = t.newCursor();
+            try {
+                cursor.toCursor(cursor3);
+                cursor.toEndToken();
+            } finally {
+                cursor3.dispose();
+            }
             return newT;
         }
         return null;
@@ -335,10 +350,13 @@ public class XWPFTableCell implements IBody, ICell {
      */
     private boolean isCursorInTableCell(XmlCursor cursor) {
         XmlCursor verify = cursor.newCursor();
-        verify.toParent();
-        boolean result = (verify.getObject() == this.ctTc);
-        verify.dispose();
-        return result;
+        try {
+            verify.toParent();
+            boolean result = (verify.getObject() == this.ctTc);
+            return result;
+        } finally {
+            verify.dispose();
+        }
     }
 
     @Override
@@ -475,16 +493,21 @@ public class XWPFTableCell implements IBody, ICell {
      */
     @Override
     public XWPFTableCell getTableCell(CTTc cell) {
-        XmlCursor cursor = cell.newCursor();
-        cursor.toParent();
-        XmlObject o = cursor.getObject();
-        if (!(o instanceof CTRow)) {
-            return null;
+        XmlObject o;
+        CTRow row;
+        final XmlCursor cursor = cell.newCursor();
+        try {
+            cursor.toParent();
+            o = cursor.getObject();
+            if (!(o instanceof CTRow)) {
+                return null;
+            }
+            row = (CTRow) o;
+            cursor.toParent();
+            o = cursor.getObject();
+        } finally {
+            cursor.dispose();
         }
-        CTRow row = (CTRow) o;
-        cursor.toParent();
-        o = cursor.getObject();
-        cursor.dispose();
         if (!(o instanceof CTTbl)) {
             return null;
         }
