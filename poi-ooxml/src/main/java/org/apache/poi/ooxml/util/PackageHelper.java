@@ -36,6 +36,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Removal;
 
 /**
  * Provides handy methods to work with OOXML packages
@@ -71,7 +72,10 @@ public final class PackageHelper {
      * @param   pkg   the package to clone
      * @param   file  the destination file
      * @return  the cloned package
+     * @deprecated this method is not used internally and creates temp files that are not well handled
      */
+    @Deprecated
+    @Removal(version = "6.0.0")
     public static OPCPackage clone(OPCPackage pkg, File file) throws OpenXML4JException, IOException {
 
         String path = file.getAbsolutePath();

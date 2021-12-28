@@ -71,7 +71,6 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         this.plainByteFlags = new SparseBitSet(cs);
         this.chunkBits = Integer.bitCount(cs-1);
         this.fileOut = TempFile.createTempFile("encrypted_package", "crypt");
-        this.fileOut.deleteOnExit();
         this.out = new FileOutputStream(fileOut);
         this.dir = dir;
         this.cipher = initCipherForBlock(null, 0, false);
@@ -266,6 +265,10 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
             }
         } catch (GeneralSecurityException e) {
             throw new IOException(e);
+        } finally {
+            if (fileOut != null) {
+                fileOut.delete();
+            }
         }
     }
 

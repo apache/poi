@@ -26,7 +26,7 @@ import java.io.IOException;
  * Default implementation of the {@link TempFileCreationStrategy} used by {@link TempFile}:
  * Files are collected into one directory and by default are deleted on exit from the VM.
  * Files may be manually deleted by user prior to JVM exit.
- * Files can be kept by defining the system property {@link #KEEP_FILES}.
+ * Files can be kept by defining the system property {@link #DELETE_FILES_ON_EXIT}.
  *
  * Each file is registered for deletion with the JVM and the temporary directory is not deleted
  * after the JVM exits. Files that are created in the poifiles directory outside
@@ -37,8 +37,8 @@ import java.io.IOException;
 public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy {
     public static final String POIFILES = "poifiles";
 
-    /** To keep files after JVM exit, set the <code>-Dpoi.keep.tmp.files</code> JVM property */
-    public static final String KEEP_FILES = "poi.keep.tmp.files";
+    /** To use files.deleteOnExit after clean JVM exit, set the <code>-Dpoi.delete.tmp.files.on.exit</code> JVM property */
+    public static final String DELETE_FILES_ON_EXIT = "poi.delete.tmp.files.on.exit";
 
     /** The directory where the temporary files will be created (<code>null</code> to use the default directory). */
     private File dir;
@@ -105,8 +105,8 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
         // Generate a unique new filename
         File newFile = File.createTempFile(prefix, suffix, dir);
 
-        // Set the delete on exit flag, unless explicitly disabled
-        if (System.getProperty(KEEP_FILES) == null) {
+        // Set the delete on exit flag, but only when explicitly disabled
+        if (System.getProperty(DELETE_FILES_ON_EXIT) != null) {
             newFile.deleteOnExit();
         }
 
@@ -126,10 +126,8 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
         File newDirectory = new File(dir, prefix + Long.toString(n));
         createTempDirectory(newDirectory);
 
-        // Set the delete on exit flag, unless explicitly disabled
-        if (System.getProperty(KEEP_FILES) == null) {
-            newDirectory.deleteOnExit();
-        }
+        //this method appears to be only used in tests, so it is probably ok to use deleteOnExit
+        newDirectory.deleteOnExit();
 
         // All done
         return newDirectory;
