@@ -131,9 +131,10 @@ public class StandardEncryptor extends Encryptor {
         protected long countBytes;
         protected final File fileOut;
         protected final DirectoryNode dir;
+        protected final boolean deleteFile;
 
         @SuppressWarnings({"resource", "squid:S2095"})
-        private StandardCipherOutputStream(DirectoryNode dir, File fileOut) throws IOException {
+        private StandardCipherOutputStream(DirectoryNode dir, File fileOut, boolean deleteFile) throws IOException {
             // although not documented, we need the same padding as with agile encryption
             // and instead of calculating the missing bytes for the block size ourselves
             // we leave it up to the CipherOutputStream, which generates/saves them on close()
@@ -147,12 +148,13 @@ public class StandardEncryptor extends Encryptor {
             super(
                 new CipherOutputStream(new FileOutputStream(fileOut), getCipher(getSecretKey(), "PKCS5Padding"))
             );
+            this.deleteFile = deleteFile;
             this.fileOut = fileOut;
             this.dir = dir;
         }
 
         protected StandardCipherOutputStream(DirectoryNode dir) throws IOException {
-            this(dir, TempFile.createTempFile("encrypted_package", "crypt"));
+            this(dir, TempFile.createTempFile("encrypted_package", "crypt"), true);
         }
 
         @Override
@@ -172,6 +174,11 @@ public class StandardEncryptor extends Encryptor {
             // the CipherOutputStream adds the padding bytes on close()
             super.close();
             writeToPOIFS();
+            if (deleteFile && fileOut != null) {
+                if (!fileOut.delete()) {
+                    //ignore
+                }
+            }
         }
 
         void writeToPOIFS() throws IOException {

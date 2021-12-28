@@ -111,8 +111,15 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
             RandomSingleton.getInstance().nextBytes(ivBytes);
             RandomSingleton.getInstance().nextBytes(keyBytes);
             final File tmpFile = TempFile.createTempFile("protectedXlsx", ".zip");
-            copyToFile(is, tmpFile, keyBytes, ivBytes);
-            return fileToSource(tmpFile, keyBytes, ivBytes);
+            try {
+                copyToFile(is, tmpFile, keyBytes, ivBytes);
+                return fileToSource(tmpFile, keyBytes, ivBytes);
+            } catch (IOException|RuntimeException e) {
+                if (!tmpFile.delete()) {
+                    LOG.atInfo().log("Temp file was not deleted, may already have been deleted by another method.");
+                }
+                throw e;
+            }
         } finally {
             IOUtils.closeQuietly(is);
         }

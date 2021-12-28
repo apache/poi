@@ -618,7 +618,12 @@ public final class ExcelFileFormatDocFunctionExtractor {
 //      }
 
         File tempEFFDocFile = downloadSourceFile();
-        processFile(tempEFFDocFile, outFile);
-        tempEFFDocFile.delete();
+        try {
+            processFile(tempEFFDocFile, outFile);
+        } finally {
+            if (!tempEFFDocFile.delete()) {
+                //ignore
+            }
+        }
     }
 }

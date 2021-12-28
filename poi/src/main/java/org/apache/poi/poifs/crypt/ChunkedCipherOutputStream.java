@@ -267,7 +267,9 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
             throw new IOException(e);
         } finally {
             if (fileOut != null) {
-                fileOut.delete();
+                if (!fileOut.delete()) {
+                    //ignore
+                }
             }
         }
     }

@@ -84,6 +84,7 @@ public final class BigGridDemo {
         // Step 1. Create a template file. Setup sheets and workbook-level objects such as
         // cell styles, number formats, etc.
 
+        File tmp = null;
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet("Big Grid");
 
@@ -97,7 +98,7 @@ public final class BigGridDemo {
             }
 
             //Step 2. Generate XML file.
-            File tmp = File.createTempFile("sheet", ".xml");
+            tmp = File.createTempFile("sheet", ".xml");
             try (
                     FileOutputStream stream = new FileOutputStream(tmp);
                     Writer fw = new OutputStreamWriter(stream, XML_ENCODING)
@@ -109,6 +110,8 @@ public final class BigGridDemo {
             try (FileOutputStream out = new FileOutputStream("big-grid.xlsx")) {
                 substitute(new File("template.xlsx"), tmp, sheetRef.substring(1), out);
             }
+        } finally {
+            if (tmp != null) tmp.delete();
         }
     }
 
