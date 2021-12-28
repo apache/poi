@@ -64,8 +64,8 @@ public class XmlVisioDocument extends POIXMLDocument {
 
         VisioDocumentType document;
 
-        try {
-            document = VisioDocumentDocument1.Factory.parse(getPackagePart().getInputStream()).getVisioDocument();
+        try (InputStream stream = getPackagePart().getInputStream()){
+            document = VisioDocumentDocument1.Factory.parse(stream).getVisioDocument();
         } catch (XmlException | IOException e) {
             throw new POIXMLException(e);
         }

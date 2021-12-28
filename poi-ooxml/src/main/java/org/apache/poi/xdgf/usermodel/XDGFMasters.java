@@ -18,6 +18,7 @@
 package org.apache.poi.xdgf.usermodel;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,8 +60,8 @@ public class XDGFMasters extends XDGFXMLDocumentPart {
     @Override
     protected void onDocumentRead() {
         try {
-            try {
-                _mastersObject = MastersDocument.Factory.parse(getPackagePart().getInputStream()).getMasters();
+            try (InputStream stream = getPackagePart().getInputStream()) {
+                _mastersObject = MastersDocument.Factory.parse(stream).getMasters();
             } catch (XmlException | IOException e) {
                 throw new POIXMLException(e);
             }

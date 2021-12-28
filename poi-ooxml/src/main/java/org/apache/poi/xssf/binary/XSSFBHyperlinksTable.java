@@ -60,8 +60,10 @@ public class XSSFBHyperlinksTable {
         //load the urls from the sheet .rels
         loadUrlsFromSheetRels(sheetPart);
         //now load the hyperlinks from the bottom of the sheet
-        HyperlinkSheetScraper scraper = new HyperlinkSheetScraper(sheetPart.getInputStream());
-        scraper.parse();
+        try (InputStream stream = sheetPart.getInputStream()) {
+            HyperlinkSheetScraper scraper = new HyperlinkSheetScraper(stream);
+            scraper.parse();
+        }
     }
 
     /**

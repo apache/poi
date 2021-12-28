@@ -111,8 +111,9 @@ public class XSSFBReader extends XSSFReader {
         if(parts.size() == 0) return null;
 
         // Create the Styles Table, and associate the Themes if present
-        return new XSSFBStylesTable(parts.get(0).getInputStream());
-
+        try (InputStream stream = parts.get(0).getInputStream()) {
+            return new XSSFBStylesTable(stream);
+        }
     }
 
     public static class SheetIterator extends XSSFReader.SheetIterator {
@@ -133,9 +134,11 @@ public class XSSFBReader extends XSSFReader {
 
         @Override
         protected Iterator<XSSFSheetRef> createSheetIteratorFromWB(PackagePart wb) throws IOException {
-            SheetRefLoader sheetRefLoader = new SheetRefLoader(wb.getInputStream());
-            sheetRefLoader.parse();
-            return sheetRefLoader.getSheets().iterator();
+            try (InputStream stream = wb.getInputStream()) {
+                SheetRefLoader sheetRefLoader = new SheetRefLoader(stream);
+                sheetRefLoader.parse();
+                return sheetRefLoader.getSheets().iterator();
+            }
         }
 
         /**

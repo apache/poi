@@ -17,6 +17,7 @@
 package org.apache.poi.xdgf.usermodel;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,8 +59,8 @@ public class XDGFPages extends XDGFXMLDocumentPart {
     @Override
     protected void onDocumentRead() {
         try {
-            try {
-                _pagesObject = PagesDocument.Factory.parse(getPackagePart().getInputStream()).getPages();
+            try (InputStream stream = getPackagePart().getInputStream()) {
+                _pagesObject = PagesDocument.Factory.parse(stream).getPages();
             } catch (XmlException | IOException e) {
                 throw new POIXMLException(e);
             }

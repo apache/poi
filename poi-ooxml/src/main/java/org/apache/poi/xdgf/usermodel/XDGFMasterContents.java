@@ -18,6 +18,7 @@
 package org.apache.poi.xdgf.usermodel;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import com.microsoft.schemas.office.visio.x2012.main.MasterContentsDocument;
 import org.apache.poi.ooxml.POIXMLException;
@@ -44,8 +45,8 @@ public class XDGFMasterContents extends XDGFBaseContents {
 
         try {
 
-            try {
-                _pageContents = MasterContentsDocument.Factory.parse(getPackagePart().getInputStream()).getMasterContents();
+            try (InputStream stream = getPackagePart().getInputStream()) {
+                _pageContents = MasterContentsDocument.Factory.parse(stream).getMasterContents();
             } catch (XmlException | IOException e) {
                 throw new POIXMLException(e);
             }

@@ -18,6 +18,7 @@
 package org.apache.poi.xdgf.usermodel;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,8 +44,8 @@ public class XDGFPageContents extends XDGFBaseContents {
     @Override
     protected void onDocumentRead() {
         try {
-            try {
-                _pageContents = PageContentsDocument.Factory.parse(getPackagePart().getInputStream()).getPageContents();
+            try (InputStream stream = getPackagePart().getInputStream()) {
+                _pageContents = PageContentsDocument.Factory.parse(stream).getPageContents();
             } catch (XmlException | IOException e) {
                 throw new POIXMLException(e);
             }
