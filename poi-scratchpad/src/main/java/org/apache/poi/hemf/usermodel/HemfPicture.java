@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -205,6 +206,12 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
         final Rectangle2D b = getBoundsInPoints();
         return new Dimension2DDouble(abs(b.getWidth()), abs(b.getHeight()));
     }
+
+    /**
+     * @param ctx
+     * @param graphicsBounds
+     * @throws IllegalStateException if the draw fails
+     */
     public void draw(Graphics2D ctx, Rectangle2D graphicsBounds) {
         final Shape clip = ctx.getClip();
         final AffineTransform at = ctx.getTransform();
@@ -232,8 +239,13 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
                         ? winBounds
                         : emfBounds;
             } else {
-                b = Stream.of(emfBounds, winBounds, viewBounds).
-                    min(comparingDouble(r -> diff(r, recBounds))).get();
+                Optional<Rectangle2D> result = Stream.of(emfBounds, winBounds, viewBounds).
+                    min(comparingDouble(r -> diff(r, recBounds)));
+                if (result.isPresent()) {
+                    b = result.get();
+                } else {
+                    throw new IllegalStateException("Failed to create Rectangle2D for drawing");
+                }
             }
 
             ctx.translate(graphicsBounds.getCenterX(), graphicsBounds.getCenterY());
@@ -245,7 +257,7 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
 
             HemfGraphics g = new HemfGraphics(ctx, b);
 
-            int idx=0;
+            int idx = 0;
             for (HemfRecord r : getRecords()) {
                 try {
                     g.draw(r);

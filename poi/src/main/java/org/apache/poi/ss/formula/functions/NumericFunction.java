@@ -177,7 +177,7 @@ public abstract class NumericFunction implements Function {
         }
         double dpm = Math.abs(d)+1;
         long x = ((long) dpm) & PARITY_MASK;
-        return MathX.sign(d) * ((Double.compare(x, dpm) == 0) ? x-1 : x+1);
+        return (double) MathX.sign(d) * ((Double.compare(x, dpm) == 0) ? x-1 : x+1);
     }
 
 
@@ -190,7 +190,7 @@ public abstract class NumericFunction implements Function {
 
         double dpm = Math.abs(d);
         long x = ((long) dpm) & PARITY_MASK;
-        return MathX.sign(d) * ((Double.compare(x, dpm) == 0) ? x : (x + 2));
+        return (double) MathX.sign(d) * ((Double.compare(x, dpm) == 0) ? x : (x + 2));
     }
 
 

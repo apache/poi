@@ -34,6 +34,8 @@ import java.util.Random;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FillPatternType;
@@ -73,6 +75,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * See <a href="https://poi.apache.org/spreadsheet/how-to.html#sxssf">SXSSF (Streaming Usermodel API)</a>.
  */
 public final class BigGridDemo {
+    private static final Logger LOG = LogManager.getLogger(BigGridDemo.class);
     private static final String XML_ENCODING = "UTF-8";
 
     private static final Random rnd = new Random();
@@ -111,7 +114,11 @@ public final class BigGridDemo {
                 substitute(new File("template.xlsx"), tmp, sheetRef.substring(1), out);
             }
         } finally {
-            if (tmp != null) tmp.delete();
+            if (tmp != null && tmp.exists()) {
+                if (!tmp.delete()) {
+                    LOG.atInfo().log("failed to delete temp file");
+                }
+            }
         }
     }
 

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.regex.Matcher;
@@ -142,7 +143,9 @@ public final class LookupUtils {
 
                 @Override
                 public Integer next() {
-                    return pos--;
+                    pos--;
+                    if (pos < 0) throw new NoSuchElementException();
+                    return pos;
                 }
             };
         }

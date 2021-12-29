@@ -94,7 +94,7 @@ final class XMatchFunction implements FreeRefFunction {
                 vector = LookupUtils.createRowVector(tableArray, 0);
             }
             int matchedIdx = LookupUtils.xlookupIndexOfValue(lookupValue, vector, matchMode, searchMode);
-            return new NumberEval(matchedIdx + 1);
+            return new NumberEval((double)matchedIdx + 1);
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
