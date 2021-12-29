@@ -111,6 +111,7 @@ public final class LookupUtils {
     public interface ValueVector {
         ValueEval getItem(int index);
         int getSize();
+
         default Iterator<Integer> indexIterator() {
             return new Iterator<Integer>() {
                 int pos = 0;
@@ -126,19 +127,14 @@ public final class LookupUtils {
                 }
             };
         }
-        /**
-         * @since POI 5.2.0
-         */
-        default Spliterator<Integer> indexSpliterator() {
-            return Spliterators.spliterator(indexIterator(), getSize(), 0);
-        }
+
         default Iterator<Integer> reverseIndexIterator() {
             return new Iterator<Integer>() {
-                int pos = getSize() - 1;
+                private int pos = getSize() - 1;
 
                 @Override
                 public boolean hasNext() {
-                    return pos >= 0;
+                    return pos > 0;
                 }
 
                 @Override
@@ -148,12 +144,6 @@ public final class LookupUtils {
                     return pos;
                 }
             };
-        }
-        /**
-         * @since POI 5.2.0
-         */
-        default Spliterator<Integer> reverseIndexSpliterator() {
-            return Spliterators.spliterator(reverseIndexIterator(), getSize(), 0);
         }
     }
 
