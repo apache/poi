@@ -123,9 +123,8 @@ public final class LookupUtils {
 
                 @Override
                 public Integer next() {
-                    pos++;
-                    if (pos > getSize()) throw new NoSuchElementException();
-                    return pos;
+                    if (!hasNext()) throw new NoSuchElementException();
+                    return pos++;
                 }
             };
         }

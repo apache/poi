@@ -131,8 +131,7 @@ enum OperatorEnum {
         if (v1 == null) {
             return true; // non-null not equal null, returns true
         }
-        // need to avoid instanceof, to work around a 1.6 compiler bug
-        if (cellValue.getClass() == String.class) {
+        if (cellValue instanceof String) {
             return cellValue.toString().compareToIgnoreCase(v1.toString()) == 0;
         }
         return cellValue.compareTo(v1) != 0;

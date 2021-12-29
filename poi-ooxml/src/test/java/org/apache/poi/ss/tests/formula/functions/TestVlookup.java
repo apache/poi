@@ -80,8 +80,8 @@ class TestVlookup {
             Cell cell = row.createCell(0);
             cell.setCellFormula("vlookup(A2,B1:B5,2,false)");
 
-            CreationHelper crateHelper = wb.getCreationHelper();
-            FormulaEvaluator eval = crateHelper.createFormulaEvaluator();
+            CreationHelper createHelper = wb.getCreationHelper();
+            FormulaEvaluator eval = createHelper.createFormulaEvaluator();
             CellValue value = eval.evaluate(cell);
 
             assertFalse(value.getBooleanValue());
@@ -97,8 +97,8 @@ class TestVlookup {
             Cell cell = row.createCell(0);
             cell.setCellFormula("vlookup(A2,B1:B5,2,)");
 
-            CreationHelper crateHelper = wb.getCreationHelper();
-            FormulaEvaluator eval = crateHelper.createFormulaEvaluator();
+            CreationHelper createHelper = wb.getCreationHelper();
+            FormulaEvaluator eval = createHelper.createFormulaEvaluator();
             CellValue value = eval.evaluate(cell);
 
             assertFalse(value.getBooleanValue());
@@ -114,8 +114,8 @@ class TestVlookup {
             Cell cell = row.createCell(0);
             cell.setCellFormula("vlookup(A2,B1:B5,,)");
 
-            CreationHelper crateHelper = wb.getCreationHelper();
-            FormulaEvaluator eval = crateHelper.createFormulaEvaluator();
+            CreationHelper createHelper = wb.getCreationHelper();
+            FormulaEvaluator eval = createHelper.createFormulaEvaluator();
             CellValue value = eval.evaluate(cell);
 
             assertFalse(value.getBooleanValue());
@@ -131,8 +131,8 @@ class TestVlookup {
             Cell cell = row.createCell(0);
             cell.setCellFormula("vlookup(A2,,,)");
 
-            CreationHelper crateHelper = wb.getCreationHelper();
-            FormulaEvaluator eval = crateHelper.createFormulaEvaluator();
+            CreationHelper createHelper = wb.getCreationHelper();
+            FormulaEvaluator eval = createHelper.createFormulaEvaluator();
             CellValue value = eval.evaluate(cell);
 
             assertFalse(value.getBooleanValue());
