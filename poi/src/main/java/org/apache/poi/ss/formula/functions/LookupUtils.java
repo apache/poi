@@ -114,7 +114,7 @@ public final class LookupUtils {
 
         default Iterator<Integer> indexIterator() {
             return new Iterator<Integer>() {
-                int pos = 0;
+                private int pos = 0;
 
                 @Override
                 public boolean hasNext() {
@@ -123,7 +123,9 @@ public final class LookupUtils {
 
                 @Override
                 public Integer next() {
-                    return pos++;
+                    pos++;
+                    if (pos > getSize()) throw new NoSuchElementException();
+                    return pos;
                 }
             };
         }

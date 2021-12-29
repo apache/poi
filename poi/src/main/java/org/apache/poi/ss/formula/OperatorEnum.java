@@ -32,7 +32,7 @@ enum OperatorEnum {
     NO_COMPARISON(OperatorEnum::noComp, false),
     BETWEEN(OperatorEnum::between, false),
     NOT_BETWEEN(OperatorEnum::notBetween, true),
-    EQUAL(OperatorEnum::equal, false),
+    EQUAL(OperatorEnum::equalCheck, false),
     NOT_EQUAL(OperatorEnum::notEqual, true),
     GREATER_THAN(OperatorEnum::greaterThan, false),
     LESS_THAN(OperatorEnum::lessThan, false),
@@ -111,7 +111,7 @@ enum OperatorEnum {
         return cellValue.compareTo(v1) < 0 || cellValue.compareTo(v2) > 0;
     }
 
-    private static <C extends Comparable<C>> boolean equal(C cellValue, C v1, C v2) {
+    private static <C extends Comparable<C>> boolean equalCheck(C cellValue, C v1, C v2) {
         if (v1 == null) {
             if (cellValue instanceof Number) {
                 // use zero for null
@@ -121,8 +121,7 @@ enum OperatorEnum {
             } else if (cellValue instanceof Boolean) return false;
             return false; // just in case - not a typical possibility
         }
-        // need to avoid instanceof, to work around a 1.6 compiler bug
-        if (cellValue.getClass() == String.class) {
+        if (cellValue instanceof String) {
             return cellValue.toString().compareToIgnoreCase(v1.toString()) == 0;
         }
         return cellValue.compareTo(v1) == 0;
