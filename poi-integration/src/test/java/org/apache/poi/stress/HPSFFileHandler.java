@@ -20,6 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
@@ -27,11 +28,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
-import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.examples.hpsf.CopyCompare;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
@@ -128,14 +126,8 @@ public class HPSFFileHandler extends POIFSFileHandler {
     public void handleAdditional(File file) throws Exception {
         assumeFalse(EXCLUDES_HANDLE_ADD.contains(file.getParentFile().getName()+"/"+file.getName()));
 
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
-            try (PrintStream psNew = new PrintStream(bos, true, "ISO-8859-1")) {
-                CopyCompare copyCompare = new CopyCompare();
-                copyCompare.setOut(psNew);
-                copyCompare.run(new String[]{file.getAbsolutePath(), copyOutput.get().getAbsolutePath()});
-                assertEquals("Equal" + NL, bos.toString(StandardCharsets.UTF_8));
-            }
-        }
+        boolean result = CopyCompare.compare(file.getAbsolutePath(), copyOutput.get().getAbsolutePath());
+        assertTrue(result);
     }
 
 

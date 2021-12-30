@@ -22,7 +22,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
@@ -63,7 +62,7 @@ import org.apache.poi.util.TempFile;
 @SuppressWarnings({"java:S106","java:S4823"})
 public final class CopyCompare {
 
-    private PrintStream out = System.out;
+    private CopyCompare() {}
 
     /**
      * Runs the example program. The application expects one or two arguments:
@@ -82,10 +81,6 @@ public final class CopyCompare {
      *                                      supported.
      */
     public static void main(final String[] args) throws IOException {
-        new CopyCompare().run(args);
-    }
-
-    public void run(String[] args) throws IOException {
         String originalFileName = null;
         String copyFileName = null;
 
@@ -103,7 +98,11 @@ public final class CopyCompare {
             System.exit(1);
         }
 
+        boolean result = compare(originalFileName, copyFileName);
+        System.out.println(result ? "Equal" : "Not equal");
+    }
 
+    public static boolean compare(String originalFileName, String copyFileName) throws IOException {
         // Read the origin POIFS using the eventing API.
         final POIFSReader r = new POIFSReader();
         try (final POIFSFileSystem poiFs = new POIFSFileSystem();
@@ -123,12 +122,8 @@ public final class CopyCompare {
              POIFSFileSystem cpfs = new POIFSFileSystem(new File(copyFileName))) {
             final DirectoryEntry oRoot = opfs.getRoot();
             final DirectoryEntry cRoot = cpfs.getRoot();
-            out.println(EntryUtils.areDirectoriesIdentical(oRoot, cRoot) ? "Equal" : "Not equal");
+            return EntryUtils.areDirectoriesIdentical(oRoot, cRoot);
         }
-    }
-
-    public void setOut(PrintStream ps) {
-        out = ps;
     }
 
     private interface InputStreamSupplier {
