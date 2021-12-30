@@ -49,7 +49,7 @@ public class CellNumberPartHandler implements PartHandler {
             // See comment in writeScientific -- exponent handling is complex.
             // (1) When parsing the format, remove the sign from after the 'e' and
             // put it before the first digit of the exponent.
-            if (exponent == null && specials.size() > 0) {
+            if (exponent == null && !specials.isEmpty()) {
                 exponent = new Special('.', pos);
                 specials.add(exponent);
                 insertSignForExponent = part.charAt(1);
@@ -73,7 +73,7 @@ public class CellNumberPartHandler implements PartHandler {
             break;
 
         case '.':
-            if (decimalPoint == null && specials.size() > 0) {
+            if (decimalPoint == null && !specials.isEmpty()) {
                 decimalPoint = new Special('.', pos);
                 specials.add(decimalPoint);
             }

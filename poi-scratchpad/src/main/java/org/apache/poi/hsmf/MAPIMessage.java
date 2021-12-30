@@ -226,7 +226,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
       ByteChunk htmlBodyBinaryChunk = mainChunks.getHtmlBodyChunkBinary();
       if (htmlBodyBinaryChunk != null) {
          List<PropertyValue> cpid = mainChunks.getProperties().get(MAPIProperty.INTERNET_CPID);
-         if (cpid != null && cpid.size() > 0) {
+         if (cpid != null && !cpid.isEmpty()) {
             int codepage = ((LongPropertyValue) cpid.get(0)).getValue();
             try {
                String encoding = CodePageUtil.codepageToEncoding(codepage, true);
@@ -423,7 +423,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
      // General codepage: Message codepage property.
      //
      List<PropertyValue> val = mainChunks.getProperties().get(MAPIProperty.MESSAGE_CODEPAGE);
-     if (val != null && val.size() > 0) {
+     if (val != null && !val.isEmpty()) {
        int codepage = ((LongPropertyValue) val.get(0)).getValue();
        try {
          String encoding = CodePageUtil.codepageToEncoding(codepage, true);
@@ -437,7 +437,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
      //
      if (generalcodepage == null) {
        val = mainChunks.getProperties().get(MAPIProperty.MESSAGE_LOCALE_ID);
-       if (val != null && val.size() > 0) {
+       if (val != null && !val.isEmpty()) {
          int lcid = ((LongPropertyValue) val.get(0)).getValue();
          int codepage = LocaleUtil.getDefaultCodePageFromLCID(lcid);
          try {
@@ -476,7 +476,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
      // UTF-8 is ignored for text body. This seems to be a special Outlook behavior.
      //
      val = mainChunks.getProperties().get(MAPIProperty.INTERNET_CPID);
-     if (val != null && val.size() > 0) {
+     if (val != null && !val.isEmpty()) {
        int codepage = ((LongPropertyValue) val.get(0)).getValue();
        try {
          String encoding = CodePageUtil.codepageToEncoding(codepage, true);
@@ -644,7 +644,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
                MAPIProperty.CREATION_TIME
          }) {
             List<PropertyValue> val = mainChunks.getProperties().get(prop);
-            if (val != null && val.size() > 0) {
+            if (val != null && !val.isEmpty()) {
                return ((TimePropertyValue)val.get(0)).getValue();
             }
          }

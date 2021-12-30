@@ -80,7 +80,7 @@ public class XDDFTextParagraph implements Iterable<XDDFTextRun> {
     public void setText(String text) {
         // keep the properties of current last run
         XmlObject existing = null;
-        if (_runs.size() > 0) {
+        if (!_runs.isEmpty()) {
             existing = _runs.get(_runs.size() - 1).getProperties().copy();
         }
         // remove all runs

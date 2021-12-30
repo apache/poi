@@ -3632,7 +3632,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         }
 
         // Now re-generate our CTHyperlinks, if needed
-        if(hyperlinks.size() > 0) {
+        if (!hyperlinks.isEmpty()) {
             if(worksheet.getHyperlinks() == null) {
                 worksheet.addNewHyperlinks();
             }

@@ -226,7 +226,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
 
     private void outputHeaderFooter(XSSFBHeaderFooter headerFooter) {
         String text = headerFooter.getString();
-        if (text != null && text.trim().length() > 0) {
+        if (text != null && !text.trim().isEmpty()) {
             handler.headerFooter(text, headerFooter.isHeader(), headerFooter.getHeaderFooterTypeLabel());
         }
     }
@@ -238,7 +238,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
             return;
         }
         Queue<CellAddress> queue = comments.getAddresses();
-        while (queue.size() > 0) {
+        while (!queue.isEmpty()) {
             CellAddress cellAddress = queue.peek();
             if (cellAddress.getRow() == currentRow && cellAddress.getColumn() < colNum) {
                 cellAddress = queue.remove();
@@ -261,7 +261,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
         }
         Queue<CellAddress> queue = comments.getAddresses();
         int lastInterpolatedRow = -1;
-        while (queue.size() > 0) {
+        while (!queue.isEmpty()) {
             CellAddress cellAddress = queue.peek();
             if (currentRow == CHECK_ALL_ROWS || cellAddress.getRow() < currentRow) {
                 cellAddress = queue.remove();

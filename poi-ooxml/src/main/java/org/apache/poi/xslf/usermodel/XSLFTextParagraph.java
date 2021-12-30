@@ -134,7 +134,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     public XSLFTextRun addLineBreak(){
         XSLFLineBreak run = new XSLFLineBreak(_p.addNewBr(), this);
         CTTextCharacterProperties brProps = run.getRPr(true);
-        if(_runs.size() > 0){
+        if (!_runs.isEmpty()) {
             // by default line break has the font size of the last text run
             CTTextCharacterProperties prevRun = _runs.get(_runs.size() - 1).getRPr(true);
             brProps.set(prevRun);

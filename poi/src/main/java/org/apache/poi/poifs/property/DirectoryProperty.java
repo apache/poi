@@ -189,7 +189,7 @@ public class DirectoryProperty extends Property implements Parent, Iterable<Prop
      */
     protected void preWrite()
     {
-        if (_children.size() > 0)
+        if (!_children.isEmpty())
         {
             Property[] children = _children.toArray(new Property[ 0 ]);
 

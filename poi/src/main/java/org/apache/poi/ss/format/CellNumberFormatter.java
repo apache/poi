@@ -261,7 +261,7 @@ public class CellNumberFormatter extends CellFormatter {
                         first = false;
                     }
                 }
-            if (fractionalSpecials.size() > 0) {
+            if (!fractionalSpecials.isEmpty()) {
                 fmtBuf.append('.');
                 for (Special s : fractionalSpecials) {
                     if (isDigitFmt(s)) {
@@ -822,7 +822,7 @@ public class CellNumberFormatter extends CellFormatter {
     private void writeFractional(StringBuffer result, StringBuffer output) {
         int digit;
         int strip;
-        if (fractionalSpecials.size() > 0) {
+        if (!fractionalSpecials.isEmpty()) {
             String decimalSeparator = Character.toString(getDecimalFormatSymbols().getDecimalSeparator());
             digit = result.indexOf(decimalSeparator) + 1;
             if (exponent != null) {

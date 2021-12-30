@@ -300,7 +300,7 @@ public final class HSSFSheet implements Sheet {
             }
         }
 
-        if (_rows.size() > 0) {
+        if (!_rows.isEmpty()) {
             Integer key = Integer.valueOf(row.getRowNum());
             HSSFRow removedRow = _rows.remove(key);
             if (removedRow != row) {

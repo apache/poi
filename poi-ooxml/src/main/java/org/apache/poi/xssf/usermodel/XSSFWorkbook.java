@@ -1741,7 +1741,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     private void saveNamedRanges(){
         // Named ranges
-        if(namedRanges.size() > 0) {
+        if (!namedRanges.isEmpty()) {
             CTDefinedNames names = CTDefinedNames.Factory.newInstance();
             CTDefinedName[] nr = new CTDefinedName[namedRanges.size()];
             int i = 0;

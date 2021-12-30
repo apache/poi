@@ -129,7 +129,7 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
                 pkg.getPartsByContentType(XSSFRelation.SHARED_STRINGS.getContentType());
 
         // Some workbooks have no shared strings table.
-        if (parts.size() > 0) {
+        if (!parts.isEmpty()) {
             PackagePart sstPart = parts.get(0);
             try (InputStream stream = sstPart.getInputStream()) {
                 readFrom(stream);

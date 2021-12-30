@@ -357,7 +357,7 @@ final class TestPOIFSFileSystem {
                         dis.reset();
                     }
                 }
-                assertTrue(props.size() > 0);
+                assertFalse(props.isEmpty());
             }
         }
         return count;

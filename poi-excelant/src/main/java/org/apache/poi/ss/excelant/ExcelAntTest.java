@@ -191,7 +191,7 @@ public class ExcelAntTest extends Task{
                      " of " + testCount + " evaluations failed to " +
                      "evaluate correctly.",
                      Project.MSG_ERR );
-            if(showFailureDetail && failureMessages.size() > 0 ) {
+            if(showFailureDetail && !failureMessages.isEmpty()) {
                 for (String failureMessage : failureMessages) {
                     log(failureMessage, Project.MSG_ERR);
                 }

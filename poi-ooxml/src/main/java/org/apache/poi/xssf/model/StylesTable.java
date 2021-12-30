@@ -693,7 +693,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
         styleSheet.setBorders(ctBorders);
 
         // Xfs
-        if(xfs.size() > 0) {
+        if (!xfs.isEmpty()) {
             CTCellXfs ctXfs = styleSheet.getCellXfs();
             if (ctXfs == null) {
                 ctXfs = CTCellXfs.Factory.newInstance();
@@ -706,7 +706,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
         }
 
         // Style xfs
-        if(styleXfs.size() > 0) {
+        if (!styleXfs.isEmpty()) {
             CTCellStyleXfs ctSXfs = styleSheet.getCellStyleXfs();
             if (ctSXfs == null) {
                 ctSXfs = CTCellStyleXfs.Factory.newInstance();
@@ -719,7 +719,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
         }
 
         // Style dxfs
-        if(dxfs.size() > 0) {
+        if (!dxfs.isEmpty()) {
             CTDxfs ctDxfs = styleSheet.getDxfs();
             if (ctDxfs == null) {
                 ctDxfs = CTDxfs.Factory.newInstance();

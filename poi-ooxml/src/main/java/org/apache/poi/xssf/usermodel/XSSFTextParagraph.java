@@ -112,7 +112,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     public XSSFTextRun addLineBreak(){
         CTTextLineBreak br = _p.addNewBr();
         CTTextCharacterProperties brProps = br.addNewRPr();
-        if(_runs.size() > 0){
+        if (!_runs.isEmpty()) {
             // by default line break has the font size of the last text run
             CTTextCharacterProperties prevRun = _runs.get(_runs.size() - 1).getRPr();
             brProps.set(prevRun);

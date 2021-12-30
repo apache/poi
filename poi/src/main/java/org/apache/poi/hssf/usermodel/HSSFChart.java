@@ -218,7 +218,7 @@ public final class HSSFChart {
             } else if(r instanceof SeriesTextRecord) {
                 // Applies to a series, unless we've seen a legend already
                 SeriesTextRecord str = (SeriesTextRecord)r;
-                if(lastChart.legendRecord == null && lastChart.series.size() > 0) {
+                if(lastChart.legendRecord == null && !lastChart.series.isEmpty()) {
                     HSSFSeries series = lastChart.series.get(lastChart.series.size()-1);
                     series.seriesTitleText = str;
                 } else {

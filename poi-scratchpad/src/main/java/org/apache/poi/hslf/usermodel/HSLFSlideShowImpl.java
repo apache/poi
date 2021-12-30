@@ -906,7 +906,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         // Add the new picture in
         int offset = 0;
-        if (_pictures.size() > 0) {
+        if (!_pictures.isEmpty()) {
             HSLFPictureData prev = _pictures.get(_pictures.size() - 1);
             offset = prev.getOffset() + prev.getBseSize();
         }

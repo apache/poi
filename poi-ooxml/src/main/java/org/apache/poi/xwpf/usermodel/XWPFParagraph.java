@@ -180,6 +180,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         return Collections.unmodifiableList(runs);
     }
 
+    public boolean runsIsEmpty() {
+        return runs.isEmpty();
+    }
+
     /**
      * Return literal runs and sdt/content control objects.
      */

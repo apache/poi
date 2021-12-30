@@ -641,7 +641,7 @@ public final class TestXSSFExportToXML {
     void testBug59026() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("59026.xlsx")) {
             Collection<XSSFMap> mappings = wb.getCustomXMLMappings();
-            assertTrue(mappings.size() > 0);
+            assertFalse(mappings.isEmpty());
             for (XSSFMap map : mappings) {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
 

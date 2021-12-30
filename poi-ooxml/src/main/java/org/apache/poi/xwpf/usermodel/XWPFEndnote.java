@@ -68,7 +68,7 @@ public class XWPFEndnote extends XWPFAbstractFootnoteEndnote {
     public void ensureFootnoteRef(XWPFParagraph p) {
 
         XWPFRun r = null;
-        if (p.getRuns().size() > 0) {
+        if (!p.runsIsEmpty()) {
             r = p.getRuns().get(0);
         }
         if (r == null) {
