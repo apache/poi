@@ -93,7 +93,7 @@ final class TextJoinFunction implements FreeRefFunction {
             }
 
             // Join the list of values with the specified delimiter and return
-            if (delimiterArgs.size() == 0) {
+            if (delimiterArgs.isEmpty()) {
                 return new StringEval(String.join("", textValues));
             } else if (delimiterArgs.size() == 1) {
                 String delimiter = laxValueToString(delimiterArgs.get(0));

@@ -583,7 +583,7 @@ public class POIFSFileSystem extends BlockStore
                 offset++;
 
                 // Chain it
-                if (_xbat_blocks.size() == 0) {
+                if (_xbat_blocks.isEmpty()) {
                     _header.setXBATStart(offset);
                 } else {
                     _xbat_blocks.get(_xbat_blocks.size() - 1).setValueAt(

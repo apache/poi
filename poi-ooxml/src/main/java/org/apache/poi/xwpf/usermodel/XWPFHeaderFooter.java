@@ -603,7 +603,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     @Override
     protected void prepareForCommit() {
         // must contain at least an empty paragraph
-        if (bodyElements.size() == 0) {
+        if (bodyElements.isEmpty()) {
             createParagraph();
         }
 
@@ -611,7 +611,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         for (XWPFTable tbl : tables) {
             for (XWPFTableRow row : tbl.tableRows) {
                 for (XWPFTableCell cell : row.getTableCells()) {
-                    if (cell.getBodyElements().size() == 0) {
+                    if (cell.getBodyElements().isEmpty()) {
                         cell.addParagraph();
                     }
                 }

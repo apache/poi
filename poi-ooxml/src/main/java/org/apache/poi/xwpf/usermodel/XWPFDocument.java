@@ -618,7 +618,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     private int getBodyElementSpecificPos(int pos, List<? extends IBodyElement> list) {
         // If there's nothing to find, skip it
-        if (list.size() == 0) {
+        if (list.isEmpty()) {
             return -1;
         }
 

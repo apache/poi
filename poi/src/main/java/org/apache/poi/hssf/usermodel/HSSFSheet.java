@@ -316,7 +316,7 @@ public final class HSSFSheet implements Sheet {
             _sheet.removeRow(hrow.getRowRecord());
 
             // if there are no more rows, then reset first/last
-            if(_rows.size() == 0) {
+            if(_rows.isEmpty()) {
                 _firstrow = -1;
                 _lastrow = -1;
             }

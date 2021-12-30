@@ -347,7 +347,7 @@ public final class ExtractorFactory {
         }
 
         // Create the extractors
-        if(dirs.size() == 0 && nonPOIFS.size() == 0){
+        if(dirs.isEmpty() && nonPOIFS.isEmpty()){
             return new POITextExtractor[0];
         }
 

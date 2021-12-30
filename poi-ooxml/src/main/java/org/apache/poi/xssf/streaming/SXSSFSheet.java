@@ -198,7 +198,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         if(_writer.getNumberOfFlushedRows() > 0) {
             return _writer.getLowestIndexOfFlushedRows();
         }
-        return _rows.size() == 0 ? -1 : _rows.firstKey();
+        return _rows.isEmpty() ? -1 : _rows.firstKey();
     }
 
     /**
@@ -208,7 +208,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      */
     @Override
     public int getLastRowNum() {
-        return _rows.size() == 0 ? -1 : _rows.lastKey();
+        return _rows.isEmpty() ? -1 : _rows.lastKey();
     }
 
     /**

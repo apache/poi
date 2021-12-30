@@ -441,7 +441,7 @@ public class XWPFTableCell implements IBody, ICell {
     }
 
     public void setText(String text) {
-        XWPFParagraph par = (paragraphs.size() == 0) ? addParagraph() : paragraphs.get(0);
+        XWPFParagraph par = paragraphs.isEmpty() ? addParagraph() : paragraphs.get(0);
         par.createRun().setText(text);
     }
 

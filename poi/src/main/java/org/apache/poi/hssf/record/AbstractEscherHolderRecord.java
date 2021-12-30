@@ -117,7 +117,7 @@ public abstract class AbstractEscherHolderRecord extends Record {
     @Override
     public int getRecordSize() {
         byte[] rawData = getRawData();
-        if (escherRecords.size() == 0 && rawData != null) {
+        if (escherRecords.isEmpty() && rawData != null) {
             // XXX: It should be possible to derive this without concatenating the array, too.
             return rawData.length;
         }

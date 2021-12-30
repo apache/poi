@@ -48,7 +48,7 @@ import static org.apache.poi.ss.format.CellFormatter.quote;
  */
 @SuppressWarnings("RegExpRepeatedSpace")
 public class CellFormatPart {
-    private static final Logger LOG = LogManager.getLogger(CellFormat.class.getName());
+    private static final Logger LOG = LogManager.getLogger(CellFormatPart.class);
 
     static final Map<String, Color> NAMED_COLORS;
 

@@ -215,7 +215,7 @@ public class PAPBinTable
                 lastPapxIndex = oldPapxSortedByEndPos.size() - 1;
             }
 
-            if ( papxs.size() == 0 )
+            if ( papxs.isEmpty() )
             {
                 LOG.atWarn().log("Paragraph [{}; {}) has no PAPX. Creating new one.", box(startInclusive),box(endExclusive));
                 // create it manually

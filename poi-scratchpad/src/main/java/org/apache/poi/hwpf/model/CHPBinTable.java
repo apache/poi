@@ -242,7 +242,7 @@ public class CHPBinTable
                 }
             }
 
-            if ( chpxs.size() == 0 )
+            if ( chpxs.isEmpty() )
             {
                 LOG.atWarn().log("Text piece [{}; {}) has no CHPX. Creating new one.", box(startInclusive),box(boundary));
                 // create it manually

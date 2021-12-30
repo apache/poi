@@ -1383,7 +1383,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         sheets.remove(index);
 
         // only set new sheet if there are still some left
-        if(sheets.size() == 0) {
+        if(sheets.isEmpty()) {
             return;
         }
 

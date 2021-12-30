@@ -150,13 +150,11 @@ class POIFSReaderRegistry
     }
 
     private void dropDocument(final POIFSReaderListener listener,
-                              final DocumentDescriptor descriptor)
-    {
+                              final DocumentDescriptor descriptor) {
         Set<POIFSReaderListener> listeners = chosenDocumentDescriptors.get(descriptor);
 
         listeners.remove(listener);
-        if (listeners.size() == 0)
-        {
+        if (listeners.isEmpty()) {
             chosenDocumentDescriptors.remove(descriptor);
         }
     }

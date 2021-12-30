@@ -889,7 +889,7 @@ public class Range {
     private static int binarySearchStart( List<? extends PropertyNode<?>> rpl,
             int start )
     {
-        if ( rpl.size() == 0 )
+        if ( rpl.isEmpty())
             return -1;
         if ( rpl.get( 0 ).getStart() >= start )
             return 0;

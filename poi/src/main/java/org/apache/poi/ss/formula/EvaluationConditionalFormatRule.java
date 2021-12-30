@@ -598,7 +598,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
         }
 
         final Set<ValueAndFormat> avgSet = new LinkedHashSet<>(1);
-        avgSet.add(new ValueAndFormat(allValues.size() == 0 ? 0 : total / allValues.size(), null, decimalTextFormat));
+        avgSet.add(new ValueAndFormat(allValues.isEmpty() ? 0 : total / allValues.size(), null, decimalTextFormat));
 
         final double stdDev = allValues.size() <= 1 ? 0 : ((NumberEval) AggregateFunction.STDEV.evaluate(pop, 0, 0)).getNumberValue();
         avgSet.add(new ValueAndFormat(stdDev, null, decimalTextFormat));

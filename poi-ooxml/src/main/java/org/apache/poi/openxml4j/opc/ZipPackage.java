@@ -537,8 +537,8 @@ public final class ZipPackage extends OPCPackage {
         try {
             // If the core properties part does not exist in the part list,
             // we save it as well
-            if (this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size() == 0 &&
-                this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES_ECMA376).size() == 0    ) {
+            if (this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).isEmpty() &&
+                this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES_ECMA376).isEmpty()) {
                 LOG.atDebug().log("Save core properties part");
 
                 // Ensure that core properties are added if missing

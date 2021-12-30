@@ -2835,7 +2835,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      */
     @Beta
     public void copyRows(List<? extends Row> srcRows, int destStartRow, CellCopyPolicy policy) {
-        if (srcRows == null || srcRows.size() == 0) {
+        if (srcRows == null || srcRows.isEmpty()) {
             throw new IllegalArgumentException("No rows to copy");
         }
         final Row srcStartRow = srcRows.get(0);

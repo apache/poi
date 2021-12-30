@@ -304,7 +304,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public short getFirstCellNum() {
-        return (short)(_cells.size() == 0 ? -1 : _cells.firstKey());
+        return (short)(_cells.isEmpty() ? -1 : _cells.firstKey());
     }
 
     /**
@@ -328,7 +328,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      */
     @Override
     public short getLastCellNum() {
-        return (short)(_cells.size() == 0 ? -1 : (_cells.lastKey() + 1));
+        return (short)(_cells.isEmpty() ? -1 : (_cells.lastKey() + 1));
     }
 
     /**

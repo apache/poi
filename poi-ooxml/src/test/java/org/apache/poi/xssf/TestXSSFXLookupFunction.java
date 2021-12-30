@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Testcase for function XLOOKUP()
  */
-public class TestXSSFXLookupFunction {
+class TestXSSFXLookupFunction {
 
     //https://support.microsoft.com/en-us/office/xlookup-function-b7fd680e-6d10-43e6-84f9-88eae8bf5929
 

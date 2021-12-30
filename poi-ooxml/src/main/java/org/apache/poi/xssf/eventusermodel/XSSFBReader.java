@@ -108,7 +108,7 @@ public class XSSFBReader extends XSSFReader {
 
     public XSSFBStylesTable getXSSFBStylesTable() throws IOException {
         ArrayList<PackagePart> parts = pkg.getPartsByContentType(XSSFBRelation.STYLES_BINARY.getContentType());
-        if(parts.size() == 0) return null;
+        if(parts.isEmpty()) return null;
 
         // Create the Styles Table, and associate the Themes if present
         try (InputStream stream = parts.get(0).getInputStream()) {

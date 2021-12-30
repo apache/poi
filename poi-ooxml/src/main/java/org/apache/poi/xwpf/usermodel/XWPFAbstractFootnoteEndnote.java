@@ -503,7 +503,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
      */
     public XWPFTable createTable() {
         XWPFTable table = new XWPFTable(ctFtnEdn.addNewTbl(), this);
-        if (bodyElements.size() == 0) {
+        if (bodyElements.isEmpty()) {
             XWPFParagraph p = createParagraph();
             ensureFootnoteRef(p);
         }

@@ -337,7 +337,7 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
 
     public void removeFormatRun(FormatRun r) {
       field_4_format_runs.remove(r);
-      if (field_4_format_runs.size() == 0) {
+      if (field_4_format_runs.isEmpty()) {
         field_4_format_runs = null;
         field_2_optionflags = richText.clearByte(field_2_optionflags);
       }
