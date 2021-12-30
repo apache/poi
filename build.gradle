@@ -168,9 +168,6 @@ subprojects {
         maven {
             url 'https://repository.apache.org/content/repositories/releases'
         }
-        maven {
-            url 'https://repository.apache.org/content/repositories/staging'
-        }
     }
 
     dependencies {
