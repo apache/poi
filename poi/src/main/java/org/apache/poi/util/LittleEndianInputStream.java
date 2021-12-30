@@ -49,12 +49,12 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
             throw new RuntimeException(e);
         }
     }
-    
+
     @Override
     public byte readByte() {
         return (byte)readUByte();
     }
-    
+
     @Override
     public int readUByte() {
         byte[] buf = new byte[1];
@@ -81,7 +81,7 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
     public double readDouble() {
         return Double.longBitsToDouble(readLong());
     }
-    
+
     @Override
     public int readInt() {
         byte[] buf = new byte[LittleEndianConsts.INT_SIZE];
@@ -92,10 +92,10 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
         }
         return LittleEndian.getInt(buf);
     }
-    
+
     /**
      * get an unsigned int value from an InputStream
-     * 
+     *
      * @return the unsigned int (32-bit) value
      * @throws RuntimeException
      *                wraps any IOException thrown from reading the stream.
@@ -105,7 +105,7 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
        long retNum = readInt();
        return retNum & 0x00FFFFFFFFL;
     }
-    
+
     @Override
     public long readLong() {
         byte[] buf = new byte[LittleEndianConsts.LONG_SIZE];
@@ -116,12 +116,12 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
         }
         return LittleEndian.getLong(buf);
     }
-    
+
     @Override
     public short readShort() {
         return (short)readUShort();
     }
-    
+
     @Override
     public int readUShort() {
         byte[] buf = new byte[LittleEndianConsts.SHORT_SIZE];
@@ -132,7 +132,7 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
         }
         return LittleEndian.getUShort(buf);
     }
-    
+
     private static void checkEOF(int actualBytes, int expectedBytes) {
         if (expectedBytes != 0 && (actualBytes == -1 || actualBytes != expectedBytes)) {
             throw new RuntimeException("Unexpected end-of-file");
@@ -156,7 +156,10 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         int readBytes = super.read(b, off, len);
-        readIndex += readBytes;
+
+        // only increase read-index when we did read some bytes
+        readIndex += Math.max(0, readBytes);
+
         return readBytes;
     }
 
