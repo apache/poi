@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
 
 /**
@@ -32,6 +33,9 @@ import org.apache.poi.util.RecordFormatException;
  */
 public final class RecordFactory {
     private static final int NUM_RECORDS = 512;
+
+    // how many records we read at max by default (can be adjusted via IOUtils)
+    private static final int MAX_NUMBER_OF_RECORDS = 1_000_000;
 
     private RecordFactory() {}
 
@@ -105,12 +109,13 @@ public final class RecordFactory {
      * @return the equivalent array of {@link NumberRecord NumberRecords}
      */
     public static NumberRecord[] convertRKRecords(MulRKRecord mrk) {
-        if (mrk.getNumColumns() < 0) {
-            throw new RecordFormatException("Cannot create RKRecords with negative number of columns: " + mrk.getNumColumns());
+        int numColumns = mrk.getNumColumns();
+        if (numColumns < 0) {
+            throw new RecordFormatException("Cannot create RKRecords with negative number of columns: " + numColumns);
         }
 
-        NumberRecord[] mulRecs = new NumberRecord[mrk.getNumColumns()];
-        for (int k = 0; k < mrk.getNumColumns(); k++) {
+        NumberRecord[] mulRecs = new NumberRecord[numColumns];
+        for (int k = 0; k < numColumns; k++) {
             NumberRecord nr = new NumberRecord();
 
             nr.setColumn((short) (k + mrk.getFirstColumn()));
@@ -171,6 +176,8 @@ public final class RecordFactory {
         Record record;
         while ((record = recStream.nextRecord())!=null) {
             records.add(record);
+
+            IOUtils.safelyAllocateCheck(records.size(), MAX_NUMBER_OF_RECORDS);
         }
 
         return records;
