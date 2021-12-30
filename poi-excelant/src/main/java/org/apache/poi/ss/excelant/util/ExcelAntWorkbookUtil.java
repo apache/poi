@@ -164,21 +164,22 @@ public class ExcelAntWorkbookUtil extends Typedef {
      */
     protected FormulaEvaluator getEvaluator(String fileName) {
         FormulaEvaluator evaluator;
-        if (fileName.endsWith(".xlsx")) {
-            if(xlsMacroList.size() > 0) {
+        if (!fileName.endsWith(".xlsx")) {
+            if(xlsMacroList.isEmpty()) {
+                evaluator = new XSSFFormulaEvaluator((XSSFWorkbook) workbook);
+            } else {
                 evaluator = XSSFFormulaEvaluator.create((XSSFWorkbook) workbook,
                                                          null,
                                                          getFunctions());
             }
-            evaluator = new XSSFFormulaEvaluator((XSSFWorkbook) workbook);
         } else {
-            if(xlsMacroList.size() > 0) {
+            if(xlsMacroList.isEmpty()) {
+                evaluator = new HSSFFormulaEvaluator((HSSFWorkbook) workbook);
+            } else {
                 evaluator = HSSFFormulaEvaluator.create((HSSFWorkbook)workbook,
                                                          null,
                                                          getFunctions());
             }
-
-            evaluator = new HSSFFormulaEvaluator((HSSFWorkbook) workbook);
         }
 
         return evaluator;

@@ -81,7 +81,7 @@ public class CellNumberPartHandler implements PartHandler {
 
         case '/':
             //!! This assumes there is a numerator and a denominator, but these are actually optional
-            if (slash == null && specials.size() > 0) {
+            if (slash == null && !specials.isEmpty()) {
                 numerator = previousNumber();
                 // If the first number in the whole format is the numerator, the
                 // entire number should be printed as an improper fraction
