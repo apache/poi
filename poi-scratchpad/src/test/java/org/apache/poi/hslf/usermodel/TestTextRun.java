@@ -46,7 +46,6 @@ import org.apache.poi.sl.usermodel.BaseTestSlideShow;
 import org.apache.poi.sl.usermodel.PlaceholderDetails;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
-import org.opentest4j.AssertionFailedError;
 
 /**
  * Tests for TextRuns
@@ -464,7 +463,6 @@ public final class TestTextRun {
             shape2.setText("Text 2");
             slide.addShape(shape2);
 
-            runs = slide.getTextParagraphs();
             assertEquals(2, runs.size());
 
             assertSame(run1, runs.get(0));
@@ -541,6 +539,7 @@ public final class TestTextRun {
             assertTrue(runs.stream().map(HSLFTextRun::getFontFamily).allMatch("Arial"::equals));
 
             int[] exp = {36, 24, 12, 32, 12, 12};
+            //noinspection ConstantConditions
             int[] act = runs.stream().map(HSLFTextRun::getFontSize).mapToInt(Double::intValue).toArray();
             assertArrayEquals(exp, act);
         }
@@ -610,15 +609,12 @@ public final class TestTextRun {
             for (Map.Entry<Locale,String[]> me : formats.entrySet()) {
                 LocaleUtil.setUserLocale(me.getKey());
 
-                try {
-                    // refresh internal members
-                    phs.forEach(PlaceholderDetails::getPlaceholder);
+                // refresh internal members
+                phs.forEach(PlaceholderDetails::getPlaceholder);
 
-                    String[] actDate = phs.stream().map(PlaceholderDetails::getDateFormat).map(ldt::format).toArray(String[]::new);
-                    assertArrayEquals(me.getValue(), actDate);
-                } catch (AssertionFailedError e) {
-                    throw new AssertionFailedError("While handling local " + me.getKey());
-                }
+                String[] actDate = phs.stream().map(PlaceholderDetails::getDateFormat).map(ldt::format).toArray(String[]::new);
+                assertArrayEquals(me.getValue(), actDate,
+                        "While handling local " + me.getKey());
             }
         } finally {
             LocaleUtil.resetUserLocale();

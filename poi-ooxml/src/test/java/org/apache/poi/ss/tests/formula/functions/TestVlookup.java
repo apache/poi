@@ -47,8 +47,10 @@ class TestVlookup {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("VLookupFullColumn.xlsx")) {
             FormulaEvaluator feval = wb.getCreationHelper().createFormulaEvaluator();
             feval.evaluateAll();
-            assertEquals("Value1", feval.evaluate(wb.getSheetAt(0).getRow(3).getCell(1)).getStringValue(),
-                "Wrong lookup value");
+
+            Cell cell = wb.getSheetAt(0).getRow(3).getCell(1);
+            assertEquals("Value1", feval.evaluate(cell).getStringValue(),
+                "Wrong lookup value for cell " + cell);
             assertEquals(CellType.ERROR, feval.evaluate(wb.getSheetAt(0).getRow(4).getCell(1)).getCellType(),
                 "Lookup should return #N/A");
         }

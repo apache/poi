@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -69,6 +68,7 @@ public final class TestXSSFFormulaParser {
     private static Ptg[] parse(FormulaParsingWorkbook fpb, String fmla) {
         return FormulaParser.parse(fmla, fpb, FormulaType.CELL, -1);
     }
+
     private static Ptg[] parse(FormulaParsingWorkbook fpb, String fmla, int rowIndex) {
         return FormulaParser.parse(fmla, fpb, FormulaType.CELL, -1, rowIndex);
     }
@@ -532,6 +532,11 @@ public final class TestXSSFFormulaParser {
 
         Sheet sheet = wb.getSheet("my-sheet");
         Cell cell = sheet.getRow(1).getCell(4);
+
+        assertEquals(CellType.FORMULA, cell.getCellType(),
+                "Had: " + cell);
+        assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType(),
+                "Had: " + cell + " and " + cell.getCachedFormulaResultType());
 
         assertEquals(5d, cell.getNumericCellValue(), 0d);
 

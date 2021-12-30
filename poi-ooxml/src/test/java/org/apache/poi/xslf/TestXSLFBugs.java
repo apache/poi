@@ -1057,6 +1057,7 @@ class TestXSLFBugs {
             targetPresentationSlide.importContent(sourceSlide);
 
             XSLFSlide targetSlide = targetPresentation.getSlides().get(0);
+            assertNotNull(targetSlide);
             assertEquals(2, targetPresentation.getPictureData().size());
 
             targetPresentation.write(NullOutputStream.NULL_OUTPUT_STREAM);
@@ -1102,7 +1103,8 @@ class TestXSLFBugs {
         try (XMLSlideShow slideShowModel = openSampleDocument("bug65673.pptx")) {
             final XSLFSlide modelSlide = slideShowModel.getSlides().get(0);
             try (XMLSlideShow newSlideShow = new XMLSlideShow()) {
-                newSlideShow.createSlide().importContent(modelSlide);
+                XSLFSlide slide = newSlideShow.createSlide().importContent(modelSlide);
+                assertNotNull(slide);
             }
         }
     }

@@ -35,6 +35,7 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.TempFile;
@@ -601,19 +602,15 @@ public final class TestXSSFTable {
             try (XSSFWorkbook wb = new XSSFWorkbook()) {
                 XSSFSheet sheet = wb.createSheet();
 
-                final String column = testValue;
-
                 // Set the values for the table
-                XSSFRow row;
-                XSSFCell cell;
                 for (int i = 0; i < 3; i++) {
                     // Create row
-                    row = sheet.createRow(i);
+                    Row row = sheet.createRow(i);
                     for (int j = 0; j < 3; j++) {
                         // Create cell
-                        cell = row.createCell(j);
+                        Cell cell = row.createCell(j);
                         if (i == 0) {
-                            final String columnName = column + (j + 1);
+                            final String columnName = testValue + (j + 1);
                             cell.setCellValue(columnName);
                         } else {
                             if (j != 2) {
@@ -630,8 +627,9 @@ public final class TestXSSFTable {
                 table.setName("Table1");
                 table.setDisplayName("Table1");
                 for (int i = 1; i < 3; i++) {
-                    cell = sheet.getRow(i).getCell(2);
-                    cell.setCellFormula("Table1[[#This Row],[" + column + "1]]");
+                    Cell cell = sheet.getRow(i).getCell(2);
+                    assertNotNull(cell);
+                    cell.setCellFormula("Table1[[#This Row],[" + testValue + "1]]");
                 }
             }
         }
