@@ -129,11 +129,12 @@ public class HPSFFileHandler extends POIFSFileHandler {
         assumeFalse(EXCLUDES_HANDLE_ADD.contains(file.getParentFile().getName()+"/"+file.getName()));
 
         try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
-            PrintStream psNew = new PrintStream(bos, true, "ISO-8859-1");
-            CopyCompare copyCompare = new CopyCompare();
-            copyCompare.setOut(psNew);
-            CopyCompare.main(new String[]{file.getAbsolutePath(), copyOutput.get().getAbsolutePath()});
-            assertEquals("Equal" + NL, bos.toString(StandardCharsets.UTF_8));
+            try (PrintStream psNew = new PrintStream(bos, true, "ISO-8859-1")) {
+                CopyCompare copyCompare = new CopyCompare();
+                copyCompare.setOut(psNew);
+                copyCompare.run(new String[]{file.getAbsolutePath(), copyOutput.get().getAbsolutePath()});
+                assertEquals("Equal" + NL, bos.toString(StandardCharsets.UTF_8));
+            }
         }
     }
 
