@@ -370,11 +370,6 @@ public class ExcelComparator {
         boolean b1, b2;
         String borderName;
         switch (borderSide) {
-            case 't': default:
-                b1 = style1.getBorderTop() == BorderStyle.THIN;
-                b2 = style2.getBorderTop() == BorderStyle.THIN;
-                borderName = "TOP";
-                break;
             case 'b':
                 b1 = style1.getBorderBottom() == BorderStyle.THIN;
                 b2 = style2.getBorderBottom() == BorderStyle.THIN;
@@ -389,6 +384,12 @@ public class ExcelComparator {
                 b1 = style1.getBorderRight() == BorderStyle.THIN;
                 b2 = style2.getBorderRight() == BorderStyle.THIN;
                 borderName = "RIGHT";
+                break;
+            case 't':
+            default:
+                b1 = style1.getBorderTop() == BorderStyle.THIN;
+                b2 = style2.getBorderTop() == BorderStyle.THIN;
+                borderName = "TOP";
                 break;
         }
         if (b1 != b2) {
