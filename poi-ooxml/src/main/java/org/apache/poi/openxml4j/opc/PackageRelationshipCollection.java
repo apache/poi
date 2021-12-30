@@ -281,10 +281,18 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
     }
 
     /**
-     * Get the numbe rof relationships in the collection.
+     * Get the number of relationships in the collection.
      */
     public int size() {
-        return relationshipsByID.values().size();
+        return relationshipsByID.size();
+    }
+
+    /**
+     * Is this collection empty?
+     * @since POI 5.2.0
+     */
+    public boolean isEmpty() {
+        return relationshipsByID.isEmpty();
     }
 
     /**
