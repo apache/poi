@@ -33,7 +33,6 @@ import java.util.Set;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.examples.hpsf.CopyCompare;
-import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.hpsf.PropertySet;
@@ -129,11 +128,13 @@ public class HPSFFileHandler extends POIFSFileHandler {
     public void handleAdditional(File file) throws Exception {
         assumeFalse(EXCLUDES_HANDLE_ADD.contains(file.getParentFile().getName()+"/"+file.getName()));
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-        PrintStream psNew = new PrintStream(bos, true, "ISO-8859-1");
-        CopyCompare.setOut(psNew);
-        CopyCompare.main(new String[]{file.getAbsolutePath(), copyOutput.get().getAbsolutePath()});
-        assertEquals("Equal" + NL, bos.toString(StandardCharsets.UTF_8));
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            PrintStream psNew = new PrintStream(bos, true, "ISO-8859-1");
+            CopyCompare copyCompare = new CopyCompare();
+            copyCompare.setOut(psNew);
+            CopyCompare.main(new String[]{file.getAbsolutePath(), copyOutput.get().getAbsolutePath()});
+            assertEquals("Equal" + NL, bos.toString(StandardCharsets.UTF_8));
+        }
     }
 
 

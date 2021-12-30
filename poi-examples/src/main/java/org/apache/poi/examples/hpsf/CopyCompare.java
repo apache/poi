@@ -62,9 +62,8 @@ import org.apache.poi.util.TempFile;
  */
 @SuppressWarnings({"java:S106","java:S4823"})
 public final class CopyCompare {
-    private CopyCompare() {}
 
-    private static final ThreadLocal<PrintStream> out = ThreadLocal.withInitial(() -> System.out);
+    private PrintStream out = System.out;
 
     /**
      * Runs the example program. The application expects one or two arguments:
@@ -83,6 +82,10 @@ public final class CopyCompare {
      *                                      supported.
      */
     public static void main(final String[] args) throws IOException {
+        new CopyCompare().run(args);
+    }
+
+    public void run(String[] args) throws IOException {
         String originalFileName = null;
         String copyFileName = null;
 
@@ -120,12 +123,12 @@ public final class CopyCompare {
              POIFSFileSystem cpfs = new POIFSFileSystem(new File(copyFileName))) {
             final DirectoryEntry oRoot = opfs.getRoot();
             final DirectoryEntry cRoot = cpfs.getRoot();
-            out.get().println(EntryUtils.areDirectoriesIdentical(oRoot, cRoot) ? "Equal" : "Not equal");
+            out.println(EntryUtils.areDirectoriesIdentical(oRoot, cRoot) ? "Equal" : "Not equal");
         }
     }
 
-    public static void setOut(PrintStream ps) {
-        out.set(ps);
+    public void setOut(PrintStream ps) {
+        out = ps;
     }
 
     private interface InputStreamSupplier {

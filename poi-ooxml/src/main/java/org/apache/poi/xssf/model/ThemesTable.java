@@ -56,7 +56,8 @@ public class ThemesTable extends POIXMLDocumentPart implements Themes {
            return values()[idx];
        }
        ThemeElement(int idx, String name) {
-           this.idx = idx; this.name = name;
+           this.idx = idx;
+           this.name = name;
        }
        public final int idx;
        public final String name;
