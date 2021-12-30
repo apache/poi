@@ -17,6 +17,7 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -50,7 +51,7 @@ public final class TestPackageThumbnail {
 
             // Open the newly created file to check core properties saved values.
             try (OPCPackage p2 = OPCPackage.open(outputFile.getAbsolutePath(), PackageAccess.READ)) {
-                assertNotEquals(0, p2.getRelationshipsByType(PackageRelationshipTypes.THUMBNAIL).size(),
+                assertFalse(p2.getRelationshipsByType(PackageRelationshipTypes.THUMBNAIL).isEmpty(),
                     "Thumbnail not added to the package !");
                 p2.revert();
             }

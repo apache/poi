@@ -1351,7 +1351,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 
     @Override
     public boolean hasRelationships() {
-        return (relationships.size() > 0);
+        return !relationships.isEmpty();
     }
 
     @Override
@@ -1644,7 +1644,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     public boolean isStrictOoxmlFormat() {
         PackageRelationshipCollection coreDocRelationships = getRelationshipsByType(
                 PackageRelationshipTypes.STRICT_CORE_DOCUMENT);
-        return coreDocRelationships.size() > 0;
+        return !coreDocRelationships.isEmpty();
     }
 
     /**

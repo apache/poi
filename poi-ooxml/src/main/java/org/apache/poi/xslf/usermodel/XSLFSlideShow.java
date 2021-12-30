@@ -195,7 +195,7 @@ public class XSLFSlideShow extends POIXMLDocument {
             throw new IllegalStateException(e);
         }
 
-        if(notes.size() == 0) {
+        if(notes.isEmpty()) {
             // No notes for this slide
             return null;
         }
@@ -239,7 +239,7 @@ public class XSLFSlideShow extends POIXMLDocument {
             throw new IllegalStateException(e);
         }
 
-        if(commentRels.size() == 0) {
+        if(commentRels.isEmpty()) {
             // No comments for this slide
             return null;
         }

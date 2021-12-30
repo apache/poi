@@ -158,7 +158,7 @@ public class XSSFBReader extends XSSFReader {
             try {
                 PackageRelationshipCollection commentsList =
                         sheetPkg.getRelationshipsByType(XSSFRelation.SHEET_COMMENTS.getRelation());
-                if (commentsList.size() > 0) {
+                if (!commentsList.isEmpty()) {
                     PackageRelationship comments = commentsList.getRelationship(0);
                     if (comments == null || comments.getTargetURI() == null) {
                         return null;

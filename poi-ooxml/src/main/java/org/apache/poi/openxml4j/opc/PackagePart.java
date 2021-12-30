@@ -442,8 +442,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      */
     @Override
     public boolean hasRelationships() {
-        return (!this._isRelationshipPart && (_relationships != null && _relationships
-                .size() > 0));
+        return (!this._isRelationshipPart && (_relationships != null && !_relationships.isEmpty()));
     }
 
     /**

@@ -187,11 +187,11 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
             core = pkg.getRelationshipsByType(CORE_DOCUMENT_REL);
 
             // If nothing was found, try some of the other OOXML-based core types
-            if (core.size() == 0) {
+            if (core.isEmpty()) {
                 // Could it be an OOXML-Strict one?
                 core = pkg.getRelationshipsByType(STRICT_DOCUMENT_REL);
             }
-            if (core.size() == 0) {
+            if (core.isEmpty()) {
                 // Could it be a visio one?
                 core = pkg.getRelationshipsByType(VISIO_DOCUMENT_REL);
                 if (core.size() == 1) {

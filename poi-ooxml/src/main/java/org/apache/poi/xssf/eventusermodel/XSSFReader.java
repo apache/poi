@@ -373,7 +373,7 @@ public class XSSFReader {
             try {
                 PackageRelationshipCollection commentsList =
                         sheetPkg.getRelationshipsByType(XSSFRelation.SHEET_COMMENTS.getRelation());
-                if (commentsList.size() > 0) {
+                if (!commentsList.isEmpty()) {
                     PackageRelationship comments = commentsList.getRelationship(0);
                     PackagePartName commentsName = PackagingURIHelper.createPartName(comments.getTargetURI());
                     PackagePart commentsPart = sheetPkg.getPackage().getPart(commentsName);
@@ -401,7 +401,8 @@ public class XSSFReader {
             // Do we have a shapes relationship? (Only ever one if so)
             try {
                 PackageRelationshipCollection drawingsList = sheetPkg.getRelationshipsByType(XSSFRelation.DRAWINGS.getRelation());
-                for (int i = 0; i < drawingsList.size(); i++) {
+                int drawingsSize = drawingsList.size();
+                for (int i = 0; i < drawingsSize; i++) {
                     PackageRelationship drawings = drawingsList.getRelationship(i);
                     PackagePartName drawingsName = PackagingURIHelper.createPartName(drawings.getTargetURI());
                     PackagePart drawingsPart = sheetPkg.getPackage().getPart(drawingsName);
