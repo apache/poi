@@ -2603,5 +2603,10 @@ final class TestBugs extends BaseTestBugzillaIssues {
         }
     }
 
-
+    @Test
+    void test52447() throws IOException {
+        try (Workbook wb = openSampleWorkbook("52447.xls")) {
+            assertNotNull(wb);
+        }
+    }
 }

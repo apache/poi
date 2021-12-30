@@ -32,6 +32,7 @@ import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.DConRefRecord;
 import org.apache.poi.hssf.record.DimensionsRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
+import org.apache.poi.hssf.record.HyperlinkRecord;
 import org.apache.poi.hssf.record.IndexRecord;
 import org.apache.poi.hssf.record.MergeCellsRecord;
 import org.apache.poi.hssf.record.MulBlankRecord;
@@ -89,6 +90,9 @@ public final class RowRecordsAggregate extends RecordAggregate {
                 case DBCellRecord.sid:
                     // end of 'Row Block'.  Should only occur after cell records
                     // ignore DBCELL records because POI generates them upon re-serialization
+                    continue;
+                case HyperlinkRecord.sid:
+                    // some files contain a HyperlinkRecord here which we ignore for now
                     continue;
             }
             if (rec instanceof UnknownRecord) {
