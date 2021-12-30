@@ -541,7 +541,7 @@ public class DateUtil {
     }
 
     // variables for performance optimization:
-    // avoid re-checking DataUtil.isADateFormat(int, String) if a given format
+    // avoid re-checking DateUtil.isADateFormat(int, String) if a given format
     // string represents a date format if the same string is passed multiple times.
     // see https://issues.apache.org/bugzilla/show_bug.cgi?id=55611
     private static final ThreadLocal<Integer> lastFormatIndex = ThreadLocal.withInitial(() -> -1);
