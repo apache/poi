@@ -1385,4 +1385,19 @@ public abstract class BaseTestConditionalFormatting {
             }
         }
     }
+
+    @Test
+    void testRangeType() {
+        for (RangeType rangeType : RangeType.values()) {
+            assertEquals(rangeType, RangeType.byName(rangeType.name));
+            assertEquals(rangeType, RangeType.byId(rangeType.id));
+        }
+
+        assertEquals(RangeType.UNALLOCATED, RangeType.byName(null));
+        assertNull(RangeType.byName("some other name"));
+
+        assertNull(RangeType.byId(-1));
+        assertNull(RangeType.byId(0));
+        assertNull(RangeType.byId(99));
+    }
 }
