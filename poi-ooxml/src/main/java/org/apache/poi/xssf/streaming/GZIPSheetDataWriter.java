@@ -53,6 +53,7 @@ public class GZIPSheetDataWriter extends SheetDataWriter {
      * @deprecated no need for this be public, will be made private or protected in an upcoming release
      */
     @Override
+    @Deprecated
     @Removal(version = "6.0.0")
     public File createTempFile() throws IOException {
         return TempFile.createTempFile("poi-sxssf-sheet-xml", ".gz");
