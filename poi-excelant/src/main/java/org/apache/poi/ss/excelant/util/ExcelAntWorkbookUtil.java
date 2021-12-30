@@ -164,7 +164,7 @@ public class ExcelAntWorkbookUtil extends Typedef {
      */
     protected FormulaEvaluator getEvaluator(String fileName) {
         FormulaEvaluator evaluator;
-        if (!fileName.endsWith(".xlsx")) {
+        if (fileName.endsWith(".xlsx")) {
             if(xlsMacroList.isEmpty()) {
                 evaluator = new XSSFFormulaEvaluator((XSSFWorkbook) workbook);
             } else {
