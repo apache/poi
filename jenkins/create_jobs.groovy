@@ -113,6 +113,8 @@ def xmlbeansjobs = [
         [ name: 'POI-XMLBeans-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
+            // temporarily disabled until gradle build is stable on 1.8
+            disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
           // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
@@ -131,8 +133,12 @@ def xmlbeansjobs = [
           disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true,
+          // temporarily disabled until gradle build is stable on 1.8
+          disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true,
+          // temporarily disabled until gradle build is stable on 1.8
+          disabled: true
         ]
 ]
 
@@ -565,22 +571,27 @@ xmlbeansjobs.each { xjob ->
             if(xjob.addShell) {
                 shellEx(delegate, xjob.addShell, xjob)
             }
-            ant {
-                targets(['clean'])
-                antInstallation(antRT)
-            }
-            ant {
-                targets(['jenkins'])
-                antInstallation(antRT)
+
+            gradle {
+//                switches('-PenableSonar')
+//                switches('-Dsonar.login=${POI_SONAR_TOKEN}')
+//                switches('-Dsonar.organization=apache')
+//                switches('-Dsonar.projectKey=poi-parent')
+//                switches('-Dsonar.host.url=https://sonarcloud.io')
+                tasks('clean')
+                tasks('jenkins')
+                tasks('jacocoTestReport')
+//                tasks('sonarqube')
+                useWrapper(true)
             }
         }
         publishers {
-            archiveArtifacts('build/*.jar,build/*.zip,build/*.tgz,build/hs_err*.log')
+            archiveArtifacts('build/libs/xmlbeans*.jar,build/distributions/*,build/hs_err*.log')
 
             warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                 resolveRelativePaths()
             }
-            archiveJunit('build/test-results/**/TEST-*.xml') {
+            archiveJunit('build/test-results/test/TEST-*.xml') {
                 testDataPublishers {
                     publishTestStabilityData()
                 }
@@ -588,7 +599,7 @@ xmlbeansjobs.each { xjob ->
             recordIssues {
                 tools {
                     spotBugs {
-                        pattern('build/findbugs.xml')
+                        pattern('build/reports/spotbugs/*/spotbugs.xml')
                         reportEncoding('UTF-8')
                     }
                 }
