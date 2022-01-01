@@ -148,6 +148,10 @@ javadoc {
     }
 }
 
+// without this dependency, parallel building sometimes fails because the javadoc
+// task tries to access a jar-file which is not yet fully built
+javadoc.mustRunAfter ':poi-ooxml:jar'
+
 javadocJar {
     metaInf {
         from("$projectDir/../legal/LICENSE")
