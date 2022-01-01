@@ -43,6 +43,7 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
+import java.security.KeyStoreException;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -823,7 +824,14 @@ class TestSignatureInfo {
         assertNotNull(pkg);
 
         DummyKeystore ks = new DummyKeystore("test");
-        KeyCertPair certPair = ks.addEntryFromPEM(testdata.getFile(pemFile), "test");
+        final KeyCertPair certPair;
+        try {
+            certPair = ks.addEntryFromPEM(testdata.getFile(pemFile), "test");
+        } catch (KeyStoreException e) {
+            // some JDKs do not have the proper setup, let's avoid strange test-failures due to this
+            assumeTrue(e.getMessage().startsWith("unrecognized algorithm name: PBEWithSHA1AndDESede"));
+            throw e;
+        }
 
         SignatureConfig config = new SignatureConfig();
         config.setKey(certPair.getKey());
@@ -870,7 +878,14 @@ class TestSignatureInfo {
     @Test
     void createXAdES_T_65623() throws Exception {
         DummyKeystore ks = new DummyKeystore(STORE_PASS);
-        KeyCertPair certPair = ks.createDummyKey();
+        final KeyCertPair certPair;
+        try {
+            certPair = ks.createDummyKey();
+        } catch (KeyStoreException e) {
+            // some JDKs do not have the proper setup, let's avoid strange test-failures due to this
+            assumeTrue(e.getMessage().startsWith("unrecognized algorithm name: PBEWithSHA1AndDESede"));
+            throw e;
+        }
 
         UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -1050,7 +1065,14 @@ class TestSignatureInfo {
     @Test
     void commitmentType65672() throws Exception {
         DummyKeystore ks = new DummyKeystore(STORE_PASS);
-        KeyCertPair certPair = ks.createDummyKey();
+        final KeyCertPair certPair;
+        try {
+            certPair = ks.createDummyKey();
+        } catch (KeyStoreException e) {
+            // some JDKs do not have the proper setup, let's avoid strange test-failures due to this
+            assumeTrue(e.getMessage().startsWith("unrecognized algorithm name: PBEWithSHA1AndDESede"));
+            throw e;
+        }
 
         UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -1086,7 +1108,7 @@ class TestSignatureInfo {
 
     private SignatureConfig prepareConfig(String pfxInput) throws Exception {
         DummyKeystore ks = (pfxInput == null) ? new DummyKeystore(STORE_PASS) : new DummyKeystore(pfxInput, STORE_PASS);
-        KeyCertPair certPair = ks.createDummyKey();;
+        KeyCertPair certPair = ks.createDummyKey();
 
         SignatureConfig signatureConfig = new SignatureConfig();
         signatureConfig.setKey(certPair.getKey());
