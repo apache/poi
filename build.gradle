@@ -272,12 +272,7 @@ subprojects {
 
         // Specifying the local via system properties did not work, so we set them this way
         jvmArgs << [
-            '-Djava.io.tmpdir=build',
-            '-DPOI.testdata.path=../test-data',
             '-Djava.awt.headless=true',
-            '-Djava.locale.providers=JRE,CLDR',
-            '-Duser.language=en',
-            '-Duser.country=US',
             '-Djavax.xml.stream.XMLInputFactory=com.sun.xml.internal.stream.XMLInputFactoryImpl',
             "-Dversion.id=${project.version}",
             '-ea',
@@ -319,8 +314,13 @@ subprojects {
 
         // http://forums.gradle.org/gradle/topics/jacoco_related_failure_in_multiproject_build
         systemProperties['user.dir'] = workingDir
+        systemProperties['java.io.tmpdir'] = 'build' 
 
         systemProperties['POI.testdata.path'] = '../test-data'
+
+        // define the locale to not have failing tests when the locale is set differently on the current machine
+        systemProperties['user.language'] = 'en'
+        systemProperties['user.country'] = 'US'
 
         // this is necessary for JDK 9+ to keep formatting dates the same way as in previous JDK-versions
         systemProperties['java.locale.providers'] = 'JRE,CLDR'
