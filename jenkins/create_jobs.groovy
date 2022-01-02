@@ -112,9 +112,7 @@ def poijobs = [
 def xmlbeansjobs = [
         [ name: 'POI-XMLBeans-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true,
         ],
-        [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
-            // temporarily disabled until gradle build is stable on 1.8
-            disabled: true
+        [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
           // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
@@ -132,13 +130,9 @@ def xmlbeansjobs = [
           // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
           disabled: true
         ],
-        [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true,
-          // temporarily disabled until gradle build is stable on 1.8
-          disabled: true
+        [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true
         ],
-        [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true,
-          // temporarily disabled until gradle build is stable on 1.8
-          disabled: true
+        [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true
         ]
 ]
 
