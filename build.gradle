@@ -39,7 +39,7 @@ plugins {
     id "com.dorongold.task-tree" version "2.1.0"
     id('org.nosphere.apache.rat') version '0.7.0'
     id 'distribution'
-    id "com.github.spotbugs" version "4.8.0"
+    id "com.github.spotbugs" version "5.0.4"
 }
 
 repositories {
