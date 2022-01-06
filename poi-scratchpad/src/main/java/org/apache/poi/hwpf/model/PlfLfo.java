@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.model.types.LFOAbstractType;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
@@ -37,9 +38,10 @@ import static org.apache.logging.log4j.util.Unbox.box;
  * Documentation quoted from Page 424 of 621. [MS-DOC] -- v20110315 Word (.doc)
  * Binary File Format
  */
-public class PlfLfo
-{
+public class PlfLfo {
     private static final Logger LOGGER = LogManager.getLogger(PlfLfo.class);
+
+    private static final int MAX_NUMBER_OF_LFO = 100_000;
 
     /**
      * An unsigned integer that specifies the count of elements in both the
@@ -75,6 +77,8 @@ public class PlfLfo
                     "Apache POI doesn't support rgLfo/rgLfoData size large than "
                             + Integer.MAX_VALUE + " elements" );
         }
+
+        IOUtils.safelyAllocateCheck(lfoMacLong, MAX_NUMBER_OF_LFO);
 
         this._lfoMac = (int) lfoMacLong;
         _rgLfo = new LFO[_lfoMac];

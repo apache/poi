@@ -54,7 +54,9 @@ public class TestWordToConverterSuite
         "password_tika_binaryrc4.doc",
         "password_password_cryptoapi.doc",
         // WORD 2.0 file
-        "word2.doc"
+        "word2.doc",
+        // Corrupt file
+        "Fuzzed.doc"
     );
 
     public static Stream<Arguments> files() {
