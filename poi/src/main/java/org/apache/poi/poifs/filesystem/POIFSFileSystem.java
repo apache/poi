@@ -64,7 +64,7 @@ public class POIFSFileSystem extends BlockStore
     private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
-    private static final int MAX_ALLOCATION_SIZE = 100_000_000;
+    private static final int MAX_ALLOCATION_SIZE = 250_000_000;
 
     private static final Logger LOG = LogManager.getLogger(POIFSFileSystem.class);
 

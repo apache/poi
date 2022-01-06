@@ -87,7 +87,7 @@ import org.apache.poi.util.Units;
 public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFTextParagraph,HSLFTextRun> {
     private static final Logger LOG = LogManager.getLogger(HSLFTextParagraph.class);
 
-    private static final int MAX_NUMBER_OF_STYLES = 10_000;
+    private static final int MAX_NUMBER_OF_STYLES = 20_000;
 
     // Note: These fields are protected to help with unit testing
     // Other classes shouldn't really go playing with them!

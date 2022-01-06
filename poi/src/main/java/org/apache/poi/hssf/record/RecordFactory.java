@@ -35,7 +35,7 @@ public final class RecordFactory {
     private static final int NUM_RECORDS = 512;
 
     // how many records we read at max by default (can be adjusted via IOUtils)
-    private static final int MAX_NUMBER_OF_RECORDS = 1_000_000;
+    private static final int MAX_NUMBER_OF_RECORDS = 2_000_000;
 
     private RecordFactory() {}
 
