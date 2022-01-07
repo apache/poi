@@ -20,6 +20,9 @@ package org.apache.poi.ss.formula.eval;
 import org.apache.poi.ss.formula.functions.ArrayFunction;
 import org.apache.poi.ss.formula.functions.Fixed2ArgFunction;
 import org.apache.poi.ss.formula.functions.Function;
+import org.apache.poi.ss.util.NumberToTextConverter;
+
+import java.math.BigDecimal;
 
 public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction implements ArrayFunction {
 
@@ -76,7 +79,9 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
     public static final Function AddEval = new TwoOperandNumericOperation() {
         @Override
         protected double evaluate(double d0, double d1) {
-            return d0+d1;
+            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d0));
+            BigDecimal bd2 = new BigDecimal(NumberToTextConverter.toText(d1));
+            return bd1.add(bd2).doubleValue();
         }
     };
     public static final Function DivideEval = new TwoOperandNumericOperation() {
@@ -85,13 +90,17 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
             if (d1 == 0.0) {
                 throw new EvaluationException(ErrorEval.DIV_ZERO);
             }
-            return d0/d1;
+            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d0));
+            BigDecimal bd2 = new BigDecimal(NumberToTextConverter.toText(d1));
+            return bd1.divide(bd2).doubleValue();
         }
     };
     public static final Function MultiplyEval = new TwoOperandNumericOperation() {
         @Override
         protected double evaluate(double d0, double d1) {
-            return d0*d1;
+            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d0));
+            BigDecimal bd2 = new BigDecimal(NumberToTextConverter.toText(d1));
+            return bd1.multiply(bd2).doubleValue();
         }
     };
     public static final Function PowerEval = new TwoOperandNumericOperation() {
@@ -109,7 +118,9 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
         }
         @Override
         protected double evaluate(double d0, double d1) {
-            return d0-d1;
+            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d0));
+            BigDecimal bd2 = new BigDecimal(NumberToTextConverter.toText(d1));
+            return bd1.subtract(bd2).doubleValue();
         }
     }
     public static final Function SubtractEval = new SubtractEvalClass();
