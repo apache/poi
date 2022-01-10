@@ -81,7 +81,6 @@ import org.w3c.dom.Element;
  * Taken (with permission) from https://gist.github.com/msteiger/4509119,
  * including the fixes that are discussed in the comments
  *
- * @see <a href="https://stackoverflow.com/questions/14258206/">Gradient paints not working in Apache Batik's svggen</a>
  * @see <a href="https://issues.apache.org/jira/browse/BATIK-1032">BATIK-1032</a>
  */
 @Internal

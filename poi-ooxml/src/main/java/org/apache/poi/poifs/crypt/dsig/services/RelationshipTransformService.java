@@ -184,7 +184,6 @@ public class RelationshipTransformService extends TransformService {
      * and converts it to another XML document.
      *
      * @see <a href="https://www.ecma-international.org/activities/Office%20Open%20XML%20Formats/Draft%20ECMA-376%203rd%20edition,%20March%202011/Office%20Open%20XML%20Part%202%20-%20Open%20Packaging%20Conventions.pdf">13.2.4.24 Relationships Transform Algorithm</a>
-     * @see <a href="https://stackoverflow.com/questions/36063375">XML Relationship Transform Algorithm</a>
      */
     public Data transform(Data data, XMLCryptoContext context) throws TransformException {
         LOG.atDebug().log("transform(data,context)");

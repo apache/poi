@@ -46,8 +46,7 @@ import org.ietf.jgss.Oid;
 
     public void init() throws GeneralSecurityException {
         if (isMSCapi(key)) {
-            // see https://stackoverflow.com/questions/39196145 for problems with SunMSCAPI
-            // and why we can't sign the calculated digest
+            // SunMSCAPI can't be used to sign the calculated digest
             throw new EncryptedDocumentException(
                 "Windows keystore entries can't be signed with the "+algo+" hash. Please "+
                 "use one digest algorithm of sha1 / sha256 / sha384 / sha512.");

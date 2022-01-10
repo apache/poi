@@ -153,7 +153,6 @@ public class DummyKeystore {
     }
 
     public KeyCertPair addEntryFromPEM(File pemFile, String keyPass) throws IOException, CertificateException, KeyStoreException {
-        // see https://stackoverflow.com/questions/11787571/how-to-read-pem-file-to-get-private-and-public-key
         PrivateKey key = null;
         X509Certificate x509 = null;
 

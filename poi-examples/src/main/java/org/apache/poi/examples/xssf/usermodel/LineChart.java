@@ -78,7 +78,7 @@ public final class LineChart {
 
             // Use a category axis for the bottom axis.
             XDDFCategoryAxis bottomAxis = chart.createCategoryAxis(AxisPosition.BOTTOM);
-            bottomAxis.setTitle("x"); // https://stackoverflow.com/questions/32010765
+            bottomAxis.setTitle("x");
             XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
             leftAxis.setTitle("f(x)");
             leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
@@ -89,20 +89,19 @@ public final class LineChart {
 
             XDDFLineChartData data = (XDDFLineChartData) chart.createData(ChartTypes.LINE, bottomAxis, leftAxis);
             XDDFLineChartData.Series series1 = (XDDFLineChartData.Series) data.addSeries(xs, ys1);
-            series1.setTitle("2x", null); // https://stackoverflow.com/questions/21855842
-            series1.setSmooth(false); // https://stackoverflow.com/questions/29014848
-            series1.setMarkerStyle(MarkerStyle.STAR); // https://stackoverflow.com/questions/39636138
+            series1.setTitle("2x", null);
+            series1.setSmooth(false);
+            series1.setMarkerStyle(MarkerStyle.STAR);
             XDDFLineChartData.Series series2 = (XDDFLineChartData.Series) data.addSeries(xs, ys2);
             series2.setTitle("3x", null);
             series2.setSmooth(true);
             series2.setMarkerSize((short) 6);
-            series2.setMarkerStyle(MarkerStyle.TRIANGLE); // https://stackoverflow.com/questions/39636138
+            series2.setMarkerStyle(MarkerStyle.TRIANGLE);
             chart.plot(data);
 
-            // if your series have missing values like https://stackoverflow.com/questions/29014848
+            // if your series have missing values
             // chart.displayBlanksAs(DisplayBlanks.GAP);
 
-            // https://stackoverflow.com/questions/24676460
             solidLineSeries(data, 0, PresetColor.CHARTREUSE);
             solidLineSeries(data, 1, PresetColor.TURQUOISE);
 

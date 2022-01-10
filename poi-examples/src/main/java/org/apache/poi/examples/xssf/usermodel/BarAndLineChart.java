@@ -58,10 +58,6 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-// original contributions by Axel Richter on https://stackoverflow.com/questions/47065690
-// additional title formatting from https://stackoverflow.com/questions/50418856
-// and legend positioning from https://stackoverflow.com/questions/49615379
-// this would probably be an answer for https://stackoverflow.com/questions/36447925 too
 public final class BarAndLineChart {
 
     private static final int NUM_OF_ROWS = 7;

@@ -487,9 +487,6 @@ public final class TestXSSFTable {
         }
     }
 
-    /**
-     * See https://stackoverflow.com/questions/44407111/apache-poi-cant-format-filled-cells-as-numeric
-     */
     @Test
     void testNumericCellsInTable() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {

@@ -51,9 +51,6 @@ public class FileBackedDataSource extends DataSource implements Closeable {
     // therefore we need to keep the list of mapped buffers and do some ugly reflection to try to
     // clean the buffer during close().
     // See https://bz.apache.org/bugzilla/show_bug.cgi?id=58480,
-    // http://stackoverflow.com/questions/3602783/file-access-synchronized-on-java-object and
-    // http://bugs.java.com/view_bug.do?bug_id=4724038 for related discussions
-    // https://stackoverflow.com/questions/36077641/java-when-does-direct-buffer-released
     private final IdentityHashMap<ByteBuffer,ByteBuffer> buffersToClean = new IdentityHashMap<>();
 
     public FileBackedDataSource(File file) throws FileNotFoundException {

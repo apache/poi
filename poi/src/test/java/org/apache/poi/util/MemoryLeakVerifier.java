@@ -44,8 +44,6 @@ import java.util.List;
  *
  * This will verify at the end of the test if the object is actually removed by the
  * garbage collector or if it lingers in memory for some reason.
- *
- * Idea taken from http://stackoverflow.com/a/7410460/411846
  */
 public class MemoryLeakVerifier {
     private static final int MAX_GC_ITERATIONS = 50;

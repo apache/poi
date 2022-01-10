@@ -81,7 +81,6 @@ public final class XMLHelper {
     private static long lastLog;
 
     // DocumentBuilderFactory.newDocumentBuilder is thread-safe
-    // see https://stackoverflow.com/questions/12455602/is-documentbuilder-thread-safe
     private static final DocumentBuilderFactory documentBuilderFactory = getDocumentBuilderFactory();
 
     private static final SAXParserFactory saxFactory = getSaxParserFactory();
