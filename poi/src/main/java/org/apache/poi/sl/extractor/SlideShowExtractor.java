@@ -44,6 +44,7 @@ import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Removal;
 
@@ -407,7 +408,8 @@ public class SlideShowExtractor<
     }
 
     /**
-     * Extract the used codepoints for font embedding / subsetting
+     * Extract the used codepoints for font embedding / subsetting. This method is not intended for public use.
+     * 
      * @param typeface the typeface/font family of the textruns to examine
      * @param italic use {@code true} for italic TextRuns, {@code false} for non-italic ones and
      *      {@code null} if it doesn't matter
@@ -415,6 +417,7 @@ public class SlideShowExtractor<
      *      {@code null} if it doesn't matter
      * @return a bitset with the marked/used codepoints
      */
+    @Internal
     public SparseBitSet getCodepointsInSparseBitSet(String typeface, Boolean italic, Boolean bold) {
         final SparseBitSet glyphs = new SparseBitSet();
 
