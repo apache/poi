@@ -45,6 +45,7 @@ import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.Removal;
 
 /**
  * Common SlideShow extractor
@@ -388,6 +389,7 @@ public class SlideShowExtractor<
      * @deprecated use {@link #getCodepointsInSparseBitSet(String, Boolean, Boolean)}
      */
     @Deprecated
+    @Removal(version = "6.0.0")
     public BitSet getCodepoints(String typeface, Boolean italic, Boolean bold) {
         final BitSet glyphs = new BitSet();
 
