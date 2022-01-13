@@ -256,18 +256,18 @@ public class TestBuildFile {
 
         assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.  " +
-            "It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-4");
+            "It evaluated to 2285.5761494145568 when the value of 2285.576149 with precision of 1.0E-4");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.  " +
-            "It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-5");
+            "It evaluated to 2285.5761494145568 when the value of 2285.576149 with precision of 1.0E-5");
         assertLogContaining("Failed to evaluate cell 'MortgageCalculator'!$B$4.  " +
-            "It evaluated to 2285.5761494145563 when the value of 2285.576149 with precision of 1.0E-10 was expected.");
+            "It evaluated to 2285.5761494145568 when the value of 2285.576149 with precision of 1.0E-10 was expected.");
         assertLogContaining("2/3 tests passed");
     }
 
     @Test
     void testPrecisionFail() {
         expectBuildException("test-precision-fails", "precision not matched",
-             "\tFailed to evaluate cell 'MortgageCalculator'!$B$4.  It evaluated to 2285.5761494145563 " +
+             "\tFailed to evaluate cell 'MortgageCalculator'!$B$4.  It evaluated to 2285.5761494145568 " +
              "when the value of 2285.576149 with precision of 1.0E-10 was expected.");
     }
 

@@ -23,6 +23,7 @@ import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.util.NumberToTextConverter;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 
 public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction implements ArrayFunction {
 
@@ -79,9 +80,9 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
     public static final Function AddEval = new TwoOperandNumericOperation() {
         @Override
         protected double evaluate(double d0, double d1) {
-            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d0));
-            BigDecimal bd2 = new BigDecimal(NumberToTextConverter.toText(d1));
-            return bd1.add(bd2).doubleValue();
+            BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
+            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
+            return bd0.add(bd1).doubleValue();
         }
     };
     public static final Function DivideEval = new TwoOperandNumericOperation() {
@@ -90,17 +91,17 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
             if (d1 == 0.0) {
                 throw new EvaluationException(ErrorEval.DIV_ZERO);
             }
-            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d0));
-            BigDecimal bd2 = new BigDecimal(NumberToTextConverter.toText(d1));
-            return bd1.divide(bd2).doubleValue();
+            BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
+            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
+            return bd0.divide(bd1, MathContext.DECIMAL128).doubleValue();
         }
     };
     public static final Function MultiplyEval = new TwoOperandNumericOperation() {
         @Override
         protected double evaluate(double d0, double d1) {
-            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d0));
-            BigDecimal bd2 = new BigDecimal(NumberToTextConverter.toText(d1));
-            return bd1.multiply(bd2).doubleValue();
+            BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
+            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
+            return bd0.multiply(bd1).doubleValue();
         }
     };
     public static final Function PowerEval = new TwoOperandNumericOperation() {
@@ -118,9 +119,9 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
         }
         @Override
         protected double evaluate(double d0, double d1) {
-            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d0));
-            BigDecimal bd2 = new BigDecimal(NumberToTextConverter.toText(d1));
-            return bd1.subtract(bd2).doubleValue();
+            BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
+            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
+            return bd0.subtract(bd1).doubleValue();
         }
     }
     public static final Function SubtractEval = new SubtractEvalClass();
