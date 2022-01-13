@@ -29,6 +29,8 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.CellReference;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
 /**
  * Tests for proper calculation of named ranges from external workbooks.
  */
@@ -123,7 +125,7 @@ final class TestExternalNameReference {
         evaluator.evaluateFormulaCell(ccell);
         evaluator.evaluateFormulaCell(tccell);
         assertEquals(NEW_PART_COST, uccell.getNumericCellValue(), 0);
-        assertEquals(NEW_PART_COST*NEW_QUANT, ccell.getNumericCellValue(), 0);
-        assertEquals(NEW_PART_COST*NEW_QUANT*MARKUP_COST_2, tccell.getNumericCellValue(), 0);
+        assertEquals(new BigDecimal(NEW_PART_COST).multiply(new BigDecimal(NEW_QUANT)).doubleValue(), ccell.getNumericCellValue(), 0.000000001);
+        assertEquals(NEW_PART_COST*NEW_QUANT*MARKUP_COST_2, tccell.getNumericCellValue(), 0.000000001);
     }
 }

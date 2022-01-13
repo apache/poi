@@ -80,9 +80,7 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
     public static final Function AddEval = new TwoOperandNumericOperation() {
         @Override
         protected double evaluate(double d0, double d1) {
-            BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
-            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
-            return bd0.add(bd1).doubleValue();
+            return d0+d1;
         }
     };
     public static final Function DivideEval = new TwoOperandNumericOperation() {
@@ -119,9 +117,7 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
         }
         @Override
         protected double evaluate(double d0, double d1) {
-            BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
-            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
-            return bd0.subtract(bd1).doubleValue();
+            return d0-d1;
         }
     }
     public static final Function SubtractEval = new SubtractEvalClass();
