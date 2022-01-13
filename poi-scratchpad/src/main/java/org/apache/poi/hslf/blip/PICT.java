@@ -23,6 +23,7 @@ import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -99,7 +100,7 @@ public final class PICT extends Metafile {
                     out.write(chunk, 0, count);
                     // PICT zip-stream can be erroneous, so we clear the array to determine
                     // the maximum of read bytes, after the inflater crashed
-                    bytefill(chunk, (byte) 0);
+                    Arrays.fill(chunk, (byte) 0);
                 }
             } catch (Exception e) {
                 int lastLen = chunk.length - 1;
@@ -184,24 +185,6 @@ public final class PICT extends Metafile {
                 break;
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for PICT");
-        }
-    }
-
-
-    /*
-     * initialize a smaller piece of the array and use the System.arraycopy
-     * call to fill in the rest of the array in an expanding binary fashion
-     */
-    private static void bytefill(byte[] array, byte value) {
-        // http://stackoverflow.com/questions/9128737/fastest-way-to-set-all-values-of-an-array
-        int len = array.length;
-
-        if (len > 0){
-            array[0] = value;
-        }
-
-        for (int i = 1; i < len; i += i) {
-            System.arraycopy(array, 0, array, i, Math.min(len - i, i));
         }
     }
 }

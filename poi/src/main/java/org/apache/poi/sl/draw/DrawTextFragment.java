@@ -101,7 +101,6 @@ public class DrawTextFragment implements Drawable  {
         double l = layout.getLeading();
 
         if (l == 0) {
-            // see https://stackoverflow.com/questions/925147
             // we use a 115% value instead of the 120% proposed one, as this seems to be closer to LO/OO
             l = (layout.getAscent()+layout.getDescent())*0.15;
         }

@@ -128,8 +128,6 @@ class TestFonts {
 
     private void setFont(TextBox<?,?> tb, String fontFamily, FontGroup fontGroup) {
         // TODO: set east asian font family - MS Office uses "MS Mincho" or "MS Gothic" as a fallback
-        // see https://stackoverflow.com/questions/26063828 for good explanation about the font metrics
-        // differences on different environments
         for (TextParagraph<?,?,? extends TextRun> p : tb.getTextParagraphs()) {
             for (TextRun r : p.getTextRuns()) {
                 r.setFontFamily(fontFamily, fontGroup);

@@ -79,7 +79,7 @@ public final class BarChart {
 
             // Use a category axis for the bottom axis.
             XDDFCategoryAxis bottomAxis = chart.createCategoryAxis(AxisPosition.BOTTOM);
-            bottomAxis.setTitle("x"); // https://stackoverflow.com/questions/32010765
+            bottomAxis.setTitle("x");
             XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
             leftAxis.setTitle("f(x)");
             leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
@@ -90,7 +90,7 @@ public final class BarChart {
 
             XDDFChartData data = chart.createData(ChartTypes.BAR, bottomAxis, leftAxis);
             XDDFChartData.Series series1 = data.addSeries(xs, ys1);
-            series1.setTitle("2x", null); // https://stackoverflow.com/questions/21855842
+            series1.setTitle("2x", null);
             XDDFChartData.Series series2 = data.addSeries(xs, ys2);
             series2.setTitle("3x", null);
             chart.plot(data);

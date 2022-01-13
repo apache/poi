@@ -143,7 +143,7 @@ subprojects {
         all {
             resolutionStrategy {
                 force "commons-io:commons-io:${commonsIoVersion}"
-                force 'org.slf4j:slf4j-api:1.7.32'
+                force 'org.slf4j:slf4j-api:1.7.33'
                 force 'com.fasterxml.woodstox:woodstox-core:6.2.7'
             }
         }
@@ -314,7 +314,7 @@ subprojects {
 
         // http://forums.gradle.org/gradle/topics/jacoco_related_failure_in_multiproject_build
         systemProperties['user.dir'] = workingDir
-        systemProperties['java.io.tmpdir'] = 'build' 
+        systemProperties['java.io.tmpdir'] = 'build'
 
         systemProperties['POI.testdata.path'] = '../test-data'
 
@@ -759,6 +759,26 @@ distributions {
 binDistZip.dependsOn 'zipJavadocs', ':poi-ooxml-lite:jar'
 binDistTar.dependsOn 'zipJavadocs', ':poi-ooxml-lite:jar'
 
+task soLinkCheck() {
+    doLast {
+        def path = ant.path {
+            fileset(dir: '.', includes: '**/*.java') {
+                exclude(name: 'build.gradle')
+                contains(text: 'stackoverflow.com')
+            }
+        }
+
+        path.list().each {
+            println it
+        }
+
+        if (path.size() > 0) {
+            // #65796 - minimize notifications about non-asf open source
+            throw new GradleException('License issue found - conceal the link and contradict any findings m(')
+        }
+    }
+}
+
 var srcDep = [
     ':poi:cacheJava9',
     ':poi:cacheTest9',
@@ -778,7 +798,8 @@ var srcDep = [
 
 srcDistTar.dependsOn srcDep
 srcDistZip.dependsOn srcDep
-rat.dependsOn srcDep
+soLinkCheck.dependsOn srcDep
+rat.dependsOn soLinkCheck
 
 task fixDistDir {
     doLast {

@@ -73,7 +73,6 @@ public final class StreamHelper {
             trans.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             // don't indent xml documents, the indent will cause errors in calculating the xml signature
             // because of different handling of linebreaks in Windows/Unix
-            // see https://stackoverflow.com/questions/36063375
             trans.setOutputProperty(OutputKeys.INDENT, "no");
             trans.setOutputProperty(OutputKeys.STANDALONE, "yes");
             trans.transform(xmlSource, outputTarget);

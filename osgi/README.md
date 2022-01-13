@@ -25,7 +25,7 @@ Available in Maven Central: https://mvnrepository.com/artifact/net.sf.saxon/saxo
 3. Apache XML Security for Java, Bouncy Castle and XML Commons Resolver 
 These are required to sign or validate signed Office documents. The OSGi bundles are available in Maven Central:
 
-    - Apache XML Security for Java: https://mvnrepository.com/artifact/org.apache.santuario/xmlsec/2.2.3
+    - Apache XML Security for Java: https://mvnrepository.com/artifact/org.apache.santuario/xmlsec/2.3.0
     
     - XML Commons Resolver: https://mvnrepository.com/artifact/xml-resolver/xml-resolver/1.2-osgi
     

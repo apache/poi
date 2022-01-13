@@ -69,7 +69,6 @@ public interface DrawFontManager {
      *
      * @return String with mapped codepoints
      *
-     * @see <a href="http://stackoverflow.com/questions/8692095">Drawing exotic fonts in a java applet</a>
      * @see StringUtil#mapMsCodepointString(String)
      */
     String mapFontCharset(Graphics2D graphics, FontInfo fontInfo, String text);
