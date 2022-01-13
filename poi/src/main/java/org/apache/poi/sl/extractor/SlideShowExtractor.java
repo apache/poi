@@ -409,7 +409,7 @@ public class SlideShowExtractor<
 
     /**
      * Extract the used codepoints for font embedding / subsetting. This method is not intended for public use.
-     * 
+     *
      * @param typeface the typeface/font family of the textruns to examine
      * @param italic use {@code true} for italic TextRuns, {@code false} for non-italic ones and
      *      {@code null} if it doesn't matter
