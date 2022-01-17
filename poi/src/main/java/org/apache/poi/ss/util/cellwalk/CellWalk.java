@@ -21,7 +21,6 @@ import static org.apache.commons.math3.util.ArithmeticUtils.addAndCheck;
 import static org.apache.commons.math3.util.ArithmeticUtils.mulAndCheck;
 import static org.apache.commons.math3.util.ArithmeticUtils.subAndCheck;
 
-import org.apache.commons.math3.util.ArithmeticUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
