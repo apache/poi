@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.commons.math3.util.ArithmeticUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.EmptyFileException;
@@ -127,7 +126,7 @@ public class POIFSFileSystem extends BlockStore
     protected void createNewDataSource() {
         // Data needs to initially hold just the header block,
         //  a single bat block, and an empty properties section
-        long blockSize = ArithmeticUtils.mulAndCheck(bigBlockSize.getBigBlockSize(), 3L);
+        long blockSize = Math.multiplyExact(bigBlockSize.getBigBlockSize(), 3L);
         _data = new ByteArrayBackedDataSource(IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH));
     }
 
@@ -455,7 +454,7 @@ public class POIFSFileSystem extends BlockStore
         // Ensure there's a spot in the file for it
         ByteBuffer buffer = ByteBuffer.allocate(bigBlockSize.getBigBlockSize());
         // Header isn't in BATs
-        long writeTo = ArithmeticUtils.mulAndCheck(1L + offset, bigBlockSize.getBigBlockSize());
+        long writeTo = Math.multiplyExact(1L + offset, (long)bigBlockSize.getBigBlockSize());
         _data.write(buffer, writeTo);
         // All done
         return newBAT;
