@@ -70,7 +70,7 @@ dependencies {
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
-    api 'com.github.virtuald:curvesapi:1.06'
+    api 'com.github.virtuald:curvesapi:1.07'
     api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
     api 'org.apache.commons:commons-collections4:4.4'
 
