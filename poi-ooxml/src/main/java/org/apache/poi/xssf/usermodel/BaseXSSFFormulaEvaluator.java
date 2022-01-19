@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.ss.formula.BaseFormulaEvaluator;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
@@ -29,10 +31,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPxg;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.model.ExternalLinksTable;
 
 /**
  * Internal POI use only - parent of XSSF and SXSSF formula evaluators
@@ -86,7 +86,22 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
         Ptg[] formulaTokens = getEvaluationWorkbook().getFormulaTokens(evalCell);
         for (Ptg ptg : formulaTokens) {
             if (ptg instanceof Area3DPxg) {
-                System.err.println("ptg = " + ptg);
+                Area3DPxg area3DPxg= (Area3DPxg) ptg;
+                if(area3DPxg.getExternalWorkbookNumber()>0){
+                    EvaluationWorkbook.ExternalSheet externalSheet = getEvaluationWorkbook().getExternalSheet(area3DPxg.getSheetName(), area3DPxg.getLastSheetName(), area3DPxg.getExternalWorkbookNumber());
+                    if (externalSheet instanceof EvaluationWorkbook.ExternalSheetRange){
+                        // TODO:
+                    }else{
+                        XSSFCell xssfCell = ((XSSFEvaluationCell) evalCell).getXSSFCell();
+                        XSSFWorkbook externalWorkbook= (XSSFWorkbook) xssfCell.getSheet().getWorkbook().getCreationHelper().getReferencedWorkbooks().get(externalSheet.getWorkbookName());
+
+                        ExternalLinksTable externalLinksTable = xssfCell.getSheet().getWorkbook().getExternalLinksTable().get(area3DPxg.getExternalWorkbookNumber() - 1);
+                        externalLinksTable.cacheData(externalSheet.getSheetName(),area3DPxg.getFirstRow(),area3DPxg.getFirstColumn());
+                        System.out.println("externalLinksTable = " + externalLinksTable);
+                    }
+                    System.err.println("area3DPxg = " + area3DPxg);
+                }
+
             }
         }
     }
