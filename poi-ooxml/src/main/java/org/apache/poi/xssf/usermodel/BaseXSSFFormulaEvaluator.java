@@ -26,6 +26,9 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.ptg.Area3DPxg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -55,6 +58,7 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
     protected CellValue evaluateFormulaCellValue(Cell cell) {
         EvaluationCell evalCell = toEvaluationCell(cell);
         ValueEval eval = _bookEvaluator.evaluate(evalCell);
+        cacheExternalWorkbookCells(evalCell);
         if (eval instanceof NumberEval) {
             NumberEval ne = (NumberEval) eval;
             return new CellValue(ne.getNumberValue());
@@ -73,6 +77,19 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
         throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
     }
 
+    /**
+     * cache cell value of external workbook
+     * @param evalCell sourceCell
+     */
+    private void cacheExternalWorkbookCells(EvaluationCell evalCell){
+        //
+        Ptg[] formulaTokens = getEvaluationWorkbook().getFormulaTokens(evalCell);
+        for (Ptg ptg : formulaTokens) {
+            if (ptg instanceof Area3DPxg) {
+                System.err.println("ptg = " + ptg);
+            }
+        }
+    }
     @Override
     protected void setCellType(Cell cell, CellType cellType) {
         if (cell instanceof  XSSFCell) {

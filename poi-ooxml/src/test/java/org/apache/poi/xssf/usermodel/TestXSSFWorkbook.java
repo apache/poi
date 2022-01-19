@@ -1299,6 +1299,36 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
+    @Test
+    void testCacheExternalWorkbook() throws Exception {
+        String nameA = "cache-external-workbook-a.xlsx";
+
+        try (
+                UnsynchronizedByteArrayOutputStream bosA = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bosB = new UnsynchronizedByteArrayOutputStream();
+                XSSFWorkbook workbookA = new XSSFWorkbook();
+                XSSFWorkbook workbookB = new XSSFWorkbook()
+        ) {
+            XSSFRow row1 = workbookA.createSheet().createRow(0);
+            row1.createCell(0).setCellValue(10);
+            row1.createCell(1).setCellValue(20);
+
+            XSSFRow row2 = workbookB.createSheet().createRow(0);
+            XSSFCell cell = row2.createCell(0);
+
+            workbookB.linkExternalWorkbook(nameA, workbookA);
+            String formula = String.format(LocaleUtil.getUserLocale(), "SUM('[%s]Sheet0'!A1:B1)", nameA);
+            cell.setCellFormula(formula);
+            XSSFFormulaEvaluator evaluator = workbookB.getCreationHelper().createFormulaEvaluator();
+            evaluator.evaluateFormulaCell(cell);
+            assertEquals(30.0, cell.getNumericCellValue());
+
+            workbookA.write(bosA);
+            workbookB.write(bosB);
+
+        }
+    }
+
     private static void expectFormattedContent(Cell cell, String value) {
         assertEquals(value, new DataFormatter().formatCellValue(cell),
                 "Cell " + ref(cell) + " has wrong formatted content.");
