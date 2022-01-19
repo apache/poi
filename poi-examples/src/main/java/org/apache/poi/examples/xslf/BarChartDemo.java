@@ -124,7 +124,7 @@ public final class BarChartDemo {
         series2.setTitle(series[1], chart.setSheetTitle(series[1], COLUMN_SPEAKERS));
 
         chart.plot(bar);
-        chart.setTitleText(chartTitle); // https://stackoverflow.com/questions/30532612
+        chart.setTitleText(chartTitle);
         // chart.setTitleOverlay(overlay);
 
         // adjust font size for readability

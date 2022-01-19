@@ -136,7 +136,6 @@ public class StandardDecryptor extends Decryptor {
         }
         // limit wrong calculated ole entries - (bug #57080)
         // standard encryption always uses aes encoding, so blockSize is always 16
-        // http://stackoverflow.com/questions/3283787/size-of-data-after-aes-encryption
         int blockSize = getEncryptionInfo().getHeader().getCipherAlgorithm().blockSize;
         long cipherLen = (_length/blockSize + 1) * blockSize;
         Cipher cipher = getCipher(getSecretKey());

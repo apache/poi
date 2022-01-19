@@ -37,8 +37,6 @@ sourceSets {
 
 dependencies {
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-//    implementation "org.apache.logging.log4j:log4j-api:${log4jVersion}"
-    runtimeOnly "org.apache.logging.log4j:log4j-core:${log4jVersion}"
 }
 
 idea {

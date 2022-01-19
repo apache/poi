@@ -78,7 +78,7 @@ public final class ScatterChart {
             legend.setPosition(LegendPosition.TOP_RIGHT);
 
             XDDFValueAxis bottomAxis = chart.createValueAxis(AxisPosition.BOTTOM);
-            bottomAxis.setTitle("x"); // https://stackoverflow.com/questions/32010765
+            bottomAxis.setTitle("x");
             XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
             leftAxis.setTitle("f(x)");
             leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
@@ -90,8 +90,8 @@ public final class ScatterChart {
 
             XDDFScatterChartData data = (XDDFScatterChartData) chart.createData(ChartTypes.SCATTER, bottomAxis, leftAxis);
             XDDFScatterChartData.Series series1 = (XDDFScatterChartData.Series) data.addSeries(xs, ys1);
-            series1.setTitle("2x", null); // https://stackoverflow.com/questions/21855842
-            series1.setSmooth(false); // https://stackoverflow.com/questions/39636138
+            series1.setTitle("2x", null);
+            series1.setSmooth(false);
             XDDFScatterChartData.Series series2 = (XDDFScatterChartData.Series) data.addSeries(xs, ys2);
             series2.setTitle("3x", null);
             chart.plot(data);

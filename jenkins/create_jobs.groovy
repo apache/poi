@@ -133,7 +133,11 @@ def xmlbeansjobs = [
         [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true
+        ],
+        [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
+          sonar: true
         ]
+
 ]
 
 def svnBase = 'https://svn.apache.org/repos/asf/poi/trunk'
@@ -519,7 +523,7 @@ xmlbeansjobs.each { xjob ->
             disabled()
         }
 
-        description( defaultDesc + (xjob.apicheck ? apicheckDesc : sonarDesc) )
+        description( defaultDesc + (xjob.apicheck ? apicheckDesc : sonarDesc.replace('poi-parent','apache_xmlbeans')) )
         logRotator {
             numToKeep(5)
             artifactNumToKeep(1)
@@ -542,6 +546,14 @@ xmlbeansjobs.each { xjob ->
                 absolute(180)
                 abortBuild()
                 writeDescription('Build was aborted due to timeout')
+            }
+            if(xjob.sonar) {
+                credentialsBinding {
+                    string('POI_SONAR_TOKEN', 'sonarcloud-poi')
+                }
+                configure { project ->
+                    project / buildWrappers << 'hudson.plugins.sonar.SonarBuildWrapper' {}
+                }
             }
         }
         jdk(jdkMapping.get(jdkKey))
@@ -567,15 +579,19 @@ xmlbeansjobs.each { xjob ->
             }
 
             gradle {
-//                switches('-PenableSonar')
-//                switches('-Dsonar.login=${POI_SONAR_TOKEN}')
-//                switches('-Dsonar.organization=apache')
-//                switches('-Dsonar.projectKey=poi-parent')
-//                switches('-Dsonar.host.url=https://sonarcloud.io')
+                if (xjob.sonar) {
+                    switches('-PenableSonar')
+                    switches('-Dsonar.login=${POI_SONAR_TOKEN}')
+                    switches('-Dsonar.organization=apache')
+                    switches('-Dsonar.projectKey=apache_xmlbeans')
+                    switches('-Dsonar.host.url=https://sonarcloud.io')
+                }
                 tasks('clean')
                 tasks('jenkins')
                 tasks('jacocoTestReport')
-//                tasks('sonarqube')
+                if (xjob.sonar) {
+                    tasks('sonarqube')
+                }
                 useWrapper(true)
             }
         }

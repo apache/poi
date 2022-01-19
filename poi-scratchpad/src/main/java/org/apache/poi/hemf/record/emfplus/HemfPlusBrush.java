@@ -677,37 +677,6 @@ public class HemfPlusBrush {
             Color inter = DrawPaint.SCRGB2RGB(r,g,b);
             return new Color(inter.getRed(), inter.getGreen(), inter.getBlue(), a);
         }
-
-        /*
-        private Color interpolateColorsHSL(final double factor) {
-            final double[] hslStart = DrawPaint.RGB2HSL(startColor);
-            final double[] hslStop = DrawPaint.RGB2HSL(endColor);
-
-            BiFunction<Number,Number,Double> linearInter = (start, stop) ->
-                start.doubleValue()+(stop.doubleValue()-start.doubleValue())*factor;
-
-            double alpha = linearInter.apply(startColor.getAlpha(),endColor.getAlpha());
-            double sat = linearInter.apply(hslStart[1],hslStop[1]);
-            double lum = linearInter.apply(hslStart[2],hslStop[2]);
-
-            // find closest match - decide if need to go clockwise or counter-clockwise
-            // https://stackoverflow.com/questions/1416560/hsl-interpolation
-            double hueMidCW = (hslStart[0]+hslStop[0])/2.;
-            double hueMidCCW = (hslStart[0]+hslStop[0]+360.)/2.;
-
-            Function<Double,Double> hueDelta = (hue) ->
-                Math.min(Math.abs(hslStart[0]-hue), Math.abs(hslStop[0]-hue));
-
-            double hslDiff;
-            if (hueDelta.apply(hueMidCW) > hueDelta.apply(hueMidCCW)) {
-                hslDiff = (hslStart[0] < hslStop[0]) ? hslStop[0]-hslStart[0] : (360-hslStart[0])+hslStop[0];
-            } else {
-                hslDiff = (hslStart[0] < hslStop[0]) ? -hslStart[0]-(360-hslStop[0]) : -(hslStart[0]-hslStop[0]);
-            }
-            double hue = (hslStart[0]+hslDiff*factor)%360.;
-
-            return DrawPaint.HSL2RGB(hue, sat, lum, alpha/255.);
-        } */
     }
 
     /** The EmfPlusPathGradientBrushData object specifies a path gradient for a graphics brush. */

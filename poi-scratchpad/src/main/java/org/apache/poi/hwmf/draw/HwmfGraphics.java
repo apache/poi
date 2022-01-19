@@ -619,8 +619,6 @@ public class HwmfGraphics implements HwmfCharsetAware {
             // TODO: fix font height calculation
             // the height is given as font size + ascent + descent
             // as an approximation we reduce the height by a static factor
-            //
-            // see https://stackoverflow.com/a/26564924/2066598 on to get the font size from the cell height
             return fontHeight*3/4;
         }
     }

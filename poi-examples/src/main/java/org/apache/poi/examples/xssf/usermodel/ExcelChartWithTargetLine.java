@@ -53,14 +53,10 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
- * This example is based on original contributions by Axel Richter on StackOverflow.
+ * This example is based on original contributions by Axel Richter
  *
  * <em>Note from original author</em>:
  * This only works for Excel since OpenOffice or LibreOffice Calc is not able having series having literal numeric values set.
- *
- * @see <a href="https://stackoverflow.com/questions/50772989/">Create target marker in a bar chart with openxmlformats</a>
- * @see <a href="https://stackoverflow.com/questions/50873700/">Change axis color and font of the chart in openxmlformats</a>
- * @see <a href="https://stackoverflow.com/questions/51530552/">Change colors of line chart Apache POI</a>
  */
 public final class ExcelChartWithTargetLine {
     private ExcelChartWithTargetLine() {}
@@ -91,7 +87,6 @@ public final class ExcelChartWithTargetLine {
         leftValues.crossAxis(barCategories);
         barCategories.crossAxis(leftValues);
 
-        // from https://stackoverflow.com/questions/50873700/
         // colored major grid lines
         leftValues.getOrAddMajorGridProperties().setLineProperties(solidTomato);
         //colored axis line
@@ -167,7 +162,6 @@ public final class ExcelChartWithTargetLine {
         }
 
 
-        // from https://stackoverflow.com/questions/51530552/
         // customize the chart
 
         // do not auto delete the title

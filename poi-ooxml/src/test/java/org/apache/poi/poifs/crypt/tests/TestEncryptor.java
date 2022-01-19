@@ -327,8 +327,7 @@ class TestEncryptor {
     /**
      * Ensure we can encrypt a package that is missing the Core
      *  Properties, eg one from dodgy versions of Jasper Reports
-     * See https://github.com/nestoru/xlsxenc/ and
-     * http://stackoverflow.com/questions/28593223
+     * See https://github.com/nestoru/xlsxenc/
      */
     @Test
     void encryptPackageWithoutCoreProperties() throws Exception {
@@ -513,9 +512,7 @@ class TestEncryptor {
         aehHeader.setHashAlgorithm(HashAlgorithm.sha1);
         AgileEncryptionVerifier aehVerifier = (AgileEncryptionVerifier)eiNew.getVerifier();
 
-        // this cast might look strange - if the setters would be public, it will become obsolete
-        // see http://stackoverflow.com/questions/5637650/overriding-protected-methods-in-java
-        ((EncryptionVerifier)aehVerifier).setCipherAlgorithm(CipherAlgorithm.aes256);
+        aehVerifier.setCipherAlgorithm(CipherAlgorithm.aes256);
         aehVerifier.setHashAlgorithm(HashAlgorithm.sha512);
 
         Encryptor enc = eiNew.getEncryptor();
@@ -590,7 +587,6 @@ class TestEncryptor {
 
     @Test
     void smallFile() throws IOException, GeneralSecurityException {
-        // see https://stackoverflow.com/questions/61463301
         final int tinyFileSize = 80_000_000;
         final String pass = "s3cr3t";
 

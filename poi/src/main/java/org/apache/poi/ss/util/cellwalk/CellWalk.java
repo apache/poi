@@ -17,11 +17,6 @@
 
 package org.apache.poi.ss.util.cellwalk;
 
-import static org.apache.commons.math3.util.ArithmeticUtils.addAndCheck;
-import static org.apache.commons.math3.util.ArithmeticUtils.mulAndCheck;
-import static org.apache.commons.math3.util.ArithmeticUtils.subAndCheck;
-
-import org.apache.commons.math3.util.ArithmeticUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -94,9 +89,9 @@ public class CellWalk {
                     continue;
                 }
 
-                long rowSize = mulAndCheck(subAndCheck(ctx.rowNumber, firstRow), (long)width);
+                long rowSize = Math.multiplyExact(Math.subtractExact(ctx.rowNumber, firstRow), (long)width);
 
-                ctx.ordinalNumber = addAndCheck(rowSize, (ctx.colNumber - firstColumn + 1));
+                ctx.ordinalNumber = Math.addExact(rowSize, (ctx.colNumber - firstColumn + 1));
 
                 handler.onCell(currentCell, ctx);
             }

@@ -152,8 +152,8 @@ class TestFinanceLib extends BaseTestNumeric {
             addRow(sheet, 7, 14500);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            Utils.assertDouble(fe, cell, "NPV(A2, A4:A8)+A3", 1922.061554932363);
-            Utils.assertDouble(fe, cell, "NPV(A2, A4:A8, -9000)+A3", -3749.4650870155747);
+            Utils.assertDouble(fe, cell, "NPV(A2, A4:A8)+A3", 1922.061554932363, 0.00000000001);
+            Utils.assertDouble(fe, cell, "NPV(A2, A4:A8, -9000)+A3", -3749.4650870155747, 0.00000000001);
         }
     }
 
