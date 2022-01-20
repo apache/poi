@@ -157,8 +157,8 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
 
     private int getSheetNameIndex(String sheetName) {
         CTExternalBook externalBook = link.getExternalBook();
-        CTExternalSheetNames sheetNames = null;
-        if (externalBook.getSheetNames() == null) {
+        CTExternalSheetNames sheetNames = externalBook.getSheetNames();
+        if (sheetNames == null) {
             sheetNames = externalBook.addNewSheetNames();
         }
         int index = -1;

@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -60,11 +61,7 @@ import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.model.StylesTable;
 import org.junit.jupiter.api.Test;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
@@ -1310,25 +1307,36 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
                 XSSFWorkbook workbookB = new XSSFWorkbook()
         ) {
             XSSFRow row1 = workbookA.createSheet().createRow(0);
-            row1.createCell(0).setCellValue(10);
-            row1.createCell(1).setCellValue(20);
+            double v1 = 10, v2 = 10, sum = v1 + v2;
+            row1.createCell(0).setCellValue(v1);
+            row1.createCell(1).setCellValue(v2);
 
-            XSSFRow row2 = workbookB.createSheet().createRow(0);
-            XSSFCell cell = row2.createCell(0);
+            XSSFRow row = workbookB.createSheet().createRow(0);
+            XSSFCell cell = row.createCell(0);
 
             workbookB.linkExternalWorkbook(nameA, workbookA);
             String formula = String.format(LocaleUtil.getUserLocale(), "SUM('[%s]Sheet0'!A1:B1)", nameA);
             cell.setCellFormula(formula);
             XSSFFormulaEvaluator evaluator = workbookB.getCreationHelper().createFormulaEvaluator();
             evaluator.evaluateFormulaCell(cell);
-            assertEquals(30.0, cell.getNumericCellValue());
+
+            assertEquals(sum, cell.getNumericCellValue());
 
             workbookA.write(bosA);
             workbookB.write(bosB);
             FileOutputStream f1 = new FileOutputStream(nameA);
-            FileOutputStream f2 = new FileOutputStream("b.xlsx");
             workbookA.write(f1);
-            workbookB.write(f2);
+//            FileOutputStream f2 = new FileOutputStream("b.xlsx");
+//            workbookB.write(f2);
+
+            try(
+                    XSSFWorkbook workbook2 = new XSSFWorkbook(bosB.toInputStream())
+            ) {
+                CTExternalLink link = workbook2.getExternalLinksTable().get(0).getCTExternalLink();
+                CTExternalSheetData sheetData = link.getExternalBook().getSheetDataSet().getSheetDataArray(0);
+                assertEquals(Double.valueOf(sheetData.getRowArray(0).getCellArray(0).getV()), v1);
+                assertEquals(Double.valueOf(sheetData.getRowArray(0).getCellArray(1).getV()), v2);
+            }
         }
     }
 

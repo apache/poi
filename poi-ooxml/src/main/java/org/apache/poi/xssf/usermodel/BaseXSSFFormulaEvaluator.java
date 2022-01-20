@@ -32,6 +32,7 @@ import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.ExternalLinksTable;
 
 /**
@@ -79,35 +80,58 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
 
     /**
      * cache cell value of external workbook
+     *
      * @param evalCell sourceCell
      */
-    private void cacheExternalWorkbookCells(EvaluationCell evalCell){
+    private void cacheExternalWorkbookCells(EvaluationCell evalCell) {
         //
         Ptg[] formulaTokens = getEvaluationWorkbook().getFormulaTokens(evalCell);
         for (Ptg ptg : formulaTokens) {
             if (ptg instanceof Area3DPxg) {
-                Area3DPxg area3DPxg= (Area3DPxg) ptg;
-                if(area3DPxg.getExternalWorkbookNumber()>0){
+                Area3DPxg area3DPxg = (Area3DPxg) ptg;
+                if (area3DPxg.getExternalWorkbookNumber() > 0) {
                     EvaluationWorkbook.ExternalSheet externalSheet = getEvaluationWorkbook().getExternalSheet(area3DPxg.getSheetName(), area3DPxg.getLastSheetName(), area3DPxg.getExternalWorkbookNumber());
-                    if (externalSheet instanceof EvaluationWorkbook.ExternalSheetRange){
-                        // TODO:
-                    }else{
-                        XSSFCell xssfCell = ((XSSFEvaluationCell) evalCell).getXSSFCell();
-                        XSSFWorkbook externalWorkbook= (XSSFWorkbook) xssfCell.getSheet().getWorkbook().getCreationHelper().getReferencedWorkbooks().get(externalSheet.getWorkbookName());
 
-                        ExternalLinksTable externalLinksTable = xssfCell.getSheet().getWorkbook().getExternalLinksTable().get(area3DPxg.getExternalWorkbookNumber() - 1);
-                        externalLinksTable.cacheData(externalSheet.getSheetName(),area3DPxg.getFirstRow(),area3DPxg.getFirstColumn());
-                        System.out.println("externalLinksTable = " + externalLinksTable);
+                    XSSFCell xssfCell = ((XSSFEvaluationCell) evalCell).getXSSFCell();
+                    XSSFWorkbook externalWorkbook = (XSSFWorkbook) xssfCell.getSheet().getWorkbook().getCreationHelper().getReferencedWorkbooks().get(externalSheet.getWorkbookName());
+                    ExternalLinksTable externalLinksTable = xssfCell.getSheet().getWorkbook().getExternalLinksTable().get(area3DPxg.getExternalWorkbookNumber() - 1);
+
+                    int firstSheet = externalWorkbook.getSheetIndex(area3DPxg.getSheetName());
+                    int lastSheet = firstSheet;
+                    if (area3DPxg.getLastSheetName() != null) {
+                        lastSheet = externalWorkbook.getSheetIndex(area3DPxg.getLastSheetName());
                     }
+
+                    for (int sheetIndex = firstSheet; sheetIndex <= lastSheet; sheetIndex++) {
+                        XSSFSheet sheet = externalWorkbook.getSheetAt(sheetIndex);
+                        int firstRow = area3DPxg.getFirstRow();
+                        int lastRow = area3DPxg.getLastRow();
+                        for (int rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
+                            XSSFRow row = sheet.getRow(rowIndex);
+                            int firstColumn = area3DPxg.getFirstColumn();
+                            int lastColumn = area3DPxg.getLastColumn();
+                            for (int cellIndex = firstColumn; cellIndex <= lastColumn; cellIndex++) {
+                                XSSFCell cell = row.getCell(cellIndex);
+                                String cellValue = cell.getRawValue();
+                                String cellR = new CellReference(cell).formatAsString(false);
+                                externalLinksTable.cacheData(sheet.getSheetName(), rowIndex + 1, cellR, cellValue);
+
+                            }
+                        }
+
+                    }
+                    System.out.println("externalLinksTable = " + externalLinksTable);
+
                     System.err.println("area3DPxg = " + area3DPxg);
                 }
 
             }
         }
     }
+
     @Override
     protected void setCellType(Cell cell, CellType cellType) {
-        if (cell instanceof  XSSFCell) {
+        if (cell instanceof XSSFCell) {
             EvaluationWorkbook evaluationWorkbook = getEvaluationWorkbook();
             BaseXSSFEvaluationWorkbook xewb = BaseXSSFEvaluationWorkbook.class.isAssignableFrom(evaluationWorkbook.getClass()) ? (BaseXSSFEvaluationWorkbook) evaluationWorkbook : null;
 
