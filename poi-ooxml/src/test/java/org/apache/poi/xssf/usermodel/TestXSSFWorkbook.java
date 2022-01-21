@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -61,7 +60,13 @@ import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.model.StylesTable;
 import org.junit.jupiter.api.Test;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalLink;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalSheetData;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
 
 public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
