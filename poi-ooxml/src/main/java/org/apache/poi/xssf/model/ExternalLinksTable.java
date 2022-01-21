@@ -33,7 +33,16 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalBook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalCell;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalDefinedName;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalLink;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalSheetData;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalSheetDataSet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalSheetName;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalSheetNames;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.ExternalLinkDocument;
 
 /**
  * Holds details of links to parts of other workbooks (eg named ranges),
