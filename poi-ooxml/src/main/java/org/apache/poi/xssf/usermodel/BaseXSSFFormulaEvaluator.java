@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.ss.formula.BaseFormulaEvaluator;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
@@ -30,8 +28,10 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.Ref3DPxg;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.model.ExternalLinksTable;
 
@@ -120,9 +120,6 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
                         }
 
                     }
-                    System.out.println("externalLinksTable = " + externalLinksTable);
-
-                    System.err.println("area3DPxg = " + area3DPxg);
                 }
 
             }
