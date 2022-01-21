@@ -33,9 +33,15 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalBook;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalDefinedName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalLink;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalRow;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalSheetData;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalSheetDataSet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalSheetName;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalSheetNames;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.ExternalLinkDocument;
 
 /**
@@ -123,7 +129,7 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
 
         // Have a new one added
         PackageRelationship newRel = getPackagePart().addExternalRelationship(
-                                target, PackageRelationshipTypes.EXTERNAL_LINK_PATH);
+                target, PackageRelationshipTypes.EXTERNAL_LINK_PATH);
         link.getExternalBook().setId(newRel.getId());
     }
 
@@ -148,6 +154,80 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
     }
 
 
+    public void cacheData(String sheetName, long rowR, String cellR, String v) {
+        CTExternalBook externalBook = link.getExternalBook();
+        synchronized (externalBook.monitor()) {
+            CTExternalSheetData sheetData = getSheetData(getSheetNameIndex(sheetName));
+            CTExternalRow row = getRow(sheetData, rowR);
+            CTExternalCell cell = getCell(row, cellR);
+            cell.setV(v);
+        }
+    }
+
+    private int getSheetNameIndex(String sheetName) {
+        CTExternalBook externalBook = link.getExternalBook();
+        CTExternalSheetNames sheetNames = externalBook.getSheetNames();
+        if (sheetNames == null) {
+            sheetNames = externalBook.addNewSheetNames();
+        }
+        int index = -1;
+        for (int i = 0; i < sheetNames.sizeOfSheetNameArray(); i++) {
+            CTExternalSheetName ctExternalSheetName = sheetNames.getSheetNameArray(i);
+            if (ctExternalSheetName.getVal().equals(sheetName)) {
+                index = i;
+                break;
+            }
+        }
+        if (index == -1) {
+            CTExternalSheetName ctExternalSheetName = sheetNames.addNewSheetName();
+            ctExternalSheetName.setVal(sheetName);
+            index = sheetNames.sizeOfSheetNameArray() - 1;
+        }
+        return index;
+
+    }
+
+    private CTExternalSheetData getSheetData(int sheetId) {
+
+        CTExternalSheetDataSet sheetDataSet = link.getExternalBook().getSheetDataSet();
+        if (sheetDataSet == null) {
+            sheetDataSet = link.getExternalBook().addNewSheetDataSet();
+        }
+        CTExternalSheetData ctExternalSheetData = null;
+        for (CTExternalSheetData item : sheetDataSet.getSheetDataArray()) {
+            if (item.getSheetId() == sheetId) {
+                ctExternalSheetData = item;
+                break;
+            }
+        }
+        if (ctExternalSheetData == null) {
+            ctExternalSheetData = sheetDataSet.addNewSheetData();
+            ctExternalSheetData.setSheetId(sheetId);
+        }
+        return ctExternalSheetData;
+    }
+
+    private CTExternalRow getRow(CTExternalSheetData sheetData, long rowR) {
+        for (CTExternalRow ctExternalRow : sheetData.getRowArray()) {
+            if (ctExternalRow.getR() == rowR) {
+                return ctExternalRow;
+            }
+        }
+        CTExternalRow ctExternalRow = sheetData.addNewRow();
+        ctExternalRow.setR(rowR);
+        return ctExternalRow;
+    }
+
+    private CTExternalCell getCell(CTExternalRow row, String cellR) {
+        for (CTExternalCell ctExternalCell : row.getCellArray()) {
+            if (ctExternalCell.getR().equals(cellR)) {
+                return ctExternalCell;
+            }
+        }
+        CTExternalCell ctExternalCell = row.addNewCell();
+        ctExternalCell.setR(cellR);
+        return ctExternalCell;
+    }
     // TODO Last seen data
 
 

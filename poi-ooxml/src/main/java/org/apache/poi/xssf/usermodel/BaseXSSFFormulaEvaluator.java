@@ -26,10 +26,14 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.ptg.Area3DPxg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.model.ExternalLinksTable;
 
 /**
  * Internal POI use only - parent of XSSF and SXSSF formula evaluators
@@ -55,6 +59,7 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
     protected CellValue evaluateFormulaCellValue(Cell cell) {
         EvaluationCell evalCell = toEvaluationCell(cell);
         ValueEval eval = _bookEvaluator.evaluate(evalCell);
+        cacheExternalWorkbookCells(evalCell);
         if (eval instanceof NumberEval) {
             NumberEval ne = (NumberEval) eval;
             return new CellValue(ne.getNumberValue());
@@ -73,9 +78,57 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
         throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
     }
 
+    /**
+     * cache cell value of external workbook
+     *
+     * @param evalCell sourceCell
+     */
+    private void cacheExternalWorkbookCells(EvaluationCell evalCell) {
+        //
+        Ptg[] formulaTokens = getEvaluationWorkbook().getFormulaTokens(evalCell);
+        for (Ptg ptg : formulaTokens) {
+            if (ptg instanceof Area3DPxg) {
+                Area3DPxg area3DPxg = (Area3DPxg) ptg;
+                if (area3DPxg.getExternalWorkbookNumber() > 0) {
+                    EvaluationWorkbook.ExternalSheet externalSheet = getEvaluationWorkbook().getExternalSheet(area3DPxg.getSheetName(), area3DPxg.getLastSheetName(), area3DPxg.getExternalWorkbookNumber());
+
+                    XSSFCell xssfCell = ((XSSFEvaluationCell) evalCell).getXSSFCell();
+                    XSSFWorkbook externalWorkbook = (XSSFWorkbook) xssfCell.getSheet().getWorkbook().getCreationHelper().getReferencedWorkbooks().get(externalSheet.getWorkbookName());
+                    ExternalLinksTable externalLinksTable = xssfCell.getSheet().getWorkbook().getExternalLinksTable().get(area3DPxg.getExternalWorkbookNumber() - 1);
+
+                    int firstSheet = externalWorkbook.getSheetIndex(area3DPxg.getSheetName());
+                    int lastSheet = firstSheet;
+                    if (area3DPxg.getLastSheetName() != null) {
+                        lastSheet = externalWorkbook.getSheetIndex(area3DPxg.getLastSheetName());
+                    }
+
+                    for (int sheetIndex = firstSheet; sheetIndex <= lastSheet; sheetIndex++) {
+                        XSSFSheet sheet = externalWorkbook.getSheetAt(sheetIndex);
+                        int firstRow = area3DPxg.getFirstRow();
+                        int lastRow = area3DPxg.getLastRow();
+                        for (int rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
+                            XSSFRow row = sheet.getRow(rowIndex);
+                            int firstColumn = area3DPxg.getFirstColumn();
+                            int lastColumn = area3DPxg.getLastColumn();
+                            for (int cellIndex = firstColumn; cellIndex <= lastColumn; cellIndex++) {
+                                XSSFCell cell = row.getCell(cellIndex);
+                                String cellValue = cell.getRawValue();
+                                String cellR = new CellReference(cell).formatAsString(false);
+                                externalLinksTable.cacheData(sheet.getSheetName(), rowIndex + 1, cellR, cellValue);
+
+                            }
+                        }
+
+                    }
+                }
+
+            }
+        }
+    }
+
     @Override
     protected void setCellType(Cell cell, CellType cellType) {
-        if (cell instanceof  XSSFCell) {
+        if (cell instanceof XSSFCell) {
             EvaluationWorkbook evaluationWorkbook = getEvaluationWorkbook();
             BaseXSSFEvaluationWorkbook xewb = BaseXSSFEvaluationWorkbook.class.isAssignableFrom(evaluationWorkbook.getClass()) ? (BaseXSSFEvaluationWorkbook) evaluationWorkbook : null;
 

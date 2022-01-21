@@ -61,6 +61,8 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.model.StylesTable;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalLink;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalSheetData;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
@@ -109,13 +111,13 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         // Check the package contains what we'd expect it to
         try (OPCPackage pkg = OPCPackage.open(file.toString())) {
             PackagePart wbRelPart =
-                pkg.getPart(PackagingURIHelper.createPartName("/xl/_rels/workbook.xml.rels"));
+                    pkg.getPart(PackagingURIHelper.createPartName("/xl/_rels/workbook.xml.rels"));
             assertNotNull(wbRelPart);
             assertTrue(wbRelPart.isRelationshipPart());
             assertEquals(ContentTypes.RELATIONSHIPS_PART, wbRelPart.getContentType());
 
             PackagePart wbPart =
-                pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
+                    pkg.getPart(PackagingURIHelper.createPartName("/xl/workbook.xml"));
             // Links to the three sheets, shared strings and styles
             assertTrue(wbPart.hasRelationships());
             assertEquals(5, wbPart.getRelationships().size());
@@ -294,11 +296,11 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
             // Add two more styles
             assertEquals(StylesTable.FIRST_CUSTOM_STYLE_ID + 8,
-                st.putNumberFormat("testFORMAT"));
+                    st.putNumberFormat("testFORMAT"));
             assertEquals(StylesTable.FIRST_CUSTOM_STYLE_ID + 8,
-                st.putNumberFormat("testFORMAT"));
+                    st.putNumberFormat("testFORMAT"));
             assertEquals(StylesTable.FIRST_CUSTOM_STYLE_ID + 9,
-                st.putNumberFormat("testFORMAT2"));
+                    st.putNumberFormat("testFORMAT2"));
             assertEquals(10, st.getNumDataFormats());
 
 
@@ -370,7 +372,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             assertEquals(1, allPictures.size());
 
             PackagePartName imagePartName = PackagingURIHelper
-                .createPartName("/xl/media/image1.jpeg");
+                    .createPartName("/xl/media/image1.jpeg");
             PackagePart imagePart = workbook.getPackage().getPart(imagePartName);
             assertNotNull(imagePart);
 
@@ -1069,31 +1071,31 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
      */
     @Test
     void getTable() throws IOException {
-       XSSFWorkbook wb = openSampleWorkbook("WithTable.xlsx");
-       XSSFTable table1 = wb.getTable("Tabella1");
-       assertNotNull(table1, "Tabella1 was not found in workbook");
-       assertEquals("Tabella1", table1.getName(), "Table name");
-       assertEquals("Foglio1", table1.getSheetName(), "Sheet name");
+        XSSFWorkbook wb = openSampleWorkbook("WithTable.xlsx");
+        XSSFTable table1 = wb.getTable("Tabella1");
+        assertNotNull(table1, "Tabella1 was not found in workbook");
+        assertEquals("Tabella1", table1.getName(), "Table name");
+        assertEquals("Foglio1", table1.getSheetName(), "Sheet name");
 
-       // Table lookup should be case-insensitive
-       assertSame(table1, wb.getTable("TABELLA1"), "Case insensitive table name lookup");
+        // Table lookup should be case-insensitive
+        assertSame(table1, wb.getTable("TABELLA1"), "Case insensitive table name lookup");
 
-       // If workbook does not contain any data tables matching the provided name, getTable should return null
-       assertNull(wb.getTable(null), "Null table name should not throw NPE");
-       assertNull(wb.getTable("Foglio1"), "Should not be able to find non-existent table");
+        // If workbook does not contain any data tables matching the provided name, getTable should return null
+        assertNull(wb.getTable(null), "Null table name should not throw NPE");
+        assertNull(wb.getTable("Foglio1"), "Should not be able to find non-existent table");
 
-       // If a table is added after getTable is called it should still be reachable by XSSFWorkbook.getTable
-       // This test makes sure that if any caching is done that getTable never uses a stale cache
-       XSSFTable table2 = wb.getSheet("Foglio2").createTable(null);
-       table2.setName("Table2");
-       assertSame(table2, wb.getTable("Table2"), "Did not find Table2");
+        // If a table is added after getTable is called it should still be reachable by XSSFWorkbook.getTable
+        // This test makes sure that if any caching is done that getTable never uses a stale cache
+        XSSFTable table2 = wb.getSheet("Foglio2").createTable(null);
+        table2.setName("Table2");
+        assertSame(table2, wb.getTable("Table2"), "Did not find Table2");
 
-       // If table name is modified after getTable is called, the table can only be found by its new name
-       // This test makes sure that if any caching is done that getTable never uses a stale cache
-       table1.setName("Table1");
-       assertSame(table1, wb.getTable("TABLE1"), "Did not find Tabella1 renamed to Table1");
+        // If table name is modified after getTable is called, the table can only be found by its new name
+        // This test makes sure that if any caching is done that getTable never uses a stale cache
+        table1.setName("Table1");
+        assertSame(table1, wb.getTable("TABLE1"), "Did not find Tabella1 renamed to Table1");
 
-       wb.close();
+        wb.close();
     }
 
     @SuppressWarnings("deprecation")
@@ -1295,6 +1297,46 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             for (PackagePart packagePart : workbook.getPackage().getParts()) {
                 assertFalse(packagePart.getPartName().toString().contains("trash"),
                         "should ignore part " + packagePart.getPartName());
+            }
+        }
+    }
+
+    @Test
+    void testCacheExternalWorkbook() throws Exception {
+        String nameA = "cache-external-workbook-a.xlsx";
+
+        try (
+                UnsynchronizedByteArrayOutputStream bosA = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bosB = new UnsynchronizedByteArrayOutputStream();
+                XSSFWorkbook workbookA = new XSSFWorkbook();
+                XSSFWorkbook workbookB = new XSSFWorkbook()
+        ) {
+            XSSFRow row1 = workbookA.createSheet().createRow(0);
+            double v1 = 10, v2 = 10, sum = v1 + v2;
+            row1.createCell(0).setCellValue(v1);
+            row1.createCell(1).setCellValue(v2);
+
+            XSSFRow row = workbookB.createSheet().createRow(0);
+            XSSFCell cell = row.createCell(0);
+
+            workbookB.linkExternalWorkbook(nameA, workbookA);
+            String formula = String.format(LocaleUtil.getUserLocale(), "SUM('[%s]Sheet0'!A1:B1)", nameA);
+            cell.setCellFormula(formula);
+            XSSFFormulaEvaluator evaluator = workbookB.getCreationHelper().createFormulaEvaluator();
+            evaluator.evaluateFormulaCell(cell);
+
+            assertEquals(sum, cell.getNumericCellValue());
+
+            workbookA.write(bosA);
+            workbookB.write(bosB);
+
+            try(
+                    XSSFWorkbook workbook2 = new XSSFWorkbook(bosB.toInputStream())
+            ) {
+                CTExternalLink link = workbook2.getExternalLinksTable().get(0).getCTExternalLink();
+                CTExternalSheetData sheetData = link.getExternalBook().getSheetDataSet().getSheetDataArray(0);
+                assertEquals(Double.valueOf(sheetData.getRowArray(0).getCellArray(0).getV()), v1);
+                assertEquals(Double.valueOf(sheetData.getRowArray(0).getCellArray(1).getV()), v2);
             }
         }
     }
