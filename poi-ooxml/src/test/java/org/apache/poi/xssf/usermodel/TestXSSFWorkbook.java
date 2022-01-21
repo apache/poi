@@ -1329,10 +1329,6 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
             workbookA.write(bosA);
             workbookB.write(bosB);
-            FileOutputStream f1 = new FileOutputStream(nameA);
-            workbookA.write(f1);
-//            FileOutputStream f2 = new FileOutputStream("b.xlsx");
-//            workbookB.write(f2);
 
             try(
                     XSSFWorkbook workbook2 = new XSSFWorkbook(bosB.toInputStream())
