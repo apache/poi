@@ -142,7 +142,7 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor 
             return text.toString();
         } catch (IOException | OpenXML4JException | SAXException e) {
             LOGGER.atWarn().withThrowable(e).log("Failed to load text");
-            return null;
+            return "";
         }
     }
 
