@@ -154,7 +154,7 @@ task testJar(type: Jar, dependsOn: [ testClasses, cacheTest9 ] ) {
         }
     }
 
-    from sourceSets.test.output
+    from sourceSets.test.output + sourceSets.main.output
 
     manifest {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
@@ -172,14 +172,12 @@ test {
         jvmArgs += [
             "-javaagent:${OOXML_LITE_AGENT}=${OOXML_LITE_REPORT}|${OOXML_LITE_INCLUDES}",
         ]
-        /*
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             jvmArgs += [
                 '--add-modules', MODULE_NAME,
                 '--module-path', '../build/dist/maven/poi-excelant-tests' + File.pathSeparator + files(TEST_MODULE_PATH).asPath,
             ]
         }
-        */
     }
 }
 

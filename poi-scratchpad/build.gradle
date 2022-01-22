@@ -90,7 +90,6 @@ task compileTest9(type: JavaCompile) {
     destinationDirectory = file(TEST9_OUT + VERSIONS9)
     source = file(TEST9_SRC)
     options.compilerArgs = [
-        '--patch-module', "org.apache.poi.poi=${projectDir}/../poi/build/classes/java/main",
         '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
         '--module-path', files(TEST_MODULE_PATH).asPath
     ]
@@ -134,7 +133,7 @@ task testJar(type: Jar, dependsOn: testClasses) {
         }
     }
 
-    from sourceSets.test.output
+    from sourceSets.test.output + sourceSets.main.output
 
     manifest {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
@@ -176,16 +175,14 @@ test {
 
     systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
 
-    /*
     doFirst {
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             jvmArgs += [
                 '--add-modules', MODULE_NAME,
-                '--module-path', '${projectDir}/../build/dist/maven/poi-scratchpad-tests' + File.pathSeparator + files(TEST_MODULE_PATH).asPath,
+                '--module-path', '../build/dist/maven/poi-scratchpad-tests' + File.pathSeparator + files(TEST_MODULE_PATH).asPath,
             ]
         }
     }
-    */
 }
 
 publishing {
