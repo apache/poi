@@ -55,6 +55,9 @@ public abstract class AbstractEscherOptRecord extends EscherRecord {
             EscherRecordFactory recordFactory )
     {
         int bytesRemaining = readHeader( data, offset );
+        if (bytesRemaining < 0) {
+            throw new IllegalStateException("Invalid value for bytesRemaining: " + bytesRemaining);
+        }
         short propertiesCount = readInstance( data, offset );
         int pos = offset + 8;
 
