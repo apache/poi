@@ -204,6 +204,7 @@ task compileTest9(type: JavaCompile) {
     destinationDirectory = file(TEST9_OUT + VERSIONS9)
     source = file(TEST9_SRC)
     options.compilerArgs = [
+        '--patch-module', "org.apache.poi.poi=${projectDir}/../poi/build/classes/java/main",
         '--patch-module', "${MODULE_NAME}=${(sourceSets.main.output.classesDirs + sourceSets.test.output.classesDirs).asPath}",
         '--module-path', files(TEST_MODULE_PATH).asPath
     ]
@@ -320,12 +321,14 @@ test {
             "-XX:ErrorFile=../build/hs_err_pid%p.log",
             "-javaagent:${OOXML_LITE_AGENT}=${OOXML_LITE_REPORT}|${OOXML_LITE_INCLUDES}"
         ]
+        /*
         if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
             jvmArgs += [
                 '--add-modules', MODULE_NAME,
                 '--module-path', '../build/dist/maven/poi-ooxml-tests' + File.pathSeparator + files(TEST_MODULE_PATH).asPath,
             ]
         }
+        */
     }
 }
 
