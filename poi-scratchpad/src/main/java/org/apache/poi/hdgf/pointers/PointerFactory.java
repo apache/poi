@@ -14,9 +14,9 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
 package org.apache.poi.hdgf.pointers;
 
+import org.apache.poi.hdgf.exceptions.OldVisioFormatException;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -43,7 +43,7 @@ public final class PointerFactory {
         Pointer p;
         if(version >= 6) {
             p = new PointerV6();
-            p.setType(LittleEndian.getInt(data, offset+0));
+            p.setType(LittleEndian.getInt(data, offset));
             p.setAddress((int)LittleEndian.getUInt(data, offset+4));
             p.setOffset((int)LittleEndian.getUInt(data, offset+8));
             p.setLength((int)LittleEndian.getUInt(data, offset+12));
@@ -52,7 +52,7 @@ public final class PointerFactory {
             return p;
         } else if(version == 5) {
             p = new PointerV5();
-            p.setType(LittleEndian.getShort(data, offset+0));
+            p.setType(LittleEndian.getShort(data, offset));
             p.setFormat(LittleEndian.getShort(data, offset+2));
             p.setAddress((int)LittleEndian.getUInt(data, offset+4));
             p.setOffset((int)LittleEndian.getUInt(data, offset+8));
@@ -60,7 +60,7 @@ public final class PointerFactory {
 
             return p;
         } else {
-            throw new IllegalArgumentException("Visio files with versions below 5 are not supported, yours was " + version);
+            throw new OldVisioFormatException("Visio files with versions below 5 are not supported, yours was " + version);
         }
     }
 

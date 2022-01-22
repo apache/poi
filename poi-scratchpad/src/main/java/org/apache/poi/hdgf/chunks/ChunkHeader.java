@@ -14,11 +14,11 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
 package org.apache.poi.hdgf.chunks;
 
 import java.nio.charset.Charset;
 
+import org.apache.poi.hdgf.exceptions.OldVisioFormatException;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -47,7 +47,7 @@ public abstract class ChunkHeader {
             } else {
                 ch = new ChunkHeaderV6();
             }
-            ch.setType((int)LittleEndian.getUInt(data, offset + 0));
+            ch.setType((int)LittleEndian.getUInt(data, offset));
             ch.setId((int)LittleEndian.getUInt(data, offset + 4));
             ch.setUnknown1((int)LittleEndian.getUInt(data, offset + 8));
             ch.setLength((int)LittleEndian.getUInt(data, offset + 12));
@@ -58,7 +58,7 @@ public abstract class ChunkHeader {
         } else if(documentVersion == 5 || documentVersion == 4) {
             ChunkHeaderV4V5 ch = new ChunkHeaderV4V5();
 
-            ch.setType(LittleEndian.getShort(data, offset + 0));
+            ch.setType(LittleEndian.getShort(data, offset));
             ch.setId(LittleEndian.getShort(data, offset + 2));
             ch.setUnknown2(LittleEndian.getUByte(data, offset + 4));
             ch.setUnknown3(LittleEndian.getUByte(data, offset + 5));
@@ -67,7 +67,7 @@ public abstract class ChunkHeader {
 
             return ch;
         } else {
-            throw new IllegalArgumentException("Visio files with versions below 4 are not supported, yours was " + documentVersion);
+            throw new OldVisioFormatException("Visio files with versions below 4 are not supported, yours was " + documentVersion);
         }
     }
 
