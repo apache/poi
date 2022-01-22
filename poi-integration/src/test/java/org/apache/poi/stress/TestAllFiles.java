@@ -78,7 +78,6 @@ public class TestAllFiles {
         "lost+found",
         "**/.git/**",
         "**/ExternalEntityInText.docx", //the DocType (DTD) declaration causes this to fail
-        "**/right-to-left.xlsx" //the threaded comments in this file cause XSSF clone to fail
     };
 
     // cheap workaround of skipping the few problematic files

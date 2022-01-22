@@ -58,5 +58,6 @@ public class XWPFFileHandler extends AbstractFileHandler {
         }
 
         handleExtracting(file);
+        handleAdditional(file);
     }
 }
