@@ -95,6 +95,22 @@ public final class TestSXSSFFormulaEvaluation  extends BaseTestFormulaEvaluator 
     }
 
     @Test
+    void testLogSpam() throws IOException {
+        try (SXSSFWorkbook wb = new SXSSFWorkbook(5)) {
+            SXSSFSheet s = wb.createSheet();
+            s.trackAllColumnsForAutoSizing();
+
+            for (int i = 0; i < 20; i++) {
+                s.createRow(i).createCell(0).setCellValue("1+2");
+            }
+
+            // previously this caused a large number of useless
+            // log-lines "SXSSF doesn't support Rich Text Strings..."
+            s.flushRows();
+        }
+    }
+
+    @Test
     void testEvaluateRefOutsideWindowFails() throws IOException {
         try (SXSSFWorkbook wb = new SXSSFWorkbook(5)) {
             SXSSFSheet s = wb.createSheet();

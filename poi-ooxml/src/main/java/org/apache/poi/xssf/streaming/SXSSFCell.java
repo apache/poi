@@ -399,7 +399,9 @@ public class SXSSFCell extends CellBase {
             return ((RichTextValue)_value).getValue();
         else {
             String plainText = getStringCellValue();
-            return getSheet().getWorkbook().getCreationHelper().createRichTextString(plainText);
+            // don't use the creation-helper here as it would spam the log with one line per row
+            //return getSheet().getWorkbook().getCreationHelper().createRichTextString(plainText);
+            return new XSSFRichTextString(plainText);
         }
     }
 
