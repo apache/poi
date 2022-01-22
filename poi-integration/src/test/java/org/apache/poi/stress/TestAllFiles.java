@@ -149,13 +149,20 @@ public class TestAllFiles {
     @ParameterizedTest(name = "Extracting - #{index} {0} {1}")
     @MethodSource("extractFiles")
     void handleExtracting(String file, FileHandlerKnown handler, String password, Class<? extends Throwable> exClass, String exMessage) throws IOException {
-        if (StressTestUtils.excludeFile(file, EXPECTED_FAILURES)) return;
+        String threadName = Thread.currentThread().getName();
+        try {
+            Thread.currentThread().setName("Extracting - " + file + " - " + handler);
+            if (StressTestUtils.excludeFile(file, EXPECTED_FAILURES))
+                return;
 
-        System.out.println("Running extractFiles on "+file);
-        FileHandler fileHandler = handler.getHandler();
-        assertNotNull(fileHandler, "Did not find a handler for file " + file);
-        Executable exec = () -> fileHandler.handleExtracting(new File(ROOT_DIR, file));
-        verify(file, exec, exClass, exMessage, password);
+            System.out.println("Running extractFiles on " + file);
+            FileHandler fileHandler = handler.getHandler();
+            assertNotNull(fileHandler, "Did not find a handler for file " + file);
+            Executable exec = () -> fileHandler.handleExtracting(new File(ROOT_DIR, file));
+            verify(file, exec, exClass, exMessage, password);
+        } finally {
+            Thread.currentThread().setName(threadName);
+        }
     }
 
     public static Stream<Arguments> handleFiles() throws IOException {
@@ -165,12 +172,18 @@ public class TestAllFiles {
     @ParameterizedTest(name = "#{index} {0} {1}")
     @MethodSource("handleFiles")
     void handleFile(String file, FileHandlerKnown handler, String password, Class<? extends Throwable> exClass, String exMessage) throws IOException {
-        System.out.println("Running handleFiles on "+file);
-        FileHandler fileHandler = handler.getHandler();
-        assertNotNull(fileHandler, "Did not find a handler for file " + file);
-        try (InputStream stream = new BufferedInputStream(new FileInputStream(new File(ROOT_DIR, file)), 64 * 1024)) {
-            Executable exec = () -> fileHandler.handleFile(stream, file);
-            verify(file, exec, exClass, exMessage, password);
+        String threadName = Thread.currentThread().getName();
+        try {
+            Thread.currentThread().setName("Handle - " + file + " - " + handler);
+            System.out.println("Running handleFiles on "+file);
+            FileHandler fileHandler = handler.getHandler();
+            assertNotNull(fileHandler, "Did not find a handler for file " + file);
+            try (InputStream stream = new BufferedInputStream(new FileInputStream(new File(ROOT_DIR, file)), 64 * 1024)) {
+                Executable exec = () -> fileHandler.handleFile(stream, file);
+                verify(file, exec, exClass, exMessage, password);
+            }
+        } finally {
+            Thread.currentThread().setName(threadName);
         }
     }
 
@@ -181,11 +194,17 @@ public class TestAllFiles {
     @ParameterizedTest(name = "Additional - #{index} {0} {1}")
     @MethodSource("handleAdditionals")
     void handleAdditional(String file, FileHandlerKnown handler, String password, Class<? extends Throwable> exClass, String exMessage) {
-        System.out.println("Running additionals on "+file);
-        FileHandler fileHandler = handler.getHandler();
-        assertNotNull(fileHandler, "Did not find a handler for file " + file);
-        Executable exec = () -> fileHandler.handleAdditional(new File(ROOT_DIR, file));
-        verify(file, exec, exClass, exMessage, password);
+        String threadName = Thread.currentThread().getName();
+        try {
+            Thread.currentThread().setName("Additional - " + file + " - " + handler);
+            System.out.println("Running additionals on "+file);
+            FileHandler fileHandler = handler.getHandler();
+            assertNotNull(fileHandler, "Did not find a handler for file " + file);
+            Executable exec = () -> fileHandler.handleAdditional(new File(ROOT_DIR, file));
+            verify(file, exec, exClass, exMessage, password);
+        } finally {
+            Thread.currentThread().setName(threadName);
+        }
     }
 
     @SuppressWarnings("unchecked")
