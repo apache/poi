@@ -67,18 +67,18 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    /**
     * Table with the styles used for formatting
     */
-   private Styles stylesTable;
+   private final Styles stylesTable;
 
    /**
     * Table with cell comments
     */
-   private Comments comments;
+   private final Comments comments;
 
    /**
     * Read only access to the shared strings table, for looking
     *  up (most) string cell's contents
     */
-   private SharedStrings sharedStringsTable;
+   private final SharedStrings sharedStringsTable;
 
    /**
     * Where our text is going
@@ -105,12 +105,12 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    private int rowNum;
    private int nextRowNum;      // some sheets do not have rowNums, Excel can read them so we should try to handle them correctly as well
    private String cellRef;
-   private boolean formulasNotResults;
+   private final boolean formulasNotResults;
 
    // Gathers characters as they are seen.
-   private StringBuilder value = new StringBuilder(64);
-   private StringBuilder formula = new StringBuilder(64);
-   private StringBuilder headerFooter = new StringBuilder(64);
+   private final StringBuilder value = new StringBuilder(64);
+   private final StringBuilder formula = new StringBuilder(64);
+   private final StringBuilder headerFooter = new StringBuilder(64);
 
    private Queue<CellAddress> commentCellRefs;
 
@@ -413,13 +413,14 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
 
            case SST_STRING:
                String sstIndex = value.toString();
-               try {
-                   int idx = Integer.parseInt(sstIndex);
-                   RichTextString rtss = sharedStringsTable.getItemAt(idx);
-                   thisStr = rtss.toString();
-               }
-               catch (NumberFormatException ex) {
-                   LOG.atError().withThrowable(ex).log("Failed to parse SST index '{}'", sstIndex);
+               if (sstIndex.length() > 0) {
+                   try {
+                       int idx = Integer.parseInt(sstIndex);
+                       RichTextString rtss = sharedStringsTable.getItemAt(idx);
+                       thisStr = rtss.toString();
+                   } catch (NumberFormatException ex) {
+                       LOG.atError().withThrowable(ex).log("Failed to parse SST index '{}'", sstIndex);
+                   }
                }
                break;
 

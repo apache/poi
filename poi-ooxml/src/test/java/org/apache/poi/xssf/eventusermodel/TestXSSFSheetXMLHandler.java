@@ -68,4 +68,35 @@ public class TestXSSFSheetXMLHandler {
             }
         }
     }
+
+    @Test
+    public void testNumber() throws Exception {
+        try (OPCPackage xlsxPackage = OPCPackage.open(_ssTests.openResourceAsStream("sample.xlsx"))) {
+            final XSSFReader reader = new XSSFReader(xlsxPackage);
+
+            final Iterator<InputStream> iter = reader.getSheetsData();
+
+            try (InputStream stream = iter.next()) {
+                final XMLReader sheetParser = XMLHelper.getSaxParserFactory().newSAXParser().getXMLReader();
+
+                sheetParser.setContentHandler(new XSSFSheetXMLHandler(reader.getStylesTable(),
+                        new ReadOnlySharedStringsTable(xlsxPackage), new SheetContentsHandler() {
+                    @Override
+                    public void startRow(final int rowNum) {
+                    }
+
+                    @Override
+                    public void endRow(final int rowNum) {
+                    }
+
+                    @Override
+                    public void cell(final String cellReference, final String formattedValue,
+                                     final XSSFComment comment) {
+                    }
+                }, false));
+
+                sheetParser.parse(new InputSource(stream));
+            }
+        }
+    }
 }
