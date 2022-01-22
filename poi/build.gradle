@@ -162,7 +162,7 @@ task testJar(type: Jar, dependsOn: [ testClasses, cacheTest9 ]) {
         }
     }
 
-    from sourceSets.test.output + sourceSets.main.output
+    from sourceSets.test.output
 
     manifest {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
