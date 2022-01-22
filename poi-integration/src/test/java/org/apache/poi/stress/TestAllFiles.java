@@ -90,6 +90,7 @@ public class TestAllFiles {
         "**/right-to-left.xlsx", //the threaded comments in this file cause XSSF clone to fail
         "document/word2.doc",
         "document/cpansearch.perl.org_src_tobyink_acme-rundoc-0.001_word-lib_hello_world.docm",
+        "document/Fuzzed.doc",
         "hpsf/Test0313rur.adm",
         "spreadsheet/43493.xls",
         "spreadsheet/44958.xls",
@@ -100,7 +101,7 @@ public class TestAllFiles {
         "spreadsheet/testArraysAndTables.xls",
         "spreadsheet/testEXCEL_3.xls",
         "spreadsheet/testEXCEL_4.xls",
-        "poifs/unknown_properties.msg"
+        "poifs/unknown_properties.msg",
     };
 
     private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
