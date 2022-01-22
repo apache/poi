@@ -215,12 +215,12 @@ public class TestAllFiles {
         if (exClass != null && AssertionFailedError.class.isAssignableFrom(exClass)) {
             try {
                 exec.execute();
-                fail(errPrefix + "Expected failed assertion");
+                fail(errPrefix + "Expected failed assertion " + exClass + " and message " + exMessage);
             } catch (AssertionFailedError e) {
                 String actMsg = pathReplace(e.getMessage());
                 assertEquals(exMessage, actMsg, errPrefix);
             } catch (Throwable e) {
-                fail(errPrefix + "Unexpected exception", e);
+                fail(errPrefix + "Unexpected exception, expected " + exClass + " and message " + exMessage, e);
             }
         } else if (exClass != null) {
             Exception e = assertThrows((Class<? extends Exception>)exClass, exec);
