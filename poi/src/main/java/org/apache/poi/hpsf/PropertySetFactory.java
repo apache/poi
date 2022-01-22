@@ -87,7 +87,9 @@ public class PropertySetFactory {
         if (byteOrder != PropertySet.BYTE_ORDER_ASSERTION ||
             format != PropertySet.FORMAT_ASSERTION ||
             sectionCount < 0) {
-            throw new NoPropertySetStreamException();
+            throw new NoPropertySetStreamException("ByteOrder: " + byteOrder +
+                    ", format: " + format +
+                    ", sectionCount: " + sectionCount);
         }
 
         if (sectionCount > 0) {
