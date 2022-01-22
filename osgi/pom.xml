@@ -24,12 +24,12 @@
     <groupId>org.apache.poi</groupId>
     <artifactId>poi-bundle</artifactId>
     <packaging>bundle</packaging>
-    <version>5.2.0</version>
+    <version>5.2.1-SNAPSHOT</version>
 
     <name>Apache POI OSGi bundle</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <poi.version>5.1.1-SNAPSHOT</poi.version>
+        <poi.version>5.2.1-SNAPSHOT</poi.version>
         <pax.exam.version>4.12.0</pax.exam.version>
     </properties>
 
