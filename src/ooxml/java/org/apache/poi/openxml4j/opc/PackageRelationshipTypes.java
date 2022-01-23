@@ -39,7 +39,7 @@ public interface PackageRelationshipTypes {
     /**
      * Core properties relationship type as defiend in ECMA 376.
      */
-    String CORE_PROPERTIES_ECMA376 = "http://schemas.openxmlformats.org/officedocument/2006/relationships/metadata/core-properties";
+    String CORE_PROPERTIES_ECMA376 = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/metadata/core-properties";
 
     /**
      * Namespace of Core properties relationship type as defiend in ECMA 376
