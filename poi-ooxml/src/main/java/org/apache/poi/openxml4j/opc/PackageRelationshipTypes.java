@@ -26,7 +26,7 @@ public interface PackageRelationshipTypes {
      *
      *  <p>
      *  The standard specifies a source relations ship for the Core File Properties part as follows:
-     *  <code>http://schemas.openxmlformats.org/officeDocument/2006/relationships/metadata/core-properties.</code>
+     *  <code>http://schemas.openxmlformats.org/officedocument/2006/relationships/metadata/core-properties.</code>
      *  </p>
      *  <p>
      *   Office uses the following source relationship for the Core File Properties part:
@@ -38,8 +38,12 @@ public interface PackageRelationshipTypes {
 
     /**
      * Core properties relationship type as defined in ECMA 376.
+     * <p>
+     * See 2.1.33 Part 1 Section 15.2.11.1, Core File Properties Part in [MS-OE376].pdf.
+     * The case of 'officedocument' matches what appears in the pdf.
+     * </p>
      */
-    String CORE_PROPERTIES_ECMA376 = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/metadata/core-properties";
+    String CORE_PROPERTIES_ECMA376 = "http://schemas.openxmlformats.org/officedocument/2006/relationships/metadata/core-properties";
 
     /**
      * Namespace of Core properties relationship type as defined in ECMA 376
