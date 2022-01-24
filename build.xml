@@ -284,7 +284,7 @@ under the License.
     <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.34" usage="main-tests"/>
     <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest:2.2" usage="main-tests"/>
     <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.8.4" usage="main-tests"/>
-    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:4.2.0" usage="main-tests"/>
+    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:4.3.0" usage="main-tests"/>
     <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.12.3" usage="main-tests"/>
     <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.12.3" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
@@ -680,6 +680,7 @@ under the License.
             <fileset dir="${basedir}/lib/main-tests">
                 <include name="mockito-core-3*.jar"/>
                 <include name="mockito-core-4.0*.jar"/>
+                <include name="mockito-core-4.2*.jar"/>
                 <include name="hamcrest-core*"/>
                 <include name="junit-4*.jar"/>
                 <include name="*slf4j*.jar"/>
