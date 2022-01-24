@@ -142,8 +142,9 @@ public final class ImageUtils {
      * @param scaleX the amount by which image width is multiplied relative to the original width.
      * @param scaleY the amount by which image height is multiplied relative to the original height.
      * @return the new Dimensions of the scaled picture in EMUs
+     * @throws IllegalArgumentException if scale values lead to negative or infinite results
      */
-    public static Dimension setPreferredSize(Picture picture, double scaleX, double scaleY){
+    public static Dimension setPreferredSize(Picture picture, double scaleX, double scaleY) {
         ClientAnchor anchor = picture.getClientAnchor();
         boolean isHSSF = (anchor instanceof HSSFClientAnchor);
         PictureData data = picture.getPictureData();
@@ -219,6 +220,9 @@ public final class ImageUtils {
                                   Function<Integer,Number> nextSize) {
         if (targetSize < 0) {
             throw new IllegalArgumentException("target size < 0");
+        }
+        if (Double.isInfinite(targetSize) || Double.isNaN(targetSize)) {
+            throw new IllegalArgumentException("target size " + targetSize + " is not supported");
         }
 
         int cellIdx = startCell;
