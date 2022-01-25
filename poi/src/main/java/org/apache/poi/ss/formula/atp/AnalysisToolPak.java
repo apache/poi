@@ -151,6 +151,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "NOMINAL", null);
         r(m, "NORM.DIST", NormDist.instance);
         r(m, "NORM.S.DIST", NormSDist.instance);
+        r(m, "NORM.INV", NormInv.instance);
         r(m, "NUMBERVALUE", NumberValueFunction.instance);
         r(m, "OCT2BIN", null);
         r(m, "OCT2DEC", Oct2Dec.instance);

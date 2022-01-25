@@ -274,7 +274,7 @@ public final class FunctionEval {
         // 292: NEGBINOMDIST
         retval[293] = NormDist.instance;
         retval[294] = NormSDist.instance;
-        // 295: NORMINV
+        retval[295] = NormInv.instance;
         // 296: NORMSINV
         // 297: STANDARDIZE
         retval[298] = NumericFunction.ODD;
