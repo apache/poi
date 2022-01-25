@@ -46,8 +46,7 @@ final class TestNormDist {
     @Test
     void testBasic() {
         confirmValue("42", "40", "1.5", true, 0.9087888);
-        //TODO needs investigation
-        //confirmValue("42", "40", "1.5", false, 0.10934);
+        confirmValue("42", "40", "1.5", false, 0.10934);
     }
 
     @Test

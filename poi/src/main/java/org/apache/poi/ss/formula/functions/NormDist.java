@@ -36,7 +36,7 @@ public final class NormDist extends Fixed4ArgFunction implements FreeRefFunction
 
     static double probability(double x, double mean, double stdev, boolean cumulative) {
         NormalDistribution normalDistribution = new NormalDistribution(mean, stdev);
-        return cumulative ? normalDistribution.cumulativeProbability(x) : normalDistribution.probability(x);
+        return cumulative ? normalDistribution.cumulativeProbability(x) : normalDistribution.density(x);
     }
 
     @Override
