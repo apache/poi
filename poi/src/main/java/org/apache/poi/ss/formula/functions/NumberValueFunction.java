@@ -41,7 +41,7 @@ public final class NumberValueFunction implements FreeRefFunction {
     public ValueEval evaluate( ValueEval[] args, OperationEvaluationContext ec ) {
 
         Locale locale = LocaleUtil.getUserLocale();
-        DecimalFormatSymbols decimalFormatSymbols = new DecimalFormatSymbols(locale);
+        DecimalFormatSymbols decimalFormatSymbols = DecimalFormatSymbols.getInstance(locale);
 
         String text = null;
         //If the Decimal_separator and Group_separator arguments are not specified, separators from the current locale are used.
