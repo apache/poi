@@ -48,8 +48,6 @@ public final class NormDist extends Fixed4ArgFunction implements FreeRefFunction
             Double xval = evaluateValue(arg1, srcRowIndex, srcColumnIndex);
             if (xval == null) {
                 return ErrorEval.VALUE_INVALID;
-            } else if (xval < 0) {
-                return ErrorEval.NUM_ERROR;
             }
             Double mean = evaluateValue(arg2, srcRowIndex, srcColumnIndex);
             if (mean == null) {
