@@ -25,27 +25,27 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel NORMSDIST() and NORM.S.DIST functions.<p>
+ * Implementation for Excel NORMSINV() and NORM.S.INV() functions.<p>
  * <ul>
- *   <li>https://support.microsoft.com/en-us/office/normsdist-function-463369ea-0345-445d-802a-4ff0d6ce7cac</li>
- *   <li>https://support.microsoft.com/en-us/office/norm-s-dist-function-1e787282-3832-4520-a9ae-bd2a8d99ba88</li>
+ *   <li>https://support.microsoft.com/en-us/office/normsinv-function-8d1bce66-8e4d-4f3b-967c-30eed61f019d</li>
+ *   <li>https://support.microsoft.com/en-us/office/norm-s-inv-function-d6d556b4-ab7f-49cd-b526-5a20918452b1</li>
  * </ul>
  */
-public final class NormSDist extends Fixed1ArgFunction implements FreeRefFunction {
+public final class NormSInv extends Fixed1ArgFunction implements FreeRefFunction {
 
-    public static final NormSDist instance = new NormSDist();
+    public static final NormSInv instance = new NormSInv();
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1) {
         try {
-            Double xval = evaluateValue(arg1, srcRowIndex, srcColumnIndex);
-            if (xval == null) {
+            Double probability = evaluateValue(arg1, srcRowIndex, srcColumnIndex);
+            if (probability == null) {
                 return ErrorEval.VALUE_INVALID;
-            } else if (xval < 0) {
+            } else if (probability <= 0 || probability >= 1) {
                 return ErrorEval.NUM_ERROR;
             }
 
-            return new NumberEval(NormDist.probability(xval.doubleValue(), 0, 1, true));
+            return new NumberEval(NormInv.inverse(probability.doubleValue(), 0, 1));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
