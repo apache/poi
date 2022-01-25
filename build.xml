@@ -337,7 +337,7 @@ under the License.
     <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.10.2" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:30.1-jre" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
-    <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.33" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.34" usage="ooxml-tests"/>
 
     <!-- coverage libs -->
     <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.6" usage="util" packaging="zip"/>
