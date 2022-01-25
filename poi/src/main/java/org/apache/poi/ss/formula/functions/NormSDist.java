@@ -17,7 +17,6 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -26,24 +25,18 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel NORMDIST() and NORM.DIST() functions.<p>
+ * Implementation for Excel NORMSDIST() function.<p>
  * <ul>
- *   <li>https://support.microsoft.com/en-us/office/normdist-function-126db625-c53e-4591-9a22-c9ff422d6d58</li>
- *   <li>https://support.microsoft.com/en-us/office/norm-dist-function-edb1cc14-a21c-4e53-839d-8082074c9f8d</li>
+ *   <li>https://support.microsoft.com/en-us/office/normsdist-function-463369ea-0345-445d-802a-4ff0d6ce7cac</li>
+ *   <li>https://support.microsoft.com/en-us/office/norm-s-dist-function-1e787282-3832-4520-a9ae-bd2a8d99ba88</li>
  * </ul>
  */
-public final class NormDist extends Fixed4ArgFunction implements FreeRefFunction {
+public final class NormSDist extends Fixed1ArgFunction implements FreeRefFunction {
 
-    public static final NormDist instance = new NormDist();
-
-    static double probability(double x, double mean, double stdev, boolean cumulative) {
-        NormalDistribution normalDistribution = new NormalDistribution(mean, stdev);
-        return cumulative ? normalDistribution.cumulativeProbability(x) : normalDistribution.density(x);
-    }
+    public static final NormSDist instance = new NormSDist();
 
     @Override
-    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1, ValueEval arg2,
-                              ValueEval arg3, ValueEval arg4) {
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1) {
         try {
             Double xval = evaluateValue(arg1, srcRowIndex, srcColumnIndex);
             if (xval == null) {
@@ -51,23 +44,8 @@ public final class NormDist extends Fixed4ArgFunction implements FreeRefFunction
             } else if (xval < 0) {
                 return ErrorEval.NUM_ERROR;
             }
-            Double mean = evaluateValue(arg2, srcRowIndex, srcColumnIndex);
-            if (mean == null) {
-                return ErrorEval.VALUE_INVALID;
-            }
-            Double stdev = evaluateValue(arg3, srcRowIndex, srcColumnIndex);
-            if (stdev == null) {
-                return ErrorEval.VALUE_INVALID;
-            } else if (stdev.doubleValue() <= 0) {
-                return ErrorEval.NUM_ERROR;
-            }
-            Boolean cumulative = OperandResolver.coerceValueToBoolean(arg4, false);
-            if (cumulative == null) {
-                return ErrorEval.VALUE_INVALID;
-            }
 
-            return new NumberEval(probability(
-                    xval.doubleValue(), mean.doubleValue(), stdev.doubleValue(), cumulative.booleanValue()));
+            return new NumberEval(NormDist.probability(xval.doubleValue(), 0, 1, true));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
@@ -75,8 +53,8 @@ public final class NormDist extends Fixed4ArgFunction implements FreeRefFunction
 
     @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-        if (args.length == 4) {
-            return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1], args[2], args[3]);
+        if (args.length == 1) {
+            return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0]);
         }
 
         return ErrorEval.VALUE_INVALID;

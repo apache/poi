@@ -19,10 +19,10 @@ package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -37,69 +37,51 @@ import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests for {@link NormDist}
+ * Tests for {@link NormSDist}
  */
-final class TestNormDist {
+final class TestNormSDist {
 
     private static final OperationEvaluationContext ec = new OperationEvaluationContext(null, null, 0, 0, 0, null);
 
     @Test
     void testBasic() {
-        confirmValue("42", "40", "1.5", true, 0.9087888);
-        confirmValue("42", "40", "1.5", false, 0.10934);
+        confirmValue("1.333333", 0.908788726);
     }
 
     @Test
     void testInvalid() {
-        confirmInvalidError("A1","B2","C2", false);
+        confirmInvalidError("A1");
     }
 
-    @Test
-    void testNumError() {
-        confirmNumError("42","40","0", false);
-        confirmNumError("42","40","0", true);
-        confirmNumError("42","40","-0.1", false);
-        confirmNumError("42","40","-0.1", true);
-    }
-
-    //https://support.microsoft.com/en-us/office/normdist-function-126db625-c53e-4591-9a22-c9ff422d6d58
-    //https://support.microsoft.com/en-us/office/norm-dist-function-edb1cc14-a21c-4e53-839d-8082074c9f8d
+    //https://support.microsoft.com/en-us/office/normsdist-function-463369ea-0345-445d-802a-4ff0d6ce7cac
+    //https://support.microsoft.com/en-us/office/norm-s-dist-function-1e787282-3832-4520-a9ae-bd2a8d99ba88
     @Test
     void testMicrosoftExample1() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
-            addRow(sheet, 0, "Data", "Description");
-            addRow(sheet, 1, 42, "Value for which you want the distribution");
-            addRow(sheet, 2, 40, "Arithmetic mean of the distribution");
-            addRow(sheet, 3, 1.5, "Standard deviation of the distribution");
+            HSSFRow row = sheet.createRow(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertDouble(fe, cell, "NORMDIST(A2,A3,A4,TRUE)", 0.9087888, 0.000001);
-            assertDouble(fe, cell, "NORM.DIST(A2,A3,A4,TRUE)", 0.9087888, 0.000001);
+            HSSFCell cell = row.createCell(0);
+            assertDouble(fe, cell, "NORMSDIST(1.333333)", 0.908788726, 0.000001);
+            assertDouble(fe, cell, "NORM.S.DIST(1.333333)", 0.908788726, 0.000001);
         }
     }
 
-    private static ValueEval invokeValue(String number1, String number2, String number3, boolean cumulative) {
-        ValueEval[] args = new ValueEval[] { new StringEval(number1), new StringEval(number2), new StringEval(number3), BoolEval.valueOf(cumulative)};
-        return NormDist.instance.evaluate(args, ec);
+    private static ValueEval invokeValue(String number1) {
+        ValueEval[] args = new ValueEval[] { new StringEval(number1)};
+        return NormSDist.instance.evaluate(args, ec);
     }
 
-    private static void confirmValue(String number1, String number2, String number3, boolean cumulative, double expected) {
-        ValueEval result = invokeValue(number1, number2, number3, cumulative);
+    private static void confirmValue(String number1, double expected) {
+        ValueEval result = invokeValue(number1);
         assertEquals(NumberEval.class, result.getClass());
         assertEquals(expected, ((NumberEval) result).getNumberValue(), 0.0000001);
     }
 
-    private static void confirmInvalidError(String number1, String number2, String number3, boolean cumulative) {
-        ValueEval result = invokeValue(number1, number2, number3, cumulative);
+    private static void confirmInvalidError(String number1) {
+        ValueEval result = invokeValue(number1);
         assertEquals(ErrorEval.class, result.getClass());
         assertEquals(ErrorEval.VALUE_INVALID, result);
-    }
-
-    private static void confirmNumError(String number1, String number2, String number3, boolean cumulative) {
-        ValueEval result = invokeValue(number1, number2, number3, cumulative);
-        assertEquals(ErrorEval.class, result.getClass());
-        assertEquals(ErrorEval.NUM_ERROR, result);
     }
 
 }

@@ -273,7 +273,7 @@ public final class FunctionEval {
         // 291: LOGINV
         // 292: NEGBINOMDIST
         retval[293] = NormDist.instance;
-        // 294: NORMSDIST
+        retval[294] = NormSDist.instance;
         // 295: NORMINV
         // 296: NORMSINV
         // 297: STANDARDIZE
