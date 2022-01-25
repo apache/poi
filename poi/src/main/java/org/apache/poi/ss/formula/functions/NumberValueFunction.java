@@ -71,7 +71,6 @@ public final class NumberValueFunction implements FreeRefFunction {
                 groupSep = OperandResolver.coerceValueToString(v3).substring(0, 1); //If multiple characters are used in the Decimal_separator or Group_separator arguments, only the first character is used.
             }
         } catch (EvaluationException e) {
-            e.printStackTrace() ;
             return e.getErrorEval();
         }
 
@@ -107,9 +106,8 @@ public final class NumberValueFunction implements FreeRefFunction {
             result = result / Math.pow(100, countPercent); //If the Text argument ends in one or more percent signs (%), they are used in the calculation of the result.
             checkValue(result);
         } catch (EvaluationException e) {
-            e.printStackTrace() ;
             return e.getErrorEval();
-        } catch (Exception anyex) {
+        } catch (Exception e) {
             return ErrorEval.VALUE_INVALID; //If any of the arguments are not valid, NUMBERVALUE returns the #VALUE! error value.
         }
 
