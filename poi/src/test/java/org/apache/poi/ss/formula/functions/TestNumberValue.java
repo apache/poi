@@ -30,6 +30,7 @@ import java.io.IOException;
 
 import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
+import static org.apache.poi.ss.util.Utils.assertError;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -46,6 +47,7 @@ public class TestNumberValue {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = row.createCell(0);
             assertDouble(fe, cell, "NUMBERVALUE(\"2.500,27\",\",\",\".\")", 2500.27, 0.000000000001);
+            assertDouble(fe, cell, "NUMBERVALUE(\" 2.500,27 \",\",\",\".\")", 2500.27, 0.000000000001);
         }
     }
 
@@ -57,6 +59,19 @@ public class TestNumberValue {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = row.createCell(0);
             assertDouble(fe, cell, "NUMBERVALUE(\"3.5%\")", 0.035, 0.000000000001);
+            assertDouble(fe, cell, "NUMBERVALUE(\"9%%\")", 0.0009, 0.000000000001);
+        }
+    }
+
+    @Test
+    void testInvalidValues() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = row.createCell(0);
+            assertError(fe, cell, "NUMBERVALUE(\"notnum\")", FormulaError.VALUE);
+            assertError(fe, cell, "NUMBERVALUE(\"2,00,27\",\",\",\".\")", FormulaError.VALUE);
         }
     }
 }
