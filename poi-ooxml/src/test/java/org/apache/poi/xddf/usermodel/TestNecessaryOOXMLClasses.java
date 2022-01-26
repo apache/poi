@@ -201,4 +201,30 @@ class TestNecessaryOOXMLClasses {
         assertNotNull(stHoleSize);
     }
 
+    @Test
+    void testClassesForSayiPoiTl() {
+        //https://github.com/Sayi/poi-tl/tree/master/poi-ooxml-schemas-extra
+        CTCustSplit ctCustSplit = CTCustSplit.Factory.newInstance();
+        assertNotNull(ctCustSplit);
+        CTOfPieChart ctOfPieChart = CTOfPieChart.Factory.newInstance();
+        assertNotNull(ctOfPieChart);
+        CTOfPieType ctOfPieType = CTOfPieType.Factory.newInstance();
+        assertNotNull(ctOfPieType);
+        CTSecondPieSize ctSecondPieSize = CTSecondPieSize.Factory.newInstance();
+        assertNotNull(ctSecondPieSize);
+        CTSplitType ctSplitType = CTSplitType.Factory.newInstance();
+        assertNotNull(ctSplitType);
+        STOfPieType stOfPieType = STOfPieType.Factory.newInstance();
+        assertNotNull(stOfPieType);
+        assertNotNull(STOfPieType.Enum.forString("pie"));
+        STSecondPieSize stSecondPieSize = STSecondPieSize.Factory.newInstance();
+        assertNotNull(stSecondPieSize);
+        STSecondPieSizePercent stSecondPieSizePercent = STSecondPieSizePercent.Factory.newInstance();
+        assertNotNull(stSecondPieSizePercent);
+        STSecondPieSizeUShort stSecondPieSizeUShort = STSecondPieSizeUShort.Factory.newInstance();
+        assertNotNull(stSecondPieSizeUShort);
+        STSplitType stSplitType = STSplitType.Factory.newInstance();
+        assertNotNull(stSplitType);
+        assertNotNull(STSplitType.Enum.forString("auto"));
+    }
 }
