@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -101,7 +102,7 @@ public final class BigGridDemo {
             }
 
             //Step 2. Generate XML file.
-            tmp = File.createTempFile("sheet", ".xml");
+            tmp = Files.createTempFile("sheet", ".xml").toFile();
             try (
                     FileOutputStream stream = new FileOutputStream(tmp);
                     Writer fw = new OutputStreamWriter(stream, XML_ENCODING)
