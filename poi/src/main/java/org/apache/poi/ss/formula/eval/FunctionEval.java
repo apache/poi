@@ -276,7 +276,7 @@ public final class FunctionEval {
         retval[294] = NormSDist.instance;
         retval[295] = NormInv.instance;
         retval[296] = NormSInv.instance;
-        // 297: STANDARDIZE
+        retval[297] = Standardize.instance;
         retval[298] = NumericFunction.ODD;
         // 299: PERMUT
         retval[300] = NumericFunction.POISSON;

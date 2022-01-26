@@ -19,7 +19,6 @@ package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
@@ -36,51 +35,64 @@ import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests for {@link NormSDist}
+ * Tests for {@link Standardize}
  */
-final class TestNormSDist {
+final class TestStandardize {
 
     private static final OperationEvaluationContext ec = new OperationEvaluationContext(null, null, 0, 0, 0, null);
 
     @Test
     void testBasic() {
-        confirmValue("1.333333", 0.908788726);
+        confirmValue("42", "40", "1.5", 1.33333333);
     }
 
     @Test
     void testInvalid() {
-        confirmInvalidError("A1");
+        confirmInvalidError("A1","B2","C2");
     }
 
-    //https://support.microsoft.com/en-us/office/normsdist-function-463369ea-0345-445d-802a-4ff0d6ce7cac
-    //https://support.microsoft.com/en-us/office/norm-s-dist-function-1e787282-3832-4520-a9ae-bd2a8d99ba88
+    @Test
+    void testNumError() {
+        confirmNumError("42","40","0");
+        confirmNumError("42","40","-0.1");
+    }
+
+    //https://support.microsoft.com/en-us/office/standardize-function-81d66554-2d54-40ec-ba83-6437108ee775
     @Test
     void testMicrosoftExample1() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
-            HSSFRow row = sheet.createRow(0);
+            addRow(sheet, 0, "Data", "Description");
+            addRow(sheet, 1, 42, "Value to normalize");
+            addRow(sheet, 2, 40, "Arithmetic mean of the distribution");
+            addRow(sheet, 3, 1.5, "Standard deviation of the distribution");
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = row.createCell(0);
-            assertDouble(fe, cell, "NORMSDIST(1.333333)", 0.908788726, 0.000001);
-            assertDouble(fe, cell, "NORM.S.DIST(1.333333)", 0.908788726, 0.000001);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertDouble(fe, cell, "STANDARDIZE(A2,A3,A4)", 1.33333333, 0.000001);
         }
     }
 
-    private static ValueEval invokeValue(String number1) {
-        ValueEval[] args = new ValueEval[] { new StringEval(number1)};
-        return NormSDist.instance.evaluate(args, ec);
+    private static ValueEval invokeValue(String number1, String number2, String number3) {
+        ValueEval[] args = new ValueEval[] { new StringEval(number1), new StringEval(number2), new StringEval(number3)};
+        return Standardize.instance.evaluate(args, ec);
     }
 
-    private static void confirmValue(String number1, double expected) {
-        ValueEval result = invokeValue(number1);
+    private static void confirmValue(String number1, String number2, String number3, double expected) {
+        ValueEval result = invokeValue(number1, number2, number3);
         assertEquals(NumberEval.class, result.getClass());
         assertEquals(expected, ((NumberEval) result).getNumberValue(), 0.0000001);
     }
 
-    private static void confirmInvalidError(String number1) {
-        ValueEval result = invokeValue(number1);
+    private static void confirmInvalidError(String number1, String number2, String number3) {
+        ValueEval result = invokeValue(number1, number2, number3);
         assertEquals(ErrorEval.class, result.getClass());
         assertEquals(ErrorEval.VALUE_INVALID, result);
+    }
+
+    private static void confirmNumError(String number1, String number2, String number3) {
+        ValueEval result = invokeValue(number1, number2, number3);
+        assertEquals(ErrorEval.class, result.getClass());
+        assertEquals(ErrorEval.NUM_ERROR, result);
     }
 
 }
