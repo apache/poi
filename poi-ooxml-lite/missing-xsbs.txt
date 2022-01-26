@@ -61,6 +61,8 @@ ctluminanceeffectb41atype
 ctmacroname363btype
 ctmodifyverifier3bb5type
 ctnarye738type
+ctofpiechartbbb3type
+ctofpietype5237type
 ctomathparapr8d43type
 ctonoff3c8ctype
 ctpatternfillproperties3637type
