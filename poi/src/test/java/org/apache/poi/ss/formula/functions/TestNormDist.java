@@ -45,8 +45,8 @@ final class TestNormDist {
 
     @Test
     void testBasic() {
-        confirmValue("42", "40", "1.5", true, 0.9087888);
-        confirmValue("42", "40", "1.5", false, 0.10934);
+        confirmValue("42", "40", "1.5", true, 0.908788780274132);
+        confirmValue("42", "40", "1.5", false, 0.109340049783996);
     }
 
     @Test
@@ -74,8 +74,8 @@ final class TestNormDist {
             addRow(sheet, 3, 1.5, "Standard deviation of the distribution");
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertDouble(fe, cell, "NORMDIST(A2,A3,A4,TRUE)", 0.9087888, 0.000001);
-            assertDouble(fe, cell, "NORM.DIST(A2,A3,A4,TRUE)", 0.9087888, 0.000001);
+            assertDouble(fe, cell, "NORMDIST(A2,A3,A4,TRUE)", 0.908788780274132, 0.00000000000001);
+            assertDouble(fe, cell, "NORM.DIST(A2,A3,A4,TRUE)", 0.908788780274132, 0.00000000000001);
         }
     }
 
@@ -87,7 +87,7 @@ final class TestNormDist {
     private static void confirmValue(String number1, String number2, String number3, boolean cumulative, double expected) {
         ValueEval result = invokeValue(number1, number2, number3, cumulative);
         assertEquals(NumberEval.class, result.getClass());
-        assertEquals(expected, ((NumberEval) result).getNumberValue(), 0.0000001);
+        assertEquals(expected, ((NumberEval) result).getNumberValue(), 0.00000000000001);
     }
 
     private static void confirmInvalidError(String number1, String number2, String number3, boolean cumulative) {
