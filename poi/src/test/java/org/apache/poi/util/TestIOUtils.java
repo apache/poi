@@ -37,7 +37,6 @@ import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EmptyFileException;
@@ -182,7 +181,7 @@ final class TestIOUtils {
 
     @Test
     void testCopyToFile() throws IOException {
-        File dest = Files.createTempFile("poi-ioutils-", "").toFile();
+        File dest = TempFile.createTempFile("poi-ioutils-", "");
         try {
             try (InputStream is = new FileInputStream(TMP)) {
                 assertEquals(LENGTH, IOUtils.copy(is, dest));
