@@ -1600,7 +1600,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     public void groupColumn(int fromColumn, int toColumn) {
         groupColumn1Based(fromColumn+1, toColumn+1);
     }
-    
+
     private void groupColumn1Based(int fromColumn, int toColumn) {
         CTCols ctCols=worksheet.getColsArray(0);
         CTCol ctCol=CTCol.Factory.newInstance();
@@ -2315,7 +2315,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         CTCol col = columnHelper.getColumn(columnIndex, false);
         int colInfoIx = columnHelper.getIndexOfColumn(cols, col);
 
-        int idx = findColInfoIdx(Math.toIntExact(col.getMax()), colInfoIx);
+        int idx = col == null ? -1 : findColInfoIdx(Math.toIntExact(col.getMax()), colInfoIx);
         if (idx == -1) {
             return;
         }
@@ -2330,7 +2330,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         int endIdx = findEndOfColumnOutlineGroup(idx);
 
         // expand:
-        // colapsed bit must be unset
+        // collapsed bit must be unset
         // hidden bit gets unset _if_ surrounding groups are expanded you can
         // determine
         // this by looking at the hidden bit of the enclosing group. You will

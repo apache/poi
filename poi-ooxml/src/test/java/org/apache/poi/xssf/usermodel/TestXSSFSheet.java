@@ -411,6 +411,56 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
+    void collapseGroupColumn() throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet();
+            XSSFRow row0 = sheet.createRow(0);
+            XSSFRow row1 = sheet.createRow(1);
+            for (int i = 0; i < 8; i++) {
+                XSSFCell cell0 = row0.createCell(i);
+                cell0.setCellValue("Col" + CellReference.convertNumToColString(cell0.getColumnIndex()));
+                XSSFCell cell1 = row1.createCell(i);
+                cell1.setCellValue(cell1.getAddress().formatAsString());
+            }
+
+            sheet.groupColumn(2, 3);
+            sheet.groupColumn(5, 7);
+
+            CTCols cols = sheet.getCTWorksheet().getColsArray(0);
+            assertEquals(2, cols.sizeOfColArray());
+            CTCol col0 = cols.getColArray(0);
+            CTCol col1 = cols.getColArray(1);
+            assertEquals(3, col0.getMin());
+            assertEquals(4, col0.getMax());
+            assertFalse(col0.getHidden());
+            assertFalse(col0.getCollapsed());
+            assertEquals(6, col1.getMin());
+            assertEquals(8, col1.getMax());
+            assertFalse(col1.getHidden());
+            assertFalse(col1.getCollapsed());
+
+            sheet.setColumnGroupCollapsed(3, true);
+            cols = sheet.getCTWorksheet().getColsArray(0);
+            assertEquals(3, cols.sizeOfColArray());
+            col0 = cols.getColArray(0);
+            col1 = cols.getColArray(1);
+            CTCol col2 = cols.getColArray(2);
+            assertEquals(3, col0.getMin());
+            assertEquals(4, col0.getMax());
+            assertTrue(col0.getHidden());
+            assertFalse(col0.getCollapsed());
+            assertEquals(5, col1.getMin());
+            assertEquals(5, col1.getMax());
+            assertFalse(col1.getHidden());
+            assertTrue(col1.getCollapsed());
+            assertEquals(6, col2.getMin());
+            assertEquals(8, col2.getMax());
+            assertFalse(col2.getHidden());
+            assertFalse(col2.getCollapsed());
+        }
+    }
+
+    @Test
     void groupUngroupColumn() throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet = workbook.createSheet();
