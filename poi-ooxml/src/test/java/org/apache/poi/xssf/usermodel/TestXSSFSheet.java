@@ -329,7 +329,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             sheet.removeMergedRegion(0);
             assertEquals(0, sheet.getNumMergedRegions());
             assertNull(sheet.getCTWorksheet().getMergeCells(),
-                "CTMergeCells should be deleted after removing the last merged region on the sheet.");
+                    "CTMergeCells should be deleted after removing the last merged region on the sheet.");
             assertEquals(0, sheet.addMergedRegion(region_1));
             assertEquals(1, sheet.addMergedRegion(region_2));
             assertEquals(2, sheet.addMergedRegion(region_3));
@@ -486,28 +486,28 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             sheet1.groupColumn(4, 7);
 
             assertEquals(1, cols.sizeOfColArray());
-            checkColumnGroup(cols.getColArray(0), 4, 7); // false, true
+            checkColumnGroup(cols.getColArray(0), 4, 7, false, false);
 
             sheet1.groupColumn(9, 12);
 
             assertEquals(2, cols.sizeOfColArray());
-            checkColumnGroup(cols.getColArray(0), 4, 7); // false, true
-            checkColumnGroup(cols.getColArray(1), 9, 12); // false, true
+            checkColumnGroup(cols.getColArray(0), 4, 7, false, false);
+            checkColumnGroup(cols.getColArray(1), 9, 12, false, false);
 
             sheet1.groupColumn(10, 11);
 
             assertEquals(4, cols.sizeOfColArray());
-            checkColumnGroup(cols.getColArray(0), 4, 7); // false, true
-            checkColumnGroup(cols.getColArray(1), 9, 9); // false, true
-            checkColumnGroup(cols.getColArray(2), 10, 11); // false, true
-            checkColumnGroup(cols.getColArray(3), 12, 12); // false, true
+            checkColumnGroup(cols.getColArray(0), 4, 7, false, false);
+            checkColumnGroup(cols.getColArray(1), 9, 9, false, false);
+            checkColumnGroup(cols.getColArray(2), 10, 11, false, false);
+            checkColumnGroup(cols.getColArray(3), 12, 12, false, false);
 
             // collapse columns - 1
             sheet1.setColumnGroupCollapsed(5, true);
 
-            // FIXME: we grew a column?
+            // FIXME: we grew a column? -- this whole section needs investigation
             assertEquals(5, cols.sizeOfColArray());
-            checkColumnGroupIsCollapsed(cols.getColArray(0), 4, 7); // true, true
+            checkColumnGroupIsCollapsed(cols.getColArray(0), 4, 7);
             checkColumnGroup(cols.getColArray(1), 8, 8); // false, true
             checkColumnGroup(cols.getColArray(2), 9, 9); // false, true
             checkColumnGroup(cols.getColArray(3), 10, 11); // false, true
@@ -518,22 +518,22 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             sheet1.setColumnGroupCollapsed(5, false);
             assertEquals(5, cols.sizeOfColArray());
 
-            checkColumnGroupIsExpanded(cols.getColArray(0), 4, 7); // false, true
+            checkColumnGroupIsExpanded(cols.getColArray(0), 4, 7);
             checkColumnGroup(cols.getColArray(1), 8, 8, false, false);
-            checkColumnGroup(cols.getColArray(2), 9, 9); // false, true
-            checkColumnGroup(cols.getColArray(3), 10, 11); // false, true
-            checkColumnGroup(cols.getColArray(4), 12, 12); // false, true
+            checkColumnGroup(cols.getColArray(2), 9, 9, false, false);
+            checkColumnGroup(cols.getColArray(3), 10, 11, false, false);
+            checkColumnGroup(cols.getColArray(4), 12, 12, false, false);
 
 
             //collapse - 2
             sheet1.setColumnGroupCollapsed(9, true);
             // it grew again?
             assertEquals(6, cols.sizeOfColArray());
-            checkColumnGroup(cols.getColArray(0), 4, 7); // false, true
+            checkColumnGroup(cols.getColArray(0), 4, 7, false, false);
             checkColumnGroup(cols.getColArray(1), 8, 8, false, false);
-            checkColumnGroupIsCollapsed(cols.getColArray(2), 9, 9); // true, true
-            checkColumnGroupIsCollapsed(cols.getColArray(3), 10, 11); // true, true
-            checkColumnGroupIsCollapsed(cols.getColArray(4), 12, 12); // true, true
+            checkColumnGroupIsCollapsed(cols.getColArray(2), 9, 9); // true, true);
+            checkColumnGroupIsCollapsed(cols.getColArray(3), 10, 11); // true, true);
+            checkColumnGroupIsCollapsed(cols.getColArray(4), 12, 12); // true, true);
             // why was this column group added?
             checkColumnGroup(cols.getColArray(5), 13, 13); // false, true
 
@@ -579,12 +579,12 @@ public final class TestXSSFSheet extends BaseTestXSheet {
                 cols = sheet1.getCTWorksheet().getColsArray(0);
 
                 assertEquals(6, cols.sizeOfColArray());
-                checkColumnGroup(cols.getColArray(0), 4, 7, false, true);
-                checkColumnGroup(cols.getColArray(1), 8, 8, false, true);
-                checkColumnGroup(cols.getColArray(2), 9, 9, false, true);
-                checkColumnGroup(cols.getColArray(3), 10, 11, false, true);
-                checkColumnGroup(cols.getColArray(4), 12, 12, false, true);
-                checkColumnGroup(cols.getColArray(5), 13, 13, false, true);
+                checkColumnGroup(cols.getColArray(0), 4, 7, false, false);
+                checkColumnGroup(cols.getColArray(1), 8, 8, false, false);
+                checkColumnGroup(cols.getColArray(2), 9, 9, false, false);
+                checkColumnGroup(cols.getColArray(3), 10, 11, false, false);
+                checkColumnGroup(cols.getColArray(4), 12, 12, false, false);
+                checkColumnGroup(cols.getColArray(5), 13, 13, false, false);
             }
         }
     }
@@ -600,8 +600,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     private static void checkColumnGroup(
             CTCol col,
             int fromColumnIndex, int toColumnIndex,
-            boolean isSetHidden, boolean isSetCollapsed
-            ) {
+            boolean isSetHidden, boolean isSetCollapsed) {
         assertEquals(fromColumnIndex, col.getMin() - 1, "from column index"); // 1 based
         assertEquals(toColumnIndex, col.getMax() - 1, "to column index"); // 1 based
         assertEquals(isSetHidden, col.isSetHidden(), "isSetHidden");
@@ -619,7 +618,6 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         assertEquals(fromColumnIndex, col.getMin() - 1, "from column index"); // 1 based
         assertEquals(toColumnIndex, col.getMax() - 1, "to column index"); // 1 based
         assertFalse(col.isSetHidden(), "isSetHidden");
-        assertTrue(col.isSetCollapsed(), "isSetCollapsed"); //not necessarily set
     }
 
     /**
@@ -630,11 +628,25 @@ public final class TestXSSFSheet extends BaseTestXSheet {
      * @param toColumnIndex 0-indexed
      */
     private static void checkColumnGroupIsCollapsed(CTCol col, int fromColumnIndex, int toColumnIndex) {
+        checkColumnGroupIsCollapsed(col, fromColumnIndex, toColumnIndex, false, false);
+    }
+
+    /**
+     * Verify that column groups were created correctly after Sheet.groupColumn
+     *
+     * @param col the column group xml bean
+     * @param fromColumnIndex 0-indexed
+     * @param toColumnIndex 0-indexed
+     */
+    private static void checkColumnGroupIsCollapsed(CTCol col, int fromColumnIndex, int toColumnIndex,
+                                                    boolean isSetCollapsed, boolean collapsed) {
         assertEquals(fromColumnIndex, col.getMin() - 1, "from column index"); // 1 based
         assertEquals(toColumnIndex, col.getMax() - 1, "to column index"); // 1 based
         assertTrue(col.isSetHidden(), "isSetHidden");
-        assertTrue(col.isSetCollapsed(), "isSetCollapsed");
-        //assertTrue(col.getCollapsed(), "getCollapsed");
+        assertEquals(isSetCollapsed, col.isSetCollapsed(), "isSetCollapsed");
+        if (isSetCollapsed) {
+            assertEquals(collapsed, col.getCollapsed(), "getCollapsed");
+        }
     }
 
     /**
@@ -649,9 +661,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         assertEquals(fromColumnIndex, col.getMin() - 1, "from column index"); // 1 based
         assertEquals(toColumnIndex, col.getMax() - 1, "to column index"); // 1 based
         assertFalse(col.isSetHidden(), "isSetHidden");
-        assertTrue(col.isSetCollapsed(), "isSetCollapsed");
-        //assertTrue(!col.isSetCollapsed() || !col.getCollapsed(), "isSetCollapsed");
-        //assertFalse(col.getCollapsed(), "getCollapsed");
+        assertTrue(!col.isSetCollapsed() || !col.getCollapsed(), "isSetCollapsed");
     }
 
     /**
@@ -1202,13 +1212,13 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
     @ParameterizedTest
     @CsvSource(value = {
-        // run with the file provided in the Bug-Report
-        "54607.xlsx, '1, 0, 0', '0, 0, 0'",
+            // run with the file provided in the Bug-Report
+            "54607.xlsx, '1, 0, 0', '0, 0, 0'",
 
-        // run with some other flie to see
-        "54436.xlsx, '0', '0'",
-        "TwoSheetsNoneHidden.xlsx, '0, 0', '0, 0'",
-        "TwoSheetsNoneHidden.xls, '0, 0', '0, 0'"
+            // run with some other flie to see
+            "54436.xlsx, '0', '0'",
+            "TwoSheetsNoneHidden.xlsx, '0, 0', '0, 0'",
+            "TwoSheetsNoneHidden.xls, '0, 0', '0, 0'"
     })
     void bug54607(String file, String topRows, String leftCols) throws IOException {
         Consumer<Workbook> testFun = (wb) -> {
@@ -1219,8 +1229,8 @@ public final class TestXSSFSheet extends BaseTestXSheet {
                 wb.forEach(sh -> assertNotNull(sh.getSheetName()));
 
                 String act = StreamSupport.stream(Spliterators.spliterator(wb.iterator(), wb.getNumberOfSheets(), Spliterator.ORDERED), false).
-                    map(sh -> sheetFun.apply(sh).toString()).
-                    collect(Collectors.joining(", "));
+                        map(sh -> sheetFun.apply(sh).toString()).
+                        collect(Collectors.joining(", "));
 
                 assertEquals(exp, act);
             }
