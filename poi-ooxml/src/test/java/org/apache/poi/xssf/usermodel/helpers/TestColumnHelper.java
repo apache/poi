@@ -423,29 +423,30 @@ public final class TestColumnHelper {
             sheet.setColumnWidth(2, 10);
 
             CTCols ctCols = sheet.getCTWorksheet().getColsArray()[0];
-            assertFalse(ctCols.getColArray(0).isSetCollapsed());
-            assertFalse(ctCols.getColArray(1).isSetCollapsed());
-            assertFalse(ctCols.getColArray(2).isSetCollapsed());
+            CTCol col0 = ctCols.getColArray(0);
+            CTCol col1 = ctCols.getColArray(1);
+            CTCol col2 = ctCols.getColArray(2);
+            assertFalse(col0.getCollapsed());
+            assertFalse(col0.getHidden());
+            assertFalse(col1.getCollapsed());
+            assertFalse(col1.getHidden());
+            assertFalse(col2.getCollapsed());
+            assertFalse(col2.getHidden());
 
             sheet.groupColumn(0, 1);
             sheet.setColumnGroupCollapsed(0, true);
 
             ctCols = sheet.getCTWorksheet().getColsArray()[0];
             assertEquals(3, ctCols.sizeOfColArray());
-            //TODO setColumnGroupCollapsed is currently broken
-            /*
-            assertTrue(ctCols.getColArray(0).isSetCollapsed());
-            assertTrue(ctCols.getColArray(1).isSetCollapsed());
-            assertTrue(ctCols.getColArray(2).isSetCollapsed());
-
-            ColumnHelper helper = new ColumnHelper(CTWorksheet.Factory.newInstance());
-            helper.setColumnAttributes(ctCols.getColArray(1), ctCols.getColArray(2));
-
-            ctCols = sheet.getCTWorksheet().getColsArray()[0];
-            assertTrue(ctCols.getColArray(0).isSetCollapsed());
-            assertTrue(ctCols.getColArray(1).isSetCollapsed());
-            assertTrue(ctCols.getColArray(2).isSetCollapsed());
-            */
+            col0 = ctCols.getColArray(0);
+            col1 = ctCols.getColArray(1);
+            col2 = ctCols.getColArray(2);
+            assertFalse(col0.getCollapsed());
+            assertTrue(col0.getHidden());
+            assertFalse(col1.getCollapsed());
+            assertTrue(col1.getHidden());
+            assertTrue(col2.getCollapsed());
+            assertFalse(col2.getHidden());
         }
     }
 }
