@@ -25,7 +25,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -44,6 +43,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFDataFormat;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -102,7 +102,7 @@ public final class BigGridDemo {
             }
 
             //Step 2. Generate XML file.
-            tmp = Files.createTempFile("sheet", ".xml").toFile();
+            tmp = TempFile.createTempFile("sheet", ".xml");
             try (
                     FileOutputStream stream = new FileOutputStream(tmp);
                     Writer fw = new OutputStreamWriter(stream, XML_ENCODING)
