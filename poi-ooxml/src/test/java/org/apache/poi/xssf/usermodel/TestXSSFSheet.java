@@ -505,6 +505,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             // collapse columns - 1
             sheet1.setColumnGroupCollapsed(5, true);
 
+            //TODO setColumnGroupCollapsed is currently broken (and may never have worked well)
             // FIXME: we grew a column? -- this whole section needs investigation
             assertEquals(5, cols.sizeOfColArray());
             checkColumnGroupIsCollapsed(cols.getColArray(0), 4, 7);
