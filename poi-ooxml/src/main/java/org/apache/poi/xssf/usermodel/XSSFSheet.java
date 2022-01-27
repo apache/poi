@@ -1600,6 +1600,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     public void groupColumn(int fromColumn, int toColumn) {
         groupColumn1Based(fromColumn+1, toColumn+1);
     }
+    
     private void groupColumn1Based(int fromColumn, int toColumn) {
         CTCols ctCols=worksheet.getColsArray(0);
         CTCol ctCol=CTCol.Factory.newInstance();
