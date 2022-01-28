@@ -251,7 +251,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
         int endIdx = findEndOfColumnOutlineGroup(idx);
 
         // expand:
-        // colapsed bit must be unset
+        // collapsed bit must be unset
         // hidden bit gets unset _if_ surrounding groups are expanded you can determine
         //   this by looking at the hidden bit of the enclosing group.  You will have
         //   to look at the start and the end of the current group to determine which
