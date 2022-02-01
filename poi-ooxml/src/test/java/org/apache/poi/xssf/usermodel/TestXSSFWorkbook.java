@@ -1341,6 +1341,22 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
+    @Test
+    void checkExistingFileForR1C1Refs() throws IOException {
+        try (
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                XSSFWorkbook wb = openSampleWorkbook("WithTable.xlsx")
+        ) {
+            assertFalse(wb.usesR1C1CellReferences());
+            wb.setUseR1C1CellReferences(true);
+            assertTrue(wb.usesR1C1CellReferences());
+            wb.write(bos);
+            try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
+                assertTrue(wb2.usesR1C1CellReferences());
+            }
+        }
+    }
+
     private static void expectFormattedContent(Cell cell, String value) {
         assertEquals(value, new DataFormatter().formatCellValue(cell),
                 "Cell " + ref(cell) + " has wrong formatted content.");
