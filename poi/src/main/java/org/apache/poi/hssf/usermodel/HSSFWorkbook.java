@@ -367,7 +367,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         //  it happens to be spelled.
         InputStream stream = directory.createDocumentInputStream(workbookName);
 
-        List<Record> records = RecordFactory.createRecords(stream);
+        List<org.apache.poi.hssf.record.Record> records = RecordFactory.createRecords(stream);
 
         workbook = InternalWorkbook.createWorkbook(records);
         setPropertiesFromWorkbook(workbook);
@@ -457,10 +457,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * @see SSTRecord
      */
 
-    private void convertLabelRecords(List<Record> records, int offset) {
+    private void convertLabelRecords(List<org.apache.poi.hssf.record.Record> records, int offset) {
         LOGGER.atDebug().log("convertLabelRecords called");
         for (int k = offset; k < records.size(); k++) {
-            Record rec = records.get(k);
+            org.apache.poi.hssf.record.Record rec = records.get(k);
 
             if (rec.getSid() == LabelRecord.sid) {
                 LabelRecord oldrec = (LabelRecord) rec;
@@ -1450,7 +1450,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      */
     private static final class SheetRecordCollector implements RecordVisitor {
 
-        private final List<Record> _list;
+        private final List<org.apache.poi.hssf.record.Record> _list;
         private int _totalSize;
 
         public SheetRecordCollector() {
@@ -1463,7 +1463,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         }
 
         @Override
-        public void visitRecord(Record r) {
+        public void visitRecord(org.apache.poi.hssf.record.Record r) {
             _list.add(r);
             _totalSize += r.getRecordSize();
 
@@ -1471,7 +1471,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
         public int serialize(int offset, byte[] data) {
             int result = 0;
-            for (Record rec : _list) {
+            for (org.apache.poi.hssf.record.Record rec : _list) {
                 result += rec.serialize(offset + result, data);
             }
             return result;
@@ -2032,7 +2032,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     public List<HSSFPictureData> getAllPictures() {
         // The drawing group record always exists at the top level, so we won't need to do this recursively.
         List<HSSFPictureData> pictures = new ArrayList<>();
-        for (Record r : workbook.getRecords()) {
+        for (RecordBase r : workbook.getRecords()) {
             if (r instanceof AbstractEscherHolderRecord) {
                 ((AbstractEscherHolderRecord) r).decode();
                 List<EscherRecord> escherRecords = ((AbstractEscherHolderRecord) r).getEscherRecords();
