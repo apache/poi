@@ -1769,6 +1769,34 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         return null;
     }
 
+    @Override
+    public void setUseR1C1CellReferences(boolean useR1C1CellReferences) {
+        for (HSSFSheet hssfSheet : _sheets) {
+
+            InternalSheet internalSheet = hssfSheet.getSheet();
+
+            List<RecordBase> records = internalSheet.getRecords();
+
+            RefModeRecord refModeRecord = null;
+            for (RecordBase record : records) {
+                if (record instanceof RefModeRecord) refModeRecord = (RefModeRecord)record;
+            }
+            if (useR1C1CellReferences) {
+                if (refModeRecord == null) {
+                    refModeRecord = new RefModeRecord();
+                    records.add(records.size() - 1, refModeRecord);
+                }
+                refModeRecord.setMode(RefModeRecord.USE_R1C1_MODE);
+            } else {
+                if (refModeRecord == null) {
+                    refModeRecord = new RefModeRecord();
+                    records.add(records.size() - 1, refModeRecord);
+                }
+                refModeRecord.setMode(RefModeRecord.USE_A1_MODE);
+            }
+        }
+    }
+
     int getNameIndex(String name) {
 
         for (int k = 0; k < names.size(); k++) {

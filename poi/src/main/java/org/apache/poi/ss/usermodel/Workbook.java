@@ -638,4 +638,10 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @since POI 5.2.1
      */
     Boolean usesR1C1CellReferences();
+
+    /**
+     * @param useR1C1CellReferences set to true if you want to configure workbook to use R1C1 cell references (as opposed to A1 cell references).
+     * @since POI 5.2.1
+     */
+    void setUseR1C1CellReferences(boolean useR1C1CellReferences);
 }

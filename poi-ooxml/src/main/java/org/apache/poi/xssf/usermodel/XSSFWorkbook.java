@@ -97,24 +97,7 @@ import org.apache.poi.xssf.usermodel.helpers.XSSFFormulaUtils;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookView;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBookViews;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedNames;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDialogsheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalReference;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCaches;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheets;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookProtection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STSheetState;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorkbookDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
  * High level representation of a SpreadsheetML workbook.  This is the first object most users
@@ -1578,6 +1561,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             return Boolean.FALSE;
         }
         return null;
+    }
+
+    @Override
+    public void setUseR1C1CellReferences(boolean useR1C1CellReferences) {
+        CTCalcPr calcPr = getCTWorkbook().getCalcPr();
+        if (calcPr == null) calcPr = getCTWorkbook().addNewCalcPr();
+        STRefMode.Enum refMode = useR1C1CellReferences ? R_1_C_1 : A_1;
+        calcPr.setRefMode(refMode);
     }
 
     private static String getReferencePrintArea(String sheetName, int startC, int endC, int startR, int endR) {
