@@ -25,7 +25,7 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel NORMSINV() and NORM.S.INV() functions.<p>
+ * Implementation for Excel NORMSINV() and NORM.S.INV() functions.
  * <ul>
  *   <li>https://support.microsoft.com/en-us/office/normsinv-function-8d1bce66-8e4d-4f3b-967c-30eed61f019d</li>
  *   <li>https://support.microsoft.com/en-us/office/norm-s-inv-function-d6d556b4-ab7f-49cd-b526-5a20918452b1</li>
@@ -34,6 +34,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 public final class NormSInv extends Fixed1ArgFunction implements FreeRefFunction {
 
     public static final NormSInv instance = new NormSInv();
+
+    private NormSInv() {}
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1) {

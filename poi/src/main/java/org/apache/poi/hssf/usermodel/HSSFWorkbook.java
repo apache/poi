@@ -69,22 +69,7 @@ import org.apache.poi.hssf.model.InternalSheet.UnsupportedBOFType;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.WorkbookRecordList;
-import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
-import org.apache.poi.hssf.record.BackupRecord;
-import org.apache.poi.hssf.record.BoundSheetRecord;
-import org.apache.poi.hssf.record.DrawingGroupRecord;
-import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.FilePassRecord;
-import org.apache.poi.hssf.record.FontRecord;
-import org.apache.poi.hssf.record.FormatRecord;
-import org.apache.poi.hssf.record.LabelRecord;
-import org.apache.poi.hssf.record.LabelSSTRecord;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.RecalcIdRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordFactory;
-import org.apache.poi.hssf.record.SSTRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
@@ -382,7 +367,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         //  it happens to be spelled.
         InputStream stream = directory.createDocumentInputStream(workbookName);
 
-        List<Record> records = RecordFactory.createRecords(stream);
+        List<org.apache.poi.hssf.record.Record> records = RecordFactory.createRecords(stream);
 
         workbook = InternalWorkbook.createWorkbook(records);
         setPropertiesFromWorkbook(workbook);
@@ -472,10 +457,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * @see SSTRecord
      */
 
-    private void convertLabelRecords(List<Record> records, int offset) {
+    private void convertLabelRecords(List<org.apache.poi.hssf.record.Record> records, int offset) {
         LOGGER.atDebug().log("convertLabelRecords called");
         for (int k = offset; k < records.size(); k++) {
-            Record rec = records.get(k);
+            org.apache.poi.hssf.record.Record rec = records.get(k);
 
             if (rec.getSid() == LabelRecord.sid) {
                 LabelRecord oldrec = (LabelRecord) rec;
@@ -1465,7 +1450,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      */
     private static final class SheetRecordCollector implements RecordVisitor {
 
-        private final List<Record> _list;
+        private final List<org.apache.poi.hssf.record.Record> _list;
         private int _totalSize;
 
         public SheetRecordCollector() {
@@ -1478,7 +1463,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         }
 
         @Override
-        public void visitRecord(Record r) {
+        public void visitRecord(org.apache.poi.hssf.record.Record r) {
             _list.add(r);
             _totalSize += r.getRecordSize();
 
@@ -1486,7 +1471,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
         public int serialize(int offset, byte[] data) {
             int result = 0;
-            for (Record rec : _list) {
+            for (org.apache.poi.hssf.record.Record rec : _list) {
                 result += rec.serialize(offset + result, data);
             }
             return result;
@@ -1762,6 +1747,66 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         return newName;
     }
 
+    @Override
+    public Boolean usesR1C1CellReferences() {
+        for (HSSFSheet hssfSheet : _sheets) {
+            InternalSheet internalSheet = hssfSheet.getSheet();
+
+            List<RecordBase> records = internalSheet.getRecords();
+
+            RefModeRecord refModeRecord = null;
+            for (RecordBase record : records) {
+                if (record instanceof RefModeRecord) refModeRecord = (RefModeRecord)record;
+            }
+            if (refModeRecord == null) {
+                return null;
+            } else if (refModeRecord.getMode() == RefModeRecord.USE_R1C1_MODE) {
+                return Boolean.TRUE;
+            } else if (refModeRecord.getMode() == RefModeRecord.USE_A1_MODE) {
+                return Boolean.FALSE;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Configure workbook to use R1C1 cell references (as opposed to A1 cell references).
+     * <p>
+     *     Note that HSSF format stores this information at sheet level - so if the workbook has no sheets,
+     *     this call will have no effect. It is recommended that you call this (possibly again) just before
+     *     writing HSSFWorkbook.
+     * </p>
+     * @param useR1C1CellReferences set to true if you want to configure workbook to use R1C1 cell references (as opposed to A1 cell references).
+     * @since POI 5.2.1
+     */
+    @Override
+    public void setUseR1C1CellReferences(boolean useR1C1CellReferences) {
+        for (HSSFSheet hssfSheet : _sheets) {
+
+            InternalSheet internalSheet = hssfSheet.getSheet();
+
+            List<RecordBase> records = internalSheet.getRecords();
+
+            RefModeRecord refModeRecord = null;
+            for (RecordBase record : records) {
+                if (record instanceof RefModeRecord) refModeRecord = (RefModeRecord)record;
+            }
+            if (useR1C1CellReferences) {
+                if (refModeRecord == null) {
+                    refModeRecord = new RefModeRecord();
+                    records.add(records.size() - 1, refModeRecord);
+                }
+                refModeRecord.setMode(RefModeRecord.USE_R1C1_MODE);
+            } else {
+                if (refModeRecord == null) {
+                    refModeRecord = new RefModeRecord();
+                    records.add(records.size() - 1, refModeRecord);
+                }
+                refModeRecord.setMode(RefModeRecord.USE_A1_MODE);
+            }
+        }
+    }
+
     int getNameIndex(String name) {
 
         for (int k = 0; k < names.size(); k++) {
@@ -1803,7 +1848,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      *
      * @return the HSSFDataFormat object
      * @see FormatRecord
-     * @see Record
+     * @see org.apache.poi.hssf.record.Record
      */
     @Override
     public HSSFDataFormat createDataFormat() {
@@ -1987,7 +2032,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     public List<HSSFPictureData> getAllPictures() {
         // The drawing group record always exists at the top level, so we won't need to do this recursively.
         List<HSSFPictureData> pictures = new ArrayList<>();
-        for (Record r : workbook.getRecords()) {
+        for (RecordBase r : workbook.getRecords()) {
             if (r instanceof AbstractEscherHolderRecord) {
                 ((AbstractEscherHolderRecord) r).decode();
                 List<EscherRecord> escherRecords = ((AbstractEscherHolderRecord) r).getEscherRecords();

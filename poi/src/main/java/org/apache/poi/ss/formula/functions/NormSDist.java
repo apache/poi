@@ -25,7 +25,7 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel NORMSDIST() and NORM.S.DIST functions.<p>
+ * Implementation for Excel NORMSDIST() and NORM.S.DIST functions.
  * <ul>
  *   <li>https://support.microsoft.com/en-us/office/normsdist-function-463369ea-0345-445d-802a-4ff0d6ce7cac</li>
  *   <li>https://support.microsoft.com/en-us/office/norm-s-dist-function-1e787282-3832-4520-a9ae-bd2a8d99ba88</li>
@@ -34,6 +34,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 public final class NormSDist extends Fixed1ArgFunction implements FreeRefFunction {
 
     public static final NormSDist instance = new NormSDist();
+
+    private NormSDist() {}
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1) {

@@ -491,9 +491,30 @@ public class CellReference implements GenericRecord {
      *    <tr><td>'O''Brien''s Sales'!A1'&nbsp;</td><td>Sheet name with special characters</td></tr>
      *  </table>
      * @return the text representation of this cell reference as it would appear in a formula.
+     * @see #formatAsString(boolean)
      */
     public String formatAsString() {
         return formatAsString(true);
+    }
+
+    /**
+     * Returns a text representation of this cell reference in R1C1 format.
+     * <p>
+     *  Example return values:
+     *  <table>
+     *    <caption>Example return values</caption>
+     *    <tr><th>Result</th><th>Comment</th></tr>
+     *    <tr><td>R1C1</td><td>Cell reference without sheet</td></tr>
+     *    <tr><td>Sheet1!R1C1</td><td>Standard sheet name</td></tr>
+     *    <tr><td>'O''Brien''s Sales'!R1C1'&nbsp;</td><td>Sheet name with special characters</td></tr>
+     *  </table>
+     * @return the text representation of this cell reference as it would appear in a formula.
+     * @see #formatAsString()
+     * @see #formatAsR1C1String(boolean)
+     * @since POI 5.2.1
+     */
+    public String formatAsR1C1String() {
+        return formatAsR1C1String(true);
     }
 
     /**
@@ -512,6 +533,7 @@ public class CellReference implements GenericRecord {
      * @param   includeSheetName If true and there is a sheet name set for this cell reference,
      *                           the reference is prefixed with the sheet name and '!'
      * @return the text representation of this cell reference as it would appear in a formula.
+     * @see #formatAsString()
      */
     public String formatAsString(boolean includeSheetName) {
         StringBuilder sb = new StringBuilder(32);
@@ -520,6 +542,36 @@ public class CellReference implements GenericRecord {
             sb.append(SHEET_NAME_DELIMITER);
         }
         appendCellReference(sb);
+        return sb.toString();
+    }
+
+    /**
+     * Returns a text representation of this cell reference in R1C1 format and allows to control
+     * if the sheetname is included in the reference.
+     *
+     * <p>
+     *  Example return values:
+     *  <table>
+     *    <caption>Example return values</caption>
+     *    <tr><th>Result</th><th>Comment</th></tr>
+     *    <tr><td>R1C1</td><td>Cell reference without sheet</td></tr>
+     *    <tr><td>Sheet1!R1C1</td><td>Standard sheet name</td></tr>
+     *    <tr><td>'O''Brien''s Sales'!R1C1'&nbsp;</td><td>Sheet name with special characters</td></tr>
+     *  </table>
+     * @param   includeSheetName If true and there is a sheet name set for this cell reference,
+     *                           the reference is prefixed with the sheet name and '!'
+     * @return the text representation of this cell reference as it would appear in a formula.
+     * @see #formatAsString(boolean)
+     * @see #formatAsR1C1String()
+     * @since POI 5.2.1
+     */
+    public String formatAsR1C1String(boolean includeSheetName) {
+        StringBuilder sb = new StringBuilder(32);
+        if(includeSheetName && _sheetName != null) {
+            SheetNameFormatter.appendFormat(sb, _sheetName);
+            sb.append(SHEET_NAME_DELIMITER);
+        }
+        appendR1C1CellReference(sb);
         return sb.toString();
     }
 
@@ -561,6 +613,19 @@ public class CellReference implements GenericRecord {
                 sb.append(ABSOLUTE_REFERENCE_MARKER);
             }
             sb.append(_rowIndex+1);
+        }
+    }
+
+    /**
+     * Appends R1C1 cell reference with '$' markers for absolute values as required.
+     * Sheet name is not included.
+     */
+    /* package */ void appendR1C1CellReference(StringBuilder sb) {
+        if (_rowIndex != -1) {
+            sb.append('R').append(_rowIndex+1);
+        }
+        if (_colIndex != -1) {
+            sb.append('C').append(_colIndex+1);
         }
     }
 

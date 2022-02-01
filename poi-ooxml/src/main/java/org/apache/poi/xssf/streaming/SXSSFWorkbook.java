@@ -1350,9 +1350,18 @@ public class SXSSFWorkbook implements Workbook {
         return _wb.addOlePackage(oleData, label, fileName, command);
     }
 
-
     @Override
     public EvaluationWorkbook createEvaluationWorkbook() {
         return SXSSFEvaluationWorkbook.create(this);
+    }
+
+    @Override
+    public Boolean usesR1C1CellReferences() {
+        return getXSSFWorkbook().usesR1C1CellReferences();
+    }
+
+    @Override
+    public void setUseR1C1CellReferences(boolean useR1C1CellReferences) {
+        getXSSFWorkbook().setUseR1C1CellReferences(useR1C1CellReferences);
     }
 }

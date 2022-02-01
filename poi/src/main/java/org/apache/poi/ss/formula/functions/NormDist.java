@@ -26,7 +26,7 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel NORMDIST() and NORM.DIST() functions.<p>
+ * Implementation for Excel NORMDIST() and NORM.DIST() functions.
  * <ul>
  *   <li>https://support.microsoft.com/en-us/office/normdist-function-126db625-c53e-4591-9a22-c9ff422d6d58</li>
  *   <li>https://support.microsoft.com/en-us/office/norm-dist-function-edb1cc14-a21c-4e53-839d-8082074c9f8d</li>
@@ -40,6 +40,8 @@ public final class NormDist extends Fixed4ArgFunction implements FreeRefFunction
         NormalDistribution normalDistribution = new NormalDistribution(mean, stdev);
         return cumulative ? normalDistribution.cumulativeProbability(x) : normalDistribution.density(x);
     }
+
+    private NormDist() {}
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1, ValueEval arg2,

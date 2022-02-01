@@ -110,8 +110,8 @@ public final class XMLHelper {
         factory.setExpandEntityReferences(false);
         factory.setValidating(false);
         trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);
-        trySet(factory::setAttribute, ACCESS_EXTERNAL_SCHEMA, "");
-        trySet(factory::setAttribute, ACCESS_EXTERNAL_DTD, "");
+        quietSet(factory::setAttribute, ACCESS_EXTERNAL_SCHEMA, "");
+        quietSet(factory::setAttribute, ACCESS_EXTERNAL_DTD, "");
         trySet(factory::setFeature, FEATURE_EXTERNAL_ENTITIES, false);
         trySet(factory::setFeature, FEATURE_PARAMETER_ENTITIES, false);
         trySet(factory::setFeature, FEATURE_LOAD_EXTERNAL_DTD, false);

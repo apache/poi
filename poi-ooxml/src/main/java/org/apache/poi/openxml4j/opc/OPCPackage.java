@@ -442,7 +442,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         }
 
         if (this.packageAccess == PackageAccess.READ) {
-            LOG.atWarn().log("The close() method is intended to SAVE a package. This package is open in READ ONLY mode, use the revert() method instead!");
+            LOG.atDebug().log("The close() method is intended to SAVE a package. This package is open in READ ONLY mode, use the revert() method instead!");
             revert();
             return;
         }
