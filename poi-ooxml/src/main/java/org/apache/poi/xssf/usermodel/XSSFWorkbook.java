@@ -20,6 +20,7 @@ package org.apache.poi.xssf.usermodel;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import static org.apache.poi.xssf.usermodel.helpers.XSSFPasswordHelper.setPassword;
 import static org.apache.poi.xssf.usermodel.helpers.XSSFPasswordHelper.validatePassword;
+import static org.openxmlformats.schemas.spreadsheetml.x2006.main.STRefMode.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -1564,6 +1565,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public void setPrintArea(int sheetIndex, int startColumn, int endColumn, int startRow, int endRow) {
         String reference=getReferencePrintArea(getSheetName(sheetIndex), startColumn, endColumn, startRow, endRow);
         setPrintArea(sheetIndex, reference);
+    }
+
+    @Override
+    public Boolean usesR1C1CellReferences() {
+        final CTCalcPr calcPr = getCTWorkbook().getCalcPr();
+        if (calcPr == null) {
+            return null;
+        } else if (calcPr.getRefMode() == R_1_C_1) {
+            return Boolean.TRUE;
+        } else if (calcPr.getRefMode() == A_1) {
+            return Boolean.FALSE;
+        }
+        return null;
     }
 
     private static String getReferencePrintArea(String sheetName, int startC, int endC, int startR, int endR) {

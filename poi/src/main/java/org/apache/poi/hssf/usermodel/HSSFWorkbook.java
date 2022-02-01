@@ -69,22 +69,7 @@ import org.apache.poi.hssf.model.InternalSheet.UnsupportedBOFType;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.model.WorkbookRecordList;
-import org.apache.poi.hssf.record.AbstractEscherHolderRecord;
-import org.apache.poi.hssf.record.BackupRecord;
-import org.apache.poi.hssf.record.BoundSheetRecord;
-import org.apache.poi.hssf.record.DrawingGroupRecord;
-import org.apache.poi.hssf.record.ExtendedFormatRecord;
-import org.apache.poi.hssf.record.FilePassRecord;
-import org.apache.poi.hssf.record.FontRecord;
-import org.apache.poi.hssf.record.FormatRecord;
-import org.apache.poi.hssf.record.LabelRecord;
-import org.apache.poi.hssf.record.LabelSSTRecord;
-import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.RecalcIdRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordFactory;
-import org.apache.poi.hssf.record.SSTRecord;
-import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
@@ -1760,6 +1745,28 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         names.add(newName);
 
         return newName;
+    }
+
+    @Override
+    public Boolean usesR1C1CellReferences() {
+        for (HSSFSheet hssfSheet : _sheets) {
+            InternalSheet internalSheet = hssfSheet.getSheet();
+
+            List<RecordBase> records = internalSheet.getRecords();
+
+            RefModeRecord refModeRecord = null;
+            for (RecordBase record : records) {
+                if (record instanceof RefModeRecord) refModeRecord = (RefModeRecord)record;
+            }
+            if (refModeRecord == null) {
+                return null;
+            } else if (refModeRecord.getMode() == RefModeRecord.USE_R1C1_MODE) {
+                return Boolean.TRUE;
+            } else if (refModeRecord.getMode() == RefModeRecord.USE_A1_MODE) {
+                return Boolean.FALSE;
+            }
+        }
+        return null;
     }
 
     int getNameIndex(String name) {
