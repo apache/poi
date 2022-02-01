@@ -76,7 +76,8 @@ public final class NumberValueFunction implements FreeRefFunction {
             return e.getErrorEval();
         }
 
-        if("".equals(text)) text = "0"; //If an empty string ("") is specified as the Text argument, the result is 0.
+        if("".equals(text) || text == null) text = "0"; //If an empty string ("") is specified as the Text argument, the result is 0.
+
         text = text.replace(" ", ""); //Empty spaces in the Text argument are ignored, even in the middle of the argument. For example, " 3 000 " is returned as 3000.
         String[] parts = text.split("["+decSep+"]");
         String sigPart = "";

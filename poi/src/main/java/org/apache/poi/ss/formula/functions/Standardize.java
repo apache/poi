@@ -54,8 +54,8 @@ public final class Standardize extends Fixed3ArgFunction implements FreeRefFunct
                 return ErrorEval.NUM_ERROR;
             }
 
-            BigDecimal result = new BigDecimal(xval.doubleValue() - mean.doubleValue())
-                    .divide(new BigDecimal(stdev), MathContext.DECIMAL128);
+            BigDecimal result = BigDecimal.valueOf(xval.doubleValue() - mean.doubleValue())
+                    .divide(BigDecimal.valueOf(stdev), MathContext.DECIMAL128);
             return new NumberEval(result.doubleValue());
         } catch (EvaluationException e) {
             return e.getErrorEval();

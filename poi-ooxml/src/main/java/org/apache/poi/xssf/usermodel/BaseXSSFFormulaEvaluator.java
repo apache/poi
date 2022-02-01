@@ -114,8 +114,7 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
                                 XSSFCell cell = row.getCell(cellIndex);
                                 String cellValue = cell.getRawValue();
                                 String cellR = new CellReference(cell).formatAsString(false);
-                                externalLinksTable.cacheData(sheet.getSheetName(), rowIndex + 1, cellR, cellValue);
-
+                                externalLinksTable.cacheData(sheet.getSheetName(), (long)rowIndex + 1, cellR, cellValue);
                             }
                         }
 
