@@ -64,6 +64,8 @@ final class TestCellReference {
     void testAbsRef1(){
         CellReference cf = new CellReference("$B$5");
         confirmCell(cf, null, 4, 1, true, true, "$B$5");
+        //absolute refs are not supported for R1C1 style
+        assertEquals("R5C2", cf.formatAsR1C1String());
     }
 
     @Test

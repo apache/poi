@@ -97,6 +97,7 @@ final class TestAreaReference {
         ar = new AreaReference("Tabelle1!B5:B5", SpreadsheetVersion.EXCEL97);
         assertTrue(ar.isSingleCell());
         TestCellReference.confirmCell(ar.getFirstCell(), "Tabelle1", 4, 1, false, false, "Tabelle1!B5");
+        assertEquals("Tabelle1!R5C2", ar.getFirstCell().formatAsR1C1String(true));
 
         assertEquals(1, ar.getAllReferencedCells().length);
 
