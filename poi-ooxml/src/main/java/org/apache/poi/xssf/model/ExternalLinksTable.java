@@ -228,8 +228,6 @@ public class ExternalLinksTable extends POIXMLDocumentPart {
         ctExternalCell.setR(cellR);
         return ctExternalCell;
     }
-    // TODO Last seen data
-
 
     protected class ExternalName implements Name {
         private final CTExternalDefinedName name;
