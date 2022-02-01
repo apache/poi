@@ -51,6 +51,7 @@ final class TestCellAddress {
     @Test
     void testFormatAsString() {
         assertEquals("A1", CellAddress.A1.formatAsString());
+        assertEquals("R1C1", CellAddress.A1.formatAsR1C1String());
     }
 
     @Test

@@ -410,11 +410,13 @@ public abstract class BaseTestCellComment {
         assertEquals(CellAddress.A1, comment.getAddress());
         CellAddress C2 = new CellAddress("C2");
         assertEquals("C2", C2.formatAsString());
+        assertEquals("R2C3", C2.formatAsR1C1String());
         comment.setAddress(C2);
         assertEquals(C2, comment.getAddress());
 
         CellAddress E10 = new CellAddress(9, 4);
         assertEquals("E10", E10.formatAsString());
+        assertEquals("R10C5", E10.formatAsR1C1String());
         comment.setAddress(9, 4);
         assertEquals(E10, comment.getAddress());
     }
