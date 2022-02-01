@@ -1848,7 +1848,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      *
      * @return the HSSFDataFormat object
      * @see FormatRecord
-     * @see Record
+     * @see org.apache.poi.hssf.record.Record
      */
     @Override
     public HSSFDataFormat createDataFormat() {

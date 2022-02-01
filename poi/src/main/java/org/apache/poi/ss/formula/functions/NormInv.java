@@ -26,7 +26,7 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel NORMINV() and NORM.INV() functions.<p>
+ * Implementation for Excel NORMINV() and NORM.INV() functions.
  * <ul>
  *   <li>https://support.microsoft.com/en-us/office/norminv-function-87981ab8-2de0-4cb0-b1aa-e21d4cb879b8</li>
  *   <li>https://support.microsoft.com/en-us/office/norm-inv-function-54b30935-fee7-493c-bedb-2278a9db7e13</li>
