@@ -107,7 +107,7 @@ public class FractionFormat extends Format {
     @SuppressWarnings("squid:S2111")
     public String format(Number num) {
 
-        final BigDecimal doubleValue = new BigDecimal(num.doubleValue());
+        final BigDecimal doubleValue = BigDecimal.valueOf(num.doubleValue());
 
         final boolean isNeg = doubleValue.compareTo(BigDecimal.ZERO) < 0;
 
@@ -162,7 +162,7 @@ public class FractionFormat extends Format {
         if (wholePartFormatString == null || wholePartFormatString.isEmpty()){
             final int fden = fract.getDenominator();
             final int fnum = fract.getNumerator();
-            BigDecimal trueNum = wholePart.multiply(new BigDecimal(fden)).add(new BigDecimal(fnum));
+            BigDecimal trueNum = wholePart.multiply(BigDecimal.valueOf(fden)).add(BigDecimal.valueOf(fnum));
             sb.append(trueNum.toBigInteger()).append("/").append(fden);
             return sb.toString();
         }
