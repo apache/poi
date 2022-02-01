@@ -37,6 +37,8 @@ public final class NumberValueFunction implements FreeRefFunction {
 
     public static final FreeRefFunction instance = new NumberValueFunction();
 
+    private NumberValueFunction() {}
+
     @Override
     public ValueEval evaluate( ValueEval[] args, OperationEvaluationContext ec ) {
 

@@ -35,6 +35,8 @@ public final class NormSInv extends Fixed1ArgFunction implements FreeRefFunction
 
     public static final NormSInv instance = new NormSInv();
 
+    private NormSInv() {}
+
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1) {
         try {

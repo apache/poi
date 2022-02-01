@@ -35,6 +35,8 @@ public final class NormSDist extends Fixed1ArgFunction implements FreeRefFunctio
 
     public static final NormSDist instance = new NormSDist();
 
+    private NormSDist() {}
+
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1) {
         try {

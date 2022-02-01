@@ -41,6 +41,8 @@ public final class NormDist extends Fixed4ArgFunction implements FreeRefFunction
         return cumulative ? normalDistribution.cumulativeProbability(x) : normalDistribution.density(x);
     }
 
+    private NormDist() {}
+
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1, ValueEval arg2,
                               ValueEval arg3, ValueEval arg4) {

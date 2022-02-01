@@ -41,6 +41,8 @@ public final class NormInv extends Fixed3ArgFunction implements FreeRefFunction 
         return normalDistribution.inverseCumulativeProbability(probability);
     }
 
+    private NormInv() {}
+
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1, ValueEval arg2, ValueEval arg3) {
         try {
