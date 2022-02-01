@@ -1769,6 +1769,16 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         return null;
     }
 
+    /**
+     * Configure workbook to use R1C1 cell references (as opposed to A1 cell references).
+     * <p>
+     *     Note that HSSF format stores this information at sheet level - so if the workbook has no sheets,
+     *     this call will have no effect. It is recommended that you call this (possibly again) just before
+     *     writing HSSFWorkbook.
+     * </p>
+     * @param useR1C1CellReferences set to true if you want to configure workbook to use R1C1 cell references (as opposed to A1 cell references).
+     * @since POI 5.2.1
+     */
     @Override
     public void setUseR1C1CellReferences(boolean useR1C1CellReferences) {
         for (HSSFSheet hssfSheet : _sheets) {

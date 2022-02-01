@@ -1194,6 +1194,24 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         }
     }
 
+    @Test
+    void checkNewFileForR1C1Refs() throws IOException {
+        try (
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                HSSFWorkbook wb = new HSSFWorkbook()
+        ) {
+            assertNull(wb.usesR1C1CellReferences());
+            HSSFSheet sheet = wb.createSheet();
+            assertFalse(wb.usesR1C1CellReferences());
+            wb.setUseR1C1CellReferences(true);
+            assertTrue(wb.usesR1C1CellReferences());
+            wb.write(bos);
+            try (HSSFWorkbook wb2 = new HSSFWorkbook(bos.toInputStream())) {
+                assertTrue(wb2.usesR1C1CellReferences());
+            }
+        }
+    }
+
     @Disabled
     void createDrawing() {
         // the dimensions for this image are different than for XSSF and SXSSF
