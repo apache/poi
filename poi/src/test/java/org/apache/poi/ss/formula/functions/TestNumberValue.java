@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Testcase for function NUMBERVALUE()
  */
-public class TestNumberValue {
+class TestNumberValue {
 
     //https://support.microsoft.com/en-us/office/numbervalue-function-1b05c8cf-2bfa-4437-af70-596c7ea7d879
     @Test

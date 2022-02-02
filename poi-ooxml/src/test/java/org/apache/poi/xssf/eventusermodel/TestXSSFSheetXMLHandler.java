@@ -28,13 +28,14 @@ import org.xml.sax.XMLReader;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class TestXSSFSheetXMLHandler {
+class TestXSSFSheetXMLHandler {
     private static final POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
     @Test
-    public void testInlineString() throws Exception {
+    void testInlineString() throws Exception {
         try (OPCPackage xlsxPackage = OPCPackage.open(_ssTests.openResourceAsStream("InlineString.xlsx"))) {
             final XSSFReader reader = new XSSFReader(xlsxPackage);
 
@@ -64,13 +65,13 @@ public class TestXSSFSheetXMLHandler {
                     }
                 }, false));
 
-                sheetParser.parse(new InputSource(stream));
+                assertDoesNotThrow(() -> sheetParser.parse(new InputSource(stream)));
             }
         }
     }
 
     @Test
-    public void testNumber() throws Exception {
+    void testNumber() throws Exception {
         try (OPCPackage xlsxPackage = OPCPackage.open(_ssTests.openResourceAsStream("sample.xlsx"))) {
             final XSSFReader reader = new XSSFReader(xlsxPackage);
 
@@ -95,7 +96,7 @@ public class TestXSSFSheetXMLHandler {
                     }
                 }, false));
 
-                sheetParser.parse(new InputSource(stream));
+                assertDoesNotThrow(() -> sheetParser.parse(new InputSource(stream)));
             }
         }
     }
