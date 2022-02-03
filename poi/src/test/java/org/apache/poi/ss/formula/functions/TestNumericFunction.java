@@ -83,6 +83,7 @@ final class TestNumericFunction {
             HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             assertString(fe, cell, "DOLLAR(1234.567,2)", "€1,234.57");
+            assertString(fe, cell, "DOLLAR(-1234.567,2)", "-€1,234.57");
         } finally {
             LocaleUtil.setUserLocale(defaultLocale);
         }
@@ -96,7 +97,8 @@ final class TestNumericFunction {
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            assertString(fe, cell, "DOLLAR(1234.567,2)", "€1.234,57");
+            assertString(fe, cell, "DOLLAR(1234.567,2)", "1.234,57 €");
+            assertString(fe, cell, "DOLLAR(-1234.567,2)", "-1.234,57 €");
         } finally {
             LocaleUtil.setUserLocale(defaultLocale);
         }
@@ -111,6 +113,7 @@ final class TestNumericFunction {
             HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             assertString(fe, cell, "DOLLAR(1234.567,2)", "￥1,234.57");
+            assertString(fe, cell, "DOLLAR(-1234.567,2)", "-￥1,234.57");
         } finally {
             LocaleUtil.setUserLocale(defaultLocale);
         }
@@ -124,7 +127,8 @@ final class TestNumericFunction {
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            assertString(fe, cell, "DOLLAR(1234.567,2)", "kr.1,234.57");
+            assertString(fe, cell, "DOLLAR(1234.567,2)", "1.234,57 kr.");
+            assertString(fe, cell, "DOLLAR(-1234.567,2)", "-1.234,57 kr.");
         } finally {
             LocaleUtil.setUserLocale(defaultLocale);
         }

@@ -27,6 +27,7 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 
 public abstract class NumericFunction implements Function {
 
@@ -117,7 +118,16 @@ public abstract class NumericFunction implements Function {
             DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale());
             DecimalFormat df = new DecimalFormat(decimalFormatString.toString(), symbols);
 
-            return new StringEval(df.format(val));
+            DecimalFormat nf = (DecimalFormat) NumberFormat.getCurrencyInstance(LocaleUtil.getUserLocale());
+            int decimalPlaces = nPlaces < 0 ? 0 : nPlaces;
+            if (LocaleUtil.getUserLocale().getCountry().equalsIgnoreCase("US")) {
+                nf.setNegativePrefix("(" + nf.getDecimalFormatSymbols().getCurrencySymbol());
+                nf.setNegativeSuffix(")");
+            }
+            nf.setMinimumFractionDigits(decimalPlaces);
+            nf.setMaximumFractionDigits(decimalPlaces);
+
+            return new StringEval(nf.format(val).replace("\u00a0"," "));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
