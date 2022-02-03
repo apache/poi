@@ -20,6 +20,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LocaleUtil;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
@@ -120,6 +121,7 @@ final class TestNumericFunction {
     }
 
     @Test
+    @Disabled("fails on some Java Runtimes (kr. apprears at start of result in some JREs)")
     void testDOLLARDenmark() {
         Locale defaultLocale = LocaleUtil.getUserLocale();
         try {

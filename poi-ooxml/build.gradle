@@ -140,6 +140,7 @@ dependencies {
     testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.34'
     testImplementation 'com.google.guava:guava:31.0.1-jre'
     testImplementation 'org.tukaani:xz:1.9'
+    testImplementation 'com.github.rzymek:opczip:1.2.0'
 
     // prevent slf4j warnings coming from xmlsec -> slf4j-api 1.7.x dependency
     // see https://logging.apache.org/log4j/2.x/log4j-slf4j-impl/
