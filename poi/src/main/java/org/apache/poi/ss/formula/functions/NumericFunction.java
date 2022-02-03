@@ -26,7 +26,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 
 public abstract class NumericFunction implements Function {
@@ -103,20 +102,6 @@ public abstract class NumericFunction implements Function {
                         .toBigInteger().multiply(divisor.toBigInteger());
                 val = bigInt.doubleValue();
             }
-
-            StringBuilder decimalPlacesFormat = new StringBuilder();
-            if (nPlaces > 0) {
-                decimalPlacesFormat.append('.');
-            }
-            for (int i = 0; i < nPlaces; i++) {
-                decimalPlacesFormat.append('0');
-            }
-            StringBuilder decimalFormatString = new StringBuilder();
-            decimalFormatString.append("¤#,##0").append(decimalPlacesFormat)
-                    .append(";(¤#,##0").append(decimalPlacesFormat).append(')');
-
-            DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale());
-            DecimalFormat df = new DecimalFormat(decimalFormatString.toString(), symbols);
 
             DecimalFormat nf = (DecimalFormat) NumberFormat.getCurrencyInstance(LocaleUtil.getUserLocale());
             int decimalPlaces = nPlaces < 0 ? 0 : nPlaces;
