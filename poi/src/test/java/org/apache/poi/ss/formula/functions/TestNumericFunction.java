@@ -115,4 +115,18 @@ final class TestNumericFunction {
             LocaleUtil.setUserLocale(defaultLocale);
         }
     }
+
+    @Test
+    void testDOLLARDenmark() {
+        Locale defaultLocale = LocaleUtil.getUserLocale();
+        try {
+            LocaleUtil.setUserLocale(new Locale("da", "DK"));
+            HSSFWorkbook wb = new HSSFWorkbook();
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertString(fe, cell, "DOLLAR(1234.567,2)", "kr.1,234.57");
+        } finally {
+            LocaleUtil.setUserLocale(defaultLocale);
+        }
+    }
 }
