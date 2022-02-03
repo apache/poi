@@ -38,4 +38,16 @@ final class TestNumericFunction {
         assertDouble(fe, cell, "880000000*0.00849/3", 2490400.0, 0);
         assertDouble(fe, cell, "INT(880000000*0.00849/3)", 2490400.0, 0);
     }
+
+    @Test
+    void testSIGN() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        //https://support.microsoft.com/en-us/office/sign-function-109c932d-fcdc-4023-91f1-2dd0e916a1d8
+        assertDouble(fe, cell, "SIGN(10)", 1.0, 0);
+        assertDouble(fe, cell, "SIGN(4-4)", 0.0, 0);
+        assertDouble(fe, cell, "SIGN(-0.00001)", -1.0, 0);
+    }
+
 }
