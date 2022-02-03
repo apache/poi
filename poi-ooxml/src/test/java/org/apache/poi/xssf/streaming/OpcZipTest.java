@@ -4,7 +4,9 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.junit.jupiter.api.Test;
 
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 
@@ -21,7 +23,7 @@ class OpcZipTest {
             try (OpcOutputStream zip = new OpcOutputStream(bos1)) {
                 for (Map.Entry<String, String> entry : contents.entrySet()) {
                     zip.putNextEntry(entry.getKey());
-                    PrintStream printer = new PrintStream(zip);
+                    PrintStream printer = new PrintStream(zip, true, StandardCharsets.UTF_8.name());
                     printer.print(entry.getValue());
                     printer.flush();
                     zip.closeEntry();
@@ -30,7 +32,7 @@ class OpcZipTest {
             try (com.github.rzymek.opczip.OpcOutputStream zip = new com.github.rzymek.opczip.OpcOutputStream(bos2)) {
                 for (Map.Entry<String, String> entry : contents.entrySet()) {
                     zip.putNextEntry(new ZipEntry(entry.getKey()));
-                    PrintStream printer = new PrintStream(zip);
+                    PrintStream printer = new PrintStream(zip, true, StandardCharsets.UTF_8.name());
                     printer.print(entry.getValue());
                     printer.flush();
                     zip.closeEntry();
@@ -43,7 +45,7 @@ class OpcZipTest {
     private static Map<String, String> createContents() {
         Map<String, String> contents = new LinkedHashMap<>();
         for (int i = 0; i < 3; i++) {
-            String name = String.format("dir%s/file%s.txt", i % 3, i);
+            String name = String.format(Locale.US, "dir%s/file%s.txt", i % 3, i);
             contents.put(name, "this is the contents");
         }
         return contents;
