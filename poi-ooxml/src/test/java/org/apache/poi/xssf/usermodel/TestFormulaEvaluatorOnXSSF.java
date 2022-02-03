@@ -170,6 +170,9 @@ public final class TestFormulaEvaluatorOnXSSF {
     @ParameterizedTest
     @MethodSource("data")
     void processFunctionRow(String targetFunctionName, int formulasRowIdx, int expectedValuesRowIdx) {
+        //DOLLAR function returns a string that is locale specific
+        assumeFalse(targetFunctionName.equalsIgnoreCase("DOLLAR"));
+
         Row formulasRow = sheet.getRow(formulasRowIdx);
         Row expectedValuesRow = sheet.getRow(expectedValuesRowIdx);
 
@@ -180,7 +183,6 @@ public final class TestFormulaEvaluatorOnXSSF {
             Cell c = formulasRow.getCell(colnum);
             assumeTrue(c != null);
             assumeTrue(c.getCellType() == CellType.FORMULA);
-            assumeFalse(targetFunctionName.equalsIgnoreCase("DOLLAR"));
             ignoredFormulaTestCase(c.getCellFormula());
 
             CellValue actValue = evaluator.evaluate(c);

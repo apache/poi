@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -152,6 +153,9 @@ public final class TestFormulasFromSpreadsheet {
     @ParameterizedTest
     @MethodSource("data")
     void processFunctionRow(String targetFunctionName, int formulasRowIdx, int expectedValuesRowIdx) {
+        //DOLLAR function returns a string that is locale specific
+        assumeFalse(targetFunctionName.equalsIgnoreCase("DOLLAR"));
+
         Row formulasRow = sheet.getRow(formulasRowIdx);
         Row expectedValuesRow = sheet.getRow(expectedValuesRowIdx);
 
