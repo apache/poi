@@ -27,8 +27,6 @@ import java.math.BigInteger;
 import java.math.MathContext;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
-import java.util.Locale;
 
 public abstract class NumericFunction implements Function {
 
@@ -113,8 +111,8 @@ public abstract class NumericFunction implements Function {
                 decimalPlacesFormat.append('0');
             }
             StringBuilder decimalFormatString = new StringBuilder();
-            decimalFormatString.append("$#,##0").append(decimalPlacesFormat)
-                    .append(";($#,##0").append(decimalPlacesFormat).append(')');
+            decimalFormatString.append("¤#,##0").append(decimalPlacesFormat)
+                    .append(";(¤#,##0").append(decimalPlacesFormat).append(')');
 
             DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale());
             DecimalFormat df = new DecimalFormat(decimalFormatString.toString(), symbols);
