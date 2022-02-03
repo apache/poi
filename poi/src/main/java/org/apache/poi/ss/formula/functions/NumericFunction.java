@@ -20,8 +20,13 @@ package org.apache.poi.ss.formula.functions;
 import static org.apache.poi.ss.formula.eval.ErrorEval.VALUE_INVALID;
 
 import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.util.LocaleUtil;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.MathContext;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.Locale;
 
@@ -93,6 +98,13 @@ public abstract class NumericFunction implements Function {
                 return VALUE_INVALID;
             }
 
+            if (nPlaces < 0) {
+                BigDecimal divisor = BigDecimal.valueOf(Math.pow(10, -nPlaces));
+                BigInteger bigInt = BigDecimal.valueOf(val).divide(divisor, MathContext.DECIMAL128)
+                        .toBigInteger().multiply(divisor.toBigInteger());
+                val = bigInt.doubleValue();
+            }
+
             StringBuilder decimalPlacesFormat = new StringBuilder();
             if (nPlaces > 0) {
                 decimalPlacesFormat.append('.');
@@ -104,10 +116,11 @@ public abstract class NumericFunction implements Function {
             decimalFormatString.append("$#,##0").append(decimalPlacesFormat)
                     .append(";($#,##0").append(decimalPlacesFormat).append(')');
 
-            DecimalFormat df = new DecimalFormat(decimalFormatString.toString());
+            DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale());
+            DecimalFormat df = new DecimalFormat(decimalFormatString.toString(), symbols);
 
             return new StringEval(df.format(val));
-        }catch (EvaluationException e) {
+        } catch (EvaluationException e) {
             return e.getErrorEval();
         }
     }

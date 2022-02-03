@@ -59,8 +59,7 @@ final class TestNumericFunction {
         //https://support.microsoft.com/en-us/office/dollar-function-a6cd05d9-9740-4ad3-a469-8109d18ff611
         assertString(fe, cell, "DOLLAR(1234.567,2)", "$1,234.57");
         assertString(fe, cell, "DOLLAR(-1234.567,0)", "($1,235)");
-        //TODO need to fix code to handle next case
-        //assertString(fe, cell, "DOLLAR(-1234.567,-2)", "($1,200)");
+        assertString(fe, cell, "DOLLAR(-1234.567,-2)", "($1,200)");
         assertString(fe, cell, "DOLLAR(-0.123,4)", "($0.1230)");
         assertString(fe, cell, "DOLLAR(99.888)", "$99.89");
         assertString(fe, cell, "DOLLAR(123456789.567,2)", "$123,456,789.57");
