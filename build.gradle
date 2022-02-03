@@ -126,7 +126,7 @@ subprojects {
         batikVersion = '1.14'
         graphics2dVersion = '0.34'
         pdfboxVersion = '2.0.25'
-        saxonVersion = '10.6'
+        saxonVersion = '11.1'
         apiGuardianVersion = '1.1.2'
 
         JAVA9_SRC = 'src/main/java9'
