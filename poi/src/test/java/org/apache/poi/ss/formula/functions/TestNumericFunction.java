@@ -30,8 +30,12 @@ final class TestNumericFunction {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-        assertDouble(fe, cell, "880000000*0.00849", 7471200.0, 0.00000001);
-        assertDouble(fe, cell, "880000000*0.00849/3", 2490400.0, 0.00000001);
-        assertDouble(fe, cell, "INT(880000000*0.00849/3)", 2490400.0, 0.00000001);
+        assertDouble(fe, cell, "INT(880000000.0001)", 880000000.0, 0);
+        //the following INT(-880000000.0001) resulting in -880000001.0 has been observed in excel
+        //see also https://support.microsoft.com/en-us/office/int-function-a6c4af9e-356d-4369-ab6a-cb1fd9d343ef
+        assertDouble(fe, cell, "INT(-880000000.0001)", -880000001.0, 0);
+        assertDouble(fe, cell, "880000000*0.00849", 7471200.0, 0);
+        assertDouble(fe, cell, "880000000*0.00849/3", 2490400.0, 0);
+        assertDouble(fe, cell, "INT(880000000*0.00849/3)", 2490400.0, 0);
     }
 }

@@ -100,6 +100,7 @@ public abstract class NumericFunction implements Function {
 
     public static final Function EXP = oneDouble(d -> Math.pow(Math.E, d));
     public static final Function FACT = oneDouble(MathX::factorial);
+    //https://support.microsoft.com/en-us/office/int-function-a6c4af9e-356d-4369-ab6a-cb1fd9d343ef
     public static final Function INT = oneDouble(d -> Math.round(d-0.5));
     public static final Function LN = oneDouble(Math::log);
     public static final Function LOG10 = oneDouble(d -> Math.log(d) / LOG_10_TO_BASE_e);
