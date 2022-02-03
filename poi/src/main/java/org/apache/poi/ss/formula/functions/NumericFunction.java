@@ -21,6 +21,10 @@ import static org.apache.poi.ss.formula.eval.ErrorEval.VALUE_INVALID;
 
 import org.apache.poi.ss.formula.eval.*;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
+
 public abstract class NumericFunction implements Function {
 
     private static final double ZERO = 0.0;
@@ -89,10 +93,20 @@ public abstract class NumericFunction implements Function {
                 return VALUE_INVALID;
             }
 
-            // TODO - DOLLAR() function impl is NQR
-            // result should be StringEval, with leading '$' and thousands separators
-            // current junits are asserting incorrect behaviour
-            return new NumberEval(val);
+            StringBuilder decimalPlacesFormat = new StringBuilder();
+            if (nPlaces > 0) {
+                decimalPlacesFormat.append('.');
+            }
+            for (int i = 0; i < nPlaces; i++) {
+                decimalPlacesFormat.append('0');
+            }
+            StringBuilder decimalFormatString = new StringBuilder();
+            decimalFormatString.append("$#,##0").append(decimalPlacesFormat)
+                    .append(";($#,##0").append(decimalPlacesFormat).append(')');
+
+            DecimalFormat df = new DecimalFormat(decimalFormatString.toString());
+
+            return new StringEval(df.format(val));
         }catch (EvaluationException e) {
             return e.getErrorEval();
         }

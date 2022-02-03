@@ -22,6 +22,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
 import static org.apache.poi.ss.util.Utils.assertDouble;
+import static org.apache.poi.ss.util.Utils.assertString;
 
 final class TestNumericFunction {
 
@@ -50,4 +51,18 @@ final class TestNumericFunction {
         assertDouble(fe, cell, "SIGN(-0.00001)", -1.0, 0);
     }
 
+    @Test
+    void testDOLLAR() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+        //https://support.microsoft.com/en-us/office/dollar-function-a6cd05d9-9740-4ad3-a469-8109d18ff611
+        assertString(fe, cell, "DOLLAR(1234.567,2)", "$1,234.57");
+        assertString(fe, cell, "DOLLAR(-1234.567,0)", "($1,235)");
+        //TODO need to fix code to handle next case
+        //assertString(fe, cell, "DOLLAR(-1234.567,-2)", "($1,200)");
+        assertString(fe, cell, "DOLLAR(-0.123,4)", "($0.1230)");
+        assertString(fe, cell, "DOLLAR(99.888)", "$99.89");
+        assertString(fe, cell, "DOLLAR(123456789.567,2)", "$123,456,789.57");
+    }
 }
