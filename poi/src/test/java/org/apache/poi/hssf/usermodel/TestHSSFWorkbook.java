@@ -1186,7 +1186,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
                 HSSFWorkbook wb = openSampleWorkbook("49423.xls")
         ) {
             assertEquals(CellReferenceType.A1, wb.getCellReferenceType());
-            wb.setUseR1C1CellReferences(true);
+            wb.setCellReferenceType(CellReferenceType.R1C1);
             assertEquals(CellReferenceType.R1C1, wb.getCellReferenceType());
             wb.write(bos);
             try (HSSFWorkbook wb2 = new HSSFWorkbook(bos.toInputStream())) {
@@ -1204,7 +1204,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             assertEquals(CellReferenceType.UNKNOWN, wb.getCellReferenceType());
             HSSFSheet sheet = wb.createSheet();
             assertEquals(CellReferenceType.A1, wb.getCellReferenceType());
-            wb.setUseR1C1CellReferences(true);
+            wb.setCellReferenceType(CellReferenceType.R1C1);
             assertEquals(CellReferenceType.R1C1, wb.getCellReferenceType());
             wb.write(bos);
             try (HSSFWorkbook wb2 = new HSSFWorkbook(bos.toInputStream())) {

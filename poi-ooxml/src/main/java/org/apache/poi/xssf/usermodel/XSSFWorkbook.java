@@ -1565,11 +1565,17 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     @Override
-    public void setUseR1C1CellReferences(boolean useR1C1CellReferences) {
+    public void setCellReferenceType(CellReferenceType cellReferenceType) {
         CTCalcPr calcPr = getCTWorkbook().getCalcPr();
-        if (calcPr == null) calcPr = getCTWorkbook().addNewCalcPr();
-        STRefMode.Enum refMode = useR1C1CellReferences ? R_1_C_1 : A_1;
-        calcPr.setRefMode(refMode);
+        if (cellReferenceType == CellReferenceType.UNKNOWN) {
+            if (calcPr != null) {
+                calcPr.unsetRefMode();
+            }
+        } else {
+            if (calcPr == null) calcPr = getCTWorkbook().addNewCalcPr();
+            STRefMode.Enum refMode = cellReferenceType == CellReferenceType.R1C1 ? R_1_C_1 : A_1;
+            calcPr.setRefMode(refMode);
+        }
     }
 
     private static String getReferencePrintArea(String sheetName, int startC, int endC, int startR, int endR) {

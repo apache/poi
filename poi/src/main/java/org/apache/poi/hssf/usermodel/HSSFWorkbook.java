@@ -1757,7 +1757,10 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
             RefModeRecord refModeRecord = null;
             for (RecordBase record : records) {
-                if (record instanceof RefModeRecord) refModeRecord = (RefModeRecord)record;
+                if (record instanceof RefModeRecord) {
+                    refModeRecord = (RefModeRecord)record;
+                    break;
+                }
             }
             if (refModeRecord == null) {
                 continue;
@@ -1771,17 +1774,17 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
-     * Configure workbook to use R1C1 cell references (as opposed to A1 cell references).
+     * Configure workbook to a specific cell reference type, e.g. R1C1 cell references (as opposed to A1 cell references).
      * <p>
      *     Note that HSSF format stores this information at sheet level - so if the workbook has no sheets,
      *     this call will have no effect. It is recommended that you call this (possibly again) just before
      *     writing HSSFWorkbook.
      * </p>
-     * @param useR1C1CellReferences set to true if you want to configure workbook to use R1C1 cell references (as opposed to A1 cell references).
+     * @param cellReferenceType the type of cell references used
      * @since POI 5.2.1
      */
     @Override
-    public void setUseR1C1CellReferences(boolean useR1C1CellReferences) {
+    public void setCellReferenceType(CellReferenceType cellReferenceType) {
         for (HSSFSheet hssfSheet : _sheets) {
 
             InternalSheet internalSheet = hssfSheet.getSheet();
@@ -1790,20 +1793,27 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
             RefModeRecord refModeRecord = null;
             for (RecordBase record : records) {
-                if (record instanceof RefModeRecord) refModeRecord = (RefModeRecord)record;
+                if (record instanceof RefModeRecord) {
+                    refModeRecord = (RefModeRecord)record;
+                    break;
+                }
             }
-            if (useR1C1CellReferences) {
+            if (cellReferenceType == CellReferenceType.R1C1) {
                 if (refModeRecord == null) {
                     refModeRecord = new RefModeRecord();
                     records.add(records.size() - 1, refModeRecord);
                 }
                 refModeRecord.setMode(RefModeRecord.USE_R1C1_MODE);
-            } else {
+            } else if (cellReferenceType == CellReferenceType.A1) {
                 if (refModeRecord == null) {
                     refModeRecord = new RefModeRecord();
                     records.add(records.size() - 1, refModeRecord);
                 }
                 refModeRecord.setMode(RefModeRecord.USE_A1_MODE);
+            } else {
+                if (refModeRecord != null) {
+                    records.remove(refModeRecord);
+                }
             }
         }
     }

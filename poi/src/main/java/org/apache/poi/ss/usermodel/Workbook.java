@@ -639,8 +639,8 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     CellReferenceType getCellReferenceType();
 
     /**
-     * @param useR1C1CellReferences set to true if you want to configure workbook to use R1C1 cell references (as opposed to A1 cell references).
+     * @param cellReferenceType the type of cell references used
      * @since POI 5.2.1
      */
-    void setUseR1C1CellReferences(boolean useR1C1CellReferences);
+    void setCellReferenceType(CellReferenceType cellReferenceType);
 }

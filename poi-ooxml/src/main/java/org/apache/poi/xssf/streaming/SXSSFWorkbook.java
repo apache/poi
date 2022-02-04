@@ -1362,7 +1362,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     @Override
-    public void setUseR1C1CellReferences(boolean useR1C1CellReferences) {
-        getXSSFWorkbook().setUseR1C1CellReferences(useR1C1CellReferences);
+    public void setCellReferenceType(CellReferenceType cellReferenceType) {
+        getXSSFWorkbook().setCellReferenceType(cellReferenceType);
     }
 }

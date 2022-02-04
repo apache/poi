@@ -1373,7 +1373,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
                 XSSFWorkbook wb = openSampleWorkbook("WithTable.xlsx")
         ) {
             assertEquals(CellReferenceType.A1, wb.getCellReferenceType());
-            wb.setUseR1C1CellReferences(true);
+            wb.setCellReferenceType(CellReferenceType.R1C1);
             assertEquals(CellReferenceType.R1C1, wb.getCellReferenceType());
             wb.write(bos);
             try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
@@ -1389,7 +1389,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
                 XSSFWorkbook wb = new XSSFWorkbook()
         ) {
             assertEquals(CellReferenceType.UNKNOWN, wb.getCellReferenceType());
-            wb.setUseR1C1CellReferences(true);
+            wb.setCellReferenceType(CellReferenceType.R1C1);
             assertEquals(CellReferenceType.R1C1, wb.getCellReferenceType());
             wb.write(bos);
             try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
