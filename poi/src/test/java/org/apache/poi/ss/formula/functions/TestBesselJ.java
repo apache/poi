@@ -63,6 +63,7 @@ final class TestBesselJ {
             double tolerance = 0.000001;
             assertDouble(fe, cell, "BESSELJ(1.9, 2)", 0.329925829, tolerance);
             assertDouble(fe, cell, "BESSELJ(1.9, 2.5)", 0.329925829, tolerance);
+            assertDouble(fe, cell, "BESSELJ(12.4,7)", -0.217156767, tolerance);
         }
     }
 
