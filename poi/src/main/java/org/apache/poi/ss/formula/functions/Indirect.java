@@ -93,7 +93,7 @@ public final class Indirect implements FreeRefFunction {
     }
 
     private static ValueEval evaluateIndirect(final OperationEvaluationContext ec, String text,
-            boolean isA1style) {
+                                              boolean isA1style) {
 
         // Search backwards for '!' because sheet names can contain '!'
         int plingPos = text.lastIndexOf('!');
@@ -115,7 +115,7 @@ public final class Indirect implements FreeRefFunction {
             refText = text.substring(plingPos + 1);
         }
 
-        if (Table.isStructuredReference.matcher(refText).matches()) {
+        if (isA1style && Table.isStructuredReference.matcher(refText).matches()) {
             // The argument is structured reference
             Area3DPxg areaPtg;
             try {
@@ -130,8 +130,8 @@ public final class Indirect implements FreeRefFunction {
             String refStrPart2;
             int colonPos = refText.indexOf(':');
             if (colonPos < 0) {
-                 refStrPart1 = refText.trim();
-                 refStrPart2 = null;
+                refStrPart1 = refText.trim();
+                refStrPart2 = null;
             } else {
                 refStrPart1 = refText.substring(0, colonPos).trim();
                 refStrPart2 = refText.substring(colonPos + 1).trim();
@@ -187,7 +187,7 @@ public final class Indirect implements FreeRefFunction {
             // else - just sheet name
             String sheetName = unescapeString(text.subSequence(sheetStartPos, lastIx));
             if (sheetName == null) { // note - when quoted, sheetName can
-                                     // start/end with whitespace
+                // start/end with whitespace
                 return null;
             }
             return new String[] { wbName, sheetName, };
