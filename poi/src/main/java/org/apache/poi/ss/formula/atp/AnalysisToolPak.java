@@ -72,7 +72,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "AVERAGEIFS", Averageifs.instance);
         r(m, "BAHTTEXT", null);
         r(m, "BESSELI", null);
-        r(m, "BESSELJ", null);
+        r(m, "BESSELJ", BesselJ.instance);
         r(m, "BESSELK", null);
         r(m, "BESSELY", null);
         r(m, "BIN2DEC", Bin2Dec.instance);
