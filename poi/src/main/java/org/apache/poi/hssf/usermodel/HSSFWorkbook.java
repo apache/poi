@@ -96,6 +96,7 @@ import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.usermodel.CellReferenceType;
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -1748,7 +1749,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     @Override
-    public Boolean usesR1C1CellReferences() {
+    public CellReferenceType getCellReferenceType() {
         for (HSSFSheet hssfSheet : _sheets) {
             InternalSheet internalSheet = hssfSheet.getSheet();
 
@@ -1759,14 +1760,14 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
                 if (record instanceof RefModeRecord) refModeRecord = (RefModeRecord)record;
             }
             if (refModeRecord == null) {
-                return null;
+                continue;
             } else if (refModeRecord.getMode() == RefModeRecord.USE_R1C1_MODE) {
-                return Boolean.TRUE;
+                return CellReferenceType.R1C1;
             } else if (refModeRecord.getMode() == RefModeRecord.USE_A1_MODE) {
-                return Boolean.FALSE;
+                return CellReferenceType.A1;
             }
         }
-        return null;
+        return CellReferenceType.UNKNOWN;
     }
 
     /**

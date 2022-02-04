@@ -50,6 +50,7 @@ import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.usermodel.CellReferenceType;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataFormat;
@@ -1356,8 +1357,8 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     @Override
-    public Boolean usesR1C1CellReferences() {
-        return getXSSFWorkbook().usesR1C1CellReferences();
+    public CellReferenceType getCellReferenceType() {
+        return getXSSFWorkbook().getCellReferenceType();
     }
 
     @Override

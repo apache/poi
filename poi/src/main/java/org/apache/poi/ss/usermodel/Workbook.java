@@ -633,11 +633,10 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     EvaluationWorkbook createEvaluationWorkbook();
 
     /**
-     * @return true if workbook is configured to use R1C1 cell references (as opposed to A1 cell references).
-     * Returns null if the configuration is not explicitly set on the workbook.
+     * @return the type of cell references used
      * @since POI 5.2.1
      */
-    Boolean usesR1C1CellReferences();
+    CellReferenceType getCellReferenceType();
 
     /**
      * @param useR1C1CellReferences set to true if you want to configure workbook to use R1C1 cell references (as opposed to A1 cell references).

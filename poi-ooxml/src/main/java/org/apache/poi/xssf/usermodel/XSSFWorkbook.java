@@ -71,6 +71,7 @@ import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.apache.poi.ss.usermodel.CellReferenceType;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Date1904Support;
 import org.apache.poi.ss.usermodel.Name;
@@ -1551,16 +1552,16 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     @Override
-    public Boolean usesR1C1CellReferences() {
+    public CellReferenceType getCellReferenceType() {
         final CTCalcPr calcPr = getCTWorkbook().getCalcPr();
         if (calcPr == null) {
-            return null;
+            return CellReferenceType.UNKNOWN;
         } else if (calcPr.getRefMode() == R_1_C_1) {
-            return Boolean.TRUE;
+            return CellReferenceType.R1C1;
         } else if (calcPr.getRefMode() == A_1) {
-            return Boolean.FALSE;
+            return CellReferenceType.A1;
         }
-        return null;
+        return CellReferenceType.UNKNOWN;
     }
 
     @Override

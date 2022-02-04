@@ -17,38 +17,38 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
-import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
-import static org.apache.poi.xssf.XSSFTestDataSamples.*;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.zip.CRC32;
-
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.*;
+import org.apache.poi.openxml4j.opc.ContentTypes;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.ZipPackage;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellReferenceType;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Comment;
+import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
@@ -67,6 +67,31 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.zip.CRC32;
+
+import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
+import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
+import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
+import static org.apache.poi.xssf.XSSFTestDataSamples.writeOut;
+import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
@@ -1347,12 +1372,12 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
                 UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
                 XSSFWorkbook wb = openSampleWorkbook("WithTable.xlsx")
         ) {
-            assertFalse(wb.usesR1C1CellReferences());
+            assertEquals(CellReferenceType.A1, wb.getCellReferenceType());
             wb.setUseR1C1CellReferences(true);
-            assertTrue(wb.usesR1C1CellReferences());
+            assertEquals(CellReferenceType.R1C1, wb.getCellReferenceType());
             wb.write(bos);
             try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
-                assertTrue(wb2.usesR1C1CellReferences());
+                assertEquals(CellReferenceType.R1C1, wb2.getCellReferenceType());
             }
         }
     }
@@ -1363,12 +1388,12 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
                 UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
                 XSSFWorkbook wb = new XSSFWorkbook()
         ) {
-            assertNull(wb.usesR1C1CellReferences());
+            assertEquals(CellReferenceType.UNKNOWN, wb.getCellReferenceType());
             wb.setUseR1C1CellReferences(true);
-            assertTrue(wb.usesR1C1CellReferences());
+            assertEquals(CellReferenceType.R1C1, wb.getCellReferenceType());
             wb.write(bos);
             try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
-                assertTrue(wb2.usesR1C1CellReferences());
+                assertEquals(CellReferenceType.R1C1, wb2.getCellReferenceType());
             }
         }
     }

@@ -61,6 +61,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.usermodel.BaseTestWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellReferenceType;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.Name;
@@ -1184,12 +1185,12 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
                 UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
                 HSSFWorkbook wb = openSampleWorkbook("49423.xls")
         ) {
-            assertFalse(wb.usesR1C1CellReferences());
+            assertEquals(CellReferenceType.A1, wb.getCellReferenceType());
             wb.setUseR1C1CellReferences(true);
-            assertTrue(wb.usesR1C1CellReferences());
+            assertEquals(CellReferenceType.R1C1, wb.getCellReferenceType());
             wb.write(bos);
             try (HSSFWorkbook wb2 = new HSSFWorkbook(bos.toInputStream())) {
-                assertTrue(wb2.usesR1C1CellReferences());
+                assertEquals(CellReferenceType.R1C1, wb2.getCellReferenceType());
             }
         }
     }
@@ -1200,14 +1201,14 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
                 UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
                 HSSFWorkbook wb = new HSSFWorkbook()
         ) {
-            assertNull(wb.usesR1C1CellReferences());
+            assertEquals(CellReferenceType.UNKNOWN, wb.getCellReferenceType());
             HSSFSheet sheet = wb.createSheet();
-            assertFalse(wb.usesR1C1CellReferences());
+            assertEquals(CellReferenceType.A1, wb.getCellReferenceType());
             wb.setUseR1C1CellReferences(true);
-            assertTrue(wb.usesR1C1CellReferences());
+            assertEquals(CellReferenceType.R1C1, wb.getCellReferenceType());
             wb.write(bos);
             try (HSSFWorkbook wb2 = new HSSFWorkbook(bos.toInputStream())) {
-                assertTrue(wb2.usesR1C1CellReferences());
+                assertEquals(CellReferenceType.R1C1, wb2.getCellReferenceType());
             }
         }
     }
