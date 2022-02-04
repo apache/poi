@@ -103,7 +103,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "DELTA", Delta.instance);
         r(m, "DISC", null);
         r(m, "DOLLARDE", DollarDe.instance);
-        r(m, "DOLLARFR", null);
+        r(m, "DOLLARFR", DollarFr.instance);
         r(m, "DURATION", null);
         r(m, "EDATE", EDate.instance);
         r(m, "EFFECT", null);

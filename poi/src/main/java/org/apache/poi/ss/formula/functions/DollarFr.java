@@ -26,15 +26,17 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
- * Implementation for Excel DOLLARDE() function.
+ * Implementation for Excel DOLLARFR() function.
  * <p>
- * https://support.microsoft.com/en-us/office/dollarde-function-db85aab0-1677-428a-9dfd-a38476693427
+ * https://support.microsoft.com/en-us/office/dollarfr-function-0835d163-3023-4a33-9824-3042c5d4f495
  */
-public final class DollarDe extends Fixed2ArgFunction implements FreeRefFunction {
+public final class DollarFr extends Fixed2ArgFunction implements FreeRefFunction {
 
-    public static final FreeRefFunction instance = new DollarDe();
+    public static final FreeRefFunction instance = new DollarFr();
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg1, ValueEval arg2) {
@@ -68,9 +70,9 @@ public final class DollarDe extends Fixed2ArgFunction implements FreeRefFunction
                 return new NumberEval(valueLong);
             }
 
-            BigDecimal inflated = BigDecimal.valueOf(valueFractional).multiply(BigDecimal.valueOf(Math.pow(10, fractionLength)));
+            BigDecimal calc = BigDecimal.valueOf(valueFractional).multiply(BigDecimal.valueOf(fraction))
+                    .divide(BigDecimal.valueOf(Math.pow(10, fractionLength)), MathContext.DECIMAL128);
 
-            BigDecimal calc = inflated.divide(BigDecimal.valueOf(fraction), MathContext.DECIMAL128);
             BigDecimal result = calc.add(BigDecimal.valueOf(valueLong));
             if (negative) {
                 result = result.multiply(BigDecimal.valueOf(-1));

@@ -23,7 +23,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
@@ -32,14 +31,13 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Tests for {@link DollarDe}
+ * Tests for {@link DollarFr}
  */
-final class TestDollarDe {
+final class TestDollarFr {
 
     private static final OperationEvaluationContext ec = new OperationEvaluationContext(null, null, 0, 0, 0, null);
 
@@ -60,7 +58,7 @@ final class TestDollarDe {
         confirmDiv0("22.5","-0.9");
     }
 
-    //https://support.microsoft.com/en-us/office/dollarde-function-db85aab0-1677-428a-9dfd-a38476693427
+    //https://support.microsoft.com/en-us/office/dollarfr-function-0835d163-3023-4a33-9824-3042c5d4f495
     @Test
     void testMicrosoftExample1() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
@@ -69,14 +67,10 @@ final class TestDollarDe {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = row.createCell(0);
             double tolerance = 0.000000000000001;
-            assertDouble(fe, cell, "DOLLARDE(1.02,16)", 1.125, tolerance);
-            assertDouble(fe, cell, "DOLLARDE(1.02,16.9)", 1.125, tolerance);
-            assertDouble(fe, cell, "DOLLARDE(1.32,16)", 3.0, tolerance);
-            assertDouble(fe, cell, "DOLLARDE(-1.02,16)", -1.125, tolerance);
-            assertDouble(fe, cell, "DOLLARDE(1.1,32)", 1.3125, tolerance);
-            assertDouble(fe, cell, "DOLLARDE(1.1,32.1)", 1.3125, tolerance);
-            assertDouble(fe, cell, "DOLLARDE(1.0,32)", 1.0, tolerance);
-            assertDouble(fe, cell, "DOLLARDE(1.000001,32)", 1.000003125, tolerance);
+            assertDouble(fe, cell, "DOLLARFR(1.125,16)", 1.02, tolerance);
+            assertDouble(fe, cell, "DOLLARFR(-1.125,16)", -1.02, tolerance);
+            assertDouble(fe, cell, "DOLLARFR(1.000125,16)", 1.00002, tolerance);
+            assertDouble(fe, cell, "DOLLARFR(1.125,32)", 1.04, tolerance);
         }
     }
 
