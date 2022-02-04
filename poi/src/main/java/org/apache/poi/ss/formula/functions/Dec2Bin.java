@@ -24,7 +24,7 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel Bin2Dec() function.
+ * Implementation for Excel DEC2BIN() function.
  * <p>
  * <b>Syntax</b>:<br> <b>Bin2Dec  </b>(<b>number</b>,<b>[places]</b> )<br>
  * <p>
