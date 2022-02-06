@@ -335,9 +335,10 @@ under the License.
 
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.10.2" usage="ooxml-tests"/>
-    <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:30.1-jre" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:31.0.1-jre" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.35" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.opczip" artifact="com.github.rzymek:opczip:1.2.0" usage="ooxml-tests"/>
 
     <!-- coverage libs -->
     <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.6" usage="util" packaging="zip"/>
@@ -479,6 +480,7 @@ under the License.
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${ooxml.test.guava.jar}"/>
+        <pathelement location="${ooxml.test.opczip.jar}"/>
         <!-- classes are omitted on test cases outside the xml-dsign area to avoid classpath poisioning -->
         <!--path refid="ooxml.xmlsec.classpath"/-->
         <!-- Used only for ExtractorFactory, see #57963 -->
@@ -824,6 +826,7 @@ under the License.
                     <available file="${ooxml.test.guava.jar}"/>
                     <available file="${ooxml.test.javassist.jar}"/>
                     <available file="${ooxml.test.slf4j-api.jar}"/>
+                    <available file="${ooxml.test.opczip.jar}"/>
                     <available file="${svg.xml-apis-ext.jar}"/>
                     <available file="${svg.batik-anim.jar}"/>
                     <available file="${svg.batik-awt-util.jar}"/>
@@ -863,6 +866,7 @@ under the License.
         <downloadfile src="${ooxml.test.guava.url}" dest="${ooxml.test.guava.jar}"/>
         <downloadfile src="${ooxml.test.javassist.url}" dest="${ooxml.test.javassist.jar}"/>
         <downloadfile src="${ooxml.test.slf4j-api.url}" dest="${ooxml.test.slf4j-api.jar}"/>
+        <downloadfile src="${ooxml.test.opczip.url}" dest="${ooxml.test.opczip.jar}"/>
         <downloadfile src="${svg.batik-anim.url}" dest="${svg.batik-anim.jar}"/>
         <downloadfile src="${svg.batik-awt-util.url}" dest="${svg.batik-awt-util.jar}"/>
         <downloadfile src="${svg.batik-bridge.url}" dest="${svg.batik-bridge.jar}"/>
