@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaParsingWorkbook;
@@ -45,6 +47,7 @@ import org.apache.poi.ss.usermodel.Table;
  */
 public final class Indirect implements FreeRefFunction {
 
+    private static final Logger LOGGER = LogManager.getLogger(Indirect.class);
     public static final FreeRefFunction instance = new Indirect();
 
     private Indirect() {
@@ -136,7 +139,12 @@ public final class Indirect implements FreeRefFunction {
                 refStrPart1 = refText.substring(0, colonPos).trim();
                 refStrPart2 = refText.substring(colonPos + 1).trim();
             }
-            return ec.getDynamicReference(workbookName, sheetName, refStrPart1, refStrPart2, isA1style);
+            try {
+                return ec.getDynamicReference(workbookName, sheetName, refStrPart1, refStrPart2, isA1style);
+            } catch (Exception e) {
+                LOGGER.atWarn().log("Indirect function: failed to parse reference {}", text, e);
+                return ErrorEval.REF_INVALID;
+            }
         }
     }
 

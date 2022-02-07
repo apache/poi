@@ -109,6 +109,7 @@ public class CellReference implements GenericRecord {
     /**
      * Create an cell ref from a string representation.  Sheet names containing special characters should be
      * delimited and escaped as per normal syntax rules for formulas.
+     * @throws IllegalArgumentException if cellRef is not valid
      */
     public CellReference(String cellRef) {
         if(endsWithIgnoreCase(cellRef, "#REF!")) {

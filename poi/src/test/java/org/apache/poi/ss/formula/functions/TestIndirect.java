@@ -177,6 +177,7 @@ final class TestIndirect {
             // simple error propagation:
 
             confirm(feA, c, "INDIRECT(\"'Sheet1 '!R3C4\", FALSE)", ErrorEval.REF_INVALID);
+            confirm(feA, c, "INDIRECT(\"R2CX\", FALSE)", ErrorEval.REF_INVALID);
         }
     }
 
