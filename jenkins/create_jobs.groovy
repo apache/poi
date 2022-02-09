@@ -110,29 +110,17 @@ def poijobs = [
 ]
 
 def xmlbeansjobs = [
-        [ name: 'POI-XMLBeans-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true,
+        [ name: 'POI-XMLBeans-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true, gradle: true,
         ],
-        [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
+        [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true, gradle: true,
         ],
-        [ name: 'POI-XMLBeans-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
-          disabled: true
-        ],
-        [ name: 'POI-XMLBeans-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA now
-          disabled: true
-        ],
-        [ name: 'POI-XMLBeans-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 15 is not a LTS and JDK 16 is GA now
-          disabled: true
-        ],
-        [ name: 'POI-XMLBeans-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true,
+        [ name: 'POI-XMLBeans-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true, gradle: true,
           // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
           disabled: true
         ],
-        [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true
+        [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true, gradle: true,
         ],
-        [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true
+        [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true, gradle: true,
         ],
         [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
           sonar: true
