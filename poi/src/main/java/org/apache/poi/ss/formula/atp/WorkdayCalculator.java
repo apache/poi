@@ -17,8 +17,11 @@
 
 package org.apache.poi.ss.formula.atp;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
@@ -29,6 +32,35 @@ import org.apache.poi.util.Removal;
  */
 public class WorkdayCalculator {
     public static final WorkdayCalculator instance = new WorkdayCalculator();
+
+    private static final Set<Integer> standardWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.SATURDAY, Calendar.SUNDAY}));
+    private static final Set<Integer> sunMonWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.SUNDAY, Calendar.MONDAY}));
+    private static final Set<Integer> monTuesWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.MONDAY, Calendar.TUESDAY}));
+    private static final Set<Integer> tuesWedsWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.TUESDAY, Calendar.WEDNESDAY}));
+    private static final Set<Integer> wedsThursWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.WEDNESDAY, Calendar.THURSDAY}));
+    private static final Set<Integer> thursFriWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.THURSDAY, Calendar.FRIDAY}));
+    private static final Set<Integer> friSatWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.FRIDAY, Calendar.SATURDAY}));
+    private static final Set<Integer> monWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.MONDAY}));
+    private static final Set<Integer> tuesWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.TUESDAY}));
+    private static final Set<Integer> wedsWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.WEDNESDAY}));
+    private static final Set<Integer> thursWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.THURSDAY}));
+    private static final Set<Integer> friWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.FRIDAY}));
+    private static final Set<Integer> satWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.SATURDAY}));
+    private static final Set<Integer> sunWeekend =
+            new HashSet<>(Arrays.asList(new Integer[]{Calendar.SUNDAY}));
 
     /**
      * Constructor.
@@ -46,10 +78,12 @@ public class WorkdayCalculator {
      * @return number of workdays between start and end dates, including both dates.
      */
     public int calculateWorkdays(double start, double end, double[] holidays) {
-        int saturdaysPast = this.pastDaysOfWeek(start, end, Calendar.SATURDAY);
-        int sundaysPast = this.pastDaysOfWeek(start, end, Calendar.SUNDAY);
+        Integer[] weekendDays = new Integer[standardWeekend.size()];
+        weekendDays = standardWeekend.toArray(weekendDays);
+        int weekendDay1Past = weekendDays.length == 0 ? 0 : this.pastDaysOfWeek(start, end, weekendDays[0]);
+        int weekendDay2Past = weekendDays.length <= 1 ? 0 : this.pastDaysOfWeek(start, end, weekendDays[1]);
         int nonWeekendHolidays = this.calculateNonWeekendHolidays(start, end, holidays);
-        return (int) (end - start + 1) - saturdaysPast - sundaysPast - nonWeekendHolidays;
+        return (int) (end - start + 1) - weekendDay1Past - weekendDay2Past - nonWeekendHolidays;
     }
 
     /**
@@ -131,8 +165,11 @@ public class WorkdayCalculator {
     }
 
     private boolean isWeekend(Calendar date) {
-        return date.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
-                && date.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY;
+        return isWeekend(date, standardWeekend);
+    }
+
+    private boolean isWeekend(Calendar date, Set<Integer> weekendDays) {
+        return weekendDays.contains(date.get(Calendar.DAY_OF_WEEK));
     }
 
     /**
