@@ -20,7 +20,9 @@ package org.apache.poi.ss.formula.atp;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -61,6 +63,24 @@ public class WorkdayCalculator {
             new HashSet<>(Arrays.asList(new Integer[]{Calendar.SATURDAY}));
     private static final Set<Integer> sunWeekend =
             new HashSet<>(Arrays.asList(new Integer[]{Calendar.SUNDAY}));
+    private static final Map<Integer, Set<Integer>> weekendTypeMap = new HashMap<>();
+
+    static {
+        weekendTypeMap.put(1, standardWeekend);
+        weekendTypeMap.put(2, sunMonWeekend);
+        weekendTypeMap.put(3, monTuesWeekend);
+        weekendTypeMap.put(4, tuesWedsWeekend);
+        weekendTypeMap.put(5, wedsThursWeekend);
+        weekendTypeMap.put(6, thursFriWeekend);
+        weekendTypeMap.put(7, friSatWeekend);
+        weekendTypeMap.put(11, monWeekend);
+        weekendTypeMap.put(12, tuesWeekend);
+        weekendTypeMap.put(13, wedsWeekend);
+        weekendTypeMap.put(14, thursWeekend);
+        weekendTypeMap.put(15, friWeekend);
+        weekendTypeMap.put(16, satWeekend);
+        weekendTypeMap.put(17, sunWeekend);
+    }
 
     /**
      * Constructor.
@@ -88,6 +108,7 @@ public class WorkdayCalculator {
 
     /**
      * Calculate the workday past x workdays from a starting date, considering a range of holidays.
+     * Uses Sat/Sun weekend.
      *
      * @param start start date.
      * @param workdays number of workdays to be past from starting date.
@@ -95,6 +116,20 @@ public class WorkdayCalculator {
      * @return date past x workdays.
      */
     public Date calculateWorkdays(double start, int workdays, double[] holidays) {
+        return calculateWorkdays(start, workdays, 1, holidays);
+    }
+
+    /**
+     * Calculate the workday past x workdays from a starting date, considering a range of holidays.
+     *
+     * @param start start date.
+     * @param workdays number of workdays to be past from starting date.
+     * @param weekendType weekend parameter (see https://support.microsoft.com/en-us/office/workday-intl-function-a378391c-9ba7-4678-8a39-39611a9bf81d)
+     * @param holidays an array of holidays.
+     * @return date past x workdays.
+     */
+    public Date calculateWorkdays(double start, int workdays, int weekendType, double[] holidays) {
+        Set<Integer> weekendDays = weekendTypeMap.getOrDefault(weekendType, standardWeekend);
         Date startDate = DateUtil.getJavaDate(start);
         int direction = workdays < 0 ? -1 : 1;
         Calendar endDate = LocaleUtil.getLocaleCalendar();
@@ -103,7 +138,7 @@ public class WorkdayCalculator {
         while (workdays != 0) {
             endDate.add(Calendar.DAY_OF_YEAR, direction);
             excelEndDate += direction;
-            if (!isWeekend(endDate) && !isHoliday(excelEndDate, holidays)) {
+            if (!isWeekend(endDate, weekendDays) && !isHoliday(excelEndDate, holidays)) {
                 workdays -= direction;
             }
         }
