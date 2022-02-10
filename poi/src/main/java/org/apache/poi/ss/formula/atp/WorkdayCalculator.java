@@ -69,9 +69,7 @@ public class WorkdayCalculator {
         while (workdays != 0) {
             endDate.add(Calendar.DAY_OF_YEAR, direction);
             excelEndDate += direction;
-            if (endDate.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
-                    && endDate.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY
-                    && !isHoliday(excelEndDate, holidays)) {
+            if (!isWeekend(endDate) && !isHoliday(excelEndDate, holidays)) {
                 workdays -= direction;
             }
         }
@@ -129,7 +127,12 @@ public class WorkdayCalculator {
     protected boolean isWeekend(double aDate) {
         Calendar date = LocaleUtil.getLocaleCalendar();
         date.setTime(DateUtil.getJavaDate(aDate));
-        return date.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || date.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
+        return isWeekend(date);
+    }
+
+    private boolean isWeekend(Calendar date) {
+        return date.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
+                && date.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY;
     }
 
     /**
@@ -155,4 +158,5 @@ public class WorkdayCalculator {
     protected boolean isInARange(double start, double end, double aDate) {
         return aDate >= start && aDate <= end;
     }
+
 }

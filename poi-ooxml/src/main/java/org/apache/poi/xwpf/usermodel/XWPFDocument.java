@@ -1448,6 +1448,14 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return Collections.unmodifiableList(result);
     }
 
+    /**
+     * @return document level settings
+     * @since POI 5.2.1
+     */
+    public XWPFSettings getSettings() {
+        return settings;
+    }
+
     void registerPackagePictureData(XWPFPictureData picData) {
         List<XWPFPictureData> list = packagePictures.computeIfAbsent(picData.getChecksum(), k -> new ArrayList<>(1));
         if (!list.contains(picData)) {
