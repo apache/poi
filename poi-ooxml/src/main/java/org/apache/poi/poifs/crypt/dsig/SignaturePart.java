@@ -99,7 +99,6 @@ public class SignaturePart {
      * @throws XmlException if the xml signature is malformed
      */
     public SignatureDocument getSignatureDocument() throws IOException, XmlException {
-        // TODO: check for XXE
         try (InputStream stream = signaturePart.getInputStream()) {
             return SignatureDocument.Factory.parse(stream, DEFAULT_XML_OPTIONS);
         }
