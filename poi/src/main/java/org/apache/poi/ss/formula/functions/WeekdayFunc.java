@@ -56,25 +56,9 @@ public final class WeekdayFunc implements Function {
 
     /**
      * Perform WEEKDAY(date, returnOption) function.
-     * Note: Parameter texts are from German EXCEL-2010 help.
-     * Parameters in args[]:
-     *  args[0] serialDate
-     * EXCEL-date value
-     * Standardmaessig ist der 1. Januar 1900 die fortlaufende Zahl 1 und
-     * der 1. Januar 2008 die fortlaufende Zahl 39.448, da dieser Tag nach 39.448 Tagen
-     * auf den 01.01.1900 folgt.
-     * @return Option (optional)
-     * Bestimmt den Rueckgabewert:
-        1   oder nicht angegeben Zahl 1 (Sonntag) bis 7 (Samstag). Verhaelt sich wie fruehere Microsoft Excel-Versionen.
-        2   Zahl 1 (Montag) bis 7 (Sonntag).
-        3   Zahl 0 (Montag) bis 6 (Sonntag).
-        11  Die Zahlen 1 (Montag) bis 7 (Sonntag)
-        12  Die Zahlen 1 (Dienstag) bis 7 (Montag)
-        13  Die Zahlen 1 (Mittwoch) bis 7 (Dienstag)
-        14  Die Zahlen 1 (Donnerstag) bis 7 (Mittwoch)
-        15  Die Zahlen 1 (Freitag) bis 7 (Donnerstag)
-        16  Die Zahlen 1 (Samstag) bis 7 (Freitag)
-        17  Die Zahlen 1 (Sonntag) bis 7 (Samstag)
+     * <p>
+     *     https://support.microsoft.com/en-us/office/weekday-function-60e44483-2ed1-439f-8bd0-e404c190949a
+     * </p>
      */
     public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
         try {
