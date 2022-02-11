@@ -73,13 +73,13 @@ public class WorkdayCalculator {
         weekendTypeMap.put(5, wedsThursWeekend);
         weekendTypeMap.put(6, thursFriWeekend);
         weekendTypeMap.put(7, friSatWeekend);
-        weekendTypeMap.put(11, monWeekend);
-        weekendTypeMap.put(12, tuesWeekend);
-        weekendTypeMap.put(13, wedsWeekend);
-        weekendTypeMap.put(14, thursWeekend);
-        weekendTypeMap.put(15, friWeekend);
-        weekendTypeMap.put(16, satWeekend);
-        weekendTypeMap.put(17, sunWeekend);
+        weekendTypeMap.put(11, sunWeekend);
+        weekendTypeMap.put(12, monWeekend);
+        weekendTypeMap.put(13, tuesWeekend);
+        weekendTypeMap.put(14, wedsWeekend);
+        weekendTypeMap.put(15, thursWeekend);
+        weekendTypeMap.put(16, friWeekend);
+        weekendTypeMap.put(17, satWeekend);
     }
 
     /**

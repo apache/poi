@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.atp;
 
 import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -69,7 +70,9 @@ final class WorkdayIntlFunction implements FreeRefFunction {
             start = this.evaluator.evaluateDateArg(args[0], srcCellRow, srcCellCol);
             days = (int) Math.floor(this.evaluator.evaluateNumberArg(args[1], srcCellRow, srcCellCol));
             if (args.length >= 3) {
-                weekendType = (int) this.evaluator.evaluateNumberArg(args[2], srcCellRow, srcCellCol);
+                if (args[2] != BlankEval.instance) {
+                    weekendType = (int) this.evaluator.evaluateNumberArg(args[2], srcCellRow, srcCellCol);
+                }
                 if (!WorkdayCalculator.instance.getValidWeekendTypes().contains(weekendType)) {
                    return ErrorEval.NUM_ERROR;
                 }
