@@ -27,11 +27,10 @@ import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
  * Implementation of Excel 'Analysis ToolPak' function WORKDAY.INTL()<br>
- * Returns the date past a number of workdays beginning at a start date, considering an interval of holidays. A workday is any non
- * saturday/sunday date.
+ * Returns the date past a number of workdays beginning at a start date, considering an interval of holidays.
  * <p>
  * <b>Syntax</b><br>
- * <b>WORKDAY</b>(<b>startDate</b>, <b>days</b>, weekendType, holidays)
+ * <b>WORKDAY.INTL</b>(<b>startDate</b>, <b>days</b>, weekendType, holidays)
  * <p>
  * https://support.microsoft.com/en-us/office/workday-intl-function-a378391c-9ba7-4678-8a39-39611a9bf81d
  */
