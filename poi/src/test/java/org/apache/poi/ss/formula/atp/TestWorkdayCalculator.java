@@ -87,9 +87,17 @@ class TestWorkdayCalculator {
 
     @Test
     void testCalculateWorkdaysNumberOfDays() {
-        double start = 41553.0;
+        double start = DateUtil.getExcelDate(d(2013, 10, 4));
+        assertEquals(41551.0, start);
         int days = 1;
         assertEquals(d(2013, 10, 7), WorkdayCalculator.instance.calculateWorkdays(start, days, new double[0]));
+        assertEquals(d(2013, 10, 7), WorkdayCalculator.instance.calculateWorkdays(start + 1, days, new double[0]));
+        assertEquals(d(2013, 10, 7), WorkdayCalculator.instance.calculateWorkdays(start + 2, days, new double[0]));
+        assertEquals(d(2013, 10, 5),
+                WorkdayCalculator.instance.calculateWorkdays(start, days, 5, new double[0]));
+
+        assertEquals(d(2013, 10, 3), WorkdayCalculator.instance.calculateWorkdays(start, -1, new double[0]));
+
     }
 
     @Test
