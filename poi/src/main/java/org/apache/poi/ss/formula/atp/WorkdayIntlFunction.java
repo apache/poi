@@ -33,6 +33,7 @@ import org.apache.poi.ss.usermodel.DateUtil;
  * <b>WORKDAY.INTL</b>(<b>startDate</b>, <b>days</b>, weekendType, holidays)
  * <p>
  * https://support.microsoft.com/en-us/office/workday-intl-function-a378391c-9ba7-4678-8a39-39611a9bf81d
+ * @since POI 5.2.0
  */
 final class WorkdayIntlFunction implements FreeRefFunction {
 
