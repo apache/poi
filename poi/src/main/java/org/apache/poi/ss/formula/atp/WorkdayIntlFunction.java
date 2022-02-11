@@ -26,33 +26,35 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.usermodel.DateUtil;
 
 /**
- * Implementation of Excel 'Analysis ToolPak' function WORKDAY()<br>
+ * Implementation of Excel 'Analysis ToolPak' function WORKDAY.INTL()<br>
  * Returns the date past a number of workdays beginning at a start date, considering an interval of holidays. A workday is any non
  * saturday/sunday date.
  * <p>
  * <b>Syntax</b><br>
- * <b>WORKDAY</b>(<b>startDate</b>, <b>days</b>, holidays)
+ * <b>WORKDAY</b>(<b>startDate</b>, <b>days</b>, weekendType, holidays)
  * <p>
+ * https://support.microsoft.com/en-us/office/workday-intl-function-a378391c-9ba7-4678-8a39-39611a9bf81d
  */
-final class WorkdayFunction implements FreeRefFunction {
+final class WorkdayIntlFunction implements FreeRefFunction {
 
-    public static final FreeRefFunction instance = new WorkdayFunction(ArgumentsEvaluator.instance);
+    public static final FreeRefFunction instance = new WorkdayIntlFunction(ArgumentsEvaluator.instance);
 
     private ArgumentsEvaluator evaluator;
 
-    private WorkdayFunction(ArgumentsEvaluator anEvaluator) {
+    private WorkdayIntlFunction(ArgumentsEvaluator anEvaluator) {
         // enforces singleton
         this.evaluator = anEvaluator;
     }
 
     /**
-     * Evaluate for WORKDAY. Given a date, a number of days and an optional date or interval of holidays, determines which date it is past
+     * Evaluate for WORKDAY.INTL. Given a date, a number of days, an optional weekend type
+     * and an optional date or interval of holidays, determines which date it is past
      * number of parameterized workdays.
      *
      * @return {@link ValueEval} with date as its value.
      */
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-        if (args.length < 2 || args.length > 3) {
+        if (args.length < 2 || args.length > 4) {
             return ErrorEval.VALUE_INVALID;
         }
 
@@ -61,13 +63,21 @@ final class WorkdayFunction implements FreeRefFunction {
 
         double start;
         int days;
+        int weekendType = 1;
         double[] holidays;
         try {
             start = this.evaluator.evaluateDateArg(args[0], srcCellRow, srcCellCol);
             days = (int) Math.floor(this.evaluator.evaluateNumberArg(args[1], srcCellRow, srcCellCol));
-            ValueEval holidaysCell = args.length == 3 ? args[2] : null;
+            if (args.length >= 3) {
+                weekendType = (int) this.evaluator.evaluateNumberArg(args[2], srcCellRow, srcCellCol);
+                if (!WorkdayCalculator.instance.getValidWeekendTypes().contains(weekendType)) {
+                   return ErrorEval.NUM_ERROR;
+                }
+            }
+            ValueEval holidaysCell = args.length >= 4 ? args[3] : null;
             holidays = this.evaluator.evaluateDatesArg(holidaysCell, srcCellRow, srcCellCol);
-            return new NumberEval(DateUtil.getExcelDate(WorkdayCalculator.instance.calculateWorkdays(start, days, holidays)));
+            return new NumberEval(DateUtil.getExcelDate(
+                    WorkdayCalculator.instance.calculateWorkdays(start, days, weekendType, holidays)));
         } catch (EvaluationException e) {
             return ErrorEval.VALUE_INVALID;
         }

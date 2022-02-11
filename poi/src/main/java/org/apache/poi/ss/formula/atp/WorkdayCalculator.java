@@ -89,6 +89,10 @@ public class WorkdayCalculator {
         // enforcing singleton
     }
 
+    public Set<Integer> getValidWeekendTypes() {
+        return weekendTypeMap.keySet();
+    }
+
     /**
      * Calculate how many workdays are there between a start and an end date, as excel representations, considering a range of holidays.
      *

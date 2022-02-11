@@ -184,6 +184,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "TEXTJOIN", TextJoinFunction.instance);
         r(m, "WEEKNUM", WeekNum.instance);
         r(m, "WORKDAY", WorkdayFunction.instance);
+        r(m, "WORKDAY.INTL", WorkdayIntlFunction.instance);
         r(m, "XIRR", null);
         r(m, "XLOOKUP", XLookupFunction.instance);
         r(m, "XMATCH", XMatchFunction.instance);
