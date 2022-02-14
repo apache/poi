@@ -76,8 +76,7 @@ ant.taskdef(name: "junit",
 
 
 wrapper {
-    // https://stackoverflow.com/a/54741656/2066598
-    gradleVersion = '7.3.3'
+    gradleVersion = '7.4'
 }
 
 task adjustWrapperPropertiesFile {
@@ -178,8 +177,7 @@ subprojects {
     }
 
     task wrapper(type: Wrapper){
-        // https://stackoverflow.com/a/65701523/2066598
-        gradleVersion = '7.3.3'
+        gradleVersion = '7.4'
     }
 
     java {
