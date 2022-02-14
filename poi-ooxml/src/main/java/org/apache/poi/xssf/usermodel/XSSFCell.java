@@ -117,8 +117,9 @@ public final class XSSFCell extends CellBase {
     protected XSSFCell(XSSFRow row, CTCell cell) {
         _cell = cell;
         _row = row;
-        if (cell.getR() != null) {
-            _cellNum = new CellReference(cell.getR()).getCol();
+        String rval = cell.getR();
+        if (rval != null) {
+            _cellNum = new CellReference(rval).getCol();
         } else {
             int prevNum = row.getLastCellNum();
             if(prevNum != -1){
