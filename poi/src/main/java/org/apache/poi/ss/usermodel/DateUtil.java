@@ -93,7 +93,7 @@ public class DateUtil {
      */
     public static LocalDateTime toLocalDateTime(Date date) {
         return date.toInstant()
-                .atZone(TimeZone.getTimeZone(ZoneOffset.UTC).toZoneId()) // java.util.Date uses UTC
+                .atZone(LocaleUtil.TIMEZONE_UTC.toZoneId()) // java.util.Date uses UTC
                 .toLocalDateTime();
     }
 
@@ -104,7 +104,7 @@ public class DateUtil {
      */
     public static LocalDateTime toLocalDateTime(Calendar date) {
         return date.toInstant()
-                .atZone(TimeZone.getTimeZone(ZoneOffset.UTC).toZoneId()) // java.util.Date uses UTC
+                .atZone(LocaleUtil.TIMEZONE_UTC.toZoneId()) // java.util.Date uses UTC
                 .toLocalDateTime();
     }
 
