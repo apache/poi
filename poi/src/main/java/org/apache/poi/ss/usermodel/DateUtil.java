@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
@@ -92,7 +93,7 @@ public class DateUtil {
      */
     public static LocalDateTime toLocalDateTime(Date date) {
         return date.toInstant()
-                .atZone(TimeZone.getTimeZone("UTC").toZoneId()) // java.util.Date uses UTC
+                .atZone(TimeZone.getTimeZone(ZoneOffset.UTC).toZoneId()) // java.util.Date uses UTC
                 .toLocalDateTime();
     }
 
@@ -103,7 +104,7 @@ public class DateUtil {
      */
     public static LocalDateTime toLocalDateTime(Calendar date) {
         return date.toInstant()
-                .atZone(TimeZone.getTimeZone("UTC").toZoneId()) // java.util.Date uses UTC
+                .atZone(TimeZone.getTimeZone(ZoneOffset.UTC).toZoneId()) // java.util.Date uses UTC
                 .toLocalDateTime();
     }
 

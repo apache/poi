@@ -19,6 +19,7 @@
 package org.apache.poi.util;
 
 import java.nio.charset.Charset;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -45,7 +46,7 @@ public final class LocaleUtil {
      * Excel doesn't store TimeZone information in the file, so if in doubt,
      *  use UTC to perform calculations
      */
-    public static final TimeZone TIMEZONE_UTC = TimeZone.getTimeZone("UTC");
+    public static final TimeZone TIMEZONE_UTC = TimeZone.getTimeZone(ZoneOffset.UTC);
 
     /**
      * Default encoding for unknown byte encodings of native files

@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -1093,7 +1094,7 @@ public abstract class BaseTestCell {
             cell.setCellValue(new Date());
             assertEquals(CellType.FORMULA, cell.getCellType());
 
-            cell.setCellValue(GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.ROOT));
+            cell.setCellValue(GregorianCalendar.getInstance(TimeZone.getTimeZone(ZoneOffset.UTC), Locale.ROOT));
             assertEquals(CellType.FORMULA, cell.getCellType());
 
             cell.setCellValue(1.0);

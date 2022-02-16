@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
@@ -329,7 +330,7 @@ public final class TestPOIXMLProperties {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("sample.strict.xlsx"))) {
             POIXMLProperties props = new POIXMLProperties(pkg);
             assertNotNull(props.getCoreProperties().getCreated());
-            assertEquals(2007, props.getCoreProperties().getCreated().toInstant().atZone(ZoneId.of("UTC")).getYear());
+            assertEquals(2007, props.getCoreProperties().getCreated().toInstant().atZone(ZoneOffset.UTC).getYear());
         }
     }
 
