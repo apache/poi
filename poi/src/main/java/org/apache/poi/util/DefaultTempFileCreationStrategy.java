@@ -22,6 +22,8 @@ import static org.apache.poi.util.TempFile.JAVA_IO_TMPDIR;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileAttribute;
 
 /**
  * Default implementation of the {@link TempFileCreationStrategy} used by {@link TempFile}:
@@ -58,7 +60,7 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
      *
      * @param dir The directory where the temporary files will be created (<code>null</code> to use the default directory).
      *
-     * @see File#createTempFile(String, String, File)
+     * @see Files#createTempFile(Path, String, String, FileAttribute[]) 
      */
     public DefaultTempFileCreationStrategy(File dir) {
         this.dir = dir;
