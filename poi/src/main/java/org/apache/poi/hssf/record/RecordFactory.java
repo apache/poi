@@ -35,7 +35,17 @@ public final class RecordFactory {
     private static final int NUM_RECORDS = 512;
 
     // how many records we read at max by default (can be adjusted via IOUtils)
-    private static final int MAX_NUMBER_OF_RECORDS = 2_000_000;
+    //increased to 5 million due to https://bz.apache.org/bugzilla/show_bug.cgi?id=65887
+    private static final int DEFAULT_MAX_NUMBER_OF_RECORDS = 5_000_000;
+    private static int MAX_NUMBER_OF_RECORDS = DEFAULT_MAX_NUMBER_OF_RECORDS;
+
+    public static void setMaxNumberOfRecords(int maxNumberOfRecords) {
+        MAX_NUMBER_OF_RECORDS = maxNumberOfRecords;
+    }
+
+    public static int getMaxNumberOfRecords() {
+        return MAX_NUMBER_OF_RECORDS;
+    }
 
     private RecordFactory() {}
 
