@@ -161,8 +161,9 @@ public final class IOUtils {
      * @param length The maximum length to read, use {@link Integer#MAX_VALUE} to read the stream
      *               until EOF
      * @param maxLength if the input is equal to/longer than {@code maxLength} bytes,
- *                   then throw an {@link IOException} complaining about the length.
-*                    use {@link Integer#MAX_VALUE} to disable the check
+     *                  then throw an {@link IOException} complaining about the length.
+     *                  use {@link Integer#MAX_VALUE} to disable the check - if {@link #setByteArrayMaxOverride(int)} is
+     *                  set then that max of that value and this maxLength is used
      * @return A byte array with the read bytes.
      * @throws IOException If reading data fails or EOF is encountered too early for the given length.
      */
@@ -170,14 +171,12 @@ public final class IOUtils {
         if (length < 0L || maxLength < 0L) {
             throw new RecordFormatException("Can't allocate an array of length < 0");
         }
-        // if (length > (long)Integer.MAX_VALUE) {
-        //     throw new RecordFormatException("Can't allocate an array > "+Integer.MAX_VALUE);
-        // }
-        if ((length != Integer.MAX_VALUE) || (maxLength != Integer.MAX_VALUE)) {
-            checkLength(length, maxLength);
+        final int derivedMaxLength = BYTE_ARRAY_MAX_OVERRIDE <= 0 ? maxLength : Math.max(maxLength, BYTE_ARRAY_MAX_OVERRIDE);
+        if ((length != Integer.MAX_VALUE) || (derivedMaxLength != Integer.MAX_VALUE)) {
+            checkLength(length, derivedMaxLength);
         }
 
-        final int len = Math.min(length, maxLength);
+        final int len = Math.min(length, derivedMaxLength);
         try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(len == Integer.MAX_VALUE ? 4096 : len)) {
             byte[] buffer = new byte[4096];
             int totalBytes = 0, readBytes;
@@ -191,8 +190,8 @@ public final class IOUtils {
                 checkByteSizeLimit(totalBytes);
             } while (totalBytes < len && readBytes > -1);
 
-            if (maxLength != Integer.MAX_VALUE && totalBytes == maxLength) {
-                throw new IOException("MaxLength (" + maxLength + ") reached - stream seems to be invalid.");
+            if (derivedMaxLength != Integer.MAX_VALUE && totalBytes == derivedMaxLength) {
+                throw new IOException("MaxLength (" + derivedMaxLength + ") reached - stream seems to be invalid.");
             }
 
             if (len != Integer.MAX_VALUE && totalBytes < len) {
