@@ -18,11 +18,11 @@
 package org.apache.poi.hslf.blip;
 
 import java.awt.Dimension;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -64,10 +64,10 @@ public final class WMF extends Metafile {
 
     @Override
     public byte[] getData(){
-        try {
-            byte[] rawdata = getRawData();
+        byte[] rawdata = getRawData();
+        try (InputStream is = new UnsynchronizedByteArrayInputStream(rawdata)) {
 
-            InputStream is = new ByteArrayInputStream( rawdata );
+
             Header header = new Header();
             header.read(rawdata, CHECKSUM_SIZE*getUIDInstanceCount());
             long skipLen = header.getSize() + (long)CHECKSUM_SIZE*getUIDInstanceCount();

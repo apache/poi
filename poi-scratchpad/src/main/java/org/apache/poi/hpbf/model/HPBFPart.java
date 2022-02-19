@@ -17,11 +17,11 @@
 
 package org.apache.poi.hpbf.model;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.util.IOUtils;
 
@@ -83,8 +83,9 @@ public abstract class HPBFPart {
         generateData();
 
         // Write out
-        ByteArrayInputStream bais = new ByteArrayInputStream(data);
-        dir.createDocument(path[path.length-1], bais);
+        try (UnsynchronizedByteArrayInputStream bais = new UnsynchronizedByteArrayInputStream(data)) {
+            dir.createDocument(path[path.length-1], bais);
+        }
     }
 
     /**

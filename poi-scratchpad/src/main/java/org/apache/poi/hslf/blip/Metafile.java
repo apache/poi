@@ -19,21 +19,19 @@ package org.apache.poi.hslf.blip;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.DeflaterOutputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 /**
@@ -90,26 +88,29 @@ public abstract class Metafile extends HSLFPictureData {
          */
         private int filter = 254;
 
-        public void read(byte[] data, int offset){
-            @SuppressWarnings("resource")
-            LittleEndianInputStream leis = new LittleEndianInputStream(
-                new ByteArrayInputStream(data, offset, RECORD_LENGTH));
+        public void read(byte[] data, int offset) {
+            try (
+                    LittleEndianInputStream leis = new LittleEndianInputStream(
+                            new UnsynchronizedByteArrayInputStream(data, offset, RECORD_LENGTH))
+            ) {
+                wmfsize = leis.readInt();
 
-            wmfsize = leis.readInt();
+                int left = leis.readInt();
+                int top = leis.readInt();
+                int right = leis.readInt();
+                int bottom = leis.readInt();
+                bounds.setBounds(left, top, right - left, bottom - top);
 
-            int left = leis.readInt();
-            int top = leis.readInt();
-            int right = leis.readInt();
-            int bottom = leis.readInt();
-            bounds.setBounds(left, top, right-left, bottom-top);
+                int width = leis.readInt();
+                int height = leis.readInt();
+                size.setSize(width, height);
 
-            int width = leis.readInt();
-            int height = leis.readInt();
-            size.setSize(width, height);
-
-            zipsize = leis.readInt();
-            compression = leis.readUByte();
-            filter = leis.readUByte();
+                zipsize = leis.readInt();
+                compression = leis.readUByte();
+                filter = leis.readUByte();
+            } catch (IOException e) {
+                throw new IllegalStateException(e);
+            }
         }
 
         public void write(OutputStream out) throws IOException {

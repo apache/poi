@@ -18,11 +18,11 @@
 package org.apache.poi.hslf.blip;
 
 import java.awt.Dimension;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -68,10 +68,11 @@ public final class EMF extends Metafile {
         Header header = new Header();
         header.read(rawdata, CHECKSUM_SIZE);
 
-        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
-             InputStream is = new ByteArrayInputStream(rawdata);
-             InflaterInputStream inflater = new InflaterInputStream(is)) {
-
+        try (
+                InputStream is = new UnsynchronizedByteArrayInputStream(rawdata);
+                InflaterInputStream inflater = new InflaterInputStream(is);
+                UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()
+        ) {
             long len = IOUtils.skipFully(is,header.getSize() + (long)CHECKSUM_SIZE);
             assert(len == header.getSize() + CHECKSUM_SIZE);
 
