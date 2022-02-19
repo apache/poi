@@ -77,8 +77,6 @@ public class XMLSlideShow extends POIXMLDocument
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
-    private static final int DEFAULT_MAX_IMAGE_SIZE = 100_000_000;
-    private static int MAX_IMAGE_SIZE = DEFAULT_MAX_IMAGE_SIZE;
 
     private CTPresentation _presentation;
     private final List<XSLFSlide> _slides = new ArrayList<>();
@@ -101,20 +99,6 @@ public class XMLSlideShow extends POIXMLDocument
      */
     public static int getMaxRecordLength() {
         return MAX_RECORD_LENGTH;
-    }
-
-    /**
-     * @param length the max image size allowed for XMLSlideShow
-     */
-    public static void setMaxImageSize(int length) {
-        MAX_IMAGE_SIZE = length;
-    }
-
-    /**
-     * @return the max image size allowed for XMLSlideShow
-     */
-    public static int getMaxImageSize() {
-        return MAX_IMAGE_SIZE;
     }
 
     public XMLSlideShow() {
@@ -572,7 +556,7 @@ public class XMLSlideShow extends POIXMLDocument
      */
     @Override
     public XSLFPictureData addPicture(InputStream is, PictureType format) throws IOException {
-        return addPicture(IOUtils.toByteArray(is, getMaxImageSize()), format);
+        return addPicture(IOUtils.toByteArray(is, XSLFPictureData.getMaxImageSize()), format);
     }
 
 

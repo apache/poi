@@ -34,6 +34,23 @@ import org.apache.poi.util.IOUtils;
  */
 public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
 
+    private static final int DEFAULT_MAX_IMAGE_SIZE = 100_000_000;
+    private static int MAX_IMAGE_SIZE = DEFAULT_MAX_IMAGE_SIZE;
+
+    /**
+     * @param length the max image size allowed for XSSF pictures
+     */
+    public static void setMaxImageSize(int length) {
+        MAX_IMAGE_SIZE = length;
+    }
+
+    /**
+     * @return the max image size allowed for XSSF pictures
+     */
+    public static int getMaxImageSize() {
+        return MAX_IMAGE_SIZE;
+    }
+
     /**
      * Relationships for each known picture type
      */
@@ -88,7 +105,7 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      */
     public byte[] getData() {
         try (InputStream inputStream = getPackagePart().getInputStream()) {
-            return IOUtils.toByteArray(inputStream);
+            return IOUtils.toByteArray(inputStream, getMaxImageSize());
         } catch(IOException e) {
             throw new POIXMLException(e);
         }

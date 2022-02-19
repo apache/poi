@@ -43,6 +43,24 @@ import org.apache.poi.util.Units;
  */
 @Beta
 public final class XSLFPictureData extends POIXMLDocumentPart implements PictureData {
+
+    private static final int DEFAULT_MAX_IMAGE_SIZE = 100_000_000;
+    private static int MAX_IMAGE_SIZE = DEFAULT_MAX_IMAGE_SIZE;
+
+    /**
+     * @param length the max image size allowed for XSLF pictures
+     */
+    public static void setMaxImageSize(int length) {
+        MAX_IMAGE_SIZE = length;
+    }
+
+    /**
+     * @return the max image size allowed for XSLF pictures
+     */
+    public static int getMaxImageSize() {
+        return MAX_IMAGE_SIZE;
+    }
+
     private Long checksum;
 
     // original image dimensions (for formats supported by BufferedImage)
@@ -86,7 +104,7 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
      */
     public byte[] getData() {
         try (InputStream stream = getInputStream()) {
-            return IOUtils.toByteArray(stream);
+            return IOUtils.toByteArray(stream, getMaxImageSize());
         } catch (IOException e) {
             throw new POIXMLException(e);
         }
