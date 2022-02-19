@@ -39,7 +39,16 @@ import org.apache.poi.util.TempFile;
 
     // how large a single entry in a zip-file should become at max
     // can be overwritten via IOUtils.setByteArrayMaxOverride()
-    private static final int MAX_ENTRY_SIZE = 100_000_000;
+    private static final int DEFAULT_MAX_ENTRY_SIZE = 100_000_000;
+    private static int MAX_ENTRY_SIZE = DEFAULT_MAX_ENTRY_SIZE;
+
+    public static void setMaxEntrySize(int maxEntrySize) {
+        MAX_ENTRY_SIZE = maxEntrySize;
+    }
+
+    public static int getMaxEntrySize() {
+       return MAX_ENTRY_SIZE;
+    }
 
     private byte[] data;
     private File tempFile;
