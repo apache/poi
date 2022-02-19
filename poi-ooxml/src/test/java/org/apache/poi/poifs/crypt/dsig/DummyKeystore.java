@@ -24,7 +24,6 @@
 package org.apache.poi.poifs.crypt.dsig;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -53,6 +52,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.LocaleUtil;
@@ -139,7 +139,7 @@ public class DummyKeystore {
     public DummyKeystore(String pfxInput, String storePass) throws GeneralSecurityException, IOException {
         CryptoFunctions.registerBouncyCastle();
         keystore = KeyStore.getInstance("PKCS12");
-        try (InputStream fis = new ByteArrayInputStream(RawDataUtil.decompress(pfxInput))) {
+        try (InputStream fis = new UnsynchronizedByteArrayInputStream(RawDataUtil.decompress(pfxInput))) {
             keystore.load(fis, storePass.toCharArray());
         }
     }

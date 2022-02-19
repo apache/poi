@@ -16,12 +16,12 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.util.IOUtils;
@@ -41,11 +41,11 @@ public class XSSFBFileHandler extends AbstractFileHandler {
     public void handleFile(InputStream stream, String path) throws Exception {
         byte[] bytes = IOUtils.toByteArray(stream);
 
-        try (OPCPackage opcPackage = OPCPackage.open(new ByteArrayInputStream(bytes))) {
+        try (OPCPackage opcPackage = OPCPackage.open(new UnsynchronizedByteArrayInputStream(bytes))) {
             testOne(opcPackage);
         }
 
-        testNotHandledByWorkbookException(OPCPackage.open(new ByteArrayInputStream(bytes)));
+        testNotHandledByWorkbookException(OPCPackage.open(new UnsynchronizedByteArrayInputStream(bytes)));
     }
 
     private void testNotHandledByWorkbookException(OPCPackage pkg) throws IOException {

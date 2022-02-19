@@ -22,7 +22,6 @@ import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readARGB;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -32,6 +31,7 @@ import java.util.function.Supplier;
 
 import javax.imageio.ImageIO;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
@@ -419,21 +419,24 @@ public class HemfPlusImage {
                         if (getBitmapType() == EmfPlusBitmapDataType.PIXEL) {
                             return new Rectangle2D.Double(0, 0, bitmapWidth, bitmapHeight);
                         } else {
-                            BufferedImage bi = ImageIO.read(new ByteArrayInputStream(getRawData(continuedObjectData)));
-                            return new Rectangle2D.Double(bi.getMinX(), bi.getMinY(), bi.getWidth(), bi.getHeight());
+                            try(UnsynchronizedByteArrayInputStream is = new UnsynchronizedByteArrayInputStream(getRawData(continuedObjectData))) {
+                                BufferedImage bi = ImageIO.read(is);
+                                return new Rectangle2D.Double(bi.getMinX(), bi.getMinY(), bi.getWidth(), bi.getHeight());
+                            }
                         }
                     case METAFILE:
-                        ByteArrayInputStream bis = new ByteArrayInputStream(getRawData(continuedObjectData));
-                        switch (getMetafileType()) {
-                            case Wmf:
-                            case WmfPlaceable:
-                                HwmfPicture wmf = new HwmfPicture(bis);
-                                return wmf.getBounds();
-                            case Emf:
-                            case EmfPlusDual:
-                            case EmfPlusOnly:
-                                HemfPicture emf = new HemfPicture(bis);
-                                return emf.getBounds();
+                        try(UnsynchronizedByteArrayInputStream bis = new UnsynchronizedByteArrayInputStream(getRawData(continuedObjectData))) {
+                            switch (getMetafileType()) {
+                                case Wmf:
+                                case WmfPlaceable:
+                                    HwmfPicture wmf = new HwmfPicture(bis);
+                                    return wmf.getBounds();
+                                case Emf:
+                                case EmfPlusDual:
+                                case EmfPlusOnly:
+                                    HemfPicture emf = new HemfPicture(bis);
+                                    return emf.getBounds();
+                            }
                         }
                         break;
                     default:

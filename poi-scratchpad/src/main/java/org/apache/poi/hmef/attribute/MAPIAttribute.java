@@ -17,13 +17,13 @@
 
 package org.apache.poi.hmef.attribute;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
@@ -115,107 +115,108 @@ public class MAPIAttribute {
                "instead received a " + parent.getProperty() + " one"
          );
       }
-      ByteArrayInputStream inp = new ByteArrayInputStream(parent.getData());
+      try(UnsynchronizedByteArrayInputStream inp = new UnsynchronizedByteArrayInputStream(parent.getData())) {
+         // First up, get the number of attributes
+         int count = LittleEndian.readInt(inp);
+         List<MAPIAttribute> attrs = new ArrayList<>();
 
-      // First up, get the number of attributes
-      int count = LittleEndian.readInt(inp);
-      List<MAPIAttribute> attrs = new ArrayList<>();
+         // Now, read each one in in turn
+         for(int i=0; i<count; i++) {
+            int typeAndMV = LittleEndian.readUShort(inp);
+            int id = LittleEndian.readUShort(inp);
 
-      // Now, read each one in in turn
-      for(int i=0; i<count; i++) {
-         int typeAndMV = LittleEndian.readUShort(inp);
-         int id = LittleEndian.readUShort(inp);
-
-         // Is it either Multi-Valued or Variable-Length?
-         boolean isMV = false;
-         boolean isVL = false;
-         int typeId = typeAndMV;
-         if( (typeAndMV & Types.MULTIVALUED_FLAG) != 0 ) {
-            isMV = true;
-            typeId -= Types.MULTIVALUED_FLAG;
-         }
-         if(typeId == Types.ASCII_STRING.getId() || typeId == Types.UNICODE_STRING.getId() ||
-               typeId == Types.BINARY.getId() || typeId == Types.DIRECTORY.getId()) {
-            isVL = true;
-         }
-
-         // Turn the type ID into a strongly typed thing
-         MAPIType type = Types.getById(typeId);
-         if (type == null) {
-            type = Types.createCustom(typeId);
-         }
-
-         // If it's a named property, rather than a standard
-         //  MAPI property, grab the details of it
-         MAPIProperty prop = MAPIProperty.get(id);
-         if(id >= 0x8000 && id <= 0xFFFF) {
-            byte[] guid = new byte[16];
-            if (IOUtils.readFully(inp, guid) < 0) {
-               throw new IOException("Not enough data to read guid");
+            // Is it either Multi-Valued or Variable-Length?
+            boolean isMV = false;
+            boolean isVL = false;
+            int typeId = typeAndMV;
+            if( (typeAndMV & Types.MULTIVALUED_FLAG) != 0 ) {
+               isMV = true;
+               typeId -= Types.MULTIVALUED_FLAG;
             }
-            int mptype = LittleEndian.readInt(inp);
+            if(typeId == Types.ASCII_STRING.getId() || typeId == Types.UNICODE_STRING.getId() ||
+                    typeId == Types.BINARY.getId() || typeId == Types.DIRECTORY.getId()) {
+               isVL = true;
+            }
 
-            // Get the name of it
-            String name;
-            if(mptype == 0) {
-               // It's based on a normal one
-               int mpid = LittleEndian.readInt(inp);
-               MAPIProperty base = MAPIProperty.get(mpid);
-               name = base.name;
-            } else {
-               // Custom name was stored
-               int mplen = LittleEndian.readInt(inp);
-               byte[] mpdata = IOUtils.safelyAllocate(mplen, MAX_RECORD_LENGTH);
-               if (IOUtils.readFully(inp, mpdata) < 0) {
-                  throw new IOException("Not enough data to read " + mplen + " bytes for attribute name");
+            // Turn the type ID into a strongly typed thing
+            MAPIType type = Types.getById(typeId);
+            if (type == null) {
+               type = Types.createCustom(typeId);
+            }
+
+            // If it's a named property, rather than a standard
+            //  MAPI property, grab the details of it
+            MAPIProperty prop = MAPIProperty.get(id);
+            if(id >= 0x8000 && id <= 0xFFFF) {
+               byte[] guid = new byte[16];
+               if (IOUtils.readFully(inp, guid) < 0) {
+                  throw new IOException("Not enough data to read guid");
                }
-               name = StringUtil.getFromUnicodeLE(mpdata, 0, (mplen/2)-1);
-               skipToBoundary(mplen, inp);
+               int mptype = LittleEndian.readInt(inp);
+
+               // Get the name of it
+               String name;
+               if(mptype == 0) {
+                  // It's based on a normal one
+                  int mpid = LittleEndian.readInt(inp);
+                  MAPIProperty base = MAPIProperty.get(mpid);
+                  name = base.name;
+               } else {
+                  // Custom name was stored
+                  int mplen = LittleEndian.readInt(inp);
+                  byte[] mpdata = IOUtils.safelyAllocate(mplen, MAX_RECORD_LENGTH);
+                  if (IOUtils.readFully(inp, mpdata) < 0) {
+                     throw new IOException("Not enough data to read " + mplen + " bytes for attribute name");
+                  }
+                  name = StringUtil.getFromUnicodeLE(mpdata, 0, (mplen/2)-1);
+                  skipToBoundary(mplen, inp);
+               }
+
+               // Now create
+               prop = MAPIProperty.createCustom(id, type, name);
+            }
+            if(prop == MAPIProperty.UNKNOWN) {
+               prop = MAPIProperty.createCustom(id, type, "(unknown " + Integer.toHexString(id) + ")");
             }
 
-            // Now create
-            prop = MAPIProperty.createCustom(id, type, name);
-         }
-         if(prop == MAPIProperty.UNKNOWN) {
-            prop = MAPIProperty.createCustom(id, type, "(unknown " + Integer.toHexString(id) + ")");
-         }
-
-         // Now read in the value(s)
-         int values = 1;
-         if(isMV || isVL) {
-            values = LittleEndian.readInt(inp);
-         }
-
-         if (type == Types.NULL && values > 1) {
-            throw new IOException("Placeholder/NULL arrays aren't supported.");
-         }
-
-         for(int j=0; j<values; j++) {
-            int len = getLength(type, inp);
-            byte[] data = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
-            if (IOUtils.readFully(inp, data) < 0) {
-               throw new IOException("Not enough data to read " + len + " bytes of attribute value");
+            // Now read in the value(s)
+            int values = 1;
+            if(isMV || isVL) {
+               values = LittleEndian.readInt(inp);
             }
-            skipToBoundary(len, inp);
 
-            // Create
-            MAPIAttribute attr;
-            if(type == Types.UNICODE_STRING || type == Types.ASCII_STRING) {
-               attr = new MAPIStringAttribute(prop, typeId, data);
-            } else if(type == Types.APP_TIME || type == Types.TIME) {
-               attr = new MAPIDateAttribute(prop, typeId, data);
-            } else if(id == MAPIProperty.RTF_COMPRESSED.id) {
-               attr = new MAPIRtfAttribute(prop, typeId, data);
-            } else {
-               attr = new MAPIAttribute(prop, typeId, data);
+            if (type == Types.NULL && values > 1) {
+               throw new IOException("Placeholder/NULL arrays aren't supported.");
             }
-            attrs.add(attr);
+
+            for(int j=0; j<values; j++) {
+               int len = getLength(type, inp);
+               byte[] data = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
+               if (IOUtils.readFully(inp, data) < 0) {
+                  throw new IOException("Not enough data to read " + len + " bytes of attribute value");
+               }
+               skipToBoundary(len, inp);
+
+               // Create
+               MAPIAttribute attr;
+               if(type == Types.UNICODE_STRING || type == Types.ASCII_STRING) {
+                  attr = new MAPIStringAttribute(prop, typeId, data);
+               } else if(type == Types.APP_TIME || type == Types.TIME) {
+                  attr = new MAPIDateAttribute(prop, typeId, data);
+               } else if(id == MAPIProperty.RTF_COMPRESSED.id) {
+                  attr = new MAPIRtfAttribute(prop, typeId, data);
+               } else {
+                  attr = new MAPIAttribute(prop, typeId, data);
+               }
+               attrs.add(attr);
+            }
          }
+
+         // All done
+         return attrs;
       }
-
-      // All done
-      return attrs;
    }
+
    private static int getLength(MAPIType type, InputStream inp) throws IOException {
       if (type.isFixedLength()) {
          return type.getLength();

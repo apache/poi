@@ -17,13 +17,13 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.InflaterInputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -140,8 +140,8 @@ public final class Picture {
          */
         if ( matchSignature( rawContent, COMPRESSED1, 32 )
                 || matchSignature( rawContent, COMPRESSED2, 32 ) ) {
-            try (ByteArrayInputStream bis = new ByteArrayInputStream( rawContent, 33, rawContent.length - 33 );
-                InflaterInputStream in = new InflaterInputStream(bis);
+            try (UnsynchronizedByteArrayInputStream bis = new UnsynchronizedByteArrayInputStream( rawContent, 33, rawContent.length - 33 );
+                 InflaterInputStream in = new InflaterInputStream(bis);
                  UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
 
                 IOUtils.copy(in, out);

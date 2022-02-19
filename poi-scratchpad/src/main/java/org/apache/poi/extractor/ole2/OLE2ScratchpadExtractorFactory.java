@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.extractor.ole2;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -24,6 +23,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.extractor.ExtractorFactory;
@@ -185,7 +185,7 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
             for (AttachmentChunks attachment : msg.getAttachmentFiles()) {
                 if (attachment.getAttachData() != null) {
                     byte[] data = attachment.getAttachData().getValue();
-                    nonPOIFS.add( new ByteArrayInputStream(data) );
+                    nonPOIFS.add( new UnsynchronizedByteArrayInputStream(data) );
                 } else if (attachment.getAttachmentDirectory() != null) {
                     dirs.add(attachment.getAttachmentDirectory().getDirectory());
                 }

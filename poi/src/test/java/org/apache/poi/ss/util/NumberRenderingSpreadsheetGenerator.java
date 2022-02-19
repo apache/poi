@@ -17,7 +17,6 @@
 
 package org.apache.poi.ss.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -27,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -212,14 +212,12 @@ public class NumberRenderingSpreadsheetGenerator {
     }
 
     private static String interpretLong(byte[] fileContent, int offset) {
-        InputStream is = new ByteArrayInputStream(fileContent, offset, 8);
-        long l;
-        try {
-            l = new DataInputStream(is).readLong();
+        try (InputStream is = new UnsynchronizedByteArrayInputStream(fileContent, offset, 8)) {
+            long l = new DataInputStream(is).readLong();
+            return "0x" + Long.toHexString(l).toUpperCase(Locale.ROOT);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Problem in interpretLong", e);
         }
-        return "0x" + Long.toHexString(l).toUpperCase(Locale.ROOT);
     }
 
     private static boolean isNaNBytes(byte[] fileContent, int offset) {

@@ -17,9 +17,9 @@
 
 package org.apache.poi.hdgf.streams;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.hdgf.HDGFLZW;
 import org.apache.poi.util.IOUtils;
 
@@ -92,25 +92,26 @@ public final class CompressedStreamStore extends StreamStore {
      * Decompresses the given data, returning it as header + contents
      */
     public static byte[][] decompress(byte[] data, int offset, int length) throws IOException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(data, offset, length);
+        try (UnsynchronizedByteArrayInputStream bais = new UnsynchronizedByteArrayInputStream(data, offset, length)) {
+            // Decompress
+            HDGFLZW lzw = new HDGFLZW();
+            byte[] decompressed = lzw.decompress(bais);
 
-        // Decompress
-        HDGFLZW lzw = new HDGFLZW();
-        byte[] decompressed = lzw.decompress(bais);
+            if (decompressed.length < 4) {
+                throw new IllegalArgumentException("Could not read enough data to decompress: " + decompressed.length);
+            }
 
-        if (decompressed.length < 4) {
-            throw new IllegalArgumentException("Could not read enough data to decompress: " + decompressed.length);
+            // Split into header and contents
+            byte[][] ret = new byte[2][];
+            ret[0] = new byte[4];
+            ret[1] = new byte[decompressed.length - 4];
+
+            System.arraycopy(decompressed, 0, ret[0], 0, 4);
+            System.arraycopy(decompressed, 4, ret[1], 0, ret[1].length);
+
+            // All done
+            return ret;
         }
 
-        // Split into header and contents
-        byte[][] ret = new byte[2][];
-        ret[0] = new byte[4];
-        ret[1] = new byte[decompressed.length - 4];
-
-        System.arraycopy(decompressed, 0, ret[0], 0, 4);
-        System.arraycopy(decompressed, 4, ret[1], 0, ret[1].length);
-
-        // All done
-        return ret;
     }
 }

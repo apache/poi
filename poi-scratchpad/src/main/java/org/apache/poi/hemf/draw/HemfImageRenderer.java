@@ -25,11 +25,11 @@ import java.awt.RenderingHints;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.apache.poi.hwmf.draw.HwmfGraphicsState;
@@ -65,7 +65,7 @@ public class HemfImageRenderer implements ImageRenderer, EmbeddedExtractor {
         if (!PictureData.PictureType.EMF.contentType.equals(contentType)) {
             throw new IOException("Invalid picture type");
         }
-        image = new HemfPicture(new ByteArrayInputStream(data));
+        image = new HemfPicture(new UnsynchronizedByteArrayInputStream(data));
     }
 
     @Override

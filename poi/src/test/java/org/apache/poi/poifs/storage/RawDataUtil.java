@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi.poifs.storage;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.IOUtils;
@@ -53,7 +53,7 @@ public final class RawDataUtil {
      */
     public static byte[] decompress(String data) throws IOException {
         byte[] base64Bytes = Base64.getDecoder().decode(data);
-        return IOUtils.toByteArray(new GZIPInputStream(new ByteArrayInputStream(base64Bytes)));
+        return IOUtils.toByteArray(new GZIPInputStream(new UnsynchronizedByteArrayInputStream(base64Bytes)));
     }
 
     /**

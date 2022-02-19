@@ -26,7 +26,6 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -40,6 +39,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
@@ -391,7 +391,7 @@ public class HemfPlusBrush {
             EmfPlusBrushData brushData = brushType.constructor.get();
             byte[] buf = getRawData(continuedObjectData);
             try {
-                brushData.init(new LittleEndianInputStream(new ByteArrayInputStream(buf)), buf.length);
+                brushData.init(new LittleEndianInputStream(new UnsynchronizedByteArrayInputStream(buf)), buf.length);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

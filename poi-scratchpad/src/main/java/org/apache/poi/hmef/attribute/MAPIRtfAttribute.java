@@ -17,9 +17,10 @@
 
 package org.apache.poi.hmef.attribute;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.CompressedRTF;
 import org.apache.poi.hmef.HMEFMessage;
@@ -44,7 +45,11 @@ public final class MAPIRtfAttribute extends MAPIAttribute {
 
       // Decompress it, removing any trailing padding as needed
       CompressedRTF rtf = new CompressedRTF();
-      byte[] tmp = rtf.decompress(new ByteArrayInputStream(data));
+      byte[] tmp;
+      try (InputStream is = new UnsynchronizedByteArrayInputStream(data)) {
+         tmp = rtf.decompress(is);
+      }
+
       if(tmp.length > rtf.getDeCompressedSize()) {
          this.decompressed = IOUtils.safelyClone(tmp, 0, rtf.getDeCompressedSize(), MAX_RECORD_LENGTH);
       } else {
