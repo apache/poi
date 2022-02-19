@@ -96,6 +96,10 @@ public final class IOUtils {
         }
     }
 
+    private static int getByteArrayLimit() {
+        return BYTE_ARRAY_MAX_OVERRIDE < 0 ? Integer.MAX_VALUE : BYTE_ARRAY_MAX_OVERRIDE;
+    }
+
     /**
      * Peeks at the first N bytes of the stream. Returns those bytes, but
      *  with the stream unaffected. Requires a stream that supports mark/reset,
@@ -130,14 +134,15 @@ public final class IOUtils {
     }
 
     /**
-     * Reads all the data from the input stream, and returns the bytes read.
+     * Reads all the data from the input stream, and returns the bytes read. If {@link #setByteArrayMaxOverride(int)}
+     * is used then that limit is applied and this call will fail if the array size exceeds the configured limit.
      *
      * @param stream The byte stream of data to read.
      * @return A byte array with the read bytes.
      * @throws IOException If reading data fails or EOF is encountered too early for the given length.
      */
     public static byte[] toByteArray(InputStream stream) throws IOException {
-        return toByteArray(stream, Integer.MAX_VALUE);
+        return toByteArray(stream, getByteArrayLimit());
     }
 
     /**
@@ -150,7 +155,7 @@ public final class IOUtils {
      * @throws IOException If reading data fails or EOF is encountered too early for the given length.
      */
     public static byte[] toByteArray(InputStream stream, final int length) throws IOException {
-        return toByteArray(stream, length, Integer.MAX_VALUE);
+        return toByteArray(stream, length, getByteArrayLimit());
     }
 
 
