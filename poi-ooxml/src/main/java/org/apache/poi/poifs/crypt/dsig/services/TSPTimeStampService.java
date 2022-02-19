@@ -86,10 +86,16 @@ public class TSPTimeStampService implements TimeStampService {
     private static final int DEFAULT_TIMESTAMP_RESPONSE_SIZE = 10_000_000;
     private static int MAX_TIMESTAMP_RESPONSE_SIZE = DEFAULT_TIMESTAMP_RESPONSE_SIZE;
 
+    /**
+     * @param maxTimestampResponseSize the max timestamp response size allowed
+     */
     public static void setMaxTimestampResponseSize(int maxTimestampResponseSize) {
         MAX_TIMESTAMP_RESPONSE_SIZE = maxTimestampResponseSize;
     }
 
+    /**
+     * @return the max timestamp response size allowed
+     */
     public static int getMaxTimestampResponseSize() {
         return MAX_TIMESTAMP_RESPONSE_SIZE;
     }
