@@ -34,6 +34,23 @@ import org.apache.poi.util.IOUtils;
  */
 public class XWPFPictureData extends POIXMLDocumentPart {
 
+    private static final int DEFAULT_MAX_IMAGE_SIZE = 100_000_000;
+    private static int MAX_IMAGE_SIZE = DEFAULT_MAX_IMAGE_SIZE;
+
+    /**
+     * @param length the max image size allowed for XSSF pictures
+     */
+    public static void setMaxImageSize(int length) {
+        MAX_IMAGE_SIZE = length;
+    }
+
+    /**
+     * @return the max image size allowed for XSSF pictures
+     */
+    public static int getMaxImageSize() {
+        return MAX_IMAGE_SIZE;
+    }
+
     /**
      * Relationships for each known picture type
      */
@@ -94,7 +111,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      */
     public byte[] getData() {
         try (InputStream stream = getPackagePart().getInputStream()) {
-            return IOUtils.toByteArray(stream);
+            return IOUtils.toByteArray(stream, getMaxImageSize());
         } catch (IOException e) {
             throw new POIXMLException(e);
         }
@@ -146,15 +163,11 @@ public class XWPFPictureData extends POIXMLDocumentPart {
 
     public Long getChecksum() {
         if (this.checksum == null) {
-            InputStream is = null;
             byte[] data;
-            try {
-                is = getPackagePart().getInputStream();
-                data = IOUtils.toByteArray(is);
+            try (InputStream is = getPackagePart().getInputStream()) {
+                data = IOUtils.toByteArray(is, getMaxImageSize());
             } catch (IOException e) {
                 throw new POIXMLException(e);
-            } finally {
-                IOUtils.closeQuietly(is);
             }
             this.checksum = IOUtils.calculateChecksum(data);
         }

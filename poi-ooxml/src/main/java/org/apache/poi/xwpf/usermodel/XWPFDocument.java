@@ -1520,7 +1520,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     public String addPictureData(InputStream is, int format) throws InvalidFormatException {
         try {
-            byte[] data = IOUtils.toByteArray(is);
+            byte[] data = IOUtils.toByteArray(is, XWPFPictureData.getMaxImageSize());
             return addPictureData(data, format);
         } catch (IOException e) {
             throw new POIXMLException(e);
