@@ -50,6 +50,7 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -295,6 +296,7 @@ public final class TestPOIXMLDocument {
         }
     }
 
+    @Disabled("needs investigation")
     @Test
     void testOSGIClassLoading() throws IOException {
         byte[] data;
