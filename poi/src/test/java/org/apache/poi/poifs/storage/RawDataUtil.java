@@ -17,6 +17,7 @@
 package org.apache.poi.poifs.storage;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
@@ -35,39 +36,50 @@ public final class RawDataUtil {
     private RawDataUtil() {}
 
     public static byte[] decode(String[] hexDataLines) {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(hexDataLines.length * 32 + 32);
-
-        for (String hexDataLine : hexDataLines) {
-            byte[] lineData = HexRead.readFromString(hexDataLine);
-            baos.write(lineData, 0, lineData.length);
+        try (UnsynchronizedByteArrayOutputStream baos =
+                     new UnsynchronizedByteArrayOutputStream(hexDataLines.length * 32 + 32)) {
+            for (String hexDataLine : hexDataLines) {
+                byte[] lineData = HexRead.readFromString(hexDataLine);
+                baos.write(lineData, 0, lineData.length);
+            }
+            return baos.toByteArray();
+        } catch (IOException e) {
+            throw new IllegalStateException("problem decoding hex data", e);
         }
-        return baos.toByteArray();
     }
 
     /**
      * Decompress previously gziped/base64ed data
      *
-     * @param data the gziped/base64ed data
+     * @param data the gzipped/base64ed data
      * @return the raw bytes
      * @throws IOException if you copy and pasted the data wrong
      */
     public static byte[] decompress(String data) throws IOException {
         byte[] base64Bytes = Base64.getDecoder().decode(data);
-        return IOUtils.toByteArray(new GZIPInputStream(new UnsynchronizedByteArrayInputStream(base64Bytes)));
+        try (
+                InputStream is = new UnsynchronizedByteArrayInputStream(base64Bytes);
+                GZIPInputStream gzis = new GZIPInputStream(is);
+        ) {
+            return IOUtils.toByteArray(gzis);
+        }
     }
 
     /**
      * Compress raw data for test runs - usually called while debugging :)
      *
      * @param data the raw data
-     * @return the gziped/base64ed data as String
+     * @return the gzipped/base64ed data as String
      * @throws IOException usually not ...
      */
     public static String compress(byte[] data) throws IOException {
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-        java.util.zip.GZIPOutputStream gz = new java.util.zip.GZIPOutputStream(bos);
-        gz.write(data);
-        gz.finish();
-        return Base64.getEncoder().encodeToString(bos.toByteArray());
+        try (
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                java.util.zip.GZIPOutputStream gz = new java.util.zip.GZIPOutputStream(bos)
+        ) {
+            gz.write(data);
+            gz.finish();
+            return Base64.getEncoder().encodeToString(bos.toByteArray());
+        }
     }
 }
