@@ -94,7 +94,7 @@ public class XWPFChart extends XDDFChart {
         if (this.checksum == null) {
             byte[] data;
             try (InputStream is = getPackagePart().getInputStream()) {
-                data = IOUtils.toByteArray(is, XWPFPictureData.getMaxImageSize());
+                data = IOUtils.toByteArrayWithMaxLength(is, XWPFPictureData.getMaxImageSize());
             } catch (IOException e) {
                 throw new POIXMLException(e);
             }

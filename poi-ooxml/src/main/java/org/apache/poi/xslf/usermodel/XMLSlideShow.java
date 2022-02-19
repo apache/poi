@@ -556,7 +556,7 @@ public class XMLSlideShow extends POIXMLDocument
      */
     @Override
     public XSLFPictureData addPicture(InputStream is, PictureType format) throws IOException {
-        return addPicture(IOUtils.toByteArray(is, XSLFPictureData.getMaxImageSize()), format);
+        return addPicture(IOUtils.toByteArrayWithMaxLength(is, XSLFPictureData.getMaxImageSize()), format);
     }
 
 

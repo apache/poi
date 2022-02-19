@@ -104,7 +104,7 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
      */
     public byte[] getData() {
         try (InputStream stream = getInputStream()) {
-            return IOUtils.toByteArray(stream, getMaxImageSize());
+            return IOUtils.toByteArrayWithMaxLength(stream, getMaxImageSize());
         } catch (IOException e) {
             throw new POIXMLException(e);
         }

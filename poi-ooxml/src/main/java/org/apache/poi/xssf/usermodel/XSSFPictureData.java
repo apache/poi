@@ -105,7 +105,7 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      */
     public byte[] getData() {
         try (InputStream inputStream = getPackagePart().getInputStream()) {
-            return IOUtils.toByteArray(inputStream, getMaxImageSize());
+            return IOUtils.toByteArrayWithMaxLength(inputStream, getMaxImageSize());
         } catch(IOException e) {
             throw new POIXMLException(e);
         }

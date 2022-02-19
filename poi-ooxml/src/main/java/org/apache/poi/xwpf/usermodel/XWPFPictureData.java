@@ -111,7 +111,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      */
     public byte[] getData() {
         try (InputStream stream = getPackagePart().getInputStream()) {
-            return IOUtils.toByteArray(stream, getMaxImageSize());
+            return IOUtils.toByteArrayWithMaxLength(stream, getMaxImageSize());
         } catch (IOException e) {
             throw new POIXMLException(e);
         }
@@ -165,7 +165,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
         if (this.checksum == null) {
             byte[] data;
             try (InputStream is = getPackagePart().getInputStream()) {
-                data = IOUtils.toByteArray(is, getMaxImageSize());
+                data = IOUtils.toByteArrayWithMaxLength(is, getMaxImageSize());
             } catch (IOException e) {
                 throw new POIXMLException(e);
             }

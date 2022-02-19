@@ -202,6 +202,45 @@ public final class IOUtils {
         }
     }
 
+    /**
+     * Reads the input stream, and returns the bytes read.
+     *
+     * @param stream The byte stream of data to read.
+     * @param maxLength if the input is equal to/longer than {@code maxLength} bytes,
+     *                  then throw an {@link IOException} complaining about the length.
+     *                  use {@link Integer#MAX_VALUE} to disable the check - if {@link #setByteArrayMaxOverride(int)} is
+     *                  set then that max of that value and this maxLength is used
+     * @return A byte array with the read bytes.
+     * @throws IOException If reading data fails or EOF is encountered too early for the given length.
+     * @since POI 5.2.1
+     */
+    public static byte[] toByteArrayWithMaxLength(InputStream stream, final int maxLength) throws IOException {
+        if (maxLength < 0L) {
+            throw new RecordFormatException("Can't allocate an array of length < 0");
+        }
+        final int derivedMaxLength = BYTE_ARRAY_MAX_OVERRIDE <= 0 ? maxLength : Math.max(maxLength, BYTE_ARRAY_MAX_OVERRIDE);
+
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(derivedMaxLength == Integer.MAX_VALUE ? 4096 : derivedMaxLength)) {
+            byte[] buffer = new byte[4096];
+            int totalBytes = 0, readBytes;
+            do {
+                readBytes = stream.read(buffer, 0, Math.min(buffer.length, derivedMaxLength - totalBytes));
+                totalBytes += Math.max(readBytes, 0);
+                if (readBytes > 0) {
+                    baos.write(buffer, 0, readBytes);
+                }
+
+                checkByteSizeLimit(totalBytes);
+            } while (totalBytes < derivedMaxLength && readBytes > -1);
+
+            if (derivedMaxLength != Integer.MAX_VALUE && totalBytes == derivedMaxLength) {
+                throw new IOException("MaxLength (" + derivedMaxLength + ") reached - stream seems to be invalid.");
+            }
+
+            return baos.toByteArray();
+        }
+    }
+
     private static void checkLength(long length, int maxLength) {
         if (BYTE_ARRAY_MAX_OVERRIDE > 0) {
             if (length > BYTE_ARRAY_MAX_OVERRIDE) {

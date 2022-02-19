@@ -107,7 +107,7 @@ public class XWPFComments extends POIXMLDocumentPart {
      * @throws IOException            If reading the picture-data from the stream fails.
      */
     public String addPictureData(InputStream is, int format) throws InvalidFormatException, IOException {
-        byte[] data = IOUtils.toByteArray(is, XWPFPictureData.getMaxImageSize());
+        byte[] data = IOUtils.toByteArrayWithMaxLength(is, XWPFPictureData.getMaxImageSize());
         return addPictureData(data, format);
     }
 
