@@ -50,14 +50,12 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.LocaleUtil;
 
 /** Handler for ppt and pptx files */
 @Internal
 class PPTHandler extends MFProxy {
     private SlideShow<?,?> ppt;
     private Slide<?,?> slide;
-    private Charset defaultCharset = LocaleUtil.CHARSET_1252;
 
     @Override
     public void parse(File file) throws IOException {

@@ -81,6 +81,19 @@ public class TSPTimeStampService implements TimeStampService {
 
     private static final Logger LOG = LogManager.getLogger(TSPTimeStampService.class);
 
+    // how large a timestamp response is expected to be
+    // can be overwritten via IOUtils.setByteArrayMaxOverride()
+    private static final int DEFAULT_TIMESTAMP_RESPONSE_SIZE = 10_000_000;
+    private static int MAX_TIMESTAMP_RESPONSE_SIZE = DEFAULT_TIMESTAMP_RESPONSE_SIZE;
+
+    public static void setMaxTimestampResponseSize(int maxTimestampResponseSize) {
+        MAX_TIMESTAMP_RESPONSE_SIZE = maxTimestampResponseSize;
+    }
+
+    public static int getMaxTimestampResponseSize() {
+        return MAX_TIMESTAMP_RESPONSE_SIZE;
+    }
+
     /**
      * Maps the digest algorithm to corresponding OID value.
      */
@@ -165,7 +178,7 @@ public class TSPTimeStampService implements TimeStampService {
             }
 
             try (InputStream stream = huc.getInputStream()) {
-                responseBytes = IOUtils.toByteArray(stream);
+                responseBytes = IOUtils.toByteArray(stream, MAX_TIMESTAMP_RESPONSE_SIZE);
             }
             LOG.atDebug().log(() -> new SimpleMessage("response content: " + HexDump.dump(responseBytes, 0, 0)));
         } finally {
