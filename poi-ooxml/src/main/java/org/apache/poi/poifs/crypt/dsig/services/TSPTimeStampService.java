@@ -184,7 +184,7 @@ public class TSPTimeStampService implements TimeStampService {
             }
 
             try (InputStream stream = huc.getInputStream()) {
-                responseBytes = IOUtils.toByteArray(stream, MAX_TIMESTAMP_RESPONSE_SIZE);
+                responseBytes = IOUtils.toByteArrayWithMaxLength(stream, getMaxTimestampResponseSize());
             }
             LOG.atDebug().log(() -> new SimpleMessage("response content: " + HexDump.dump(responseBytes, 0, 0)));
         } finally {
