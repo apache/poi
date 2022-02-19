@@ -100,12 +100,12 @@ final class TestIOUtils {
     }
 
     @Test
-    void testToByteArrayToSmall() {
+    void testToByteArrayTooSmall() {
         assertThrows(IOException.class, () -> IOUtils.toByteArray(data123(), 10));
     }
 
     @Test
-    void testToByteArrayMaxLengthToSmall() {
+    void testToByteArrayMaxLengthTooSmall() {
         assertThrows(IOException.class, () -> IOUtils.toByteArray(data123(), 10, 10));
     }
 

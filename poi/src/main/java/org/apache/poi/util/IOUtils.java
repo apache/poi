@@ -96,10 +96,6 @@ public final class IOUtils {
         }
     }
 
-    private static int getByteArrayLimit() {
-        return BYTE_ARRAY_MAX_OVERRIDE < 0 ? Integer.MAX_VALUE : BYTE_ARRAY_MAX_OVERRIDE;
-    }
-
     /**
      * Peeks at the first N bytes of the stream. Returns those bytes, but
      *  with the stream unaffected. Requires a stream that supports mark/reset,
@@ -134,15 +130,14 @@ public final class IOUtils {
     }
 
     /**
-     * Reads all the data from the input stream, and returns the bytes read. If {@link #setByteArrayMaxOverride(int)}
-     * is used then that limit is applied and this call will fail if the array size exceeds the configured limit.
+     * Reads all the data from the input stream, and returns the bytes read.
      *
      * @param stream The byte stream of data to read.
      * @return A byte array with the read bytes.
      * @throws IOException If reading data fails or EOF is encountered too early for the given length.
      */
     public static byte[] toByteArray(InputStream stream) throws IOException {
-        return toByteArray(stream, getByteArrayLimit());
+        return toByteArray(stream, Integer.MAX_VALUE);
     }
 
     /**
@@ -155,7 +150,7 @@ public final class IOUtils {
      * @throws IOException If reading data fails or EOF is encountered too early for the given length.
      */
     public static byte[] toByteArray(InputStream stream, final int length) throws IOException {
-        return toByteArray(stream, length, getByteArrayLimit());
+        return toByteArray(stream, length, Integer.MAX_VALUE);
     }
 
 
@@ -537,11 +532,11 @@ public final class IOUtils {
 
     private static void throwRFE(long length, int maxLength) {
         throw new RecordFormatException(String.format(Locale.ROOT, "Tried to allocate an array of length %,d" +
-                ", but the maximum length for this record type is %,d.\n" +
-                "If the file is not corrupt, please open an issue on bugzilla to request \n" +
-                "increasing the maximum allowable size for this record type.\n"+
-                "As a temporary workaround, consider setting a higher override value with " +
-                "IOUtils.setByteArrayMaxOverride()",
+                        ", but the maximum length for this record type is %,d.\n" +
+                        "If the file is not corrupt, please open an issue on bugzilla to request \n" +
+                        "increasing the maximum allowable size for this record type.\n"+
+                        "As a temporary workaround, consider setting a higher override value with " +
+                        "IOUtils.setByteArrayMaxOverride()",
                 length, maxLength));
 
     }
