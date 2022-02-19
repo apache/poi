@@ -19,8 +19,10 @@ package org.apache.poi.hmef.attribute;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -47,6 +49,17 @@ public final class TestTNEFAttributes {
         }
     }
 
+    /**
+     * Test malformed TNEF is detected by MAPIAttribute and does not cause Out Of Memory error
+     */
+    @Test
+    void testMalformedTNEF() throws Exception {
+        try (InputStream is = _samples.openResourceAsStream("oom.tnef")) {
+            quick = new HMEFMessage(is);
+        } catch (Exception e) {
+            assertTrue(e instanceof IOException);
+        }
+    }
     /**
      * Test counts
      */

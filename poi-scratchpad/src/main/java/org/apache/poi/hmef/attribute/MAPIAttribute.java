@@ -150,7 +150,9 @@ public class MAPIAttribute {
          MAPIProperty prop = MAPIProperty.get(id);
          if(id >= 0x8000 && id <= 0xFFFF) {
             byte[] guid = new byte[16];
-            IOUtils.readFully(inp, guid);
+            if (IOUtils.readFully(inp, guid) < 0) {
+               throw new IOException("Not enough data to read guid");
+            }
             int mptype = LittleEndian.readInt(inp);
 
             // Get the name of it
@@ -164,7 +166,9 @@ public class MAPIAttribute {
                // Custom name was stored
                int mplen = LittleEndian.readInt(inp);
                byte[] mpdata = IOUtils.safelyAllocate(mplen, MAX_RECORD_LENGTH);
-               IOUtils.readFully(inp, mpdata);
+               if (IOUtils.readFully(inp, mpdata) < 0) {
+                  throw new IOException("Not enough data to read " + mplen + " bytes for attribute name");
+               }
                name = StringUtil.getFromUnicodeLE(mpdata, 0, (mplen/2)-1);
                skipToBoundary(mplen, inp);
             }
@@ -189,7 +193,9 @@ public class MAPIAttribute {
          for(int j=0; j<values; j++) {
             int len = getLength(type, inp);
             byte[] data = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
-            IOUtils.readFully(inp, data);
+            if (IOUtils.readFully(inp, data) < 0) {
+               throw new IOException("Not enough data to read " + len + " bytes of attribute value");
+            }
             skipToBoundary(len, inp);
 
             // Create
