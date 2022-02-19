@@ -19,7 +19,7 @@ package org.apache.poi.hmef.attribute;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -55,11 +55,10 @@ public final class TestTNEFAttributes {
     @Test
     void testMalformedTNEF() throws Exception {
         try (InputStream is = _samples.openResourceAsStream("oom.tnef")) {
-            quick = new HMEFMessage(is);
-        } catch (Exception e) {
-            assertTrue(e instanceof IOException);
+            assertThrows(IOException.class, ()-> new HMEFMessage(is));
         }
     }
+
     /**
      * Test counts
      */
