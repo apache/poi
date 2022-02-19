@@ -78,7 +78,8 @@ import org.apache.poi.util.TempFile;
             }
 
             // Grab the de-compressed contents for later
-            data = (entrySize == -1) ? IOUtils.toByteArray(inp) : IOUtils.toByteArray(inp, (int)entrySize, MAX_ENTRY_SIZE);
+            data = (entrySize == -1) ? IOUtils.toByteArrayWithMaxLength(inp, getMaxEntrySize()) :
+                    IOUtils.toByteArray(inp, (int)entrySize, getMaxEntrySize());
         }
     }
 
