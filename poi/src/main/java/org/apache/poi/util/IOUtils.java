@@ -135,6 +135,7 @@ public final class IOUtils {
      * @param stream The byte stream of data to read.
      * @return A byte array with the read bytes.
      * @throws IOException If reading data fails or EOF is encountered too early for the given length.
+     * @throws RecordFormatException If the requested length is invalid.
      */
     public static byte[] toByteArray(InputStream stream) throws IOException {
         return toByteArray(stream, Integer.MAX_VALUE);
@@ -148,6 +149,7 @@ public final class IOUtils {
      *               until EOF.
      * @return A byte array with the read bytes.
      * @throws IOException If reading data fails or EOF is encountered too early for the given length.
+     * @throws RecordFormatException If the requested length is invalid.
      */
     public static byte[] toByteArray(InputStream stream, final int length) throws IOException {
         return toByteArray(stream, length, Integer.MAX_VALUE);
@@ -166,9 +168,10 @@ public final class IOUtils {
      *                  set then that max of that value and this maxLength is used
      * @return A byte array with the read bytes.
      * @throws IOException If reading data fails or EOF is encountered too early for the given length.
+     * @throws RecordFormatException If the requested length is invalid.
      */
     public static byte[] toByteArray(InputStream stream, final int length, final int maxLength) throws IOException {
-        if (length < 0L || maxLength < 0L) {
+        if ((length < 0 && length != Integer.MIN_VALUE) || maxLength < 0) {
             throw new RecordFormatException("Can't allocate an array of length < 0");
         }
         final int derivedMaxLength = BYTE_ARRAY_MAX_OVERRIDE <= 0 ? maxLength : Math.max(maxLength, BYTE_ARRAY_MAX_OVERRIDE);
@@ -176,26 +179,27 @@ public final class IOUtils {
             checkLength(length, derivedMaxLength);
         }
 
-        final int len = Math.min(length, derivedMaxLength);
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(len == Integer.MAX_VALUE ? 4096 : len)) {
+        final int derivedLen = length == Integer.MIN_VALUE ? derivedMaxLength : Math.min(length, derivedMaxLength);
+        try (UnsynchronizedByteArrayOutputStream baos =
+                     new UnsynchronizedByteArrayOutputStream(derivedLen == Integer.MAX_VALUE ? 4096 : derivedLen)) {
             byte[] buffer = new byte[4096];
             int totalBytes = 0, readBytes;
             do {
-                readBytes = stream.read(buffer, 0, Math.min(buffer.length, len - totalBytes));
+                readBytes = stream.read(buffer, 0, Math.min(buffer.length, derivedLen - totalBytes));
                 totalBytes += Math.max(readBytes, 0);
                 if (readBytes > 0) {
                     baos.write(buffer, 0, readBytes);
                 }
 
                 checkByteSizeLimit(totalBytes);
-            } while (totalBytes < len && readBytes > -1);
+            } while (totalBytes < derivedLen && readBytes > -1);
 
             if (derivedMaxLength != Integer.MAX_VALUE && totalBytes == derivedMaxLength) {
                 throw new IOException("MaxLength (" + derivedMaxLength + ") reached - stream seems to be invalid.");
             }
 
-            if (len != Integer.MAX_VALUE && totalBytes < len) {
-                throw new EOFException("unexpected EOF - expected len: " + len + " - actual len: " + totalBytes);
+            if (length != Integer.MIN_VALUE && derivedLen != Integer.MAX_VALUE && totalBytes < derivedLen) {
+                throw new EOFException("unexpected EOF - expected len: " + derivedLen + " - actual len: " + totalBytes);
             }
 
             return baos.toByteArray();
@@ -212,33 +216,11 @@ public final class IOUtils {
      *                  set then that max of that value and this maxLength is used
      * @return A byte array with the read bytes.
      * @throws IOException If reading data fails or EOF is encountered too early for the given length.
+     * @throws RecordFormatException If the requested length is invalid.
      * @since POI 5.2.1
      */
     public static byte[] toByteArrayWithMaxLength(InputStream stream, final int maxLength) throws IOException {
-        if (maxLength < 0L) {
-            throw new RecordFormatException("Can't allocate an array of length < 0");
-        }
-        final int derivedMaxLength = BYTE_ARRAY_MAX_OVERRIDE <= 0 ? maxLength : Math.max(maxLength, BYTE_ARRAY_MAX_OVERRIDE);
-
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(derivedMaxLength == Integer.MAX_VALUE ? 4096 : derivedMaxLength)) {
-            byte[] buffer = new byte[4096];
-            int totalBytes = 0, readBytes;
-            do {
-                readBytes = stream.read(buffer, 0, Math.min(buffer.length, derivedMaxLength - totalBytes));
-                totalBytes += Math.max(readBytes, 0);
-                if (readBytes > 0) {
-                    baos.write(buffer, 0, readBytes);
-                }
-
-                checkByteSizeLimit(totalBytes);
-            } while (totalBytes < derivedMaxLength && readBytes > -1);
-
-            if (derivedMaxLength != Integer.MAX_VALUE && totalBytes == derivedMaxLength) {
-                throw new IOException("MaxLength (" + derivedMaxLength + ") reached - stream seems to be invalid.");
-            }
-
-            return baos.toByteArray();
-        }
+        return toByteArray(stream, Integer.MIN_VALUE, maxLength);
     }
 
     private static void checkLength(long length, int maxLength) {
