@@ -554,7 +554,7 @@ public final class IOUtils {
     private static void throwRFE(long length, int maxLength) {
         throw new RecordFormatException(String.format(Locale.ROOT, "Tried to allocate an array of length %,d" +
                         ", but the maximum length for this record type is %,d.\n" +
-                        "If the file is not corrupt, please open an issue on bugzilla to request \n" +
+                        "If the file is not corrupt or large, please open an issue on bugzilla to request \n" +
                         "increasing the maximum allowable size for this record type.\n"+
                         "As a temporary workaround, consider setting a higher override value with " +
                         "IOUtils.setByteArrayMaxOverride()",
