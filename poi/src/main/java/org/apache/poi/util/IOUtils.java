@@ -196,7 +196,7 @@ public final class IOUtils {
         if (length < 0 || maxLength < 0) {
             throw new RecordFormatException("Can't allocate an array of length < 0");
         }
-        final int derivedMaxLength = BYTE_ARRAY_MAX_OVERRIDE <= 0 ? maxLength : Math.max(maxLength, BYTE_ARRAY_MAX_OVERRIDE);
+        final int derivedMaxLength = Math.max(maxLength, BYTE_ARRAY_MAX_OVERRIDE);
         if ((length != Integer.MAX_VALUE) || (derivedMaxLength != Integer.MAX_VALUE)) {
             checkLength(length, derivedMaxLength);
         }
