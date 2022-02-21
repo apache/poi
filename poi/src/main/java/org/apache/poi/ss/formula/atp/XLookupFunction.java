@@ -138,7 +138,7 @@ final class XLookupFunction implements FreeRefFunction, ArrayFunction {
                 if (tableArray.isColumn()) {
                     return area.offset(matchedIdx, matchedIdx,0, area.getWidth() - 1);
                 } else {
-                    return area.offset(0, area.getHeight() - 1,matchedIdx, matchedIdx);
+                    return area.offset(0, area.getHeight() - 1, matchedIdx, matchedIdx);
                 }
             } else {
                 return returnEval;
