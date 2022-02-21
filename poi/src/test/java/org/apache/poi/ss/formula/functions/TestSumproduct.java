@@ -32,6 +32,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -135,6 +136,17 @@ final class TestSumproduct {
         }
     }
 
+    @Disabled("https://bz.apache.org/bugzilla/show_bug.cgi?id=65907")
+    @Test
+    void testMicrosoftExample3() throws Exception {
+        //https://support.microsoft.com/en-us/office/sumproduct-function-16753e75-9f68-4874-94ac-4d2145a2fd2e
+        try (HSSFWorkbook wb = initWorkbook3()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(11).createCell(3);
+            assertDouble(fe, cell, "SUMPRODUCT((B2:B9=B12)*(C2:C9=C12)*D2:D9)", 5249);
+        }
+    }
+
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -143,6 +155,24 @@ final class TestSumproduct {
         addRow(sheet, 2, null, "Chai", 2.20, 7);
         addRow(sheet, 3, null, "Mint", 4.20, 3);
         addRow(sheet, 4, null, "Ginger", 3.62, 6);
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook3() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, null , "Region", "Item", "Sales");
+        addRow(sheet, 1, null, "North", "Apples", 2763);
+        addRow(sheet, 2, null, "South", "Pears", 9359);
+        addRow(sheet, 3, null, "East", "Cherries", 3830);
+        addRow(sheet, 4, null, "West", "Bananas", 8720);
+        addRow(sheet, 5, null, "North", "Pears", 1873);
+        addRow(sheet, 6, null, "South", "Apples", 4065);
+        addRow(sheet, 7, null, "East", "Cherries", 1419);
+        addRow(sheet, 8, null, "West", "Bananas", 7173);
+        addRow(sheet, 9);
+        addRow(sheet, 10, null , "Region", "Item", "Sales");
+        addRow(sheet, 11, null , "East", "Cherries");
         return wb;
     }
 }
