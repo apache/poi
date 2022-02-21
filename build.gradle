@@ -128,6 +128,10 @@ subprojects {
         saxonVersion = '11.2'
         apiGuardianVersion = '1.1.2'
 
+        jdkVersion = (project.properties['jdkVersion'] ?: '8') as int
+        // see https://github.com/gradle/gradle/blob/master/subprojects/jvm-services/src/main/java/org/gradle/internal/jvm/inspection/JvmVendor.java
+        jdkVendor = (project.properties['jdkVendor'] ?: '') as String
+
         JAVA9_SRC = 'src/main/java9'
         JAVA9_OUT = "${buildDir}/classes/java9/main/"
         TEST9_SRC = 'src/test/java9'
@@ -155,12 +159,9 @@ subprojects {
         options.incremental = true
 
         onlyIf {
-            (name != "compileJava9" && name != "compileTest9") || JavaVersion.current() != JavaVersion.VERSION_1_8
+            (name != "compileJava9" && name != "compileTest9") // || jdkVersion > 8
         }
     }
-
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
 
     repositories {
         mavenCentral()
@@ -181,6 +182,10 @@ subprojects {
     }
 
     java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(jdkVersion))
+            if (jdkVendor != '') vendor.set(JvmVendorSpec.matching(jdkVendor))
+        }
         withJavadocJar()
         withSourcesJar()
     }
@@ -188,11 +193,13 @@ subprojects {
     javadoc {
         failOnError = true
         maxMemory = "1024M"
+        javadocTool = javaToolchains.javadocToolFor {
+            languageVersion = JavaLanguageVersion.of(11)
+        }
+
         doFirst {
             options {
-                if (JavaVersion.current().isJava9Compatible()) {
-                    addBooleanOption('html5', true)
-                }
+                addBooleanOption('html5', true)
                 addBooleanOption('Xdoclint:all,-missing', true)
                 links 'https://poi.apache.org/apidocs/dev/'
                 links 'https://docs.oracle.com/javase/8/docs/api/'
@@ -251,6 +258,11 @@ subprojects {
         useJUnitPlatform()
         reports {
             junitXml.required = true
+        }
+
+        javaLauncher = javaToolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(jdkVersion))
+            if (jdkVendor != '') vendor.set(JvmVendorSpec.matching(jdkVendor))
         }
 
         // Exclude some tests that are not actually tests or do not run cleanly on purpose
@@ -324,14 +336,12 @@ subprojects {
         systemProperties['java.locale.providers'] = 'JRE,CLDR'
 
         doFirst {
-            if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+            if (jdkVersion > 8) {
                 // some options were removed in JDK 18
-                if (JavaVersion.current().ordinal() < JavaVersion.VERSION_18.ordinal()) {
+                if (jdkVersion < 18) {
                     jvmArgs += [
                         '--illegal-access=warn',
                     ]
-                } else {
-                    System.out.println("Configuring for JDK 18 or higher")
                 }
 
                 jvmArgs += [
@@ -403,7 +413,7 @@ subprojects {
         ignoreFailures = false
         suppressAnnotations = [ 'org.apache.poi.util.SuppressForbidden' ]
         // forbiddenapis bundled signatures max supported version is 14
-        targetCompatibility = (JavaVersion.VERSION_14.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_14)
+        // targetCompatibility = (JavaVersion.VERSION_14.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_14)
     }
 
     forbiddenApisMain {

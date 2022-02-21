@@ -26,7 +26,7 @@ sourceSets {
         // TypeSystemHolder.class is in the resources
         output.dir(BEANS_RES, builtBy: 'generate_beans')
         compileClasspath += files(BEANS_RES)
-        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+        if (jdkVersion > 8) {
             output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
         }
         java {
@@ -52,13 +52,17 @@ final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path 
 
 compileJava {
     dependsOn 'generate_beans'
+    options.fork = true
+    options.forkOptions.jvmArgs << '-Xmx2G'
 }
 
 task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava'
 
-    sourceCompatibility = 9
-    targetCompatibility = 9
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(jdkVersion)
+        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
+    }
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
@@ -66,6 +70,10 @@ task compileJava9(type: JavaCompile) {
         '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.asPath}",
         '--module-path', files(MAIN_MODULE_PATH).asPath
     ]
+
+    onlyIf {
+        jdkVersion > 8
+    }
 }
 
 task cacheJava9(type: Copy) {
@@ -136,7 +144,7 @@ task sourceJar(type: Jar) {
 jar {
     dependsOn 'sourceJar'
 
-    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+    if (jdkVersion == 8) {
         into('META-INF/versions/9') {
             from JAVA9_SRC include '*.class'
         }

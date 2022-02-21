@@ -24,12 +24,12 @@ configurations {
 
 sourceSets {
     main {
-        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+        if (jdkVersion > 8) {
             output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
         }
     }
     test {
-        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+        if (jdkVersion > 8) {
             output.dir(TEST9_OUT, builtBy: 'cacheTest9')
         }
     }
@@ -64,8 +64,10 @@ final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path 
 task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava', ':poi:jar'
 
-    sourceCompatibility = 9
-    targetCompatibility = 9
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(jdkVersion)
+        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
+    }
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
@@ -73,6 +75,10 @@ task compileJava9(type: JavaCompile) {
         '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
         '--module-path', files(MAIN_MODULE_PATH).asPath
     ]
+
+    onlyIf {
+        jdkVersion > 8
+    }
 }
 
 task cacheJava9(type: Copy) {
@@ -85,8 +91,10 @@ task cacheJava9(type: Copy) {
 task compileTest9(type: JavaCompile) {
     dependsOn 'compileTestJava', ':poi:jar'
 
-    sourceCompatibility = 9
-    targetCompatibility = 9
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(jdkVersion)
+        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
+    }
     destinationDirectory = file(TEST9_OUT + VERSIONS9)
     source = file(TEST9_SRC)
     options.compilerArgs = [
@@ -94,6 +102,10 @@ task compileTest9(type: JavaCompile) {
         '--module-path', files(TEST_MODULE_PATH).asPath
     ]
     classpath = files()
+
+    onlyIf {
+        jdkVersion > 8
+    }
 }
 
 
@@ -107,7 +119,7 @@ task cacheTest9(type: Copy) {
 jar {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
 
-    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+    if (jdkVersion == 8) {
         into('META-INF/versions/9') {
             from JAVA9_SRC include '*.class'
         }
@@ -127,7 +139,7 @@ task testJar(type: Jar, dependsOn: testClasses) {
     // ignore second module-info.class from main
     duplicatesStrategy = 'exclude'
 
-    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+    if (jdkVersion == 8) {
         into('META-INF/versions/9') {
             from TEST9_SRC include '*.class'
         }
@@ -176,7 +188,7 @@ test {
     systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
 
     doFirst {
-        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+        if (jdkVersion > 8) {
             jvmArgs += [
                 '--add-modules', MODULE_NAME,
                 '--module-path', '../build/dist/maven/poi-scratchpad-tests' + File.pathSeparator + files(TEST_MODULE_PATH).asPath,

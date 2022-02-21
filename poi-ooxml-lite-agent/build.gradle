@@ -17,7 +17,7 @@
 
 sourceSets {
     main {
-        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+        if (jdkVersion > 8) {
             output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
         }
     }
@@ -32,15 +32,19 @@ dependencies {
 final MODULE_NAME = 'org.apache.poi.ooxml_lite'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(jdkVersion))
+        if (jdkVendor != '') vendor.set(JvmVendorSpec.matching(jdkVendor))
+    }
 }
 
 task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava'
 
-    sourceCompatibility = 9
-    targetCompatibility = 9
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(jdkVersion)
+        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
+    }
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
@@ -49,6 +53,10 @@ task compileJava9(type: JavaCompile) {
             '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
             '--module-path', sourceSets.main.compileClasspath.asPath
         ]
+    }
+
+    onlyIf {
+        jdkVersion > 8
     }
 }
 
@@ -62,7 +70,7 @@ task cacheJava9(type: Copy) {
 jar {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
 
-    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+    if (jdkVersion == 8) {
         into('META-INF/versions/9') {
             from JAVA9_SRC include '*.class'
         }

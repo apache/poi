@@ -141,18 +141,18 @@ def defaultMaven = 'maven_3_latest'
 def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H29'
 
 def jdkMapping = [
-        '1.8': 'jdk_1.8_latest',
-        '1.10': 'jdk_10_latest',
-        '1.11': 'jdk_11_latest',
-        '1.12': 'jdk_12_latest',
-        '1.13': 'jdk_13_latest',
-        '1.14': 'jdk_14_latest',
-        '1.15': 'jdk_15_latest',
-        '1.16': 'jdk_16_latest',
-        '1.17': 'jdk_17_latest',
-        '1.18': 'jdk_18_latest',
-        'OpenJDK 1.8': 'adoptopenjdk_hotspot_8u282',
-        'IBMJDK': 'ibmjdk_1.8.0_261',
+        '1.8': [ jenkinsJdk: 'jdk_1.8_latest', jdkVersion: 8, jdkVendor: 'oracle' ],
+        '1.10': [ jenkinsJdk: 'jdk_10_latest', jdkVersion: 10, jdkVendor: 'oracle' ],
+        '1.11': [ jenkinsJdk: 'jdk_11_latest', jdkVersion: 11, jdkVendor: 'oracle' ],
+        '1.12': [ jenkinsJdk: 'jdk_12_latest', jdkVersion: 12, jdkVendor: '' ],
+        '1.13': [ jenkinsJdk: 'jdk_13_latest', jdkVersion: 13, jdkVendor: '' ],
+        '1.14': [ jenkinsJdk: 'jdk_14_latest', jdkVersion: 14, jdkVendor: '' ],
+        '1.15': [ jenkinsJdk: 'jdk_15_latest', jdkVersion: 15, jdkVendor: '' ],
+        '1.16': [ jenkinsJdk: 'jdk_16_latest', jdkVersion: 16, jdkVendor: '' ],
+        '1.17': [ jenkinsJdk: 'jdk_17_latest', jdkVersion: 17, jdkVendor: '' ],
+        '1.18': [ jenkinsJdk: 'jdk_18_latest', jdkVersion: 18, jdkVendor: '' ],
+        'OpenJDK 1.8': [ jenkinsJdk: 'adoptopenjdk_hotspot_8u282', jdkVersion: 8, jdkVendor: 'adoptopenjdk' ],
+        'IBMJDK': [ jenkinsJdk: 'ibmjdk_1.8.0_261', jdkVersion: 8, jdkVendor: 'ibm' ]
 ]
 
 static def shellEx(def context, String cmd, def poijob) {
@@ -302,7 +302,7 @@ poijobs.each { poijob ->
                 }
             }
         }
-        jdk(jdkMapping.get(jdkKey))
+        jdk(jdkMapping.get(jdkKey).jenkinsJdk)
         scm {
             if (poijob.githubpr) {
                 git {
@@ -383,6 +383,10 @@ poijobs.each { poijob ->
                     switches('-Dsonar.organization=apache')
                     switches('-Dsonar.projectKey=poi-parent')
                     switches('-Dsonar.host.url=https://sonarcloud.io')
+                    switches('-PjdkVersion=${jdkMapping.get(jdkKey).jdkVersion}')
+                    if (jdkMapping.get(jdkKey).jdkVendor != '') {
+                        switches('-PjdkVendor=${jdkMapping.get(jdkKey).jdkVendor}')
+                    }
                     tasks('clean')
                     tasks('check')
                     tasks('jacocoTestReport')
@@ -433,6 +437,10 @@ poijobs.each { poijob ->
                         }
                         if (poijob.saxonTest) {
                             switches('-Psaxon.test=true')
+                        }
+                        switches('-PjdkVersion=${jdkMapping.get(jdkKey).jdkVersion}')
+                        if (jdkMapping.get(jdkKey).jdkVendor != '') {
+                            switches('-PjdkVendor=${jdkMapping.get(jdkKey).jdkVendor}')
                         }
                     }
                 } else {
@@ -544,7 +552,7 @@ xmlbeansjobs.each { xjob ->
                 }
             }
         }
-        jdk(jdkMapping.get(jdkKey))
+        jdk(jdkMapping.get(jdkKey).jenkinsJdk)
         scm {
             svn(xmlbeansSvnBase) { svnNode ->
                 svnNode / browser(class: 'hudson.scm.browsers.ViewSVN') /
@@ -573,6 +581,10 @@ xmlbeansjobs.each { xjob ->
                     switches('-Dsonar.organization=apache')
                     switches('-Dsonar.projectKey=apache_xmlbeans')
                     switches('-Dsonar.host.url=https://sonarcloud.io')
+                    switches('-PjdkVersion=${jdkMapping.get(jdkKey).jdkVersion}')
+                    if (jdkMapping.get(jdkKey).jdkVendor != '') {
+                        switches('-PjdkVendor=${jdkMapping.get(jdkKey).jdkVendor}')
+                    }
                 }
                 tasks('clean')
                 tasks('jenkins')

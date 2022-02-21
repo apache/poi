@@ -19,7 +19,7 @@ import java.util.regex.Pattern
 
 sourceSets {
     main {
-        if (JavaVersion.current() != JavaVersion.VERSION_1_8) {
+        if (jdkVersion > 8) {
             output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
         }
     }
@@ -58,8 +58,11 @@ final List MODULE_COMPILE_PATH = sourceSets.main.compileClasspath.findAll{ it.pa
 task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava', ':poi-ooxml:jar', ':poi-scratchpad:jar'
 
-    sourceCompatibility = 9
-    targetCompatibility = 9
+    javaCompiler = javaToolchains.compilerFor {
+        languageVersion = JavaLanguageVersion.of(jdkVersion)
+        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
+    }
+
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
@@ -67,6 +70,11 @@ task compileJava9(type: JavaCompile) {
         '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
         '--module-path', files(MODULE_COMPILE_PATH).asPath
     ]
+
+
+    onlyIf {
+        jdkVersion > 8
+    }
 }
 
 task cacheJava9(type: Copy) {
@@ -81,7 +89,7 @@ jar {
 
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
 
-    if (JavaVersion.current() == JavaVersion.VERSION_1_8) {
+    if (jdkVersion == 8) {
         into('META-INF/versions/9') {
             from JAVA9_SRC include '*.class'
         }
