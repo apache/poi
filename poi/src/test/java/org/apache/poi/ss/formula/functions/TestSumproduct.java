@@ -17,9 +17,15 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.apache.poi.ss.util.Utils.addRow;
+import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -117,5 +123,26 @@ final class TestSumproduct {
 
         ValueEval[] args = { aeA, aeB, };
         assertEquals(ErrorEval.REF_INVALID, invokeSumproduct(args));
+    }
+
+    @Test
+    void testMicrosoftExample1() throws Exception {
+        //https://support.microsoft.com/en-us/office/sumproduct-function-16753e75-9f68-4874-94ac-4d2145a2fd2e
+        try (HSSFWorkbook wb = initWorkbook1()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertDouble(fe, cell, "SUMPRODUCT(C2:C5,D2:D5)", 78.97);
+        }
+    }
+
+    private HSSFWorkbook initWorkbook1() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, null , "Item", "Cost per unit", "Quantity");
+        addRow(sheet, 1, null, "Green Tea", 3.25, 9);
+        addRow(sheet, 2, null, "Chai", 2.20, 7);
+        addRow(sheet, 3, null, "Mint", 4.20, 3);
+        addRow(sheet, 4, null, "Ginger", 3.62, 6);
+        return wb;
     }
 }
