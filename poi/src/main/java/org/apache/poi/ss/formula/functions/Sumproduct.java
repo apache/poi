@@ -51,6 +51,12 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  *          A<b>n</b><sub>(<b>i</b>,<b>j</b>)</sub>&nbsp;
  *    )&nbsp;
  *  )
+ *
+ * <p>
+ *     The current implementation does not support the more advanced use cases of SUMPRODUCT, including
+ *     <code>SUMPRODUCT((B2:B9=B12)*(C2:C9=C12)*D2:D9)</code> (see example 3 in
+ *     https://support.microsoft.com/en-us/office/sumproduct-function-16753e75-9f68-4874-94ac-4d2145a2fd2e).
+ * </p>
  */
 public final class Sumproduct implements Function {
 
