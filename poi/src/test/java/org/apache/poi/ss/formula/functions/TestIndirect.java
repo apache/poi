@@ -124,7 +124,11 @@ final class TestIndirect {
         confirm(feA, c, "SUM(INDIRECT(A4))", 50); // indirect defined name
         confirm(feA, c, "SUM(INDIRECT(B4))", 351); // indirect defined name pointinh to other sheet
 
+
         // simple error propagation:
+
+        confirm(feA, c, "INDIRECT(\"C\")", ErrorEval.REF_INVALID);
+        confirm(feA, c, "INDIRECT(\"4\")", ErrorEval.REF_INVALID);
 
         // arg0 is evaluated to text first
         confirm(feA, c, "INDIRECT(#DIV/0!)", ErrorEval.DIV_ZERO);

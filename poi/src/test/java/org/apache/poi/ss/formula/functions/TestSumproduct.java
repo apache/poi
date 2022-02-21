@@ -133,6 +133,7 @@ final class TestSumproduct {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             assertDouble(fe, cell, "SUMPRODUCT(C2:C5,D2:D5)", 78.97);
+            assertDouble(fe, cell, "SUMPRODUCT(C2:C5=\"Chai\",D2:D5)", 78.97);
         }
     }
 
