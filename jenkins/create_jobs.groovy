@@ -383,9 +383,9 @@ poijobs.each { poijob ->
                     switches('-Dsonar.organization=apache')
                     switches('-Dsonar.projectKey=poi-parent')
                     switches('-Dsonar.host.url=https://sonarcloud.io')
-                    switches('-PjdkVersion=${jdkMapping.get(jdkKey).jdkVersion}')
+                    switches("-PjdkVersion=${jdkMapping.get(jdkKey).jdkVersion}")
                     if (jdkMapping.get(jdkKey).jdkVendor != '') {
-                        switches('-PjdkVendor=${jdkMapping.get(jdkKey).jdkVendor}')
+                        switches("-PjdkVendor=${jdkMapping.get(jdkKey).jdkVendor}")
                     }
                     tasks('clean')
                     tasks('check')
@@ -438,9 +438,9 @@ poijobs.each { poijob ->
                         if (poijob.saxonTest) {
                             switches('-Psaxon.test=true')
                         }
-                        switches('-PjdkVersion=${jdkMapping.get(jdkKey).jdkVersion}')
+                        switches("-PjdkVersion=${jdkMapping.get(jdkKey).jdkVersion}")
                         if (jdkMapping.get(jdkKey).jdkVendor != '') {
-                            switches('-PjdkVendor=${jdkMapping.get(jdkKey).jdkVendor}')
+                            switches("-PjdkVendor=${jdkMapping.get(jdkKey).jdkVendor}")
                         }
                     }
                 } else {
@@ -581,9 +581,9 @@ xmlbeansjobs.each { xjob ->
                     switches('-Dsonar.organization=apache')
                     switches('-Dsonar.projectKey=apache_xmlbeans')
                     switches('-Dsonar.host.url=https://sonarcloud.io')
-                    switches('-PjdkVersion=${jdkMapping.get(jdkKey).jdkVersion}')
+                    switches("-PjdkVersion=${jdkMapping.get(jdkKey).jdkVersion}")
                     if (jdkMapping.get(jdkKey).jdkVendor != '') {
-                        switches('-PjdkVendor=${jdkMapping.get(jdkKey).jdkVendor}')
+                        switches("-PjdkVendor=${jdkMapping.get(jdkKey).jdkVendor}")
                     }
                 }
                 tasks('clean')
