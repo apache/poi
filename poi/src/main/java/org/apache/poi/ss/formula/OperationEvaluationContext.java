@@ -223,7 +223,7 @@ public final class OperationEvaluationContext {
 
         SpreadsheetVersion ssVersion = _workbook.getSpreadsheetVersion();
 
-        NameType part1refType = isA1Style ? classifyCellReference(refStrPart1, ssVersion) : NameType.CELL;
+        NameType part1refType = isA1Style ? classifyCellReference(refStrPart1, ssVersion) : getR1C1CellType(refStrPart1);
         switch (part1refType) {
             case BAD_CELL_OR_NAMED_RANGE:
                 return ErrorEval.REF_INVALID;
@@ -255,7 +255,7 @@ public final class OperationEvaluationContext {
             }
             throw new IllegalStateException("Unexpected reference classification of '" + refStrPart1 + "'.");
         }
-        NameType part2refType = isA1Style ? classifyCellReference(refStrPart1, ssVersion) : NameType.CELL;
+        NameType part2refType = isA1Style ? classifyCellReference(refStrPart2, ssVersion) : getR1C1CellType(refStrPart2);
         switch (part2refType) {
             case BAD_CELL_OR_NAMED_RANGE:
                 return ErrorEval.REF_INVALID;
@@ -571,6 +571,25 @@ public final class OperationEvaluationContext {
             return new CellReference(newR, newC);
         } else {
             throw new IllegalArgumentException(relativeReference + " is not a valid R1C1 reference");
+        }
+    }
+
+    private static NameType getR1C1CellType(String str) {
+        String upRef = str.toUpperCase(LocaleUtil.getUserLocale());
+        int rpos = upRef.indexOf('R');
+        int cpos = upRef.indexOf('C');
+        if (rpos != -1) {
+            if (cpos == -1) {
+                return NameType.ROW;
+            } else {
+                return NameType.CELL;
+            }
+        } else {
+            if (cpos == -1) {
+                return NameType.BAD_CELL_OR_NAMED_RANGE;
+            } else {
+                return NameType.COLUMN;
+            }
         }
     }
 }
