@@ -168,10 +168,13 @@ final class TestIndirect {
 
             // non-error cases
             confirm(feA, c, "INDIRECT(\"R2C3\", FALSE)", 23);
+            confirm(feA, c, "INDIRECT(\"r2c3\", FALSE)", 23);
             confirm(feA, c, "INDIRECT(\"R[-4]C[0]\", FALSE)", 23);
             confirm(feA, c, "INDIRECT(\"R[-4]C\", FALSE)", 23);
             confirm(feA, c, "INDIRECT(\"R1C1:R1C7\", FALSE)", 13); // de-reference area ref (note formula is in C4)
+            confirm(feA, c, "INDIRECT(\"r1c1:r1c7\", FALSE)", 13); // de-reference area ref (note formula is in C4)
             confirm(feA, c, "SUM(INDIRECT(\"Sheet2!R1C2:R3C3\", FALSE))", 351); // area ref
+            confirm(feA, c, "SUM(INDIRECT(\"Sheet2!r1c2:r3c3\", FALSE))", 351); // area ref
             confirm(feA, c, "SUM(INDIRECT(\"Sheet2! R1C2 : R3C3 \", FALSE))", 351); // spaces in area ref
 
             //scenarios yet to support

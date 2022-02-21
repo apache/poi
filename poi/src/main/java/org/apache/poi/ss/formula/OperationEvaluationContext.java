@@ -42,6 +42,9 @@ import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
+import org.apache.poi.util.LocaleUtil;
+
+import java.util.Locale;
 
 /**
  * Contains all the contextual information required to evaluate an operation
@@ -533,8 +536,9 @@ public final class OperationEvaluationContext {
     }
 
     public static CellReference applyR1C1Reference(CellReference anchorReference, String relativeReference) {
-        int rpos = relativeReference.indexOf('R');
-        int cpos = relativeReference.indexOf('C');
+        String upRef = relativeReference.toUpperCase(LocaleUtil.getUserLocale());
+        int rpos = upRef.indexOf('R');
+        int cpos = upRef.indexOf('C');
         if (rpos >= 0 && cpos > rpos) {
             String rval = relativeReference.substring(rpos + 1, cpos).trim();
             String cval = relativeReference.substring(cpos + 1).trim();
