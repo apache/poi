@@ -201,10 +201,13 @@ final class TestIndirect {
     @Test
     void testR1C1FullRow() throws Exception {
         try (HSSFWorkbook wbA = createWBA()) {
-            HSSFCell c = wbA.getSheetAt(0).createRow(100).createCell(0);
+            HSSFRow row = wbA.getSheetAt(0).createRow(100);
+            HSSFCell c0 = row.createCell(0);
+            HSSFCell c1 = row.createCell(1);
             HSSFFormulaEvaluator feA = new HSSFFormulaEvaluator(wbA);
-            confirm(feA, c, "INDIRECT(\"R[-100]\", FALSE)", 11.0);
-            confirm(feA, c, "INDIRECT(\"R1\", FALSE)", 11.0);
+            confirm(feA, c0, "INDIRECT(\"R[-100]\", FALSE)", 11.0);
+            confirm(feA, c0, "INDIRECT(\"R1\", FALSE)", 11.0);
+            //assertEquals(12.0, c1.getNumericCellValue());
         }
     }
 
