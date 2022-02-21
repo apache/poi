@@ -195,6 +195,9 @@ final class TestIndirect {
             HSSFFormulaEvaluator feA = new HSSFFormulaEvaluator(wbA);
             confirm(feA, c, "INDIRECT(\"C[-17]\", FALSE)", 14.0);
             confirm(feA, c, "INDIRECT(\"C4\", FALSE)", 14.0);
+            confirm(feA, c, "INDIRECT(\"c4\", FALSE)", 14.0);
+            confirm(feA, c, "INDIRECT(\"Sheet1!C4\", FALSE)", 14.0);
+            confirm(feA, c, "INDIRECT(\"CX\", FALSE)", ErrorEval.REF_INVALID);
         }
     }
 
@@ -207,7 +210,10 @@ final class TestIndirect {
             HSSFFormulaEvaluator feA = new HSSFFormulaEvaluator(wbA);
             confirm(feA, c0, "INDIRECT(\"R[-100]\", FALSE)", 11.0);
             confirm(feA, c0, "INDIRECT(\"R1\", FALSE)", 11.0);
+            confirm(feA, c0, "INDIRECT(\"r1\", FALSE)", 11.0);
+            confirm(feA, c0, "INDIRECT(\"Sheet1!R1\", FALSE)", 11.0);
             //assertEquals(12.0, c1.getNumericCellValue());
+            confirm(feA, c0, "INDIRECT(\"RX\", FALSE)", ErrorEval.REF_INVALID);
         }
     }
 
