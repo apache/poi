@@ -242,8 +242,49 @@ public final class OperationEvaluationContext {
             // no ':'
             switch (part1refType) {
                 case COLUMN:
+                    if (isA1Style) {
+                        return ErrorEval.REF_INVALID;
+                    } else {
+                        try {
+                            String upRef = refStrPart1.toUpperCase(LocaleUtil.getUserLocale());
+                            int cpos = upRef.indexOf('C');
+                            String cval = refStrPart1.substring(cpos + 1).trim();
+                            int absoluteC;
+                            if (cval.startsWith("[") && cval.endsWith("]")) {
+                                int relativeC = Integer.parseInt(cval.substring(1, cval.length() - 1).trim());
+                                absoluteC = getColumnIndex() + relativeC;
+                            } else if (!cval.isEmpty()) {
+                                absoluteC = Integer.parseInt(cval) - 1;
+                            } else {
+                                return ErrorEval.REF_INVALID;
+                            }
+                            return new LazyAreaEval(0, absoluteC, ssVersion.getLastRowIndex(), absoluteC, sre);
+                        } catch (Exception e) {
+                            return ErrorEval.REF_INVALID;
+                        }
+                    }
                 case ROW:
-                    return ErrorEval.REF_INVALID;
+                    if (isA1Style) {
+                        return ErrorEval.REF_INVALID;
+                    } else {
+                        try {
+                            String upRef = refStrPart1.toUpperCase(LocaleUtil.getUserLocale());
+                            int rpos = upRef.indexOf('R');
+                            String rval = refStrPart1.substring(rpos + 1).trim();
+                            int absoluteR;
+                            if (rval.startsWith("[") && rval.endsWith("]")) {
+                                int relativeR = Integer.parseInt(rval.substring(1, rval.length() - 1).trim());
+                                absoluteR = getRowIndex() + relativeR;
+                            } else if (!rval.isEmpty()) {
+                                absoluteR = Integer.parseInt(rval) - 1;
+                            } else {
+                                return ErrorEval.REF_INVALID;
+                            }
+                            return new LazyAreaEval(absoluteR, 0, absoluteR, ssVersion.getLastColumnIndex(), sre);
+                        } catch (Exception e) {
+                            return ErrorEval.REF_INVALID;
+                        }
+                    }
                 case CELL:
                     CellReference cr;
                     if (isA1Style) {

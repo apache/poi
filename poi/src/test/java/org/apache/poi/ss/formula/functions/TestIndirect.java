@@ -169,6 +169,8 @@ final class TestIndirect {
             HSSFFormulaEvaluator feA = new HSSFFormulaEvaluator(wbA);
 
             // non-error cases
+            confirm(feA, c, "INDIRECT(\"R1C1\", FALSE)", 11);
+            confirm(feA, c, "INDIRECT(\"R1C4\", FALSE)", 14);
             confirm(feA, c, "INDIRECT(\"R2C3\", FALSE)", 23);
             confirm(feA, c, "INDIRECT(\"r2c3\", FALSE)", 23);
             confirm(feA, c, "INDIRECT(\"R[-4]C[0]\", FALSE)", 23);
@@ -179,14 +181,30 @@ final class TestIndirect {
             confirm(feA, c, "SUM(INDIRECT(\"Sheet2!r1c2:r3c3\", FALSE))", 351); // area ref
             confirm(feA, c, "SUM(INDIRECT(\"Sheet2! R1C2 : R3C3 \", FALSE))", 351); // spaces in area ref
 
-            //scenarios yet to support
-            //R[-4] -- supports getting full row
-            //C[-4] -- supports getting full column
-
             // simple error propagation:
 
             confirm(feA, c, "INDIRECT(\"'Sheet1 '!R3C4\", FALSE)", ErrorEval.REF_INVALID);
             confirm(feA, c, "INDIRECT(\"R2CX\", FALSE)", ErrorEval.REF_INVALID);
+        }
+    }
+
+    @Test
+    void testR1C1FullColumn() throws Exception {
+        try (HSSFWorkbook wbA = createWBA()) {
+            HSSFCell c = wbA.getSheetAt(0).getRow(0).createCell(20);
+            HSSFFormulaEvaluator feA = new HSSFFormulaEvaluator(wbA);
+            confirm(feA, c, "INDIRECT(\"C[-17]\", FALSE)", 14.0);
+            confirm(feA, c, "INDIRECT(\"C4\", FALSE)", 14.0);
+        }
+    }
+
+    @Test
+    void testR1C1FullRow() throws Exception {
+        try (HSSFWorkbook wbA = createWBA()) {
+            HSSFCell c = wbA.getSheetAt(0).createRow(100).createCell(0);
+            HSSFFormulaEvaluator feA = new HSSFFormulaEvaluator(wbA);
+            confirm(feA, c, "INDIRECT(\"R[-100]\", FALSE)", 11.0);
+            confirm(feA, c, "INDIRECT(\"R1\", FALSE)", 11.0);
         }
     }
 
