@@ -107,10 +107,12 @@ final class TestIndirect {
 
         // non-error cases
         confirm(feA, c, "INDIRECT(\"C2\")", 23);
+        confirm(feA, c, "INDIRECT(\"c2\")", 23);
         confirm(feA, c, "INDIRECT(\"C2\", TRUE)", 23);
         confirm(feA, c, "INDIRECT(\"$C2\")", 23);
         confirm(feA, c, "INDIRECT(\"C$2\")", 23);
         confirm(feA, c, "SUM(INDIRECT(\"Sheet2!B1:C3\"))", 351); // area ref
+        confirm(feA, c, "SUM(INDIRECT(\"Sheet2!b1:c3\"))", 351); // area ref
         confirm(feA, c, "SUM(INDIRECT(\"Sheet2! B1 : C3 \"))", 351); // spaces in area ref
         confirm(feA, c, "SUM(INDIRECT(\"'John''s sales'!A1:C1\"))", 93); // special chars in sheet name
         confirm(feA, c, "INDIRECT(\"'Sheet1'!B3\")", 32); // redundant sheet name quotes
