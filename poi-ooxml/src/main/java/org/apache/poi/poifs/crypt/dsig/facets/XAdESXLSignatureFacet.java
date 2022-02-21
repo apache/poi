@@ -36,13 +36,11 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-import java.util.UUID;
 
 import javax.xml.crypto.MarshalException;
 
@@ -67,9 +65,11 @@ import org.bouncycastle.cert.ocsp.BasicOCSPResp;
 import org.bouncycastle.cert.ocsp.OCSPResp;
 import org.bouncycastle.cert.ocsp.RespID;
 import org.etsi.uri.x01903.v13.*;
+import org.etsi.uri.x01903.v14.TimeStampValidationDataDocument;
 import org.etsi.uri.x01903.v14.ValidationDataType;
 import org.w3.x2000.x09.xmldsig.CanonicalizationMethodType;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -114,12 +114,38 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         UnsignedSignaturePropertiesType unsignedSigProps =
             ofNullable(unsignedProps.getUnsignedSignatureProperties()).orElseGet(unsignedProps::addNewUnsignedSignatureProperties);
 
-        // create the XAdES-T time-stamp
-        NodeList nlSigVal = document.getElementsByTagNameNS(XML_DIGSIG_NS, "SignatureValue");
-        XAdESTimeStampType signatureTimeStamp = addTimestamp(nlSigVal, signatureInfo, unsignedSigProps);
+        final NodeList nlSigVal = document.getElementsByTagNameNS(XML_DIGSIG_NS, "SignatureValue");
+        if (nlSigVal.getLength() != 1) {
+            throw new IllegalArgumentException("SignatureValue is not set.");
+        }
+        final Element sigVal = (Element)nlSigVal.item(0);
+
 
         // Without revocation data service we cannot construct the XAdES-C extension.
         RevocationDataService revDataSvc = signatureConfig.getRevocationDataService();
+        if (revDataSvc != null) {
+            // XAdES-X-L
+            addCertificateValues(unsignedSigProps, signatureConfig);
+        }
+
+        LOG.atDebug().log("creating XAdES-T time-stamp");
+
+        // xadesv141::TimeStampValidationData
+        XAdESTimeStampType signatureTimeStamp;
+        try {
+            final RevocationData tsaRevocationDataXadesT = new RevocationData();
+            signatureTimeStamp = createXAdESTimeStamp(signatureInfo, tsaRevocationDataXadesT, sigVal);
+            unsignedSigProps.addNewSignatureTimeStamp().set(signatureTimeStamp);
+
+            if (tsaRevocationDataXadesT.hasRevocationDataEntries()) {
+                TimeStampValidationDataDocument validationData = createValidationData(tsaRevocationDataXadesT);
+                insertXChild(unsignedSigProps, validationData);
+            }
+        } catch (CertificateEncodingException e) {
+            throw new MarshalException("unable to create XAdES signatrue", e);
+        }
+
+
         if (revDataSvc != null) {
             // XAdES-C: complete certificate refs
             CompleteCertificateRefsType completeCertificateRefs = completeCertificateRefs(unsignedSigProps, signatureConfig);
@@ -130,19 +156,30 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
             addRevocationCRL(completeRevocationRefs, signatureConfig, revocationData);
             addRevocationOCSP(completeRevocationRefs, signatureConfig, revocationData);
 
-            // XAdES-X Type 1 timestamp
-            addTimestampX(unsignedSigProps, signatureInfo, nlSigVal, signatureTimeStamp, completeCertificateRefs, completeRevocationRefs);
-
-            // XAdES-X-L
-            addCertificateValues(unsignedSigProps, signatureConfig);
-
             RevocationValuesType revocationValues = unsignedSigProps.addNewRevocationValues();
             createRevocationValues(revocationValues, revocationData);
+
+            // XAdES-X Type 1 timestamp
+            LOG.atDebug().log("creating XAdES-X time-stamp");
+            revocationData = new RevocationData();
+            XAdESTimeStampType timeStampXadesX1 = createXAdESTimeStamp(signatureInfo, revocationData,
+                    sigVal, signatureTimeStamp.getDomNode(), completeCertificateRefs.getDomNode(), completeRevocationRefs.getDomNode());
+
+            // marshal XAdES-X
+            unsignedSigProps.addNewSigAndRefsTimeStamp().set(timeStampXadesX1);
         }
 
+
+
+
         // marshal XAdES-X-L
-        Node n = document.importNode(qualProps.getDomNode(), true);
-        qualNl.item(0).getParentNode().replaceChild(n, qualNl.item(0));
+        Element n = (Element)document.importNode(qualProps.getDomNode(), true);
+        NodeList nl = n.getElementsByTagName("TimeStampValidationData");
+        for (int i=0; i<nl.getLength(); i++) {
+            ((Element)nl.item(i)).setAttributeNS(XML_NS, "xmlns", "http://uri.etsi.org/01903/v1.4.1#");
+        }
+        Node qualNL0 = qualNl.item(0);
+        qualNL0.getParentNode().replaceChild(n, qualNL0);
     }
 
     private QualifyingPropertiesType getQualProps(NodeList qualNl) throws MarshalException {
@@ -158,28 +195,6 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         } catch (XmlException e) {
             throw new MarshalException(e);
         }
-    }
-
-    private XAdESTimeStampType addTimestamp(NodeList nlSigVal, SignatureInfo signatureInfo, UnsignedSignaturePropertiesType unsignedSigProps) {
-        if (nlSigVal.getLength() != 1) {
-            throw new IllegalArgumentException("SignatureValue is not set.");
-        }
-
-        RevocationData tsaRevocationDataXadesT = new RevocationData();
-        LOG.atDebug().log("creating XAdES-T time-stamp");
-        XAdESTimeStampType signatureTimeStamp = createXAdESTimeStamp
-            (signatureInfo, Collections.singletonList(nlSigVal.item(0)), tsaRevocationDataXadesT);
-
-        // marshal the XAdES-T extension
-        unsignedSigProps.addNewSignatureTimeStamp().set(signatureTimeStamp);
-
-        // xadesv141::TimeStampValidationData
-        if (tsaRevocationDataXadesT.hasRevocationDataEntries()) {
-            ValidationDataType validationData = createValidationData(tsaRevocationDataXadesT);
-            insertXChild(unsignedSigProps, validationData);
-        }
-
-        return signatureTimeStamp;
     }
 
     private CompleteCertificateRefsType completeCertificateRefs(UnsignedSignaturePropertiesType unsignedSigProps, SignatureConfig signatureConfig) {
@@ -253,11 +268,11 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                     ResponderID ocspResponderId = respId.toASN1Primitive();
                     DERTaggedObject derTaggedObject = (DERTaggedObject)ocspResponderId.toASN1Primitive();
                     if (2 == derTaggedObject.getTagNo()) {
-                        ASN1OctetString keyHashOctetString = (ASN1OctetString)derTaggedObject.getObject();
+                        ASN1OctetString keyHashOctetString = (ASN1OctetString)derTaggedObject.getBaseObject();
                         byte[] key = keyHashOctetString.getOctets();
                         responderId.setByKey(key);
                     } else {
-                        X500Name name = X500Name.getInstance(derTaggedObject.getObject());
+                        X500Name name = X500Name.getInstance(derTaggedObject.getBaseObject());
                         String nameStr = name.toString();
                         responderId.setByName(nameStr);
                     }
@@ -268,38 +283,18 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         }
     }
 
-    private void addTimestampX(UnsignedSignaturePropertiesType unsignedSigProps, SignatureInfo signatureInfo, NodeList nlSigVal, XAdESTimeStampType signatureTimeStamp,
-        CompleteCertificateRefsType completeCertificateRefs, CompleteRevocationRefsType completeRevocationRefs) {
-
-        List<Node> timeStampNodesXadesX1 = new ArrayList<>();
-        timeStampNodesXadesX1.add(nlSigVal.item(0));
-        timeStampNodesXadesX1.add(signatureTimeStamp.getDomNode());
-        timeStampNodesXadesX1.add(completeCertificateRefs.getDomNode());
-        timeStampNodesXadesX1.add(completeRevocationRefs.getDomNode());
-
-        RevocationData tsaRevocationDataXadesX1 = new RevocationData();
-        LOG.atDebug().log("creating XAdES-X time-stamp");
-        XAdESTimeStampType timeStampXadesX1 = createXAdESTimeStamp
-            (signatureInfo, timeStampNodesXadesX1, tsaRevocationDataXadesX1);
-        if (tsaRevocationDataXadesX1.hasRevocationDataEntries()) {
-            ValidationDataType timeStampXadesX1ValidationData = createValidationData(tsaRevocationDataXadesX1);
-            insertXChild(unsignedSigProps, timeStampXadesX1ValidationData);
-        }
-
-        // marshal XAdES-X
-        unsignedSigProps.addNewSigAndRefsTimeStamp().set(timeStampXadesX1);
-
-    }
-
     private void addCertificateValues(UnsignedSignaturePropertiesType unsignedSigProps, SignatureConfig signatureConfig) {
+        List<X509Certificate> chain = signatureConfig.getSigningCertificateChain();
+        if (chain.size() < 2) {
+            return;
+        }
         CertificateValuesType certificateValues = unsignedSigProps.addNewCertificateValues();
-        for (X509Certificate certificate : signatureConfig.getSigningCertificateChain()) {
-            EncapsulatedPKIDataType encapsulatedPKIDataType = certificateValues.addNewEncapsulatedX509Certificate();
-            try {
-                encapsulatedPKIDataType.setByteArrayValue(certificate.getEncoded());
-            } catch (CertificateEncodingException e) {
-                throw new RuntimeException("certificate encoding error: " + e.getMessage(), e);
+        try {
+            for (X509Certificate certificate : chain.subList(1, chain.size())) {
+                certificateValues.addNewEncapsulatedX509Certificate().setByteArrayValue(certificate.getEncoded());
             }
+        } catch (CertificateEncodingException e) {
+            throw new RuntimeException("certificate encoding error: " + e.getMessage(), e);
         }
     }
 
@@ -341,45 +336,48 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
 
     private XAdESTimeStampType createXAdESTimeStamp(
             SignatureInfo signatureInfo,
-            List<Node> nodeList,
-            RevocationData revocationData) {
+            RevocationData revocationData,
+            Node... nodes) {
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
-        byte[] c14nSignatureValueElement = getC14nValue(nodeList, signatureConfig.getXadesCanonicalizationMethod());
+        byte[] c14nSignatureValueElement = getC14nValue(Arrays.asList(nodes), signatureConfig.getXadesCanonicalizationMethod());
 
-        return createXAdESTimeStamp(signatureInfo, c14nSignatureValueElement, revocationData);
-    }
-
-    private XAdESTimeStampType createXAdESTimeStamp(SignatureInfo signatureInfo, byte[] data, RevocationData revocationData) {
-        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         // create the time-stamp
         byte[] timeStampToken;
         try {
-            timeStampToken = signatureConfig.getTspService().timeStamp(signatureInfo, data, revocationData);
+            timeStampToken = signatureConfig.getTspService().timeStamp(signatureInfo, c14nSignatureValueElement, revocationData);
         } catch (Exception e) {
             throw new RuntimeException("error while creating a time-stamp: "
-                    + e.getMessage(), e);
+                + e.getMessage(), e);
         }
 
         // create a XAdES time-stamp container
         XAdESTimeStampType xadesTimeStamp = XAdESTimeStampType.Factory.newInstance();
-        xadesTimeStamp.setId("time-stamp-" + UUID.randomUUID());
         CanonicalizationMethodType c14nMethod = xadesTimeStamp.addNewCanonicalizationMethod();
         c14nMethod.setAlgorithm(signatureConfig.getXadesCanonicalizationMethod());
 
         // embed the time-stamp
         EncapsulatedPKIDataType encapsulatedTimeStamp = xadesTimeStamp.addNewEncapsulatedTimeStamp();
         encapsulatedTimeStamp.setByteArrayValue(timeStampToken);
-        encapsulatedTimeStamp.setId("time-stamp-token-" + UUID.randomUUID());
 
         return xadesTimeStamp;
     }
 
-    private ValidationDataType createValidationData(
-            RevocationData revocationData) {
-        ValidationDataType validationData = ValidationDataType.Factory.newInstance();
+    private TimeStampValidationDataDocument createValidationData(RevocationData revocationData)
+    throws CertificateEncodingException {
+        TimeStampValidationDataDocument doc = TimeStampValidationDataDocument.Factory.newInstance();
+        ValidationDataType validationData = doc.addNewTimeStampValidationData();
+        List<X509Certificate> tspChain = revocationData.getX509chain();
+
+        if (tspChain.size() > 1) {
+            CertificateValuesType cvals = validationData.addNewCertificateValues();
+            for (X509Certificate x509 : tspChain.subList(1, tspChain.size())) {
+                byte[] encoded = x509.getEncoded();
+                cvals.addNewEncapsulatedX509Certificate().setByteArrayValue(encoded);
+            }
+        }
         RevocationValuesType revocationValues = validationData.addNewRevocationValues();
         createRevocationValues(revocationValues, revocationData);
-        return validationData;
+        return doc;
     }
 
     private void createRevocationValues(

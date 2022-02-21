@@ -26,7 +26,9 @@ package org.apache.poi.poifs.crypt.dsig.services;
 
 import java.security.cert.CRLException;
 import java.security.cert.X509CRL;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,37 +36,28 @@ import java.util.List;
  */
 public class RevocationData {
 
-    private final List<byte[]> crls;
-
-    private final List<byte[]> ocsps;
-
-    /**
-     * Default constructor.
-     */
-    public RevocationData() {
-        this.crls = new ArrayList<>();
-        this.ocsps = new ArrayList<>();
-    }
+    private final List<byte[]> crls = new ArrayList<>();
+    private final List<byte[]> ocsps = new ArrayList<>();
+    private final List<X509Certificate> x509chain = new ArrayList<>();
 
     /**
      * Adds a CRL to this revocation data set.
      */
     public void addCRL(byte[] encodedCrl) {
-        this.crls.add(encodedCrl);
+        if (this.crls.stream().noneMatch(by -> Arrays.equals(by, encodedCrl))) {
+            this.crls.add(encodedCrl);
+        }
     }
 
     /**
      * Adds a CRL to this revocation data set.
      */
     public void addCRL(X509CRL crl) {
-        byte[] encodedCrl;
         try {
-            encodedCrl = crl.getEncoded();
+            addCRL(crl.getEncoded());
         } catch (CRLException e) {
-            throw new IllegalArgumentException("CRL coding error: "
-                    + e.getMessage(), e);
+            throw new IllegalArgumentException("CRL coding error: " + e.getMessage(), e);
         }
-        addCRL(encodedCrl);
     }
 
     /**
@@ -72,6 +65,10 @@ public class RevocationData {
      */
     public void addOCSP(byte[] encodedOcsp) {
         this.ocsps.add(encodedOcsp);
+    }
+
+    public void addCertificate(X509Certificate x509) {
+        x509chain.add(x509);
     }
 
     /**
@@ -119,5 +116,9 @@ public class RevocationData {
      */
     public boolean hasRevocationDataEntries() {
         return hasOCSPs() || hasCRLs();
+    }
+
+    public List<X509Certificate> getX509chain() {
+        return x509chain;
     }
 }

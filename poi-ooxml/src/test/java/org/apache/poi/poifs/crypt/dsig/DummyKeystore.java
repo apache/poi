@@ -37,20 +37,33 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAKeyGenParameterSpec;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javax.security.auth.x500.X500Principal;
 
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
@@ -206,12 +219,36 @@ public class DummyKeystore {
         return new KeyCertPair(getKey(keyAlias, keyPass), keystore.getCertificateChain(keyAlias));
     }
 
+    public KeyCertPair getKeyPair(int index, String keyPass) throws GeneralSecurityException {
+        Map.Entry<String, PrivateKey> me = getKeyByIndex(index, keyPass);
+        return me != null ?  getKeyPair(me.getKey(), keyPass) : null;
+    }
+
     public PrivateKey getKey(String keyAlias, String keyPass) throws GeneralSecurityException {
         return (PrivateKey)keystore.getKey(keyAlias, keyPass.toCharArray());
     }
 
+    public PrivateKey getKey(int index, String keyPass) throws GeneralSecurityException {
+        Map.Entry<String, PrivateKey> me = getKeyByIndex(index, keyPass);
+        return me != null ?  me.getValue() : null;
+    }
+
     public X509Certificate getFirstX509(String alias) throws KeyStoreException {
         return (X509Certificate)keystore.getCertificate(alias);
+    }
+
+    private Map.Entry<String,PrivateKey> getKeyByIndex(int index, String keyPass) throws GeneralSecurityException {
+        for (String a : Collections.list(keystore.aliases())) {
+            try {
+                PrivateKey pk = (PrivateKey) keystore.getKey(a, keyPass.toCharArray());
+                if (pk != null) {
+                    return new AbstractMap.SimpleEntry<>(a, pk);
+                }
+            } catch (UnrecoverableKeyException | KeyStoreException | NoSuchAlgorithmException e) {
+                break;
+            }
+        }
+        return null;
     }
 
     public void save(File storeFile, String storePass) throws IOException, GeneralSecurityException {
@@ -350,4 +387,50 @@ public class DummyKeystore {
         return ocspRespBuilder.build(OCSPRespBuilder.SUCCESSFUL, basicOCSPResp);
     }
 
+    public void importX509(File file) throws CertificateException, KeyStoreException, IOException {
+        try (InputStream is = new FileInputStream(file)) {
+            X509Certificate cert = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(is);
+            keystore.setCertificateEntry(cert.getSubjectX500Principal().getName(), cert);
+        }
+    }
+
+    public void importKeystore(File file, String storePass, String keyPass, Function<String,String> otherKeyPass) throws GeneralSecurityException, IOException {
+        DummyKeystore dk = new DummyKeystore(file, storePass);
+
+        Map<String,X509Certificate> myCerts = new HashMap<>();
+        for (String a : Collections.list(keystore.aliases())) {
+            Certificate[] chain = keystore.getCertificateChain(a);
+            if (chain == null) {
+                Certificate cert = keystore.getCertificate(a);
+                if (cert == null) {
+                    continue;
+                }
+                chain = new Certificate[]{cert};
+            }
+            Arrays.stream(chain)
+                .map(X509Certificate.class::cast)
+                .filter(c -> !myCerts.containsKey(c.getSubjectX500Principal().getName()))
+                .forEach(c -> myCerts.put(c.getSubjectX500Principal().getName(), c));
+        }
+
+        for (String a : Collections.list(dk.keystore.aliases())) {
+            KeyCertPair keyPair = dk.getKeyPair(a, otherKeyPass.apply(a));
+            ArrayList<X509Certificate> chain = new ArrayList<>(keyPair.getX509Chain());
+            Set<String> names = chain.stream().map(X509Certificate::getSubjectX500Principal).map(X500Principal::getName).collect(Collectors.toSet());
+            X509Certificate last = chain.get(chain.size() - 1);
+            do {
+                String issuer = last.getIssuerX500Principal().getName();
+                X509Certificate parent = myCerts.get(issuer);
+                if (names.contains(issuer) || parent == null) {
+                    break;
+                } else {
+                    chain.add(parent);
+                    names.add(issuer);
+                }
+                last = parent;
+            } while (true);
+
+            keystore.setKeyEntry(a, keyPair.getKey(), keyPass.toCharArray(), chain.toArray(new X509Certificate[0]));
+        }
+    }
 }

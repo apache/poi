@@ -26,42 +26,49 @@ package org.apache.poi.poifs.crypt.dsig.services;
 
 import static org.apache.logging.log4j.util.Unbox.box;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.math.BigInteger;
-import java.net.HttpURLConnection;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import javax.security.auth.x500.X500Principal;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig.CRLEntry;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.IOUtils;
+import org.apache.poi.poifs.crypt.dsig.services.TimeStampHttpClient.TimeStampHttpClientResponse;
+import org.bouncycastle.asn1.ASN1IA5String;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.cmp.PKIFailureInfo;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.DistributionPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.cms.DefaultCMSSignatureAlgorithmNameGenerator;
 import org.bouncycastle.cms.SignerId;
 import org.bouncycastle.cms.SignerInformationVerifier;
@@ -80,25 +87,6 @@ import org.bouncycastle.tsp.TimeStampToken;
 public class TSPTimeStampService implements TimeStampService {
 
     private static final Logger LOG = LogManager.getLogger(TSPTimeStampService.class);
-
-    // how large a timestamp response is expected to be
-    // can be overwritten via IOUtils.setByteArrayMaxOverride()
-    private static final int DEFAULT_TIMESTAMP_RESPONSE_SIZE = 10_000_000;
-    private static int MAX_TIMESTAMP_RESPONSE_SIZE = DEFAULT_TIMESTAMP_RESPONSE_SIZE;
-
-    /**
-     * @param maxTimestampResponseSize the max timestamp response size allowed
-     */
-    public static void setMaxTimestampResponseSize(int maxTimestampResponseSize) {
-        MAX_TIMESTAMP_RESPONSE_SIZE = maxTimestampResponseSize;
-    }
-
-    /**
-     * @return the max timestamp response size allowed
-     */
-    public static int getMaxTimestampResponseSize() {
-        return MAX_TIMESTAMP_RESPONSE_SIZE;
-    }
 
     /**
      * Maps the digest algorithm to corresponding OID value.
@@ -133,72 +121,16 @@ public class TSPTimeStampService implements TimeStampService {
         }
         ASN1ObjectIdentifier digestAlgoOid = mapDigestAlgoToOID(signatureConfig.getTspDigestAlgo());
         TimeStampRequest request = requestGenerator.generate(digestAlgoOid, digest, nonce);
-        byte[] encodedRequest = request.getEncoded();
 
-        // create the HTTP POST request
-        Proxy proxy = Proxy.NO_PROXY;
-        if (signatureConfig.getProxyUrl() != null) {
-            URL proxyUrl = new URL(signatureConfig.getProxyUrl());
-            String host = proxyUrl.getHost();
-            int port = proxyUrl.getPort();
-            proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(InetAddress.getByName(host), (port == -1 ? 80 : port)));
+        TimeStampHttpClient httpClient = signatureConfig.getTspHttpClient();
+        httpClient.init(signatureConfig);
+        httpClient.setContentTypeIn(signatureConfig.isTspOldProtocol() ? "application/timestamp-request" : "application/timestamp-query");
+        TimeStampHttpClientResponse response = httpClient.post(signatureConfig.getTspUrl(), request.getEncoded());
+        if (!response.isOK()) {
+            throw new IOException("Requesting timestamp data failed");
         }
 
-        String contentType;
-        HttpURLConnection huc = (HttpURLConnection)new URL(signatureConfig.getTspUrl()).openConnection(proxy);
-        byte[] responseBytes;
-        try {
-            if (signatureConfig.getTspUser() != null) {
-                String userPassword = signatureConfig.getTspUser() + ":" + signatureConfig.getTspPass();
-                String encoding = Base64.getEncoder().encodeToString(userPassword.getBytes(StandardCharsets.ISO_8859_1));
-                huc.setRequestProperty("Authorization", "Basic " + encoding);
-            }
-
-            huc.setRequestMethod("POST");
-            huc.setConnectTimeout(20000);
-            huc.setReadTimeout(20000);
-            huc.setDoOutput(true); // also sets method to POST.
-            huc.setRequestProperty("User-Agent", signatureConfig.getUserAgent());
-            huc.setRequestProperty("Content-Type", signatureConfig.isTspOldProtocol()
-                    ? "application/timestamp-request"
-                    : "application/timestamp-query"); // "; charset=ISO-8859-1");
-
-            OutputStream hucOut = huc.getOutputStream();
-            hucOut.write(encodedRequest);
-
-            // invoke TSP service
-            huc.connect();
-
-            int statusCode = huc.getResponseCode();
-            if (statusCode != 200) {
-                final String message = "Error contacting TSP server " + signatureConfig.getTspUrl() +
-                        ", had status code " + statusCode + "/" + huc.getResponseMessage();
-                LOG.atError().log(message);
-                throw new IOException(message);
-            }
-
-            // HTTP input validation
-            contentType = huc.getHeaderField("Content-Type");
-            if (null == contentType) {
-                throw new RuntimeException("missing Content-Type header");
-            }
-
-            try (InputStream stream = huc.getInputStream()) {
-                responseBytes = IOUtils.toByteArrayWithMaxLength(stream, getMaxTimestampResponseSize());
-            }
-            LOG.atDebug().log(() -> new SimpleMessage("response content: " + HexDump.dump(responseBytes, 0, 0)));
-        } finally {
-            huc.disconnect();
-        }
-
-        if (!contentType.startsWith(signatureConfig.isTspOldProtocol()
-            ? "application/timestamp-response"
-            : "application/timestamp-reply"
-        )) {
-            throw new RuntimeException("invalid Content-Type: " + contentType +
-                    // dump the first few bytes
-                    ": " + HexDump.dump(responseBytes, 0, 0, 200));
-        }
+        byte[] responseBytes = response.getResponseBytes();
 
         if (responseBytes.length == 0) {
             throw new RuntimeException("Content-Length is zero");
@@ -229,53 +161,138 @@ public class TSPTimeStampService implements TimeStampService {
         LOG.atDebug().log("signer cert issuer: {}", signerCertIssuer);
 
         // TSP signer certificates retrieval
-        Collection<X509CertificateHolder> certificates = timeStampToken.getCertificates().getMatches(null);
+        Map<String, X509CertificateHolder> certificateMap =
+            timeStampToken.getCertificates().getMatches(null).stream()
+                .collect(Collectors.toMap(h -> h.getSubject().toString(), Function.identity()));
 
-        X509CertificateHolder signerCert = null;
-        Map<X500Name, X509CertificateHolder> certificateMap = new HashMap<>();
-        for (X509CertificateHolder certificate : certificates) {
-            if (signerCertIssuer.equals(certificate.getIssuer())
-                && signerCertSerialNumber.equals(certificate.getSerialNumber())) {
-                signerCert = certificate;
-            }
-            certificateMap.put(certificate.getSubject(), certificate);
-        }
 
         // TSP signer cert path building
-        if (signerCert == null) {
-            throw new RuntimeException("TSP response token has no signer certificate");
-        }
-        List<X509Certificate> tspCertificateChain = new ArrayList<>();
+        X509CertificateHolder signerCert = certificateMap.values().stream()
+            .filter(h -> signerCertIssuer.equals(h.getIssuer())
+                && signerCertSerialNumber.equals(h.getSerialNumber()))
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("TSP response token has no signer certificate"));
+
         JcaX509CertificateConverter x509converter = new JcaX509CertificateConverter();
         x509converter.setProvider("BC");
-        X509CertificateHolder certificate = signerCert;
+
+        // complete certificate chain
+        X509Certificate child = x509converter.getCertificate(signerCert);
         do {
-            LOG.atDebug().log("adding to certificate chain: {}", certificate.getSubject());
-            tspCertificateChain.add(x509converter.getCertificate(certificate));
-            if (certificate.getSubject().equals(certificate.getIssuer())) {
+            revocationData.addCertificate(child);
+            X500Principal issuer = child.getIssuerX500Principal();
+            if (child.getSubjectX500Principal().equals(issuer)) {
                 break;
             }
-            certificate = certificateMap.get(certificate.getIssuer());
-        } while (null != certificate);
+            X509CertificateHolder parentHolder = certificateMap.get(issuer.getName());
+            child = (parentHolder != null)
+                ? x509converter.getCertificate(parentHolder)
+                : signatureConfig.getCachedCertificateByPrinicipal(issuer.getName());
+            if (child != null) {
+                retrieveCRL(signatureConfig, child).forEach(revocationData::addCRL);
+            }
+        } while (child != null);
 
         // verify TSP signer signature
-        X509CertificateHolder holder = new X509CertificateHolder(tspCertificateChain.get(0).getEncoded());
-        DefaultCMSSignatureAlgorithmNameGenerator nameGen = new DefaultCMSSignatureAlgorithmNameGenerator();
-        DefaultSignatureAlgorithmIdentifierFinder sigAlgoFinder = new DefaultSignatureAlgorithmIdentifierFinder();
-        DefaultDigestAlgorithmIdentifierFinder hashAlgoFinder = new DefaultDigestAlgorithmIdentifierFinder();
-        BcDigestCalculatorProvider calculator = new BcDigestCalculatorProvider();
-        BcRSASignerInfoVerifierBuilder verifierBuilder = new BcRSASignerInfoVerifierBuilder(nameGen, sigAlgoFinder, hashAlgoFinder, calculator);
-        SignerInformationVerifier verifier = verifierBuilder.build(holder);
+        BcRSASignerInfoVerifierBuilder verifierBuilder = new BcRSASignerInfoVerifierBuilder(
+            new DefaultCMSSignatureAlgorithmNameGenerator(),
+            new DefaultSignatureAlgorithmIdentifierFinder(),
+            new DefaultDigestAlgorithmIdentifierFinder(),
+            new BcDigestCalculatorProvider());
+        SignerInformationVerifier verifier = verifierBuilder.build(signerCert);
 
         timeStampToken.validate(verifier);
 
         // verify TSP signer certificate
         if (signatureConfig.getTspValidator() != null) {
-            signatureConfig.getTspValidator().validate(tspCertificateChain, revocationData);
+            signatureConfig.getTspValidator().validate(revocationData.getX509chain(), revocationData);
         }
 
         LOG.atDebug().log("time-stamp token time: {}", timeStampToken.getTimeStampInfo().getGenTime());
 
         return timeStampToken.getEncoded();
+    }
+
+    /**
+     * Check if CRL is to be added, check cached CRLs in config and download if necessary.
+     * Can be overriden to suppress the logic
+     * @return empty list, if not found or suppressed, otherwise the list of CRLs as encoded bytes
+     */
+    protected List<byte[]> retrieveCRL(SignatureConfig signatureConfig, X509Certificate holder) throws IOException {
+        // TODO: add config, if crls should be added
+        final List<CRLEntry> crlEntries = signatureConfig.getCrlEntries();
+        byte[] crlPoints = holder.getExtensionValue(Extension.cRLDistributionPoints.getId());
+        if (crlPoints == null) {
+            return Collections.emptyList();
+        }
+
+        // TODO: check if parse is necessary, or if crlExt.getExtnValue() can be use directly
+        ASN1Primitive extVal = JcaX509ExtensionUtils.parseExtensionValue(crlPoints);
+        return Stream.of(CRLDistPoint.getInstance(extVal).getDistributionPoints())
+            .map(DistributionPoint::getDistributionPoint)
+            .filter(Objects::nonNull)
+            .filter(dpn -> dpn.getType() == DistributionPointName.FULL_NAME)
+            .flatMap(dpn -> Stream.of(GeneralNames.getInstance(dpn.getName()).getNames()))
+            .filter(genName -> genName.getTagNo() == GeneralName.uniformResourceIdentifier)
+            .map(genName -> ASN1IA5String.getInstance(genName.getName()).getString())
+            .flatMap(url -> {
+                List<CRLEntry> ul = crlEntries.stream().filter(ce -> matchCRLbyUrl(ce, holder, url)).collect(Collectors.toList());
+                Stream<CRLEntry> cl = crlEntries.stream().filter(ce -> matchCRLbyCN(ce, holder, url));
+                if (ul.isEmpty()) {
+                    CRLEntry ce = downloadCRL(signatureConfig, url);
+                    if (ce != null) {
+                        ul.add(ce);
+                    }
+                }
+                return Stream.concat(ul.stream(), cl).map(CRLEntry::getCrlBytes);
+            })
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+    }
+
+    protected boolean matchCRLbyUrl(CRLEntry other, X509Certificate holder, String url) {
+        return url.equals(other.getCrlURL());
+    }
+
+    protected boolean matchCRLbyCN(CRLEntry other, X509Certificate holder, String url) {
+        return holder.getSubjectX500Principal().getName().equals(other.getCertCN());
+    }
+
+    /**
+     * Convenience method to download a crl in an unsafe way, i.e. without verifying the
+     * https certificates.
+     * Please provide your own method, if you have imported the TSP server CA certificates
+     * in your local keystore
+     *
+     * @return the bytes of the CRL or null if unsuccessful / download is suppressed
+     */
+    protected CRLEntry downloadCRL(SignatureConfig signatureConfig, String url) {
+        if (!signatureConfig.isAllowCRLDownload()) {
+            return null;
+        }
+
+        TimeStampHttpClient httpClient = signatureConfig.getTspHttpClient();
+        httpClient.init(signatureConfig);
+        httpClient.setBasicAuthentication(null, null);
+        TimeStampHttpClientResponse response;
+        try {
+            response = httpClient.get(url);
+            if (!response.isOK()) {
+                return null;
+            }
+        } catch (IOException e) {
+            return null;
+        }
+
+        try {
+            CertificateFactory certFact = CertificateFactory.getInstance("X.509");
+            byte[] crlBytes = response.getResponseBytes();
+            // verify the downloaded bytes, throws Exception if invalid
+            X509CRL crl = (X509CRL)certFact.generateCRL(new ByteArrayInputStream(crlBytes));
+            return signatureConfig.addCRL(url, crl.getIssuerX500Principal().getName(), crlBytes);
+        } catch (GeneralSecurityException e) {
+            LOG.atWarn().withThrowable(e).log("CRL download failed from {}", url);
+            return null;
+        }
     }
 }

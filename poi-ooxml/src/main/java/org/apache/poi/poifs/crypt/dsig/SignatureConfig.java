@@ -20,22 +20,33 @@ package org.apache.poi.poifs.crypt.dsig;
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.OO_DIGSIG_NS;
 import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet.XADES_132_NS;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.PrivateKey;
 import java.security.Provider;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
@@ -58,8 +69,10 @@ import org.apache.poi.poifs.crypt.dsig.facets.XAdESSignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationDataService;
 import org.apache.poi.poifs.crypt.dsig.services.SignaturePolicyService;
 import org.apache.poi.poifs.crypt.dsig.services.TSPTimeStampService;
+import org.apache.poi.poifs.crypt.dsig.services.TimeStampHttpClient;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
+import org.apache.poi.poifs.crypt.dsig.services.TimeStampSimpleHttpClient;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Removal;
@@ -73,6 +86,29 @@ import org.apache.xml.security.signature.XMLSignature;
  */
 @SuppressWarnings({"unused","WeakerAccess"})
 public class SignatureConfig {
+    public static class CRLEntry {
+        private final String crlURL;
+        private final String certCN;
+        private final byte[] crlBytes;
+
+        public CRLEntry(String crlURL, String certCN, byte[] crlBytes) {
+            this.crlURL = crlURL;
+            this.certCN = certCN;
+            this.crlBytes = crlBytes;
+        }
+
+        public String getCrlURL() {
+            return crlURL;
+        }
+
+        public String getCertCN() {
+            return certCN;
+        }
+
+        public byte[] getCrlBytes() {
+            return crlBytes;
+        }
+    }
 
     public static final String SIGNATURE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
 
@@ -116,6 +152,9 @@ public class SignatureConfig {
      * the time-stamp service used for XAdES-T and XAdES-X.
      */
     private TimeStampService tspService = new TSPTimeStampService();
+    private TimeStampHttpClient tspHttpClient = new TimeStampSimpleHttpClient();
+
+
     /**
      * timestamp service provider URL
      */
@@ -137,7 +176,7 @@ public class SignatureConfig {
 
     /**
      * the optional revocation data service used for XAdES-C and XAdES-X-L.
-     * When <code>null</code> the signature will be limited to XAdES-T only.
+     * When {@code null} the signature will be limited to XAdES-T only.
      */
     private RevocationDataService revocationDataService;
     /**
@@ -156,7 +195,7 @@ public class SignatureConfig {
 
     /**
      * The signature Id attribute value used to create the XML signature. A
-     * <code>null</code> value will trigger an automatically generated signature Id.
+     * {@code null} value will trigger an automatically generated signature Id.
      */
     private String packageSignatureId = "idPackageSignature";
 
@@ -221,6 +260,23 @@ public class SignatureConfig {
 
     private String commitmentType = "Created and approved this document";
 
+    /**
+     * Swtich to enable/disable automatic CRL download - by default the download is with all https hostname
+     * and certificate verifications disabled.
+     *
+     * @since POI 5.3.0
+     */
+    private boolean allowCRLDownload = false;
+
+    /**
+     * List of cached / saved CRL entries
+     */
+    private final List<CRLEntry> crlEntries = new ArrayList<>();
+
+    /**
+     * Keystore used for cached certificates
+     */
+    private final KeyStore keyStore = emptyKeyStore();
 
     public SignatureConfig() {
         // OOo doesn't like ds namespaces so per default prefixing is off.
@@ -490,7 +546,7 @@ public class SignatureConfig {
 
     /**
      * @param packageSignatureId The signature Id attribute value used to create the XML signature.
-     * A <code>null</code> value will trigger an automatically generated signature Id.
+     * A {@code null} value will trigger an automatically generated signature Id.
      */
     public void setPackageSignatureId(String packageSignatureId) {
         this.packageSignatureId = nvl(packageSignatureId,"xmldsig-"+UUID.randomUUID());
@@ -536,7 +592,7 @@ public class SignatureConfig {
 
     /**
      * @param tspDigestAlgo the algorithm to be used for the timestamp entry.
-     * if <code>null</code>, the hash algorithm of the main entry
+     * if {@code null}, the hash algorithm of the main entry
      */
     public void setTspDigestAlgo(HashAlgorithm tspDigestAlgo) {
         this.tspDigestAlgo = tspDigestAlgo;
@@ -570,6 +626,24 @@ public class SignatureConfig {
      */
     public void setTspService(TimeStampService tspService) {
         this.tspService = tspService;
+    }
+
+    /**
+     * @return the http client used for timestamp server connections
+     *
+     * @since POI 5.3.0
+     */
+    public TimeStampHttpClient getTspHttpClient() {
+        return tspHttpClient;
+    }
+
+    /**
+     * @param tspHttpClient the http client used for timestamp server connections
+     *
+     * @since POI 5.3.0
+     */
+    public void setTspHttpClient(TimeStampHttpClient tspHttpClient) {
+        this.tspHttpClient = tspHttpClient;
     }
 
     /**
@@ -616,7 +690,7 @@ public class SignatureConfig {
 
     /**
      * @return the optional revocation data service used for XAdES-C and XAdES-X-L.
-     * When <code>null</code> the signature will be limited to XAdES-T only.
+     * When {@code null} the signature will be limited to XAdES-T only.
      */
     public RevocationDataService getRevocationDataService() {
         return revocationDataService;
@@ -624,7 +698,7 @@ public class SignatureConfig {
 
     /**
      * @param revocationDataService the optional revocation data service used for XAdES-C and XAdES-X-L.
-     * When <code>null</code> the signature will be limited to XAdES-T only.
+     * When {@code null} the signature will be limited to XAdES-T only.
      */
     public void setRevocationDataService(RevocationDataService revocationDataService) {
         this.revocationDataService = revocationDataService;
@@ -639,7 +713,7 @@ public class SignatureConfig {
 
     /**
      * @param xadesDigestAlgo hash algorithm used for XAdES.
-     * When <code>null</code>, defaults to {@link #getDigestAlgo()}
+     * When {@code null}, defaults to {@link #getDigestAlgo()}
      */
     public void setXadesDigestAlgo(HashAlgorithm xadesDigestAlgo) {
         this.xadesDigestAlgo = xadesDigestAlgo;
@@ -647,7 +721,7 @@ public class SignatureConfig {
 
     /**
      * @param xadesDigestAlgo hash algorithm used for XAdES.
-     * When <code>null</code>, defaults to {@link #getDigestAlgo()}
+     * When {@code null}, defaults to {@link #getDigestAlgo()}
      *
      * @since POI 4.0.0
      */
@@ -671,7 +745,7 @@ public class SignatureConfig {
 
     /**
      * @return the asn.1 object id for the tsp request policy.
-     * Defaults to <code>1.3.6.1.4.1.13762.3</code>
+     * Defaults to {@code 1.3.6.1.4.1.13762.3}
      */
     public String getTspRequestPolicy() {
         return tspRequestPolicy;
@@ -729,15 +803,15 @@ public class SignatureConfig {
     }
 
     /**
-     * @return the xades role element. If <code>null</code> the claimed role element is omitted.
-     * Defaults to <code>null</code>
+     * @return the xades role element. If {@code null} the claimed role element is omitted.
+     * Defaults to {@code null}
      */
     public String getXadesRole() {
         return xadesRole;
     }
 
     /**
-     * @param xadesRole the xades role element. If <code>null</code> the claimed role element is omitted.
+     * @param xadesRole the xades role element. If {@code null} the claimed role element is omitted.
      */
     public void setXadesRole(String xadesRole) {
         this.xadesRole = xadesRole;
@@ -745,7 +819,7 @@ public class SignatureConfig {
 
     /**
      * @return the Id for the XAdES SignedProperties element.
-     * Defaults to <code>idSignedProperties</code>
+     * Defaults to {@code idSignedProperties}
      */
     public String getXadesSignatureId() {
         return nvl(xadesSignatureId, "idSignedProperties");
@@ -753,7 +827,7 @@ public class SignatureConfig {
 
     /**
      * @param xadesSignatureId the Id for the XAdES SignedProperties element.
-     * When <code>null</code> defaults to <code>idSignedProperties</code>
+     * When {@code null} defaults to {@code idSignedProperties}
      */
     public void setXadesSignatureId(String xadesSignatureId) {
         this.xadesSignatureId = xadesSignatureId;
@@ -761,7 +835,7 @@ public class SignatureConfig {
 
     /**
      * @return when true, include the policy-implied block.
-     * Defaults to <code>true</code>
+     * Defaults to {@code true}
      */
     public boolean isXadesSignaturePolicyImplied() {
         return xadesSignaturePolicyImplied;
@@ -1027,7 +1101,7 @@ public class SignatureConfig {
 
     /**
      * @return the cannonicalization method for XAdES-XL signing.
-     * Defaults to <code>EXCLUSIVE</code>
+     * Defaults to {@code EXCLUSIVE}
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/javax/xml/crypto/dsig/CanonicalizationMethod.html">javax.xml.crypto.dsig.CanonicalizationMethod</a>
      */
     public String getXadesCanonicalizationMethod() {
@@ -1136,4 +1210,96 @@ public class SignatureConfig {
     public void setCommitmentType(String commitmentType) {
         this.commitmentType = commitmentType;
     }
+
+
+    public CRLEntry addCRL(String crlURL, String certCN, byte[] crlBytes) {
+        CRLEntry ce = new CRLEntry(crlURL, certCN, crlBytes);
+        crlEntries.add(ce);
+        return ce;
+    }
+
+    public List<CRLEntry> getCrlEntries() {
+        return crlEntries;
+    }
+
+    public boolean isAllowCRLDownload() {
+        return allowCRLDownload;
+    }
+
+    public void setAllowCRLDownload(boolean allowCRLDownload) {
+        this.allowCRLDownload = allowCRLDownload;
+    }
+
+    /**
+     * @return keystore with cached certificates
+     */
+    public KeyStore getKeyStore() {
+        return keyStore;
+    }
+
+    /**
+     * Add certificate into keystore (cache) for further certificate chain lookups
+     * @param alias the alias, or null if alias is taken from common name attribute of certificate
+     * @param x509 the x509 certificate
+     */
+    public void addCachedCertificate(String alias, X509Certificate x509) throws KeyStoreException {
+        String lAlias = alias;
+        if (lAlias == null) {
+            lAlias = x509.getSubjectX500Principal().getName();
+        }
+        if (keyStore != null) {
+            synchronized (keyStore) {
+                keyStore.setCertificateEntry(lAlias, x509);
+            }
+        }
+    }
+
+    public void addCachedCertificate(String alias, byte[] x509Bytes) throws KeyStoreException, CertificateException {
+        CertificateFactory certFact = CertificateFactory.getInstance("X.509");
+        X509Certificate x509 = (X509Certificate)certFact.generateCertificate(new ByteArrayInputStream(x509Bytes));
+        addCachedCertificate(null, x509);
+    }
+
+    public X509Certificate getCachedCertificateByPrinicipal(String principalName) {
+        if (keyStore == null) {
+            return null;
+        }
+        // TODO: add synchronized
+        try {
+            for (String a : Collections.list(keyStore.aliases())) {
+                Certificate[] chain = keyStore.getCertificateChain(a);
+                if (chain == null) {
+                    Certificate cert = keyStore.getCertificate(a);
+                    if (cert == null) {
+                        continue;
+                    }
+                    chain = new Certificate[]{cert};
+                }
+                Optional<X509Certificate> found = Stream.of(chain)
+                    .map(X509Certificate.class::cast)
+                    .filter(c -> principalName.equalsIgnoreCase(c.getSubjectX500Principal().getName()))
+                    .findFirst();
+                if (found.isPresent()) {
+                    return found.get();
+                }
+            }
+            return null;
+        } catch (KeyStoreException e) {
+            return null;
+        }
+    }
+
+
+    private static KeyStore emptyKeyStore() {
+        try {
+            KeyStore ks = KeyStore.getInstance("PKCS12");
+            ks.load(null, null);
+            return ks;
+        } catch (IOException | GeneralSecurityException e) {
+            LOG.atError().withThrowable(e).log("unable to create PKCS #12 keystore - XAdES certificate chain lookups disabled");
+        }
+        return null;
+    }
+
+
 }

@@ -39,7 +39,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.XMLConstants;
 import javax.xml.crypto.URIReference;
 import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dom.DOMStructure;
@@ -261,7 +260,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
         SignatureInfoV1Document sigV1 = createSignatureInfoV1(signatureInfo);
         Element n = (Element)document.importNode(sigV1.getSignatureInfoV1().getDomNode(), true);
-        n.setAttributeNS(XML_NS, XMLConstants.XMLNS_ATTRIBUTE, MS_DIGSIG_NS);
+        // n.setAttributeNS(XML_NS, XMLConstants.XMLNS_ATTRIBUTE, MS_DIGSIG_NS);
 
         List<XMLStructure> signatureInfoContent = new ArrayList<>();
         signatureInfoContent.add(new DOMStructure(n));

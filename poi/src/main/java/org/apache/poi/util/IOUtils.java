@@ -160,7 +160,7 @@ public final class IOUtils {
      * Reads up to {@code length} bytes from the input stream, and returns the bytes read.
      *
      * @param stream The byte stream of data to read.
-     * @param length The maximum length to read, use {@link Integer#MAX_VALUE} to read the stream
+     * @param length The maximum length to read, use {@link Integer#MIN_VALUE} to read the stream
      *               until EOF
      * @param maxLength if the input is equal to/longer than {@code maxLength} bytes,
      *                  then throw an {@link IOException} complaining about the length.
