@@ -50,7 +50,6 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
@@ -311,7 +310,6 @@ public final class TestPOIXMLDocument {
     }
 
 
-    @Disabled("needs investigation")
     @Test
     void testOSGIClassLoading() throws IOException {
         byte[] data;
@@ -332,8 +330,8 @@ public final class TestPOIXMLDocument {
         UncaughtHandler uh = new UncaughtHandler();
 
         // check schema type loading and check if we could run in an OOM
-        Thread[] ta = new Thread[30];
-        for (int j=0; j<10; j++) {
+        Thread[] ta = new Thread[4];
+        for (int j=0; j<3; j++) {
             for (int i=0; i<ta.length; i++) {
                 ta[i] = new Thread(run);
                 ta[i].setContextClassLoader(cl.getParent());
