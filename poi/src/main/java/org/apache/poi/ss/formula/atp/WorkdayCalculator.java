@@ -36,33 +36,33 @@ public class WorkdayCalculator {
     public static final WorkdayCalculator instance = new WorkdayCalculator();
 
     private static final Set<Integer> standardWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.SATURDAY, Calendar.SUNDAY}));
+            new HashSet<>(Arrays.asList(Calendar.SATURDAY, Calendar.SUNDAY));
     private static final Set<Integer> sunMonWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.SUNDAY, Calendar.MONDAY}));
+            new HashSet<>(Arrays.asList(Calendar.SUNDAY, Calendar.MONDAY));
     private static final Set<Integer> monTuesWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.MONDAY, Calendar.TUESDAY}));
+            new HashSet<>(Arrays.asList(Calendar.MONDAY, Calendar.TUESDAY));
     private static final Set<Integer> tuesWedsWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.TUESDAY, Calendar.WEDNESDAY}));
+            new HashSet<>(Arrays.asList(Calendar.TUESDAY, Calendar.WEDNESDAY));
     private static final Set<Integer> wedsThursWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.WEDNESDAY, Calendar.THURSDAY}));
+            new HashSet<>(Arrays.asList(Calendar.WEDNESDAY, Calendar.THURSDAY));
     private static final Set<Integer> thursFriWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.THURSDAY, Calendar.FRIDAY}));
+            new HashSet<>(Arrays.asList(Calendar.THURSDAY, Calendar.FRIDAY));
     private static final Set<Integer> friSatWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.FRIDAY, Calendar.SATURDAY}));
+            new HashSet<>(Arrays.asList(Calendar.FRIDAY, Calendar.SATURDAY));
     private static final Set<Integer> monWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.MONDAY}));
+            new HashSet<>(Arrays.asList(Calendar.MONDAY));
     private static final Set<Integer> tuesWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.TUESDAY}));
+            new HashSet<>(Arrays.asList(Calendar.TUESDAY));
     private static final Set<Integer> wedsWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.WEDNESDAY}));
+            new HashSet<>(Arrays.asList(Calendar.WEDNESDAY));
     private static final Set<Integer> thursWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.THURSDAY}));
+            new HashSet<>(Arrays.asList(Calendar.THURSDAY));
     private static final Set<Integer> friWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.FRIDAY}));
+            new HashSet<>(Arrays.asList(Calendar.FRIDAY));
     private static final Set<Integer> satWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.SATURDAY}));
+            new HashSet<>(Arrays.asList(Calendar.SATURDAY));
     private static final Set<Integer> sunWeekend =
-            new HashSet<>(Arrays.asList(new Integer[]{Calendar.SUNDAY}));
+            new HashSet<>(Arrays.asList(Calendar.SUNDAY));
     private static final Map<Integer, Set<Integer>> weekendTypeMap = new HashMap<>();
 
     static {

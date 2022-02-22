@@ -23,7 +23,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
@@ -42,8 +41,7 @@ import org.apache.poi.util.LocaleUtil;
  * Contains methods for dealing with Excel dates.
  */
 public class DateUtil {
-    // FIXME this should be changed to private and the class marked final once HSSFDateUtil can be removed
-    protected DateUtil() {
+    private DateUtil() {
         // no instances of this class
     }
 

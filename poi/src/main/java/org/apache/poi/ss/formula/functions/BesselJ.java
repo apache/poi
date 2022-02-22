@@ -24,9 +24,6 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-
 /**
  * Implementation for Excel BESSELJ() function.
  * <p>

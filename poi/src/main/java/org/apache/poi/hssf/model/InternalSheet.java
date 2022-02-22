@@ -561,17 +561,17 @@ public final class InternalSheet {
         boolean haveSerializedIndex = false;
 
         for (int k = 0; k < _records.size(); k++) {
-            RecordBase record = _records.get(k);
+            RecordBase recordBase = _records.get(k);
 
-            if (record instanceof RecordAggregate) {
-                RecordAggregate agg = (RecordAggregate) record;
+            if (recordBase instanceof RecordAggregate) {
+                RecordAggregate agg = (RecordAggregate) recordBase;
                 agg.visitContainedRecords(ptv);
-            } else {
-                ptv.visitRecord((Record) record);
+            } else if (recordBase instanceof Record) {
+                ptv.visitRecord((Record) recordBase);
             }
 
             // If the BOF record was just serialized then add the IndexRecord
-            if (record instanceof BOFRecord) {
+            if (recordBase instanceof BOFRecord) {
               if (!haveSerializedIndex) {
                 haveSerializedIndex = true;
                 // Add an optional UncalcedRecord. However, we should add

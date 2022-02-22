@@ -26,8 +26,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 
 import java.math.BigDecimal;
 import java.math.MathContext;
-import java.text.NumberFormat;
-import java.util.Locale;
 
 /**
  * Implementation for Excel DOLLARFR() function.

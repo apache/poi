@@ -1763,7 +1763,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
                 }
             }
             if (refModeRecord == null) {
-                continue;
+                //no-op
             } else if (refModeRecord.getMode() == RefModeRecord.USE_R1C1_MODE) {
                 return CellReferenceType.R1C1;
             } else if (refModeRecord.getMode() == RefModeRecord.USE_A1_MODE) {
@@ -2043,7 +2043,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     public List<HSSFPictureData> getAllPictures() {
         // The drawing group record always exists at the top level, so we won't need to do this recursively.
         List<HSSFPictureData> pictures = new ArrayList<>();
-        for (RecordBase r : workbook.getRecords()) {
+        for (org.apache.poi.hssf.record.Record r : workbook.getRecords()) {
             if (r instanceof AbstractEscherHolderRecord) {
                 ((AbstractEscherHolderRecord) r).decode();
                 List<EscherRecord> escherRecords = ((AbstractEscherHolderRecord) r).getEscherRecords();
