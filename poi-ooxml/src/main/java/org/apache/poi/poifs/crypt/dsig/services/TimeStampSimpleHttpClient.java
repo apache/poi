@@ -54,7 +54,7 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
     protected static final String BASIC_AUTH = "Authorization";
     protected static final String REDIRECT_LOCATION = "Location";
 
-    private static final Logger LOG = LogManager.getLogger(TSPTimeStampService.class);
+    private static final Logger LOG = LogManager.getLogger(TimeStampSimpleHttpClient.class);
 
     // how large a timestamp response is expected to be
     // can be overwritten via IOUtils.setByteArrayMaxOverride()
@@ -265,7 +265,7 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
         HttpsURLConnection conns = (HttpsURLConnection)conn;
 
         try {
-            SSLContext sc = SSLContext.getInstance("SSL");
+            SSLContext sc = SSLContext.getInstance("TLS");
             sc.init(null, new TrustManager[]{new UnsafeTrustManager()}, RandomSingleton.getInstance());
             conns.setSSLSocketFactory(sc.getSocketFactory());
             conns.setHostnameVerifier((hostname, session) -> true);
