@@ -46,6 +46,7 @@ import static java.lang.invoke.MethodType.methodType;
  * use the replacement in Java 9+.
  * This implementation is inspired by LUCENE-6989.
  */
+@SuppressForbidden("uses java.security features deprecated in java 17 - no other option though")
 public final class CleanerUtil {
 
     // Prevent instantiation
