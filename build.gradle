@@ -413,7 +413,7 @@ subprojects {
         ignoreFailures = false
         suppressAnnotations = [ 'org.apache.poi.util.SuppressForbidden' ]
         // forbiddenapis bundled signatures max supported version is 14
-        // targetCompatibility = (JavaVersion.VERSION_14.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_14)
+        targetCompatibility = (JavaVersion.VERSION_14.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_14)
     }
 
     forbiddenApisMain {
