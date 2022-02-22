@@ -43,6 +43,7 @@ import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.SuppressForbidden;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -50,6 +51,7 @@ import org.junit.jupiter.api.Test;
  * Unit tests for the Excel 5/95 and Excel 4 (and older) text
  *  extractor
  */
+@SuppressForbidden("tests java.security features deprecated in java 17 - no other option though")
 final class TestOldExcelExtractor {
     private static OldExcelExtractor createExtractor(String sampleFileName) throws IOException {
         File file = HSSFTestDataSamples.getSampleFile(sampleFileName);

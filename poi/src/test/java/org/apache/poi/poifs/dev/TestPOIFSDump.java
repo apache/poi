@@ -35,6 +35,7 @@ import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.property.PropertyTable;
+import org.apache.poi.util.SuppressForbidden;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -42,6 +43,7 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+@SuppressForbidden("tests java.security features deprecated in java 17 - no other option though")
 public class TestPOIFSDump {
 
     private static PrintStream SYSTEM;
