@@ -152,6 +152,19 @@ public class TestPOIFSDump {
         }
     }
 
+    @SuppressForbidden("tests java.security features deprecated in java 17 - no other option though")
+    private static class TestOverrideSecurityManager extends SecurityManager {
+        @Override
+        public void checkExit(int status) {
+            throw new SecurityException();
+        }
+
+        @Override
+        public void checkPermission(Permission perm) {
+            // Allow other activities by default
+        }
+    }
+
     @Test
     void testMainNoArgs() {
         Assumptions.assumeFalse(System.getProperty("java.version").startsWith("18"),
@@ -159,18 +172,7 @@ public class TestPOIFSDump {
 
         SecurityManager sm = System.getSecurityManager();
         try {
-            System.setSecurityManager(new SecurityManager() {
-                @Override
-                public void checkExit(int status) {
-                    throw new SecurityException();
-                }
-
-                @Override
-                public void checkPermission(Permission perm) {
-                    // Allow other activities by default
-                }
-            });
-
+            System.setSecurityManager(new TestOverrideSecurityManager());
             assertThrows(SecurityException.class, () -> POIFSDump.main(new String[]{}));
         } finally {
             System.setSecurityManager(sm);

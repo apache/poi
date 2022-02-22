@@ -362,6 +362,7 @@ final class TestOldExcelExtractor {
         }
     }
 
+    @SuppressForbidden("tests java.security features deprecated in java 17 - no other option though")
     private static class NoExitSecurityManager extends SecurityManager {
         @Override
         public void checkPermission(Permission perm) {
