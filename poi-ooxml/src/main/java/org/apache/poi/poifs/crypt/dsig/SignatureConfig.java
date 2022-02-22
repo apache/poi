@@ -264,7 +264,7 @@ public class SignatureConfig {
      * Swtich to enable/disable automatic CRL download - by default the download is with all https hostname
      * and certificate verifications disabled.
      *
-     * @since POI 5.3.0
+     * @since POI 5.2.1
      */
     private boolean allowCRLDownload = false;
 
@@ -631,7 +631,7 @@ public class SignatureConfig {
     /**
      * @return the http client used for timestamp server connections
      *
-     * @since POI 5.3.0
+     * @since POI 5.2.1
      */
     public TimeStampHttpClient getTspHttpClient() {
         return tspHttpClient;
@@ -640,7 +640,7 @@ public class SignatureConfig {
     /**
      * @param tspHttpClient the http client used for timestamp server connections
      *
-     * @since POI 5.3.0
+     * @since POI 5.2.1
      */
     public void setTspHttpClient(TimeStampHttpClient tspHttpClient) {
         this.tspHttpClient = tspHttpClient;
