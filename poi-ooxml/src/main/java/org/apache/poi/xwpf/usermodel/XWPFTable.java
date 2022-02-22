@@ -55,7 +55,6 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     public static final String REGEX_PERCENTAGE = "[0-9]+(\\.[0-9]+)?%";
     public static final String DEFAULT_PERCENTAGE_WIDTH = "100%";
-    static final String NS_OOXML_WP_MAIN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
     public static final String REGEX_WIDTH_VALUE = "auto|[0-9]+|" + REGEX_PERCENTAGE;
 
     // Create a map from this XWPF-level enum to the STBorder.Enum values
