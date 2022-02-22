@@ -242,7 +242,7 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
                     }
 
                     try (InputStream is = huc.getInputStream()) {
-                        responseBytes = IOUtils.toByteArray(is, Integer.MIN_VALUE, getMaxTimestampResponseSize());
+                        responseBytes = IOUtils.toByteArrayWithMaxLength(is, getMaxTimestampResponseSize());
                     }
                     break;
                 default:
