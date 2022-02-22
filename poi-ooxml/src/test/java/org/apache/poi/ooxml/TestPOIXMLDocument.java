@@ -296,6 +296,7 @@ public final class TestPOIXMLDocument {
         }
     }
 
+    @Disabled("needs investigation")
     @Test
     void testOSGIClassLoading() throws IOException {
         byte[] data;
