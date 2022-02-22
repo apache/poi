@@ -313,28 +313,16 @@ public final class OperationEvaluationContext {
         switch (part1refType) {
             case COLUMN:
                 firstRow = 0;
-                if (part2refType.equals(NameType.COLUMN)) {
-                    lastRow = ssVersion.getLastRowIndex();
-                    firstCol = parseRowRef(refStrPart1);
-                    lastCol = parseRowRef(refStrPart2);
-                } else {
-                    lastRow = ssVersion.getLastRowIndex();
-                    firstCol = parseColRef(refStrPart1);
-                    lastCol = parseColRef(refStrPart2);
-                }
+                lastRow = ssVersion.getLastRowIndex();
+                firstCol = parseColRef(refStrPart1);
+                lastCol = parseColRef(refStrPart2);
                 break;
             case ROW:
                 // support of cell range in the form of integer:integer
                 firstCol = 0;
-                if (part2refType.equals(NameType.ROW)) {
-                    firstRow = parseColRef(refStrPart1);
-                    lastRow = parseColRef(refStrPart2);
-                    lastCol = ssVersion.getLastColumnIndex();
-                } else {
-                    lastCol = ssVersion.getLastColumnIndex();
-                    firstRow = parseRowRef(refStrPart1);
-                    lastRow = parseRowRef(refStrPart2);
-                }
+                lastCol = ssVersion.getLastColumnIndex();
+                firstRow = parseRowRef(refStrPart1);
+                lastRow = parseRowRef(refStrPart2);
                 break;
             case CELL:
                 CellReference cr;
