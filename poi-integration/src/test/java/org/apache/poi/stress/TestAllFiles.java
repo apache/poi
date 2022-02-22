@@ -77,7 +77,15 @@ public class TestAllFiles {
         "**/.svn/**",
         "lost+found",
         "**/.git/**",
-        "**/ExternalEntityInText.docx", //the DocType (DTD) declaration causes this to fail
+        //the DocType (DTD) declaration causes this to fail
+        "**/ExternalEntityInText.docx",
+
+        // exclude files failing on windows nodes, because of limited JCE policies
+        "document/bug53475-password-is-pass.docx",
+        "poifs/60320-protected.xlsx",
+        "poifs/protected_sha512.xlsx",
+        "poifs/60320-protected.xlsx",
+        "poifs/protected_sha512.xlsx",
     };
 
     // cheap workaround of skipping the few problematic files
@@ -101,6 +109,13 @@ public class TestAllFiles {
         "spreadsheet/testEXCEL_3.xls",
         "spreadsheet/testEXCEL_4.xls",
         "poifs/unknown_properties.msg",
+
+        // exclude files failing on windows nodes, because of limited JCE policies
+        "document/bug53475-password-is-pass.docx",
+        "poifs/60320-protected.xlsx",
+        "poifs/protected_sha512.xlsx",
+        "poifs/60320-protected.xlsx",
+        "poifs/protected_sha512.xlsx",
     };
 
     private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
