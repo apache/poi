@@ -314,15 +314,15 @@ public final class OperationEvaluationContext {
             case COLUMN:
                 firstRow = 0;
                 lastRow = ssVersion.getLastRowIndex();
-                firstCol = parseColRef(refStrPart1);
-                lastCol = parseColRef(refStrPart2);
+                firstCol = parseRowRef(refStrPart1);
+                lastCol = parseRowRef(refStrPart2);
                 break;
             case ROW:
                 // support of cell range in the form of integer:integer
                 firstCol = 0;
                 lastCol = ssVersion.getLastColumnIndex();
-                firstRow = parseRowRef(refStrPart1);
-                lastRow = parseRowRef(refStrPart2);
+                firstRow = parseColRef(refStrPart1);
+                lastRow = parseColRef(refStrPart2);
                 break;
             case CELL:
                 CellReference cr;
