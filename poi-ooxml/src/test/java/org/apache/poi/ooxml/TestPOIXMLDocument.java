@@ -296,6 +296,21 @@ public final class TestPOIXMLDocument {
         }
     }
 
+    @Test
+    void testLoadPptx() throws IOException {
+        byte[] data;
+        try (InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("table_test.pptx")) {
+            data = IOUtils.toByteArray(is);
+        }
+
+        assertDoesNotThrow(() -> {
+            try (XMLSlideShow ppt = new XMLSlideShow(new ByteArrayInputStream(data))) {
+                assertNotNull(ppt.getSlides().get(0).getShapes());
+            }}
+        );
+    }
+
+
     @Disabled("needs investigation")
     @Test
     void testOSGIClassLoading() throws IOException {
