@@ -38,6 +38,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import javax.security.auth.x500.X500Principal;
 import javax.xml.XMLConstants;
 import javax.xml.crypto.XMLStructure;
 import javax.xml.crypto.dom.DOMStructure;
@@ -309,6 +310,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
     protected static void setCertID
         (CertIDType certId, SignatureConfig signatureConfig, boolean issuerNameNoReverseOrder, X509Certificate certificate) {
         X509IssuerSerialType issuerSerial = certId.addNewIssuerSerial();
+        X500Principal issuerPrincipal = certificate.getIssuerX500Principal();
         String issuerName;
         if (issuerNameNoReverseOrder) {
             /*
@@ -319,10 +321,9 @@ public class XAdESSignatureFacet implements SignatureFacet {
              * XXX: not correct according to RFC 4514.
              */
             // TODO: check if issuerName is different on getTBSCertificate
-            // issuerName = PrincipalUtil.getIssuerX509Principal(certificate).getName().replace(",", ", ");
-            issuerName = certificate.getIssuerDN().getName().replace(",", ", ");
+            issuerName = issuerPrincipal.getName().replace(",", ", ");
         } else {
-            issuerName = certificate.getIssuerX500Principal().toString();
+            issuerName = issuerPrincipal.toString();
         }
         issuerSerial.setX509IssuerName(issuerName);
         issuerSerial.setX509SerialNumber(certificate.getSerialNumber());

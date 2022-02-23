@@ -194,7 +194,7 @@ subprojects {
         failOnError = true
         maxMemory = "1024M"
         javadocTool = javaToolchains.javadocToolFor {
-            languageVersion = JavaLanguageVersion.of(11)
+            languageVersion = JavaLanguageVersion.of(Math.max(11,jdkVersion))
         }
 
         doFirst {
