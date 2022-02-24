@@ -303,7 +303,7 @@ public final class XMLHelper {
 
     private static void logThrowable(Throwable t, String message, String name) {
         if (System.currentTimeMillis() > lastLog + TimeUnit.MINUTES.toMillis(5)) {
-            LOG.atWarn().withThrowable(t).log("{} [log suppressed for 5 minutes]{}", message, name);
+            LOG.atWarn().withThrowable(t).log("{} [log suppressed for 5 minutes] {}", message, name);
             lastLog = System.currentTimeMillis();
         }
     }
