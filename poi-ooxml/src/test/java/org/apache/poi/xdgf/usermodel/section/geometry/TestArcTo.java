@@ -19,7 +19,11 @@ package org.apache.poi.xdgf.usermodel.section.geometry;
 
 import com.microsoft.schemas.office.visio.x2012.main.CellType;
 import com.microsoft.schemas.office.visio.x2012.main.RowType;
+import com.microsoft.schemas.office.visio.x2012.main.SectionType;
+import com.microsoft.schemas.office.visio.x2012.main.TriggerType;
+
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.xdgf.usermodel.section.GeometrySection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +32,10 @@ import java.awt.geom.PathIterator;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TestArcTo {
 
@@ -115,6 +123,28 @@ public class TestArcTo {
         expectedPath.moveTo(X0, Y0);
 
         assertPath(expectedPath, actualPath);
+    }
+
+    // this test is mostly used to trigger inclusion of some
+    // classes into poi-ooxml-lite
+    @Test
+    public void testSnapshot() {
+        SectionType sectionType = mock(SectionType.class);
+        RowType rowType = mock(RowType.class);
+
+        when(sectionType.getCellArray()).thenReturn(new CellType[0]);
+        when(sectionType.getRowArray()).thenReturn(new RowType[] {
+                rowType
+        });
+        when(rowType.getIX()).thenReturn(0L);
+        when(rowType.getT()).thenReturn("ArcTo");
+        when(rowType.getCellArray()).thenReturn(new CellType[0]);
+
+        GeometrySection section = new GeometrySection(sectionType, null);
+        assertNotNull(section);
+
+        TriggerType[] triggerArray = sectionType.getTriggerArray();
+        assertNull(triggerArray);
     }
 
     private static ArcTo createArcTo(double a) {
