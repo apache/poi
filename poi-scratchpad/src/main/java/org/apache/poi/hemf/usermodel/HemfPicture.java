@@ -208,8 +208,9 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
     }
 
     /**
-     * @param ctx
-     * @param graphicsBounds
+     * @param ctx The Graphics-context to draw on
+     * @param graphicsBounds A rectangle which describes the bounds
+     *                       for drawing
      * @throws IllegalStateException if the draw fails
      */
     public void draw(Graphics2D ctx, Rectangle2D graphicsBounds) {

@@ -41,7 +41,7 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class HMEFMessage {
     public static final int HEADER_SIGNATURE = 0x223e9f78;
-    
+
     @SuppressWarnings("unused")
     private int fileId;
     private final List<TNEFAttribute> messageAttributes = new ArrayList<>();
@@ -50,7 +50,7 @@ public final class HMEFMessage {
 
     /**
      * @param inp input stream
-     * @throws IOException
+     * @throws IOException If reading data from the stream fails
      * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
@@ -64,17 +64,17 @@ public final class HMEFMessage {
                         "expected " + HEADER_SIGNATURE + " but got " + sig
                 );
             }
-            
+
             // Read the File ID
             fileId = LittleEndian.readUShort(inp);
-            
+
             // Now begin processing the contents
             process(inp);
         } finally {
             inp.close();
         }
     }
-    
+
     private void process(InputStream inp) throws IOException {
        int level;
        do {
@@ -126,16 +126,16 @@ public final class HMEFMessage {
         Attachment attach = attachments.get(attachments.size() - 1);
         attach.addAttribute(attr);
     }
-    
+
     /**
-     * Returns all HMEF/TNEF attributes of the message. 
+     * Returns all HMEF/TNEF attributes of the message.
      * Note - In a typical message, most of the interesting properties
-     *  are stored as {@link MAPIAttribute}s - see {@link #getMessageMAPIAttributes()} 
+     *  are stored as {@link MAPIAttribute}s - see {@link #getMessageMAPIAttributes()}
      */
     public List<TNEFAttribute> getMessageAttributes() {
         return Collections.unmodifiableList(messageAttributes);
     }
-    
+
     /**
      * Returns all MAPI attributes of the message.
      * Note - A small number of HMEF/TNEF specific attributes normally
@@ -144,17 +144,17 @@ public final class HMEFMessage {
     public List<MAPIAttribute> getMessageMAPIAttributes() {
         return Collections.unmodifiableList(mapiAttributes);
     }
-    
+
     /**
      * Returns all the Attachments of the message.
      */
     public List<Attachment> getAttachments() {
         return Collections.unmodifiableList(attachments);
     }
-    
+
     /**
      * Return the message attribute with the given ID,
-     *  or null if there isn't one. 
+     *  or null if there isn't one.
      */
     public TNEFAttribute getMessageAttribute(TNEFProperty id) {
         for (TNEFAttribute attr : messageAttributes) {
@@ -164,10 +164,10 @@ public final class HMEFMessage {
         }
         return null;
     }
-    
+
     /**
      * Return the message MAPI Attribute with the given ID,
-     *  or null if there isn't one. 
+     *  or null if there isn't one.
      */
     public MAPIAttribute getMessageMAPIAttribute(MAPIProperty id) {
         for (MAPIAttribute attr : mapiAttributes) {
@@ -178,7 +178,7 @@ public final class HMEFMessage {
         }
         return null;
     }
-    
+
     /**
      * Return the string value of the mapi property, or null
      *  if it isn't set
@@ -186,7 +186,7 @@ public final class HMEFMessage {
     private String getString(MAPIProperty id) {
         return MAPIStringAttribute.getAsString( getMessageMAPIAttribute(id) );
     }
-    
+
     /**
      * Returns the Message Subject, or null if the mapi property
      *  for this isn't set
@@ -194,7 +194,7 @@ public final class HMEFMessage {
     public String getSubject() {
         return getString(MAPIProperty.CONVERSATION_TOPIC);
     }
-    
+
     /**
      * Returns the Message Body, as RTF, or null if the mapi property
      *  for this isn't set

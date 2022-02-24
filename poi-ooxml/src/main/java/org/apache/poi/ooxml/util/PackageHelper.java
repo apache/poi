@@ -48,11 +48,11 @@ public final class PackageHelper {
     }
 
     /**
-     * @param stream
+     * @param stream The InputStream to read from
      * @param closeStream whether to close the stream (default is false)
      * @since POI 5.2.0
      * @return OPCPackage
-     * @throws IOException
+     * @throws IOException If reading data from the stream fails
      */
     public static OPCPackage open(InputStream stream, boolean closeStream) throws IOException {
         try {

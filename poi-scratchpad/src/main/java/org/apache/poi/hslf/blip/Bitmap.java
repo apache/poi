@@ -41,7 +41,7 @@ import org.apache.poi.util.Units;
 public abstract class Bitmap extends HSLFPictureData {
 
     /**
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of its overloads to create new
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], org.apache.poi.sl.usermodel.PictureData.PictureType)} or one of its overloads to create new
      *             {@link Bitmap}. This API led to detached {@link Bitmap} instances (See Bugzilla
      *             46122) and prevented adding additional functionality.
      */

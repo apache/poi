@@ -81,8 +81,8 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
     }
 
     /**
-     * @param inputStream
-     * @throws IOException
+     * @param inputStream The InputStream to read data from
+     * @throws IOException If reading data from the file fails
      * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */

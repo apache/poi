@@ -128,7 +128,7 @@ public class XMLSlideShow extends POIXMLDocument
 
     /**
      * @param is InputStream
-     * @throws IOException
+     * @throws IOException If reading data from the stream fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
      * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format

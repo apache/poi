@@ -119,7 +119,9 @@ public class XSSFReader {
     /**
      * Controls whether {@link #getSharedStringsTable()} uses {@link SharedStringsTable}
      * or {@link ReadOnlySharedStringsTable}.
-     * @param useReadOnlySharedStringsTable
+     *
+     * @param useReadOnlySharedStringsTable if true, the ReadOnlySharedStringsTable is used,
+     *                                      SharedStringsTable otherwise
      * @since POI 5.2.0
      */
     public void setUseReadOnlySharedStringsTable(boolean useReadOnlySharedStringsTable) {

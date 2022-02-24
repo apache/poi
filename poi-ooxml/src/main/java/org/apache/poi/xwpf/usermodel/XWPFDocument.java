@@ -133,7 +133,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     /**
      * @param pkg OPC package
-     * @throws IOException
+     * @throws IOException If reading data from the package fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
      * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
@@ -146,8 +146,8 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * @param is InputStream
-     * @throws IOException
+     * @param is The InputStream to read data from
+     * @throws IOException If reading data from the stream fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
      * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format

@@ -47,7 +47,7 @@ public final class PICT extends Metafile {
     private static final Logger LOG = LogManager.getLogger(PICT.class);
 
     /**
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of its overloads to create new
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], org.apache.poi.sl.usermodel.PictureData.PictureType)} or one of its overloads to create new
      *             PICT. This API led to detached PICT instances (See Bugzilla
      *             46122) and prevented adding additional functionality.
      */

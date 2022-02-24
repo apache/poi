@@ -166,7 +166,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
     /**
      * Constructs a Powerpoint document from an input stream.
-     * @throws IOException
+     * @throws IOException If reading data from the stream fails
      * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
@@ -177,7 +177,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
     /**
      * Constructs a Powerpoint document from an POIFSFileSystem.
-     * @throws IOException
+     * @throws IOException If reading data from the file-system fails
      * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
@@ -188,7 +188,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
     /**
      * Constructs a Powerpoint document from an DirectoryNode.
-     * @throws IOException
+     * @throws IOException If reading data from the DirectoryNode fails
      * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */

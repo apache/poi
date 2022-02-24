@@ -30,7 +30,7 @@ import org.apache.poi.util.Removal;
 public final class PNG extends Bitmap {
 
     /**
-     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of its overloads to create new
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], org.apache.poi.sl.usermodel.PictureData.PictureType)} or one of its overloads to create new
      *             {@link PNG}. This API led to detached {@link PNG} instances (See Bugzilla
      *             46122) and prevented adding additional functionality.
      */
@@ -70,7 +70,7 @@ public final class PNG extends Bitmap {
     public int getSignature(){
         return (getUIDInstanceCount() == 1 ? 0x6E00 : 0x6E10);
     }
-    
+
     /**
      * Sets the PNG signature - either {@code 0x6E00} or {@code 0x6E10}
      */
@@ -84,6 +84,6 @@ public final class PNG extends Bitmap {
                 break;
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for PNG");
-        }        
+        }
     }
 }
