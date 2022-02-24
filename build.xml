@@ -42,7 +42,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="5.2.1-SNAPSHOT"/>
+    <property name="version.id" value="5.2.1"/>
     <property name="release.rc" value=""/>
 
     <property environment="env"/>
