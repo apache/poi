@@ -18,7 +18,7 @@ package org.apache.poi.stress;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.function.Supplier;
+import java.lang.reflect.InvocationTargetException;
 
 @SuppressWarnings("unused")
 public enum FileHandlerKnown {
@@ -46,7 +46,8 @@ public enum FileHandlerKnown {
             // Because of no-scratchpad handling, we need to resort to reflection here
             String n = name().replace("NULL", "Null");
             return (FileHandler)Class.forName("org.apache.poi.stress." + n + "FileHandler").getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
+        } catch (RuntimeException | ClassNotFoundException | NoSuchMethodException | InstantiationException |
+                IllegalAccessException | InvocationTargetException e) {
             return new NullFileHandler();
         }
     }

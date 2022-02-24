@@ -44,7 +44,8 @@ import org.apache.poi.util.IOUtils;
  * in the integration tests, mostly text-extraction related at the moment.
  */
 public abstract class AbstractFileHandler implements FileHandler {
-    public static final Set<String> EXPECTED_EXTRACTOR_FAILURES = new HashSet<>(Arrays.asList(
+    // some FileHandlers extend this list!?!
+    protected static final Set<String> EXPECTED_EXTRACTOR_FAILURES = new HashSet<>(Arrays.asList(
         // password protected files without password
         // ... currently none ...
 
