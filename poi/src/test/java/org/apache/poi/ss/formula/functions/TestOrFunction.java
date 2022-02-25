@@ -23,6 +23,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -31,6 +32,7 @@ import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertBoolean;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.apache.poi.ss.util.Utils.assertString;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests for {@link BooleanFunction#OR}
@@ -85,6 +87,20 @@ final class TestOrFunction {
             HSSFRow row = sheet.createRow(0);
             HSSFCell cell = row.createCell(0);
             assertDouble(fe, cell, "INDEX({1},1,IF(OR(FALSE,FALSE),1,1))", 1.0);
+        }
+    }
+
+    @Test
+    void testBug65915ArrayFunction() throws IOException {
+        //https://bz.apache.org/bugzilla/show_bug.cgi?id=65915
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            sheet.setArrayFormula("INDEX({1},1,IF(OR(FALSE,FALSE),1,1))", new CellRangeAddress(0, 0, 0, 0));
+            fe.evaluateAll();
+            assertEquals(1.0, cell.getNumericCellValue());
         }
     }
 
