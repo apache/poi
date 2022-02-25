@@ -76,6 +76,18 @@ final class TestOrFunction {
         }
     }
 
+    @Test
+    void testBug65915() throws IOException {
+        //https://bz.apache.org/bugzilla/show_bug.cgi?id=65915
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            assertDouble(fe, cell, "INDEX({1},1,IF(OR(FALSE,FALSE),1,1))", 1.0);
+        }
+    }
+
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
