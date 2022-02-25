@@ -17,12 +17,18 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.AreaEval;
@@ -316,5 +322,34 @@ final class TestIndex {
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
         assertEquals(7.0, fe.evaluate(c1).getNumberValue(), 0);
+    }
+
+    @Test
+    void testMicrosoftExample2() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            //https://support.microsoft.com/en-us/office/index-function-a5dcf0dd-996d-40a4-a822-b56b061328bd
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            assertDouble(fe, cell, "INDEX({1,2;3,4},0,2)", 2.0);
+        }
+    }
+
+    @Test
+    void testMicrosoftExample2ArrayFunction() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            //https://support.microsoft.com/en-us/office/index-function-a5dcf0dd-996d-40a4-a822-b56b061328bd
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row0 = sheet.createRow(0);
+            HSSFCell cell0 = row0.createCell(0);
+            HSSFRow row1 = sheet.createRow(1);
+            HSSFCell cell1 = row1.createCell(0);
+            sheet.setArrayFormula("INDEX({1,2;3,4},0,2)", new CellRangeAddress(0, 1, 0, 0));
+            fe.evaluateAll();
+            assertEquals(2.0, cell0.getNumericCellValue());
+            assertEquals(4.0, cell1.getNumericCellValue());
+        }
     }
 }
