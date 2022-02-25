@@ -80,6 +80,14 @@ public class Utils {
         assertEquals(expectedResult, result.getNumberValue(), tolerance);
     }
 
+    public static void assertBoolean(FormulaEvaluator fe, Cell cell, String formulaText, boolean expectedResult) {
+        cell.setCellFormula(formulaText);
+        fe.notifyUpdateCell(cell);
+        CellValue result = fe.evaluate(cell);
+        assertEquals(CellType.BOOLEAN, result.getCellType());
+        assertEquals(expectedResult, result.getBooleanValue());
+    }
+
     public static void assertError(FormulaEvaluator fe, Cell cell, String formulaText, FormulaError expectedError) {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);
