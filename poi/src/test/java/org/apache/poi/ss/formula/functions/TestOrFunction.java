@@ -98,7 +98,21 @@ final class TestOrFunction {
             HSSFSheet sheet = wb.createSheet();
             HSSFRow row = sheet.createRow(0);
             HSSFCell cell = row.createCell(0);
-            sheet.setArrayFormula("INDEX({1},1,IF(OR(FALSE,FALSE),1,1))", new CellRangeAddress(0, 0, 0, 0));
+            sheet.setArrayFormula("INDEX({1},1,IF(OR(FALSE,FALSE),0,1))", new CellRangeAddress(0, 0, 0, 0));
+            fe.evaluateAll();
+            assertEquals(1.0, cell.getNumericCellValue());
+        }
+    }
+
+    @Test
+    void testBug65915Array3Function() throws IOException {
+        //https://bz.apache.org/bugzilla/show_bug.cgi?id=65915
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            sheet.setArrayFormula("INDEX({1},1,IF(OR(1=2,2=3,3=4),0,1))", new CellRangeAddress(0, 0, 0, 0));
             fe.evaluateAll();
             assertEquals(1.0, cell.getNumericCellValue());
         }

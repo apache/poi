@@ -139,14 +139,7 @@ public abstract class BooleanFunction implements Function,ArrayFunction {
 
     @Override
     public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-        if (args.length == 1) {
-            return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex,
-                    vA -> evaluate(new ValueEval[]{vA}, srcRowIndex, srcColumnIndex));
-        } else if (args.length == 2) {
-            return evaluateTwoArrayArgs(args[0], args[1], srcRowIndex, srcColumnIndex,
-                    (vA, vB) -> evaluate(new ValueEval[]{vA, vB}, srcRowIndex, srcColumnIndex));
-        }
-        return ErrorEval.VALUE_INVALID;
+        return evaluate(args, srcRowIndex, srcColumnIndex);
     }
 
     private static ValueEval evaluateFalse(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
