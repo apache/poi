@@ -43,7 +43,7 @@ sourceSets {
 dependencies {
     testImplementation 'org.apache.ant:ant:1.10.12'
     testImplementation 'org.apache.commons:commons-collections4:4.4'
-    testImplementation 'com.google.guava:guava:31.0.1-jre'
+    testImplementation 'com.google.guava:guava:31.1-jre'
 
     misc(project(':poi-ooxml')) {
         capabilities {
