@@ -32,74 +32,74 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr;
 
 public class MultiHeaderDocument {
-	public static void main(String[] args) throws IOException {
-		try (XWPFDocument doc = new XWPFDocument()) {
-			// First Body Paragraph
-			XWPFParagraph p1 = doc.createParagraph();
+    public static void main(String[] args) throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            // First Body Paragraph
+            XWPFParagraph p1 = doc.createParagraph();
 
-			XWPFRun run1 = p1.createRun();
-			run1.setText("This is the text of the first paragraph/page/section");
+            XWPFRun run1 = p1.createRun();
+            run1.setText("This is the text of the first paragraph/page/section");
 
-			CTP ctp1 = p1.getCTP();
-			CTPPr ppr1 = null;
-			if (!ctp1.isSetPPr()) {
-				ctp1.addNewPPr();
-			}
-			ppr1 = ctp1.getPPr();
+            CTP ctp1 = p1.getCTP();
+            CTPPr ppr1 = null;
+            if (!ctp1.isSetPPr()) {
+                ctp1.addNewPPr();
+            }
+            ppr1 = ctp1.getPPr();
 
-			CTSectPr sec1 = null;
-			if (!ppr1.isSetSectPr()) {
-				ppr1.addNewSectPr();
-			}
+            CTSectPr sec1 = null;
+            if (!ppr1.isSetSectPr()) {
+                ppr1.addNewSectPr();
+            }
 
-			sec1 = ppr1.getSectPr();
+            sec1 = ppr1.getSectPr();
 
-			// Paragraph for Section 1 header.
-			CTP parCTP = CTP.Factory.newInstance();
-			parCTP.addNewR().addNewT().setStringValue("Header For Section 1");
-			XWPFParagraph headerPar1 = new XWPFParagraph(parCTP, doc);
+            // Paragraph for Section 1 header.
+            CTP parCTP = CTP.Factory.newInstance();
+            parCTP.addNewR().addNewT().setStringValue("Header For Section 1");
+            XWPFParagraph headerPar1 = new XWPFParagraph(parCTP, doc);
 
-			XWPFParagraph[] headerPars1 = { headerPar1 };
+            XWPFParagraph[] headerPars1 = { headerPar1 };
 
-			XWPFHeaderFooterPolicy pol1 = new XWPFHeaderFooterPolicy(doc, sec1);
-			pol1.createHeader(STHdrFtr.DEFAULT, headerPars1);
+            XWPFHeaderFooterPolicy pol1 = new XWPFHeaderFooterPolicy(doc, sec1);
+            pol1.createHeader(STHdrFtr.DEFAULT, headerPars1);
 
-			// Create second body paragraph with a different header
+            // Create second body paragraph with a different header
 
-			XWPFParagraph p2 = doc.createParagraph();
+            XWPFParagraph p2 = doc.createParagraph();
 
-			XWPFRun run2 = p2.createRun();
-			run2.setText("This is the text of the second paragraph/page/section");
+            XWPFRun run2 = p2.createRun();
+            run2.setText("This is the text of the second paragraph/page/section");
 
-			CTP ctp2 = p2.getCTP();
-			CTPPr ppr2 = null;
-			if (!ctp2.isSetPPr()) {
-				ctp2.addNewPPr();
-			}
-			ppr2 = ctp2.getPPr();
+            CTP ctp2 = p2.getCTP();
+            CTPPr ppr2 = null;
+            if (!ctp2.isSetPPr()) {
+                ctp2.addNewPPr();
+            }
+            ppr2 = ctp2.getPPr();
 
-			CTSectPr sec2 = null;
-			if (!ppr2.isSetSectPr()) {
-				ppr2.addNewSectPr();
-			}
+            CTSectPr sec2 = null;
+            if (!ppr2.isSetSectPr()) {
+                ppr2.addNewSectPr();
+            }
 
-			sec2 = ppr2.getSectPr();
+            sec2 = ppr2.getSectPr();
 
-			// Paragraph for Section 2 header.
-			CTP parCTP2 = CTP.Factory.newInstance();
-			parCTP2.addNewR().addNewT().setStringValue("Header For Section 2");
-			XWPFParagraph headerPar2 = new XWPFParagraph(parCTP2, doc);
+            // Paragraph for Section 2 header.
+            CTP parCTP2 = CTP.Factory.newInstance();
+            parCTP2.addNewR().addNewT().setStringValue("Header For Section 2");
+            XWPFParagraph headerPar2 = new XWPFParagraph(parCTP2, doc);
 
-			XWPFParagraph[] headerPars2 = { headerPar2 };
+            XWPFParagraph[] headerPars2 = { headerPar2 };
 
-			XWPFHeaderFooterPolicy pol2 = new XWPFHeaderFooterPolicy(doc, sec2);
-			pol2.createHeader(STHdrFtr.DEFAULT, headerPars2);
+            XWPFHeaderFooterPolicy pol2 = new XWPFHeaderFooterPolicy(doc, sec2);
+            pol2.createHeader(STHdrFtr.DEFAULT, headerPars2);
 
-			try (OutputStream os = new FileOutputStream(new File("multiheader.docx"))) {
+            try (OutputStream os = new FileOutputStream(new File("multiheader.docx"))) {
 
-				doc.write(os);
+                doc.write(os);
 
-			}
-		}
-	}
+            }
+        }
+    }
 }
