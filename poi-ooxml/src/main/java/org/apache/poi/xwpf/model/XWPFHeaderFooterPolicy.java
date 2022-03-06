@@ -74,6 +74,8 @@ public class XWPFHeaderFooterPolicy {
 
     private XWPFHeader defaultHeader;
     private XWPFFooter defaultFooter;
+    //This variable allows to have a reference for each section, and having different headers in each of them.
+    private CTSectPr sectPr;
 
     /**
      * Figures out the policy for the given document,
@@ -101,6 +103,8 @@ public class XWPFHeaderFooterPolicy {
                     : ctBody.addNewSectPr();
         }
         this.doc = doc;
+        this.sectPr = sectPr;
+
         for (int i = 0; i < sectPr.sizeOfHeaderReferenceArray(); i++) {
             // Get the header
             CTHdrFtrRef ref = sectPr.getHeaderReferenceArray(i);
@@ -293,14 +297,14 @@ public class XWPFHeaderFooterPolicy {
 
 
     private void setFooterReference(Enum type, XWPFHeaderFooter wrapper) {
-        CTHdrFtrRef ref = doc.getDocument().getBody().getSectPr().addNewFooterReference();
+        CTHdrFtrRef ref = this.sectPr.addNewFooterReference();
         ref.setType(type);
         ref.setId(doc.getRelationId(wrapper));
     }
 
 
     private void setHeaderReference(Enum type, XWPFHeaderFooter wrapper) {
-        CTHdrFtrRef ref = doc.getDocument().getBody().getSectPr().addNewHeaderReference();
+        CTHdrFtrRef ref = this.sectPr.addNewHeaderReference();
         ref.setType(type);
         ref.setId(doc.getRelationId(wrapper));
     }
