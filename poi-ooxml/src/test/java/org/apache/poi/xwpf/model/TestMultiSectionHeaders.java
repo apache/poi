@@ -21,6 +21,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFFooter;
 import org.apache.poi.xwpf.usermodel.XWPFHeader;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
@@ -36,7 +37,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class TestMultiSectionHeaders {
 
     @Test
-    void testAddHeadersForTwoDistinctSections() throws IOException {
+    void testAddHeadersForTwoDistinctSections() {
 
         String header1Text = "Header 1 Text";
         String header2Text = "Header 2 Text";
@@ -46,14 +47,10 @@ public class TestMultiSectionHeaders {
         // Add first body/section paragraph
         XWPFParagraph par1 = doc.createParagraph();
 
-        CTP ctp1 = par1.getCTP();
-        ctp1.addNewR().addNewT().setStringValue("Text for first body paragraph");
+        XWPFRun run1 = par1.createRun();
+        run1.setText("Text for first body paragraph");
 
-        CTPPr ppr1 = null;
-        if (!ctp1.isSetPPr()) {
-            ctp1.addNewPPr();
-        }
-        ppr1 = ctp1.getPPr();
+        CTPPr ppr1 = par1.getCTPPr();
 
         CTSectPr sec1 = null;
         if (!ppr1.isSetSectPr()) {
@@ -75,14 +72,10 @@ public class TestMultiSectionHeaders {
         // Add second body/section paragraph
         XWPFParagraph par2 = doc.createParagraph();
 
-        CTP ctp2 = par2.getCTP();
-        ctp2.addNewR().addNewT().setStringValue("Text for second body paragraph");
+        XWPFRun run2 = par2.createRun();
+        run2.setText("Text for second body paragraph");
 
-        CTPPr ppr2 = null;
-        if (!ctp2.isSetPPr()) {
-            ctp2.addNewPPr();
-        }
-        ppr2 = ctp2.getPPr();
+        CTPPr ppr2 = par2.getCTPPr();
 
         CTSectPr sec2 = null;
         if (!ppr2.isSetSectPr()) {
@@ -133,14 +126,10 @@ public class TestMultiSectionHeaders {
         // Add first body/section paragraph
         XWPFParagraph par1 = doc.createParagraph();
 
-        CTP ctp1 = par1.getCTP();
-        ctp1.addNewR().addNewT().setStringValue("Text for first body paragraph");
+        XWPFRun run1 = par1.createRun();
+        run1.setText("Text for first body paragraph");
 
-        CTPPr ppr1 = null;
-        if (!ctp1.isSetPPr()) {
-            ctp1.addNewPPr();
-        }
-        ppr1 = ctp1.getPPr();
+        CTPPr ppr1 = par1.getCTPPr();
 
         CTSectPr sec1 = null;
         if (!ppr1.isSetSectPr()) {
@@ -162,14 +151,10 @@ public class TestMultiSectionHeaders {
         // Add second body/section paragraph
         XWPFParagraph par2 = doc.createParagraph();
 
-        CTP ctp2 = par2.getCTP();
-        ctp2.addNewR().addNewT().setStringValue("Text for second body paragraph");
+        XWPFRun run2 = par2.createRun();
+        run2.setText("Text for second body paragraph");
 
-        CTPPr ppr2 = null;
-        if (!ctp2.isSetPPr()) {
-            ctp2.addNewPPr();
-        }
-        ppr2 = ctp2.getPPr();
+        CTPPr ppr2 = par2.getCTPPr();
 
         CTSectPr sec2 = null;
         if (!ppr2.isSetSectPr()) {

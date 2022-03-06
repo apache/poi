@@ -1456,7 +1456,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * Get a <b>copy</b> of the currently used CTPPr, if none is used, return
      * a new instance.
      */
-    private CTPPr getCTPPr() {
+    @Internal
+    public CTPPr getCTPPr() {
         return paragraph.getPPr() == null ? paragraph.addNewPPr()
                 : paragraph.getPPr();
     }
