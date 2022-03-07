@@ -114,7 +114,9 @@ abstract class CellCacheEntry implements ICacheEntry {
         for (int i = 0; i < formulaCells.length; i++) {
             FormulaCellCacheEntry fc = formulaCells[i];
             fc.clearFormulaEntry();
-            fc.recurseClearCachedFormulaResults();
+            if (fc != this) {
+                fc.recurseClearCachedFormulaResults();
+            }
         }
     }
 
