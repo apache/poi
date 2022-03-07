@@ -169,10 +169,10 @@ class TestXSLFTextParagraph {
         }
     }
 
-        /**
-         * test breaking test into lines.
-         * This test requires that the Arial font is available and will run only on windows
-         */
+    /**
+     * test breaking test into lines.
+     * This test requires that the Arial font is available and will run only on windows
+     */
     @Test
     void testBreakLines() throws IOException {
         String os = System.getProperty("os.name");
