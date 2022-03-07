@@ -22,6 +22,7 @@ package org.apache.poi.xslf.usermodel;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -203,9 +204,15 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         return run;
     }
 
+    /**
+     * Get the TextParagraphs for this text box. Removing an item from this list will not reliably remove
+     * the item from the underlying document. Use <code>removeTextParagraph</code> for that.
+     *
+     * @return the TextParagraphs for this text box
+     */
     @Override
     public List<XSLFTextParagraph> getTextParagraphs() {
-        return _paragraphs;
+        return Collections.unmodifiableList(_paragraphs);
     }
 
     /**
@@ -227,6 +234,29 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         XSLFTextParagraph paragraph = newTextParagraph(p);
         _paragraphs.add(paragraph);
         return paragraph;
+    }
+
+    /**
+     * @param paragraph paragraph to remove
+     * @return whether the paragraph was removed
+     * @since POI 5.2.2
+     */
+    public boolean removeTextParagraph(XSLFTextParagraph paragraph) {
+        CTTextParagraph ctTextParagraph = paragraph.getXmlObject();
+        CTTextBody txBody = getTextBody(false);
+        if (txBody != null) {
+            if (_paragraphs.remove(paragraph)) {
+                for (int i = 0; i < txBody.sizeOfPArray(); i++) {
+                    if (txBody.getPArray(i).equals(ctTextParagraph)) {
+                        txBody.removeP(i);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } else {
+            return false;
+        }
     }
 
     @Override

@@ -146,12 +146,33 @@ class TestXSLFTextParagraph {
         assertEquals(expectedWidth, dtp.getWrappingWidth(false, null), 0);
 
         ppt.close();
-     }
+    }
 
-    /**
-     * test breaking test into lines.
-     * This test requires that the Arial font is available and will run only on windows
-     */
+    @Test
+    void testRemoveTextParagraph() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide slide = ppt.createSlide();
+            XSLFTextShape sh = slide.createAutoShape();
+            sh.setLineColor(Color.black);
+
+            XSLFTextParagraph p = sh.addNewTextParagraph();
+            p.addNewTextRun().setText(
+                    "Paragraph formatting allows for more granular control " +
+                            "of text within a shape. Properties here apply to all text " +
+                            "residing within the corresponding paragraph.");
+
+            assertTrue(sh.removeTextParagraph(p));
+
+            assertTrue(sh.getTextParagraphs().isEmpty());
+
+            assertEquals(0, sh.getTextBody(true).sizeOfPArray());
+        }
+    }
+
+        /**
+         * test breaking test into lines.
+         * This test requires that the Arial font is available and will run only on windows
+         */
     @Test
     void testBreakLines() throws IOException {
         String os = System.getProperty("os.name");
