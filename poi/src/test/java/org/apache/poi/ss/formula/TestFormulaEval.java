@@ -50,4 +50,26 @@ class TestFormulaEval {
             assertEquals(CellType.ERROR, cell.getCellType());
         }
     }
+
+    @Test
+    void testCircularRef2() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell0 = row.createCell(0);
+            HSSFCell cell1 = row.createCell(1);
+            cell0.setCellFormula("B1");
+            cell1.setCellFormula("A1");
+            HSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            formulaEvaluator.evaluateAll();
+
+            cell0.setCellFormula(null);
+            cell1.setCellFormula(null);
+            formulaEvaluator.notifyUpdateCell(cell0);
+            formulaEvaluator.notifyUpdateCell(cell1);
+            //the following asserts should probably be BLANK not ERROR
+            assertEquals(CellType.ERROR, cell0.getCellType());
+            assertEquals(CellType.ERROR, cell1.getCellType());
+        }
+    }
 }
