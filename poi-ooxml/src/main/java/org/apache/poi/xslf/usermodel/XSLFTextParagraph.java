@@ -18,6 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -103,12 +104,12 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     @Override
     public List<XSLFTextRun> getTextRuns() {
-        return _runs;
+        return Collections.unmodifiableList(_runs);
     }
 
     @Override
     public Iterator<XSLFTextRun> iterator() {
-        return _runs.iterator();
+        return getTextRuns().iterator();
     }
 
     /**
@@ -123,6 +124,43 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         XSLFTextRun run = newTextRun(r);
         _runs.add(run);
         return run;
+    }
+
+    /**
+     * Remove a text run
+     *
+     * @param  textRun a run of text
+     * @return whether the run was removed
+     * @since POI 5.2.2
+     */
+    public boolean removeTextRun(XSLFTextRun textRun) {
+        if (_runs.remove(textRun)) {
+            XmlObject xo = textRun.getXmlObject();
+            if (xo instanceof CTRegularTextRun) {
+                for (int i = 0; i < getXmlObject().sizeOfRArray(); i++) {
+                    if (getXmlObject().getRArray(i).equals(xo)) {
+                        getXmlObject().removeR(i);
+                        return true;
+                    }
+                }
+            } else if (xo instanceof CTTextField) {
+                for (int i = 0; i < getXmlObject().sizeOfFldArray(); i++) {
+                    if (getXmlObject().getFldArray(i).equals(xo)) {
+                        getXmlObject().removeFld(i);
+                        return true;
+                    }
+                }
+            } else if (xo instanceof CTTextLineBreak) {
+                for (int i = 0; i < getXmlObject().sizeOfBrArray(); i++) {
+                    if (getXmlObject().getBrArray(i).equals(xo)) {
+                        getXmlObject().removeBr(i);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        return false;
     }
 
     /**

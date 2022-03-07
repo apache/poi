@@ -169,6 +169,28 @@ class TestXSLFTextParagraph {
         }
     }
 
+    @Test
+    void testRemoveTextRun() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide slide = ppt.createSlide();
+            XSLFTextShape sh = slide.createAutoShape();
+            sh.setLineColor(Color.black);
+
+            XSLFTextParagraph p = sh.addNewTextParagraph();
+            XSLFTextRun run = p.addNewTextRun();
+            run.setText(
+                    "Paragraph formatting allows for more granular control " +
+                            "of text within a shape. Properties here apply to all text " +
+                            "residing within the corresponding paragraph.");
+
+            assertTrue(p.removeTextRun(run));
+
+            assertTrue(p.getTextRuns().isEmpty());
+
+            assertEquals(0, p.getXmlObject().sizeOfRArray());
+        }
+    }
+
     /**
      * test breaking test into lines.
      * This test requires that the Arial font is available and will run only on windows
