@@ -25,7 +25,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -34,7 +33,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TestFormulaEval {
 
-    @Disabled("https://bz.apache.org/bugzilla/show_bug.cgi?id=65939")
     @Test
     void testCircularRef() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
@@ -46,8 +44,10 @@ class TestFormulaEval {
             // the following assert should probably be NUMERIC not ERROR (from testing in Excel itself)
             assertEquals(CellType.ERROR, formulaEvaluator.evaluateFormulaCell(cell));
 
-            cell.setCellFormula(null); //this line fails
+            cell.setCellFormula(null);
             formulaEvaluator.notifyUpdateCell(cell);
+            //the following assert should probably be BLANK not ERROR
+            assertEquals(CellType.ERROR, cell.getCellType());
         }
     }
 }

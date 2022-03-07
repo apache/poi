@@ -604,7 +604,11 @@ public class HSSFCell extends CellBase {
             case ERROR:
                 byte errorValue = (byte) ((FormulaRecordAggregate)_record).getFormulaRecord().getCachedErrorValue();
                 _record = new BoolErrRecord();
-                ((BoolErrRecord)_record).setValue(errorValue);
+                try {
+                    ((BoolErrRecord)_record).setValue(errorValue);
+                } catch (IllegalArgumentException ise) {
+                    ((BoolErrRecord)_record).setValue((byte) ErrorEval.REF_INVALID.getErrorCode());
+                }
                 _cellType = CellType.ERROR;
                 break;
             default:
