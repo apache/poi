@@ -38,6 +38,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.CodepointsUtil;
 import org.apache.poi.util.Removal;
@@ -322,7 +323,7 @@ public class SheetDataWriter implements Closeable {
             }
             case STRING: {
                 if (_sharedStringSource != null) {
-                    XSSFRichTextString rt = new XSSFRichTextString(cell.getStringCellValue());
+                    RichTextString rt = cell.getRichStringCellValue();
                     int sRef = _sharedStringSource.addSharedStringItem(rt);
 
                     writeAttribute("t", STCellType.S.toString());

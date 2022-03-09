@@ -55,13 +55,11 @@ public class SXSSFCreationHelper implements CreationHelper {
 
     @Override
     public XSSFRichTextString createRichTextString(String text) {
-        LOG.atInfo().log("SXSSF doesn't support Rich Text Strings, any formatting information will be lost");
         return new XSSFRichTextString(text);
     }
 
     @Override
     public SXSSFFormulaEvaluator createFormulaEvaluator() {
-
         return new SXSSFFormulaEvaluator(wb);
     }
 

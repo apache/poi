@@ -51,6 +51,10 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.SharedStringsTable;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
@@ -150,6 +154,51 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
                 cell = row.getCell(2);
                 assertNotNull(cell);
                 assertEquals("A", cell.getStringCellValue());
+            }
+        }
+    }
+
+    @Test
+    void useSharedStringsTableWithRichText() throws Exception {
+        try (SXSSFWorkbook wb = new SXSSFWorkbook(null, 10, false, true)) {
+
+            SharedStringsTable sss = wb.getSharedStringSource();
+
+            assertNotNull(sss);
+
+            XSSFFont redFont = new XSSFFont();
+            redFont.setColor(new XSSFColor(new java.awt.Color(241,76,93), new DefaultIndexedColorMap()));
+
+            Row row = wb.createSheet("S1").createRow(0);
+
+            row.createCell(0).setCellValue("A");
+            row.createCell(1).setCellValue("B");
+            XSSFRichTextString rts = new XSSFRichTextString("A");
+            rts.applyFont(redFont);
+            row.createCell(2).setCellValue(rts);
+
+            try (XSSFWorkbook xssfWorkbook = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb)) {
+                sss = wb.getSharedStringSource();
+                assertEquals(3, sss.getUniqueCount());
+                assertTrue(wb.dispose());
+
+                Sheet sheet1 = xssfWorkbook.getSheetAt(0);
+                assertEquals("S1", sheet1.getSheetName());
+                assertEquals(1, sheet1.getPhysicalNumberOfRows());
+                row = sheet1.getRow(0);
+                assertNotNull(row);
+                Cell cell = row.getCell(0);
+                assertNotNull(cell);
+                assertEquals("A", cell.getStringCellValue());
+                cell = row.getCell(1);
+                assertNotNull(cell);
+                assertEquals("B", cell.getStringCellValue());
+                cell = row.getCell(2);
+                assertNotNull(cell);
+                assertEquals("A", cell.getStringCellValue());
+                XSSFRichTextString outputRichTextString = (XSSFRichTextString) cell.getRichStringCellValue();
+                XSSFFont outputFont = outputRichTextString.getFontAtIndex(0);
+                assertEquals(redFont, outputFont);
             }
         }
     }
