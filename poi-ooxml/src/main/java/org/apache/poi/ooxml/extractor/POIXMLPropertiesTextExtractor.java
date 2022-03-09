@@ -113,7 +113,6 @@ public class POIXMLPropertiesTextExtractor implements POIXMLTextExtractor {
                 document.getProperties().getCoreProperties().getUnderlyingProperties();
 
         appendIfPresent(text, "Category", props.getCategoryProperty());
-        appendIfPresent(text, "Category", props.getCategoryProperty());
         appendIfPresent(text, "ContentStatus", props.getContentStatusProperty());
         appendIfPresent(text, "ContentType", props.getContentTypeProperty());
         appendDateIfPresent(text, "Created", props.getCreatedProperty());
