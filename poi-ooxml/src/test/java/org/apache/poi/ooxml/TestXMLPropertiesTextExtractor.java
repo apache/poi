@@ -16,11 +16,6 @@
 ==================================================================== */
 package org.apache.poi.ooxml;
 
-import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.extractor.POIXMLPropertiesTextExtractor;
 import org.apache.poi.ooxml.util.PackageHelper;
@@ -29,6 +24,13 @@ import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
+
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class TestXMLPropertiesTextExtractor {
     private static final POIDataSamples _ssSamples = POIDataSamples.getSpreadSheetInstance();
@@ -102,43 +104,62 @@ public final class TestXMLPropertiesTextExtractor {
 
     @Test
     void testCustom() throws Exception {
-      OPCPackage pkg = OPCPackage.open(
+        OPCPackage pkg = OPCPackage.open(
                 _ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm")
-      );
-      XSSFWorkbook wb = new XSSFWorkbook(pkg);
+        );
+        XSSFWorkbook wb = new XSSFWorkbook(pkg);
 
-      POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(wb);
-      ext.getText();
+        POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(wb);
+        ext.getText();
 
-      // Now check
-      String text = ext.getText();
-      String cText = ext.getCustomPropertiesText();
+        // Now check
+        String text = ext.getText();
+        String cText = ext.getCustomPropertiesText();
 
-      assertContains(text, "description = another value");
-      assertContains(cText, "description = another value");
+        assertContains(text, "description = another value");
+        assertContains(cText, "description = another value");
 
-      ext.close();
+        ext.close();
     }
 
     /**
      * Bug #49386 - some properties, especially
-     *  dates can be null
+     * dates can be null
      */
     @Test
     void testWithSomeNulls() throws Exception {
-      OPCPackage pkg = OPCPackage.open(
-            _slSamples.openResourceAsStream("49386-null_dates.pptx")
-      );
-      XSLFSlideShow sl = new XSLFSlideShow(pkg);
+        try (
+                OPCPackage pkg = OPCPackage.open(
+                        _slSamples.openResourceAsStream("49386-null_dates.pptx")
+                );
+                XSLFSlideShow sl = new XSLFSlideShow(pkg);
+                POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(sl)
+        ) {
+            String text = ext.getText();
+            assertFalse(text.contains("Created =")); // With date is null
+            assertContains(text, "CreatedString = "); // Via string is blank
+            assertContains(text, "LastModifiedBy = IT Client Services");
+        }
+    }
 
-      POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(sl);
-      ext.getText();
-
-      String text = ext.getText();
-      assertFalse(text.contains("Created =")); // With date is null
-      assertContains(text, "CreatedString = "); // Via string is blank
-      assertContains(text, "LastModifiedBy = IT Client Services");
-
-      ext.close();
+    /**
+     * Bug #65946 - a bug led to Category being added twice
+     */
+    @Test
+    void testCategoryProperty() throws Exception {
+        try (
+                OPCPackage pkg = OPCPackage.open(
+                        _slSamples.openResourceAsStream("rain.pptx")
+                );
+                XSLFSlideShow sl = new XSLFSlideShow(pkg);
+                POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(sl)
+        ) {
+            String text = ext.getText();
+            int idx0 = text.indexOf("Category =");
+            assertNotEquals(-1, idx0);
+            int idx1 = text.indexOf("Category =", idx0 + 1);
+            assertEquals(-1, idx1);
+            assertContains(text, "Category = rain"); // Via string is blank
+        }
     }
 }
