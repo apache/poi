@@ -202,7 +202,7 @@ public final class IOUtils {
         }
 
         final int derivedLen = Math.min(length, derivedMaxLength);
-        final int bufferLen = isLengthKnown ? derivedLen : 4096;
+        final int bufferLen = isLengthKnown ? derivedLen : Math.min(4096, derivedLen);
         try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(bufferLen)) {
             byte[] buffer = new byte[4096];
             int totalBytes = 0, readBytes;

@@ -92,13 +92,11 @@ public class XWPFChart extends XDDFChart {
 
     public Long getChecksum() {
         if (this.checksum == null) {
-            byte[] data;
             try (InputStream is = getPackagePart().getInputStream()) {
-                data = IOUtils.toByteArrayWithMaxLength(is, XWPFPictureData.getMaxImageSize());
+                this.checksum = IOUtils.calculateChecksum(is);
             } catch (IOException e) {
                 throw new POIXMLException(e);
             }
-            this.checksum = IOUtils.calculateChecksum(data);
         }
         return this.checksum;
     }
