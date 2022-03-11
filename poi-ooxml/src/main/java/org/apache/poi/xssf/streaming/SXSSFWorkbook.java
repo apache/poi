@@ -967,6 +967,7 @@ public class SXSSFWorkbook implements Workbook {
         try {
             try (FileOutputStream os = new FileOutputStream(tmplFile)) {
                 _wb.write(os);
+                _wb.close();
             }
 
             //Substitute the template entries with the generated sheet data files
