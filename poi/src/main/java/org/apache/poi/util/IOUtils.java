@@ -171,7 +171,7 @@ public final class IOUtils {
      * @throws RecordFormatException If the requested length is invalid.
      */
     public static byte[] toByteArray(InputStream stream, final int length, final int maxLength) throws IOException {
-        return toByteArray(stream, length, maxLength, true);
+        return toByteArray(stream, length, maxLength, true, length != Integer.MAX_VALUE);
     }
 
     /**
@@ -188,11 +188,11 @@ public final class IOUtils {
      * @since POI 5.2.1
      */
     public static byte[] toByteArrayWithMaxLength(InputStream stream, final int maxLength) throws IOException {
-        return toByteArray(stream, maxLength, maxLength, false);
+        return toByteArray(stream, maxLength, maxLength, false, false);
     }
 
     private static byte[] toByteArray(InputStream stream, final int length, final int maxLength,
-                                      final boolean checkEOFException) throws IOException {
+                                      final boolean checkEOFException, final boolean isLengthKnown) throws IOException {
         if (length < 0 || maxLength < 0) {
             throw new RecordFormatException("Can't allocate an array of length < 0");
         }
@@ -202,8 +202,8 @@ public final class IOUtils {
         }
 
         final int derivedLen = Math.min(length, derivedMaxLength);
-        try (UnsynchronizedByteArrayOutputStream baos =
-                     new UnsynchronizedByteArrayOutputStream(derivedLen == Integer.MAX_VALUE ? 4096 : derivedLen)) {
+        final int bufferLen = isLengthKnown ? derivedLen : 4096;
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(bufferLen)) {
             byte[] buffer = new byte[4096];
             int totalBytes = 0, readBytes;
             do {
