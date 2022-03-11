@@ -54,8 +54,30 @@ public final class IOUtils {
      */
     private static int BYTE_ARRAY_MAX_OVERRIDE = -1;
 
+    /**
+     * The max init size of ByteArrayOutputStream.
+     * -1 means init size of ByteArrayOutputStream could be up to Integer.MAX_VALUE
+     */
+    private static int MAX_BYTE_ARRAY_INIT_SIZE = -1;
+
     private IOUtils() {
         // no instances of this class
+    }
+
+    /**
+     * @param maxOverride the max init size of ByteArrayOutputStream.
+     * -1 (the default) means init size of ByteArrayOutputStream could be up to Integer.MAX_VALUE
+     */
+    public static void setMaxByteArrayInitSize(final int maxOverride) {
+        MAX_BYTE_ARRAY_INIT_SIZE = maxOverride;
+    }
+
+    /**
+     * @return the max init size of ByteArrayOutputStream.
+     * -1 (the default) means init size of ByteArrayOutputStream could be up to Integer.MAX_VALUE
+     */
+    public static int getMaxByteArrayInitSize() {
+        return MAX_BYTE_ARRAY_INIT_SIZE;
     }
 
     /**
@@ -202,7 +224,10 @@ public final class IOUtils {
         }
 
         final int derivedLen = Math.min(length, derivedMaxLength);
-        final int bufferLen = isLengthKnown ? derivedLen : Math.min(4096, derivedLen);
+        int bufferLen = isLengthKnown ? derivedLen : Math.min(4096, derivedLen);
+        if (bufferLen > MAX_BYTE_ARRAY_INIT_SIZE && MAX_BYTE_ARRAY_INIT_SIZE > 0) {
+            bufferLen = Math.min(bufferLen, MAX_BYTE_ARRAY_INIT_SIZE);
+        }
         try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(bufferLen)) {
             byte[] buffer = new byte[4096];
             int totalBytes = 0, readBytes;
