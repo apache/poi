@@ -225,7 +225,7 @@ public final class IOUtils {
 
         final int derivedLen = Math.min(length, derivedMaxLength);
         int bufferLen = isLengthKnown ? derivedLen : Math.min(4096, derivedLen);
-        if (bufferLen > MAX_BYTE_ARRAY_INIT_SIZE && MAX_BYTE_ARRAY_INIT_SIZE > 0) {
+        if (MAX_BYTE_ARRAY_INIT_SIZE > 0 && bufferLen > MAX_BYTE_ARRAY_INIT_SIZE) {
             bufferLen = Math.min(bufferLen, MAX_BYTE_ARRAY_INIT_SIZE);
         }
         try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(bufferLen)) {
