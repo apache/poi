@@ -144,6 +144,30 @@ final class TestIOUtils {
     }
 
     @Test
+    void testToByteArrayMaxLength() throws IOException {
+        final byte[] array = new byte[]{1, 2, 3, 4, 5, 6, 7};
+        try (ByteArrayInputStream is = new ByteArrayInputStream(array)) {
+            assertArrayEquals(array, IOUtils.toByteArrayWithMaxLength(is, 7));
+        }
+    }
+
+    @Test
+    void testToByteArrayMaxLengthLongerThanArray() throws IOException {
+        final byte[] array = new byte[]{1, 2, 3, 4, 5, 6, 7};
+        try (ByteArrayInputStream is = new ByteArrayInputStream(array)) {
+            assertArrayEquals(array, IOUtils.toByteArrayWithMaxLength(is, 8));
+        }
+    }
+
+    @Test
+    void testToByteArrayMaxLengthShorterThanArray() throws IOException {
+        final byte[] array = new byte[]{1, 2, 3, 4, 5, 6, 7};
+        try (ByteArrayInputStream is = new ByteArrayInputStream(array)) {
+            assertArrayEquals(new byte[]{1, 2, 3}, IOUtils.toByteArrayWithMaxLength(is, 3));
+        }
+    }
+
+    @Test
     void testSkipFully() throws IOException {
         try (InputStream is =  new FileInputStream(TMP)) {
             long skipped = IOUtils.skipFully(is, 20000L);

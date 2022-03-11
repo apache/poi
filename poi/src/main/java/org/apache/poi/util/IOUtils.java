@@ -216,12 +216,14 @@ public final class IOUtils {
                 checkByteSizeLimit(totalBytes);
             } while (totalBytes < derivedLen && readBytes > -1);
 
-            if (derivedMaxLength != Integer.MAX_VALUE && totalBytes == derivedMaxLength) {
-                throw new IOException("MaxLength (" + derivedMaxLength + ") reached - stream seems to be invalid.");
-            }
+            if (checkEOFException) {
+                if (derivedMaxLength != Integer.MAX_VALUE && totalBytes == derivedMaxLength) {
+                    throw new IOException("MaxLength (" + derivedMaxLength + ") reached - stream seems to be invalid.");
+                }
 
-            if (checkEOFException && derivedLen != Integer.MAX_VALUE && totalBytes < derivedLen) {
-                throw new EOFException("unexpected EOF - expected len: " + derivedLen + " - actual len: " + totalBytes);
+                if (derivedLen != Integer.MAX_VALUE && totalBytes < derivedLen) {
+                    throw new EOFException("unexpected EOF - expected len: " + derivedLen + " - actual len: " + totalBytes);
+                }
             }
 
             return baos.toByteArray();
