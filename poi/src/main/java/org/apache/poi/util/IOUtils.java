@@ -406,7 +406,7 @@ public final class IOUtils {
         long totalCount = 0;
         int readBytes = -1;
         do {
-            int todoBytes = (int)((limit < 0) ? buff.length : Math.min(limit-totalCount, buff.length));
+            int todoBytes = (int)((limit < 0) ? DEFAULT_BUFFER_SIZE : Math.min(limit-totalCount, DEFAULT_BUFFER_SIZE));
             if (todoBytes > 0) {
                 readBytes = inp.read(buff, 0, todoBytes);
                 if (readBytes > 0) {
