@@ -60,13 +60,19 @@ public final class IOUtils {
      */
     private static int MAX_BYTE_ARRAY_INIT_SIZE = -1;
 
+    /**
+     * The default size of the bytearray used while reading input streams. This is meant to be pretty small.
+     */
+    private static int DEFAULT_BUFFER_SIZE = 4096;
+
     private IOUtils() {
         // no instances of this class
     }
 
     /**
      * @param maxOverride the max init size of ByteArrayOutputStream.
-     * -1 (the default) means init size of ByteArrayOutputStream could be up to Integer.MAX_VALUE
+     * -1 (the default) means init size of ByteArrayOutputStream could be up to {@link Integer#MAX_VALUE}
+     * @since POI 5.2.2
      */
     public static void setMaxByteArrayInitSize(final int maxOverride) {
         MAX_BYTE_ARRAY_INIT_SIZE = maxOverride;
@@ -74,7 +80,8 @@ public final class IOUtils {
 
     /**
      * @return the max init size of ByteArrayOutputStream.
-     * -1 (the default) means init size of ByteArrayOutputStream could be up to Integer.MAX_VALUE
+     * -1 (the default) means init size of ByteArrayOutputStream could be up to {@link Integer#MAX_VALUE}
+     * @since POI 5.2.2
      */
     public static int getMaxByteArrayInitSize() {
         return MAX_BYTE_ARRAY_INIT_SIZE;
@@ -167,7 +174,7 @@ public final class IOUtils {
      * Reads up to {@code length} bytes from the input stream, and returns the bytes read.
      *
      * @param stream The byte stream of data to read.
-     * @param length The maximum length to read, use Integer.MAX_VALUE to read the stream
+     * @param length The maximum length to read, use {@link Integer#MAX_VALUE} to read the stream
      *               until EOF.
      * @return A byte array with the read bytes.
      * @throws IOException If reading data fails or EOF is encountered too early for the given length.
@@ -224,15 +231,13 @@ public final class IOUtils {
         }
 
         final int derivedLen = Math.min(length, derivedMaxLength);
-        int bufferLen = isLengthKnown ? derivedLen : Math.min(4096, derivedLen);
-        if (MAX_BYTE_ARRAY_INIT_SIZE > 0 && bufferLen > MAX_BYTE_ARRAY_INIT_SIZE) {
-            bufferLen = Math.min(bufferLen, MAX_BYTE_ARRAY_INIT_SIZE);
-        }
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(bufferLen)) {
-            byte[] buffer = new byte[4096];
+        final int byteArrayInitLen = calculateByteArrayInitLength(isLengthKnown, length, derivedMaxLength);
+        final int internalBufferLen = DEFAULT_BUFFER_SIZE;
+        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(byteArrayInitLen)) {
+            byte[] buffer = new byte[internalBufferLen];
             int totalBytes = 0, readBytes;
             do {
-                readBytes = stream.read(buffer, 0, Math.min(buffer.length, derivedLen - totalBytes));
+                readBytes = stream.read(buffer, 0, Math.min(internalBufferLen, derivedLen - totalBytes));
                 totalBytes += Math.max(readBytes, 0);
                 if (readBytes > 0) {
                     baos.write(buffer, 0, readBytes);
@@ -253,6 +258,16 @@ public final class IOUtils {
 
             return baos.toByteArray();
         }
+    }
+
+    //open for testing
+    static int calculateByteArrayInitLength(final boolean isLengthKnown, final int length, final int maxLength) {
+        final int derivedLen = Math.min(length, maxLength);
+        final int bufferLen = isLengthKnown ? derivedLen : Math.min(DEFAULT_BUFFER_SIZE, derivedLen);
+        if (MAX_BYTE_ARRAY_INIT_SIZE > 0 && bufferLen > MAX_BYTE_ARRAY_INIT_SIZE) {
+            return Math.min(bufferLen, MAX_BYTE_ARRAY_INIT_SIZE);
+        }
+        return bufferLen;
     }
 
     private static void checkLength(long length, int maxLength) {
@@ -387,7 +402,7 @@ public final class IOUtils {
      * @throws IOException If copying the data fails.
      */
     public static long copy(InputStream inp, OutputStream out, long limit) throws IOException {
-        final byte[] buff = new byte[4096];
+        final byte[] buff = new byte[DEFAULT_BUFFER_SIZE];
         long totalCount = 0;
         int readBytes = -1;
         do {
@@ -428,7 +443,7 @@ public final class IOUtils {
      * Calculate checksum on input data
      */
     public static long calculateChecksum(byte[] data) {
-        Checksum sum = new CRC32();
+        final Checksum sum = new CRC32();
         sum.update(data, 0, data.length);
         return sum.getValue();
     }
@@ -440,9 +455,9 @@ public final class IOUtils {
      * {@code IOUtils.calculateChecksum(IOUtils.toByteArray(stream))}
      */
     public static long calculateChecksum(InputStream stream) throws IOException {
-        Checksum sum = new CRC32();
+        final Checksum sum = new CRC32();
 
-        byte[] buf = new byte[4096];
+        final byte[] buf = new byte[DEFAULT_BUFFER_SIZE];
         int count;
         while ((count = stream.read(buf)) != -1) {
             if (count > 0) {
@@ -461,7 +476,7 @@ public final class IOUtils {
      */
     public static void closeQuietly( final Closeable closeable ) {
         // no need to log a NullPointerException here
-        if(closeable == null) {
+        if (closeable == null) {
             return;
         }
 

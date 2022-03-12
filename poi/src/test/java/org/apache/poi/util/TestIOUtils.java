@@ -168,6 +168,15 @@ final class TestIOUtils {
     }
 
     @Test
+    void testCalculateByteArrayInitLength() throws IOException {
+        assertEquals(4096, IOUtils.calculateByteArrayInitLength(false, 6000, 10000));
+        assertEquals(3000, IOUtils.calculateByteArrayInitLength(false, 3000, 10000));
+        assertEquals(3000, IOUtils.calculateByteArrayInitLength(false, 10000, 3000));
+        assertEquals(10000, IOUtils.calculateByteArrayInitLength(true, 10000, 12000));
+        assertEquals(10000, IOUtils.calculateByteArrayInitLength(true, 12000, 10000));
+    }
+
+    @Test
     void testSkipFully() throws IOException {
         try (InputStream is =  new FileInputStream(TMP)) {
             long skipped = IOUtils.skipFully(is, 20000L);
