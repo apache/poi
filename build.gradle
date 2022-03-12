@@ -137,7 +137,7 @@ subprojects {
     apply plugin: 'de.thetaphi.forbiddenapis'
     apply plugin: 'com.github.spotbugs'
 
-    version = '5.2.2-SNAPSHOT'
+    version = '5.2.2'
     ext {
         bouncyCastleVersion = '1.70'
         commonsCodecVersion = '1.15'
