@@ -152,6 +152,30 @@ final class TestIOUtils {
     }
 
     @Test
+    void testToByteArrayMaxLengthWithByteArrayInitLenShort() throws IOException {
+        final byte[] array = new byte[]{1, 2, 3, 4, 5, 6, 7};
+        IOUtils.setMaxByteArrayInitSize(2);
+        try (ByteArrayInputStream is = new ByteArrayInputStream(array)) {
+            assertEquals(2, IOUtils.getMaxByteArrayInitSize());
+            assertArrayEquals(array, IOUtils.toByteArrayWithMaxLength(is, 7));
+        } finally {
+            IOUtils.setMaxByteArrayInitSize(-1);
+        }
+    }
+
+    @Test
+    void testToByteArrayMaxLengthWithByteArrayInitLenLong() throws IOException {
+        final byte[] array = new byte[]{1, 2, 3, 4, 5, 6, 7};
+        IOUtils.setMaxByteArrayInitSize(8192);
+        try (ByteArrayInputStream is = new ByteArrayInputStream(array)) {
+            assertEquals(8192, IOUtils.getMaxByteArrayInitSize());
+            assertArrayEquals(array, IOUtils.toByteArrayWithMaxLength(is, 7));
+        } finally {
+            IOUtils.setMaxByteArrayInitSize(-1);
+        }
+    }
+
+    @Test
     void testToByteArrayMaxLengthLongerThanArray() throws IOException {
         final byte[] array = new byte[]{1, 2, 3, 4, 5, 6, 7};
         try (ByteArrayInputStream is = new ByteArrayInputStream(array)) {
@@ -163,7 +187,18 @@ final class TestIOUtils {
     void testToByteArrayMaxLengthShorterThanArray() throws IOException {
         final byte[] array = new byte[]{1, 2, 3, 4, 5, 6, 7};
         try (ByteArrayInputStream is = new ByteArrayInputStream(array)) {
-            assertArrayEquals(new byte[]{1, 2, 3}, IOUtils.toByteArrayWithMaxLength(is, 3));
+            assertThrows(RecordFormatException.class, () -> IOUtils.toByteArrayWithMaxLength(is, 3));
+        }
+    }
+
+    @Test
+    void testToByteArrayMaxLengthShorterThanArrayWithByteArrayOverride() throws IOException {
+        final byte[] array = new byte[]{1, 2, 3, 4, 5, 6, 7};
+        IOUtils.setByteArrayMaxOverride(30 * 1024 * 1024);
+        try (ByteArrayInputStream is = new ByteArrayInputStream(array)) {
+            assertArrayEquals(array, IOUtils.toByteArrayWithMaxLength(is, 3));
+        } finally {
+            IOUtils.setByteArrayMaxOverride(-1);
         }
     }
 

@@ -230,7 +230,7 @@ public final class IOUtils {
             checkLength(length, derivedMaxLength);
         }
 
-        final int derivedLen = Math.min(length, derivedMaxLength);
+        final int derivedLen = isLengthKnown ? Math.min(length, derivedMaxLength) : derivedMaxLength;
         final int byteArrayInitLen = calculateByteArrayInitLength(isLengthKnown, length, derivedMaxLength);
         final int internalBufferLen = DEFAULT_BUFFER_SIZE;
         try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(byteArrayInitLen)) {
@@ -242,18 +242,15 @@ public final class IOUtils {
                 if (readBytes > 0) {
                     baos.write(buffer, 0, readBytes);
                 }
-
                 checkByteSizeLimit(totalBytes);
             } while (totalBytes < derivedLen && readBytes > -1);
 
-            if (checkEOFException) {
-                if (derivedMaxLength != Integer.MAX_VALUE && totalBytes == derivedMaxLength) {
-                    throw new IOException("MaxLength (" + derivedMaxLength + ") reached - stream seems to be invalid.");
-                }
+            if (BYTE_ARRAY_MAX_OVERRIDE < 0 && readBytes > -1 && !isLengthKnown && stream.read() >= 0) {
+                throwRecordTruncationException(derivedMaxLength);
+            }
 
-                if (derivedLen != Integer.MAX_VALUE && totalBytes < derivedLen) {
-                    throw new EOFException("unexpected EOF - expected len: " + derivedLen + " - actual len: " + totalBytes);
-                }
+            if (checkEOFException && derivedLen != Integer.MAX_VALUE && totalBytes < derivedLen) {
+                throw new EOFException("unexpected EOF - expected len: " + derivedLen + " - actual len: " + totalBytes);
             }
 
             return baos.toByteArray();
@@ -586,7 +583,7 @@ public final class IOUtils {
      * Simple utility function to check that you haven't hit EOF
      * when reading a byte.
      *
-     * @param is inputstream to read
+     * @param is input stream to read
      * @return byte read, unless
      * @throws IOException on IOException or EOF if -1 is read
      */
@@ -606,6 +603,16 @@ public final class IOUtils {
                         "As a temporary workaround, consider setting a higher override value with " +
                         "IOUtils.setByteArrayMaxOverride()",
                 length, maxLength));
+
+    }
+
+    private static void throwRecordTruncationException(final int maxLength) {
+        throw new RecordFormatException(String.format(Locale.ROOT, "Tried to read data but the maximum length " +
+                "for this record type is %,d.\n" +
+                "If the file is not corrupt or large, please open an issue on bugzilla to request \n" +
+                "increasing the maximum allowable size for this record type.\n"+
+                "As a temporary workaround, consider setting a higher override value with " +
+                "IOUtils.setByteArrayMaxOverride()", maxLength));
 
     }
 }
