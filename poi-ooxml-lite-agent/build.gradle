@@ -89,3 +89,8 @@ spotbugsMain.enabled = false
 javadoc.enabled = false
 javadocJar.enabled = false
 
+forbiddenApis {
+  //java 18 build issues
+  ignoreFailures = true
+}
+
