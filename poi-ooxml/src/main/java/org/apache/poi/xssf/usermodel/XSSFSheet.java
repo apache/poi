@@ -926,7 +926,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
 
     /**
-     * Get the default row height for the sheet measued in point size (if the rows do not define their own height).
+     * Get the default row height for the sheet measured in point size (if the rows do not define their own height).
      *
      * @return  default row height in points
      */
