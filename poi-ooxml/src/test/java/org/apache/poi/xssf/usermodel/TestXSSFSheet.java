@@ -2227,6 +2227,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     void testCustomWidthAndHeight() throws IOException {
         try (XSSFWorkbook wb = (XSSFWorkbook) _testDataProvider.openSampleWorkbook("WidthsAndHeights.xlsx")) {
             XSSFSheet sheet = wb.getSheetAt(0);
+            assertEquals(8, sheet.getDefaultColumnWidth());
+            assertEquals(300, sheet.getDefaultRowHeight());
+            assertEquals(15.0, sheet.getDefaultRowHeightInPoints(), 0.00001);
             assertEquals(5120, sheet.getColumnWidth(0));
             assertEquals(2048, sheet.getColumnWidth(1));
             assertEquals(0, sheet.getColumnWidth(2));
