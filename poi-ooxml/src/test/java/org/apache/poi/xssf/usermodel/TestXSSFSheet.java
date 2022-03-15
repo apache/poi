@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.apache.poi.xssf.XSSFTestDataSamples.openSamplePackage;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -2190,7 +2191,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    public void bug65120() throws IOException {
+    void bug65120() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFCreationHelper creationHelper = wb.getCreationHelper();
 
@@ -2222,4 +2223,31 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         }
     }
 
+    @Test
+    void testCustomWidthAndHeight() throws IOException {
+        try (XSSFWorkbook wb = (XSSFWorkbook) _testDataProvider.openSampleWorkbook("WidthsAndHeights.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            assertEquals(5120, sheet.getColumnWidth(0));
+            assertEquals(2048, sheet.getColumnWidth(1));
+            assertEquals(0, sheet.getColumnWidth(2));
+            assertEquals(140.034, sheet.getColumnWidthInPixels(0), 0.00001);
+            assertEquals(56.0136, sheet.getColumnWidthInPixels(1), 0.00001);
+            assertEquals(0.0, sheet.getColumnWidthInPixels(2), 0.00001);
+            assertFalse(sheet.isColumnHidden(0));
+            assertFalse(sheet.isColumnHidden(1));
+            assertTrue(sheet.isColumnHidden(2));
+            XSSFRow row0 = sheet.getRow(0);
+            assertEquals(750, row0.getHeight());
+            assertEquals(37.5, row0.getHeightInPoints(), 0.00001);
+            assertFalse(row0.getZeroHeight());
+            XSSFRow row1 = sheet.getRow(1);
+            assertEquals(300, row1.getHeight());
+            assertEquals(15.0, row1.getHeightInPoints(), 0.00001);
+            assertFalse(row1.getZeroHeight());
+            XSSFRow row2 = sheet.getRow(2);
+            assertEquals(15, row2.getHeight());
+            assertEquals(0.75, row2.getHeightInPoints(), 0.00001);
+            assertTrue(row2.getZeroHeight());
+        }
+    }
 }

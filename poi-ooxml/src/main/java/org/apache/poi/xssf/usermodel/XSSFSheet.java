@@ -868,7 +868,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * Get the actual column width (in units of 1/256th of a character width )
      *
      * <p>
-     * Note, the returned  value is always gerater that {@link #getDefaultColumnWidth()} because the latter does not include margins.
+     * Note, the returned  value is always greater that {@link #getDefaultColumnWidth()} because the latter does not include margins.
      * Actual column width measured as the number of characters of the maximum digit width of the
      * numbers 0, 1, 2, ..., 9 as rendered in the normal style's font. There are 4 pixels of margin
      * padding (two on each side), plus 1 pixel padding for the gridlines.
