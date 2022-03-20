@@ -145,7 +145,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
         _valuesAgg.removeAllCellsValuesForRow(rowIndex);
         RowRecord rr = _rowRecords.remove(rowIndex);
         if (rr == null) {
-            throw new RuntimeException("Invalid row index (" + key.intValue() + ")");
+            throw new RuntimeException("Invalid row index (" + rowIndex + ")");
         }
         if (row != rr) {
             _rowRecords.put(rowIndex, rr);
