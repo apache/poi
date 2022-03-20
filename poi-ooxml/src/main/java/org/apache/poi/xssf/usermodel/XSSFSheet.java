@@ -3962,6 +3962,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         safeGetProtectionField().setSelectUnlockedCells(enabled);
     }
 
+    /**
+     * Reads the dimensions of the sheet data
+     * @return dimensions of the sheet data as a Cell Range (can be null)
+     * @since POI 5.2.3
+     */
+    public CellRangeAddress getDimension() {
+        CTSheetDimension ctSheetDimension = worksheet.getDimension();
+        String ref = ctSheetDimension == null ? null : ctSheetDimension.getRef();
+        if (ref != null) {
+            return CellRangeAddress.valueOf(ref);
+        }
+        return null;
+    }
+
     private CTSheetProtection safeGetProtectionField() {
         if (!isSheetProtectionEnabled()) {
             return worksheet.addNewSheetProtection();

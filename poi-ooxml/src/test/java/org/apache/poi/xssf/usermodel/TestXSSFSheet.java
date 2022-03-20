@@ -2253,4 +2253,28 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             assertTrue(row2.getZeroHeight());
         }
     }
+
+    @Test
+    void testBug64536() throws IOException {
+        try (
+                XSSFWorkbook xssfWorkbook = (XSSFWorkbook) _testDataProvider.openSampleWorkbook("1_NoIden.xlsx");
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            XSSFSheet fileSheet = xssfWorkbook.getSheetAt(0);
+            assertEquals(CellRangeAddress.valueOf("B1:D9"), fileSheet.getDimension());
+
+            // Create Row and Cell, Then Set a Value
+            // 5, 2, 4 is just random number for test
+            Row fileRow = fileSheet.createRow(5);
+            Cell fileCell = fileRow.createCell(2, CellType.STRING);
+            fileCell.setCellValue("TEST VALUE");
+
+            xssfWorkbook.write(bos);
+
+            try (XSSFWorkbook xssfWorkbook2 = new XSSFWorkbook(bos.toInputStream())) {
+                XSSFSheet xssfSheet = xssfWorkbook2.getSheetAt(0);
+                assertEquals(CellRangeAddress.valueOf("B1:F9"), xssfSheet.getDimension());
+            }
+        }
+    }
 }
