@@ -43,6 +43,7 @@ public class MAPIAttribute {
    //arbitrarily selected; may need to increase
    private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
    private static int MAX_RECORD_LENGTH = 1_000_000;
+   private static int MAX_RECORD_COUNT = 10_000;
 
    private final MAPIProperty property;
    private final int type;
@@ -183,6 +184,7 @@ public class MAPIAttribute {
             int values = 1;
             if(isMV || isVL) {
                values = LittleEndian.readInt(inp);
+               IOUtils.safelyAllocateCheck(values, MAX_RECORD_COUNT);
             }
 
             if (type == Types.NULL && values > 1) {

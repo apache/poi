@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
@@ -35,6 +34,7 @@ import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -55,7 +55,7 @@ public final class TestTNEFAttributes {
     @Test
     void testMalformedTNEF() throws Exception {
         try (InputStream is = _samples.openResourceAsStream("oom.tnef")) {
-            assertThrows(IOException.class, ()-> new HMEFMessage(is));
+            assertThrows(RecordFormatException.class, ()-> new HMEFMessage(is));
         }
     }
 
@@ -63,7 +63,7 @@ public final class TestTNEFAttributes {
      * Test counts
      */
     @Test
-    void testCounts() throws Exception {
+    void testCounts() {
         // The message should have 4 attributes
         assertEquals(4, quick.getMessageAttributes().size());
 
@@ -79,15 +79,19 @@ public final class TestTNEFAttributes {
     @Test
     void testBasics() throws Exception {
         // An int one
+        TNEFAttribute messageAttributeVersion = quick.getMessageAttribute(TNEFProperty.ID_TNEFVERSION);
+        assertNotNull(messageAttributeVersion);
         assertEquals(
                 0x010000,
-                LittleEndian.getInt(quick.getMessageAttribute(TNEFProperty.ID_TNEFVERSION).getData())
+                LittleEndian.getInt(messageAttributeVersion.getData())
         );
 
         // Claims not to be text, but really is
+        TNEFAttribute messageAttributeClass = quick.getMessageAttribute(TNEFProperty.ID_MESSAGECLASS);
+        assertNotNull(messageAttributeClass);
         assertEquals(
                 "IPM.Microsoft Mail.Note\0",
-            new String(quick.getMessageAttribute(TNEFProperty.ID_MESSAGECLASS).getData(), StandardCharsets.US_ASCII)
+            new String(messageAttributeClass.getData(), StandardCharsets.US_ASCII)
         );
 
         // Try constructing two attributes
@@ -140,7 +144,7 @@ public final class TestTNEFAttributes {
      * Test string based ones
      */
     @Test
-    void testString() throws Exception {
+    void testString() {
         TNEFAttribute attr = quick.getAttachments().get(0).getAttribute(
                 TNEFProperty.ID_ATTACHTITLE
         );
@@ -159,7 +163,7 @@ public final class TestTNEFAttributes {
      * Test date based ones
      */
     @Test
-    void testDate() throws Exception {
+    void testDate() {
         TNEFAttribute attr = quick.getAttachments().get(0).getAttribute(
                 TNEFProperty.ID_ATTACHMODIFYDATE
         );
@@ -169,7 +173,7 @@ public final class TestTNEFAttributes {
         // It is a series of date parts
         // Weds 28th April 2010 @ 12:40:56 UTC
         assertEquals(2010, LittleEndian.getUShort(attr.getData(), 0));
-        assertEquals(04, LittleEndian.getUShort(attr.getData(), 2));
+        assertEquals( 4, LittleEndian.getUShort(attr.getData(), 2));
         assertEquals(28, LittleEndian.getUShort(attr.getData(), 4));
         assertEquals(12, LittleEndian.getUShort(attr.getData(), 6));
         assertEquals(40, LittleEndian.getUShort(attr.getData(), 8));
@@ -188,7 +192,7 @@ public final class TestTNEFAttributes {
      * Test a bit of mapi
      */
     @Test
-    void testMAPI() throws Exception {
+    void testMAPI() {
         // Message MAPI
         TNEFAttribute attr = quick.getMessageAttribute(
                 TNEFProperty.ID_MAPIPROPERTIES
@@ -223,7 +227,7 @@ public final class TestTNEFAttributes {
      * Test common ones via helpers
      */
     @Test
-    void testCommon() throws Exception {
+    void testCommon() {
         assertEquals("This is a test message", quick.getSubject());
         assertEquals("quick.doc", quick.getAttachments().get(0).getFilename());
     }
