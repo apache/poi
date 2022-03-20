@@ -50,6 +50,7 @@ import org.apache.poi.sl.usermodel.PresetColor;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
@@ -167,6 +168,9 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
                 LOG.atWarn().log("EscherSpRecord.FLAG_CHILD is set but EscherChildAnchorRecord was not found");
             }
             EscherClientAnchorRecord clientRec = getEscherChild(EscherClientAnchorRecord.RECORD_ID);
+            if (clientRec == null) {
+                throw new RecordFormatException("Could not read record 'CLIENT_ANCHOR' with record-id: " + EscherClientAnchorRecord.RECORD_ID);
+            }
             x1 = clientRec.getCol1();
             y1 = clientRec.getFlag();
             x2 = clientRec.getDx1();

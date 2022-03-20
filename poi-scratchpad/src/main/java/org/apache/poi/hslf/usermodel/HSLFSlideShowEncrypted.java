@@ -47,6 +47,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * This class provides helper functions for encrypted PowerPoint documents.
@@ -100,7 +101,9 @@ public class HSLFSlideShowEncrypted implements Closeable {
         }
 
         org.apache.poi.hslf.record.Record r = recordMap.get(userEditAtomWithEncryption.getPersistPointersOffset());
-        assert(r instanceof PersistPtrHolder);
+        if (!(r instanceof PersistPtrHolder)) {
+            throw new RecordFormatException("Encountered an unexpected record-type: " + r);
+        }
         PersistPtrHolder ptr = (PersistPtrHolder)r;
 
         Integer encOffset = ptr.getSlideLocationsLookup().get(userEditAtomWithEncryption.getEncryptSessionPersistIdRef());

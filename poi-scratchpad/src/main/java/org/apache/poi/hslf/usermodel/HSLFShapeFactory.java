@@ -42,6 +42,7 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
+import org.apache.poi.util.RecordFormatException;
 
 /**
  * Create a <code>Shape</code> object depending on its type
@@ -90,9 +91,12 @@ public final class HSLFShapeFactory {
      }
 
     public static HSLFShape createSimpleShape(EscherContainerRecord spContainer, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
-        HSLFShape shape = null;
         EscherSpRecord spRecord = spContainer.getChildById(EscherSpRecord.RECORD_ID);
+        if (spRecord == null) {
+            throw new RecordFormatException("Could not read EscherSpRecord as child of " + spContainer.getRecordName());
+        }
 
+        final HSLFShape shape;
         ShapeType type = ShapeType.forId(spRecord.getShapeType(), false);
         switch (type){
             case TEXT_BOX:
@@ -167,5 +171,4 @@ public final class HSLFShapeFactory {
         }
         return null;
     }
-
 }
