@@ -454,7 +454,7 @@ public class POIFSFileSystem extends BlockStore
         // Ensure there's a spot in the file for it
         ByteBuffer buffer = ByteBuffer.allocate(bigBlockSize.getBigBlockSize());
         // Header isn't in BATs
-        long writeTo = Math.multiplyExact(1L + offset, (long)bigBlockSize.getBigBlockSize());
+        long writeTo = Math.multiplyExact(1L + offset, bigBlockSize.getBigBlockSize());
         _data.write(buffer, writeTo);
         // All done
         return newBAT;

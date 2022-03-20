@@ -44,8 +44,6 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
 import org.apache.poi.util.LocaleUtil;
 
-import java.util.Locale;
-
 /**
  * Contains all the contextual information required to evaluate an operation
  * within a formula
@@ -210,8 +208,7 @@ public final class OperationEvaluationContext {
      * @param isA1Style    specifies the format for {@code refStrPart1} and {@code refStrPart2}.
      *                     Pass {@code true} for 'A1' style and {@code false} for 'R1C1' style.
      * @return a {@link RefEval} or {@link AreaEval}
-     * @throws IllegalArgumentException
-     * @throws IllegalStateException
+     * @throws RuntimeException If invalid parameters are provided
      */
     public ValueEval getDynamicReference(String workbookName, String sheetName, String refStrPart1,
                                          String refStrPart2, boolean isA1Style) {

@@ -248,7 +248,6 @@ public class XMLSlideShow extends POIXMLDocument
         CTSlideIdList slideList = _presentation.isSetSldIdLst()
             ? _presentation.getSldIdLst() : _presentation.addNewSldIdLst();
 
-        @SuppressWarnings("deprecation")
         OptionalLong maxId = Stream.of(slideList.getSldIdArray())
             .mapToLong(CTSlideIdListEntry::getId).max();
 
@@ -454,7 +453,6 @@ public class XMLSlideShow extends POIXMLDocument
 
         // fix ordering in the low-level xml
         CTSlideIdList sldIdLst = _presentation.getSldIdLst();
-        @SuppressWarnings("deprecation")
         CTSlideIdListEntry[] entries = sldIdLst.getSldIdArray();
         CTSlideIdListEntry oldEntry = entries[oldIndex];
         if (oldIndex < newIndex) {

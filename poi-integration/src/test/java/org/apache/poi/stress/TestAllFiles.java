@@ -246,7 +246,8 @@ public class TestAllFiles {
                 }
             } else {
                 assertNotNull(actMsg, errPrefix);
-                assertTrue(actMsg.contains(exMessage), errPrefix + "Message: "+actMsg+" - didn't contain: "+exMessage);
+                assertTrue(actMsg.contains(exMessage),
+                        errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
             }
         } else {
             assertDoesNotThrow(exec, errPrefix);

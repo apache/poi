@@ -113,6 +113,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
             _valuesAgg.construct((CellValueRecordInterface)rec, rs, svm);
         }
     }
+
     /**
      * Handles UnknownRecords which appear within the row/cell records
      */
@@ -128,7 +129,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
     }
     public void insertRow(RowRecord row) {
         // Integer integer = Integer.valueOf(row.getRowNumber());
-        _rowRecords.put(Integer.valueOf(row.getRowNumber()), row);
+        _rowRecords.put(row.getRowNumber(), row);
         // Clear the cached values
         _rowRecordValues = null;
         if ((row.getRowNumber() < _firstrow) || (_firstrow == -1)) {
@@ -142,13 +143,12 @@ public final class RowRecordsAggregate extends RecordAggregate {
     public void removeRow(RowRecord row) {
         int rowIndex = row.getRowNumber();
         _valuesAgg.removeAllCellsValuesForRow(rowIndex);
-        Integer key = Integer.valueOf(rowIndex);
-        RowRecord rr = _rowRecords.remove(key);
+        RowRecord rr = _rowRecords.remove(rowIndex);
         if (rr == null) {
             throw new RuntimeException("Invalid row index (" + key.intValue() + ")");
         }
         if (row != rr) {
-            _rowRecords.put(key, rr);
+            _rowRecords.put(rowIndex, rr);
             throw new RuntimeException("Attempt to remove row that does not belong to this sheet");
         }
 
@@ -161,7 +161,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
         if (rowIndex < 0 || rowIndex > maxrow) {
             throw new IllegalArgumentException("The row number must be between 0 and " + maxrow + ", but had: " + rowIndex);
         }
-        return _rowRecords.get(Integer.valueOf(rowIndex));
+        return _rowRecords.get(rowIndex);
     }
 
     public int getPhysicalNumberOfRows()

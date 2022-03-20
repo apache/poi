@@ -70,7 +70,7 @@ public final class InternalSheet {
 
     private static final Logger LOGGER = LogManager.getLogger(InternalSheet.class);
 
-    private List<RecordBase>             _records;
+    private final List<RecordBase>             _records;
     protected PrintGridlinesRecord       printGridlines;
     protected PrintHeadersRecord         printHeaders;
     protected GridsetRecord              gridset;
@@ -336,7 +336,7 @@ public final class InternalSheet {
         LOGGER.atDebug().log("sheet createSheet (existing file) exited");
     }
     private static void spillAggregate(RecordAggregate ra, final List<RecordBase> recs) {
-        ra.visitContainedRecords(r -> recs.add(r));
+        ra.visitContainedRecords(recs::add);
     }
 
     public static class UnsupportedBOFType extends RecordFormatException {
@@ -375,14 +375,13 @@ public final class InternalSheet {
      */
     public InternalSheet cloneSheet() {
         List<Record> clonedRecords = new ArrayList<>(_records.size());
-        for (int i = 0; i < _records.size(); i++) {
-            RecordBase rb = _records.get(i);
+        for (RecordBase rb : _records) {
             if (rb instanceof RecordAggregate) {
                 ((RecordAggregate) rb).visitContainedRecords(new RecordCloner(clonedRecords));
                 continue;
             }
-            if (rb instanceof EscherAggregate){
-                /**
+            if (rb instanceof EscherAggregate) {
+                /*
                  * this record will be removed after reading actual data from EscherAggregate
                  */
                 rb = new DrawingRecord();
@@ -1047,7 +1046,7 @@ public final class InternalSheet {
     public void setColumnWidth(int column, int width) {
         if(width > 255*256) throw new IllegalArgumentException("The maximum column width for an individual cell is 255 characters.");
 
-        setColumn(column, null, Integer.valueOf(width), null, null, null);
+        setColumn(column, null, width, null, null, null);
     }
 
     /**
@@ -1072,10 +1071,10 @@ public final class InternalSheet {
      * @param hidden - whether the column is hidden or not
      */
     public void setColumnHidden(int column, boolean hidden) {
-        setColumn( column, null, null, null, Boolean.valueOf(hidden), null);
+        setColumn( column, null, null, null, hidden, null);
     }
     public void setDefaultColumnStyle(int column, int styleIndex) {
-        setColumn(column, Short.valueOf((short)styleIndex), null, null, null, null);
+        setColumn(column, (short) styleIndex, null, null, null, null);
     }
 
     private void setColumn(int column, Short xfStyle, Integer width, Integer level, Boolean hidden, Boolean collapsed) {

@@ -41,14 +41,14 @@ import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProper
 
 /**
  * Wrapper around the three different kinds of OOXML properties
- *  and metadata a document can have (Core, Extended and Custom), 
+ *  and metadata a document can have (Core, Extended and Custom),
  *  as well Thumbnails.
  */
 public class POIXMLProperties {
-    private OPCPackage pkg;
-    private CoreProperties core;
-    private ExtendedProperties ext;
-    private CustomProperties cust;
+    private final OPCPackage pkg;
+    private final CoreProperties core;
+    private final ExtendedProperties ext;
+    private final CustomProperties cust;
 
     private PackagePart extPart;
     private PackagePart custPart;
@@ -111,7 +111,7 @@ public class POIXMLProperties {
 
     /**
      * Returns the core document properties
-     * 
+     *
      * @return the core document properties
      */
     public CoreProperties getCoreProperties() {
@@ -120,7 +120,7 @@ public class POIXMLProperties {
 
     /**
      * Returns the extended document properties
-     * 
+     *
      * @return the extended document properties
      */
     public ExtendedProperties getExtendedProperties() {
@@ -129,7 +129,7 @@ public class POIXMLProperties {
 
     /**
      * Returns the custom document properties
-     * 
+     *
      * @return the custom document properties
      */
     public CustomProperties getCustomProperties() {
@@ -151,7 +151,7 @@ public class POIXMLProperties {
         return null;
     }
     /**
-     * Returns the name of the Document thumbnail, eg 
+     * Returns the name of the Document thumbnail, eg
      *  <code>thumbnail.jpeg</code>, or <code>null</code> if there
      *  isn't one.
      *
@@ -167,7 +167,7 @@ public class POIXMLProperties {
      * Returns the Document thumbnail image data, or {@code null} if there isn't one.
      *
      * @return The thumbnail data, or null
-     * 
+     *
      * @throws IOException if the thumbnail can't be read
      */
     public InputStream getThumbnailImage() throws IOException {
@@ -181,7 +181,7 @@ public class POIXMLProperties {
      *
      * @param filename The filename for the thumbnail image, eg {@code thumbnail.jpg}
      * @param imageData The inputstream to read the thumbnail image from
-     * 
+     *
      * @throws IOException if the thumbnail can't be written
      */
     public void setThumbnail(String filename, InputStream imageData) throws IOException {
@@ -191,9 +191,9 @@ public class POIXMLProperties {
             pkg.addThumbnail(filename, imageData);
         } else {
             // Change existing
-            String newType = ContentTypes.getContentTypeFromFileExtension(filename); 
+            String newType = ContentTypes.getContentTypeFromFileExtension(filename);
             if (! newType.equals(tPart.getContentType())) {
-                throw new IllegalArgumentException("Can't set a Thumbnail of type " + 
+                throw new IllegalArgumentException("Can't set a Thumbnail of type " +
                         newType + " when existing one is of a different type " +
                         tPart.getContentType());
             }
@@ -203,7 +203,7 @@ public class POIXMLProperties {
 
     /**
      * Commit changes to the underlying OPC package
-     * 
+     *
      * @throws IOException if the properties can't be saved
      * @throws POIXMLException if the properties are erroneous
      */
@@ -236,7 +236,7 @@ public class POIXMLProperties {
             }
         }
         if(custPart != null && cust != null && cust.props != null){
-            /* bug #60977, when writing a file multiple times, 
+            /* bug #60977, when writing a file multiple times,
              * and there are custom properties and an existing package part,
              * replace, don't append to raw document byte array
              */
@@ -251,7 +251,7 @@ public class POIXMLProperties {
      * The core document properties
      */
     public static class CoreProperties {
-        private PackagePropertiesPart part;
+        private final PackagePropertiesPart part;
         private CoreProperties(PackagePropertiesPart part) {
             this.part = part;
         }
@@ -365,7 +365,7 @@ public class POIXMLProperties {
      * Extended document properties
      */
     public static class ExtendedProperties {
-        private org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props;
+        private final org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props;
         private ExtendedProperties(org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.PropertiesDocument props) {
             this.props = props;
         }
@@ -568,7 +568,7 @@ public class POIXMLProperties {
          */
         public static final String FORMAT_ID = "{D5CDD505-2E9C-101B-9397-08002B2CF9AE}";
 
-        private org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props;
+        private final org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props;
         private Integer lastPid = null;
 
         private CustomProperties(org.openxmlformats.schemas.officeDocument.x2006.customProperties.PropertiesDocument props) {
@@ -601,7 +601,7 @@ public class POIXMLProperties {
 
         /**
          * Add a new string property
-         * 
+         *
          * @param name the property name
          * @param value the property value
          *
@@ -693,11 +693,11 @@ public class POIXMLProperties {
          * Retrieve the custom property with this name, or null if none exists.
          *
          * You will need to test the various isSetX methods to work out
-         *  what the type of the property is, before fetching the 
+         *  what the type of the property is, before fetching the
          *  appropriate value for it.
          *
          * @param name the name of the property to fetch
-         * 
+         *
          * @return the custom property with this name, or null if none exists
          */
         public CTProperty getProperty(String name) {
