@@ -30,10 +30,12 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.poifs.crypt.temp.AesZipFileZipEntrySource;
 import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
 
@@ -85,6 +87,26 @@ class TestOPCCompliancePackageModel {
                         OPCPackage.open(POIDataSamples.getOpenXML4JInstance().openResourceAsStream(filename)),
                 "A package implementer shall neither create nor recognize a part with a part name derived from another" +
                         " part name by appending segments to it. [M1.11]"
+        );
+    }
+
+    @Test
+    void testInvalidformatExceptionZipSource() throws IOException {
+        try (AesZipFileZipEntrySource source = AesZipFileZipEntrySource.createZipEntrySource(
+                POIDataSamples.getOpenXML4JInstance().openResourceAsStream("OPCCompliance_DerivedPartNameFAIL.docx"))) {
+            assertThrows(InvalidFormatException.class, () ->
+                            OPCPackage.open(source),
+                    "Should fail for invalid file"
+            );
+        }
+    }
+
+    @Test
+    void testInvalidformatExceptionFile() {
+        assertThrows(InvalidFormatException.class,
+                () -> OPCPackage.open(POIDataSamples.getOpenXML4JInstance().
+                                getFile("OPCCompliance_DerivedPartNameFAIL.docx"), PackageAccess.READ),
+                "Should fail for invalid file"
         );
     }
 

@@ -211,7 +211,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
            // pack.originalPackagePath = file.getAbsolutePath();
            return pack;
        } catch (InvalidFormatException | RuntimeException e) {
-           IOUtils.closeQuietly(pack);
+           // use revert() to free resources when the packgae is opened read-only
+           pack.revert();
+
            throw e;
        }
    }
@@ -272,14 +274,14 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     */
    public static OPCPackage open(File file, PackageAccess access)
          throws InvalidFormatException {
-      if (file == null) {
-          throw new IllegalArgumentException("'file' must be given");
-      }
-      if (file.exists() && file.isDirectory()) {
-          throw new IllegalArgumentException("file must not be a directory");
-      }
+       if (file == null) {
+           throw new IllegalArgumentException("'file' must be given");
+       }
+       if (file.exists() && file.isDirectory()) {
+           throw new IllegalArgumentException("file must not be a directory");
+       }
 
-      OPCPackage pack = new ZipPackage(file, access);
+       OPCPackage pack = new ZipPackage(file, access);
        try {
            if (pack.partList == null && access != PackageAccess.WRITE) {
                pack.getParts();
@@ -287,7 +289,11 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
            pack.originalPackagePath = file.getAbsolutePath();
            return pack;
        } catch (InvalidFormatException | RuntimeException e) {
-           IOUtils.closeQuietly(pack);
+           if (access == PackageAccess.READ) {
+               pack.revert();
+           } else {
+               IOUtils.closeQuietly(pack);
+           }
            throw e;
        }
    }
