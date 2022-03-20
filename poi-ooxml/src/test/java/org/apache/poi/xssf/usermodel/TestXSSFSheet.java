@@ -784,9 +784,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     /**
      * Verify that column groups were created correctly after Sheet.groupColumn
      *
-     * @param col the column group xml bean
+     * @param col             the column group xml bean
      * @param fromColumnIndex 0-indexed
-     * @param toColumnIndex 0-indexed
+     * @param toColumnIndex   0-indexed
      */
     @SuppressWarnings("SameParameterValue")
     private static void checkColumnGroup(
@@ -802,9 +802,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     /**
      * Verify that column groups were created correctly after Sheet.groupColumn
      *
-     * @param col the column group xml bean
+     * @param col             the column group xml bean
      * @param fromColumnIndex 0-indexed
-     * @param toColumnIndex 0-indexed
+     * @param toColumnIndex   0-indexed
      */
     private static void checkColumnGroup(CTCol col, int fromColumnIndex, int toColumnIndex) {
         assertEquals(fromColumnIndex, col.getMin() - 1, "from column index"); // 1 based
@@ -815,9 +815,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     /**
      * Verify that column groups were created correctly after Sheet.groupColumn
      *
-     * @param col the column group xml bean
+     * @param col             the column group xml bean
      * @param fromColumnIndex 0-indexed
-     * @param toColumnIndex 0-indexed
+     * @param toColumnIndex   0-indexed
      */
     private static void checkColumnGroupIsCollapsed(CTCol col, int fromColumnIndex, int toColumnIndex) {
         checkColumnGroupIsCollapsed(col, fromColumnIndex, toColumnIndex, false, false);
@@ -826,9 +826,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     /**
      * Verify that column groups were created correctly after Sheet.groupColumn
      *
-     * @param col the column group xml bean
+     * @param col             the column group xml bean
      * @param fromColumnIndex 0-indexed
-     * @param toColumnIndex 0-indexed
+     * @param toColumnIndex   0-indexed
      */
     private static void checkColumnGroupIsCollapsed(CTCol col, int fromColumnIndex, int toColumnIndex,
                                                     boolean isSetCollapsed, boolean collapsed) {
@@ -844,9 +844,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     /**
      * Verify that column groups were created correctly after Sheet.groupColumn
      *
-     * @param col the column group xml bean
+     * @param col             the column group xml bean
      * @param fromColumnIndex 0-indexed
-     * @param toColumnIndex 0-indexed
+     * @param toColumnIndex   0-indexed
      */
     @SuppressWarnings("SameParameterValue")
     private static void checkColumnGroupIsExpanded(CTCol col, int fromColumnIndex, int toColumnIndex) {
@@ -1414,9 +1414,9 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     })
     void bug54607(String file, String topRows, String leftCols) throws IOException {
         Consumer<Workbook> testFun = (wb) -> {
-            for (int i=0; i<2; i++) {
-                Function<Sheet, Short> sheetFun = (i==0) ? Sheet::getTopRow : Sheet::getLeftCol;
-                String exp = (i==0) ? topRows : leftCols;
+            for (int i = 0; i < 2; i++) {
+                Function<Sheet, Short> sheetFun = (i == 0) ? Sheet::getTopRow : Sheet::getLeftCol;
+                String exp = (i == 0) ? topRows : leftCols;
 
                 wb.forEach(sh -> assertNotNull(sh.getSheetName()));
 
@@ -1487,7 +1487,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         }
     }
 
-    private XSSFWorkbook setupSheet(){
+    private XSSFWorkbook setupSheet() {
         //set up workbook
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
@@ -2087,7 +2087,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             Sheet sheet3 = wb.cloneSheet(0);
             wb.setSheetName(2, "Sheet 3");
 
-            Sheet[] sheets = { sheet2, sheet3 };
+            Sheet[] sheets = {sheet2, sheet3};
 
             for (Sheet sheet : sheets) {
                 Drawing<?> drawing = sheet.createDrawingPatriarch();
@@ -2156,16 +2156,16 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
     @Test
     void testSheetForceFormulaRecalculationDefaultValues() throws IOException {
-        try (Workbook wb = _testDataProvider.openSampleWorkbook("sample.xlsx")){
+        try (Workbook wb = _testDataProvider.openSampleWorkbook("sample.xlsx")) {
             for (Sheet s : wb) {
-                assertEquals(wb.getForceFormulaRecalculation(),s.getForceFormulaRecalculation());
+                assertEquals(wb.getForceFormulaRecalculation(), s.getForceFormulaRecalculation());
             }
         }
     }
 
     @Test
     void testWorkbookSetForceFormulaRecalculation() throws IOException {
-        try (Workbook wb = _testDataProvider.openSampleWorkbook("sample.xlsx")){
+        try (Workbook wb = _testDataProvider.openSampleWorkbook("sample.xlsx")) {
             wb.setForceFormulaRecalculation(true);
             assertTrue(wb.getForceFormulaRecalculation());
         }
@@ -2275,6 +2275,14 @@ public final class TestXSSFSheet extends BaseTestXSheet {
                 XSSFSheet xssfSheet = xssfWorkbook2.getSheetAt(0);
                 assertEquals(CellRangeAddress.valueOf("B1:F9"), xssfSheet.getDimension());
             }
+        }
+    }
+
+    @Test
+    void testNewSheetGetDimension() throws IOException {
+        try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = xssfWorkbook.createSheet();
+            assertEquals(CellRangeAddress.valueOf("A1"), sheet.getDimension());
         }
     }
 }
