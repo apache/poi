@@ -136,6 +136,7 @@ public class TestAllFiles {
         final List<Arguments> result = new ArrayList<>(100);
         for (String file : scanner.getIncludedFiles()) {
 			// avoid running on files leftover from previous failed runs
+			// or being created by tests run in parallel
 			if(file.endsWith("-saved.xls") || file.endsWith("TestHPSFWritingFunctionality.doc")) {
 				continue;
 			}

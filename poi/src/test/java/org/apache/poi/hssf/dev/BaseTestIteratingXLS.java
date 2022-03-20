@@ -91,6 +91,14 @@ public abstract class BaseTestIteratingXLS {
     @ParameterizedTest
     @MethodSource("files")
     void testMain(File file, Class<? extends Throwable> t) throws Exception {
+        // avoid running files leftover from previous failed runs
+        // or created by tests running in parallel
+        // otherwise this would cause sporadic failures with
+        // parallel test execution
+        if(file.getName().endsWith("-saved.xls")) {
+            return;
+        }
+
         Executable ex = () -> runOneFile(file);
         if (t == null) {
             assertDoesNotThrow(ex);
