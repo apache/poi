@@ -153,7 +153,7 @@ under the License.
     <property name="ooxml.testokfile" location="poi-ooxml/build/testokfile.txt"/>
 
     <property name="ooxml.lite.agent" location="build/dist/maven/poi-ooxml-lite-agent/poi-ooxml-lite-agent-${version.id}.jar"/>
-    <property name="ooxml.lite.report" location="build/ooxml-lite-report"/>
+    <property name="ooxml.lite.report" location="src/resources/ooxml-lite-report"/>
     <property name="ooxml.lite.jar" location="build/dist/maven/poi-ooxml-lite/poi-ooxml-lite-${version.id}.jar"/>
     <property name="ooxml.lite.includes" value="^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"/>
     <property name="ooxml.lite.output.dir" location="poi-ooxml-lite-agent/build/classes/ant/java"/>

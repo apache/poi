@@ -169,7 +169,7 @@ final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path 
 final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique() + files("build/brokenJars")
 
 final String OOXML_LITE_AGENT = "../build/dist/maven/poi-ooxml-lite-agent/poi-ooxml-lite-agent-${project.version}.jar"
-final String OOXML_LITE_REPORT = '../build/ooxml-lite-report'
+final String OOXML_LITE_REPORT = '../src/resources/ooxml-lite-report'
 final String OOXML_LITE_INCLUDES = "^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"
 
 compileJava {
