@@ -97,6 +97,7 @@ import org.apache.poi.util.Internal;
 @Internal
 public final class FormulaParser {
     private static final Logger LOGGER = LogManager.getLogger(FormulaParser.class);
+
     private final String _formulaString;
     private final int _formulaLength;
     /** points at the next character to be read (after the {@link #look} codepoint) */
@@ -681,11 +682,10 @@ public final class FormulaParser {
             GetChar();
         }
         // parse column quantifier
-        String startColumnName;
         String endColumnName = null;
         int nColQuantifiers = 0;
         int savePtr1 = _pointer;
-        startColumnName = parseAsColumnQuantifier();
+        String startColumnName = parseAsColumnQuantifier();
         if (startColumnName == null) {
             resetPointer(savePtr1);
         } else {
@@ -799,7 +799,7 @@ public final class FormulaParser {
 
         if (nColQuantifiers == 2) {
             if (startColumnName == null || endColumnName == null) {
-                throw new IllegalStateException("Fatal error");
+                throw new IllegalStateException("Cannot parse column: " + startColumnName + " and " + endColumnName + " with formula " + _formulaString);
             }
             int startIdx = tbl.findColumnIndex(startColumnName);
             int endIdx = tbl.findColumnIndex(endColumnName);
@@ -811,7 +811,7 @@ public final class FormulaParser {
 
         } else if (nColQuantifiers == 1 && !isThisRow) {
             if (startColumnName == null) {
-                throw new IllegalStateException("Fatal error");
+                throw new IllegalStateException("Cannot parse column: " + startColumnName + " with formula " + _formulaString);
             }
             int idx = tbl.findColumnIndex(startColumnName);
             if (idx == -1) {
