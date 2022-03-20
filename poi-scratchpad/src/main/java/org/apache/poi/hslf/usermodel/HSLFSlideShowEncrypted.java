@@ -73,7 +73,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
             1,     // unused2
             1,     // unused3
     };
-    
+
     protected HSLFSlideShowEncrypted(DocumentEncryptionAtom dea) {
         this.dea = dea;
     }
@@ -116,8 +116,8 @@ public class HSLFSlideShowEncrypted implements Closeable {
             r = Record.buildRecordAtOffset(docstream, encOffset);
             recordMap.put(encOffset, r);
         }
-        assert(r instanceof DocumentEncryptionAtom);
-        this.dea = (DocumentEncryptionAtom)r;
+
+		this.dea = (DocumentEncryptionAtom)r;
 
         String pass = Biff8EncryptionKey.getCurrentUserPassword();
         EncryptionInfo ei = getEncryptionInfo();
@@ -205,7 +205,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
         ccis.close();
         lei.close();
     }
-    
+
     protected void decryptPicture(byte[] pictstream, int offset) {
         if (dea == null) {
             return;
@@ -229,14 +229,14 @@ public class HSLFSlideShowEncrypted implements Closeable {
                     decryptPicBytes(pictstream, offset, part);
                 }
                 offset += 36;
-                
+
                 int cbName = LittleEndian.getUShort(pictstream, offset-3);
                 if (cbName > 0) {
                     // read nameData
                     decryptPicBytes(pictstream, offset, cbName);
                     offset += cbName;
                 }
-                
+
                 if (offset == endOffset) {
                     return; // no embedded blip
                 }
@@ -267,7 +267,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
                 // tag
                 nextBytes = 1;
             }
-            
+
             decryptPicBytes(pictstream, offset, nextBytes);
             offset += nextBytes;
 
@@ -304,19 +304,19 @@ public class HSLFSlideShowEncrypted implements Closeable {
 
                 // File BLIP Store Entry (FBSE)
                 int cbName = LittleEndian.getUShort(pictstream, offset+33);
-                
+
                 for (int part : BLIB_STORE_ENTRY_PARTS) {
                     ccos.write(pictstream, offset, part);
                     ccos.flush();
                     offset += part;
                 }
-                
+
                 if (cbName > 0) {
                     ccos.write(pictstream, offset, cbName);
                     ccos.flush();
                     offset += cbName;
                 }
-                
+
                 if (offset == endOffset) {
                     return; // no embedded blip
                 }

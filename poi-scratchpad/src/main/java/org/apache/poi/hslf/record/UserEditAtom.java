@@ -136,7 +136,10 @@ public final class UserEditAtom extends PositionDependentRecordAtom
             offset += LittleEndianConsts.INT_SIZE;
         }
 
-        assert(offset-start == len);
+        if(offset-start != len) {
+			throw new HSLFException("Having invalid data in UserEditAtom: "
+					+ "len: " + len + ", offset: " + offset + ", start: " + start);
+		}
     }
 
     /**

@@ -129,7 +129,9 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
         // Build up a tree of Escher records contained within
         final DefaultEscherRecordFactory erf = new HSLFEscherRecordFactory();
         dgContainer.fillFields(source, start + 8, erf);
-        assert dgContainer.getRecordId() == EscherRecordTypes.DG_CONTAINER.typeID;
+		if (dgContainer.getRecordId() != EscherRecordTypes.DG_CONTAINER.typeID) {
+			throw new IllegalArgumentException("Unexpected record type: " + dgContainer.getRecordId());
+		}
         dg = dgContainer.getChildById(EscherRecordTypes.DG.typeID);
 
         textboxWrappers = Stream.of(dgContainer).
