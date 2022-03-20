@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -60,6 +59,20 @@ class TestXWPFPictureData {
             assertNotNull(pict);
             assertEquals("jpeg", pict.suggestFileExtension());
             assertArrayEquals(pictureData, pict.getData());
+        }
+    }
+
+    @Test
+    void testReadMaxSize() throws InvalidFormatException, IOException {
+        int prev = XWPFPictureData.getMaxImageSize();
+        try {
+            // check for a regression in 5.2.1:
+            // even if we set the maximum to a very high value it should not
+            // simply allocate that much here
+            XWPFPictureData.setMaxImageSize(Integer.MAX_VALUE-1);
+            testRead();
+        } finally {
+            XWPFPictureData.setMaxImageSize(prev);
         }
     }
 
