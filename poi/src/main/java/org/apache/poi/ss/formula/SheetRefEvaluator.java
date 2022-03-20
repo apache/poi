@@ -90,10 +90,10 @@ final class SheetRefEvaluator {
         return getSheet().isRowHidden(rowIndex);
     }
 
-	/**
-	 * @return The last used row in this sheet
-	 */
-	public int getLastRowNum() {
-		return getSheet().getLastRowNum();
-	}
+    /**
+     * @return The last used row in this sheet
+     */
+    public int getLastRowNum() {
+        return getSheet().getLastRowNum();
+    }
 }

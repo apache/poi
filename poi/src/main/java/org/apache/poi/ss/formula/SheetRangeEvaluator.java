@@ -74,25 +74,25 @@ final class SheetRangeEvaluator implements SheetRange {
         return getSheetEvaluator(sheetIndex).getEvalForCell(rowIndex, columnIndex);
     }
 
-	/**
-	 * This method returns a lower row-number if it would lie outside the row-boundaries of
-	 * any sheet.
-	 *
-	 * This is used to optimize cases where very high number of rows would be checked otherwise
-	 * without any benefit as no such row exists anyway.
-	 *
-	 * @param rowIndex The 0-based row-index to check
-	 * @return If the given index lies withing the max row number across all sheets, it is returned.
-	 * 		Otherwise, the highest used row number across all sheets is returned.
-	 */
-	public int adjustRowNumber(int rowIndex) {
-		int maxRowNum = rowIndex;
+    /**
+     * This method returns a lower row-number if it would lie outside the row-boundaries of
+     * any sheet.
+     *
+     * This is used to optimize cases where very high number of rows would be checked otherwise
+     * without any benefit as no such row exists anyway.
+     *
+     * @param rowIndex The 0-based row-index to check
+     * @return If the given index lies withing the max row number across all sheets, it is returned.
+     *      Otherwise, the highest used row number across all sheets is returned.
+     */
+    public int adjustRowNumber(int rowIndex) {
+        int maxRowNum = rowIndex;
 
-		for (int i = _firstSheetIndex; i < _lastSheetIndex; i++) {
-			maxRowNum = Math.max(maxRowNum, _sheetEvaluators[i].getLastRowNum());
-		}
+        for (int i = _firstSheetIndex; i < _lastSheetIndex; i++) {
+            maxRowNum = Math.max(maxRowNum, _sheetEvaluators[i].getLastRowNum());
+        }
 
-		// do not try to evaluate further than there are rows in any sheet
-		return Math.min(rowIndex, maxRowNum);
-	}
+        // do not try to evaluate further than there are rows in any sheet
+        return Math.min(rowIndex, maxRowNum);
+    }
 }

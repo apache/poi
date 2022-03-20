@@ -199,22 +199,22 @@ public class SSSlideInfoAtom extends RecordAtom {
         ofs += _header.length;
 
         if (LittleEndian.getShort(_header, 0) != 0) {
-			LOG.atDebug().log("Invalid data for SSSlideInfoAtom at offset 0: " + LittleEndian.getShort(_header, 0));
-		}
-		if (LittleEndian.getShort(_header, 2) != RecordTypes.SSSlideInfoAtom.typeID) {
-			LOG.atDebug().log("Invalid data for SSSlideInfoAtom at offset 2: "+ LittleEndian.getShort(_header, 2));
-		}
-		if (LittleEndian.getShort(_header, 4) != 0x10) {
-			LOG.atDebug().log("Invalid data for SSSlideInfoAtom at offset 4: "+ LittleEndian.getShort(_header, 4));
-		}
-		if (LittleEndian.getShort(_header, 6) == 0) {
-			LOG.atDebug().log("Invalid data for SSSlideInfoAtom at offset 6: "+ LittleEndian.getShort(_header, 6));
-		}
+            LOG.atDebug().log("Invalid data for SSSlideInfoAtom at offset 0: " + LittleEndian.getShort(_header, 0));
+        }
+        if (LittleEndian.getShort(_header, 2) != RecordTypes.SSSlideInfoAtom.typeID) {
+            LOG.atDebug().log("Invalid data for SSSlideInfoAtom at offset 2: "+ LittleEndian.getShort(_header, 2));
+        }
+        if (LittleEndian.getShort(_header, 4) != 0x10) {
+            LOG.atDebug().log("Invalid data for SSSlideInfoAtom at offset 4: "+ LittleEndian.getShort(_header, 4));
+        }
+        if (LittleEndian.getShort(_header, 6) == 0) {
+            LOG.atDebug().log("Invalid data for SSSlideInfoAtom at offset 6: "+ LittleEndian.getShort(_header, 6));
+        }
 
         _slideTime = LittleEndian.getInt(source, ofs);
-		if (_slideTime < 0 || _slideTime > 86399000) {
-			LOG.atDebug().log("Invalid data for SSSlideInfoAtom - invalid slideTime: "+ _slideTime);
-		}
+        if (_slideTime < 0 || _slideTime > 86399000) {
+            LOG.atDebug().log("Invalid data for SSSlideInfoAtom - invalid slideTime: "+ _slideTime);
+        }
         ofs += LittleEndianConsts.INT_SIZE;
         _soundIdRef = LittleEndian.getInt(source, ofs);
         ofs += LittleEndianConsts.INT_SIZE;

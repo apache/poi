@@ -120,7 +120,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
             recordMap.put(encOffset, r);
         }
 
-		this.dea = (DocumentEncryptionAtom)r;
+        this.dea = (DocumentEncryptionAtom)r;
 
         String pass = Biff8EncryptionKey.getCurrentUserPassword();
         EncryptionInfo ei = getEncryptionInfo();

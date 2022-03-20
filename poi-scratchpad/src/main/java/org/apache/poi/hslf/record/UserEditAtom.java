@@ -137,9 +137,9 @@ public final class UserEditAtom extends PositionDependentRecordAtom
         }
 
         if(offset-start != len) {
-			throw new HSLFException("Having invalid data in UserEditAtom: "
-					+ "len: " + len + ", offset: " + offset + ", start: " + start);
-		}
+            throw new HSLFException("Having invalid data in UserEditAtom: "
+                    + "len: " + len + ", offset: " + offset + ", start: " + start);
+        }
     }
 
     /**

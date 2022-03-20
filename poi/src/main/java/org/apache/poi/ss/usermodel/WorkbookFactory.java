@@ -177,7 +177,7 @@ public final class WorkbookFactory {
      *
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the Workbook given is password protected
-	 *  @throws EmptyFileException If the given data is empty
+     *  @throws EmptyFileException If the given data is empty
      *  @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
      *  input format
      */
@@ -206,7 +206,7 @@ public final class WorkbookFactory {
      *
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
-	 *  @throws EmptyFileException If the given data is empty
+     *  @throws EmptyFileException If the given data is empty
      *  @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
      *  input format
      */
@@ -247,7 +247,7 @@ public final class WorkbookFactory {
      *
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the Workbook given is password protected
-	 *  @throws EmptyFileException If the given data is empty
+     *  @throws EmptyFileException If the given data is empty
      *  @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
      *  input format
      */
@@ -269,7 +269,7 @@ public final class WorkbookFactory {
      *
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
-	 *  @throws EmptyFileException If the given data is empty
+     *  @throws EmptyFileException If the given data is empty
      *  @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
      *  input format
      */
@@ -293,7 +293,7 @@ public final class WorkbookFactory {
      *
      *  @throws IOException if an error occurs while reading the data
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
-	 *  @throws EmptyFileException If the given data is empty
+     *  @throws EmptyFileException If the given data is empty
      *  @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
      *  input format
      */

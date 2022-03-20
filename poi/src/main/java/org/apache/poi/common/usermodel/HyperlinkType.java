@@ -72,6 +72,7 @@ public enum HyperlinkType {
      *
      * @return the old integer code for a HyperlinkType enum
      */
+    @Deprecated
     @Internal(since="3.15 beta 3")
     int getCode() {
         return code;

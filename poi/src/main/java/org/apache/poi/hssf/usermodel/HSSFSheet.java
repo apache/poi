@@ -1490,6 +1490,7 @@ public final class HSSFSheet implements Sheet {
      * @param isRow unused, kept for backwards compatibility
      * @deprecated POI 3.15 beta 2. Use {@link HSSFRowShifter#shiftMergedRegions(int, int, int)}.
      */
+    @Deprecated
     protected void shiftMerged(int startRow, int endRow, int n, boolean isRow) {
         RowShifter rowShifter = new HSSFRowShifter(this);
         rowShifter.shiftMergedRegions(startRow, endRow, n);

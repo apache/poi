@@ -138,50 +138,50 @@ public final class ExtractorFactory {
         return (allPreferEventExtractors != null) ? allPreferEventExtractors : threadPreferEventExtractors.get();
     }
 
-	/**
-	 * Create an extractor that can be used to read text from the given file.
-	 *
-	 * @param fs The file-system which wraps the data of the file.
-	 * @return A POITextExtractor that can be used to fetch text-content of the file.
-	 * @throws IOException If reading the file-data fails
-	 */
+    /**
+     * Create an extractor that can be used to read text from the given file.
+     *
+     * @param fs The file-system which wraps the data of the file.
+     * @return A POITextExtractor that can be used to fetch text-content of the file.
+     * @throws IOException If reading the file-data fails
+     */
     public static POITextExtractor createExtractor(POIFSFileSystem fs) throws IOException {
         return createExtractor(fs, getCurrentUserPassword());
     }
 
-	/**
-	 * Create an extractor that can be used to read text from the given file.
-	 *
-	 * @param fs The file-system which wraps the data of the file.
-	 * @param password The password that is necessary to open the file
-	 * @return A POITextExtractor that can be used to fetch text-content of the file.
-	 * @throws IOException If reading the file-data fails
-	 */
+    /**
+     * Create an extractor that can be used to read text from the given file.
+     *
+     * @param fs The file-system which wraps the data of the file.
+     * @param password The password that is necessary to open the file
+     * @return A POITextExtractor that can be used to fetch text-content of the file.
+     * @throws IOException If reading the file-data fails
+     */
     public static POITextExtractor createExtractor(POIFSFileSystem fs, String password) throws IOException {
         return createExtractor(fs.getRoot(), password);
     }
 
-	/**
-	 * Create an extractor that can be used to read text from the given file.
-	 *
-	 * @param input A stream which wraps the data of the file.
-	 * @return A POITextExtractor that can be used to fetch text-content of the file.
-	 * @throws IOException If reading the file-data fails
-	 * @throws EmptyFileException If the given file is empty
-	 */
+    /**
+     * Create an extractor that can be used to read text from the given file.
+     *
+     * @param input A stream which wraps the data of the file.
+     * @return A POITextExtractor that can be used to fetch text-content of the file.
+     * @throws IOException If reading the file-data fails
+     * @throws EmptyFileException If the given file is empty
+     */
     public static POITextExtractor createExtractor(InputStream input) throws IOException {
         return createExtractor(input, getCurrentUserPassword());
     }
 
-	/**
-	 * Create an extractor that can be used to read text from the given file.
-	 *
-	 * @param input A stream which wraps the data of the file.
-	 * @param password The password that is necessary to open the file
-	 * @return A POITextExtractor that can be used to fetch text-content of the file.
-	 * @throws IOException If reading the file-data fails
-	 * @throws EmptyFileException If the given file is empty
-	 */
+    /**
+     * Create an extractor that can be used to read text from the given file.
+     *
+     * @param input A stream which wraps the data of the file.
+     * @param password The password that is necessary to open the file
+     * @return A POITextExtractor that can be used to fetch text-content of the file.
+     * @throws IOException If reading the file-data fails
+     * @throws EmptyFileException If the given file is empty
+     */
     public static POITextExtractor createExtractor(InputStream input, String password) throws IOException {
         final InputStream is = FileMagic.prepareToCheckMagic(input);
         byte[] emptyFileCheck = new byte[1];
@@ -207,27 +207,27 @@ public final class ExtractorFactory {
         return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(root, password));
     }
 
-	/**
-	 * Create an extractor that can be used to read text from the given file.
-	 *
-	 * @param file The file to read
-	 * @return A POITextExtractor that can be used to fetch text-content of the file.
-	 * @throws IOException If reading the file-data fails
-	 * @throws EmptyFileException If the given file is empty
-	 */
+    /**
+     * Create an extractor that can be used to read text from the given file.
+     *
+     * @param file The file to read
+     * @return A POITextExtractor that can be used to fetch text-content of the file.
+     * @throws IOException If reading the file-data fails
+     * @throws EmptyFileException If the given file is empty
+     */
     public static POITextExtractor createExtractor(File file) throws IOException {
         return createExtractor(file, getCurrentUserPassword());
     }
 
-	/**
-	 * Create an extractor that can be used to read text from the given file.
-	 *
-	 * @param file The file to read
-	 * @param password The password that is necessary to open the file
-	 * @return A POITextExtractor that can be used to fetch text-content of the file.
-	 * @throws IOException If reading the file-data fails
-	 * @throws EmptyFileException If the given file is empty
-	 */
+    /**
+     * Create an extractor that can be used to read text from the given file.
+     *
+     * @param file The file to read
+     * @param password The password that is necessary to open the file
+     * @return A POITextExtractor that can be used to fetch text-content of the file.
+     * @throws IOException If reading the file-data fails
+     * @throws EmptyFileException If the given file is empty
+     */
     @SuppressWarnings({"java:S2095"})
     public static POITextExtractor createExtractor(File file, String password) throws IOException {
         if (file.length() == 0) {
@@ -275,22 +275,22 @@ public final class ExtractorFactory {
         return createExtractor(root, getCurrentUserPassword());
     }
 
-	/**
-	 * Create the Extractor, if possible. Generally needs the Scratchpad jar.
-	 * Note that this won't check for embedded OOXML resources either, use
-	 *  {@link org.apache.poi.ooxml.extractor.POIXMLExtractorFactory} for that.
-	 *
-	 * @param root The {@link DirectoryNode} pointing to a document.
-	 * @param password The password that is necessary to open the file
-	 *
-	 * @return The resulting {@link POITextExtractor}, an exception is thrown if
-	 *      no TextExtractor can be created for some reason.
-	 *
-	 * @throws IOException If converting the {@link DirectoryNode} into a HSSFWorkbook fails
-	 * @throws org.apache.poi.OldFileFormatException If the {@link DirectoryNode} points to a format of
-	 *      an unsupported version of Excel.
-	 * @throws IllegalArgumentException If creating the Extractor fails
-	 */
+    /**
+     * Create the Extractor, if possible. Generally needs the Scratchpad jar.
+     * Note that this won't check for embedded OOXML resources either, use
+     *  {@link org.apache.poi.ooxml.extractor.POIXMLExtractorFactory} for that.
+     *
+     * @param root The {@link DirectoryNode} pointing to a document.
+     * @param password The password that is necessary to open the file
+     *
+     * @return The resulting {@link POITextExtractor}, an exception is thrown if
+     *      no TextExtractor can be created for some reason.
+     *
+     * @throws IOException If converting the {@link DirectoryNode} into a HSSFWorkbook fails
+     * @throws org.apache.poi.OldFileFormatException If the {@link DirectoryNode} points to a format of
+     *      an unsupported version of Excel.
+     * @throws IllegalArgumentException If creating the Extractor fails
+     */
     public static POITextExtractor createExtractor(final DirectoryNode root, String password) throws IOException {
         // Encrypted OOXML files go inside OLE2 containers, is this one?
         if (root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE)) {
@@ -300,22 +300,22 @@ public final class ExtractorFactory {
         }
     }
 
-	/**
-	 * Returns an array of text extractors, one for each of
-	 *  the embedded documents in the file (if there are any).
-	 * If there are no embedded documents, you'll get back an
-	 *  empty array. Otherwise, you'll get one open
-	 *  {@link POITextExtractor} for each embedded file.
-	 *
-	 * @param ext The extractor to look at for embedded documents
-	 *
-	 * @return An array of resulting extractors. Empty if no embedded documents are found.
-	 *
-	 * @throws IOException If converting the {@link DirectoryNode} into a HSSFWorkbook fails
-	 * @throws org.apache.poi.OldFileFormatException If the {@link DirectoryNode} points to a format of
-	 *      an unsupported version of Excel.
-	 * @throws IllegalArgumentException If creating the Extractor fails
-	 */
+    /**
+     * Returns an array of text extractors, one for each of
+     *  the embedded documents in the file (if there are any).
+     * If there are no embedded documents, you'll get back an
+     *  empty array. Otherwise, you'll get one open
+     *  {@link POITextExtractor} for each embedded file.
+     *
+     * @param ext The extractor to look at for embedded documents
+     *
+     * @return An array of resulting extractors. Empty if no embedded documents are found.
+     *
+     * @throws IOException If converting the {@link DirectoryNode} into a HSSFWorkbook fails
+     * @throws org.apache.poi.OldFileFormatException If the {@link DirectoryNode} points to a format of
+     *      an unsupported version of Excel.
+     * @throws IllegalArgumentException If creating the Extractor fails
+     */
     public static POITextExtractor[] getEmbeddedDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException {
         if (ext == null) {
             throw new IllegalStateException("extractor must be given");

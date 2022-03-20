@@ -66,20 +66,18 @@ public enum CellType {
      * @since POI 3.15 beta 3
      * @deprecated POI 3.15 beta 3
      */
+    @Deprecated
     private final int code;
-    
-    /**
-     * @since POI 3.15 beta 3
-     * @deprecated POI 3.15 beta 3
-     */
+
     private CellType(int code) {
         this.code = code;
     }
-    
+
     /**
      * @since POI 3.15 beta 3.
      * @deprecated POI 3.15 beta 3. Used to transition code from <code>int</code>s to <code>CellType</code>s.
      */
+    @Deprecated
     public static CellType forInt(int code) {
         for (CellType type : values()) {
             if (type.code == code) {
@@ -93,6 +91,7 @@ public enum CellType {
      * @since POI 3.15 beta 3
      * @deprecated POI 3.15 beta 3
      */
+    @Deprecated
     public int getCode() {
         return code;
     }

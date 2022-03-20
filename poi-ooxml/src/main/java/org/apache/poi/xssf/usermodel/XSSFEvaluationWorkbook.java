@@ -62,18 +62,18 @@ public final class XSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
 
     @Override
     public EvaluationSheet getSheet(int sheetIndex) {
-		// verify index and let the method in _uBook throw the exception so we report
-		// it the same way as in other places
-		if (sheetIndex < 0 || sheetIndex >= _uBook.getNumberOfSheets()) {
-			// this will throw an exception now as the index is out of bounds
-			_uBook.getSheetAt(sheetIndex);
-		}
+        // verify index and let the method in _uBook throw the exception so we report
+        // it the same way as in other places
+        if (sheetIndex < 0 || sheetIndex >= _uBook.getNumberOfSheets()) {
+            // this will throw an exception now as the index is out of bounds
+            _uBook.getSheetAt(sheetIndex);
+        }
 
         // Performance optimization: build sheet cache for each sheet to avoid re-creating
-		// the XSSFEvaluationSheet each time a new cell is evaluated
+        // the XSSFEvaluationSheet each time a new cell is evaluated
         // EvaluationWorkbooks make not guarantee to synchronize changes made to
         // the underlying workbook after the EvaluationWorkbook is created.
-		final XSSFSheet sheet = _uBook.getSheetAt(sheetIndex);
+        final XSSFSheet sheet = _uBook.getSheetAt(sheetIndex);
         return _sheetCache.computeIfAbsent(sheet, rows -> new XSSFEvaluationSheet(sheet));
     }
 

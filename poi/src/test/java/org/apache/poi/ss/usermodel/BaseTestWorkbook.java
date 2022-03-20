@@ -916,16 +916,16 @@ public abstract class BaseTestWorkbook {
         }
     }
 
-	@Test
-	void testSheetNameTrimming() throws IOException {
-		try (Workbook workbook = _testDataProvider.createWorkbook()) {
-			Sheet sheet = workbook.createSheet("MyVeryLongSheetName_9999999999999999");
-			assertNotNull(sheet);
-			assertEquals("MyVeryLongSheetName_99999999999", workbook.getSheetName(0));
+    @Test
+    void testSheetNameTrimming() throws IOException {
+        try (Workbook workbook = _testDataProvider.createWorkbook()) {
+            Sheet sheet = workbook.createSheet("MyVeryLongSheetName_9999999999999999");
+            assertNotNull(sheet);
+            assertEquals("MyVeryLongSheetName_99999999999", workbook.getSheetName(0));
 
-			assertThrows(IllegalArgumentException.class,
-					() -> workbook.createSheet("MyVeryLongSheetName_9999999999999998")
-			);
-		}
-	}
+            assertThrows(IllegalArgumentException.class,
+                    () -> workbook.createSheet("MyVeryLongSheetName_9999999999999998")
+            );
+        }
+    }
 }

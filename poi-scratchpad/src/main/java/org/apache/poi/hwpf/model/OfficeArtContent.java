@@ -38,7 +38,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  */
 @Internal
 public final class OfficeArtContent {
-	protected static final Logger LOG = LogManager.getLogger(OfficeArtContent.class);
+    protected static final Logger LOG = LogManager.getLogger(OfficeArtContent.class);
 
     /**
      * {@link EscherRecordTypes#DGG_CONTAINER} containing drawing group information for the document.
@@ -78,9 +78,9 @@ public final class OfficeArtContent {
         EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
         int pos = offset;
         pos += drawingGroupData.fillFields(data, pos, recordFactory);
-		if (drawingGroupData.getRecordId() == EscherRecordTypes.DGG_CONTAINER.typeID) {
-			LOG.atDebug().log("Invalid record-id for filling Escher records: " + drawingGroupData.getRecordId());
-		}
+        if (drawingGroupData.getRecordId() == EscherRecordTypes.DGG_CONTAINER.typeID) {
+            LOG.atDebug().log("Invalid record-id for filling Escher records: " + drawingGroupData.getRecordId());
+        }
 
         /*
          * After the drawingGroupData there is an array (2 slots max) that has data about drawings. According to the
@@ -98,16 +98,16 @@ public final class OfficeArtContent {
             byte dgglbl = data[pos];
 
             if (dgglbl != 0x00 && dgglbl != 0x01) {
-				throw new IllegalArgumentException("Invalid dgglbl when filling Escher records: " + dgglbl);
-			}
+                throw new IllegalArgumentException("Invalid dgglbl when filling Escher records: " + dgglbl);
+            }
             pos++;
 
             EscherContainerRecord dgContainer = new EscherContainerRecord();
             pos+= dgContainer.fillFields(data, pos, recordFactory);
-			if (dgContainer.getRecordId() != EscherRecordTypes.DG_CONTAINER.typeID) {
-				throw new IllegalArgumentException("Did have an invalid record-type: " + dgContainer.getRecordId() +
-						" when filling Escher records");
-			}
+            if (dgContainer.getRecordId() != EscherRecordTypes.DG_CONTAINER.typeID) {
+                throw new IllegalArgumentException("Did have an invalid record-type: " + dgContainer.getRecordId() +
+                        " when filling Escher records");
+            }
 
             switch (dgglbl) {
                 case 0x00:
@@ -122,10 +122,10 @@ public final class OfficeArtContent {
             }
         }
 
-		if (pos != offset + size) {
-			throw new IllegalStateException("Did not read all data when filling Escher records: "
-					+ "pos: " + pos + ", offset: " + offset + ", size: " + size);
-		}
+        if (pos != offset + size) {
+            throw new IllegalStateException("Did not read all data when filling Escher records: "
+                    + "pos: " + pos + ", offset: " + offset + ", size: " + size);
+        }
     }
 
     private List<? extends EscherContainerRecord> getDgContainers() {

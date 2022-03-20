@@ -420,9 +420,9 @@ public final class RecordInputStream implements LittleEndianInput {
             nextRecord();
             // note - the compressed flag may change on the fly
             byte compressFlag = readByte();
-			if (compressFlag != 0 && compressFlag != 1) {
-				throw new RecordFormatException("Invalid compressFlag: " + compressFlag);
-			}
+            if (compressFlag != 0 && compressFlag != 1) {
+                throw new RecordFormatException("Invalid compressFlag: " + compressFlag);
+            }
             isCompressedEncoding = (compressFlag == 0);
         }
     }

@@ -935,22 +935,22 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             throw new IllegalArgumentException("sheetName must not be null");
         }
 
-		if (workbook.doesContainsSheetName(sheetname, _sheets.size())) {
-			throw new IllegalArgumentException("The workbook already contains a sheet named '" + sheetname + "'");
-		}
+        if (workbook.doesContainsSheetName(sheetname, _sheets.size())) {
+            throw new IllegalArgumentException("The workbook already contains a sheet named '" + sheetname + "'");
+        }
 
-		// YK: Mimic Excel and silently truncate sheet names longer than 31 characters
+        // YK: Mimic Excel and silently truncate sheet names longer than 31 characters
         // Issue a WARNING though in order to prevent a situation, where the provided long sheet name is
         // not accessible due to the trimming while we are not even aware of the reason and continue to use
         // the long name in generated formulas
         if(sheetname.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
             String trimmedSheetname = sheetname.substring(0, MAX_SENSITIVE_SHEET_NAME_LEN);
 
-			// we still need to warn about the trimming as the original sheet name won't be available
-			// e.g. when referenced by formulas
-			LOGGER.atWarn().log("Sheet '{}' will be added with a trimmed name '{}' for MS Excel compliance.",
-					sheetname, trimmedSheetname);
-			sheetname = trimmedSheetname;
+            // we still need to warn about the trimming as the original sheet name won't be available
+            // e.g. when referenced by formulas
+            LOGGER.atWarn().log("Sheet '{}' will be added with a trimmed name '{}' for MS Excel compliance.",
+                    sheetname, trimmedSheetname);
+            sheetname = trimmedSheetname;
         }
 
         HSSFSheet sheet = new HSSFSheet(this);

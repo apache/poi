@@ -94,7 +94,7 @@ import org.apache.poi.util.LocaleUtil;
  */
 public class CellFormat {
     /** The logger to use in the formatting code. */
-	private static final Logger LOG = LogManager.getLogger(CellFormat.class);
+    private static final Logger LOG = LogManager.getLogger(CellFormat.class);
 
     private static final Pattern ONE_PART = Pattern.compile(
             CellFormatPart.FORMAT_PAT.pattern() + "(;|$)",

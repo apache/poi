@@ -47,7 +47,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
  */
 @Beta
 public abstract class XDDFChartData {
-	private static final Logger LOGGER = LogManager.getLogger(XDDFChartData.class);
+    private static final Logger LOGGER = LogManager.getLogger(XDDFChartData.class);
 
     protected XDDFChart parent;
     protected List<Series> series;

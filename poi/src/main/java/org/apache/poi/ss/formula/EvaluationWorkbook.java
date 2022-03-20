@@ -30,13 +30,13 @@ import org.apache.poi.util.Internal;
 @Internal
 public interface EvaluationWorkbook {
 
-	/**
-	 * Returns the name of the sheet at the given 0-based index.
-	 *
-	 * @param sheetIndex The 0-based index of the sheet
-	 * @return The name of the sheet
-	 * @throws IllegalArgumentException If the index is outside the indices of available sheets
-	 */
+    /**
+     * Returns the name of the sheet at the given 0-based index.
+     *
+     * @param sheetIndex The 0-based index of the sheet
+     * @return The name of the sheet
+     * @throws IllegalArgumentException If the index is outside the indices of available sheets
+     */
     String getSheetName(int sheetIndex);
 
     /**
@@ -50,28 +50,28 @@ public interface EvaluationWorkbook {
      */
     int getSheetIndex(String sheetName);
 
-	/**
-	 * Get the sheet identified by the given 0-based index.
-	 *
-	 * @param sheetIndex The 0-based index of the sheet
-	 * @return The sheet
-	 * @throws IllegalArgumentException If the index is outside the indices of available sheets
-	 */
+    /**
+     * Get the sheet identified by the given 0-based index.
+     *
+     * @param sheetIndex The 0-based index of the sheet
+     * @return The sheet
+     * @throws IllegalArgumentException If the index is outside the indices of available sheets
+     */
     EvaluationSheet getSheet(int sheetIndex);
 
     /**
      * HSSF Only - fetch the external-style sheet details
      * <p>Return will have no workbook set if it's actually in our own workbook</p>
-	 * @return The found sheet or null if not found
-	 * @throws IllegalStateException If called with XSSF or SXSSF workbooks
+     * @return The found sheet or null if not found
+     * @throws IllegalStateException If called with XSSF or SXSSF workbooks
      */
     ExternalSheet getExternalSheet(int externSheetIndex);
 
     /**
      * XSSF Only - fetch the external-style sheet details
      * <p>Return will have no workbook set if it's actually in our own workbook</p>
-	 * @return The found sheet
-	 * @throws IllegalStateException If called with HSSF workbooks
+     * @return The found sheet
+     * @throws IllegalStateException If called with HSSF workbooks
      */
     ExternalSheet getExternalSheet(String firstSheetName, String lastSheetName, int externalWorkbookNumber);
     /**
