@@ -201,8 +201,9 @@ rm -rf examples excelant integrationtest main ooxml ooxml-schema scratchpad buil
 
 # show which files are currently modified in the working copy
 svn status || true
-# make sure no changed module-class-files are lingering on
+# make sure no changed module-class-files or ooxml-lite-report-files are lingering on
 svn revert poi*/src/*/java9/module-info.* || true
+svn revert src/resources/ooxml-lite-report.* || true
 
 # print out information about which exact version of java we are using
 echo Java-Home: $JAVA_HOME
