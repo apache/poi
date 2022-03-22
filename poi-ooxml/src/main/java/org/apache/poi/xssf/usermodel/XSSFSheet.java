@@ -3083,11 +3083,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         // also remove any hyperlinks associated with this row
         if (hyperlinks != null) {
-            for (XSSFHyperlink link : new ArrayList<>(hyperlinks)) {
+            for (XSSFHyperlink link : getHyperlinkList()) {
                 CellRangeAddress range = CellRangeAddress.valueOf(link.getCellRef());
                 //TODO handle case where hyperlink ref spans many rows (https://bz.apache.org/bugzilla/show_bug.cgi?id=65973)
+                //but where only some rows are being removed and others are not (range will need to be modified)
                 if (range.getFirstRow() == range.getLastRow() && rowsToRemoveSet.contains(range.getFirstRow())) {
                     hyperlinks.remove(link);
+                } else if (range.getFirstRow() != range.getLastRow()) {
+                    boolean toRemove = true;
+                    for (int i = range.getFirstRow(); i <= range.getLastRow() && toRemove; i++) {
+                        toRemove = rowsToRemoveSet.contains(i);
+                    }
+                    if (toRemove) {
+                        hyperlinks.remove(link);
+                    }
                 }
             }
         }
@@ -4264,13 +4273,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
     @Override
     public CellRangeAddress getRepeatingRows() {
-        return getRepeatingRowsOrColums(true);
+        return getRepeatingRowsOrColumns(true);
     }
 
 
     @Override
     public CellRangeAddress getRepeatingColumns() {
-        return getRepeatingRowsOrColums(false);
+        return getRepeatingRowsOrColumns(false);
     }
 
     @Override
@@ -4387,7 +4396,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
 
-    private CellRangeAddress getRepeatingRowsOrColums(boolean rows) {
+    private CellRangeAddress getRepeatingRowsOrColumns(boolean rows) {
         int sheetIndex = getWorkbook().getSheetIndex(this);
         XSSFName name = getWorkbook().getBuiltInName(
                 XSSFName.BUILTIN_PRINT_TITLE, sheetIndex);
