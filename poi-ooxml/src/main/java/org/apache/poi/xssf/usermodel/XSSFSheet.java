@@ -3085,8 +3085,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         if (hyperlinks != null) {
             for (XSSFHyperlink link : new ArrayList<>(hyperlinks)) {
                 CellRangeAddress range = CellRangeAddress.valueOf(link.getCellRef());
-                //TODO handle case where hyperlink ref spans many rows (https://bz.apache.org/bugzilla/show_bug.cgi?id=65973)
-                //but where only some rows are being removed and others are not (range will need to be modified)
                 if (range.getFirstRow() == range.getLastRow() && rowsToRemoveSet.contains(range.getFirstRow())) {
                     removeHyperlink(link);
                 } else if (range.getFirstRow() != range.getLastRow()) {
