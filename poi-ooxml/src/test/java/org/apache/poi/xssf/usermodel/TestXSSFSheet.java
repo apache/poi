@@ -2288,12 +2288,31 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     }
 
     @Test
-    void testRowShiftWithHyperlink() throws IOException {
+    void testRowShiftWithHyperlink1() throws IOException {
         try (XSSFWorkbook wb = createWorkbookForRowShiftWithHyperlink1(true)) {
             XSSFSheet sheet = wb.getSheetAt(0);
             List<XSSFHyperlink> hyperlinks = sheet.getHyperlinkList();
             assertEquals(1, hyperlinks.size());
             assertEquals("B1:C1", hyperlinks.get(0).getCellRef());
+            assertEquals(3, sheet.getLastRowNum());
+
+            sheet.shiftRows(2, 3, -2);
+            assertEquals(1, sheet.getLastRowNum());
+            XSSFRow row0 = sheet.getRow(0);
+            XSSFRow row1 = sheet.getRow(1);
+            assertEquals("row2", row0.getCell(0).getStringCellValue());
+            assertEquals("row3", row1.getCell(0).getStringCellValue());
+            assertEquals(0, sheet.getHyperlinkList().size());
+        }
+    }
+
+    @Test
+    void testRowShiftWithHyperlink2() throws IOException {
+        try (XSSFWorkbook wb = createWorkbookForRowShiftWithHyperlink1(false)) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            List<XSSFHyperlink> hyperlinks = sheet.getHyperlinkList();
+            assertEquals(1, hyperlinks.size());
+            assertEquals("B1:B2", hyperlinks.get(0).getCellRef());
             assertEquals(3, sheet.getLastRowNum());
 
             sheet.shiftRows(2, 3, -2);
