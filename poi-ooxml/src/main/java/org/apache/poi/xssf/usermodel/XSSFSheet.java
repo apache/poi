@@ -3088,14 +3088,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                 //TODO handle case where hyperlink ref spans many rows (https://bz.apache.org/bugzilla/show_bug.cgi?id=65973)
                 //but where only some rows are being removed and others are not (range will need to be modified)
                 if (range.getFirstRow() == range.getLastRow() && rowsToRemoveSet.contains(range.getFirstRow())) {
-                    hyperlinks.remove(link);
+                    removeHyperlink(link);
                 } else if (range.getFirstRow() != range.getLastRow()) {
                     boolean toRemove = true;
                     for (int i = range.getFirstRow(); i <= range.getLastRow() && toRemove; i++) {
                         toRemove = rowsToRemoveSet.contains(i);
                     }
                     if (toRemove) {
-                        hyperlinks.remove(link);
+                        removeHyperlink(link);
                     }
                 }
             }
