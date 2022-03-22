@@ -3084,8 +3084,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         // also remove any hyperlinks associated with this row
         if (hyperlinks != null) {
             for (XSSFHyperlink link : new ArrayList<>(hyperlinks)) {
-                CellReference ref = new CellReference(link.getCellRef());
-                if (rowsToRemoveSet.contains(ref.getRow())) {
+                CellRangeAddress range = CellRangeAddress.valueOf(link.getCellRef());
+                //TODO handle case where hyperlink ref spans many rows (https://bz.apache.org/bugzilla/show_bug.cgi?id=65973)
+                if (range.getFirstRow() == range.getLastRow() && rowsToRemoveSet.contains(range.getFirstRow())) {
                     hyperlinks.remove(link);
                 }
             }
