@@ -231,10 +231,9 @@ import static org.apache.logging.log4j.util.Unbox.box;
 
 
     /*package*/ static void updateHyperlinks(Sheet sheet, FormulaShifter formulaShifter) {
-        int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
-        List<? extends Hyperlink> hyperlinkList = sheet.getHyperlinkList();
+        final int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
 
-        for (Hyperlink hyperlink : hyperlinkList) {
+        for (Hyperlink hyperlink : sheet.getHyperlinkList()) {
             XSSFHyperlink xhyperlink = (XSSFHyperlink) hyperlink;
             String cellRef = xhyperlink.getCellRef();
             CellRangeAddress cra = CellRangeAddress.valueOf(cellRef);
