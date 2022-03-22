@@ -36,9 +36,9 @@ public final class TestXSSFName extends BaseTestNamedRange {
         super(XSSFITestDataProvider.instance);
     }
 
-    //TODO combine testRepeatingRowsAndColums() for HSSF and XSSF
+    //TODO combine testRepeatingRowsAndColumns() for HSSF and XSSF
     @Test
-    void testRepeatingRowsAndColums() throws Exception {
+    void testRepeatingRowsAndColumns() throws Exception {
         // First test that setting RR&C for same sheet more than once only creates a
         // single  Print_Titles built-in record
         XSSFWorkbook wb = new XSSFWorkbook();

@@ -243,7 +243,7 @@ final class TestFormulaEvaluatorBugs {
         assertEquals("INDEX(C:C,2,1)", cellIDX.getCellFormula());
         assertEquals(2, eva.evaluate(cellIDX).getNumberValue(), 0);
 
-        // Across two colums
+        // Across two columns
         HSSFCell cellSUM2D = rowSUM2D.getCell(0);
         assertEquals("SUM(C:D)", cellSUM2D.getCellFormula());
         assertEquals(66, eva.evaluate(cellSUM2D).getNumberValue(), 0);

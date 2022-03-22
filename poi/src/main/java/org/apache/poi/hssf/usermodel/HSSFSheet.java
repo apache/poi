@@ -2517,12 +2517,12 @@ public final class HSSFSheet implements Sheet {
 
     @Override
     public CellRangeAddress getRepeatingRows() {
-        return getRepeatingRowsOrColums(true);
+        return getRepeatingRowsOrColumns(true);
     }
 
     @Override
     public CellRangeAddress getRepeatingColumns() {
-        return getRepeatingRowsOrColums(false);
+        return getRepeatingRowsOrColumns(false);
     }
 
     @Override
@@ -2616,7 +2616,7 @@ public final class HSSFSheet implements Sheet {
     }
 
 
-    private CellRangeAddress getRepeatingRowsOrColums(boolean rows) {
+    private CellRangeAddress getRepeatingRowsOrColumns(boolean rows) {
         NameRecord rec = getBuiltinNameRecord(NameRecord.BUILTIN_PRINT_TITLE);
         if (rec == null) {
             return null;
