@@ -47,6 +47,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
@@ -2284,5 +2285,54 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             XSSFSheet sheet = xssfWorkbook.createSheet();
             assertEquals(CellRangeAddress.valueOf("A1"), sheet.getDimension());
         }
+    }
+
+    @Test
+    void testRowShiftWithHyperlink() throws IOException {
+        try (XSSFWorkbook wb = createWorkbookForRowShiftWithHyperlink1(true)) {
+            XSSFSheet sheet = wb.getSheetAt(0);
+            List<XSSFHyperlink> hyperlinks = sheet.getHyperlinkList();
+            assertEquals(1, hyperlinks.size());
+            assertEquals("B1:C1", hyperlinks.get(0).getCellRef());
+            assertEquals(3, sheet.getLastRowNum());
+
+            sheet.shiftRows(2, 3, -2);
+            assertEquals(1, sheet.getLastRowNum());
+            XSSFRow row0 = sheet.getRow(0);
+            XSSFRow row1 = sheet.getRow(1);
+            assertEquals("row2", row0.getCell(0).getStringCellValue());
+            assertEquals("row3", row1.getCell(0).getStringCellValue());
+            assertEquals(0, sheet.getHyperlinkList().size());
+        }
+    }
+
+    private XSSFWorkbook createWorkbookForRowShiftWithHyperlink1(boolean hyperlinkOneRow) {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet("Sheet1");
+        XSSFRow row0 = sheet.createRow(0);
+        XSSFRow row1 = sheet.createRow(1);
+        XSSFRow row2 = sheet.createRow(2);
+        XSSFRow row3 = sheet.createRow(3);
+        row0.createCell(0).setCellValue("row0");
+        row1.createCell(0).setCellValue("row1");
+        row2.createCell(0).setCellValue("row2");
+        row3.createCell(0).setCellValue("row3");
+        row0.createCell(1).setCellValue("https://www.example.com");
+        if (hyperlinkOneRow) {
+            row0.createCell(2).setCellValue("https://www.example.com");
+        } else {
+            row1.createCell(1).setCellValue("https://www.example.com");
+        }
+        XSSFHyperlink hyperlink = new XSSFHyperlink(HyperlinkType.URL);
+        hyperlink.setAddress("https://www.example.com");
+        hyperlink.setFirstRow(0);
+        hyperlink.setFirstColumn(1);
+        if (hyperlinkOneRow) {
+            hyperlink.setLastColumn(2);
+        } else {
+            hyperlink.setLastRow(1);
+        }
+        sheet.addHyperlink(hyperlink);
+        return wb;
     }
 }
