@@ -55,7 +55,7 @@ import org.apache.poi.util.Units;
 
 public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
     /** Max. record length - processing longer records will throw an exception */
-    public static final int DEFAULT_MAX_RECORD_LENGTH = 50_000_000;
+    public static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
     public static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
 
     private static final Logger LOG = LogManager.getLogger(HwmfPicture.class);
