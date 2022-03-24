@@ -793,6 +793,9 @@ distributions {
                 exclude '*.docx'
                 exclude '*.pptx'
                 exclude '*.xlsx'
+
+                // exclude intermediate files
+                exclude '**/*-saved.xls'
             }
             from('legal') { exclude 'HEADER' }
         }
