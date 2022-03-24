@@ -49,10 +49,10 @@ public class OOXMLLiteAgent {
         String[] args = (agentArgs == null ? "" : agentArgs).split("\\|", 2);
         String logBase = args.length >= 1 ? args[0] : "ooxml-lite-report";
 
-        XsbLogger.load(logBase+".xsb");
+        XsbLogger.load(logBase + ".xsb");
 
         ClazzLogger log = new ClazzLogger();
-        log.load(logBase+".clazz");
+        log.load(logBase + ".clazz");
         log.setPattern(args.length >= 2 ? args[1] : ".*/schemas/.*");
         inst.addTransformer(log);
 
@@ -126,14 +126,16 @@ public class OOXMLLiteAgent {
         }
     }
 
-
     static void write(Path path, String item, Set<Integer> hashes) {
-        if (!hashes.contains(item.hashCode())) {
+        if (!hashes.contains(item.hashCode()) &&
+                // exclude classes created via Mockito mocking
+                !item.contains("$MockitoMock$")) {
             try {
                 // TODO: check if this is atomic ... as transform() is probably called synchronized, it doesn't matter anyway
                 Files.write(path, (item+"\n").getBytes(StandardCharsets.ISO_8859_1), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                 hashes.add(item.hashCode());
-            } catch (IOException ignored) {
+            } catch (IOException ex) {
+                System.out.println("Had unexpected exception: " + ex);
             }
         }
     }
