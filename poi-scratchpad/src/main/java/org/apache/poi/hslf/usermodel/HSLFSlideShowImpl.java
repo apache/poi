@@ -609,7 +609,6 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         CountingOS cos = new CountingOS();
         for (Record record : _records) {
             // all top level records are position dependent
-            assert (record instanceof PositionDependentRecord);
             PositionDependentRecord pdr = (PositionDependentRecord) record;
             int oldPos = pdr.getLastOnDiskOffset();
             int newPos = cos.size();
@@ -650,7 +649,6 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         try (HSLFSlideShowEncrypted encData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom())) {
             for (Record record : _records) {
-                assert (record instanceof PositionDependentRecord);
                 // We've already figured out their new location, and
                 // told them that
                 // Tell them of the positions of the other records though
