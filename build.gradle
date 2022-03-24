@@ -236,6 +236,14 @@ subprojects {
                 source = "1.8"
             }
         }
+
+
+        // helper-target to get a directory with all third-party libraries
+        // this is used for mass-regression-testing
+        task getDeps(type: Copy) {
+            from sourceSets.main.runtimeClasspath
+            into 'build/runtime/'
+        }
     }
 
     tasks.withType(Jar) {
