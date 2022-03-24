@@ -38,17 +38,14 @@ sourceSets {
 dependencies {
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
     compileOnly project(':poi-ooxml-full')
-    compileOnly project(path:':poi-integration', configuration:'tests')
 }
 
 final MODULE_NAME = 'org.apache.poi.ooxml.schemas'
 final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
-final String OOXML_LITE_REPORT = '../build/ooxml-lite-report'
+final String OOXML_LITE_REPORT = '../src/resources/ooxml-lite-report'
 
 task generateModuleInfo() {
-    dependsOn ':poi-ooxml:build', ':poi-integration:build', ':poi-excelant:build'
-
     File fileIn = file("${OOXML_LITE_REPORT}.clazz")
     File fileOut = file("src/main/java9/module-info.java")
 
@@ -71,7 +68,7 @@ task generateModuleInfo() {
 }
 
 task compileOoxmlLite(type: Copy) {
-    dependsOn 'generateModuleInfo'
+    dependsOn 'generateModuleInfo', ':poi-ooxml-full:generate_beans'
 
     // This task is currently always executed, because gradle thinks files with two dollar signs
     // (as in AlternateContentDocument$AlternateContent$Choice.class) are always stale
@@ -128,8 +125,6 @@ task cacheJava9(type: Copy, dependsOn: 'compileJava9') {
 }
 
 jar {
-    dependsOn ':poi-ooxml:test', ':poi-integration:test'
-
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
 
     doFirst {

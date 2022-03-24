@@ -639,6 +639,7 @@ rat {
         "poi-ooxml-full/src/main/xmlschema/org/apache/poi/schemas/xmldsig-core-schema.xsd",
         "poi-ooxml-full/src/main/xmlschema/org/apache/poi/xdgf/visio.xsd",
         "osgi/README.md",
+        "src/resources/ooxml-lite-report.*",
         // ignore svn conflict artifacts
         "**/module-info.*"
     ]
