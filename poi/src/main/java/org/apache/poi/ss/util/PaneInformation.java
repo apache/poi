@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.util;
 
+import java.util.Objects;
+
 /**
  * Holds information regarding a split plane or freeze plane for a sheet.
  *
@@ -101,5 +103,31 @@ public class PaneInformation
      */
     public boolean isFreezePane() {
         return frozen;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PaneInformation)) return false;
+
+        PaneInformation that = (PaneInformation) o;
+
+        if (x != that.x) return false;
+        if (y != that.y) return false;
+        if (topRow != that.topRow) return false;
+        if (leftColumn != that.leftColumn) return false;
+        if (activePane != that.activePane) return false;
+        return frozen == that.frozen;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+            x,
+            y,
+            topRow,
+            leftColumn,
+            activePane,
+            frozen);
     }
 }
