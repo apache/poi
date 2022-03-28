@@ -677,7 +677,7 @@ public final class TestXSSFExportToXML {
         }
     }
 
-    private class XPathNSContext implements NamespaceContext {
+    private static class XPathNSContext implements NamespaceContext {
         final Map<String,String> nsMap = new HashMap<>();
 
         XPathNSContext() {
