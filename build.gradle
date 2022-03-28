@@ -152,7 +152,7 @@ subprojects {
         batikVersion = '1.14'
         graphics2dVersion = '0.35'
         pdfboxVersion = '2.0.25'
-        saxonVersion = '11.2'
+        saxonVersion = '11.3'
         apiGuardianVersion = '1.1.2'
 
         jdkVersion = (project.properties['jdkVersion'] ?: '8') as int
