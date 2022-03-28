@@ -221,7 +221,7 @@ public final class XMLHelper {
         TransformerFactory factory = TransformerFactory.newInstance();
         trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);
         quietSet(factory::setAttribute, ACCESS_EXTERNAL_DTD, "");
-        trySet(factory::setAttribute, ACCESS_EXTERNAL_STYLESHEET, "");
+        quietSet(factory::setAttribute, ACCESS_EXTERNAL_STYLESHEET, "");
         quietSet(factory::setAttribute, ACCESS_EXTERNAL_SCHEMA, "");
         return factory;
     }
@@ -239,9 +239,9 @@ public final class XMLHelper {
     public static SchemaFactory getSchemaFactory() {
         SchemaFactory factory = SchemaFactory.newInstance(W3C_XML_SCHEMA_NS_URI);
         trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);
-        trySet(factory::setProperty, ACCESS_EXTERNAL_DTD, "");
-        trySet(factory::setProperty, ACCESS_EXTERNAL_STYLESHEET, "");
-        trySet(factory::setProperty, ACCESS_EXTERNAL_SCHEMA, "");
+        quietSet(factory::setProperty, ACCESS_EXTERNAL_DTD, "");
+        quietSet(factory::setProperty, ACCESS_EXTERNAL_STYLESHEET, "");
+        quietSet(factory::setProperty, ACCESS_EXTERNAL_SCHEMA, "");
         return factory;
     }
 
