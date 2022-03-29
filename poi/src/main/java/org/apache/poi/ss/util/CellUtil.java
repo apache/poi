@@ -195,6 +195,7 @@ public final class CellUtil {
      * @param context The context for copying, see {@link CellCopyContext}
      * @throws IllegalArgumentException if copy cell style and srcCell is from a different workbook
      * @throws IllegalStateException if srcCell hyperlink is not an instance of {@link Duplicatable}
+     * @since POI 5.2.0
      */
     @Beta
     public static void copyCell(Cell srcCell, Cell destCell, CellCopyPolicy policy, CellCopyContext context) {
