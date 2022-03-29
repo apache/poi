@@ -28,20 +28,7 @@ import java.util.Spliterator;
 import java.util.TreeMap;
 
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.AutoFilter;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellRange;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DataValidation;
-import org.apache.poi.ss.usermodel.DataValidationHelper;
-import org.apache.poi.ss.usermodel.Footer;
-import org.apache.poi.ss.usermodel.Header;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.PrintSetup;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
@@ -1583,6 +1570,20 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     @Override
     public XSSFHyperlink getHyperlink(CellAddress addr) {
         return _sh.getHyperlink(addr);
+    }
+
+    /**
+     * Register a hyperlink in the collection of hyperlinks on this sheet.
+     * Use {@link SXSSFCell#setHyperlink(Hyperlink)} if the hyperlink is just for that one cell.
+     * Use this method if you want to add a Hyperlink that covers a range of sells. If you use
+     * this method, you will need to call {@link XSSFHyperlink#setCellReference(String)} to
+     * explicitly cell the value, eg B2 or B2:C3 (the 4 cells with B2 at top left and C3 at bottom right)
+     *
+     * @param hyperlink the link to add
+     * @since POI 5.2.3
+     */
+    public void addHyperlink(XSSFHyperlink hyperlink) {
+        _sh.addHyperlink(hyperlink);
     }
 
     /**

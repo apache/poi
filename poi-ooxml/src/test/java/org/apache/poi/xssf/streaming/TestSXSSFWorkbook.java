@@ -38,11 +38,13 @@ import java.util.Arrays;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -52,9 +54,12 @@ import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFHyperlink;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
@@ -527,6 +532,32 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
              Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb2)
          ) {
             assertNotNull(wbBack);
+        }
+    }
+
+    @Test
+    void addHyperlink() throws Exception {
+        try (
+            SXSSFWorkbook wb = new SXSSFWorkbook();
+            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            SXSSFSheet sheet = wb.createSheet("s1");
+            SXSSFRow row = sheet.createRow(0);
+            SXSSFCell cell = row.createCell(0);
+            cell.setCellValue("Example Website");
+            XSSFHyperlink hyperlink = (XSSFHyperlink)wb.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            hyperlink.setAddress("http://example.com");
+            hyperlink.setCellReference("A1");
+            sheet.addHyperlink(hyperlink);
+            wb.write(bos);
+
+            try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
+                XSSFSheet xssfSheet = xssfWorkbook.getSheet(sheet.getSheetName());
+                XSSFCell xssfCell = xssfSheet.getRow(0).getCell(0);
+                assertEquals("Example Website", xssfCell.getStringCellValue());
+                XSSFHyperlink xssfHyperlink = xssfCell.getHyperlink();
+                assertEquals(hyperlink.getAddress(), xssfHyperlink.getAddress());
+            }
         }
     }
 
