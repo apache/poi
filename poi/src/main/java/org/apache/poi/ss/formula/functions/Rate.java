@@ -66,7 +66,7 @@ public class Rate implements Function {
 
             checkValue(rate);
         } catch (EvaluationException e) {
-            LOG.atError().withThrowable(e).log("Can't evaluate rate function")
+            LOG.atError().withThrowable(e).log("Can't evaluate rate function");
             return e.getErrorEval();
         }
 
@@ -83,7 +83,7 @@ public class Rate implements Function {
         if (Math.abs(rate) < FINANCIAL_PRECISION) {
             y = pv * (1 + nper * rate) + pmt * (1 + rate * type) * nper + fv;
         } else {
-            f = Math.exp(nper * Math.log(1 + rate));
+            f = Math.pow(1 + rate, nper);
             y = pv * f + pmt * (1 / rate + type) * (f - 1) + fv;
         }
         y0 = pv + pmt * nper + fv;
