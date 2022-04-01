@@ -2473,6 +2473,7 @@ under the License.
                 <exclude name="documentation/content/xdocs/dtd/" />
                 <exclude name="documentation/content/xdocs/entity/" />
                 <exclude name="documentation/resources/images/pb-poi.cdr"/>
+                <exclude name="resources/ooxml-lite-report.*"/>
             </fileset>
         </rat:report>
 
