@@ -85,6 +85,7 @@ public class MemoryLeakVerifier {
         }
     }
 
+    @SuppressForbidden("Use finalization as long as it is available here and remove it when the JDK stops providing it")
     private static void assertGarbageCollected(WeakReference<Object> ref, int maxIterations) throws InterruptedException {
         Runtime runtime = Runtime.getRuntime();
         for (int i = 0; i < maxIterations; i++) {
