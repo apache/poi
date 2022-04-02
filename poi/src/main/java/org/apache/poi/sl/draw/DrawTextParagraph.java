@@ -403,7 +403,7 @@ public class DrawTextParagraph implements Drawable {
         if (ft == null) {
             return getRenderableText(tr);
         }
-        if (!tr.getRawText().isEmpty()) {
+        if (tr.getRawText() != null && !tr.getRawText().isEmpty()) {
             switch (ft) {
                 case SLIDE_NUMBER: {
                     Slide<?, ?> slide = (Slide<?, ?>) graphics.getRenderingHint(Drawable.CURRENT_SLIDE);
