@@ -121,7 +121,11 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
             _location = other.getAddress();
             _externalRel = null;
             _ctHyperlink = CTHyperlink.Factory.newInstance();
-            setCellReference(new CellReference(other.getFirstRow(), other.getFirstColumn()));
+            _ctHyperlink.setDisplay(other.getLabel());
+            setFirstColumn(other.getFirstColumn());
+            setLastColumn(other.getLastColumn());
+            setFirstRow(other.getFirstRow());
+            setLastRow(other.getLastRow());
         }
     }
     /**

@@ -209,6 +209,78 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         }
     }
 
+    @Test
+    void testCopyHSSFHyperlink() throws IOException {
+        try (HSSFWorkbook hssfworkbook = new HSSFWorkbook()) {
+            HSSFHyperlink hlink = hssfworkbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
+            hlink.setAddress("http://poi.apache.org/");
+            hlink.setFirstColumn(3);
+            hlink.setFirstRow(2);
+            hlink.setLastColumn(3);
+            hlink.setLastRow(2);
+            hlink.setLabel("label");
+            XSSFHyperlink xlink = new XSSFHyperlink(hlink);
+
+            assertEquals("http://poi.apache.org/", xlink.getAddress());
+            assertEquals(new CellReference(2, 3), new CellReference(xlink.getCellRef()));
+            // Are HSSFHyperlink.label and XSSFHyperlink.tooltip the same? If so, perhaps one of these needs renamed for a consistent Hyperlink interface
+            // assertEquals("label", xlink.getTooltip());
+        }
+    }
+
+    @Test
+    void setHyperlinkOnCellFromHSSF() throws Exception {
+        try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook()) {
+            XSSFSheet xssfSheet = xssfWorkbook.createSheet();
+            XSSFRow xssfRow = xssfSheet.createRow(0);
+            XSSFCell xssfCell = xssfRow.createCell(0);
+            xssfCell.setCellValue("link");
+            HSSFHyperlink hssfHyperlink = new HSSFHyperlink(HyperlinkType.URL) {
+
+            };
+            hssfHyperlink.setLabel("label");
+            hssfHyperlink.setAddress("https://example.com/index.html#label");
+            hssfHyperlink.setFirstColumn(2);
+            hssfHyperlink.setLastColumn(3);
+            hssfHyperlink.setFirstRow(4);
+            hssfHyperlink.setLastRow(5);
+            xssfCell.setHyperlink(hssfHyperlink);
+            XSSFHyperlink xssfHyperlink = xssfCell.getHyperlink();
+            assertEquals(hssfHyperlink.getType(), xssfHyperlink.getType());
+            assertEquals(hssfHyperlink.getAddress(), xssfHyperlink.getAddress());
+            assertEquals(hssfHyperlink.getLabel(), xssfHyperlink.getLabel());
+            assertEquals("A1", xssfHyperlink.getCellRef());
+        }
+    }
+
+    @Test
+    void setHyperlinkOnSheetFromHSSF() throws Exception {
+        try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook()) {
+            XSSFSheet xssfSheet = xssfWorkbook.createSheet();
+            XSSFRow xssfRow = xssfSheet.createRow(0);
+            XSSFCell xssfCell = xssfRow.createCell(0);
+            xssfCell.setCellValue("link");
+            HSSFHyperlink hssfHyperlink = new HSSFHyperlink(HyperlinkType.URL) {
+
+            };
+            hssfHyperlink.setLabel("label");
+            hssfHyperlink.setAddress("https://example.com/index.html#label");
+            hssfHyperlink.setFirstColumn(2);
+            hssfHyperlink.setLastColumn(3);
+            hssfHyperlink.setFirstRow(4);
+            hssfHyperlink.setLastRow(5);
+            XSSFHyperlink xssfHyperlink = new XSSFHyperlink(hssfHyperlink);
+            xssfSheet.addHyperlink(xssfHyperlink);
+            assertEquals(hssfHyperlink.getType(), xssfHyperlink.getType());
+            assertEquals(hssfHyperlink.getAddress(), xssfHyperlink.getAddress());
+            assertEquals(hssfHyperlink.getLabel(), xssfHyperlink.getLabel());
+            assertEquals(hssfHyperlink.getFirstColumn(), xssfHyperlink.getFirstColumn());
+            assertEquals(hssfHyperlink.getLastColumn(), xssfHyperlink.getLastColumn());
+            assertEquals(hssfHyperlink.getFirstRow(), xssfHyperlink.getFirstRow());
+            assertEquals(hssfHyperlink.getLastRow(), xssfHyperlink.getLastRow());
+        }
+    }
+
     /**
      * Only for WithMoreVariousData.xlsx !
      */
@@ -298,26 +370,6 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
     @Override
     public XSSFHyperlink copyHyperlink(Hyperlink link) {
         return new XSSFHyperlink(link);
-    }
-
-    @Test
-    void testCopyHSSFHyperlink() throws IOException {
-        HSSFWorkbook hssfworkbook = new HSSFWorkbook();
-        HSSFHyperlink hlink = hssfworkbook.getCreationHelper().createHyperlink(HyperlinkType.URL);
-        hlink.setAddress("http://poi.apache.org/");
-        hlink.setFirstColumn(3);
-        hlink.setFirstRow(2);
-        hlink.setLastColumn(5);
-        hlink.setLastRow(6);
-        hlink.setLabel("label");
-        XSSFHyperlink xlink = new XSSFHyperlink(hlink);
-
-        assertEquals("http://poi.apache.org/", xlink.getAddress());
-        assertEquals(new CellReference(2, 3), new CellReference(xlink.getCellRef()));
-        // Are HSSFHyperlink.label and XSSFHyperlink.tooltip the same? If so, perhaps one of these needs renamed for a consistent Hyperlink interface
-        // assertEquals("label", xlink.getTooltip());
-
-        hssfworkbook.close();
     }
 
     /* bug 59775: XSSFHyperlink has wrong type if it contains a location (CTHyperlink#getLocation)
