@@ -36,7 +36,6 @@ import java.util.Set;
 
 import javax.xml.transform.TransformerException;
 
-import org.apache.commons.io.output.NullPrintStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.examples.ss.ExcelComparator;
@@ -190,7 +189,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         PrintStream oldOut = System.out;
         String testFile = file.getParentFile().getName() + "/" + file.getName();
         try {
-            System.setOut(new NullPrintStream());
+            System.setOut(new OptimizedNullPrintStream());
             FromHowTo.main(new String[]{file.getAbsolutePath()});
             XLSX2CSV.main(new String[]{file.getAbsolutePath()});
             ExcelComparator.main(new String[]{file.getAbsolutePath(), file.getAbsolutePath()});
