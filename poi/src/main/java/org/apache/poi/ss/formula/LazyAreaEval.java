@@ -45,6 +45,7 @@ final class LazyAreaEval extends AreaEvalBase {
     public ValueEval getRelativeValue(int relativeRowIndex, int relativeColumnIndex) {
         return getRelativeValue(getFirstSheetIndex(), relativeRowIndex, relativeColumnIndex);
     }
+
     @Override
     public ValueEval getRelativeValue(int sheetIndex, int relativeRowIndex, int relativeColumnIndex) {
         int rowIx = (relativeRowIndex + getFirstRow() ) ;
@@ -60,6 +61,7 @@ final class LazyAreaEval extends AreaEvalBase {
 
         return new LazyAreaEval(area, _evaluator);
     }
+
     @Override
     public LazyAreaEval getRow(int rowIndex) {
         if (rowIndex >= getHeight()) {
@@ -69,6 +71,7 @@ final class LazyAreaEval extends AreaEvalBase {
         int absRowIx = getFirstRow() + rowIndex;
         return new LazyAreaEval(absRowIx, getFirstColumn(), absRowIx, getLastColumn(), _evaluator);
     }
+
     @Override
     public LazyAreaEval getColumn(int columnIndex) {
         if (columnIndex >= getWidth()) {

@@ -18,8 +18,11 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -35,8 +38,8 @@ final class TestConcat {
     @Test
     void testConcatWithStrings() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1()) {
-            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(0);
+            FormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            Cell cell = wb.getSheetAt(0).getRow(0).createCell(0);
             confirmResult(fe, cell, "CONCAT(\"The\",\" \",\"sun\",\" \",\"will\",\" \",\"come\",\" \",\"up\",\" \",\"tomorrow.\")",
                     "The sun will come up tomorrow.");
         }
@@ -45,8 +48,8 @@ final class TestConcat {
     @Test
     void testConcatWithColumns() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1()) {
-            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(0);
+            FormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            Cell cell = wb.getSheetAt(0).getRow(0).createCell(0);
             confirmResult(fe, cell, "CONCAT(B:B, C:C)", "A’sa1a2a4a5a6a7B’sb1b2b4b5b6b7");
         }
     }
@@ -54,8 +57,8 @@ final class TestConcat {
     @Test
     void testConcatWithCellRanges() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1()) {
-            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(0);
+            FormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            Cell cell = wb.getSheetAt(0).getRow(0).createCell(0);
             confirmResult(fe, cell, "CONCAT(B2:C8)", "a1b1a2b2a4b4a5b5a6b6a7b7");
         }
     }
@@ -63,8 +66,8 @@ final class TestConcat {
     @Test
     void testConcatWithCellRefs() throws IOException {
         try (HSSFWorkbook wb = initWorkbook2()) {
-            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = wb.getSheetAt(0).createRow(5).createCell(0);
+            FormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            Cell cell = wb.getSheetAt(0).createRow(5).createCell(0);
             confirmResult(fe, cell, "CONCAT(\"Stream population for \", A2,\" \", A3, \" is \", A4, \"/mile.\")",
                     "Stream population for brook trout species is 32/mile.");
             confirmResult(fe, cell, "CONCAT(B2,\" \", C2)", "Andreas Hauser");
@@ -76,7 +79,7 @@ final class TestConcat {
 
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
+        Sheet sheet = wb.createSheet();
         addRow(sheet, 0, null, "A’s", "B’s");
         for (int i = 1; i <= 7; i++) {
             if (i != 3) {
@@ -88,7 +91,7 @@ final class TestConcat {
 
     private HSSFWorkbook initWorkbook2() {
         HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
+        Sheet sheet = wb.createSheet();
         addRow(sheet, 0, "Data", "First Name", "Last name");
         addRow(sheet, 1, "brook trout", "Andreas", "Hauser");
         addRow(sheet, 2, "species", "Fourth", "Pine");
@@ -96,7 +99,7 @@ final class TestConcat {
         return wb;
     }
 
-    private static void confirmResult(HSSFFormulaEvaluator fe, HSSFCell cell, String formulaText, String expectedResult) {
+    private static void confirmResult(FormulaEvaluator fe, Cell cell, String formulaText, String expectedResult) {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);

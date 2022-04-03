@@ -1107,7 +1107,7 @@ public final class FormulaParser {
 
         public CellReference getCellReference() {
             if (_type != Type.CELL) {
-                throw new IllegalStateException("Not applicable to this type");
+                throw new IllegalStateException("Not applicable to this reference-type, expected CELL, but had " + _type);
             }
             return new CellReference(_rep);
         }

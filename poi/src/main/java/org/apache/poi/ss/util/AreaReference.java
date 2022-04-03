@@ -170,6 +170,14 @@ public class AreaReference {
         return splitAreaReferences(reference).length == 1;
     }
 
+    /**
+     * Construct an AreaReference which spans one more rows
+     *
+     * @param version Is the spreadsheet in format Excel97 or newer Excel versions
+     * @param start The 1-based start-index of the rows
+     * @param end The 1-based end-index of the rows
+     * @return An AreaReference that spans the given rows
+     */
     public static AreaReference getWholeRow(SpreadsheetVersion version, String start, String end) {
         if (null == version) {
             version = DEFAULT_SPREADSHEET_VERSION;
@@ -177,6 +185,17 @@ public class AreaReference {
         return new AreaReference("$A" + start + ":$" + version.getLastColumnName() + end, version);
     }
 
+    /**
+     * Construct an AreaReference which spans one more columns.
+     *
+     * Columns are specified in the Excel format, i.e. "A" is the first column
+     * "B" the seconds, ... "AA", ..
+     *
+     * @param version Is the spreadsheet in format Excel97 or newer Excel versions
+     * @param start The ABC-based start-index of the columns
+     * @param end The ABC-based end-index of the columns
+     * @return An AreaReference that spans the given columns
+     */
     public static AreaReference getWholeColumn(SpreadsheetVersion version, String start, String end) {
         if (null == version) {
             version = DEFAULT_SPREADSHEET_VERSION;

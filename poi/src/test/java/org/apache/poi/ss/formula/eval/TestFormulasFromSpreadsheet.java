@@ -37,6 +37,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -171,13 +172,16 @@ public final class TestFormulasFromSpreadsheet {
            CellValue actValue = evaluator.evaluate(c);
            Cell expValue = (expectedValuesRow == null) ? null : expectedValuesRow.getCell(colnum);
 
-           String msg = String.format(Locale.ROOT, "Function '%s': Formula: %s @ %d:%d"
-                   , targetFunctionName, c.getCellFormula(), formulasRow.getRowNum(), colnum);
+           String msg = String.format(Locale.ROOT, "Function '%s': Formula: %s @ %d:%d (%s)"
+                   , targetFunctionName, c.getCellFormula(), formulasRow.getRowNum(), colnum,
+                   new CellReference(formulasRow.getRowNum(), colnum).formatAsString());
 
            assertNotNull(expValue, msg + " - Bad setup data expected value is null");
            assertNotNull(actValue, msg + " - actual value was null");
 
            final CellType cellType = expValue.getCellType();
+           msg += ", cellType: " + cellType + ", actCellType: " + actValue.getCellType() + ": " + actValue.formatAsString();
+
            switch (cellType) {
                case BLANK:
                    assertEquals(CellType.BLANK, actValue.getCellType(), msg);
