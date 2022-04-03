@@ -38,6 +38,7 @@ final class SheetRangeEvaluator implements SheetRange {
         _lastSheetIndex = lastSheetIndex;
         _sheetEvaluators = sheetEvaluators.clone();
     }
+
     public SheetRangeEvaluator(int onlySheetIndex, SheetRefEvaluator sheetEvaluator) {
         this(onlySheetIndex, onlySheetIndex, new SheetRefEvaluator[] {sheetEvaluator});
     }
@@ -53,6 +54,7 @@ final class SheetRangeEvaluator implements SheetRange {
     public int getFirstSheetIndex() {
         return _firstSheetIndex;
     }
+
     public int getLastSheetIndex() {
         return _lastSheetIndex;
     }
@@ -60,6 +62,7 @@ final class SheetRangeEvaluator implements SheetRange {
     public String getSheetName(int sheetIndex) {
         return getSheetEvaluator(sheetIndex).getSheetName();
     }
+
     public String getSheetNameRange() {
         StringBuilder sb = new StringBuilder();
         sb.append(getSheetName(_firstSheetIndex));
@@ -86,13 +89,31 @@ final class SheetRangeEvaluator implements SheetRange {
      *      Otherwise, the highest used row number across all sheets is returned.
      */
     public int adjustRowNumber(int rowIndex) {
-        int maxRowNum = rowIndex;
-
-        for (int i = _firstSheetIndex; i < _lastSheetIndex; i++) {
-            maxRowNum = Math.max(maxRowNum, _sheetEvaluators[i].getLastRowNum());
+        // some code is depending on the row-numbers higher than the "last row of the sheet"
+        // so we can only apply this optimisation if the given rowIndex is at or above the maximum
+        // possible number of row-indices for the current SpreadSheetVersion
+        boolean found = false;
+        for (int i = _firstSheetIndex; i <= _lastSheetIndex; i++) {
+            if (rowIndex >= _sheetEvaluators[i - _firstSheetIndex].getMaxRowNum()) {
+                found = true;
+            }
         }
 
-        // do not try to evaluate further than there are rows in any sheet
+        // rowIndex is not large enough, so no change necessary
+        if (!found) {
+            return rowIndex;
+        }
+
+        // reset maxRowNum if it is at the limit, i.e. we did choose "all rows" somewhere
+        // This happens e.g. for whole-column-references like "A:B"
+
+        // find the highest row-number across all relevant sheets
+        int maxRowNum = 0;
+        for (int i = _firstSheetIndex; i <= _lastSheetIndex; i++) {
+            maxRowNum = Math.max(maxRowNum, _sheetEvaluators[i - _firstSheetIndex].getLastRowNum());
+        }
+
+        // now use the new maxRowNum if it was actually lowered
         return Math.min(rowIndex, maxRowNum);
     }
 }
