@@ -2455,10 +2455,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     /**
-     * Get the visibility state for a given column.
+     * Set the visibility state for a given column.
      *
      * @param columnIndex - the column to get (0-based)
-     * @param hidden - the visiblity state of the column
+     * @param hidden - the visibility state of the column
      */
     @Override
     public void setColumnHidden(int columnIndex, boolean hidden) {

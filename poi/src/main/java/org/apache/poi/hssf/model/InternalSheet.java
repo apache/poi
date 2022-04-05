@@ -1066,13 +1066,14 @@ public final class InternalSheet {
     }
 
     /**
-     * Get the hidden property for a given column.
+     * Set the hidden property for a given column.
      * @param column - the column number
      * @param hidden - whether the column is hidden or not
      */
     public void setColumnHidden(int column, boolean hidden) {
         setColumn( column, null, null, null, hidden, null);
     }
+
     public void setDefaultColumnStyle(int column, int styleIndex) {
         setColumn(column, (short) styleIndex, null, null, null, null);
     }
