@@ -118,7 +118,7 @@ public interface Sheet extends Iterable<Row> {
     int getLastRowNum();
 
     /**
-     * Get the visibility state for a given column
+     * Set the visibility state for a given column
      *
      * @param columnIndex - the column to get (0-based)
      * @param hidden - the visibility state of the column
