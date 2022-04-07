@@ -950,7 +950,7 @@ public class DataFormatter {
         if (numberFormat == null) {
             return String.valueOf(d);
         }
-        String formatted = numberFormat.format(d);
+        String formatted = numberFormat.format(new BigDecimal(String.valueOf(d)));
         return formatted.replaceFirst("E(\\d)", "E+$1"); // to match Excel's E-notation
     }
 
