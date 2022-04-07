@@ -107,6 +107,8 @@ public class HemfImageRenderer implements ImageRenderer, EmbeddedExtractor {
             return false;
         }
 
+        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
         Charset cs = (Charset)graphics.getRenderingHint(Drawable.DEFAULT_CHARSET);
         if (cs != null && !charsetInitialized) {
             setDefaultCharset(cs);
