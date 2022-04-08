@@ -43,6 +43,7 @@ import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
@@ -1395,6 +1396,21 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
                 assertEquals(CellReferenceType.R1C1, wb2.getCellReferenceType());
             }
+        }
+    }
+
+    @Test
+    void testGithub321() throws Exception {
+        try (XSSFWorkbook wb = openSampleWorkbook("github-321.xlsx")) {
+            XSSFSheet xssfSheet = wb.getSheetAt(0);
+            DataFormatter dataFormatter = new DataFormatter();
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            XSSFCell a3 = xssfSheet.getRow(2).getCell(0);
+            assertEquals("2.05", dataFormatter.formatCellValue(a3));
+            assertEquals("2.05", dataFormatter.formatCellValue(a3, formulaEvaluator));
+            XSSFCell a4 = xssfSheet.getRow(3).getCell(0);
+            assertEquals("2.1", dataFormatter.formatCellValue(a4));
+            assertEquals("2.1", dataFormatter.formatCellValue(a4, formulaEvaluator));
         }
     }
 
