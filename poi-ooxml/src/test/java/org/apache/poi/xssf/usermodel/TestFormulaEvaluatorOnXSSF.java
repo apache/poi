@@ -213,10 +213,9 @@ public final class TestFormulaEvaluatorOnXSSF {
                     fail("Cannot expect formula as result of formula evaluation: " + msg);
                 case NUMERIC:
                     assertEquals(CellType.NUMERIC, actValue.getCellType(), msg);
-                    BaseTestNumeric.assertDouble(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), BaseTestNumeric.POS_ZERO, BaseTestNumeric.DIFF_TOLERANCE_FACTOR);
-//                double delta = Math.abs(expValue.getNumericCellValue()-actValue.getNumberValue());
-//                double pctExpValue = Math.abs(0.00001*expValue.getNumericCellValue());
-//                assertTrue(msg, delta <= pctExpValue);
+                    final double tolerance = targetFunctionName.equalsIgnoreCase("RATE")
+                            ? 0.000001 : BaseTestNumeric.DIFF_TOLERANCE_FACTOR;
+                    BaseTestNumeric.assertDouble(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), BaseTestNumeric.POS_ZERO, tolerance);
                     break;
                 case STRING:
                     assertEquals(CellType.STRING, actValue.getCellType(), msg);
