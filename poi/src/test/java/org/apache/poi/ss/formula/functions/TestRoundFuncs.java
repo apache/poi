@@ -54,6 +54,14 @@ final class TestRoundFuncs {
     }
 
     @Test
+    void testGithub321() {
+        ValueEval strArg = new NumberEval(2.05);
+        ValueEval[] args = { strArg, new NumberEval(1), };
+        NumberEval result = (NumberEval)NumericFunction.ROUND.evaluate(args, -1, (short)-1);
+        assertEquals(2.1, result.getNumberValue());
+    }
+
+    @Test
     void testRoundUpWithStringArg() {
         ValueEval strArg = new StringEval("abc");
         ValueEval[] args = { strArg, new NumberEval(2), };
