@@ -1406,9 +1406,11 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             DataFormatter dataFormatter = new DataFormatter();
             FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
             XSSFCell a3 = xssfSheet.getRow(2).getCell(0);
+            assertEquals(2.05, a3.getNumericCellValue());
             assertEquals("2.05", dataFormatter.formatCellValue(a3));
             assertEquals("2.05", dataFormatter.formatCellValue(a3, formulaEvaluator));
             XSSFCell a4 = xssfSheet.getRow(3).getCell(0);
+            assertEquals(2.05, a4.getNumericCellValue());
             assertEquals("2.1", dataFormatter.formatCellValue(a4));
             assertEquals("2.1", dataFormatter.formatCellValue(a4, formulaEvaluator));
         }
