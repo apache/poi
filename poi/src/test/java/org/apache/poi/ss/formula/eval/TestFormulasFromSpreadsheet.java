@@ -198,7 +198,9 @@ public final class TestFormulasFromSpreadsheet {
                    fail("Cannot expect formula as result of formula evaluation: " + msg);
                case NUMERIC:
                    assertEquals(CellType.NUMERIC, actValue.getCellType(), msg);
-                   TestMathX.assertDouble(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
+                   final double tolerance = targetFunctionName.equalsIgnoreCase("RATE")
+                           ? 0.000001 : TestMathX.DIFF_TOLERANCE_FACTOR;
+                   TestMathX.assertDouble(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), TestMathX.POS_ZERO, tolerance);
                    break;
                case STRING:
                    assertEquals(CellType.STRING, actValue.getCellType(), msg);
