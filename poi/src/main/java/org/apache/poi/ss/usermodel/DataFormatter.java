@@ -803,7 +803,7 @@ public class DataFormatter {
                 if (obj instanceof BigDecimal) {
                     obj = ((BigDecimal) obj).divide(divider, RoundingMode.HALF_UP);
                 } else if (obj instanceof Double) {
-                    obj = (Double) obj / divider.doubleValue();
+                    obj = (new BigDecimal(NumberToTextConverter.toText((Double)obj))).divide(divider, RoundingMode.HALF_UP);
                 } else {
                     throw new UnsupportedOperationException();
                 }
