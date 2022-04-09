@@ -803,7 +803,7 @@ public class DataFormatter {
                 if (obj instanceof BigDecimal) {
                     obj = ((BigDecimal) obj).divide(divider, RoundingMode.HALF_UP);
                 } else if (obj instanceof Double) {
-                    obj = (new BigDecimal(NumberToTextConverter.toText((Double)obj))).divide(divider, RoundingMode.HALF_UP);
+                    obj = (Double) obj / divider.doubleValue();
                 } else {
                     throw new UnsupportedOperationException();
                 }
@@ -948,9 +948,9 @@ public class DataFormatter {
         Format numberFormat = getFormat(cell, cfEvaluator);
         double d = cell.getNumericCellValue();
         if (numberFormat == null) {
-            return NumberToTextConverter.toText(d);
+            return Double.toString(d);
         }
-        String formatted = numberFormat.format(new BigDecimal(NumberToTextConverter.toText(d)));
+        String formatted = numberFormat.format(new BigDecimal(Double.toString(d)));
         return formatted.replaceFirst("E(\\d)", "E+$1"); // to match Excel's E-notation
     }
 
