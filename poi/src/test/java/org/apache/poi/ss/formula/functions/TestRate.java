@@ -28,6 +28,8 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.util.Locale;
+
 import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.apache.poi.ss.util.Utils.assertError;
@@ -107,8 +109,8 @@ final class TestRate {
             HSSFSheet sheet = wb.createSheet();
             HSSFRow row = sheet.createRow(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            for(int i = 0; i < pv.length; i++){
-                String fmla = String.format("RATE(%2f, %2f, %2f, %2f, 0, 0.1)", nper, pmt, pv[i], fv[i]);
+            for(int i = 0; i < pv.length; i++) {
+                String fmla = String.format(Locale.ROOT, "RATE(%2f, %2f, %2f, %2f, 0, 0.1)", nper, pmt, pv[i], fv[i]);
                 HSSFCell cell = row.createCell(i);
                 assertDouble(fe, cell, fmla, expected[i], 1e-8);
             }
@@ -130,7 +132,7 @@ final class TestRate {
      * RATE will return NaN, if the Newton Raphson method cannot find a
      * feasible rate within the required tolerance or number of iterations.
      * This can occur if both `pmt` and `pv` have the same sign, as it is
-     * impossible to repay a loan by making further withdrawls.
+     * impossible to repay a loan by making further withdrawals.
      *
      * See https://github.com/numpy/numpy-financial/blob/d02edfb65dcdf23bd571c2cded7fcd4a0528c6af/numpy_financial/tests/test_financial.py#L113
      */
