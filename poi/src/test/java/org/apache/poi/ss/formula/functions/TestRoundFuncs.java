@@ -30,9 +30,6 @@ import org.junit.jupiter.api.Test;
  * Test cases for ROUND(), ROUNDUP(), ROUNDDOWN()
  */
 final class TestRoundFuncs {
-    // github-43
-    // https://github.com/apache/poi/pull/43
-    @Disabled("ROUNDUP(3987*0.2, 2) currently fails by returning 797.41")
     @Test
     void testRoundUp() {
         assertRoundUpEquals(797.40, 3987*0.2, 2, 1e-10);
