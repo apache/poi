@@ -98,6 +98,18 @@ public class SheetUtil {
     private static final FontRenderContext fontRenderContext = new FontRenderContext(null, true, true);
 
     /**
+     * A system property which can be enabled to not fail when the
+     * font-system is not available on the current machine
+     */
+    private static final boolean ignoreMissingFontSystem =
+            Boolean.parseBoolean(System.getProperty("org.apache.poi.ss.ignoreMissingFontSystem"));
+
+    /**
+     * Which default char-width to use if the font-system is unavailable.
+     */
+    public static final int DEFAULT_CHAR_WIDTH = 5;
+
+    /**
      * Compute width of a single cell
      *
      * @param cell the cell whose width is to be calculated
@@ -282,8 +294,16 @@ public class SheetUtil {
 
         AttributedString str = new AttributedString(String.valueOf(defaultChar));
         copyAttributes(defaultFont, str, 0, 1);
-        TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
-        return (int) layout.getAdvance();
+        try {
+            TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
+            return (int) layout.getAdvance();
+        } catch (UnsatisfiedLinkError e) {
+            if (ignoreMissingFontSystem) {
+                return DEFAULT_CHAR_WIDTH;
+            }
+
+            throw e;
+        }
     }
 
     /**
