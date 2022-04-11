@@ -297,7 +297,7 @@ public class SheetUtil {
         try {
             TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
             return (int) layout.getAdvance();
-        } catch (UnsatisfiedLinkError e) {
+        } catch (UnsatisfiedLinkError | NoClassDefFoundError | InternalError e) {
             if (ignoreMissingFontSystem) {
                 return DEFAULT_CHAR_WIDTH;
             }
