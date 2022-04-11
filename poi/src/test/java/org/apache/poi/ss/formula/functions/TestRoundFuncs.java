@@ -17,14 +17,21 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.junit.jupiter.api.Disabled;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 /**
  * Test cases for ROUND(), ROUNDUP(), ROUNDDOWN()
@@ -54,11 +61,16 @@ final class TestRoundFuncs {
     }
 
     @Test
-    void testGithub321() {
-        ValueEval strArg = new NumberEval(2.05);
-        ValueEval[] args = { strArg, new NumberEval(1), };
-        NumberEval result = (NumberEval)NumericFunction.ROUND.evaluate(args, -1, (short)-1);
-        assertEquals(2.1, result.getNumberValue());
+    void testGithub321() throws IOException {
+        try (HSSFWorkbook hssfWorkbook = new HSSFWorkbook()) {
+            HSSFSheet hssfSheet = hssfWorkbook.createSheet();
+            HSSFRow hssfRow = hssfSheet.createRow(0);
+            HSSFCell hssfCell = hssfRow.createCell(0);
+            hssfCell.setCellValue(2.05d);
+            FormulaEvaluator formulaEvaluator = hssfWorkbook.getCreationHelper().createFormulaEvaluator();
+            HSSFCell formulaCell = hssfRow.createCell(1);
+            assertDouble(formulaEvaluator, formulaCell, "ROUND(A1, 1)", 2.1d, 1E-25);
+        }
     }
 
     @Test
