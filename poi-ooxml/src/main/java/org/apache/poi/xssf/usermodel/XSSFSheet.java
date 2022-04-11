@@ -1431,7 +1431,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      *      only previously existing rows are returned, otherwise empty rows are added as necessary
      * @throws IllegalArgumentException if startRowNum and endRowNum are not in ascending order
      */
-    private List<XSSFRow> getRows(int startRowNum, int endRowNum, boolean createRowIfMissing) {
+    public List<XSSFRow> getRows(int startRowNum, int endRowNum, boolean createRowIfMissing) {
         if (startRowNum > endRowNum) {
             throw new IllegalArgumentException("getRows: startRowNum must be less than or equal to endRowNum");
         }
