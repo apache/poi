@@ -106,14 +106,8 @@ public class FractionFormat extends Format {
 
     @SuppressWarnings("squid:S2111")
     public String format(Number num) {
-        final double d = num.doubleValue();;
-        try {
-            //this is the recommended way (in BigDecimal javadocs to create a decimal from a double)
-            return format(new BigDecimal(Double.toString(d)));
-        } catch (NumberFormatException nfe) {
-            //Double.toString can fail
-            return format(d);
-        }
+        final double d = num.doubleValue();
+        return format(new BigDecimal(d));
     }
 
     @SuppressWarnings("squid:S2111")
