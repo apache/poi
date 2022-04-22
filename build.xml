@@ -284,7 +284,7 @@ under the License.
     <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.35" usage="main-tests"/>
     <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest:2.2" usage="main-tests"/>
     <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.9.0" usage="main-tests"/>
-    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:4.5.0" usage="main-tests"/>
+    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:4.5.1" usage="main-tests"/>
     <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.12.3" usage="main-tests"/>
     <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.12.3" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
@@ -324,9 +324,9 @@ under the License.
     <dependency prefix="svg.batik-transcoder" artifact="org.apache.xmlgraphics:batik-transcoder:1.14" usage="ooxml-batik"/>
     <dependency prefix="svg.batik-util" artifact="org.apache.xmlgraphics:batik-util:1.14" usage="ooxml-batik"/>
     <dependency prefix="svg.batik-xml" artifact="org.apache.xmlgraphics:batik-xml:1.14" usage="ooxml-batik"/>
-    <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:2.0.25" usage="ooxml-provided"/>
-    <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:2.0.25" usage="ooxml-provided"/>
-    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:0.37" usage="ooxml-provided"/>
+    <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:2.0.26" usage="ooxml-provided"/>
+    <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:2.0.26" usage="ooxml-provided"/>
+    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:0.38" usage="ooxml-provided"/>
 
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.curvesapi" artifact="com.github.virtuald:curvesapi:1.07" usage="ooxml"/>
