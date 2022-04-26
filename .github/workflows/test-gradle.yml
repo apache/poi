@@ -24,17 +24,7 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '11'
-        check-latest: true
-
-    - name: Cache Gradle wrapper and dependencies
-      uses: actions/cache@v3
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-          
+        cache: 'maven'
 
     - name: Verify Gradle wrapper
       uses: gradle/wrapper-validation-action@v1
@@ -43,4 +33,4 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew check -PjdkVersion=11
+      run: ./gradlew check -PjdkVersion=11 --no-daemon
