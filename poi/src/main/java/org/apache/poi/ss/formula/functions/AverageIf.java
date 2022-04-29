@@ -36,9 +36,7 @@ extends Baseifs
     
     @Override
     public ValueEval evaluate( ValueEval[] _args, OperationEvaluationContext _ec )
-    {
-//        LOG.log( Level.FINE, "{0}::{1}", new Object[] { Arrays.asList( _args ), _ec } );
-        
+    {        
         if( _args.length < 2 ) 
         {
             return ErrorEval.VALUE_INVALID;
@@ -103,7 +101,7 @@ extends Baseifs
     @Override
     protected boolean hasInitialRange()
     {
-        throw new UnsupportedOperationException( "Not supported yet." ); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     
