@@ -54,12 +54,14 @@ final class TestGcd {
         confirmValue(Arrays.asList(5, 0), 5.0);
         confirmValue(Arrays.asList(10, 5, 0), 5.0);
         confirmValue(Arrays.asList(10.9, 5, 0), 5.0);
+        confirmValue(Arrays.asList(Math.pow(2, 53), 2.0), 2.0);
     }
 
     @Test
     void testNumError() {
         confirmNumError(Arrays.asList(-1));
         confirmNumError(Arrays.asList(10, -1));
+        confirmNumError(Arrays.asList(Math.pow(2, 54), 2.0));
     }
 
     @Test

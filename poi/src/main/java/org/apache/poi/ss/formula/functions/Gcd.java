@@ -30,6 +30,8 @@ public class Gcd implements FreeRefFunction {
 
     public static final Gcd instance = new Gcd();
 
+    private static final long MAX_INPUT = (long)Math.pow(2, 53);
+
     @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         if (args.length < 1) {
@@ -37,11 +39,11 @@ public class Gcd implements FreeRefFunction {
         } else if (args.length == 1) {
             try {
                 ValueEval v1 = OperandResolver.getSingleValue(args[0], ec.getRowIndex(), ec.getColumnIndex());
-                long l = (long)OperandResolver.coerceValueToDouble(v1);
-                if (l < 0) {
+                double d = OperandResolver.coerceValueToDouble(v1);
+                if (isInvalidInput(d)) {
                     return ErrorEval.NUM_ERROR;
                 }
-                return new NumberEval(l);
+                return new NumberEval((long)d);
             } catch (EvaluationException ee) {
                 return ErrorEval.VALUE_INVALID;
             }
@@ -50,11 +52,11 @@ public class Gcd implements FreeRefFunction {
                 ArrayList<Long> evals = new ArrayList<>();
                 for (int i = 0; i < args.length; i++) {
                     ValueEval ve = OperandResolver.getSingleValue(args[i], ec.getRowIndex(), ec.getColumnIndex());
-                    long l = (long)OperandResolver.coerceValueToDouble(ve);
-                    if (l < 0) {
+                    double d = OperandResolver.coerceValueToDouble(ve);
+                    if (isInvalidInput(d)) {
                         return ErrorEval.NUM_ERROR;
                     }
-                    evals.add(l);
+                    evals.add((long)d);
                 }
                 long result = evals.get(0);
                 for (int i = 1; i < evals.size(); i++) {
@@ -65,5 +67,9 @@ public class Gcd implements FreeRefFunction {
                 return ErrorEval.VALUE_INVALID;
             }
         }
+    }
+
+    private boolean isInvalidInput(double d) {
+        return (d < 0 || d > MAX_INPUT);
     }
 }
