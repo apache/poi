@@ -952,9 +952,8 @@ public class DataFormatter {
         }
         String formatted;
         try {
-            //see https://github.com/apache/poi/pull/321 -- but this sometimes fails as Double.toString
-            //can produce strings that can't be parsed by BigDecimal
-            formatted = numberFormat.format(new BigDecimal(Double.toString(d)));
+            //see https://github.com/apache/poi/pull/321 -- but this sometimes fails, thus the catch and retry
+            formatted = numberFormat.format(BigDecimal.valueOf(d));
         } catch (NumberFormatException nfe) {
             formatted = numberFormat.format(d);
         }
