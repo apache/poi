@@ -33,7 +33,6 @@ import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -118,7 +117,6 @@ final class TestAverageIf {
         confirm(24500, args);
     }
 
-    @Disabled("broken test")
     @Test
     void testExample2() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {

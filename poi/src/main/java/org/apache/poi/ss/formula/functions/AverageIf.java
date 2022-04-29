@@ -29,7 +29,7 @@ import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
  * the generic AverageIfs version.
  */
 public class AverageIf extends Baseifs {
-    public static final FreeRefFunction instance = new Averageifs();
+    public static final FreeRefFunction instance = new AverageIf();
 
     @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
