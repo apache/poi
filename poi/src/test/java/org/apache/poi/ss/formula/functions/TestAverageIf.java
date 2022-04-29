@@ -37,14 +37,13 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 
 /**
  * Test cases for AVERAGEIFS()
  */
 final class TestAverageIf {
 
-    private static final OperationEvaluationContext EC = new OperationEvaluationContext(null, null, 0, 1, 0, null);
+    private static final OperationEvaluationContext EC = new OperationEvaluationContext(null, null, 0, 0, 0, null);
 
     private static ValueEval invokeAverageif(ValueEval[] args) {
         return new AverageIf().evaluate(args, EC);
@@ -67,40 +66,57 @@ final class TestAverageIf {
 
     /**
      *  Example 1 from
-     *  https://support.microsoft.com/en-us/office/maxifs-function-dfd611e6-da2c-488a-919b-9b6376b28883
+     *  https://support.microsoft.com/en-us/office/averageif-function-faec8e2e-0dec-4308-af69-f5576d8ac642
      */
     @Test
     void testExample1() {
         ValueEval[] b2b5 = new ValueEval[] {
-                new StringEval("Quiz"),
-                new StringEval("Grade"),
-                new NumberEval(75),
-                new NumberEval(94)
+                new NumberEval(7000),
+                new NumberEval(14000),
+                new NumberEval(21000),
+                new NumberEval(28000)
         };
 
         ValueEval[] args;
-        // "=AVERAGEIFS(B2:B5, B2:B5, ">70", B2:B5, "<90")"
+        // "=AVERAGEIF(B2:B5, "<23000")"
         args = new ValueEval[]{
                 EvalFactory.createAreaEval("B2:B5", b2b5),
-                new StringEval(">70"),
-                EvalFactory.createAreaEval("B2:B5", b2b5)
+                new StringEval("<23000")
         };
-        confirm(84.5, args);
+        confirm( 14000, args);
 
-        ValueEval[] c2c5 = new ValueEval[] {
-                new StringEval("Quiz"),
-                new StringEval("Grade"),
-                new NumberEval(85),
-                new NumberEval(80)
+        ValueEval[] a2a5 = new ValueEval[] {
+                new NumberEval(100000),
+                new NumberEval(200000),
+                new NumberEval(300000),
+                new NumberEval(400000)
         };
-        // "=AVERAGEIFS(C2:C5, C2:C5, ">95")"
+        // "=AVERAGEIF(A2:A5, "<250000", A2:A5)"
         args = new ValueEval[]{
-                EvalFactory.createAreaEval("C2:C5", c2c5),
-                new StringEval(">95"),
-                EvalFactory.createAreaEval("C2:C5", c2c5)
+                EvalFactory.createAreaEval("A2:A5", a2a5),
+                new StringEval("<250000"),
+                EvalFactory.createAreaEval("A2:A5", a2a5)
+        };
+        confirm( 150000, args);
+
+        // "=AVERAGEIF(A2:A5, "<95000")"
+        args = new ValueEval[]{
+                EvalFactory.createAreaEval("A2:A5", a2a5),
+                new StringEval("<95000"),
+                EvalFactory.createAreaEval("A2:A5", a2a5)
         };
 
         confirmError(ErrorEval.DIV_ZERO, args);
+        
+        // "=AVERAGEIF(A2:A5, "<95000", B2:B5 )"
+        args = new ValueEval[]{
+                EvalFactory.createAreaEval("A2:A5", a2a5),
+                new StringEval(">250000"),
+                EvalFactory.createAreaEval("B2:B5", b2b5)
+        };
+        confirm( 24500, args);
+/*
+*/        
     }
 
 }

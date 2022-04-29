@@ -28,26 +28,22 @@ import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
  * Handler for singular AverageIf which has different operand handling than
  * the generic AverageIfs version.
  */
-public class AverageIf
-extends Baseifs
-{
+public class AverageIf extends Baseifs {
+    
     public static final FreeRefFunction instance = new Averageifs();
 
     
     @Override
     public ValueEval evaluate( ValueEval[] _args, OperationEvaluationContext _ec )
     {        
-        if( _args.length < 2 ) 
-        {
+        if( _args.length < 2 ) {
             return ErrorEval.VALUE_INVALID;
         }
         
-        try 
-        {
-             AreaEval sumRange = null;
+        try {
+             AreaEval sumRange = convertRangeArg( _args[ 0 ] );
              
-            if( _args.length == 3 )
-            {
+            if( _args.length == 3 ) {
                 sumRange = convertRangeArg( _args[2] );
             }
 
@@ -55,43 +51,35 @@ extends Baseifs
             AreaEval ae = convertRangeArg( _args[0] );
             I_MatchPredicate mp = Countif.createCriteriaPredicate( _args[ 1 ], _ec.getRowIndex(), _ec.getColumnIndex());
 
-            if( mp instanceof Countif.ErrorMatcher ) 
-            {
+            if( mp instanceof Countif.ErrorMatcher ) {
                 throw new EvaluationException(ErrorEval.valueOf((( Countif.ErrorMatcher) mp).getValue()));
             }
 
             return aggregateMatchingCells( createAggregator(), sumRange, ae, mp );
         } 
-        catch (EvaluationException e) 
-        {
+        catch (EvaluationException e) {
             return e.getErrorEval();
         }
     }
     
-    protected ValueEval aggregateMatchingCells( Aggregator aggregator, AreaEval sumRange, AreaEval range,  I_MatchPredicate mp )
-            throws EvaluationException
-    {
-        int height = range.getHeight();
-        int width = range.getWidth();
+    protected ValueEval aggregateMatchingCells( Aggregator aggregator, AreaEval sumRange, AreaEval testRange,  I_MatchPredicate mp )
+    throws EvaluationException {
+        
+        int height = testRange.getHeight();
+        int width = testRange.getWidth();
         
         for (int r = 0; r < height; r++) {
             for (int c = 0; c < width; c++) {
 
-                ValueEval _ve = range.getRelativeValue(r, c);;
+                ValueEval _testValue = testRange.getRelativeValue(r, c);;
 
-                // Bugs 60858 and 56420 show predicate can be null
-                if( sumRange != null )
-                {
-                    _ve = sumRange.getRelativeValue(r, c);                    
-                }
-                
-                if ( mp != null && mp.matches( _ve ) ) 
-                { // aggregate only if all of the corresponding criteria specified are true for that cell.
-                    if ( _ve instanceof ErrorEval)
-                    {
-                        throw new EvaluationException((ErrorEval) _ve );
+                ValueEval _sumValue = sumRange.getRelativeValue( r, c );
+
+                if ( mp != null && mp.matches( _testValue ) ) { // aggregate only if all of the corresponding criteria specified are true for that cell.
+                    if ( _testValue instanceof ErrorEval) {
+                        throw new EvaluationException((ErrorEval) _testValue );
                     }
-                    aggregator.addValue( _ve );
+                    aggregator.addValue( _sumValue );
                 }
             }
         }
@@ -99,15 +87,14 @@ extends Baseifs
     }
 
     @Override
-    protected boolean hasInitialRange()
-    {
+    protected boolean hasInitialRange() {
         return false;
     }
 
     
     @Override
-    protected Aggregator createAggregator()
-    {
+    protected Aggregator createAggregator() {
+        
         return new Aggregator() {
             Double sum = 0.0;
             Integer count = 0;
