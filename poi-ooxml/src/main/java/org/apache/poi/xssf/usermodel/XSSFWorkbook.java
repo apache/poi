@@ -2485,6 +2485,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
     /**
      * Whether a call to {@link XSSFCell#setCellFormula(String)} will validate the formula or not.
+     * When enabled (which is the default), this option can lead to formulas being modified by POI formula renderer.
      *
      * @param value true if the application will validate the formula is correct
      * @since 3.17
@@ -2495,6 +2496,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
     /**
      * Whether a call to {@link XSSFCell#setCellFormula(String)} will validate the formula or not.
+     * When enabled (which is the default), this option can lead to formulas being modified by POI formula renderer.
      *
      * @since 3.17
      */
