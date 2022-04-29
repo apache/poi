@@ -29,7 +29,6 @@ import org.apache.poi.ss.formula.functions.CountUtils.I_MatchPredicate;
  * the generic AverageIfs version.
  */
 public class AverageIf extends Baseifs {
-
     public static final FreeRefFunction instance = new Averageifs();
 
     @Override
@@ -62,18 +61,17 @@ public class AverageIf extends Baseifs {
     protected ValueEval aggregateMatchingCells(Aggregator aggregator, AreaEval sumRange, AreaEval testRange, I_MatchPredicate mp)
             throws EvaluationException {
 
-        int height = testRange.getHeight();
-        int width = testRange.getWidth();
+        final int height = testRange.getHeight();
+        final int width = testRange.getWidth();
 
         for (int r = 0; r < height; r++) {
             for (int c = 0; c < width; c++) {
 
                 ValueEval _testValue = testRange.getRelativeValue(r, c);
-                ;
-
                 ValueEval _sumValue = sumRange.getRelativeValue(r, c);
 
-                if (mp != null && mp.matches(_testValue)) { // aggregate only if all of the corresponding criteria specified are true for that cell.
+                if (mp != null && mp.matches(_testValue)) {
+                    // aggregate only if all of the corresponding criteria specified are true for that cell.
                     if (_testValue instanceof ErrorEval) {
                         throw new EvaluationException((ErrorEval) _testValue);
                     }
@@ -89,10 +87,8 @@ public class AverageIf extends Baseifs {
         return false;
     }
 
-
     @Override
     protected Aggregator createAggregator() {
-
         return new Aggregator() {
             Double sum = 0.0;
             Integer count = 0;
@@ -102,7 +98,7 @@ public class AverageIf extends Baseifs {
 
                 if (!(value instanceof NumberEval)) return;
 
-                double d = ((NumberEval) value).getNumberValue();
+                final double d = ((NumberEval) value).getNumberValue();
                 sum += d;
                 count++;
 
