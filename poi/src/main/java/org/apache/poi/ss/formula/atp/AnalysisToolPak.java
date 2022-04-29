@@ -141,7 +141,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "ISEVEN", ParityFunction.IS_EVEN);
         r(m, "ISODD", ParityFunction.IS_ODD);
         r(m, "JIS", null);
-        r(m, "LCM", null);
+        r(m, "LCM", Lcm.instance);
         r(m, "MAXIFS", Maxifs.instance);
         r(m, "MDURATION", null);
         r(m, "MINIFS", Minifs.instance);
