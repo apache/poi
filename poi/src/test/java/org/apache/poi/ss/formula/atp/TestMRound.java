@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
  */
 class TestMRound {
 
+    //examples from https://support.microsoft.com/en-us/office/mround-function-c299c3b0-15a5-426d-aa4b-d2d5b3baf427
     /**
         =MROUND(10, 3)  Rounds 10 to a nearest multiple of 3 (9)
         =MROUND(-10, -3)    Rounds -10 to a nearest multiple of -3 (-9)
@@ -51,6 +52,8 @@ class TestMRound {
         cell4.setCellFormula("MROUND(5, -2)");
         Cell cell5 = sh.createRow(0).createCell(0);
         cell5.setCellFormula("MROUND(5, 0)");
+        Cell cell6 = sh.createRow(0).createCell(0);
+        cell6.setCellFormula("MROUND(0.79*7.5, 0.05)");
 
         double accuracy = 1E-9;
 
@@ -70,5 +73,8 @@ class TestMRound {
 
         assertEquals(0.0, evaluator.evaluate(cell5).getNumberValue(), 0,
                      "Returns 0 because the multiple is 0");
+
+        assertEquals(5.95, evaluator.evaluate(cell6).getNumberValue(), 0,
+                "Rounds 5.925 to a nearest multiple of 0.05 (5.95)");
     }
 }

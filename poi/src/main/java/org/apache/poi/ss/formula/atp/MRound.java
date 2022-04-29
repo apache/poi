@@ -22,6 +22,9 @@ import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.NumericFunction;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * Implementation of Excel 'Analysis ToolPak' function MROUND()<br>
  *
@@ -56,7 +59,10 @@ final class MRound implements FreeRefFunction {
                     // Returns #NUM! because the number and the multiple have different signs
                     throw new EvaluationException(ErrorEval.NUM_ERROR);
                 }
-                result = multiple * Math.round( number / multiple );
+                BigDecimal bdMultiple = BigDecimal.valueOf(multiple);
+                result = bdMultiple.multiply(BigDecimal.valueOf(number).divide(bdMultiple, 0, RoundingMode.HALF_UP))
+                        .doubleValue();
+
             }
             NumericFunction.checkValue(result);
             return new NumberEval(result);
