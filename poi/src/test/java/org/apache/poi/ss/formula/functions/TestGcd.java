@@ -62,24 +62,41 @@ final class TestGcd {
         confirmNumError(Arrays.asList(10, -1));
     }
 
-    private static ValueEval invokeValue(List<Number> numberList) {
+    @Test
+    void testInvalidError() {
+        confirmInvalid(Arrays.asList());
+        confirmInvalid(Arrays.asList("num"));
+        confirmInvalid(Arrays.asList(3, "num"));
+    }
+
+    private static ValueEval invokeValue(List<Object> numberList) {
         ValueEval[] args = new ValueEval[numberList.size()];
         int i = 0;
-        for (Number num : numberList) {
-            args[i++] = new NumberEval(num.doubleValue());
+        for (Object obj : numberList) {
+            if (obj instanceof Number) {
+                args[i++] = new NumberEval(((Number)obj).doubleValue());
+            } else {
+                args[i++] = new StringEval(obj.toString());
+            }
         }
         return Gcd.instance.evaluate(args, ec);
     }
 
-    private static void confirmValue(List<Number> numberList, double expected) {
+    private static void confirmValue(List<Object> numberList, double expected) {
         ValueEval result = invokeValue(numberList);
         assertEquals(NumberEval.class, result.getClass());
         assertEquals(expected, ((NumberEval) result).getNumberValue(), 0.00000000000001);
     }
 
-    private static void confirmNumError(List<Number> numberList) {
+    private static void confirmNumError(List<Object> numberList) {
         ValueEval result = invokeValue(numberList);
         assertEquals(ErrorEval.class, result.getClass());
         assertEquals(ErrorEval.NUM_ERROR, result);
+    }
+
+    private static void confirmInvalid(List<Object> numberList) {
+        ValueEval result = invokeValue(numberList);
+        assertEquals(ErrorEval.class, result.getClass());
+        assertEquals(ErrorEval.VALUE_INVALID, result);
     }
 }
