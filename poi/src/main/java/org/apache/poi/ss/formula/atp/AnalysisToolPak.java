@@ -68,7 +68,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "ACCRINTM", null);
         r(m, "AMORDEGRC", null);
         r(m, "AMORLINC", null);
-        r(m, "AVERAGEIF", AverageIf.instance );
+        r(m, "AVERAGEIF", AverageIf.instance);
         r(m, "AVERAGEIFS", Averageifs.instance);
         r(m, "BAHTTEXT", null);
         r(m, "BESSELI", null);
