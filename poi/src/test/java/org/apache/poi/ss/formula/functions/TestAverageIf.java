@@ -23,9 +23,7 @@ import static org.apache.poi.ss.util.Utils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
@@ -34,8 +32,11 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 
 /**
@@ -115,6 +116,24 @@ final class TestAverageIf {
                 EvalFactory.createAreaEval("B2:B5", b2b5)
         };
         confirm(24500, args);
+    }
+
+    @Disabled("broken test")
+    @Test
+    void testExample2() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            addRow(sheet, 0, "Region", "Profits (Thousands)");
+            addRow(sheet, 1, "East", 45678);
+            addRow(sheet, 2, "West", 23789);
+            addRow(sheet, 3, "North", -4789);
+            addRow(sheet, 4, "South (New Office)", 0);
+            addRow(sheet, 5, "Midwest", 9678);
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            HSSFCell testCell = sheet.getRow(0).createCell(100);
+            assertDouble(formulaEvaluator, testCell, "AVERAGEIF(A2:A6,\"=*West\",B2:B6)", 16733.5);
+            assertDouble(formulaEvaluator, testCell, "AVERAGEIF(A2:A6,\"<>*(New Office)\",B2:B6)", 18589);
+        }
     }
 
 }
