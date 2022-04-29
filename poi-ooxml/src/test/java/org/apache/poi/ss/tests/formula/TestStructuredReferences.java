@@ -30,6 +30,7 @@ import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFTable;
@@ -102,6 +103,37 @@ class TestStructuredReferences {
             confirm(eval, tableSheet.getRow(7).getCell(0), 13 * 13);
             confirm(eval, formulaSheet.getRow(0).getCell(0), 209 + 13 * 13);
 
+        }
+    }
+
+    @Test
+    void testCellFormulaValidationFalse() throws Exception {
+        //relates to https://bz.apache.org/bugzilla/show_bug.cgi?id=66039
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            workbook.setCellFormulaValidation(false);
+            XSSFSheet sheet = workbook.createSheet();
+
+            //set sheet content
+            sheet.createRow(0).createCell(0).setCellValue("Field1");
+            sheet.getRow(0).createCell(1).setCellValue("Field2");
+            sheet.createRow(1).createCell(0).setCellValue(123);
+            sheet.getRow(1).createCell(1);
+
+            //create the table
+            String tableName = "Table1";
+            CellReference topLeft = new CellReference(sheet.getRow(0).getCell(0));
+            CellReference bottomRight = new CellReference(sheet.getRow(1).getCell(1));
+            AreaReference tableArea = workbook.getCreationHelper().createAreaReference(topLeft, bottomRight);
+            XSSFTable dataTable = sheet.createTable(tableArea);
+            dataTable.setName(tableName);
+            dataTable.setDisplayName(tableName);
+
+            //set the formula in sheet - when setCellFormulaValidation=true (the default), the code tries to
+            //tidy up this formula (but incorrectly, in this case) - gets adjusted to Sheet0!A2:A2
+            XSSFCell formulaCell = sheet.getRow(1).getCell(1);
+            formulaCell.setCellFormula(tableName + "[[#This Row],[Field1]]");
+
+            assertEquals("Table1[[#This Row],[Field1]]", formulaCell.getCellFormula());
         }
     }
 
