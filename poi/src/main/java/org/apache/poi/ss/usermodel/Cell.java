@@ -232,7 +232,7 @@ public interface Cell {
      *
      * <p>If the cell was blank, sets value to 0. Otherwise, preserves the value as precalculated.</p>
      *
-     * <p></p>In XSSF implementation, there is a <code>XSSFWorkbook.setCellFormulaValidation(boolean)</code>
+     * <p>In XSSF implementation, there is a <code>XSSFWorkbook.setCellFormulaValidation(boolean)</code>
      * setting that can validate (but also in some cases, reformat) the formula.</p>
      * 
      * @param formula the formula to set, e.g. <code>"SUM(C4:E4)"</code>.
