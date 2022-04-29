@@ -32,21 +32,21 @@ public class AverageIf extends Baseifs {
     public static final FreeRefFunction instance = new Averageifs();
 
     @Override
-    public ValueEval evaluate(ValueEval[] _args, OperationEvaluationContext _ec) {
-        if (_args.length < 2) {
+    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+        if (args.length < 2) {
             return ErrorEval.VALUE_INVALID;
         }
 
         try {
-            AreaEval sumRange = convertRangeArg(_args[0]);
+            AreaEval sumRange = convertRangeArg(args[0]);
 
-            if (_args.length == 3) {
-                sumRange = convertRangeArg(_args[2]);
+            if (args.length == 3) {
+                sumRange = convertRangeArg(args[2]);
             }
 
             // collect pairs of ranges and criteria
-            AreaEval ae = convertRangeArg(_args[0]);
-            I_MatchPredicate mp = Countif.createCriteriaPredicate(_args[1], _ec.getRowIndex(), _ec.getColumnIndex());
+            AreaEval ae = convertRangeArg(args[0]);
+            I_MatchPredicate mp = Countif.createCriteriaPredicate(args[1], ec.getRowIndex(), ec.getColumnIndex());
 
             if (mp instanceof Countif.ErrorMatcher) {
                 throw new EvaluationException(ErrorEval.valueOf(((Countif.ErrorMatcher) mp).getValue()));
