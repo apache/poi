@@ -26,6 +26,19 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 
 import java.util.ArrayList;
 
+
+/**
+ * Implementation for Excel GCD() function.
+ * <p>
+ *   <b>Syntax</b>:<br> <b>GCD  </b>(<b>number</b>, ...)<br>
+ * </p>
+ * <p>
+ *   Returns the greatest common divisor of two or more integers. The greatest common divisor is the largest integer that divides both number1 and number2 without a remainder.
+ * </p>
+ * <p>
+ *   See https://support.microsoft.com/en-us/office/gcd-function-d5107a51-69e3-461f-8e4c-ddfc21b5073a
+ * </p>
+ */
 public class Gcd implements FreeRefFunction {
 
     public static final Gcd instance = new Gcd();
