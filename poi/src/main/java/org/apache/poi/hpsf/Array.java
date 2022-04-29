@@ -22,8 +22,16 @@ import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
 @Internal
 public class Array {
+    private static final int DEFAULT_MAX_NUMBER_OF_ARRAY_SCALARS = 100_000;
+    private static int MAX_NUMBER_OF_ARRAY_SCALARS = DEFAULT_MAX_NUMBER_OF_ARRAY_SCALARS;
 
-    private static final int MAX_NUMBER_OF_ARRAY_SCALARS = 100_000;
+    public static int getMaxNumberOfArrayScalars() {
+        return MAX_NUMBER_OF_ARRAY_SCALARS;
+    }
+
+    public static void setMaxNumberOfArrayScalars(final int maxNumberOfArrayScalars) {
+        MAX_NUMBER_OF_ARRAY_SCALARS = maxNumberOfArrayScalars;
+    }
 
     static class ArrayDimension {
         private long _size;
@@ -88,7 +96,7 @@ public class Array {
         }
         int numberOfScalars = (int) numberOfScalarsLong;
 
-        IOUtils.safelyAllocateCheck(numberOfScalars, MAX_NUMBER_OF_ARRAY_SCALARS);
+        IOUtils.safelyAllocateCheck(numberOfScalars, getMaxNumberOfArrayScalars());
 
         _values = new TypedPropertyValue[numberOfScalars];
         int paddedType = (_header._type == Variant.VT_VARIANT) ? 0 : _header._type;
