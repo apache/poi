@@ -39,6 +39,7 @@ final class TestSqrtpi {
     //https://support.microsoft.com/en-us/office/sqrtpi-function-1fb4e63f-9b51-46d6-ad68-b3e7a8b519b4
     @Test
     void testBasic() {
+        //the expected values were observed in my copy of Excel
         confirmValue(Arrays.asList(1), 1.77245385090552);
         confirmValue(Arrays.asList(2), 2.506628274631);
     }

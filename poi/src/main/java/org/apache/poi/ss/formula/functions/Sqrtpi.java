@@ -56,6 +56,8 @@ public class Sqrtpi implements FreeRefFunction {
                 return ErrorEval.NUM_ERROR;
             }
             final double result = Math.sqrt(Math.PI * d);
+            //NumberToTextConverter reduces the precision to what Excel uses internally
+            //without this conversion, `result` is too precise
             return new NumberEval(Double.parseDouble(NumberToTextConverter.toText(result)));
         } catch (EvaluationException e) {
             return e.getErrorEval();
