@@ -39,7 +39,7 @@ import java.io.IOException;
 
 
 /**
- * Test cases for AVERAGEIFS()
+ * Test cases for AVERAGEIF()
  */
 final class TestAverageIf {
 
