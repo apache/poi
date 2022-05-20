@@ -240,8 +240,16 @@ public class XWPFNumbering extends POIXMLDocumentPart {
         for (XWPFAbstractNum abstractNum : abstractNums) {
             BigInteger foundNumId = abstractNum.getAbstractNum().getAbstractNumId();
             if(abstractNumID.equals(foundNumId)) {
-                ctNumbering.removeAbstractNum(foundNumId.byteValue());
                 abstractNums.remove(abstractNum);
+                break;
+            }
+        }
+
+        for (int i = 0; i < ctNumbering.sizeOfAbstractNumArray(); i++) {
+            CTAbstractNum ctAbstractNum = ctNumbering.getAbstractNumArray(i);
+            BigInteger foundNumId = ctAbstractNum.getAbstractNumId();
+            if(abstractNumID.equals(foundNumId)) {
+                ctNumbering.removeAbstractNum(i);
                 return true;
             }
         }
