@@ -196,23 +196,26 @@ class TestXWPFBugs {
             //attempt to remove item with numId 2
             assertTrue(numbering.removeAbstractNum(BigInteger.valueOf(2)));
 
-            for (int i = 0; i <= 10; i++) {
-                XWPFAbstractNum abstractNum = numbering.getAbstractNum(BigInteger.valueOf(i));
+            XWPFDocument docReloaded = writeOutAndReadBack(doc);
+            XWPFNumbering numberingReloaded = docReloaded.getNumbering();
+
+            for (int id = 0; id <= 10; id++) {
+                XWPFAbstractNum abstractNum = numberingReloaded.getAbstractNum(BigInteger.valueOf(id));
 
                 // we removed id "2", so this one should be empty, all others not
-                if (i == 2) {
-                    assertNull(abstractNum, "Failed for " + i);
+                if (id == 2) {
+                    assertNull(abstractNum, "Failed for " + id);
                 } else {
-                    assertNotNull(abstractNum, "Failed for " + i);
-                    assertEquals(i, abstractNum.getAbstractNum().getAbstractNumId().longValue());
+                    assertNotNull(abstractNum, "Failed for " + id);
+                    assertEquals(id, abstractNum.getAbstractNum().getAbstractNumId().longValue());
                 }
             }
 
             // removing the same again fails
-            assertFalse(numbering.removeAbstractNum(BigInteger.valueOf(2)));
+            assertFalse(numberingReloaded.removeAbstractNum(BigInteger.valueOf(2)));
 
             // removing another one works
-            assertTrue(numbering.removeAbstractNum(BigInteger.valueOf(4)));
+            assertTrue(numberingReloaded.removeAbstractNum(BigInteger.valueOf(4)));
         }
     }
 
