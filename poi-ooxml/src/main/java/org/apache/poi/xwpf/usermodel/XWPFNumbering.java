@@ -223,11 +223,20 @@ public class XWPFNumbering extends POIXMLDocumentPart {
             ctNumbering.addNewAbstractNum().set(abstractNum.getAbstractNum());
         } else {
             abstractNum.setCtAbstractNum(ctNumbering.addNewAbstractNum());
-            abstractNum.getAbstractNum().setAbstractNumId(BigInteger.valueOf(pos));
+            BigInteger id = findNextAbstractNumberingId();
+            abstractNum.getAbstractNum().setAbstractNumId(id);
             ctNumbering.setAbstractNumArray(pos, abstractNum.getAbstractNum());
         }
         abstractNums.add(abstractNum);
         return abstractNum.getCTAbstractNum().getAbstractNumId();
+    }
+
+    private BigInteger findNextAbstractNumberingId() {
+        long maxId = 0;
+        for (XWPFAbstractNum num : abstractNums) {
+            maxId = Math.max(maxId, num.getAbstractNum().getAbstractNumId().longValue());
+        }
+        return BigInteger.valueOf(maxId + 1);
     }
 
     /**

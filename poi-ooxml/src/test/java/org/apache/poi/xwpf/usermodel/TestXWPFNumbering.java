@@ -153,4 +153,16 @@ class TestXWPFNumbering {
             assertEquals("upperLetter", ctNumLvl.getLvl().getNumFmt().getVal().toString());
         }
     }
+
+    @Test
+    void testAddAbstractNum() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("NumberingWithOutOfOrderId.docx")) {
+            doc.getNumbering().addAbstractNum(new XWPFAbstractNum());
+            long count = doc.getNumbering()
+                    .getAbstractNums().stream()
+                    .map(e -> e.getCTAbstractNum().getAbstractNumId().intValue())
+                    .distinct().count();
+            assertEquals(doc.getNumbering().getAbstractNums().size(), count);
+        }
+    }
 }

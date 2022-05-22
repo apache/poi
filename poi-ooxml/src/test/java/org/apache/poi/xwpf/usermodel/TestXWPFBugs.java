@@ -196,6 +196,9 @@ class TestXWPFBugs {
             //attempt to remove item with numId 2
             assertTrue(numbering.removeAbstractNum(BigInteger.valueOf(2)));
 
+            //adding one level to numbering with id 1
+            numbering.getAbstractNum(BigInteger.valueOf(1)).getCTAbstractNum().addNewLvl();
+
             XWPFDocument docReloaded = writeOutAndReadBack(doc);
             XWPFNumbering numberingReloaded = docReloaded.getNumbering();
 
@@ -208,6 +211,14 @@ class TestXWPFBugs {
                 } else {
                     assertNotNull(abstractNum, "Failed for " + id);
                     assertEquals(id, abstractNum.getAbstractNum().getAbstractNumId().longValue());
+
+                    // we added one level for numbering with id "1"
+                    if (id == 1) {
+                        //TODO remaining issue from https://bz.apache.org/bugzilla/show_bug.cgi?id=66079
+                        //assertEquals(1, abstractNum.getAbstractNum().getLvlList().size());
+                    } else {
+                        assertEquals(0, abstractNum.getAbstractNum().getLvlList().size());
+                    }
                 }
             }
 
