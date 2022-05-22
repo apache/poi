@@ -214,8 +214,7 @@ class TestXWPFBugs {
 
                     // we added one level for numbering with id "1"
                     if (id == 1) {
-                        //TODO remaining issue from https://bz.apache.org/bugzilla/show_bug.cgi?id=66079
-                        //assertEquals(1, abstractNum.getAbstractNum().getLvlList().size());
+                        assertEquals(1, abstractNum.getAbstractNum().getLvlList().size());
                     } else {
                         assertEquals(0, abstractNum.getAbstractNum().getLvlList().size());
                     }
@@ -285,6 +284,48 @@ class TestXWPFBugs {
                     .map(e -> e.getCTAbstractNum().getAbstractNumId().intValue())
                     .distinct().count();
             assertEquals(numbering.getAbstractNums().size(), uniqueIdCount);
+        }
+    }
+
+    @Test
+    void testEditNumberings() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("NumberingWithOutOfOrderId.docx")) {
+            XWPFNumbering numbering = doc.createNumbering();
+
+            // Abstract numbering with id = 1 already exists in the file, and has 9 levels
+            XWPFAbstractNum abstractNum1 = numbering.getAbstractNum(BigInteger.ONE);
+            assertEquals(9, abstractNum1.getAbstractNum().getLvlList().size());
+            // Remove all levels from this numbering
+            while (abstractNum1.getAbstractNum().getLvlList().size() > 0) {
+                abstractNum1.getAbstractNum().removeLvl(0);
+            }
+
+            // Add abstract numbering with id = 0
+            addNumberingWithAbstractId(numbering, 0);
+
+            // Add abstract numbering with auto-generated id, this should be 2
+            numbering.addAbstractNum(new XWPFAbstractNum());
+
+            // Add (id + 1) levels to each abstract numbering
+            for (int id = 0; id < 3; id++) {
+                XWPFAbstractNum num = numbering.getAbstractNum(BigInteger.valueOf(id));
+                for (int j = 0; j < id + 1; j++) {
+                    num.getAbstractNum().addNewLvl();
+                }
+            }
+
+            // Check that all levels added successfully
+            for (int id = 0; id < 3; id++) {
+                assertEquals(id + 1, numbering.getAbstractNum(BigInteger.valueOf(id)).getAbstractNum().getLvlList().size());
+            }
+
+            XWPFDocument docReloaded = writeOutAndReadBack(doc);
+            XWPFNumbering numberingReloaded = docReloaded.getNumbering();
+
+            // Check that all added levels persisted after document reload
+            for (int id = 0; id < 3; id++) {
+                assertEquals(id + 1, numberingReloaded.getAbstractNum(BigInteger.valueOf(id)).getAbstractNum().getLvlList().size());
+            }
         }
     }
 

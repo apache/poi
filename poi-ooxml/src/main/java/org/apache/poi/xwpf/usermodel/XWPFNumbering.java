@@ -220,12 +220,15 @@ public class XWPFNumbering extends POIXMLDocumentPart {
     public BigInteger addAbstractNum(XWPFAbstractNum abstractNum) {
         int pos = abstractNums.size();
         if (abstractNum.getAbstractNum() != null) { // Use the current CTAbstractNum if it exists
-            ctNumbering.addNewAbstractNum().set(abstractNum.getAbstractNum());
+            CTAbstractNum ctAbstractNum = ctNumbering.addNewAbstractNum();
+            ctAbstractNum.set(abstractNum.getAbstractNum());
+            abstractNum.setCtAbstractNum(ctAbstractNum);
         } else {
             abstractNum.setCtAbstractNum(ctNumbering.addNewAbstractNum());
             BigInteger id = findNextAbstractNumberingId();
             abstractNum.getAbstractNum().setAbstractNumId(id);
             ctNumbering.setAbstractNumArray(pos, abstractNum.getAbstractNum());
+            abstractNum.setCtAbstractNum(ctNumbering.getAbstractNumArray(pos));
         }
         abstractNums.add(abstractNum);
         return abstractNum.getCTAbstractNum().getAbstractNumId();
