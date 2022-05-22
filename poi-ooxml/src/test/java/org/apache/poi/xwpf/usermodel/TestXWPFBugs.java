@@ -268,6 +268,26 @@ class TestXWPFBugs {
         }
     }
 
+    @Test
+    void test66080() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFNumbering numbering = doc.createNumbering();
+
+            // Add abstract numbering with id 1
+            addNumberingWithAbstractId(numbering, 1);
+
+            // Add abstract numbering with auto-generated id
+            numbering.addAbstractNum(new XWPFAbstractNum());
+
+            // Check that all abstract numbering ids are unique
+            long uniqueIdCount = numbering
+                    .getAbstractNums().stream()
+                    .map(e -> e.getCTAbstractNum().getAbstractNumId().intValue())
+                    .distinct().count();
+            assertEquals(numbering.getAbstractNums().size(), uniqueIdCount);
+        }
+    }
+
     private static void addNumberingWithAbstractId(XWPFNumbering documentNumbering, int id){
         // create a numbering scheme
         CTAbstractNum cTAbstractNum = CTAbstractNum.Factory.newInstance();
