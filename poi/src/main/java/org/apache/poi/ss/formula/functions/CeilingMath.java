@@ -24,6 +24,9 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * Implementation for Excel CEILING.MATH() function.
  * <ul>
@@ -46,18 +49,37 @@ public final class CeilingMath implements FreeRefFunction {
             if (xval == null) {
                 return ErrorEval.NUM_ERROR;
             }
+            double multiplier = 1.0;
+            if (args.length > 1) {
+                Double arg1Val = evaluateValue(args[1], ec.getRowIndex(), ec.getColumnIndex());
+                multiplier = arg1Val != null ? arg1Val.doubleValue() : 1.0;
+            }
             boolean roundNegativeNumsDown = false;
             if (args.length > 2) {
                 Double arg2Val = evaluateValue(args[2], ec.getRowIndex(), ec.getColumnIndex());
                 roundNegativeNumsDown = arg2Val != null && arg2Val.doubleValue() < 0.0;
             }
             if (roundNegativeNumsDown && xval < 0.0) {
+                if (multiplier != 1.0) {
+                    return new NumberEval(roundUsingBigDecimal(xval, multiplier, RoundingMode.FLOOR));
+                }
                 return new NumberEval(Math.floor(xval));
+            }
+            if (multiplier != 1.0) {
+                return new NumberEval(roundUsingBigDecimal(xval, multiplier, RoundingMode.CEILING));
             }
             return new NumberEval(Math.ceil(xval));
         } catch (EvaluationException evaluationException) {
             return evaluationException.getErrorEval();
         }
+    }
+
+    private double roundUsingBigDecimal(double xval, double multiplier, RoundingMode mode) {
+        BigDecimal multiplierDecimal = BigDecimal.valueOf(multiplier);
+        BigDecimal bd = BigDecimal.valueOf(xval).divide(multiplierDecimal)
+                .setScale(0, mode)
+                .multiply(multiplierDecimal);
+        return bd.doubleValue();
     }
 
     private static Double evaluateValue(ValueEval arg, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
