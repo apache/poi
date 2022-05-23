@@ -47,6 +47,10 @@ final class TestFloorMath {
             assertDouble(fe, cell, "FLOOR.MATH(6.7)", 6.0, 0.00000000000001);
             assertDouble(fe, cell, "FLOOR.MATH(-8.1,2)", -10.0, 0.00000000000001);
             assertDouble(fe, cell, "FLOOR.MATH(-5.5,2,-1)", -4.0, 0.00000000000001);
+
+            assertDouble(fe, cell, "FLOOR.MATH(-2.5,-2)", -4.0, 0.00000000000001);
+            assertDouble(fe, cell, "FLOOR.MATH(-2.5,-2,-1)", -2.0, 0.00000000000001);
+            assertDouble(fe, cell, "FLOOR.MATH(2.5,-2)", 2.0, 0.00000000000001);
         }
     }
 
