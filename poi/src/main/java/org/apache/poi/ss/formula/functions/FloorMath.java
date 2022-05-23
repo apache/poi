@@ -29,16 +29,16 @@ import java.math.RoundingMode;
 import static org.apache.poi.ss.formula.functions.MathX.scaledRoundUsingBigDecimal;
 
 /**
- * Implementation for Excel CEILING.MATH() function.
+ * Implementation for Excel FLOOR.MATH() function.
  * <ul>
- *   <li>https://support.microsoft.com/en-us/office/ceiling-math-function-80f95d2f-b499-4eee-9f16-f795a8e306c8</li>
+ *   <li>https://support.microsoft.com/en-us/office/floor-math-function-c302b599-fbdb-4177-ba19-2c2b1249a2f5</li>
  * </ul>
  */
-public final class CeilingMath implements FreeRefFunction {
+public final class FloorMath implements FreeRefFunction {
 
-    public static final CeilingMath instance = new CeilingMath();
+    public static final FloorMath instance = new FloorMath();
 
-    private CeilingMath() {}
+    private FloorMath() {}
 
     @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
@@ -62,14 +62,14 @@ public final class CeilingMath implements FreeRefFunction {
             }
             if (roundNegativeNumsDown && xval < 0.0) {
                 if (multiplier != 1.0) {
-                    return new NumberEval(scaledRoundUsingBigDecimal(xval, multiplier, RoundingMode.FLOOR));
+                    return new NumberEval(scaledRoundUsingBigDecimal(xval, multiplier, RoundingMode.CEILING));
                 }
-                return new NumberEval(Math.floor(xval));
+                return new NumberEval(Math.ceil(xval));
             }
             if (multiplier != 1.0) {
-                return new NumberEval(scaledRoundUsingBigDecimal(xval, multiplier, RoundingMode.CEILING));
+                return new NumberEval(scaledRoundUsingBigDecimal(xval, multiplier, RoundingMode.FLOOR));
             }
-            return new NumberEval(Math.ceil(xval));
+            return new NumberEval(Math.floor(xval));
         } catch (EvaluationException evaluationException) {
             return evaluationException.getErrorEval();
         }

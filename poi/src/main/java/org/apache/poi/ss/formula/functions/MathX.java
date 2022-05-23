@@ -19,6 +19,9 @@ package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.util.NumberToTextConverter;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * This class is an extension to the standard math library
  * provided by java.lang.Math class. It follows the Math class
@@ -231,7 +234,13 @@ final class MathX {
         if (s==0 && n!=0) {
             return Double.NaN;
         } else {
-            return (n==0 || s==0) ? 0 : Math.floor(n/s) * s;
+            if (n == 0.0 || s == 0.0) {
+                return 0.0;
+            } else if (s == 1.0) {
+                return Math.floor(n);
+            } else {
+                return scaledRoundUsingBigDecimal(n, s, RoundingMode.FLOOR);
+            }
         }
     }
 
@@ -254,8 +263,22 @@ final class MathX {
         if (n>0 && s<0) {
             return Double.NaN;
         } else {
-            return (n == 0 || s == 0) ? 0 : Math.ceil(n/s) * s;
+            if (n == 0.0 || s == 0.0) {
+                return 0.0;
+            } else if (s == 1.0) {
+                return Math.ceil(n);
+            } else {
+                return scaledRoundUsingBigDecimal(n, s, RoundingMode.CEILING);
+            }
         }
+    }
+
+    public static double scaledRoundUsingBigDecimal(double xval, double multiplier, RoundingMode mode) {
+        BigDecimal multiplierDecimal = BigDecimal.valueOf(multiplier);
+        BigDecimal bd = BigDecimal.valueOf(xval).divide(multiplierDecimal)
+                .setScale(0, mode)
+                .multiply(multiplierDecimal);
+        return bd.doubleValue();
     }
 
     /**

@@ -31,11 +31,11 @@ import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.apache.poi.ss.util.Utils.assertError;
 
 /**
- * Tests for {@link CeilingMath}
+ * Tests for {@link FloorMath}
  */
-final class TestCeilingMath {
+final class TestFloorMath {
 
-    //https://support.microsoft.com/en-us/office/ceiling-math-function-80f95d2f-b499-4eee-9f16-f795a8e306c8
+    //https://support.microsoft.com/en-us/office/floor-math-function-c302b599-fbdb-4177-ba19-2c2b1249a2f5
     @Test
     void testMicrosoftExamples() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
@@ -43,10 +43,10 @@ final class TestCeilingMath {
             HSSFRow row = sheet.createRow(0);
             HSSFCell cell = row.createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            assertDouble(fe, cell, "CEILING.MATH(24.3,5)", 25.0, 0.00000000000001);
-            assertDouble(fe, cell, "CEILING.MATH(6.7)", 7.0, 0.00000000000001);
-            assertDouble(fe, cell, "CEILING.MATH(-8.1,2)", -8.0, 0.00000000000001);
-            assertDouble(fe, cell, "CEILING.MATH(-5.5,2,-1)", -6.0, 0.00000000000001);
+            assertDouble(fe, cell, "FLOOR.MATH(24.3,5)", 20.0, 0.00000000000001);
+            assertDouble(fe, cell, "FLOOR.MATH(6.7)", 6.0, 0.00000000000001);
+            assertDouble(fe, cell, "FLOOR.MATH(-8.1,2)", -10.0, 0.00000000000001);
+            assertDouble(fe, cell, "FLOOR.MATH(-5.5,2,-1)", -4.0, 0.00000000000001);
         }
     }
 
@@ -57,7 +57,7 @@ final class TestCeilingMath {
             HSSFRow row = sheet.createRow(0);
             HSSFCell cell = row.createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            assertError(fe, cell, "CEILING.MATH()", FormulaError.VALUE);
+            assertError(fe, cell, "FLOOR.MATH()", FormulaError.VALUE);
         }
     }
 
@@ -68,7 +68,7 @@ final class TestCeilingMath {
             HSSFRow row = sheet.createRow(0);
             HSSFCell cell = row.createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            assertError(fe, cell, "CEILING.MATH(\"abc\")", FormulaError.NUM);
+            assertError(fe, cell, "FLOOR.MATH(\"abc\")", FormulaError.NUM);
         }
     }
 }
