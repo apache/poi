@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.util.NumberToTextConverter;
+import org.apache.poi.util.Internal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -273,6 +274,7 @@ final class MathX {
         }
     }
 
+    @Internal
     public static double scaledRoundUsingBigDecimal(double xval, double multiplier, RoundingMode mode) {
         BigDecimal multiplierDecimal = BigDecimal.valueOf(multiplier);
         BigDecimal bd = BigDecimal.valueOf(xval).divide(multiplierDecimal)
