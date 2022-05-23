@@ -48,7 +48,7 @@ public final class CeilingMath implements FreeRefFunction {
         try {
             Double xval = evaluateValue(args[0], ec.getRowIndex(), ec.getColumnIndex());
             if (xval == null) {
-                return ErrorEval.NUM_ERROR;
+                return ErrorEval.VALUE_INVALID;
             }
             double multiplier = 1.0;
             if (args.length > 1) {

@@ -73,7 +73,7 @@ final class TestCeilingMath {
             HSSFRow row = sheet.createRow(0);
             HSSFCell cell = row.createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            assertError(fe, cell, "CEILING.MATH(\"abc\")", FormulaError.NUM);
+            assertError(fe, cell, "CEILING.MATH(\"abc\")", FormulaError.VALUE);
         }
     }
 }

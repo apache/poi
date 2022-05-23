@@ -240,6 +240,8 @@ final class MathX {
                 return 0.0;
             } else if (s == 1.0) {
                 return Math.floor(n);
+            } else if (s < 0.0 && n >= 0.0) {
+                return Double.NaN;
             } else {
                 return scaledRoundUsingBigDecimal(n, s, RoundingMode.FLOOR);
             }

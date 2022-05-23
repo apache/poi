@@ -22,6 +22,7 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.jupiter.api.Test;
 
@@ -29,13 +30,14 @@ import java.io.IOException;
 
 import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.apache.poi.ss.util.Utils.assertError;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Tests for {@link FloorMath}
+ * Tests for Floor function
  */
-final class TestFloorMath {
+final class TestFloor {
 
-    //https://support.microsoft.com/en-us/office/floor-math-function-c302b599-fbdb-4177-ba19-2c2b1249a2f5
+    //https://support.microsoft.com/en-us/office/floor-function-14bb497c-24f2-4e04-b327-b0b4de5a8886
     @Test
     void testMicrosoftExamples() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
@@ -43,15 +45,11 @@ final class TestFloorMath {
             HSSFRow row = sheet.createRow(0);
             HSSFCell cell = row.createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            assertDouble(fe, cell, "FLOOR.MATH(24.3,5)", 20.0, 0.00000000000001);
-            assertDouble(fe, cell, "FLOOR.MATH(6.7)", 6.0, 0.00000000000001);
-            assertDouble(fe, cell, "FLOOR.MATH(-8.1,2)", -10.0, 0.00000000000001);
-            assertDouble(fe, cell, "FLOOR.MATH(-5.5,2,-1)", -4.0, 0.00000000000001);
-
-            assertDouble(fe, cell, "FLOOR.MATH(-2.5,-2)", -4.0, 0.00000000000001);
-            assertDouble(fe, cell, "FLOOR.MATH(-2.5,-2,-1)", -2.0, 0.00000000000001);
-            assertDouble(fe, cell, "FLOOR.MATH(2.5,-2)", 2.0, 0.00000000000001);
-            assertDouble(fe, cell, "FLOOR.MATH(0.234,0.01)", 0.23, 0.00000000000001);
+            assertDouble(fe, cell, "FLOOR(3.7,2)", 2.0, 0.00000000000001);
+            assertDouble(fe, cell, "FLOOR(-2.5,-2)", -2.0, 0.00000000000001);
+            assertError(fe, cell, "FLOOR(2.5,-2)", FormulaError.NUM);
+            assertDouble(fe, cell, "FLOOR(1.58,0.1)", 1.5, 0.00000000000001);
+            assertDouble(fe, cell, "FLOOR(0.234,0.01)", 0.23, 0.00000000000001);
         }
     }
 
@@ -62,18 +60,19 @@ final class TestFloorMath {
             HSSFRow row = sheet.createRow(0);
             HSSFCell cell = row.createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            assertError(fe, cell, "FLOOR.MATH()", FormulaError.VALUE);
+            assertThrows(FormulaParseException.class, () ->
+                assertError(fe, cell, "FLOOR()", FormulaError.VALUE));
         }
     }
 
     @Test
-    void testNumError() throws IOException {
+    void testInvalidNum() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             HSSFRow row = sheet.createRow(0);
             HSSFCell cell = row.createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            assertError(fe, cell, "FLOOR.MATH(\"abc\")", FormulaError.VALUE);
+            assertError(fe, cell, "FLOOR(\"abc\", \"def\")", FormulaError.VALUE);
         }
     }
 }
