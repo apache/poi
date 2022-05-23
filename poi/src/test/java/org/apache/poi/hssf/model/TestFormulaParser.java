@@ -515,6 +515,7 @@ final class TestFormulaParser {
 
         wb.createSheet("Cash_Flow");
         wb.createSheet("Test Sheet");
+        wb.createSheet("Sheet 3>");
 
         HSSFSheet sheet = wb.createSheet("Test");
         HSSFRow row = sheet.createRow(0);
@@ -539,6 +540,10 @@ final class TestFormulaParser {
         formula = cell.getCellFormula();
         assertEquals("'Cash_Flow:Test Sheet'!A1", formula);
 
+        // special character
+        cell.setCellFormula("'Cash_Flow:Sheet 3>'!A1");
+        formula = cell.getCellFormula();
+        assertEquals("'Cash_Flow:Sheet 3>'!A1", formula);
 
         // References to a range (area) of cells:
 

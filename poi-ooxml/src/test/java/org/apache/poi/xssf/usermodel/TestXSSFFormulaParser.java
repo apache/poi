@@ -407,6 +407,7 @@ public final class TestXSSFFormulaParser {
             Sheet sheet1 = wb.createSheet("Sheet1");
             Sheet sheet2 = wb.createSheet("Sheet2");
             Sheet sheet3 = wb.createSheet("Sheet 3");
+            Sheet sheet4 = wb.createSheet("Sheet4>");
 
             Row tempRow = sheet1.createRow(0);
             tempRow.createCell(0).setCellValue(1);
@@ -417,6 +418,10 @@ public final class TestXSSFFormulaParser {
             tempRow.createCell(1).setCellValue(4);
 
             tempRow = sheet3.createRow(0);
+            tempRow.createCell(0).setCellValue(5);
+            tempRow.createCell(1).setCellValue(6);
+
+            tempRow = sheet4.createRow(0);
             tempRow.createCell(0).setCellValue(5);
             tempRow.createCell(1).setCellValue(6);
 
@@ -441,6 +446,20 @@ public final class TestXSSFFormulaParser {
             cell.setCellFormula(formula);
             cellFormula = cell.getCellFormula();
             assertEquals(formula, cellFormula);
+
+            // quoted sheet names with special character
+            cell = tempRow.createCell(5);
+            formula = "SUM('Sheet1:Sheet4>'!A1:B1)";
+            cell.setCellFormula(formula);
+            cellFormula = cell.getCellFormula();
+            assertEquals(formula, cellFormula);
+
+            // quoted sheet names with special character #2
+//            cell = tempRow.createCell(6);
+//            formula = "SUM('Sheet 3:Sheet4>'!A1:B1)";
+//            cell.setCellFormula(formula);
+//            cellFormula = cell.getCellFormula();
+//            assertEquals(formula, cellFormula);
         }
     }
 

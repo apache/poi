@@ -465,7 +465,7 @@ public final class FormulaParser {
     private ParseNode parseRangeable() {
         SkipWhite();
         int savePointer = _pointer;
-        SheetIdentifier sheetIden = parseSheetName();
+        SheetIdentifier sheetIden = parseSheetName(false);
 
         if (sheetIden == null) {
             resetPointer(savePointer);
@@ -1154,7 +1154,7 @@ public final class FormulaParser {
      * Note - caller should reset {@link #_pointer} upon {@code null} result
      * @return The sheet name as an identifier {@code null} if '!' is not found in the right place
      */
-    private SheetIdentifier parseSheetName() {
+    private SheetIdentifier parseSheetName(boolean isSndPartOfQuotedRange) {
         String bookName;
         if (look == '[') {
             bookName = getBookName();
@@ -1162,8 +1162,10 @@ public final class FormulaParser {
             bookName = null;
         }
 
-        if (look == '\'') {
-            Match('\'');
+        if (look == '\'' || isSndPartOfQuotedRange) {
+            if (!isSndPartOfQuotedRange) {
+                Match('\'');
+            }
 
             if (look == '[')
                 bookName = getBookName();
@@ -1197,7 +1199,7 @@ public final class FormulaParser {
             }
             // See if it's a multi-sheet range, eg Sheet1:Sheet3!A1
             if (look == ':') {
-                return parseSheetRange(bookName, iden);
+                return parseSheetRange(bookName, iden, true);
             }
             return null;
         }
@@ -1221,7 +1223,7 @@ public final class FormulaParser {
             }
             // See if it's a multi-sheet range, eg Sheet1:Sheet3!A1
             if (look == ':') {
-                return parseSheetRange(bookName, iden);
+                return parseSheetRange(bookName, iden, false);
             }
             return null;
         }
@@ -1237,9 +1239,9 @@ public final class FormulaParser {
      * If we have something that looks like [book]Sheet1: or
      *  Sheet1, see if it's actually a range eg Sheet1:Sheet2!
      */
-    private SheetIdentifier parseSheetRange(String bookname, NameIdentifier sheet1Name) {
+    private SheetIdentifier parseSheetRange(String bookname, NameIdentifier sheet1Name, boolean isSndPartOfQuotedRange) {
         GetChar();
-        SheetIdentifier sheet2 = parseSheetName();
+        SheetIdentifier sheet2 = parseSheetName(isSndPartOfQuotedRange);
         if (sheet2 != null) {
            return new SheetRangeIdentifier(bookname, sheet1Name, sheet2.getSheetIdentifier());
         }
