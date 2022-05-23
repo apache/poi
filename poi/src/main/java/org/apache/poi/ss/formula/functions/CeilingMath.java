@@ -62,12 +62,14 @@ public final class CeilingMath implements FreeRefFunction {
             }
             if (roundNegativeNumsDown && xval < 0.0) {
                 if (multiplier != 1.0) {
-                    return new NumberEval(scaledRoundUsingBigDecimal(xval, multiplier, RoundingMode.FLOOR));
+                    RoundingMode mode = multiplier < 0.0 ? RoundingMode.CEILING : RoundingMode.FLOOR;
+                    return new NumberEval(scaledRoundUsingBigDecimal(xval, multiplier, mode));
                 }
                 return new NumberEval(Math.floor(xval));
             }
             if (multiplier != 1.0) {
-                return new NumberEval(scaledRoundUsingBigDecimal(xval, multiplier, RoundingMode.CEILING));
+                RoundingMode mode = multiplier < 0.0 ? RoundingMode.FLOOR : RoundingMode.CEILING;
+                return new NumberEval(scaledRoundUsingBigDecimal(xval, multiplier, mode));
             }
             return new NumberEval(Math.ceil(xval));
         } catch (EvaluationException evaluationException) {

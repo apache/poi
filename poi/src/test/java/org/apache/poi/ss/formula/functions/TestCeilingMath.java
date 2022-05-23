@@ -47,6 +47,11 @@ final class TestCeilingMath {
             assertDouble(fe, cell, "CEILING.MATH(6.7)", 7.0, 0.00000000000001);
             assertDouble(fe, cell, "CEILING.MATH(-8.1,2)", -8.0, 0.00000000000001);
             assertDouble(fe, cell, "CEILING.MATH(-5.5,2,-1)", -6.0, 0.00000000000001);
+
+            assertDouble(fe, cell, "CEILING.MATH(2.5,-2)", 4.0, 0.00000000000001);
+            assertDouble(fe, cell, "CEILING.MATH(-2.5,-2)", -2.0, 0.00000000000001);
+            assertDouble(fe, cell, "CEILING.MATH(-2.5,-2,-1)", -4.0, 0.00000000000001);
+            assertDouble(fe, cell, "CEILING.MATH(0.234, 0.01)", 0.24, 0.00000000000001);
         }
     }
 
