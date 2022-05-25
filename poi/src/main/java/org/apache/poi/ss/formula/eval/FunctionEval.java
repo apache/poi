@@ -107,7 +107,7 @@ public final class FunctionEval {
         retval[39] = NumericFunction.MOD;
         retval[40] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DCOUNT);
         retval[41] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DSUM);
-        // 42: DAVERAGE
+        retval[42] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DAVERAGE);
         retval[43] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DMIN);
         retval[44] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DMAX);
         // 45: DSTDEV

@@ -60,6 +60,8 @@ public final class DStarRunner implements Function3Arg {
         DSUM(DSum::new),
         /** @see DCount */
         DCOUNT(DCount::new),
+        /** @see DAverage */
+        DAVERAGE(DAverage::new),
         ;
 
         private final Supplier<IDStarAlgorithm> implSupplier;
