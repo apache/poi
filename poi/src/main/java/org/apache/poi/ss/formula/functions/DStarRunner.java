@@ -104,12 +104,13 @@ public final class DStarRunner implements Function3Arg {
         final IDStarAlgorithm algorithm = algoType.newInstance();
 
         int fc = -1;
-        String field = null;
         try {
             filterColumn = OperandResolver.getSingleValue(filterColumn, srcRowIndex, srcColumnIndex);
-            fc = getColumnForName(filterColumn, db);
-            if (filterColumn instanceof StringEval) {
-                field = ((StringEval)filterColumn).getStringValue();
+            if (filterColumn instanceof NumericValueEval) {
+                //fc is zero based while Excel uses 1 based column numbering
+                fc = (int) Math.round(((NumericValueEval)filterColumn).getNumberValue()) - 1;
+            } else {
+                fc = getColumnForName(filterColumn, db);
             }
             if(fc == -1 && !algorithm.allowEmptyMatchField()) {
                 // column not found
@@ -140,7 +141,7 @@ public final class DStarRunner implements Function3Arg {
             if(matches) {
                 ValueEval currentValueEval = resolveReference(db, row, fc);
                 // Pass the match to the algorithm and conditionally abort the search.
-                boolean shouldContinue = algorithm.processMatch(currentValueEval, field);
+                boolean shouldContinue = algorithm.processMatch(currentValueEval, fc);
                 if(! shouldContinue) {
                     break;
                 }

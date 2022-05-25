@@ -31,7 +31,7 @@ public final class DGet implements IDStarAlgorithm {
     private ValueEval result;
 
     @Override
-    public boolean processMatch(ValueEval eval, String field) {
+    public boolean processMatch(ValueEval eval, int fieldNumber) {
         if(result == null) // First match, just set the value.
         {
             result = eval;

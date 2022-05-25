@@ -43,6 +43,7 @@ public class TestDGet {
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             assertError(fe, cell, "DGET(A5:E11, \"Yield\", A1:A3)", FormulaError.NUM);
             assertDouble(fe, cell, "DGET(A5:E11, \"Yield\", A1:F3)", 10);
+            assertDouble(fe, cell, "DGET(A5:E11, 4, A1:F3)", 10);
         }
     }
 
@@ -52,6 +53,7 @@ public class TestDGet {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             assertDouble(fe, cell, "DGET(A5:E11, \"Yield\", A1:F3)", 6);
+            assertDouble(fe, cell, "DGET(A5:E11, 4, A1:F3)", 6);
         }
     }
 

@@ -42,6 +42,7 @@ public class TestDCount {
             assertDouble(fe, cell, "DCOUNT(A5:E11,,A1:A2)", 3);
             assertDouble(fe, cell, "DCOUNT(A5:E11, \"Age\", A1:A2)", 2);
             assertDouble(fe, cell, "DCOUNT(A5:E11, \"Age\", A1:F2)", 1);
+            assertDouble(fe, cell, "DCOUNT(A5:E11, 3, A1:F2)", 1);
         }
     }
 

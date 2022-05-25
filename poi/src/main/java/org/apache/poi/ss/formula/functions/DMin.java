@@ -33,7 +33,7 @@ public final class DMin implements IDStarAlgorithm {
     private ValueEval minimumValue;
 
     @Override
-    public boolean processMatch(ValueEval eval, String field) {
+    public boolean processMatch(ValueEval eval, int fieldNumber) {
         if(eval instanceof NumericValueEval) {
             if(minimumValue == null) { // First match, just set the value.
                 minimumValue = eval;
