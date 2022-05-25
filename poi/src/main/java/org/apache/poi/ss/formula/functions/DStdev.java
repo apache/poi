@@ -20,39 +20,35 @@ package org.apache.poi.ss.formula.functions;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.util.NumberToTextConverter;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
+import java.util.ArrayList;
 
 /**
- * Implementation of the DAverage function:
- * Gets the average value of a column in an area with given conditions.
+ * Implementation of the DStdev function:
+ * Gets the standard deviation value of a column in an area with given conditions.
  */
-public final class DAverage implements IDStarAlgorithm {
-    private long count;
-    private double total;
+public final class DStdev implements IDStarAlgorithm {
+    private final ArrayList<Double> values = new ArrayList<>();
 
     @Override
     public boolean processMatch(ValueEval eval) {
         if (eval instanceof NumericValueEval) {
-            count++;
-            total += ((NumericValueEval)eval).getNumberValue();
+            final double val = ((NumericValueEval)eval).getNumberValue();
+            values.add(val);
         }
         return true;
     }
 
     @Override
     public ValueEval getResult() {
-        return count == 0 ? NumberEval.ZERO : new NumberEval(divide());
-    }
-
-    private double divide() {
-        return divide(total, count);
-    }
-
-    private static double divide(final double total, final long count) {
-        return BigDecimal.valueOf(total)
-                .divide(BigDecimal.valueOf(count), MathContext.DECIMAL128)
-                .doubleValue();
+        final double[] array = new double[values.size()];
+        int pos = 0;
+        for (Double d : values) {
+            array[pos++] = d;
+        }
+        final double stdev = StatsLib.stdev(array);
+        return new NumberEval(new BigDecimal(NumberToTextConverter.toText(stdev)).doubleValue());
     }
 }

@@ -26,7 +26,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * Counts the value of a column in an area with given conditions.
  */
 public final class DCount implements IDStarAlgorithm {
-    private int count;
+    private long count;
 
     @Override
     public boolean processMatch(ValueEval eval) {
