@@ -33,7 +33,7 @@ public final class DSum implements IDStarAlgorithm {
     private double totalValue = 0;
 
     @Override
-    public boolean processMatch(ValueEval eval, int fieldNumber) {
+    public boolean processMatch(ValueEval eval) {
         if(eval instanceof NumericValueEval) {
             double currentValue = ((NumericValueEval)eval).getNumberValue();
             totalValue += currentValue;

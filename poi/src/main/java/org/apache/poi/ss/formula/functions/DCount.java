@@ -29,8 +29,8 @@ public final class DCount implements IDStarAlgorithm {
     private int count;
 
     @Override
-    public boolean processMatch(ValueEval eval, int fieldNumber) {
-        if (fieldNumber < 0 || eval instanceof NumericValueEval) {
+    public boolean processMatch(ValueEval eval) {
+        if (eval instanceof NumericValueEval) {
             count++;
         }
         return true;

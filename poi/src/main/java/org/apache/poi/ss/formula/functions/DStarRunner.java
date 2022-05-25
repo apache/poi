@@ -23,7 +23,9 @@ import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
+import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
@@ -138,10 +140,13 @@ public final class DStarRunner implements Function3Arg {
                 return ErrorEval.VALUE_INVALID;
             }
             // Filter each entry.
-            if(matches) {
+            if (matches) {
                 ValueEval currentValueEval = resolveReference(db, row, fc);
+                if (fc < 0 && algorithm.allowEmptyMatchField() && !(currentValueEval instanceof NumericValueEval)) {
+                    currentValueEval = NumberEval.ZERO;
+                }
                 // Pass the match to the algorithm and conditionally abort the search.
-                boolean shouldContinue = algorithm.processMatch(currentValueEval, fc);
+                boolean shouldContinue = algorithm.processMatch(currentValueEval);
                 if(! shouldContinue) {
                     break;
                 }

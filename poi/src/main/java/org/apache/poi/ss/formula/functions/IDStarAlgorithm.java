@@ -27,10 +27,9 @@ public interface IDStarAlgorithm {
     /**
      * Process a match that is found during a run through a database.
      * @param eval ValueEval of the cell in the matching row. References will already be resolved.
-     * @param fieldNumber the field number (added in POI 5.2.3)
      * @return Whether we should continue iterating through the database.
      */
-    boolean processMatch(ValueEval eval, int fieldNumber);
+    boolean processMatch(ValueEval eval);
 
     /**
      * Return a result ValueEval that will be the result of the calculation.
