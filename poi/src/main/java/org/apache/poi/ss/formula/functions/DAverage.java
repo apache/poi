@@ -43,10 +43,10 @@ public final class DAverage implements IDStarAlgorithm {
 
     @Override
     public ValueEval getResult() {
-        return count == 0 ? NumberEval.ZERO : new NumberEval(divide());
+        return count == 0 ? NumberEval.ZERO : new NumberEval(getAverage());
     }
 
-    private double divide() {
+    private double getAverage() {
         return divide(total, count);
     }
 
