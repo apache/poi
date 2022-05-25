@@ -30,6 +30,7 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.StringValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.util.NumberComparer;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 
 /**
@@ -41,6 +42,7 @@ import org.apache.poi.util.LocaleUtil;
  * - wildcards ? and * in string conditions
  * - functions as conditions
  */
+@Internal
 public final class DStarRunner implements Function3Arg {
     /**
      * Enum for convenience to identify and source implementations of the D* functions
