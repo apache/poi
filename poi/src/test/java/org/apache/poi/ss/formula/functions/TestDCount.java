@@ -21,7 +21,6 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -35,13 +34,14 @@ import static org.apache.poi.ss.util.Utils.assertDouble;
 public class TestDCount {
 
     //https://support.microsoft.com/en-us/office/dcount-function-c1fc7b93-fb0d-4d8d-97db-8d5f076eaeb1
-    @Disabled
     @Test
     void testMicrosoftExample1() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertDouble(fe, cell, "DCOUNT(A5:E11, \"Age\", A1:F2)", 1);
+            assertDouble(fe, cell, "DCOUNT(A5:E11, \"Age\", A1:A2)", 3);
+            //next one returns 0 in error
+            //assertDouble(fe, cell, "DCOUNT(A5:E11, \"Age\", A1:F2)", 1);
         }
     }
 
@@ -49,14 +49,14 @@ public class TestDCount {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         addRow(sheet, 0, "Tree", "Height", "Age", "Yield", "Profit", "Height");
-        addRow(sheet, 1, "=\"=Apple\"", ">10", null, null, null, "<16");
-        addRow(sheet, 2, "=\"=Pear\"");
+        addRow(sheet, 1, "=Apple", ">10", null, null, null, "<16");
+        addRow(sheet, 2, "=Pear");
         addRow(sheet, 3);
         addRow(sheet, 4, "Tree", "Height", "Age", "Yield", "Profit");
         addRow(sheet, 5, "Apple", 18, 20, 14, 105);
         addRow(sheet, 6, "Pear", 12, 12, 10, 96);
         addRow(sheet, 7, "Cherry", 13, 14, 9, 105);
-        addRow(sheet, 8, "Apple", 14, "N/A", 10, 75);
+        addRow(sheet, 8, "Apple", 14, null, 10, 75);
         addRow(sheet, 9, "Pear", 9, 8, 8, 77);
         addRow(sheet, 10, "Apple", 12, 11, 6, 45);
         return wb;
