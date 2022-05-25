@@ -80,7 +80,7 @@ public final class DStarRunner implements Function3Arg {
         this.algoType = algorithm;
     }
 
-    public final ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+    public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
         if(args.length == 3) {
             return evaluate(srcRowIndex, srcColumnIndex, args[0], args[1], args[2]);
         }
@@ -98,25 +98,31 @@ public final class DStarRunner implements Function3Arg {
         AreaEval db = (AreaEval)database;
         AreaEval cdb = (AreaEval)conditionDatabase;
 
+        // Create an algorithm runner.
+        final IDStarAlgorithm algorithm = algoType.newInstance();
+
+        int fc = -1;
+        String field = null;
         try {
             filterColumn = OperandResolver.getSingleValue(filterColumn, srcRowIndex, srcColumnIndex);
-        } catch (EvaluationException e) {
-            return e.getErrorEval();
-        }
-
-        int fc;
-        try {
             fc = getColumnForName(filterColumn, db);
-        }
-        catch (EvaluationException e) {
-            return ErrorEval.VALUE_INVALID;
-        }
-        if(fc == -1) { // column not found
-            return ErrorEval.VALUE_INVALID;
+            if (filterColumn instanceof StringEval) {
+                field = ((StringEval)filterColumn).getStringValue();
+            }
+            if(fc == -1 && !algorithm.allowEmptyMatchField()) {
+                // column not found
+                return ErrorEval.VALUE_INVALID;
+            }
+        } catch (EvaluationException e) {
+            if (!algorithm.allowEmptyMatchField()) {
+                return e.getErrorEval();
+            }
+        } catch (Exception e) {
+            if (!algorithm.allowEmptyMatchField()) {
+                return ErrorEval.VALUE_INVALID;
+            }
         }
 
-        // Create an algorithm runner.
-        IDStarAlgorithm algorithm = algoType.newInstance();
 
         // Iterate over all DB entries.
         final int height = db.getHeight();
@@ -132,7 +138,7 @@ public final class DStarRunner implements Function3Arg {
             if(matches) {
                 ValueEval currentValueEval = resolveReference(db, row, fc);
                 // Pass the match to the algorithm and conditionally abort the search.
-                boolean shouldContinue = algorithm.processMatch(currentValueEval);
+                boolean shouldContinue = algorithm.processMatch(currentValueEval, field);
                 if(! shouldContinue) {
                     break;
                 }

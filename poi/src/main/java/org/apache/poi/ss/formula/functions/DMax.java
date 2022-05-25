@@ -33,7 +33,7 @@ public final class DMax implements IDStarAlgorithm {
     private ValueEval maximumValue;
 
     @Override
-    public boolean processMatch(ValueEval eval) {
+    public boolean processMatch(ValueEval eval, String field) {
         if(eval instanceof NumericValueEval) {
             if(maximumValue == null) { // First match, just set the value.
                 maximumValue = eval;

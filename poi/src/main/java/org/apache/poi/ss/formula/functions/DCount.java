@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
@@ -28,13 +29,20 @@ public final class DCount implements IDStarAlgorithm {
     private int count;
 
     @Override
-    public boolean processMatch(ValueEval eval) {
-        count++;
+    public boolean processMatch(ValueEval eval, String field) {
+        if (field == null || eval instanceof NumericValueEval) {
+            count++;
+        }
         return true;
     }
 
     @Override
     public ValueEval getResult() {
         return new NumberEval(count);
+    }
+
+    @Override
+    public boolean allowEmptyMatchField() {
+        return true;
     }
 }

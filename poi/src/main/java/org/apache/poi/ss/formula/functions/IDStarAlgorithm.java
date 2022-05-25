@@ -27,13 +27,24 @@ public interface IDStarAlgorithm {
     /**
      * Process a match that is found during a run through a database.
      * @param eval ValueEval of the cell in the matching row. References will already be resolved.
+     * @param field the field name (added in POI 5.2.3)
      * @return Whether we should continue iterating through the database.
      */
-    boolean processMatch(ValueEval eval);
+    boolean processMatch(ValueEval eval, String field);
+
     /**
      * Return a result ValueEval that will be the result of the calculation.
      * This is always called at the end of a run through the database.
      * @return a ValueEval
      */
     ValueEval getResult();
+
+    /**
+     * Whether the field value (the 2nd param in DCOUNT, DGET, etc.) can evaluate to empty. It
+     * is allowed to evaluate to empty for DCOUNT.
+     * @return whether the field value can evaluate to empty
+     */
+    default boolean allowEmptyMatchField() {
+        return false;
+    }
 }

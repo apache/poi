@@ -39,7 +39,8 @@ public class TestDCount {
         try (HSSFWorkbook wb = initWorkbook1()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertDouble(fe, cell, "DCOUNT(A5:E11, \"Age\", A1:A2)", 3);
+            assertDouble(fe, cell, "DCOUNT(A5:E11,,A1:A2)", 3);
+            assertDouble(fe, cell, "DCOUNT(A5:E11, \"Age\", A1:A2)", 2);
             //next one returns 0 in error
             //assertDouble(fe, cell, "DCOUNT(A5:E11, \"Age\", A1:F2)", 1);
         }
