@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Locale;
 import java.util.function.Supplier;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
@@ -30,6 +31,7 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.StringValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.util.NumberComparer;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * This class performs a D* calculation. It takes an {@link IDStarAlgorithm} object and
@@ -316,7 +318,7 @@ public final class DStarRunner implements Function3Arg {
                     return testNumericCondition(value, operator.equal, stringOrNumber);
                 } else { // It's a string.
                     String valueString = value instanceof BlankEval ? "" : OperandResolver.coerceValueToString(value);
-                    return stringOrNumber.equals(valueString);
+                    return stringOrNumber.equalsIgnoreCase(valueString);
                 }
             } else { // It's a text starts-with condition.
                 if(conditionString.isEmpty()) {
@@ -324,7 +326,7 @@ public final class DStarRunner implements Function3Arg {
                 }
                 else {
                     String valueString = value instanceof BlankEval ? "" : OperandResolver.coerceValueToString(value);
-                    return valueString.startsWith(conditionString);
+                    return valueString.toLowerCase(LocaleUtil.getUserLocale()).startsWith(conditionString.toLowerCase(LocaleUtil.getUserLocale()));
                 }
             }
         } else if(condition instanceof NumericValueEval) {
