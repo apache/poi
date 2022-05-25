@@ -17,7 +17,6 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import java.util.Locale;
 import java.util.function.Supplier;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
@@ -55,6 +54,8 @@ public final class DStarRunner implements Function3Arg {
         DMAX(DMax::new),
         /** @see DSum */
         DSUM(DSum::new),
+        /** @see DCount */
+        DCOUNT(DCount::new),
         ;
 
         private final Supplier<IDStarAlgorithm> implSupplier;
@@ -122,7 +123,7 @@ public final class DStarRunner implements Function3Arg {
         for(int row = 1; row < height; ++row) {
             boolean matches;
             try {
-                matches = fullfillsConditions(db, row, cdb);
+                matches = fulfillsConditions(db, row, cdb);
             }
             catch (EvaluationException e) {
                 return ErrorEval.VALUE_INVALID;
@@ -181,7 +182,7 @@ public final class DStarRunner implements Function3Arg {
      * @param name Column heading.
      * @return Corresponding column number.
      */
-    private static int getColumnForString(AreaEval db,String name) {
+    private static int getColumnForString(AreaEval db, String name) {
         int resultColumn = -1;
         final int width = db.getWidth();
         for(int column = 0; column < width; ++column) {
@@ -211,7 +212,7 @@ public final class DStarRunner implements Function3Arg {
      * @throws EvaluationException If references could not be resolved or comparison
      * operators and operands didn't match.
      */
-    private static boolean fullfillsConditions(AreaEval db, int row, AreaEval cdb)
+    private static boolean fulfillsConditions(AreaEval db, int row, AreaEval cdb)
             throws EvaluationException {
         // Only one row must match to accept the input, so rows are ORed.
         // Each row is made up of cells where each cell is a condition,

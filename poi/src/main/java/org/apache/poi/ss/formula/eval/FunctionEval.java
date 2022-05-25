@@ -105,7 +105,7 @@ public final class FunctionEval {
         retval[37] = BooleanFunction.OR;
         retval[38] = BooleanFunction.NOT;
         retval[39] = NumericFunction.MOD;
-        // 40: DCOUNT
+        retval[40] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DCOUNT);
         retval[41] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DSUM);
         // 42: DAVERAGE
         retval[43] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DMIN);
