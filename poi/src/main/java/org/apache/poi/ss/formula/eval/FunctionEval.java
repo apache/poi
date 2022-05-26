@@ -333,13 +333,13 @@ public final class FunctionEval {
         // 358: GETPIVOTDATA
         retval[359] = new Hyperlink();
         // 360: PHONETIC
-        // 361: AVERAGEA
+        retval[361] = AggregateFunction.AVERAGEA;
         retval[362] = MinaMaxa.MAXA;
         retval[363] = MinaMaxa.MINA;
         // 364: STDEVPA
         // 365: VARPA
-        // 366: STDEVA
-        // 367: VARA
+        retval[366] = AggregateFunction.STDEVA;
+        retval[367] = AggregateFunction.VARA;
 
         for (int i = 0; i < retval.length; i++) {
             Function f = retval[i];

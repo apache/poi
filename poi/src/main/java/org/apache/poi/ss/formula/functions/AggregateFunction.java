@@ -187,6 +187,21 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
         }
     };
     public static final Function AVERAGE = new AggregateFunction() {
+        @Override
+        protected double evaluate(double[] values) throws EvaluationException {
+            if (values.length < 1) {
+                throw new EvaluationException(ErrorEval.DIV_ZERO);
+            }
+            return MathX.average(values);
+        }
+    };
+    public static final Function AVERAGEA = new AggregateFunction() {
+        @Override
+        protected boolean handleLogicalValues() {
+            return true;
+        }
+
+        @Override
         protected double evaluate(double[] values) throws EvaluationException {
             if (values.length < 1) {
                 throw new EvaluationException(ErrorEval.DIV_ZERO);
@@ -236,6 +251,20 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
             return StatsLib.stdevp(values);
         }
     };
+    public static final Function STDEVA = new AggregateFunction() {
+        @Override
+        protected boolean handleLogicalValues() {
+            return true;
+        }
+
+        @Override
+        protected double evaluate(double[] values) throws EvaluationException {
+            if (values.length < 1) {
+                throw new EvaluationException(ErrorEval.DIV_ZERO);
+            }
+            return StatsLib.stdev(values);
+        }
+    };
     public static final Function SUM = new AggregateFunction() {
         protected double evaluate(double[] values) {
             return MathX.sum(values);
@@ -260,6 +289,20 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
                 throw new EvaluationException(ErrorEval.DIV_ZERO);
             }
             return StatsLib.varp(values);
+        }
+    };
+    public static final Function VARA = new AggregateFunction() {
+        @Override
+        protected boolean handleLogicalValues() {
+            return true;
+        }
+        
+        @Override
+        protected double evaluate(double[] values) throws EvaluationException {
+            if (values.length < 1) {
+                throw new EvaluationException(ErrorEval.DIV_ZERO);
+            }
+            return StatsLib.var(values);
         }
     };
     public static final Function GEOMEAN = new Geomean();
