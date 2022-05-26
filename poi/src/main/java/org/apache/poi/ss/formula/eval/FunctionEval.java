@@ -112,7 +112,7 @@ public final class FunctionEval {
         retval[44] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DMAX);
         retval[45] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DSTDEV);
         retval[46] = AggregateFunction.VAR;
-        // 47: DVAR
+        retval[47] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DVAR);
         retval[48] = TextFunction.TEXT;
         // 49: LINEST
         retval[50] = new Trend();

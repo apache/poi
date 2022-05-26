@@ -23,7 +23,6 @@ import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
@@ -64,6 +63,8 @@ public final class DStarRunner implements Function3Arg {
         DAVERAGE(DAverage::new),
         /** @see DStdev */
         DSTDEV(DStdev::new),
+        /** @see DVar */
+        DVAR(DVar::new),
         ;
 
         private final Supplier<IDStarAlgorithm> implSupplier;
