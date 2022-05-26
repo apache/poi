@@ -175,6 +175,8 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "SERIESSUM", null);
         r(m, "SINGLE", Single.instance);
         r(m, "SQRTPI", Sqrtpi.instance);
+        r(m, "STDEV.S", Stdevs.instance);
+        r(m, "STDEV.P", Stdevp.instance);
         r(m, "SUMIFS", Sumifs.instance);
         r(m, "SWITCH", Switch.instance);
         r(m, "TBILLEQ", null);
@@ -195,6 +197,8 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "YIELD", null);
         r(m, "YIELDDISC", null);
         r(m, "YIELDMAT", null);
+        r(m, "VAR.S", Vars.instance);
+        r(m, "VAR.P", Varp.instance);
 
         return m;
     }

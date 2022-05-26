@@ -29,18 +29,22 @@ import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 
 /**
- * Testcase for function STDEVP()
+ * Testcase for functions: STDEV(), STDEVP(), STDEV.S(), STDEV.P()
  */
-public class TestStdevp {
+public class TestStdev {
 
     //https://support.microsoft.com/en-us/office/stdevp-function-1f7c1c88-1bec-4422-8242-e9f7dc8bb195
+    //https://support.microsoft.com/en-us/office/stdev-p-function-6e917c05-31a0-496f-ade7-4f4e7462f285
+    //https://support.microsoft.com/en-us/office/stdev-s-function-7d69cf97-0c1f-4acf-be27-f3e83904cc23
     @Test
     void testMicrosoftExample1() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "STDEVP(A3:A12)", 26.0545581424825, 0.00000000001);
+            assertDouble(fe, cell, "STDEV.P(A3:A12)", 26.0545581424825, 0.00000000001);
             assertDouble(fe, cell, "STDEV(A3:A12)", 27.4639157198435, 0.00000000001);
+            assertDouble(fe, cell, "STDEV.S(A3:A12)", 27.4639157198435, 0.00000000001);
         }
     }
 
