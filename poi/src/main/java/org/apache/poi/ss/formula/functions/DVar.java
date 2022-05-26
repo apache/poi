@@ -30,13 +30,12 @@ import java.util.ArrayList;
  * Gets the variance value of a column in an area with given conditions.
  */
 public final class DVar implements IDStarAlgorithm {
-    private final ArrayList<Double> values = new ArrayList<>();
+    private final ArrayList<NumericValueEval> values = new ArrayList<>();
 
     @Override
     public boolean processMatch(ValueEval eval) {
         if (eval instanceof NumericValueEval) {
-            final double val = ((NumericValueEval)eval).getNumberValue();
-            values.add(val);
+            values.add((NumericValueEval) eval);
         }
         return true;
     }
@@ -45,8 +44,8 @@ public final class DVar implements IDStarAlgorithm {
     public ValueEval getResult() {
         final double[] array = new double[values.size()];
         int pos = 0;
-        for (Double d : values) {
-            array[pos++] = d;
+        for (NumericValueEval d : values) {
+            array[pos++] = d.getNumberValue();
         }
         final double var = StatsLib.var(array);
         return new NumberEval(new BigDecimal(NumberToTextConverter.toText(var)).doubleValue());
