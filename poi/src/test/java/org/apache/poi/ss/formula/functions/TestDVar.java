@@ -29,7 +29,7 @@ import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 
 /**
- * Testcase for function DVAR()
+ * Testcase for function DVAR() and DVARP()
  */
 public class TestDVar {
 
@@ -40,6 +40,16 @@ public class TestDVar {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "DVAR(A4:E10, \"Yield\", A1:A3)", 8.8, 0.0000000001);
+        }
+    }
+
+    //https://support.microsoft.com/en-us/office/dvarp-function-eb0ba387-9cb7-45c8-81e9-0394912502fc
+    @Test
+    void testDVARPMicrosoftExample1() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
+            assertDouble(fe, cell, "DVARP(A4:E10, \"Yield\", A1:A3)", 7.04, 0.0000000001);
         }
     }
 

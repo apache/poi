@@ -206,8 +206,8 @@ public final class FunctionEval {
 
         retval[193] = AggregateFunction.STDEVP;
         retval[194] = AggregateFunction.VARP;
-        // 195: DSTDEVP
-        // 196: DVARP
+        retval[195] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DSTDEVP);
+        retval[196] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DVARP);
         retval[197] = NumericFunction.TRUNC;
         retval[198] = LogicalFunction.ISLOGICAL;
         // 199: DCOUNTA

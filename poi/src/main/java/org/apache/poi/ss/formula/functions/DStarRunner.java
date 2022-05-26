@@ -63,8 +63,12 @@ public final class DStarRunner implements Function3Arg {
         DAVERAGE(DAverage::new),
         /** @see DStdev */
         DSTDEV(DStdev::new),
+        /** @see DStdevp */
+        DSTDEVP(DStdevp::new),
         /** @see DVar */
         DVAR(DVar::new),
+        /** @see DVarp */
+        DVARP(DVarp::new),
         /** @see DProduct */
         DPRODUCT(DProduct::new),
         ;

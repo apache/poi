@@ -29,7 +29,7 @@ import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 
 /**
- * Testcase for function DSTDEV()
+ * Testcase for function DSTDEV() and DSTDEVP()
  */
 public class TestDStdev {
 
@@ -40,6 +40,16 @@ public class TestDStdev {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "DSTDEV(A5:E11, \"Yield\", A1:A3)", 2.96647939483827, 0.0000000001);
+        }
+    }
+
+    //https://support.microsoft.com/en-us/office/dstdevp-function-04b78995-da03-4813-bbd9-d74fd0f5d94b
+    @Test
+    void testDSTDEVPMicrosoftExample1() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
+            assertDouble(fe, cell, "DSTDEVP(A5:E11, \"Yield\", A1:A3)", 2.65329983228432, 0.0000000001);
         }
     }
 
