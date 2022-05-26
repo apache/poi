@@ -65,6 +65,8 @@ public final class DStarRunner implements Function3Arg {
         DSTDEV(DStdev::new),
         /** @see DVar */
         DVAR(DVar::new),
+        /** @see DProduct */
+        DPRODUCT(DProduct::new),
         ;
 
         private final Supplier<IDStarAlgorithm> implSupplier;

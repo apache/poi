@@ -201,7 +201,7 @@ public final class FunctionEval {
         retval[183] = AggregateFunction.PRODUCT;
         retval[184] = NumericFunction.FACT;
 
-        // 189: DPRODUCT
+        retval[189] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DPRODUCT);
         retval[190] = LogicalFunction.ISNONTEXT;
 
         retval[194] = AggregateFunction.VARP;
