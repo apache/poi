@@ -203,7 +203,7 @@ class TestWorkdayIntlFunction {
         assertEquals(40944.0, numberValue);
     }
 
-    private class MockAreaEval extends AreaEvalBase {
+    private static class MockAreaEval extends AreaEvalBase {
 
         private List<ValueEval> holidays;
 

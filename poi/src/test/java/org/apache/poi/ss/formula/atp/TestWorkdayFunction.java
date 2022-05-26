@@ -171,7 +171,7 @@ class TestWorkdayFunction {
         assertEquals(expDate, actDate);
     }
 
-    private class MockAreaEval extends AreaEvalBase {
+    private static class MockAreaEval extends AreaEvalBase {
 
         private List<ValueEval> holidays;
 
