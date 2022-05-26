@@ -57,6 +57,14 @@ final class StatsLib {
         return r;
     }
 
+    public static double stdevp(double[] v) {
+        double r = Double.NaN;
+        if (v!=null && v.length > 1) {
+            r = Math.sqrt( devsq(v) / v.length );
+        }
+        return r;
+    }
+
     public static double var(double[] v) {
         double r = Double.NaN;
         if (v!=null && v.length > 1) {

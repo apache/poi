@@ -204,6 +204,7 @@ public final class FunctionEval {
         retval[189] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DPRODUCT);
         retval[190] = LogicalFunction.ISNONTEXT;
 
+        retval[193] = AggregateFunction.STDEVP;
         retval[194] = AggregateFunction.VARP;
         // 195: DSTDEVP
         // 196: DVARP

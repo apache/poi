@@ -228,6 +228,14 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
             return StatsLib.stdev(values);
         }
     };
+    public static final Function STDEVP = new AggregateFunction() {
+        protected double evaluate(double[] values) throws EvaluationException {
+            if (values.length < 1) {
+                throw new EvaluationException(ErrorEval.DIV_ZERO);
+            }
+            return StatsLib.stdevp(values);
+        }
+    };
     public static final Function SUM = new AggregateFunction() {
         protected double evaluate(double[] values) {
             return MathX.sum(values);
