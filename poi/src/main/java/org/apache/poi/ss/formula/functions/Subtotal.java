@@ -27,7 +27,6 @@ import java.util.List;
 import org.apache.poi.ss.formula.LazyRefEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
@@ -52,10 +51,10 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  *      <tr><td>5</td><td>MIN</td></tr>
  *      <tr><td>6</td><td>PRODUCT</td></tr>
  *      <tr><td>7</td><td>STDEV</td></tr>
- *      <tr><td>8</td><td>STDEVP *</td></tr>
+ *      <tr><td>8</td><td>STDEVP</td></tr>
  *      <tr><td>9</td><td>SUM</td></tr>
- *      <tr><td>10</td><td>VAR *</td></tr>
- *      <tr><td>11</td><td>VARP *</td></tr>
+ *      <tr><td>10</td><td>VAR</td></tr>
+ *      <tr><td>11</td><td>VARP</td></tr>
  *      <tr><td>101</td><td>AVERAGE</td></tr>
  *      <tr><td>102</td><td>COUNT</td></tr>
  *      <tr><td>103</td><td>COUNTA</td></tr>
@@ -63,12 +62,12 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  *      <tr><td>105</td><td>MIN</td></tr>
  *      <tr><td>106</td><td>PRODUCT</td></tr>
  *      <tr><td>107</td><td>STDEV</td></tr>
- *      <tr><td>108</td><td>STDEVP *</td></tr>
+ *      <tr><td>108</td><td>STDEVP</td></tr>
  *      <tr><td>109</td><td>SUM</td></tr>
- *      <tr><td>110</td><td>VAR *</td></tr>
- *      <tr><td>111</td><td>VARP *</td></tr>
+ *      <tr><td>110</td><td>VAR</td></tr>
+ *      <tr><td>111</td><td>VARP</td></tr>
  *  </table><br>
- * * Not implemented in POI yet. Functions 101-111 are the same as functions 1-11 but with
+ * * Functions 101-111 are the same as functions 1-11 but with
  * the option 'ignore hidden values'.
  */
 public class Subtotal implements Function {
@@ -82,10 +81,10 @@ public class Subtotal implements Function {
             case 5: return subtotalInstance(AggregateFunction.MIN, true);
             case 6: return subtotalInstance(AggregateFunction.PRODUCT, true);
             case 7: return subtotalInstance(AggregateFunction.STDEV, true);
-            case 8: throw new NotImplementedFunctionException("STDEVP");
+            case 8: return subtotalInstance(AggregateFunction.STDEVP, true);
             case 9: return subtotalInstance(AggregateFunction.SUM, true);
-            case 10: throw new NotImplementedFunctionException("VAR");
-            case 11: throw new NotImplementedFunctionException("VARP");
+            case 10: return subtotalInstance(AggregateFunction.VAR, true);
+            case 11: return subtotalInstance(AggregateFunction.VARP, true);
             case 101: return subtotalInstance(AggregateFunction.AVERAGE, false);
             case 102: return Count.subtotalInstance(false);
             case 103: return Counta.subtotalInstance(false);
@@ -93,10 +92,10 @@ public class Subtotal implements Function {
             case 105: return subtotalInstance(AggregateFunction.MIN, false);
             case 106: return subtotalInstance(AggregateFunction.PRODUCT, false);
             case 107: return subtotalInstance(AggregateFunction.STDEV, false);
-            case 108: throw new NotImplementedFunctionException("STDEVP SUBTOTAL with 'exclude hidden values' option");
+            case 108: return subtotalInstance(AggregateFunction.STDEVP, false);
             case 109: return subtotalInstance(AggregateFunction.SUM, false);
-            case 110: throw new NotImplementedFunctionException("VAR SUBTOTAL with 'exclude hidden values' option");
-            case 111: throw new NotImplementedFunctionException("VARP SUBTOTAL with 'exclude hidden values' option");
+            case 110: return subtotalInstance(AggregateFunction.VAR, false);
+            case 111: return subtotalInstance(AggregateFunction.VARP, false);
         }
         throw EvaluationException.invalidValue();
     }
