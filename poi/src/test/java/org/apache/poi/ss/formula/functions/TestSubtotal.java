@@ -315,10 +315,10 @@ final class TestSubtotal {
 
         fe.evaluateAll();
 
-        assertEquals(1.41421, a3.getNumericCellValue(), 0.0001);
-        assertEquals(7.65685, a6.getNumericCellValue(), 0.0001);
-        assertEquals(2.82842, a7.getNumericCellValue(), 0.0001);
-        assertEquals(2.82842, a8.getNumericCellValue(), 0.0001);
+        assertEquals(1.41421, a3.getNumericCellValue(), 0.00001);
+        assertEquals(7.65685, a6.getNumericCellValue(), 0.00001);
+        assertEquals(2.82842, a7.getNumericCellValue(), 0.00001);
+        assertEquals(2.82842, a8.getNumericCellValue(), 0.00001);
         wb.close();
     }
 
@@ -399,9 +399,6 @@ final class TestSubtotal {
 
         // formula, throws NotImplemnted?
         String[][] formulas = {
-            { "SUBTOTAL(8,B2:B3)", NotImplementedException.class.getName() },
-            { "SUBTOTAL(10,B2:B3)", NotImplementedException.class.getName() },
-            { "SUBTOTAL(11,B2:B3)", NotImplementedException.class.getName() },
             { "SUBTOTAL(0,B2:B3)", null },
             { "SUBTOTAL(9)", FormulaParseException.class.getName() },
             { "SUBTOTAL()", FormulaParseException.class.getName() },
