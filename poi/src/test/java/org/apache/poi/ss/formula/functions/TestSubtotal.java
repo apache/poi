@@ -98,23 +98,23 @@ final class TestSubtotal {
         b3.setCellValue(3);
         Cell b4 = sh.createRow(3).createCell(1);
         b4.setCellFormula("SUBTOTAL(1,B2:B3)");
-        Cell a4 = sh.createRow(4).createCell(1);
-        a4.setCellValue(1);
-        Cell a5 = sh.createRow(5).createCell(1);
-        a5.setCellValue(7);
-        Cell a6 = sh.createRow(6).createCell(1);
-        a6.setCellFormula("SUBTOTAL(1,B2:B6)*2 + 2");
-        Cell a7 = sh.createRow(7).createCell(1);
-        a7.setCellFormula("SUBTOTAL(1,B2:B7)");
-        Cell a8 = sh.createRow(8).createCell(1);
-        a8.setCellFormula("SUBTOTAL(1,B2,B3,B4,B5,B6,B7,B8)");
+        Cell b5 = sh.createRow(4).createCell(1);
+        b5.setCellValue(1);
+        Cell b6 = sh.createRow(5).createCell(1);
+        b6.setCellValue(7);
+        Cell b7 = sh.createRow(6).createCell(1);
+        b7.setCellFormula("SUBTOTAL(1,B2:B6)*2 + 2");
+        Cell b8 = sh.createRow(7).createCell(1);
+        b8.setCellFormula("SUBTOTAL(1,B2:B7)");
+        Cell b9 = sh.createRow(8).createCell(1);
+        b9.setCellFormula("SUBTOTAL(1,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(2.0, b4.getNumericCellValue(), 0);
-        assertEquals(8.0, a6.getNumericCellValue(), 0);
-        assertEquals(3.0, a7.getNumericCellValue(), 0);
-        assertEquals(3.0, a8.getNumericCellValue(), 0);
+        assertEquals(8.0, b7.getNumericCellValue(), 0);
+        assertEquals(3.0, b8.getNumericCellValue(), 0);
+        assertEquals(3.0, b9.getNumericCellValue(), 0);
         wb.close();
 
     }
@@ -132,23 +132,23 @@ final class TestSubtotal {
         b3.setCellValue(3);
         Cell b4 = sh.createRow(3).createCell(1);
         b4.setCellFormula("SUBTOTAL(9,B2:B3)");
-        Cell a4 = sh.createRow(4).createCell(1);
-        a4.setCellValue(1);
-        Cell a5 = sh.createRow(5).createCell(1);
-        a5.setCellValue(7);
-        Cell a6 = sh.createRow(6).createCell(1);
-        a6.setCellFormula("SUBTOTAL(9,B2:B6)*2 + 2");
-        Cell a7 = sh.createRow(7).createCell(1);
-        a7.setCellFormula("SUBTOTAL(9,B2:B7)");
-        Cell a8 = sh.createRow(8).createCell(1);
-        a8.setCellFormula("SUBTOTAL(9,B2,B3,B4,B5,B6,B7,B8)");
+        Cell b5 = sh.createRow(4).createCell(1);
+        b5.setCellValue(1);
+        Cell b6 = sh.createRow(5).createCell(1);
+        b6.setCellValue(7);
+        Cell b7 = sh.createRow(6).createCell(1);
+        b7.setCellFormula("SUBTOTAL(9,B2:B6)*2 + 2");
+        Cell b8 = sh.createRow(7).createCell(1);
+        b8.setCellFormula("SUBTOTAL(9,B2:B7)");
+        Cell b9 = sh.createRow(8).createCell(1);
+        b9.setCellFormula("SUBTOTAL(9,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(4.0, b4.getNumericCellValue(), 0);
-        assertEquals(26.0, a6.getNumericCellValue(), 0);
-        assertEquals(12.0, a7.getNumericCellValue(), 0);
-        assertEquals(12.0, a8.getNumericCellValue(), 0);
+        assertEquals(26.0, b7.getNumericCellValue(), 0);
+        assertEquals(12.0, b8.getNumericCellValue(), 0);
+        assertEquals(12.0, b9.getNumericCellValue(), 0);
         wb.close();
     }
 
@@ -166,23 +166,23 @@ final class TestSubtotal {
         b3.setCellValue(3);
         Cell b4 = sh.createRow(3).createCell(1);
         b4.setCellFormula("SUBTOTAL(2,B2:B3)");
-        Cell a4 = sh.createRow(4).createCell(1);
-        a4.setCellValue("POI");                  // A4 is string and not counted
-        /*Cell a5 =*/ sh.createRow(5).createCell(1); // A5 is blank and not counted
+        Cell b5 = sh.createRow(4).createCell(1);
+        b5.setCellValue("POI");                  // A4 is string and not counted
+        /*Cell b6 =*/ sh.createRow(5).createCell(1); // A5 is blank and not counted
 
-        Cell a6 = sh.createRow(6).createCell(1);
-        a6.setCellFormula("SUBTOTAL(2,B2:B6)*2 + 2");
-        Cell a7 = sh.createRow(7).createCell(1);
-        a7.setCellFormula("SUBTOTAL(2,B2:B7)");
-        Cell a8 = sh.createRow(8).createCell(1);
-        a8.setCellFormula("SUBTOTAL(2,B2,B3,B4,B5,B6,B7,B8)");
+        Cell b7 = sh.createRow(6).createCell(1);
+        b7.setCellFormula("SUBTOTAL(2,B2:B6)*2 + 2");
+        Cell b8 = sh.createRow(7).createCell(1);
+        b8.setCellFormula("SUBTOTAL(2,B2:B7)");
+        Cell b9 = sh.createRow(8).createCell(1);
+        b9.setCellFormula("SUBTOTAL(2,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(2.0, b4.getNumericCellValue(), 0);
-        assertEquals(6.0, a6.getNumericCellValue(), 0);
-        assertEquals(2.0, a7.getNumericCellValue(), 0);
-        assertEquals(2.0, a8.getNumericCellValue(), 0);
+        assertEquals(6.0, b7.getNumericCellValue(), 0);
+        assertEquals(2.0, b8.getNumericCellValue(), 0);
+        assertEquals(2.0, b9.getNumericCellValue(), 0);
         wb.close();
     }
 
@@ -200,23 +200,23 @@ final class TestSubtotal {
         b3.setCellValue(3);
         Cell b4 = sh.createRow(3).createCell(1);
         b4.setCellFormula("SUBTOTAL(3,B2:B3)");
-        Cell a4 = sh.createRow(4).createCell(1);
-        a4.setCellValue("POI");                  // A4 is string and not counted
-        /*Cell a5 =*/ sh.createRow(5).createCell(1); // A5 is blank and not counted
+        Cell b5 = sh.createRow(4).createCell(1);
+        b5.setCellValue("POI");                  // A4 is string and not counted
+        /*Cell b6 =*/ sh.createRow(5).createCell(1); // A5 is blank and not counted
 
-        Cell a6 = sh.createRow(6).createCell(1);
-        a6.setCellFormula("SUBTOTAL(3,B2:B6)*2 + 2");
-        Cell a7 = sh.createRow(7).createCell(1);
-        a7.setCellFormula("SUBTOTAL(3,B2:B7)");
-        Cell a8 = sh.createRow(8).createCell(1);
-        a8.setCellFormula("SUBTOTAL(3,B2,B3,B4,B5,B6,B7,B8)");
+        Cell b7 = sh.createRow(6).createCell(1);
+        b7.setCellFormula("SUBTOTAL(3,B2:B6)*2 + 2");
+        Cell b8 = sh.createRow(7).createCell(1);
+        b8.setCellFormula("SUBTOTAL(3,B2:B7)");
+        Cell b9 = sh.createRow(8).createCell(1);
+        b9.setCellFormula("SUBTOTAL(3,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(2.0, b4.getNumericCellValue(), 0);
-        assertEquals(8.0, a6.getNumericCellValue(), 0);
-        assertEquals(3.0, a7.getNumericCellValue(), 0);
-        assertEquals(3.0, a8.getNumericCellValue(), 0);
+        assertEquals(8.0, b7.getNumericCellValue(), 0);
+        assertEquals(3.0, b8.getNumericCellValue(), 0);
+        assertEquals(3.0, b9.getNumericCellValue(), 0);
         wb.close();
     }
 
@@ -234,23 +234,23 @@ final class TestSubtotal {
         b3.setCellValue(3);
         Cell b4 = sh.createRow(3).createCell(1);
         b4.setCellFormula("SUBTOTAL(4,B2:B3)");
-        Cell a4 = sh.createRow(4).createCell(1);
-        a4.setCellValue(1);
-        Cell a5 = sh.createRow(5).createCell(1);
-        a5.setCellValue(7);
-        Cell a6 = sh.createRow(6).createCell(1);
-        a6.setCellFormula("SUBTOTAL(4,B2:B6)*2 + 2");
-        Cell a7 = sh.createRow(7).createCell(1);
-        a7.setCellFormula("SUBTOTAL(4,B2:B7)");
-        Cell a8 = sh.createRow(8).createCell(1);
-        a8.setCellFormula("SUBTOTAL(4,B2,B3,B4,B5,B6,B7,B8)");
+        Cell b5 = sh.createRow(4).createCell(1);
+        b5.setCellValue(1);
+        Cell b6 = sh.createRow(5).createCell(1);
+        b6.setCellValue(7);
+        Cell b7 = sh.createRow(6).createCell(1);
+        b7.setCellFormula("SUBTOTAL(4,B2:B6)*2 + 2");
+        Cell b8 = sh.createRow(7).createCell(1);
+        b8.setCellFormula("SUBTOTAL(4,B2:B7)");
+        Cell b9 = sh.createRow(8).createCell(1);
+        b9.setCellFormula("SUBTOTAL(4,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(3.0, b4.getNumericCellValue(), 0);
-        assertEquals(16.0, a6.getNumericCellValue(), 0);
-        assertEquals(7.0, a7.getNumericCellValue(), 0);
-        assertEquals(7.0, a8.getNumericCellValue(), 0);
+        assertEquals(16.0, b7.getNumericCellValue(), 0);
+        assertEquals(7.0, b8.getNumericCellValue(), 0);
+        assertEquals(7.0, b9.getNumericCellValue(), 0);
         wb.close();
     }
 
@@ -268,23 +268,23 @@ final class TestSubtotal {
         b3.setCellValue(3);
         Cell b4 = sh.createRow(3).createCell(1);
         b4.setCellFormula("SUBTOTAL(5,B2:B3)");
-        Cell a4 = sh.createRow(4).createCell(1);
-        a4.setCellValue(1);
-        Cell a5 = sh.createRow(5).createCell(1);
-        a5.setCellValue(7);
-        Cell a6 = sh.createRow(6).createCell(1);
-        a6.setCellFormula("SUBTOTAL(5,B2:B6)*2 + 2");
-        Cell a7 = sh.createRow(7).createCell(1);
-        a7.setCellFormula("SUBTOTAL(5,B2:B7)");
-        Cell a8 = sh.createRow(8).createCell(1);
-        a8.setCellFormula("SUBTOTAL(5,B2,B3,B4,B5,B6,B7,B8)");
+        Cell b5 = sh.createRow(4).createCell(1);
+        b5.setCellValue(1);
+        Cell b6 = sh.createRow(5).createCell(1);
+        b6.setCellValue(7);
+        Cell b7 = sh.createRow(6).createCell(1);
+        b7.setCellFormula("SUBTOTAL(5,B2:B6)*2 + 2");
+        Cell b8 = sh.createRow(7).createCell(1);
+        b8.setCellFormula("SUBTOTAL(5,B2:B7)");
+        Cell b9 = sh.createRow(8).createCell(1);
+        b9.setCellFormula("SUBTOTAL(5,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(1.0, b4.getNumericCellValue(), 0);
-        assertEquals(4.0, a6.getNumericCellValue(), 0);
-        assertEquals(1.0, a7.getNumericCellValue(), 0);
-        assertEquals(1.0, a8.getNumericCellValue(), 0);
+        assertEquals(4.0, b7.getNumericCellValue(), 0);
+        assertEquals(1.0, b8.getNumericCellValue(), 0);
+        assertEquals(1.0, b9.getNumericCellValue(), 0);
         wb.close();
     }
 
@@ -302,23 +302,23 @@ final class TestSubtotal {
         b3.setCellValue(3);
         Cell b4 = sh.createRow(3).createCell(1);
         b4.setCellFormula("SUBTOTAL(7,B2:B3)");
-        Cell a4 = sh.createRow(4).createCell(1);
-        a4.setCellValue(1);
-        Cell a5 = sh.createRow(5).createCell(1);
-        a5.setCellValue(7);
-        Cell a6 = sh.createRow(6).createCell(1);
-        a6.setCellFormula("SUBTOTAL(7,B2:B6)*2 + 2");
-        Cell a7 = sh.createRow(7).createCell(1);
-        a7.setCellFormula("SUBTOTAL(7,B2:B7)");
-        Cell a8 = sh.createRow(8).createCell(1);
-        a8.setCellFormula("SUBTOTAL(7,B2,B3,B4,B5,B6,B7,B8)");
+        Cell b5 = sh.createRow(4).createCell(1);
+        b5.setCellValue(1);
+        Cell b6 = sh.createRow(5).createCell(1);
+        b6.setCellValue(7);
+        Cell b7 = sh.createRow(6).createCell(1);
+        b7.setCellFormula("SUBTOTAL(7,B2:B6)*2 + 2");
+        Cell b8 = sh.createRow(7).createCell(1);
+        b8.setCellFormula("SUBTOTAL(7,B2:B7)");
+        Cell b9 = sh.createRow(8).createCell(1);
+        b9.setCellFormula("SUBTOTAL(7,B2,B3,B4,B5,B6,B7,B8)");
 
         fe.evaluateAll();
 
         assertEquals(1.41421, b4.getNumericCellValue(), 0.00001);
-        assertEquals(7.65685, a6.getNumericCellValue(), 0.00001);
-        assertEquals(2.82842, a7.getNumericCellValue(), 0.00001);
-        assertEquals(2.82842, a8.getNumericCellValue(), 0.00001);
+        assertEquals(7.65685, b7.getNumericCellValue(), 0.00001);
+        assertEquals(2.82842, b8.getNumericCellValue(), 0.00001);
+        assertEquals(2.82842, b9.getNumericCellValue(), 0.00001);
         wb.close();
     }
 
@@ -335,23 +335,23 @@ final class TestSubtotal {
             b3.setCellValue(3);
             Cell b4 = sh.createRow(3).createCell(1);
             b4.setCellFormula("SUBTOTAL(8,B2:B3)");
-            Cell a4 = sh.createRow(4).createCell(1);
-            a4.setCellValue(1);
-            Cell a5 = sh.createRow(5).createCell(1);
-            a5.setCellValue(7);
-            Cell a6 = sh.createRow(6).createCell(1);
-            a6.setCellFormula("SUBTOTAL(8,B2:B6)*2 + 2");
-            Cell a7 = sh.createRow(7).createCell(1);
-            a7.setCellFormula("SUBTOTAL(8,B2:B7)");
-            Cell a8 = sh.createRow(8).createCell(1);
-            a8.setCellFormula("SUBTOTAL(8,B2,B3,B4,B5,B6,B7,B8)");
+            Cell b5 = sh.createRow(4).createCell(1);
+            b5.setCellValue(1);
+            Cell b6 = sh.createRow(5).createCell(1);
+            b6.setCellValue(7);
+            Cell b7 = sh.createRow(6).createCell(1);
+            b7.setCellFormula("SUBTOTAL(8,B2:B6)*2 + 2");
+            Cell b8 = sh.createRow(7).createCell(1);
+            b8.setCellFormula("SUBTOTAL(8,B2:B7)");
+            Cell b9 = sh.createRow(8).createCell(1);
+            b9.setCellFormula("SUBTOTAL(8,B2,B3,B4,B5,B6,B7,B8)");
 
             fe.evaluateAll();
 
             assertEquals(1.0, b4.getNumericCellValue(), 0.00001);
-            assertEquals(6.898979, a6.getNumericCellValue(), 0.00001);
-            assertEquals(2.44949, a7.getNumericCellValue(), 0.00001);
-            assertEquals(2.44949, a8.getNumericCellValue(), 0.00001);
+            assertEquals(6.898979, b7.getNumericCellValue(), 0.00001);
+            assertEquals(2.44949, b8.getNumericCellValue(), 0.00001);
+            assertEquals(2.44949, b9.getNumericCellValue(), 0.00001);
         }
     }
 
@@ -368,23 +368,23 @@ final class TestSubtotal {
             b3.setCellValue(3);
             Cell b4 = sh.createRow(3).createCell(1);
             b4.setCellFormula("SUBTOTAL(10,B2:B3)");
-            Cell a4 = sh.createRow(4).createCell(1);
-            a4.setCellValue(1);
-            Cell a5 = sh.createRow(5).createCell(1);
-            a5.setCellValue(7);
-            Cell a6 = sh.createRow(6).createCell(1);
-            a6.setCellFormula("SUBTOTAL(10,B2:B6)*2 + 2");
-            Cell a7 = sh.createRow(7).createCell(1);
-            a7.setCellFormula("SUBTOTAL(10,B2:B7)");
-            Cell a8 = sh.createRow(8).createCell(1);
-            a8.setCellFormula("SUBTOTAL(10,B2,B3,B4,B5,B6,B7,B8)");
+            Cell b5 = sh.createRow(4).createCell(1);
+            b5.setCellValue(1);
+            Cell b6 = sh.createRow(5).createCell(1);
+            b6.setCellValue(7);
+            Cell b7 = sh.createRow(6).createCell(1);
+            b7.setCellFormula("SUBTOTAL(10,B2:B6)*2 + 2");
+            Cell b8 = sh.createRow(7).createCell(1);
+            b8.setCellFormula("SUBTOTAL(10,B2:B7)");
+            Cell b9 = sh.createRow(8).createCell(1);
+            b9.setCellFormula("SUBTOTAL(10,B2,B3,B4,B5,B6,B7,B8)");
 
             fe.evaluateAll();
 
             assertEquals(2.0, b4.getNumericCellValue());
-            assertEquals(18.0, a6.getNumericCellValue());
-            assertEquals(8.0, a7.getNumericCellValue());
-            assertEquals(8.0, a8.getNumericCellValue());
+            assertEquals(18.0, b7.getNumericCellValue());
+            assertEquals(8.0, b8.getNumericCellValue());
+            assertEquals(8.0, b9.getNumericCellValue());
         }
     }
 
