@@ -323,6 +323,105 @@ final class TestSubtotal {
     }
 
     @Test
+    void testStdevp() throws IOException {
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+
+            Sheet sh = wb.createSheet();
+            Cell a1 = sh.createRow(1).createCell(1);
+            a1.setCellValue(1);
+            Cell a2 = sh.createRow(2).createCell(1);
+            a2.setCellValue(3);
+            Cell a3 = sh.createRow(3).createCell(1);
+            a3.setCellFormula("SUBTOTAL(8,B2:B3)");
+            Cell a4 = sh.createRow(4).createCell(1);
+            a4.setCellValue(1);
+            Cell a5 = sh.createRow(5).createCell(1);
+            a5.setCellValue(7);
+            Cell a6 = sh.createRow(6).createCell(1);
+            a6.setCellFormula("SUBTOTAL(8,B2:B6)*2 + 2");
+            Cell a7 = sh.createRow(7).createCell(1);
+            a7.setCellFormula("SUBTOTAL(8,B2:B7)");
+            Cell a8 = sh.createRow(8).createCell(1);
+            a8.setCellFormula("SUBTOTAL(8,B2,B3,B4,B5,B6,B7,B8)");
+
+            fe.evaluateAll();
+
+            assertEquals(1.0, a3.getNumericCellValue(), 0.00001);
+            assertEquals(6.898979, a6.getNumericCellValue(), 0.00001);
+            assertEquals(2.44949, a7.getNumericCellValue(), 0.00001);
+            assertEquals(2.44949, a8.getNumericCellValue(), 0.00001);
+        }
+    }
+
+    @Test
+    void testVar() throws IOException {
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+
+            Sheet sh = wb.createSheet();
+            Cell a1 = sh.createRow(1).createCell(1);
+            a1.setCellValue(1);
+            Cell a2 = sh.createRow(2).createCell(1);
+            a2.setCellValue(3);
+            Cell a3 = sh.createRow(3).createCell(1);
+            a3.setCellFormula("SUBTOTAL(10,B2:B3)");
+            Cell a4 = sh.createRow(4).createCell(1);
+            a4.setCellValue(1);
+            Cell a5 = sh.createRow(5).createCell(1);
+            a5.setCellValue(7);
+            Cell a6 = sh.createRow(6).createCell(1);
+            a6.setCellFormula("SUBTOTAL(10,B2:B6)*2 + 2");
+            Cell a7 = sh.createRow(7).createCell(1);
+            a7.setCellFormula("SUBTOTAL(10,B2:B7)");
+            Cell a8 = sh.createRow(8).createCell(1);
+            a8.setCellFormula("SUBTOTAL(10,B2,B3,B4,B5,B6,B7,B8)");
+
+            fe.evaluateAll();
+
+            assertEquals(2.0, a3.getNumericCellValue());
+            assertEquals(18.0, a6.getNumericCellValue());
+            assertEquals(8.0, a7.getNumericCellValue());
+            assertEquals(8.0, a8.getNumericCellValue());
+        }
+    }
+
+    @Test
+    void testVarp() throws IOException {
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
+
+            Sheet sh = wb.createSheet();
+            Cell a1 = sh.createRow(1).createCell(1);
+            a1.setCellValue(1);
+            Cell a2 = sh.createRow(2).createCell(1);
+            a2.setCellValue(3);
+            Cell a3 = sh.createRow(3).createCell(1);
+            a3.setCellFormula("SUBTOTAL(11,B2:B3)");
+            Cell a4 = sh.createRow(4).createCell(1);
+            a4.setCellValue(1);
+            Cell a5 = sh.createRow(5).createCell(1);
+            a5.setCellValue(7);
+            Cell a6 = sh.createRow(6).createCell(1);
+            a6.setCellFormula("SUBTOTAL(11,B2:B6)*2 + 2");
+            Cell a7 = sh.createRow(7).createCell(1);
+            a7.setCellFormula("SUBTOTAL(11,B2:B7)");
+            Cell a8 = sh.createRow(8).createCell(1);
+            a8.setCellFormula("SUBTOTAL(11,B2,B3,B4,B5,B6,B7,B8)");
+
+            fe.evaluateAll();
+
+            assertEquals(1.0, a3.getNumericCellValue());
+            assertEquals(14.0, a6.getNumericCellValue());
+            assertEquals(6.0, a7.getNumericCellValue());
+            assertEquals(6.0, a8.getNumericCellValue());
+        }
+    }
+
+    @Test
     void test50209() throws IOException {
         Workbook wb = new HSSFWorkbook();
         Sheet sh = wb.createSheet();
