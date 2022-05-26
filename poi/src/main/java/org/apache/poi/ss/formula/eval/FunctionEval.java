@@ -336,8 +336,8 @@ public final class FunctionEval {
         retval[361] = AggregateFunction.AVERAGEA;
         retval[362] = MinaMaxa.MAXA;
         retval[363] = MinaMaxa.MINA;
-        // 364: STDEVPA
-        // 365: VARPA
+        retval[364] = AggregateFunction.STDEVPA;
+        retval[365] = AggregateFunction.VARPA;
         retval[366] = AggregateFunction.STDEVA;
         retval[367] = AggregateFunction.VARA;
 
