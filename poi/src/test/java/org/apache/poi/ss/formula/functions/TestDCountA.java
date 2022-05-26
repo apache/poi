@@ -29,23 +29,22 @@ import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 
 /**
- * Testcase for function DCOUNT()
+ * Testcase for function DCOUNTA()
  */
-public class TestDCount {
+public class TestDCountA {
 
-    //https://support.microsoft.com/en-us/office/dcount-function-c1fc7b93-fb0d-4d8d-97db-8d5f076eaeb1
+    //https://support.microsoft.com/en-us/office/dcounta-function-00232a6d-5a66-4a01-a25b-c1653fda1244
     @Test
     void testMicrosoftExample1() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1()) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
-            assertDouble(fe, cell, "DCOUNT(A5:E11,,A1:A2)", 3);
-            assertDouble(fe, cell, "DCOUNT(A5:E11, \"Age\", A1:A2)", 2);
-            assertDouble(fe, cell, "DCOUNT(A5:E11, \"Age\", A1:F2)", 1);
-            assertDouble(fe, cell, "DCOUNT(A5:E11, 3, A1:F2)", 1);
-            assertDouble(fe, cell, "DCOUNT(A5:E11, 2, A1:F3)", 4);
-            assertDouble(fe, cell, "DCOUNT(A5:E11, 3, A1:F3)", 3);
-            assertDouble(fe, cell, "DCOUNT(A5:E11, 5, A1:F3)", 3);
+            assertDouble(fe, cell, "DCOUNTA(A4:E10, \"Profit\", A1:F2)", 1);
+            assertDouble(fe, cell, "DCOUNTA(A4:E10, 5, A1:F2)", 1);
+            assertDouble(fe, cell, "DCOUNTA(A4:E10, , A1:F2)", 1);
+            assertDouble(fe, cell, "DCOUNTA(A4:E10, \"Profit\", A1:F2)", 1);
+            assertDouble(fe, cell, "DCOUNTA(A4:E10, \"Profit\", A1:F3)", 3);
+            assertDouble(fe, cell, "DCOUNTA(A4:E10, \"Age\", A1:F3)", 2);
         }
     }
 
@@ -55,14 +54,13 @@ public class TestDCount {
         addRow(sheet, 0, "Tree", "Height", "Age", "Yield", "Profit", "Height");
         addRow(sheet, 1, "=Apple", ">10", null, null, null, "<16");
         addRow(sheet, 2, "=Pear");
-        addRow(sheet, 3);
-        addRow(sheet, 4, "Tree", "Height", "Age", "Yield", "Profit");
-        addRow(sheet, 5, "Apple", 18, 20, 14, 105);
-        addRow(sheet, 6, "Pear", 12, 12, 10, 96);
-        addRow(sheet, 7, "Cherry", 13, 14, 9, 105);
-        addRow(sheet, 8, "Apple", 14, null, 10, 75);
-        addRow(sheet, 9, "Pear", 9, 8, 8, "$77");
-        addRow(sheet, 10, "Apple", 12, 11, 6, 45);
+        addRow(sheet, 3, "Tree", "Height", "Age", "Yield", "Profit");
+        addRow(sheet, 4, "Apple", 18, 20, 14, 105);
+        addRow(sheet, 5, "Pear", 12, 12, 10, 96);
+        addRow(sheet, 6, "Cherry", 13, 14, 9, 105);
+        addRow(sheet, 7, "Apple", 14, null, 10, 75);
+        addRow(sheet, 8, "Pear", 9, 8, 8, "$77");
+        addRow(sheet, 9, "Apple", 8, 9, 6, 45);
         return wb;
     }
 }

@@ -210,7 +210,7 @@ public final class FunctionEval {
         retval[196] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DVARP);
         retval[197] = NumericFunction.TRUNC;
         retval[198] = LogicalFunction.ISLOGICAL;
-        // 199: DCOUNTA
+        retval[199] = new DStarRunner(DStarRunner.DStarAlgorithmEnum.DCOUNTA);
 
         //204: USDOLLAR (YEN in BIFF3)
         //205: FINDB

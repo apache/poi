@@ -17,20 +17,21 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation of the DCount function:
- * Counts the number of numeric cells in a column in an area with given conditions.
+ * Implementation of the DCountA function:
+ * Counts the number of non-blank cells in a column in an area with given conditions.
  */
-public final class DCount implements IDStarAlgorithm {
+public final class DCountA implements IDStarAlgorithm {
     private long count;
 
     @Override
     public boolean processMatch(ValueEval eval) {
-        if (eval instanceof NumericValueEval) {
+        if (!(eval instanceof BlankEval)) {
             count++;
         }
         return true;

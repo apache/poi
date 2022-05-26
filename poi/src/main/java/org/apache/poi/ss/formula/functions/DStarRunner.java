@@ -59,6 +59,8 @@ public final class DStarRunner implements Function3Arg {
         DSUM(DSum::new),
         /** @see DCount */
         DCOUNT(DCount::new),
+        /** @see DCountA */
+        DCOUNTA(DCountA::new),
         /** @see DAverage */
         DAVERAGE(DAverage::new),
         /** @see DStdev */
