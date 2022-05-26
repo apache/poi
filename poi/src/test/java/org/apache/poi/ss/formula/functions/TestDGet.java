@@ -38,7 +38,18 @@ public class TestDGet {
     //https://support.microsoft.com/en-us/office/dget-function-455568bf-4eef-45f7-90f0-ec250d00892e
     @Test
     void testMicrosoftExample1() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook1(false)) {
+        try (HSSFWorkbook wb = initWorkbook1(false, false)) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertError(fe, cell, "DGET(A5:E11, \"Yield\", A1:A3)", FormulaError.NUM);
+            assertDouble(fe, cell, "DGET(A5:E11, \"Yield\", A1:F3)", 10);
+            assertDouble(fe, cell, "DGET(A5:E11, 4, A1:F3)", 10);
+        }
+    }
+
+    @Test
+    void testMicrosoftExample1CaseInsensitive() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1(false, true)) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             assertError(fe, cell, "DGET(A5:E11, \"Yield\", A1:A3)", FormulaError.NUM);
@@ -49,7 +60,7 @@ public class TestDGet {
 
     @Test
     void testMicrosoftExample1Variant() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook1(true)) {
+        try (HSSFWorkbook wb = initWorkbook1(true, false)) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             assertDouble(fe, cell, "DGET(A5:E11, \"Yield\", A1:F3)", 6);
@@ -57,14 +68,15 @@ public class TestDGet {
         }
     }
 
-    private HSSFWorkbook initWorkbook1(boolean adjustAppleCondition) {
+    private HSSFWorkbook initWorkbook1(boolean adjustAppleCondition, boolean lowercase) {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         addRow(sheet, 0, "Tree", "Height", "Age", "Yield", "Profit", "Height");
+        String appleCondition = lowercase ? "=apple" : "=Apple";
         if (adjustAppleCondition) {
-            addRow(sheet, 1, "=Apple", ">=8", null, null, null, "<12");
+            addRow(sheet, 1, appleCondition, ">=8", null, null, null, "<12");
         } else {
-            addRow(sheet, 1, "=Apple", ">10", null, null, null, "<16");
+            addRow(sheet, 1, appleCondition, ">10", null, null, null, "<16");
         }
         addRow(sheet, 2, "Pear", ">12");
         addRow(sheet, 3);
