@@ -29,12 +29,14 @@ import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 
 /**
- * Testcase for functions: VAR.S(), VAR.P()
+ * Testcase for functions: VAR.S(), VAR.P(), VARA(), VARPA()
  */
 public class TestVar {
 
     //https://support.microsoft.com/en-us/office/var-s-function-913633de-136b-449d-813e-65a00b2b990b
     //https://support.microsoft.com/en-us/office/var-p-function-73d1285c-108c-4843-ba5d-a51f90656f3a
+    //https://support.microsoft.com/en-us/office/vara-function-3de77469-fa3a-47b4-85fd-81758a1e1d07
+    //https://support.microsoft.com/en-us/office/varpa-function-59a62635-4e89-4fad-88ac-ce4dc0513b96
     @Test
     void testMicrosoftExample1() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1()) {
@@ -42,8 +44,10 @@ public class TestVar {
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "VARP(A3:A12)", 678.84, 0.00000000001);
             assertDouble(fe, cell, "VAR.P(A3:A12)", 678.84, 0.00000000001);
-            assertDouble(fe, cell, "VAR(A3:A12)", 754.27, 0.005);
-            assertDouble(fe, cell, "VAR.S(A3:A12)", 754.27, 0.005);
+            assertDouble(fe, cell, "VARPA(A3:A12)", 678.84, 0.00000000001);
+            assertDouble(fe, cell, "VAR(A3:A12)", 754.26667, 0.00005);
+            assertDouble(fe, cell, "VAR.S(A3:A12)", 754.26667, 0.00005);
+            assertDouble(fe, cell, "VARA(A3:A12)", 754.26667, 0.00005);
         }
     }
 

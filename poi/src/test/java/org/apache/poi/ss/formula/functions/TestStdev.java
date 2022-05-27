@@ -29,13 +29,15 @@ import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 
 /**
- * Testcase for functions: STDEV(), STDEVP(), STDEV.S(), STDEV.P()
+ * Testcase for functions: STDEV(), STDEVP(), STDEV.S(), STDEV.P(), STDEVA(), STDEVPA()
  */
 public class TestStdev {
 
     //https://support.microsoft.com/en-us/office/stdevp-function-1f7c1c88-1bec-4422-8242-e9f7dc8bb195
     //https://support.microsoft.com/en-us/office/stdev-p-function-6e917c05-31a0-496f-ade7-4f4e7462f285
     //https://support.microsoft.com/en-us/office/stdev-s-function-7d69cf97-0c1f-4acf-be27-f3e83904cc23
+    //https://support.microsoft.com/en-us/office/stdeva-function-5ff38888-7ea5-48de-9a6d-11ed73b29e9d
+    //https://support.microsoft.com/en-us/office/stdevpa-function-5578d4d6-455a-4308-9991-d405afe2c28c
     @Test
     void testMicrosoftExample1() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1()) {
@@ -43,8 +45,10 @@ public class TestStdev {
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "STDEVP(A3:A12)", 26.0545581424825, 0.00000000001);
             assertDouble(fe, cell, "STDEV.P(A3:A12)", 26.0545581424825, 0.00000000001);
+            assertDouble(fe, cell, "STDEVPA(A3:A12)", 26.0545581424825, 0.00000000001);
             assertDouble(fe, cell, "STDEV(A3:A12)", 27.4639157198435, 0.00000000001);
             assertDouble(fe, cell, "STDEV.S(A3:A12)", 27.4639157198435, 0.00000000001);
+            assertDouble(fe, cell, "STDEVA(A3:A12)", 27.4639157198435, 0.00000000001);
         }
     }
 
