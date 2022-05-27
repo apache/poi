@@ -51,6 +51,20 @@ public class TestVar {
         }
     }
 
+    @Test
+    void testBooleans() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook2()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
+            assertDouble(fe, cell, "VARP(A2:A7)", 9.5, 0.00000000001);
+            assertDouble(fe, cell, "VAR.P(A2:A7)", 9.5, 0.00000000001);
+            assertDouble(fe, cell, "VARPA(A2:A7)", 15.805555555555557, 0.00000000001);
+            assertDouble(fe, cell, "VAR(A2:A7)", 12.666666666666666, 0.00000000001);
+            assertDouble(fe, cell, "VAR.S(A2:A7)", 12.666666666666666, 0.00000000001);
+            assertDouble(fe, cell, "VARA(A2:A7)", 18.96666666666667, 0.00000000001);
+        }
+    }
+
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -66,6 +80,19 @@ public class TestVar {
         addRow(sheet, 9, 1350);
         addRow(sheet, 10, 1303);
         addRow(sheet, 11, 1299);
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook2() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, "Data");
+        addRow(sheet, 1, 10);
+        addRow(sheet, 2, 7);
+        addRow(sheet, 3, 9);
+        addRow(sheet, 4, 2);
+        addRow(sheet, 5, true);
+        addRow(sheet, 6, false);
         return wb;
     }
 }
