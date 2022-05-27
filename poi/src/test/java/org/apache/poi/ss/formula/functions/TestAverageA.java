@@ -45,6 +45,16 @@ public class TestAverageA {
         }
     }
 
+    @Test
+    void testBooleans() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook2()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
+            assertDouble(fe, cell, "AVERAGEA(A2:A7)", 4.833333333333333, 0.00000000001);
+            assertDouble(fe, cell, "AVERAGE(A2:A7)", 7, 0.00000000001);
+        }
+    }
+
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -55,6 +65,19 @@ public class TestAverageA {
         addRow(sheet, 4, 2);
         addRow(sheet, 5, "Not available");
         addRow(sheet, 6, "Formula");
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook2() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, "Data");
+        addRow(sheet, 1, 10);
+        addRow(sheet, 2, 7);
+        addRow(sheet, 3, 9);
+        addRow(sheet, 4, 2);
+        addRow(sheet, 5, true);
+        addRow(sheet, 6, false);
         return wb;
     }
 }
