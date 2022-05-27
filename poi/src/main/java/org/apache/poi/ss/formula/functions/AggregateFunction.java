@@ -145,7 +145,11 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
     }
 
     protected AggregateFunction() {
-        super(false, false);
+        this(false);
+    }
+
+    protected AggregateFunction(boolean isReferenceBoolCounted) {
+        super(isReferenceBoolCounted, false);
     }
 
     /**
@@ -195,12 +199,18 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
             return MathX.average(values);
         }
     };
-    public static final Function AVERAGEA = new AggregateFunction() {
+    abstract static class AggregateFunctionA extends AggregateFunction {
+
+        protected AggregateFunctionA() {
+            super(true);
+        }
+
         @Override
         protected boolean handleLogicalValues() {
             return true;
         }
-
+    }
+    public static final Function AVERAGEA = new AggregateFunctionA() {
         @Override
         protected double evaluate(double[] values) throws EvaluationException {
             if (values.length < 1) {
@@ -251,12 +261,7 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
             return StatsLib.stdevp(values);
         }
     };
-    public static final Function STDEVA = new AggregateFunction() {
-        @Override
-        protected boolean handleLogicalValues() {
-            return true;
-        }
-
+    public static final Function STDEVA = new AggregateFunctionA() {
         @Override
         protected double evaluate(double[] values) throws EvaluationException {
             if (values.length < 1) {
@@ -265,12 +270,7 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
             return StatsLib.stdev(values);
         }
     };
-    public static final Function STDEVPA = new AggregateFunction() {
-        @Override
-        protected boolean handleLogicalValues() {
-            return true;
-        }
-
+    public static final Function STDEVPA = new AggregateFunctionA() {
         @Override
         protected double evaluate(double[] values) throws EvaluationException {
             if (values.length < 1) {
@@ -305,12 +305,7 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
             return StatsLib.varp(values);
         }
     };
-    public static final Function VARA = new AggregateFunction() {
-        @Override
-        protected boolean handleLogicalValues() {
-            return true;
-        }
-
+    public static final Function VARA = new AggregateFunctionA() {
         @Override
         protected double evaluate(double[] values) throws EvaluationException {
             if (values.length < 1) {
@@ -319,12 +314,7 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
             return StatsLib.var(values);
         }
     };
-    public static final Function VARPA = new AggregateFunction() {
-        @Override
-        protected boolean handleLogicalValues() {
-            return true;
-        }
-
+    public static final Function VARPA = new AggregateFunctionA() {
         @Override
         protected double evaluate(double[] values) throws EvaluationException {
             if (values.length < 1) {
