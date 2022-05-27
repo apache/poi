@@ -52,6 +52,20 @@ public class TestStdev {
         }
     }
 
+    @Test
+    void testBooleans() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook2()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
+            assertDouble(fe, cell, "STDEVP(A2:A7)", 3.082207001484488, 0.00000000001);
+            assertDouble(fe, cell, "STDEV.P(A2:A7)", 3.082207001484488, 0.00000000001);
+            assertDouble(fe, cell, "STDEVPA(A2:A7)", 3.975620147292188, 0.00000000001);
+            assertDouble(fe, cell, "STDEV(A2:A7)", 3.559026084010437, 0.00000000001);
+            assertDouble(fe, cell, "STDEV.S(A2:A7)", 3.559026084010437, 0.00000000001);
+            assertDouble(fe, cell, "STDEVA(A2:A7)", 4.355073669487885, 0.00000000001);
+        }
+    }
+
     private HSSFWorkbook initWorkbook1() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -67,6 +81,19 @@ public class TestStdev {
         addRow(sheet, 9, 1350);
         addRow(sheet, 10, 1303);
         addRow(sheet, 11, 1299);
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook2() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, "Data");
+        addRow(sheet, 1, 10);
+        addRow(sheet, 2, 7);
+        addRow(sheet, 3, 9);
+        addRow(sheet, 4, 2);
+        addRow(sheet, 5, true);
+        addRow(sheet, 6, false);
         return wb;
     }
 }
