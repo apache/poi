@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,57 +14,62 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.time.LocalDate;
 
-import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.apache.poi.ss.util.Utils.assertError;
 
 /**
- * Testcase for DAYS() functions
+ * Tests for {@link FloorPrecise}
  */
-public class TestDays {
+final class TestFloorPrecise {
 
-    //https://support.microsoft.com/en-us/office/days-function-57740535-d549-4395-8728-0f07bff0b9df
+    //https://support.microsoft.com/en-us/office/floor-precise-function-f769b468-1452-4617-8dc3-02f842a0702e
     @Test
-    void testMicrosoftExample1() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook1()) {
+    void testMicrosoftExamples() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
-            assertDouble(fe, cell, "DAYS(\"15-MAR-2021\",\"1-FEB-2021\")", 42, 0.00000000001);
-            assertDouble(fe, cell, "DAYS(A2,A3)", 364, 0.00000000001);
-            assertDouble(fe, cell, "DAYS(\"1-FEB-2021\", \"15-MAR-2021\")", -42, 0.00000000001);
+            assertDouble(fe, cell, "FLOOR.PRECISE(-3.2,-1)", -4, 0.00000000000001);
+            assertDouble(fe, cell, "FLOOR.PRECISE(3.2,1)", 3, 0.00000000000001);
+            assertDouble(fe, cell, "FLOOR.PRECISE(-3.2,1)", -4, 0.00000000000001);
+            assertDouble(fe, cell, "FLOOR.PRECISE(3.2,-1)", 3, 0.00000000000001);
+            assertDouble(fe, cell, "FLOOR.PRECISE(3.2)", 3, 0.00000000000001);
         }
     }
 
     @Test
     void testInvalid() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook1()) {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
-            assertError(fe, cell, "DAYS(\"15-XYZ\",\"1-FEB-2021\")", FormulaError.VALUE);
-            assertError(fe, cell, "DAYS(\"15-MAR-2021\",\"1-XYZ\")", FormulaError.VALUE);
-            assertError(fe, cell, "DAYS(\"15-MAR-2021\")", FormulaError.VALUE);
+            assertError(fe, cell, "FLOOR.PRECISE()", FormulaError.VALUE);
         }
     }
 
-    private HSSFWorkbook initWorkbook1() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        addRow(sheet, 0, "Data");
-        addRow(sheet, 1, DateUtil.getExcelDate(LocalDate.parse("2021-12-31")));
-        addRow(sheet, 2, DateUtil.getExcelDate(LocalDate.parse("2021-01-01")));
-        return wb;
+    @Test
+    void testNumError() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertError(fe, cell, "FLOOR.PRECISE(\"abc\")", FormulaError.VALUE);
+        }
     }
 }
