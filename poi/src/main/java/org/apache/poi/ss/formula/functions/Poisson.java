@@ -17,25 +17,28 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
-public class Poisson {
+public class Poisson implements FreeRefFunction {
 
-    private static final double DEFAULT_RETURN_RESULT =1;
+    public static final Poisson instance = new Poisson();
+
+    private static final double DEFAULT_RETURN_RESULT = 1;
 
     /** All long-representable factorials */
     private static final long[] FACTORIALS = {
-        1L,                  1L,                   2L,
+        1L,                 1L,                  2L,
         6L,                 24L,                 120L,
         720L,               5040L,               40320L,
         362880L,            3628800L,            39916800L,
         479001600L,         6227020800L,         87178291200L,
         1307674368000L,     20922789888000L,     355687428096000L,
-        6402373705728000L, 121645100408832000L, 2432902008176640000L };
+        6402373705728000L,  121645100408832000L, 2432902008176640000L };
 
     /**
      * This checks is x = 0 and the mean = 0.
@@ -77,6 +80,11 @@ public class Poisson {
         return FACTORIALS[n];
     }
 
+    @Override
+    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+        return evaluate(args, ec.getRowIndex(), ec.getColumnIndex());
+    }
+
     public static ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
         if (args.length != 3) {
             return ErrorEval.VALUE_INVALID;
@@ -87,7 +95,12 @@ public class Poisson {
 
         try {
             // arguments/result for this function
-            double x = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
+            double x;
+            try {
+                x = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
+            } catch (EvaluationException ee) {
+                return ErrorEval.VALUE_INVALID;
+            }
             double mean = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
 
             // check for default result : excel implementation for 0,0
