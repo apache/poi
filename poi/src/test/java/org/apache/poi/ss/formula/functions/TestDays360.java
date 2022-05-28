@@ -17,13 +17,20 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
@@ -72,6 +79,18 @@ final class TestDays360 {
         confirm(1, makeDate(2011, 1, 30), makeDate(2011, 2, 1), false);
         confirm(360, makeDate(2011, 1, 1), makeDate(2011, 12, 31), false);
         confirm(30, makeDate(2011, 1, 1), makeDate(2011, 2, 1), false);
+    }
+
+    @Test
+    void testDatesAsStrings() throws Exception {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            assertDouble(fe, cell, "DAYS360(\"1-FEB-2021\", \"15-MAR-2021\")", 44, 0.00000000001);
+            assertDouble(fe, cell, "DAYS360(\"1-FEB-2021\", \"15-MAR-2021\", FALSE)", 44, 0.00000000001);
+        }
     }
 
     private static void confirm(int expResult, int y1, int m1, int d1, int y2, int m2, int d2) {

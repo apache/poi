@@ -73,7 +73,7 @@ public class Days implements FreeRefFunction {
         return ChronoUnit.DAYS.between(startDate, endDate);
     }
 
-    private static LocalDate getDate(ValueEval eval, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
+    static LocalDate getDate(ValueEval eval, int srcRowIndex, int srcColumnIndex) throws EvaluationException {
         ValueEval ve = OperandResolver.getSingleValue(eval, srcRowIndex, srcColumnIndex);
         try {
             double d0 = NumericFunction.singleOperandEvaluate(ve, srcRowIndex, srcColumnIndex);

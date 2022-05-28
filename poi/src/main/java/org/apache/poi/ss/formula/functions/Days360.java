@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -69,23 +70,23 @@ public class Days360 extends Var2or3ArgFunction {
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
         try {
-            double d0 = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
-            double d1 = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
-            return new NumberEval(evaluate(d0, d1, false));
+            LocalDate d0 = Days.getDate(arg0, srcRowIndex, srcColumnIndex);
+            LocalDate d1 = Days.getDate(arg1, srcRowIndex, srcColumnIndex);
+            return new NumberEval(evaluate(DateUtil.getExcelDate(d0), DateUtil.getExcelDate(d1), false));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
     }
 
     @Override
-    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
-            ValueEval arg2) {
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1, ValueEval arg2) {
         try {
-            double d0 = NumericFunction.singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
-            double d1 = NumericFunction.singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
+            LocalDate d0 = Days.getDate(arg0, srcRowIndex, srcColumnIndex);
+            LocalDate d1 = Days.getDate(arg1, srcRowIndex, srcColumnIndex);
             ValueEval ve = OperandResolver.getSingleValue(arg2, srcRowIndex, srcColumnIndex);
             Boolean method = OperandResolver.coerceValueToBoolean(ve, false);
-            return new NumberEval(evaluate(d0, d1, method != null && method.booleanValue()));
+            return new NumberEval(evaluate(DateUtil.getExcelDate(d0), DateUtil.getExcelDate(d1),
+                    method != null && method.booleanValue()));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
