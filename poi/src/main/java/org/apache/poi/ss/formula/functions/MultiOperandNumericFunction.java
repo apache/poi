@@ -98,12 +98,12 @@ public abstract class MultiOperandNumericFunction implements Function {
 
     /**
      * Functions like AVERAGEA() differ from AVERAGE() in the way they handle non-numeric cells.
-     * AVERAGEA treats booleans as 1.0 (true) and 0.0 (false). For strings, they should be parsed as numbers.
-     * When the string is not a number, treat it as 0.0.
+     * AVERAGEA treats booleans as 1.0 (true) and 0.0 (false). String cells are treated as 0.0
+     * (AVERAGE() ignores the cell altogether).
      *
      * @return whether to parse non-numeric cells
      */
-    protected boolean handleLogicalValues() {
+    protected boolean treatStringsAsZero() {
         return false;
     }
 
@@ -180,7 +180,7 @@ public abstract class MultiOperandNumericFunction implements Function {
                         ValueEval ve = ae.getValue(sIx, rrIx, rcIx);
                         if (!isSubtotalCounted() && ae.isSubTotal(rrIx, rcIx)) continue;
                         if (!isHiddenRowCounted() && ae.isRowHidden(rrIx)) continue;
-                        collectValue(ve, !handleLogicalValues(), temp);
+                        collectValue(ve, !treatStringsAsZero(), temp);
                     }
                 }
             }
@@ -194,7 +194,7 @@ public abstract class MultiOperandNumericFunction implements Function {
                 for (int rcIx = 0; rcIx < width; rcIx++) {
                     ValueEval ve = ae.getValue(rrIx, rcIx);
                     if (!isSubtotalCounted() && ae.isSubTotal(rrIx, rcIx)) continue;
-                    collectValue(ve, !handleLogicalValues(), temp);
+                    collectValue(ve, !treatStringsAsZero(), temp);
                 }
             }
             return;
@@ -202,7 +202,7 @@ public abstract class MultiOperandNumericFunction implements Function {
         if (operand instanceof RefEval) {
             RefEval re = (RefEval) operand;
             for (int sIx = re.getFirstSheetIndex(); sIx <= re.getLastSheetIndex(); sIx++) {
-                collectValue(re.getInnerValueEval(sIx), !handleLogicalValues(), temp);
+                collectValue(re.getInnerValueEval(sIx), !treatStringsAsZero(), temp);
             }
             return;
         }
@@ -232,16 +232,16 @@ public abstract class MultiOperandNumericFunction implements Function {
                 // ignore all ref strings
                 return;
             }
-            String s = ((StringValueEval) ve).getStringValue().trim();
-            Double d = OperandResolver.parseDouble(s);
-            if (d == null) {
-                if (handleLogicalValues()) {
-                    temp.add(0.0);
-                } else {
-                    throw new EvaluationException(ErrorEval.VALUE_INVALID);
-                }
+            if (treatStringsAsZero()) {
+                temp.add(0.0);
             } else {
-                temp.add(d.doubleValue());
+                String s = ((StringValueEval) ve).getStringValue().trim();
+                Double d = OperandResolver.parseDouble(s);
+                if (d == null) {
+                    throw new EvaluationException(ErrorEval.VALUE_INVALID);
+                } else {
+                    temp.add(d.doubleValue());
+                }
             }
             return;
         }

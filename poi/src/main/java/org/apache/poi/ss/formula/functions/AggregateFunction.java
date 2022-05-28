@@ -206,7 +206,7 @@ public abstract class AggregateFunction extends MultiOperandNumericFunction {
         }
 
         @Override
-        protected boolean handleLogicalValues() {
+        protected boolean treatStringsAsZero() {
             return true;
         }
     }
