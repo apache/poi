@@ -73,6 +73,8 @@ public class TestStdev {
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "STDEVA(A2:A7)", 4.546060565661952, 0.00000000001);
             assertDouble(fe, cell, "STDEV(A2:A7)", 3.559026084010437, 0.00000000001);
+            assertDouble(fe, cell, "STDEVPA(A2:A7)", 4.149966532662911, 0.00000000001);
+            assertDouble(fe, cell, "STDEVP(A2:A7)", 3.082207001484488, 0.00000000001);
         }
     }
 

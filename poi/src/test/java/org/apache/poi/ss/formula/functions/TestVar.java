@@ -72,6 +72,8 @@ public class TestVar {
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "VARA(A2:A7)", 20.666666666666668, 0.00000000001);
             assertDouble(fe, cell, "VAR(A2:A7)", 12.666666666666666, 0.00000000001);
+            assertDouble(fe, cell, "VARPA(A2:A7)", 17.222222222222225, 0.00000000001);
+            assertDouble(fe, cell, "VARP(A2:A7)", 9.5, 0.00000000001);
         }
     }
 
