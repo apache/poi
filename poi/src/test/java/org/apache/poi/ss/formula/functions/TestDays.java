@@ -45,6 +45,7 @@ public class TestDays {
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "DAYS(\"15-MAR-2021\",\"1-FEB-2021\")", 42, 0.00000000001);
             assertDouble(fe, cell, "DAYS(A2,A3)", 364, 0.00000000001);
+            assertDouble(fe, cell, "DAYS(\"1-FEB-2021\", \"15-MAR-2021\")", -42, 0.00000000001);
         }
     }
 
