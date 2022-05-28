@@ -80,6 +80,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "BIN2OCT", null);
         r(m, "COMPLEX", Complex.instance);
         r(m, "CEILING.MATH", CeilingMath.instance);
+        r(m, "CEILING.PRECISE", CeilingPrecise.instance);
         r(m, "CONCAT", TextFunction.CONCAT);
         r(m, "CONVERT", null);
         r(m, "COUNTIFS", Countifs.instance);

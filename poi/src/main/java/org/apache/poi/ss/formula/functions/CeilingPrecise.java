@@ -29,16 +29,16 @@ import java.math.RoundingMode;
 import static org.apache.poi.ss.formula.functions.MathX.scaledRoundUsingBigDecimal;
 
 /**
- * Implementation for Excel FLOOR.PRECISE() function.
+ * Implementation for Excel CEILING.PRECISE() function.
  * <ul>
- *   <li>https://support.microsoft.com/en-us/office/floor-precise-function-f769b468-1452-4617-8dc3-02f842a0702e</li>
+ *   <li>https://support.microsoft.com/en-us/office/ceiling-precise-function-f366a774-527a-4c92-ba49-af0a196e66cb</li>
  * </ul>
  */
-public final class FloorPrecise implements FreeRefFunction {
+public final class CeilingPrecise implements FreeRefFunction {
 
-    public static final FloorPrecise instance = new FloorPrecise();
+    public static final CeilingPrecise instance = new CeilingPrecise();
 
-    private FloorPrecise() {}
+    private CeilingPrecise() {}
 
     @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
@@ -56,9 +56,9 @@ public final class FloorPrecise implements FreeRefFunction {
                 multiplier = arg1Val != null ? Math.abs(arg1Val.doubleValue()) : 1.0;
             }
             if (multiplier != 1.0) {
-                return new NumberEval(scaledRoundUsingBigDecimal(xval, multiplier, RoundingMode.FLOOR));
+                return new NumberEval(scaledRoundUsingBigDecimal(xval, multiplier, RoundingMode.CEILING));
             }
-            return new NumberEval(Math.floor(xval));
+            return new NumberEval(Math.ceil(xval));
         } catch (EvaluationException evaluationException) {
             return evaluationException.getErrorEval();
         }
