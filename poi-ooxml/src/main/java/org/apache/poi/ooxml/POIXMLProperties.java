@@ -345,6 +345,25 @@ public class POIXMLProperties {
         public String getTitle() {
             return part.getTitleProperty().orElse(null);
         }
+
+        /**
+         * Sets the version property.
+         * @param version property value
+         * @since POI 5.2.3
+         */
+        public void setVersion(String version) {
+            part.setVersionProperty(version);
+        }
+
+        /**
+         * Returns the version property value.
+         * @return version property (can be null)
+         * @since POI 5.2.3
+         */
+        public String getVersion() {
+            return part.getVersionProperty().orElse(null);
+        }
+
         public String getRevision() {
             return part.getRevisionProperty().orElse(null);
         }

@@ -219,6 +219,9 @@ public final class TestPOIXMLProperties {
         assertEquals("Greetings", subject);
         String title = _coreProperties.getTitle();
         assertEquals("Hello World", title);
+        assertNull(_coreProperties.getVersion());
+        _coreProperties.setVersion("1.2.3");
+        assertEquals("1.2.3", _coreProperties.getVersion());
     }
 
     @Test
