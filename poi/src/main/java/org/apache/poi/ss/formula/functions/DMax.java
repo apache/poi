@@ -26,7 +26,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * Finds the maximum value of a column in an area with given conditions.
  * 
  * TODO:
- * - wildcards ? and * in string conditions
  * - functions as conditions
  */
 public final class DMax implements IDStarAlgorithm {

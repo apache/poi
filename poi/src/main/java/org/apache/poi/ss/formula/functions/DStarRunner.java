@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import java.util.function.Supplier;
+import java.util.regex.Pattern;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
@@ -40,7 +41,6 @@ import org.apache.poi.util.LocaleUtil;
  * entries against the set of conditions is done here.
  *
  * TODO:
- * - wildcards ? and * in string conditions
  * - functions as conditions
  */
 @Internal
@@ -351,10 +351,16 @@ public final class DStarRunner implements Function3Arg {
             } else { // It's a text starts-with condition.
                 if(conditionString.isEmpty()) {
                     return value instanceof StringEval;
-                }
-                else {
+                } else {
                     String valueString = value instanceof BlankEval ? "" : OperandResolver.coerceValueToString(value);
-                    return valueString.toLowerCase(LocaleUtil.getUserLocale()).startsWith(conditionString.toLowerCase(LocaleUtil.getUserLocale()));
+                    final String lowerValue = valueString.toLowerCase(LocaleUtil.getUserLocale());
+                    final String lowerCondition = conditionString.toLowerCase(LocaleUtil.getUserLocale());
+                    final Pattern pattern = Countif.StringMatcher.getWildCardPattern(lowerCondition);
+                    if (pattern == null) {
+                        return lowerValue.startsWith(lowerCondition);
+                    } else {
+                        return pattern.matcher(lowerValue).matches();
+                    }
                 }
             }
         } else if(condition instanceof NumericValueEval) {

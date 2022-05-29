@@ -38,7 +38,7 @@ public class TestDGet {
     //https://support.microsoft.com/en-us/office/dget-function-455568bf-4eef-45f7-90f0-ec250d00892e
     @Test
     void testMicrosoftExample1() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook1(false, false)) {
+        try (HSSFWorkbook wb = initWorkbook1(false, "=Apple")) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             assertError(fe, cell, "DGET(A5:E11, \"Yield\", A1:A3)", FormulaError.NUM);
@@ -49,7 +49,7 @@ public class TestDGet {
 
     @Test
     void testMicrosoftExample1CaseInsensitive() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook1(false, true)) {
+        try (HSSFWorkbook wb = initWorkbook1(false, "=apple")) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             assertError(fe, cell, "DGET(A5:E11, \"Yield\", A1:A3)", FormulaError.NUM);
@@ -59,8 +59,62 @@ public class TestDGet {
     }
 
     @Test
+    void testMicrosoftExample1StartsWith() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1(false, "App")) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertError(fe, cell, "DGET(A5:E11, \"Yield\", A1:A3)", FormulaError.NUM);
+            assertDouble(fe, cell, "DGET(A5:E11, \"Yield\", A1:F3)", 10);
+            assertDouble(fe, cell, "DGET(A5:E11, 4, A1:F3)", 10);
+        }
+    }
+
+    @Test
+    void testMicrosoftExample1StartsWithLowercase() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1(false, "app")) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertError(fe, cell, "DGET(A5:E11, \"Yield\", A1:A3)", FormulaError.NUM);
+            assertDouble(fe, cell, "DGET(A5:E11, \"Yield\", A1:F3)", 10);
+            assertDouble(fe, cell, "DGET(A5:E11, 4, A1:F3)", 10);
+        }
+    }
+
+    @Test
+    void testMicrosoftExample1Wildcard() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1(false, "A*le")) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertError(fe, cell, "DGET(A5:E11, \"Yield\", A1:A3)", FormulaError.NUM);
+            assertDouble(fe, cell, "DGET(A5:E11, \"Yield\", A1:F3)", 10);
+            assertDouble(fe, cell, "DGET(A5:E11, 4, A1:F3)", 10);
+        }
+    }
+
+    @Test
+    void testMicrosoftExample1WildcardLowercase() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1(false, "a*le")) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertError(fe, cell, "DGET(A5:E11, \"Yield\", A1:A3)", FormulaError.NUM);
+            assertDouble(fe, cell, "DGET(A5:E11, \"Yield\", A1:F3)", 10);
+            assertDouble(fe, cell, "DGET(A5:E11, 4, A1:F3)", 10);
+        }
+    }
+
+    @Test
+    void testMicrosoftExample1AppleWildcardNoMatch() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1(false, "A*x")) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
+            assertError(fe, cell, "DGET(A5:E11, \"Yield\", A1:A3)", FormulaError.NUM);
+            assertError(fe, cell, "DGET(A5:E11, \"Yield\", A1:F3)", FormulaError.VALUE);
+        }
+    }
+
+    @Test
     void testMicrosoftExample1Variant() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook1(true, false)) {
+        try (HSSFWorkbook wb = initWorkbook1(true, "=Apple")) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(100);
             assertDouble(fe, cell, "DGET(A5:E11, \"Yield\", A1:F3)", 6);
@@ -68,11 +122,10 @@ public class TestDGet {
         }
     }
 
-    private HSSFWorkbook initWorkbook1(boolean adjustAppleCondition, boolean lowercase) {
+    private HSSFWorkbook initWorkbook1(boolean adjustAppleCondition, String appleCondition) {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         addRow(sheet, 0, "Tree", "Height", "Age", "Yield", "Profit", "Height");
-        String appleCondition = lowercase ? "=apple" : "=Apple";
         if (adjustAppleCondition) {
             addRow(sheet, 1, appleCondition, ">=8", null, null, null, "<12");
         } else {

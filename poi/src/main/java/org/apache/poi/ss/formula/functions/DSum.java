@@ -26,7 +26,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * Finds the total value of matching values in a column in an area with given conditions.
  * 
  * TODO:
- * - wildcards ? and * in string conditions
  * - functions as conditions
  */
 public final class DSum implements IDStarAlgorithm {
