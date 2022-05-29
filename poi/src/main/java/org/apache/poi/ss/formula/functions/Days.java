@@ -36,14 +36,13 @@ import org.apache.poi.util.LocaleUtil;
  *
  * <p> 
  * {@code DAYS(end_date,start_date)}
- * 
- * <ul>
- * <li>Start_date, end_date (required):<br/>
- * The two dates between which you want to know the number of days.<br/>
- * If start_date occurs after end_date, the DAYS function returns a negative number.</li>
- * 
- * </ul>
  * </p>
+ *
+ * <ul>
+ * <li>Start_date, end_date (required):<br>
+ * The two dates between which you want to know the number of days.<br>
+ * If start_date occurs after end_date, the DAYS function returns a negative number.</li>
+ * </ul>
  * 
  * @see <a href="https://support.office.com/en-us/article/DAYS-function-57740535-D549-4395-8728-0F07BFF0B9DF">DAYS function - Microsoft Office</a>
  */
