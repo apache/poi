@@ -45,6 +45,15 @@ public class TestXMatchFunction {
     }
 
     @Test
+    void testMicrosoftExample0Lowercase() throws IOException {
+        try (HSSFWorkbook wb = initNumWorkbook("grape")) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(2).createCell(5);
+            assertDouble(fe, cell, "XMATCH(E3,C3:C7)", 2);
+        }
+    }
+
+    @Test
     void testMicrosoftExample1() throws IOException {
         try (HSSFWorkbook wb = initNumWorkbook("Gra?")) {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
@@ -54,6 +63,16 @@ public class TestXMatchFunction {
             assertDouble(fe, cell, "XMATCH(\"Gra\",C3:C7,1)", 2);
             assertDouble(fe, cell, "XMATCH(\"Graz\",C3:C7,1)", 3);
             assertDouble(fe, cell, "XMATCH(\"Graz\",C3:C7,-1)", 2);
+        }
+    }
+
+    @Test
+    void testMicrosoftExample1Lowercase() throws IOException {
+        try (HSSFWorkbook wb = initNumWorkbook("gra?")) {
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = wb.getSheetAt(0).getRow(2).createCell(5);
+            assertDouble(fe, cell, "XMATCH(E3,C3:C7,1)", 2);
+            assertDouble(fe, cell, "XMATCH(E3,C3:C7,-1)", 5);
         }
     }
 
