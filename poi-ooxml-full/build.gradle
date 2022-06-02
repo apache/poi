@@ -36,9 +36,7 @@ sourceSets {
 }
 
 dependencies {
-    //api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-    api files("/Users/pj.fanning/Downloads/xmlbeans-5.1.0.jar")
-    api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
+    api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
 }
 
 idea {

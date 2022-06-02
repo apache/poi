@@ -67,8 +67,7 @@ dependencies {
     api project(':poi-ooxml-full')
     api project(path: ':poi-ooxml-full', configuration: 'archives')
 
-    //api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-    api files("/Users/pj.fanning/Downloads/xmlbeans-5.1.0.jar")
+    api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
     api 'com.github.virtuald:curvesapi:1.07'

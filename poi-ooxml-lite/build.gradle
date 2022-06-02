@@ -36,8 +36,7 @@ sourceSets {
 }
 
 dependencies {
-    //api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-    api files("/Users/pj.fanning/Downloads/xmlbeans-5.1.0.jar")
+    api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
     compileOnly project(':poi-ooxml-full')
 }
 
