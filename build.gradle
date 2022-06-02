@@ -45,6 +45,7 @@ plugins {
 
 repositories {
     mavenCentral()
+    maven { url 'https://repository.apache.org/content/repositories/staging' }
 }
 
 import com.github.jk1.license.render.*
@@ -148,7 +149,7 @@ subprojects {
         log4jVersion = '2.17.2'
         mockitoVersion = '4.6.0'
         hamcrestVersion = '2.2'
-        xmlbeansVersion = '5.0.3'
+        xmlbeansVersion = '5.1.0'
         batikVersion = '1.14'
         graphics2dVersion = '0.38'
         pdfboxVersion = '2.0.26'
@@ -192,9 +193,7 @@ subprojects {
 
     repositories {
         mavenCentral()
-        maven {
-            url 'https://repository.apache.org/content/repositories/releases'
-        }
+        maven { url 'https://repository.apache.org/content/repositories/staging' }
     }
 
     dependencies {
