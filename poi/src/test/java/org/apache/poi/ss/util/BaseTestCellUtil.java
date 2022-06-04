@@ -133,7 +133,7 @@ public abstract class BaseTestCellUtil {
 
             // Set quotePrefixed to true
             CellUtil.setCellStyleProperty(c, CellUtil.QUOTE_PREFIXED, true);
-            assertFalse(c.getCellStyle().getShrinkToFit());
+            assertTrue(c.getCellStyle().getQuotePrefixed());
         }
     }
 
