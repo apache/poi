@@ -64,6 +64,8 @@ public final class CellUtil {
     public static final String ROTATION = "rotation";
     public static final String VERTICAL_ALIGNMENT = "verticalAlignment";
     public static final String WRAP_TEXT = "wrapText";
+    public static final String SHRINK_TO_FIT = "shrinkToFit";
+    public static final String QUOTE_PREFIXED = "quotePrefixed";
 
     private static final Set<String> shortValues = Collections.unmodifiableSet(
             new HashSet<>(Arrays.asList(
@@ -85,7 +87,9 @@ public final class CellUtil {
             new HashSet<>(Arrays.asList(
                     LOCKED,
                     HIDDEN,
-                    WRAP_TEXT
+                    WRAP_TEXT,
+                    SHRINK_TO_FIT,
+                    QUOTE_PREFIXED
             )));
     private static final Set<String> borderTypeValues = Collections.unmodifiableSet(
             new HashSet<>(Arrays.asList(
@@ -454,6 +458,8 @@ public final class CellUtil {
         put(properties, ROTATION, style.getRotation());
         put(properties, TOP_BORDER_COLOR, style.getTopBorderColor());
         put(properties, WRAP_TEXT, style.getWrapText());
+        put(properties, SHRINK_TO_FIT, style.getShrinkToFit());
+        put(properties, QUOTE_PREFIXED, style.getQuotePrefixed());
         return properties;
     }
 
@@ -516,6 +522,8 @@ public final class CellUtil {
         style.setRotation(getShort(properties, ROTATION));
         style.setTopBorderColor(getShort(properties, TOP_BORDER_COLOR));
         style.setWrapText(getBoolean(properties, WRAP_TEXT));
+        style.setShrinkToFit(getBoolean(properties, SHRINK_TO_FIT));
+        style.setQuotePrefixed(getBoolean(properties, QUOTE_PREFIXED));
     }
 
     /**
