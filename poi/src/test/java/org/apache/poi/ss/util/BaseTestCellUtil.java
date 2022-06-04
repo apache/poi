@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -101,6 +102,126 @@ public abstract class BaseTestCellUtil {
             // A valid BorderStyle constant, as an Enum
             CellUtil.setCellStyleProperty(c, CellUtil.BORDER_TOP, BorderStyle.MEDIUM_DASH_DOT);
             assertEquals(BorderStyle.MEDIUM_DASH_DOT, c.getCellStyle().getBorderTop());
+        }
+    }
+
+    @Test()
+    void setCellStylePropertyWithShrinkToFit() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet s = wb.createSheet();
+            Row r = s.createRow(0);
+            Cell c = r.createCell(0);
+
+            // Assert that the default shrinkToFit is false
+            assertFalse(c.getCellStyle().getShrinkToFit());
+
+            // Set shrinkToFit to true
+            CellUtil.setCellStyleProperty(c, CellUtil.SHRINK_TO_FIT, true);
+            assertTrue(c.getCellStyle().getShrinkToFit());
+        }
+    }
+
+    @Test()
+    void setCellStylePropertyWithQuotePrefixed() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet s = wb.createSheet();
+            Row r = s.createRow(0);
+            Cell c = r.createCell(0);
+
+            // Assert that the default quotePrefixed is false
+            assertFalse(c.getCellStyle().getQuotePrefixed());
+
+            // Set quotePrefixed to true
+            CellUtil.setCellStyleProperty(c, CellUtil.QUOTE_PREFIXED, true);
+            assertFalse(c.getCellStyle().getShrinkToFit());
+        }
+    }
+
+    @Test()
+    void setCellStylePropertyWithExistingStyles() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet s = wb.createSheet();
+            Row r = s.createRow(0);
+            Cell c = r.createCell(0);
+            Font f = wb.createFont();
+            f.setBold(true);
+
+            // Assert that the default cell style is not the same as the one being changed
+            assertNotEquals(HorizontalAlignment.CENTER, c.getCellStyle().getAlignment());
+            assertNotEquals(BorderStyle.THIN, c.getCellStyle().getBorderBottom());
+            assertNotEquals(BorderStyle.THIN, c.getCellStyle().getBorderLeft());
+            assertNotEquals(BorderStyle.THIN, c.getCellStyle().getBorderRight());
+            assertNotEquals(BorderStyle.THIN, c.getCellStyle().getBorderTop());
+            assertNotEquals(IndexedColors.RED.index, c.getCellStyle().getBottomBorderColor());
+            assertNotEquals(IndexedColors.RED.index, c.getCellStyle().getLeftBorderColor());
+            assertNotEquals(IndexedColors.RED.index, c.getCellStyle().getRightBorderColor());
+            assertNotEquals(IndexedColors.RED.index, c.getCellStyle().getTopBorderColor());
+            assertNotEquals(wb.createDataFormat().getFormat("#,##0"), c.getCellStyle().getDataFormat());
+            assertNotEquals(IndexedColors.BLUE.index, c.getCellStyle().getFillForegroundColor());
+            assertNotEquals(IndexedColors.BLUE.index, c.getCellStyle().getFillBackgroundColor());
+            assertNotEquals(FillPatternType.DIAMONDS, c.getCellStyle().getFillPattern());
+            assertNotEquals(f.getIndex(), c.getCellStyle().getFontIndex());
+            assertFalse(c.getCellStyle().getHidden());
+            assertNotEquals((short) 3, c.getCellStyle().getIndention());
+            assertTrue(c.getCellStyle().getLocked());
+            assertNotEquals((short) 45, c.getCellStyle().getRotation());
+            assertNotEquals(VerticalAlignment.CENTER, c.getCellStyle().getVerticalAlignment());
+            assertFalse(c.getCellStyle().getWrapText());
+            assertFalse(c.getCellStyle().getShrinkToFit());
+            assertFalse(c.getCellStyle().getQuotePrefixed());
+
+            // Set all styles
+            CellStyle cs = wb.createCellStyle();
+            cs.setAlignment(HorizontalAlignment.CENTER);
+            cs.setBorderBottom(BorderStyle.THIN);
+            cs.setBorderLeft(BorderStyle.THIN);
+            cs.setBorderRight(BorderStyle.THIN);
+            cs.setBorderTop(BorderStyle.THIN);
+            cs.setBottomBorderColor(IndexedColors.RED.index);
+            cs.setLeftBorderColor(IndexedColors.RED.index);
+            cs.setRightBorderColor(IndexedColors.RED.index);
+            cs.setTopBorderColor(IndexedColors.RED.index);
+            cs.setDataFormat(wb.createDataFormat().getFormat("#,##0"));
+            cs.setFillForegroundColor(IndexedColors.BLUE.index);
+            cs.setFillBackgroundColor(IndexedColors.BLUE.index);
+            cs.setFillPattern(FillPatternType.DIAMONDS);
+            cs.setFont(f);
+            cs.setHidden(true);
+            cs.setIndention((short) 3);
+            cs.setLocked(false);
+            cs.setRotation((short) 45);
+            cs.setVerticalAlignment(VerticalAlignment.CENTER);
+            cs.setWrapText(true);
+            cs.setShrinkToFit(true);
+            cs.setQuotePrefixed(true);
+            c.setCellStyle(cs);
+
+            // Set BorderBottom from THIN to DOUBLE with setCellStyleProperty()
+            CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, BorderStyle.DOUBLE);
+
+            // Assert that only BorderBottom has been changed and no others.
+            assertEquals(BorderStyle.DOUBLE, c.getCellStyle().getBorderBottom());
+            assertEquals(HorizontalAlignment.CENTER, c.getCellStyle().getAlignment());
+            assertEquals(BorderStyle.THIN, c.getCellStyle().getBorderLeft());
+            assertEquals(BorderStyle.THIN, c.getCellStyle().getBorderRight());
+            assertEquals(BorderStyle.THIN, c.getCellStyle().getBorderTop());
+            assertEquals(IndexedColors.RED.index, c.getCellStyle().getBottomBorderColor());
+            assertEquals(IndexedColors.RED.index, c.getCellStyle().getLeftBorderColor());
+            assertEquals(IndexedColors.RED.index, c.getCellStyle().getRightBorderColor());
+            assertEquals(IndexedColors.RED.index, c.getCellStyle().getTopBorderColor());
+            assertEquals(wb.createDataFormat().getFormat("#,##0"), c.getCellStyle().getDataFormat());
+            assertEquals(IndexedColors.BLUE.index, c.getCellStyle().getFillForegroundColor());
+            assertEquals(IndexedColors.BLUE.index, c.getCellStyle().getFillBackgroundColor());
+            assertEquals(FillPatternType.DIAMONDS, c.getCellStyle().getFillPattern());
+            assertEquals(f.getIndex(), c.getCellStyle().getFontIndex());
+            assertTrue(c.getCellStyle().getHidden());
+            assertEquals((short) 3, c.getCellStyle().getIndention());
+            assertFalse(c.getCellStyle().getLocked());
+            assertEquals((short) 45, c.getCellStyle().getRotation());
+            assertEquals(VerticalAlignment.CENTER, c.getCellStyle().getVerticalAlignment());
+            assertTrue(c.getCellStyle().getWrapText());
+            assertTrue(c.getCellStyle().getShrinkToFit());
+            assertTrue(c.getCellStyle().getQuotePrefixed());
         }
     }
 
