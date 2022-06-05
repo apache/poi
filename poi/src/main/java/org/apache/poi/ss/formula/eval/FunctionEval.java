@@ -292,7 +292,7 @@ public final class FunctionEval {
         // 309: FORECAST
         // 310: FTEST
         retval[311] = new Intercept();
-        // 312: PEARSON
+        retval[312] = Correl.instance;
         // 313: RSQ
         // 314: STEYX
         retval[315] = new Slope();

@@ -48,6 +48,18 @@ final class TestCorrel {
         }
     }
 
+    //https://support.microsoft.com/en-us/office/pearson-function-0c3e30fc-e5af-49c4-808a-3ef66e034c18
+    @Test
+    void testPearsonExample1() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook2()) {
+            HSSFSheet sheet = wb.getSheetAt(0);
+            HSSFRow row = sheet.getRow(0);
+            HSSFCell cell = row.createCell(100);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertDouble(fe, cell, "CORREL(A2:A6,B2:B6)", 0.699379, 0.0000005);
+            assertDouble(fe, cell, "PEARSON(A2:A6,B2:B6)", 0.699379, 0.0000005);
+        }
+    }
     @Test
     void testBlankValue() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1(null)) {
@@ -95,6 +107,18 @@ final class TestCorrel {
         addRow(sheet, 3, 4, 12);
         addRow(sheet, 4, 5, row4Data2);
         addRow(sheet, 5, 6, 17);
+        return wb;
+    }
+
+    private HSSFWorkbook initWorkbook2() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        HSSFSheet sheet = wb.createSheet();
+        addRow(sheet, 0, "Independent values", "Dependent values");
+        addRow(sheet, 1, 9, 10);
+        addRow(sheet, 2, 7, 6);
+        addRow(sheet, 3, 5, 1);
+        addRow(sheet, 4, 3, 5);
+        addRow(sheet, 5, 1, 3);
         return wb;
     }
 }
