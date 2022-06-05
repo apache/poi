@@ -46,6 +46,7 @@ final class TestCovar {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             assertDouble(fe, cell, "COVAR(A2:A6,B2:B6)", 5.2, 0.0000000005);
             assertDouble(fe, cell, "COVARIANCE.P(A2:A6,B2:B6)", 5.2, 0.0000000005);
+            assertDouble(fe, cell, "COVARIANCE.S(A2:A6,B2:B6)", 6.5, 0.0000000005);
         }
     }
 
@@ -58,6 +59,7 @@ final class TestCovar {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             assertDouble(fe, cell, "COVAR(A2:A6,B2:B6)", 5.5625, 0.0000000005);
             assertDouble(fe, cell, "COVARIANCE.P(A2:A6,B2:B6)", 5.5625, 0.0000000005);
+            assertDouble(fe, cell, "COVARIANCE.S(A2:A6,B2:B6)", 7.416666666666666, 0.0000000005);
         }
     }
 
@@ -70,6 +72,7 @@ final class TestCovar {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             assertDouble(fe, cell, "COVAR(A2:A6,B2:B6)", 5.5625, 0.0000000005);
             assertDouble(fe, cell, "COVARIANCE.P(A2:A6,B2:B6)", 5.5625, 0.0000000005);
+            assertDouble(fe, cell, "COVARIANCE.S(A2:A6,B2:B6)", 7.416666666666666, 0.0000000005);
         }
     }
 
@@ -82,8 +85,10 @@ final class TestCovar {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             assertError(fe, cell, "COVAR(A2:A6,B2:B5)", FormulaError.NA);
             assertError(fe, cell, "COVARIANCE.P(A2:A6,B2:B5)", FormulaError.NA);
+            assertError(fe, cell, "COVARIANCE.S(A2:A6,B2:B5)", FormulaError.NA);
             assertError(fe, cell, "COVAR(A2:B6,B2:B6)", FormulaError.NA);
             assertError(fe, cell, "COVARIANCE.P(A2:B6,B2:B6)", FormulaError.NA);
+            assertError(fe, cell, "COVARIANCE.S(A2:B6,B2:B6)", FormulaError.NA);
         }
     }
 

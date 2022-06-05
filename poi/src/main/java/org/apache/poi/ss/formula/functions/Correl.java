@@ -42,6 +42,8 @@ public class Correl extends TwoArrayFunction {
 
     public static final Correl instance = new Correl();
 
+    private Correl() {}
+
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
         try {

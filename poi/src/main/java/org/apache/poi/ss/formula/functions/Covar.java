@@ -37,7 +37,14 @@ import java.util.List;
  */
 public class Covar extends TwoArrayFunction implements FreeRefFunction {
 
-    public static final Covar instanceP = new Covar();
+    public static final Covar instanceP = new Covar(false);
+    public static final Covar instanceS = new Covar(true);
+
+    private final boolean sampleBased;
+
+    private Covar(boolean sampleBased) {
+        this.sampleBased = sampleBased;
+    }
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
@@ -45,7 +52,7 @@ public class Covar extends TwoArrayFunction implements FreeRefFunction {
             final List<DoubleList> arrays = getNumberArrays(arg0, arg1);
             final Covariance covar = new Covariance();
             final double result = covar.covariance(
-                    arrays.get(0).toArray(), arrays.get(1).toArray(), false);
+                    arrays.get(0).toArray(), arrays.get(1).toArray(), sampleBased);
             return new NumberEval(result);
         } catch (EvaluationException e) {
             return e.getErrorEval();

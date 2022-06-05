@@ -91,6 +91,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "COUPNUM", null);
         r(m, "COUPPCD", null);
         r(m, "COVARIANCE.P", Covar.instanceP);
+        r(m, "COVARIANCE.S", Covar.instanceS);
         r(m, "CUBEKPIMEMBER", null);
         r(m, "CUBEMEMBER", null);
         r(m, "CUBEMEMBERPROPERTY", null);
