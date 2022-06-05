@@ -37,7 +37,7 @@ final class TestCorrel {
     //https://support.microsoft.com/en-us/office/correl-function-995dcef7-0c0a-4bed-a3fb-239d7b68ca92
     @Test
     void testMicrosoftExample1() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook1(false)) {
+        try (HSSFWorkbook wb = initWorkbook1()) {
             HSSFSheet sheet = wb.getSheetAt(0);
             HSSFRow row = sheet.getRow(0);
             HSSFCell cell = row.createCell(100);
@@ -48,7 +48,7 @@ final class TestCorrel {
 
     @Test
     void testBlankValue() throws IOException {
-        try (HSSFWorkbook wb = initWorkbook1(true)) {
+        try (HSSFWorkbook wb = initWorkbook1(null)) {
             HSSFSheet sheet = wb.getSheetAt(0);
             HSSFRow row = sheet.getRow(0);
             HSSFCell cell = row.createCell(100);
@@ -57,18 +57,29 @@ final class TestCorrel {
         }
     }
 
-    private HSSFWorkbook initWorkbook1(boolean blankRow4) {
+    @Test
+    void testStringValue() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1("string")) {
+            HSSFSheet sheet = wb.getSheetAt(0);
+            HSSFRow row = sheet.getRow(0);
+            HSSFCell cell = row.createCell(100);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertDouble(fe, cell, "CORREL(A2:A6,B2:B6)", 0.9984884738, 0.0000000005);
+        }
+    }
+
+    private HSSFWorkbook initWorkbook1() {
+        return initWorkbook1(Double.valueOf(15));
+    }
+
+    private HSSFWorkbook initWorkbook1(Object row4Data2) {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
         addRow(sheet, 0, "Data1", "Data2");
         addRow(sheet, 1, 3, 9);
         addRow(sheet, 2, 2, 7);
         addRow(sheet, 3, 4, 12);
-        if (blankRow4) {
-            addRow(sheet, 4, 5);
-        } else {
-            addRow(sheet, 4, 5, 15);
-        }
+        addRow(sheet, 4, 5, row4Data2);
         addRow(sheet, 5, 6, 17);
         return wb;
     }
