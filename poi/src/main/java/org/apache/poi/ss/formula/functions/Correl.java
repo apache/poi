@@ -66,9 +66,13 @@ public class Correl extends Fixed2ArgFunction {
     private List<DoubleList> getNumberArrays(ValueEval operand0, ValueEval operand1) throws EvaluationException {
         double[] retval0 = collectValuesWithBlanks(operand0).toArray();
         double[] retval1 = collectValuesWithBlanks(operand1).toArray();
+        if (retval0.length != retval1.length) {
+            throw new EvaluationException(ErrorEval.NA);
+        }
         DoubleList filtered0 = new DoubleList();
         DoubleList filtered1 = new DoubleList();
-        for (int i = 0; i < retval0.length; i++) {
+        int len = Math.min(retval0.length, retval1.length);
+        for (int i = 0; i < len; i++) {
             if (Double.isNaN(retval0[i]) || Double.isNaN(retval1[i])) {
                 //ignore
             } else {

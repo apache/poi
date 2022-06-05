@@ -22,12 +22,14 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
+import static org.apache.poi.ss.util.Utils.assertError;
 
 /**
  * Tests for {@link Correl}
@@ -65,6 +67,18 @@ final class TestCorrel {
             HSSFCell cell = row.createCell(100);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             assertDouble(fe, cell, "CORREL(A2:A6,B2:B6)", 0.9984884738, 0.0000000005);
+        }
+    }
+
+    @Test
+    void testMismatch() throws IOException {
+        try (HSSFWorkbook wb = initWorkbook1()) {
+            HSSFSheet sheet = wb.getSheetAt(0);
+            HSSFRow row = sheet.getRow(0);
+            HSSFCell cell = row.createCell(100);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertError(fe, cell, "CORREL(A2:A6,B2:B5)", FormulaError.NA);
+            assertError(fe, cell, "CORREL(A2:B6,B2:B6)", FormulaError.NA);
         }
     }
 
