@@ -46,4 +46,8 @@ final class DoubleList {
         _array[_count] = value;
         _count++;
     }
+
+    public int getLength() {
+        return _count;
+    }
 }
