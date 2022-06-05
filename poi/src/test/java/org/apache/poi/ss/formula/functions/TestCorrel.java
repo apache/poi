@@ -60,6 +60,7 @@ final class TestCorrel {
             assertDouble(fe, cell, "PEARSON(A2:A6,B2:B6)", 0.699379, 0.0000005);
         }
     }
+
     @Test
     void testBlankValue() throws IOException {
         try (HSSFWorkbook wb = initWorkbook1(null)) {

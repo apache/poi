@@ -289,7 +289,7 @@ public final class FunctionEval {
         // 306: CHITEST
         retval[307] = Correl.instance;
         retval[308] = Covar.instanceP;
-        // 309: FORECAST
+        retval[309] = Forecast.instance;
         // 310: FTEST
         retval[311] = new Intercept();
         retval[312] = Correl.instance;

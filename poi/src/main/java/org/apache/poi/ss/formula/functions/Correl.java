@@ -24,6 +24,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 
 import java.util.List;
 
+import static org.apache.poi.ss.formula.functions.ArrayFunctionUtils.getNumberArrays;
+
 /**
  * Implementation for Excel CORREL() function.
  * <p>
@@ -38,7 +40,7 @@ import java.util.List;
  *   See https://support.microsoft.com/en-us/office/correl-function-995dcef7-0c0a-4bed-a3fb-239d7b68ca92
  * </p>
  */
-public class Correl extends TwoArrayFunction {
+public class Correl extends Fixed2ArgFunction {
 
     public static final Correl instance = new Correl();
 

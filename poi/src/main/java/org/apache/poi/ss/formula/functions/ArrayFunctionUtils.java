@@ -30,9 +30,9 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import java.util.Arrays;
 import java.util.List;
 
-abstract class TwoArrayFunction extends Fixed2ArgFunction {
+final class ArrayFunctionUtils {
 
-    protected List<DoubleList> getNumberArrays(ValueEval operand0, ValueEval operand1) throws EvaluationException {
+    static List<DoubleList> getNumberArrays(ValueEval operand0, ValueEval operand1) throws EvaluationException {
         double[] retval0 = collectValuesWithBlanks(operand0).toArray();
         double[] retval1 = collectValuesWithBlanks(operand1).toArray();
         if (retval0.length != retval1.length) {
@@ -52,7 +52,7 @@ abstract class TwoArrayFunction extends Fixed2ArgFunction {
         return Arrays.asList(filtered0, filtered1);
     }
 
-    private DoubleList collectValuesWithBlanks(ValueEval operand) throws EvaluationException {
+    private static DoubleList collectValuesWithBlanks(ValueEval operand) throws EvaluationException {
         DoubleList doubleList = new DoubleList();
         if (operand instanceof ThreeDEval) {
             ThreeDEval ae = (ThreeDEval) operand;
@@ -111,7 +111,7 @@ abstract class TwoArrayFunction extends Fixed2ArgFunction {
         return doubleList;
     }
 
-    private Double collectValue(ValueEval ve) throws EvaluationException {
+    private static Double collectValue(ValueEval ve) throws EvaluationException {
         if (ve == null) {
             throw new IllegalArgumentException("ve must not be null");
         }

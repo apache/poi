@@ -26,6 +26,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 
 import java.util.List;
 
+import static org.apache.poi.ss.formula.functions.ArrayFunctionUtils.getNumberArrays;
+
 /**
  * Implementation for Excel COVAR() and COVARIANCE.P() functions.
  * <p>
@@ -35,7 +37,7 @@ import java.util.List;
  * @see <a href="https://support.microsoft.com/en-us/office/covariance-p-function-6f0e1e6d-956d-4e4b-9943-cfef0bf9edfc">COVARIANCE.P</a>
  * </p>
  */
-public class Covar extends TwoArrayFunction implements FreeRefFunction {
+public class Covar extends Fixed2ArgFunction implements FreeRefFunction {
 
     public static final Covar instanceP = new Covar(false);
     public static final Covar instanceS = new Covar(true);
