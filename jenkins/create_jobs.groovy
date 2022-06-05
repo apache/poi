@@ -587,6 +587,7 @@ xmlbeansjobs.each { xjob ->
                         switches("-PjdkVendor=${jdkMapping.get(jdkKey).jdkVendor}")
                     }
                 }
+                switches('--refresh-dependencies')
                 tasks('clean')
                 tasks('jenkins')
                 tasks('jacocoTestReport')
