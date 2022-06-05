@@ -27,7 +27,7 @@ import org.apache.poi.ss.util.NumberToTextConverter;
 /**
  * Implementation for Excel SQRTPI() function.
  * <p>
- *   <b>Syntax</b>:<br> <b>SQRT  </b>(<b>number</b>)<br>
+ *   <b>Syntax</b>:<br> <b>SQRTPI </b>(<b>number</b>)<br>
  * </p>
  * <p>
  *   Returns the square root of (number * pi).
