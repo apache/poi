@@ -16,7 +16,9 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.commons.math3.stat.correlation.Covariance;
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
+import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -25,35 +27,38 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import java.util.List;
 
 /**
- * Implementation for Excel CORREL() function.
+ * Implementation for Excel COVAR() and COVARIANCE.P() functions.
  * <p>
- *   <b>Syntax</b>:<br> <b>CORREL </b>(<b>array1</b>, <b>array2</b>)<br>
+ *   <b>Syntax</b>:<br> <b>COVAR </b>(<b>array1</b>, <b>array2</b>)<br>
  * </p>
- * <p>
- *   The CORREL function returns the correlation coefficient of two cell ranges.
- *   Use the correlation coefficient to determine the relationship between two properties.
- *   For example, you can examine the relationship between a location's average temperature and the use of air conditioners.
- * </p>
- * <p>
- *   See https://support.microsoft.com/en-us/office/correl-function-995dcef7-0c0a-4bed-a3fb-239d7b68ca92
+ * @see <a href="https://support.microsoft.com/en-us/office/covar-function-50479552-2c03-4daf-bd71-a5ab88b2db03">COVAR</a>
+ * @see <a href="https://support.microsoft.com/en-us/office/covariance-p-function-6f0e1e6d-956d-4e4b-9943-cfef0bf9edfc">COVARIANCE.P</a>
  * </p>
  */
-public class Correl extends TwoArrayFunction {
+public class Covar extends TwoArrayFunction implements FreeRefFunction {
 
-    public static final Correl instance = new Correl();
+    public static final Covar instanceP = new Covar();
 
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
         try {
             final List<DoubleList> arrays = getNumberArrays(arg0, arg1);
-            final PearsonsCorrelation pc = new PearsonsCorrelation();
-            final double correl = pc.correlation(
-                    arrays.get(0).toArray(), arrays.get(1).toArray());
-            return new NumberEval(correl);
+            final Covariance covar = new Covariance();
+            final double result = covar.covariance(
+                    arrays.get(0).toArray(), arrays.get(1).toArray(), false);
+            return new NumberEval(result);
         } catch (EvaluationException e) {
             return e.getErrorEval();
         } catch (Exception e) {
             return ErrorEval.NA;
         }
+    }
+
+    @Override
+    public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+        if (args.length != 2) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        return evaluate(ec.getRowIndex(), ec.getColumnIndex(), args[0], args[1]);
     }
 }

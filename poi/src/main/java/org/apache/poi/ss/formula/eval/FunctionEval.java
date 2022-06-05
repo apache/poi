@@ -288,7 +288,7 @@ public final class FunctionEval {
         retval[305] = new Sumx2py2();
         // 306: CHITEST
         retval[307] = Correl.instance;
-        // 308: COVAR
+        retval[308] = Covar.instanceP;
         // 309: FORECAST
         // 310: FTEST
         retval[311] = new Intercept();
