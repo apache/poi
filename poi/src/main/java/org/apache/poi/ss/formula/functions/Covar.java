@@ -35,7 +35,6 @@ import static org.apache.poi.ss.formula.functions.ArrayFunctionUtils.getNumberAr
  * </p>
  * @see <a href="https://support.microsoft.com/en-us/office/covar-function-50479552-2c03-4daf-bd71-a5ab88b2db03">COVAR</a>
  * @see <a href="https://support.microsoft.com/en-us/office/covariance-p-function-6f0e1e6d-956d-4e4b-9943-cfef0bf9edfc">COVARIANCE.P</a>
- * </p>
  */
 public class Covar extends Fixed2ArgFunction implements FreeRefFunction {
 
