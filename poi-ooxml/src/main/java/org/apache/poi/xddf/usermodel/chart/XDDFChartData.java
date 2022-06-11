@@ -178,6 +178,20 @@ public abstract class XDDFChartData {
             this.valuesData = values;
         }
 
+        /**
+         * Set the Chart Series title.
+         * @param title chart series title
+         * @since POI 5.2.3
+         */
+        public void setTitle(String title) {
+            setTitle(title, null);
+        }
+
+        /**
+         * Set the Chart Series title.
+         * @param title chart series title
+         * @param titleRef cell reference
+         */
         public void setTitle(String title, CellReference titleRef) {
             if (titleRef == null) {
                 getSeriesText().setV(title);
