@@ -45,7 +45,7 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven { url 'https://repository.apache.org/content/repositories/staging' }
+    //maven { url 'https://repository.apache.org/content/repositories/staging' }
 }
 
 import com.github.jk1.license.render.*
@@ -193,7 +193,7 @@ subprojects {
 
     repositories {
         mavenCentral()
-        maven { url 'https://repository.apache.org/content/repositories/staging' }
+        //maven { url 'https://repository.apache.org/content/repositories/staging' }
     }
 
     dependencies {
