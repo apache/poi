@@ -72,6 +72,7 @@ public class XSSFConditionalFormattingThreshold implements org.apache.poi.ss.use
             return null;
         }
     }
+
     @Override
     public void setValue(Double value) {
         if (value == null) {
@@ -79,5 +80,21 @@ public class XSSFConditionalFormattingThreshold implements org.apache.poi.ss.use
         } else {
             cfvo.setVal(value.toString());
         }
+    }
+
+    /**
+     * @return true if 'gte' attribute is set to true (defaults to true)
+     * @since POI 5.2.3
+     */
+    public boolean isGte() {
+        return cfvo.getGte();
+    }
+
+    /**
+     * @param gte set 'gte' attribute (defaults to true)
+     * @since POI 5.2.3
+     */
+    public void setGte(boolean gte) {
+        cfvo.setGte(gte);
     }
 }

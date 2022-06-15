@@ -19,7 +19,10 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -27,6 +30,7 @@ import org.apache.poi.ss.usermodel.BaseTestConditionalFormatting;
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.ConditionalFormatting;
 import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
+import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold;
 import org.apache.poi.ss.usermodel.ExtendedColor;
 import org.apache.poi.ss.usermodel.FontFormatting;
 import org.apache.poi.ss.usermodel.PatternFormatting;
@@ -142,5 +146,19 @@ class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting {
     @Override
     protected boolean applyLimitOf3() {
         return false;
+    }
+
+    @Override
+    protected void checkThreshold(ConditionalFormattingThreshold threshold) {
+        assertNull(threshold.getValue());
+        assertNull(threshold.getFormula());
+        assertTrue(threshold instanceof XSSFConditionalFormattingThreshold,
+                "threshold is a XSSFConditionalFormattingThreshold?");
+        XSSFConditionalFormattingThreshold xssfThreshold = (XSSFConditionalFormattingThreshold)threshold;
+        assertTrue(xssfThreshold.isGte(), "gte defaults to true?");
+        xssfThreshold.setGte(false);
+        assertFalse(xssfThreshold.isGte(), "gte changed to false?");
+        xssfThreshold.setGte(true);
+        assertTrue(xssfThreshold.isGte(), "gte changed to true?");
     }
 }

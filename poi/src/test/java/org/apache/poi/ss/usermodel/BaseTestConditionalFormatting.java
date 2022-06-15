@@ -550,8 +550,7 @@ public abstract class BaseTestConditionalFormatting {
                     if (str.contains("[CFEX]")) fCFEX++;
                 } else {
                     ConditionType type = cf.getRule(cf.getNumberOfRules() - 1).getConditionType();
-                    if (type == ConditionType.CELL_VALUE_IS ||
-                            type == ConditionType.FORMULA) {
+                    if (type == ConditionType.CELL_VALUE_IS || type == ConditionType.FORMULA) {
                         fCF++;
                     } else {
                         // TODO Properly detect Ext ones from the xml
@@ -772,15 +771,17 @@ public abstract class BaseTestConditionalFormatting {
 
         assertColor(color, databar.getColor());
 
-        ConditionalFormattingThreshold th;
-        th = databar.getMinThreshold();
-        assertEquals(RangeType.MIN, th.getRangeType());
-        assertNull(th.getValue());
-        assertNull(th.getFormula());
-        th = databar.getMaxThreshold();
-        assertEquals(RangeType.MAX, th.getRangeType());
-        assertNull(th.getValue());
-        assertNull(th.getFormula());
+        ConditionalFormattingThreshold th1 = databar.getMinThreshold();
+        assertEquals(RangeType.MIN, th1.getRangeType());
+        checkThreshold(th1);
+        ConditionalFormattingThreshold th2 = databar.getMaxThreshold();
+        assertEquals(RangeType.MAX, th2.getRangeType());
+        checkThreshold(th2);
+    }
+
+    protected void checkThreshold(ConditionalFormattingThreshold threshold) {
+        assertNull(threshold.getValue());
+        assertNull(threshold.getFormula());
     }
 
     private void assertIconSetPercentages(ConditionalFormatting cf, IconSet iconset, Double...vals) {
