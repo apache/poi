@@ -26,6 +26,7 @@ import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
 import org.apache.poi.hssf.eventusermodel.HSSFRequest;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Assertions;
 
 class TestEFBiffViewer extends BaseTestIteratingXLS {
@@ -37,6 +38,7 @@ class TestEFBiffViewer extends BaseTestIteratingXLS {
         excludes.put("51832.xls", EncryptedDocumentException.class);
         excludes.put("xor-encryption-abc.xls", EncryptedDocumentException.class);
         excludes.put("password.xls", EncryptedDocumentException.class);
+        excludes.put("protected_66115.xls", EncryptedDocumentException.class);
         // HSSFWorkbook cannot open it as well
         excludes.put("43493.xls", RecordInputStream.LeftoverDataException.class);
         excludes.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);

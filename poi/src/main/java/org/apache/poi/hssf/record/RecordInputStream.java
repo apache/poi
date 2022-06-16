@@ -533,4 +533,9 @@ public final class RecordInputStream implements LittleEndianInput {
         ((InputStream)_dataInput).reset();
         _currentDataOffset = _markedDataOffset;
     }
+
+    @Internal
+    public boolean isEncrypted() {
+        return _dataInput instanceof Biff8DecryptingStream && ((Biff8DecryptingStream)_dataInput).isCurrentRecordEncrypted();
+    }
 }

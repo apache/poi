@@ -90,7 +90,7 @@ public class ExcInfo {
     public boolean isValid(String testName, String handler) {
         return
             !IGNORED_TESTS.equals(tests) &&
-            (tests == null || tests.contains(testName)) &&
-            (this.handler == null || this.handler.contains(handler));
+            (tests == null || (tests.contains(testName) && !tests.contains("!"+testName))) &&
+            (this.handler == null || (this.handler.contains(handler) && !this.handler.contains("!"+handler)));
     }
 }

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.util.RecordFormatException;
 
 class TestBiffViewer extends BaseTestIteratingXLS {
@@ -41,6 +42,7 @@ class TestBiffViewer extends BaseTestIteratingXLS {
 
         excludes.put("61300.xls", IndexOutOfBoundsException.class);
         excludes.put("poi-fuzz.xls", RecordFormatException.class);
+        excludes.put("protected_66115.xls", RecordFormatException.class);
 
         return excludes;
     }

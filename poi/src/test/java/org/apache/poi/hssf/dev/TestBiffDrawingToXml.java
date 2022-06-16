@@ -53,6 +53,7 @@ class TestBiffDrawingToXml extends BaseTestIteratingXLS {
         // HSSFWorkbook cannot open it as well
         excludes.put("43493.xls", RecordInputStream.LeftoverDataException.class);
         excludes.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
+        excludes.put("protected_66115.xls", EncryptedDocumentException.class);
         return excludes;
     }
 

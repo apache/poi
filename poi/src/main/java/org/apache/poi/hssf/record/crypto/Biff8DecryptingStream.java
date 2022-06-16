@@ -26,6 +26,7 @@ import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
@@ -208,4 +209,8 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
         ccis.readPlain(b, off, len);
     }
 
+    @Internal
+    public boolean isCurrentRecordEncrypted() {
+        return !shouldSkipEncryptionOnCurrentRecord;
+    }
 }
