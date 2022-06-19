@@ -201,34 +201,33 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
             // parse the document with cursor and add
             // the XmlObject to its lists
-            XmlCursor docCursor = ctDocument.newCursor();
-            docCursor.selectPath("./*");
-            while (docCursor.toNextSelection()) {
-                XmlObject o = docCursor.getObject();
-                if (o instanceof CTBody) {
-                    XmlCursor bodyCursor = o.newCursor();
-                    bodyCursor.selectPath("./*");
-                    while (bodyCursor.toNextSelection()) {
-                        XmlObject bodyObj = bodyCursor.getObject();
-                        if (bodyObj instanceof CTP) {
-                            XWPFParagraph p = new XWPFParagraph((CTP) bodyObj,
-                                    this);
-                            bodyElements.add(p);
-                            paragraphs.add(p);
-                        } else if (bodyObj instanceof CTTbl) {
-                            XWPFTable t = new XWPFTable((CTTbl) bodyObj, this);
-                            bodyElements.add(t);
-                            tables.add(t);
-                        } else if (bodyObj instanceof CTSdtBlock) {
-                            XWPFSDT c = new XWPFSDT((CTSdtBlock) bodyObj, this);
-                            bodyElements.add(c);
-                            contentControls.add(c);
+            try (XmlCursor docCursor = ctDocument.newCursor()) {
+                docCursor.selectPath("./*");
+                while (docCursor.toNextSelection()) {
+                    XmlObject o = docCursor.getObject();
+                    if (o instanceof CTBody) {
+                        try (XmlCursor bodyCursor = o.newCursor()) {
+                            bodyCursor.selectPath("./*");
+                            while (bodyCursor.toNextSelection()) {
+                                XmlObject bodyObj = bodyCursor.getObject();
+                                if (bodyObj instanceof CTP) {
+                                    XWPFParagraph p = new XWPFParagraph((CTP) bodyObj, this);
+                                    bodyElements.add(p);
+                                    paragraphs.add(p);
+                                } else if (bodyObj instanceof CTTbl) {
+                                    XWPFTable t = new XWPFTable((CTTbl) bodyObj, this);
+                                    bodyElements.add(t);
+                                    tables.add(t);
+                                } else if (bodyObj instanceof CTSdtBlock) {
+                                    XWPFSDT c = new XWPFSDT((CTSdtBlock) bodyObj, this);
+                                    bodyElements.add(c);
+                                    contentControls.add(c);
+                                }
+                            }
                         }
                     }
-                    bodyCursor.dispose();
                 }
             }
-            docCursor.dispose();
             // Sort out headers and footers
             if (doc.getDocument().getBody().getSectPr() != null) {
                 headerFooterPolicy = new XWPFHeaderFooterPolicy(this);
@@ -724,8 +723,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
              * create a new cursor, that points to the START token of the just
              * inserted paragraph
              */
-            XmlCursor newParaPos = p.newCursor();
-            try {
+            try (XmlCursor newParaPos = p.newCursor()) {
                 /*
                  * Calculate the paragraphs index in the list of all body
                  * elements
@@ -742,8 +740,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 cursor.toCursor(newParaPos);
                 cursor.toEndToken();
                 return newP;
-            } finally {
-                newParaPos.dispose();
             }
         }
         return null;
@@ -769,8 +765,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 tables.add(pos, newT);
             }
             int i = 0;
-            XmlCursor tableCursor = t.newCursor();
-            try {
+            try (XmlCursor tableCursor = t.newCursor()) {
                 cursor.toCursor(tableCursor);
                 while (cursor.toPrevSibling()) {
                     o = cursor.getObject();
@@ -782,8 +777,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 cursor.toCursor(tableCursor);
                 cursor.toEndToken();
                 return newT;
-            } finally {
-                tableCursor.dispose();
             }
         }
         return null;
@@ -793,11 +786,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * verifies that cursor is on the right position
      */
     private boolean isCursorInBody(XmlCursor cursor) {
-        XmlCursor verify = cursor.newCursor();
-        verify.toParent();
-        boolean result = (verify.getObject() == this.ctDocument.getBody());
-        verify.dispose();
-        return result;
+        try (XmlCursor verify = cursor.newCursor()) {
+            verify.toParent();
+            return (verify.getObject() == this.ctDocument.getBody());
+        }
     }
 
     private int getPosOfBodyElement(IBodyElement needle) {
@@ -1661,8 +1653,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public XWPFTableCell getTableCell(CTTc cell) {
         XmlObject o;
         CTRow row;
-        final XmlCursor cursor = cell.newCursor();
-        try {
+        try (final XmlCursor cursor = cell.newCursor()) {
             cursor.toParent();
             o = cursor.getObject();
             if (!(o instanceof CTRow)) {
@@ -1671,8 +1662,6 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             row = (CTRow) o;
             cursor.toParent();
             o = cursor.getObject();
-        } finally {
-            cursor.dispose();
         }
         if (!(o instanceof CTTbl)) {
             return null;

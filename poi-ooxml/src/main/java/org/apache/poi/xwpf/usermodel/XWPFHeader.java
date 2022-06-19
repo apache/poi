@@ -55,8 +55,7 @@ public class XWPFHeader extends XWPFHeaderFooter {
 
     public XWPFHeader(XWPFDocument doc, CTHdrFtr hdrFtr) {
         super(doc, hdrFtr);
-        XmlCursor cursor = headerFooter.newCursor();
-        try {
+        try (XmlCursor cursor = headerFooter.newCursor()) {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
@@ -69,8 +68,6 @@ public class XWPFHeader extends XWPFHeaderFooter {
                     tables.add(t);
                 }
             }
-        } finally {
-            cursor.dispose();
         }
     }
 
@@ -99,26 +96,26 @@ public class XWPFHeader extends XWPFHeaderFooter {
             headerFooter = hdrDocument.getHdr();
             // parse the document with cursor and add
             // the XmlObject to its lists
-            XmlCursor cursor = headerFooter.newCursor();
-            cursor.selectPath("./*");
-            while (cursor.toNextSelection()) {
-                XmlObject o = cursor.getObject();
-                if (o instanceof CTP) {
-                    XWPFParagraph p = new XWPFParagraph((CTP) o, this);
-                    paragraphs.add(p);
-                    bodyElements.add(p);
-                }
-                if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this);
-                    tables.add(t);
-                    bodyElements.add(t);
-                }
-                if (o instanceof CTSdtBlock) {
-                    XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
-                    bodyElements.add(c);
+            try (XmlCursor cursor = headerFooter.newCursor()) {
+                cursor.selectPath("./*");
+                while (cursor.toNextSelection()) {
+                    XmlObject o = cursor.getObject();
+                    if (o instanceof CTP) {
+                        XWPFParagraph p = new XWPFParagraph((CTP) o, this);
+                        paragraphs.add(p);
+                        bodyElements.add(p);
+                    }
+                    if (o instanceof CTTbl) {
+                        XWPFTable t = new XWPFTable((CTTbl) o, this);
+                        tables.add(t);
+                        bodyElements.add(t);
+                    }
+                    if (o instanceof CTSdtBlock) {
+                        XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
+                        bodyElements.add(c);
+                    }
                 }
             }
-            cursor.dispose();
         } catch (XmlException e) {
             throw new POIXMLException(e);
         }

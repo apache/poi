@@ -330,11 +330,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     public void removeParagraph(XWPFParagraph paragraph) {
         if (paragraphs.contains(paragraph)) {
             CTP ctP = paragraph.getCTP();
-            XmlCursor c = ctP.newCursor();
-            try {
+            try (XmlCursor c = ctP.newCursor()) {
                 c.removeXml();
-            } finally {
-                c.dispose();
             }
             paragraphs.remove(paragraph);
             bodyElements.remove(paragraph);
@@ -349,11 +346,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     public void removeTable(XWPFTable table) {
         if (tables.contains(table)) {
             CTTbl ctTbl = table.getCTTbl();
-            XmlCursor c = ctTbl.newCursor();
-            try {
+            try (XmlCursor c = ctTbl.newCursor()) {
                 c.removeXml();
-            } finally {
-                c.dispose();
             }
             tables.remove(table);
             bodyElements.remove(table);
@@ -364,11 +358,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * Clears all paragraphs and tables from this header / footer
      */
     public void clearHeaderFooter() {
-       XmlCursor c = headerFooter.newCursor();
-       try {
+       try (XmlCursor c = headerFooter.newCursor()) {
            c.removeXmlContents();
-       } finally {
-           c.dispose();
        }
        paragraphs.clear();
        tables.clear();
@@ -400,11 +391,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
                 paragraphs.add(pos, newP);
             }
             int i = 0;
-            final XmlCursor p2 = p.newCursor();
-            try {
+            try (final XmlCursor p2 = p.newCursor()) {
                 cursor.toCursor(p2);
-            } finally {
-                p2.dispose();
             }
             while (cursor.toPrevSibling()) {
                 o = cursor.getObject();
@@ -412,12 +400,9 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
                     i++;
             }
             bodyElements.add(i, newP);
-            final XmlCursor p3 = p.newCursor();
-            try {
+            try(final XmlCursor p3 = p.newCursor()) {
                 cursor.toCursor(p3);
                 cursor.toEndToken();
-            } finally {
-                p3.dispose();
             }
             return newP;
         }
@@ -449,24 +434,18 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
                 tables.add(pos, newT);
             }
             int i = 0;
-            final XmlCursor cursor2 = t.newCursor();
-            try {
+            try (final XmlCursor cursor2 = t.newCursor()) {
                 while (cursor2.toPrevSibling()) {
                     o = cursor2.getObject();
                     if (o instanceof CTP || o instanceof CTTbl) {
                         i++;
                     }
                 }
-            } finally {
-                cursor2.dispose();
             }
             bodyElements.add(i, newT);
-            final XmlCursor cursor3 = t.newCursor();
-            try {
+            try(final XmlCursor cursor3 = t.newCursor()) {
                 cursor.toCursor(cursor3);
                 cursor.toEndToken();
-            } finally {
-                cursor3.dispose();
             }
             return newT;
         }
@@ -477,13 +456,10 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * verifies that cursor is on the right position
      */
     private boolean isCursorInHdrF(XmlCursor cursor) {
-        XmlCursor verify = cursor.newCursor();
-        try {
+        try (XmlCursor verify = cursor.newCursor()) {
             verify.toParent();
             boolean result = (verify.getObject() == this.headerFooter);
             return result;
-        } finally {
-            verify.dispose();
         }
     }
 
@@ -526,8 +502,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         tables = new ArrayList<>();
         // parse the document with cursor and add
         // the XmlObject to its lists
-        XmlCursor cursor = headerFooter.newCursor();
-        try {
+        try (XmlCursor cursor = headerFooter.newCursor()) {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
@@ -542,8 +517,6 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
                     bodyElements.add(t);
                 }
             }
-        } finally {
-            cursor.dispose();
         }
     }
 

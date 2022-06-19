@@ -72,8 +72,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     }
 
     protected void init() {
-        XmlCursor cursor = ctFtnEdn.newCursor();
-        try {
+        try (XmlCursor cursor = ctFtnEdn.newCursor()) {
             //copied from XWPFDocument...should centralize this code
             //to avoid duplication
             cursor.selectPath("./*");
@@ -93,8 +92,6 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
                 }
 
             }
-        } finally {
-            cursor.dispose();
         }
     }
 
@@ -251,8 +248,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     public XWPFTableCell getTableCell(CTTc cell) {
         XmlObject o;
         CTRow row;
-        final XmlCursor cursor = cell.newCursor();
-        try {
+        try (final XmlCursor cursor = cell.newCursor()) {
             cursor.toParent();
             o = cursor.getObject();
             if (!(o instanceof CTRow)) {
@@ -261,8 +257,6 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
             row = (CTRow) o;
             cursor.toParent();
             o = cursor.getObject();
-        } finally {
-            cursor.dispose();
         }
         if (!(o instanceof CTTbl)) {
             return null;
@@ -285,13 +279,9 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
      * @return true if the cursor is within a CTFtnEdn element.
      */
     private boolean isCursorInFtn(XmlCursor cursor) {
-        XmlCursor verify = cursor.newCursor();
-        try {
+        try (XmlCursor verify = cursor.newCursor()) {
             verify.toParent();
             return  (verify.getObject() == this.ctFtnEdn);
-        } finally {
-            verify.dispose();
-
         }
     }
 
@@ -329,19 +319,17 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
                 tables.add(pos, newT);
             }
             int i = 0;
-            cursor = t.newCursor();
-            while (cursor.toPrevSibling()) {
-                o = cursor.getObject();
-                if (o instanceof CTP || o instanceof CTTbl)
-                    i++;
+            try (XmlCursor cursor1 = t.newCursor()) {
+                while (cursor1.toPrevSibling()) {
+                    o = cursor1.getObject();
+                    if (o instanceof CTP || o instanceof CTTbl)
+                        i++;
+                }
+                bodyElements.add(i, newT);
             }
-            bodyElements.add(i, newT);
-            XmlCursor c2 = t.newCursor();
-            try {
+            try (XmlCursor c2 = t.newCursor()) {
                 cursor.toCursor(c2);
                 cursor.toEndToken();
-            } finally {
-                c2.dispose();
             }
             return newT;
         }
@@ -373,11 +361,8 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
                 paragraphs.add(pos, newP);
             }
             int i = 0;
-            XmlCursor p2 = p.newCursor();
-            try {
+            try (XmlCursor p2 = p.newCursor()) {
                 cursor.toCursor(p2);
-            } finally {
-                p2.dispose();
             }
             while (cursor.toPrevSibling()) {
                 o = cursor.getObject();
@@ -385,10 +370,10 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
                     i++;
             }
             bodyElements.add(i, newP);
-            p2 = p.newCursor();
-            cursor.toCursor(p2);
-            cursor.toEndToken();
-            p2.dispose();
+            try (XmlCursor p2 = p.newCursor()) {
+                cursor.toCursor(p2);
+                cursor.toEndToken();
+            }
             return newP;
         }
         return null;
