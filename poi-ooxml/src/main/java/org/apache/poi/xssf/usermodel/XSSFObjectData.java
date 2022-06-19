@@ -82,14 +82,11 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
             // https://msdn.microsoft.com/en-us/library/dd911027(v=office.12).aspx
             CTOfficeArtExtension ext = extLst.addNewExt();
             ext.setUri("{63B3BB69-23CF-44E3-9099-C40C66FF867C}");
-            XmlCursor cur = ext.newCursor();
-            try {
+            try (XmlCursor cur = ext.newCursor()) {
                 cur.toEndToken();
                 cur.beginElement(new QName(drawNS, "compatExt", "a14"));
                 cur.insertNamespace("a14", drawNS);
                 cur.insertAttributeWithValue("spid", "_x0000_s1");
-            } finally {
-                cur.dispose();
             }
 
             nv.addNewCNvSpPr();
@@ -188,15 +185,12 @@ public class XSSFObjectData extends XSSFSimpleShape implements ObjectData {
 
     @Override
     public XSSFPictureData getPictureData() {
-        XmlCursor cur = getOleObject().newCursor();
-        try {
+        try (XmlCursor cur = getOleObject().newCursor()) {
             if (cur.toChild(XSSFRelation.NS_SPREADSHEETML, "objectPr")) {
                 String blipId = cur.getAttributeText(new QName(PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS, "id"));
                 return (XSSFPictureData)getSheet().getRelationById(blipId);
             }
             return null;
-        } finally {
-            cur.dispose();
         }
     }
 

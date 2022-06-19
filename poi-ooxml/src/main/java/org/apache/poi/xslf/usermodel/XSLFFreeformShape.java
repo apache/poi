@@ -143,9 +143,8 @@ public class XSLFFreeformShape extends XSLFAutoShape
         }
 
         final CTCustomGeometry2D geom = ((CTShapeProperties)xo).getCustGeom();
-        for(CTPath2D spPath : geom.getPathLst().getPathArray()){
-            XmlCursor cursor = spPath.newCursor();
-            try {
+        for(CTPath2D spPath : geom.getPathLst().getPathArray()) {
+            try (XmlCursor cursor = spPath.newCursor()) {
                 if (cursor.toFirstChild()) {
                     do {
                         final XmlObject ch = cursor.getObject();
@@ -164,8 +163,6 @@ public class XSLFFreeformShape extends XSLFAutoShape
                         }
                     } while (cursor.toNextSibling());
                 }
-            } finally {
-                cursor.dispose();
             }
         }
 

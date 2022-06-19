@@ -489,12 +489,9 @@ public class XSSFRichTextString implements RichTextString {
             char firstChar = text.charAt(0);
             char lastChar  = text.charAt(text.length() - 1);
             if(Character.isWhitespace(firstChar) || Character.isWhitespace(lastChar)) {
-                XmlCursor c = xs.newCursor();
-                try {
+                try (XmlCursor c = xs.newCursor()) {
                     c.toNextToken();
                     c.insertAttributeWithValue(new QName("http://www.w3.org/XML/1998/namespace", "space"), "preserve");
-                } finally {
-                    c.dispose();
                 }
             }
         }

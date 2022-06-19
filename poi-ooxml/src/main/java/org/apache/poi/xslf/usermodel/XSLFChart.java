@@ -138,13 +138,10 @@ public final class XSLFChart extends XDDFChart {
         xfrm.setOff(off);
 
         CTGraphicalObjectData gr = frame.addNewGraphic().addNewGraphicData();
-        XmlCursor grCur = gr.newCursor();
-        try {
+        try (XmlCursor grCur = gr.newCursor()) {
             grCur.toNextToken();
             grCur.beginElement(new QName(CHART_URI, "chart"));
             grCur.insertAttributeWithValue("id", PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS, rID);
-        } finally {
-            grCur.dispose();
         }
 
         gr.setUri(CHART_URI);

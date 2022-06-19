@@ -56,8 +56,7 @@ public class XSLFPath implements PathIf {
     @Override
     public Path2D.Double getPath(Context ctx) {
         Path2D.Double path2D = new Path2D.Double();
-        XmlCursor cur = pathXml.newCursor();
-        try {
+        try (XmlCursor cur = pathXml.newCursor()) {
             for (boolean hasNext = cur.toFirstChild(); hasNext; hasNext = cur.toNextSibling()) {
                 XmlObject xo = cur.getObject();
                 PathCommand pc;
@@ -78,8 +77,6 @@ public class XSLFPath implements PathIf {
                 }
                 pc.execute(path2D, ctx);
             }
-        } finally {
-            cur.dispose();
         }
         return path2D;
     }

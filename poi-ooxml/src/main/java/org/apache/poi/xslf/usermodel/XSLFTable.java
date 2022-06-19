@@ -63,8 +63,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         super(shape, sheet);
 
         CTGraphicalObjectData god = shape.getGraphic().getGraphicData();
-        XmlCursor xc = god.newCursor();
-        try {
+        try (XmlCursor xc = god.newCursor()) {
             if (!xc.toChild(XSLFRelation.NS_DRAWINGML, "tbl")) {
                 throw new IllegalStateException("a:tbl element was not found in\n " + god);
             }
@@ -81,8 +80,6 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
                 throw new IllegalStateException(errStr);
             }
             _table = (CTTable)xo;
-        } finally {
-            xc.dispose();
         }
 
         _rows = new ArrayList<>(_table.sizeOfTrArray());
@@ -260,22 +257,16 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
         frame.addNewXfrm();
         CTGraphicalObjectData gr = frame.addNewGraphic().addNewGraphicData();
-        XmlCursor grCur = gr.newCursor();
-        try {
+        try (XmlCursor grCur = gr.newCursor()) {
             grCur.toNextToken();
             grCur.beginElement(new QName(XSLFRelation.NS_DRAWINGML, "tbl"));
 
             CTTable tbl = CTTable.Factory.newInstance();
             tbl.addNewTblPr();
             tbl.addNewTblGrid();
-            XmlCursor tblCur = tbl.newCursor();
-            try {
+            try (XmlCursor tblCur = tbl.newCursor()) {
                 tblCur.moveXmlContents(grCur);
-            } finally {
-                tblCur.dispose();
             }
-        } finally {
-            grCur.dispose();
         }
         gr.setUri(TABLE_URI);
         return frame;

@@ -109,9 +109,8 @@ public final class XPathHelper {
     public static <T extends XmlObject> T selectProperty(XmlObject startObject, Class<T> resultClass, XSLFShape.ReparseFactory<T> factory, QName[]... path)
             throws XmlException {
         XmlObject xo = startObject;
-        XmlCursor cur = xo.newCursor();
         XmlCursor innerCur = null;
-        try {
+        try (XmlCursor cur = startObject.newCursor()) {
             innerCur = selectProperty(cur, path, 0, factory != null, false);
             if (innerCur == null) {
                 return null;
@@ -133,9 +132,8 @@ public final class XPathHelper {
 
             return (T)xo;
         } finally {
-            cur.dispose();
             if (innerCur != null) {
-                innerCur.dispose();
+                innerCur.close();
             }
         }
     }
@@ -187,21 +185,16 @@ public final class XPathHelper {
         for (int i=0; i<choices; i++) {
             // TODO: check [Requires] attribute of [Choice] element, if we can handle the content
             AlternateContentDocument.AlternateContent.Choice choice = alterCont.getChoiceArray(i);
-            XmlCursor cCur = choice.newCursor();
             XmlCursor innerCur = null;
-            try {
+            try (XmlCursor cCur = choice.newCursor()) {
                 String requiresNS = cCur.namespaceForPrefix(choice.getRequires());
                 if (MAC_DML_NS.equalsIgnoreCase(requiresNS)) {
                     // Mac DML usually contains PDFs ...
                     continue;
                 }
                 innerCur = selectProperty(cCur, path, offset, reparseAlternate, true);
-                if (innerCur != null) {
+                if (innerCur != null && innerCur != cCur) {
                     return innerCur;
-                }
-            } finally {
-                if (innerCur != cCur) {
-                    cCur.dispose();
                 }
             }
         }
@@ -217,7 +210,7 @@ public final class XPathHelper {
             return innerCur;
         } finally {
             if (innerCur != fCur) {
-                fCur.dispose();
+                fCur.close();
             }
         }
     }

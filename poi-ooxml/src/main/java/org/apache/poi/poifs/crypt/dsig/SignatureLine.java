@@ -195,10 +195,10 @@ public abstract class SignatureLine {
     }
 
     public void setSignatureShape(CTSignatureLine signatureLine) {
-        XmlCursor cur = signatureLine.newCursor();
-        cur.toParent();
-        this.signatureShape = (CTShape)cur.getObject();
-        cur.dispose();
+        try (XmlCursor cur = signatureLine.newCursor()) {
+            cur.toParent();
+            this.signatureShape = (CTShape)cur.getObject();
+        }
     }
 
     public void updateSignatureConfig(SignatureConfig config) throws IOException {
@@ -231,12 +231,9 @@ public abstract class SignatureLine {
         setSuggestedSigner(signatureLine.getSuggestedsigner());
         setSuggestedSigner2(signatureLine.getSuggestedsigner2());
         setSuggestedSignerEmail(signatureLine.getSuggestedsigneremail());
-        XmlCursor cur = signatureLine.newCursor();
-        try {
+        try (XmlCursor cur = signatureLine.newCursor()) {
             // the signinginstructions are actually qualified, but our schema version is too old
             setSigningInstructions(cur.getAttributeText(new QName(MS_OFFICE_URN, "signinginstructions")));
-        } finally {
-            cur.dispose();
         }
     }
 
@@ -260,14 +257,14 @@ public abstract class SignatureLine {
             CTGroup grp = CTGroup.Factory.newInstance();
             grp.addNewShape();
 
-            XmlCursor contCur = signatureContainer.newCursor();
-            contCur.toEndToken();
-            XmlCursor otherC = grp.newCursor();
-            otherC.copyXmlContents(contCur);
-            otherC.dispose();
-            contCur.toPrevSibling();
-            signatureShape = (CTShape)contCur.getObject();
-            contCur.dispose();
+            try (XmlCursor contCur = signatureContainer.newCursor()) {
+                contCur.toEndToken();
+                try (XmlCursor otherC = grp.newCursor()) {
+                    otherC.copyXmlContents(contCur);
+                }
+                contCur.toPrevSibling();
+                signatureShape = (CTShape)contCur.getObject();
+            }
 
             signatureShape.setAlt("Microsoft Office Signature Line...");
             signatureShape.setStyle("width:191.95pt;height:96.05pt");
@@ -298,9 +295,9 @@ public abstract class SignatureLine {
             xsl.setProvid("{00000000-0000-0000-0000-000000000000}");
             xsl.setExt(STExt.EDIT);
             xsl.setSigninginstructionsset(STTrueFalse.T);
-            XmlCursor cur = xsl.newCursor();
-            cur.setAttributeText(new QName(MS_OFFICE_URN, "signinginstructions"), signingInstructions);
-            cur.dispose();
+            try (XmlCursor cur = xsl.newCursor()) {
+                cur.setAttributeText(new QName(MS_OFFICE_URN, "signinginstructions"), signingInstructions);
+            }
         } catch (IOException | InvalidFormatException e) {
             // shouldn't happen ...
             throw new POIXMLException("Can't generate signature line image", e);

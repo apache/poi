@@ -250,8 +250,7 @@ public class XSLFObjectShape extends XSLFGraphicFrame implements ObjectShape<XSL
         frame.addNewXfrm();
         CTGraphicalObjectData gr = frame.addNewGraphic().addNewGraphicData();
         gr.setUri(OLE_URI);
-        XmlCursor grCur = gr.newCursor();
-        try {
+        try (XmlCursor grCur = gr.newCursor()) {
             grCur.toEndToken();
             grCur.beginElement(new QName(PML_NS, "oleObj"));
             grCur.insertElement(new QName(PML_NS, "embed"));
@@ -281,15 +280,10 @@ public class XSLFObjectShape extends XSLFGraphicFrame implements ObjectShape<XSL
 
             spPr.addNewPrstGeom().setPrst(STShapeType.RECT);
 
-            XmlCursor picCur = grpShp.newCursor();
-            try {
+            try (XmlCursor picCur = grpShp.newCursor()) {
                 picCur.toStartDoc();
                 picCur.moveXmlContents(grCur);
-            } finally {
-                picCur.dispose();
             }
-        } finally {
-            grCur.dispose();
         }
 
         return frame;

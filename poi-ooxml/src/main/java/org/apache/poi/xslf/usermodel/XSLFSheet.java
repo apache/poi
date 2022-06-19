@@ -140,8 +140,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         final XSLFSheet sheet = (parent instanceof XSLFSheet) ? (XSLFSheet)parent : ((XSLFShape)parent).getSheet();
 
         List<XSLFShape> shapes = new ArrayList<>();
-        XmlCursor cur = spTree.newCursor();
-        try {
+        try (XmlCursor cur = spTree.newCursor()) {
             for (boolean b = cur.toFirstChild(); b; b = cur.toNextSibling()) {
                 XmlObject ch = cur.getObject();
                 if(ch instanceof CTShape){
@@ -174,8 +173,6 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
                     cur.pop();
                 }
             }
-        } finally {
-            cur.dispose();
         }
 
         for (final XSLFShape s : shapes) {

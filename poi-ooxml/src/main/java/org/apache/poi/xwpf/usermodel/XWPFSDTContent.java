@@ -43,48 +43,48 @@ public class XWPFSDTContent implements ISDTContent {
         if (sdtRun == null) {
             return;
         }
-        XmlCursor cursor = sdtRun.newCursor();
-        cursor.selectPath("./*");
-        while (cursor.toNextSelection()) {
-            XmlObject o = cursor.getObject();
-            if (o instanceof CTR) {
-                XWPFRun run = new XWPFRun((CTR) o, parent);
-                bodyElements.add(run);
-            } else if (o instanceof CTSdtRun) {
-                XWPFSDT c = new XWPFSDT(((CTSdtRun) o), part);
-                bodyElements.add(c);
+        try (final XmlCursor cursor = sdtRun.newCursor()) {
+            cursor.selectPath("./*");
+            while (cursor.toNextSelection()) {
+                XmlObject o = cursor.getObject();
+                if (o instanceof CTR) {
+                    XWPFRun run = new XWPFRun((CTR) o, parent);
+                    bodyElements.add(run);
+                } else if (o instanceof CTSdtRun) {
+                    XWPFSDT c = new XWPFSDT(((CTSdtRun) o), part);
+                    bodyElements.add(c);
+                }
             }
         }
-        cursor.dispose();
     }
 
     public XWPFSDTContent(CTSdtContentBlock block, IBody part, IRunBody parent) {
         if (block == null) {
             return;
         }
-        XmlCursor cursor = block.newCursor();
-        cursor.selectPath("./*");
-        while (cursor.toNextSelection()) {
-            XmlObject o = cursor.getObject();
-            if (o instanceof CTP) {
-                XWPFParagraph p = new XWPFParagraph((CTP) o, part);
-                bodyElements.add(p);
-                // paragraphs.add(p);
-            } else if (o instanceof CTTbl) {
-                XWPFTable t = new XWPFTable((CTTbl) o, part);
-                bodyElements.add(t);
-                // tables.add(t);
-            } else if (o instanceof CTSdtBlock) {
-                XWPFSDT c = new XWPFSDT(((CTSdtBlock) o), part);
-                bodyElements.add(c);
-                // contentControls.add(c);
-            } else if (o instanceof CTR) {
-                XWPFRun run = new XWPFRun((CTR) o, parent);
-                // runs.add(run);
-                bodyElements.add(run);
+        try (final XmlCursor cursor = block.newCursor()) {
+            cursor.selectPath("./*");
+            while (cursor.toNextSelection()) {
+                XmlObject o = cursor.getObject();
+                if (o instanceof CTP) {
+                    XWPFParagraph p = new XWPFParagraph((CTP) o, part);
+                    bodyElements.add(p);
+                    // paragraphs.add(p);
+                } else if (o instanceof CTTbl) {
+                    XWPFTable t = new XWPFTable((CTTbl) o, part);
+                    bodyElements.add(t);
+                    // tables.add(t);
+                } else if (o instanceof CTSdtBlock) {
+                    XWPFSDT c = new XWPFSDT(((CTSdtBlock) o), part);
+                    bodyElements.add(c);
+                    // contentControls.add(c);
+                } else if (o instanceof CTR) {
+                    XWPFRun run = new XWPFRun((CTR) o, parent);
+                    // runs.add(run);
+                    bodyElements.add(run);
+                }
             }
         }
-        cursor.dispose();
     }
 
     @Override

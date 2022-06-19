@@ -150,9 +150,7 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
             " xmlns=\""+NS_SPREADSHEETML+"\"", "")
             , xopt);
 
-        XmlCursor cur = root.getXml().newCursor();
-
-        try {
+        try (XmlCursor cur = root.getXml().newCursor()) {
             for (boolean found = cur.toFirstChild(); found; found = cur.toNextSibling()) {
                 XmlObject xo = cur.getObject();
                 if (xo instanceof CTShapetype) {
@@ -168,21 +166,16 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
                     }
                 }
             }
-        } finally {
-            cur.dispose();
         }
     }
 
     protected List<XmlObject> getItems(){
         List<XmlObject> items = new ArrayList<>();
 
-        XmlCursor cur = root.getXml().newCursor();
-        try {
+        try (XmlCursor cur = root.getXml().newCursor()) {
             for (boolean found = cur.toFirstChild(); found; found = cur.toNextSibling()) {
                 items.add(cur.getObject());
             }
-        } finally {
-            cur.dispose();
         }
 
         return items;
@@ -207,8 +200,7 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
      */
     private void newDrawing(){
         root = XmlDocument.Factory.newInstance();
-        final XmlCursor xml = root.addNewXml().newCursor();
-        try {
+        try (final XmlCursor xml = root.addNewXml().newCursor()) {
             ShapelayoutDocument layDoc = ShapelayoutDocument.Factory.newInstance();
             CTShapeLayout layout = layDoc.addNewShapelayout();
             layout.setExt(STExt.EDIT);
@@ -217,11 +209,8 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
             idmap.setData("1");
 
             xml.toEndToken();
-            final XmlCursor layCur = layDoc.newCursor();
-            try {
+            try (XmlCursor layCur = layDoc.newCursor()) {
                 layCur.copyXmlContents(xml);
-            } finally {
-                layCur.dispose();
             }
 
             CTGroup grp = CTGroup.Factory.newInstance();
@@ -237,16 +226,10 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
             path.setConnecttype(STConnectType.RECT);
 
             xml.toEndToken();
-            final XmlCursor grpCur = grp.newCursor();
-            try {
+            try (XmlCursor grpCur = grp.newCursor()) {
                 grpCur.copyXmlContents(xml);
-            } finally {
-                grpCur.dispose();
             }
-        } finally {
-            xml.dispose();
         }
-
     }
 
     /**
@@ -278,19 +261,13 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
         cldata.addNewRow().setBigIntegerValue(BigInteger.valueOf(0));
         cldata.addNewColumn().setBigIntegerValue(BigInteger.valueOf(0));
 
-        XmlCursor xml = root.getXml().newCursor();
-        try {
+        try (final XmlCursor xml = root.getXml().newCursor()){
             xml.toEndToken();
-            XmlCursor grpCur = grp.newCursor();
-            try {
+            try (final XmlCursor grpCur = grp.newCursor()){
                 grpCur.copyXmlContents(xml);
                 xml.toPrevSibling();
                 shape = (CTShape)xml.getObject();
-            } finally {
-                grpCur.dispose();
             }
-        } finally {
-            xml.dispose();
         }
 
         return shape;
@@ -302,16 +279,13 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
      * @return the comment shape or <code>null</code>
      */
     public CTShape findCommentShape(int row, int col){
-        XmlCursor cur = root.getXml().newCursor();
-        try {
+        try (final XmlCursor cur = root.getXml().newCursor()){
             for (boolean found = cur.toFirstChild(); found; found = cur.toNextSibling()) {
                 XmlObject itm = cur.getObject();
                 if (matchCommentShape(itm, row, col)) {
                     return (CTShape)itm;
                 }
             }
-        } finally {
-            cur.dispose();
         }
         return null;
     }
@@ -337,8 +311,7 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
     }
 
     protected boolean removeCommentShape(int row, int col){
-        XmlCursor cur = root.getXml().newCursor();
-        try {
+        try (final XmlCursor cur = root.getXml().newCursor()) {
             for (boolean found = cur.toFirstChild(); found; found = cur.toNextSibling()) {
                 XmlObject itm = cur.getObject();
                 if (matchCommentShape(itm, row, col)) {
@@ -346,8 +319,6 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
                     return true;
                 }
             }
-        } finally {
-            cur.dispose();
         }
         return false;
     }

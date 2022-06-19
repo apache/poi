@@ -141,9 +141,8 @@ public class XSLFColor {
             return _phClr == null ? null : toColor(_phClr, theme);
         }
 
-        final XmlCursor cur = obj.newCursor();
         Color color = null;
-        try {
+        try (XmlCursor cur = obj.newCursor()) {
             XmlObject ch;
             for (int idx=0; color == null && (ch = nextObject(obj, cur, idx)) != null; idx++) {
                 if (ch instanceof CTHslColor) {
@@ -162,8 +161,6 @@ public class XSLFColor {
                     throw new IllegalArgumentException("Unexpected color choice: " + ch.getClass());
                 }
             }
-        } finally {
-            cur.dispose();
         }
         return color;
     }
@@ -254,8 +251,7 @@ public class XSLFColor {
             if (obj == null) {
                 continue;
             }
-            XmlCursor cur = obj.newCursor();
-            try {
+            try (XmlCursor cur = obj.newCursor()) {
                 if (!(
                         cur.toChild(XSLFRelation.NS_DRAWINGML, elem) ||
                         (cur.toFirstChild() && cur.toChild(XSLFRelation.NS_DRAWINGML, elem))
@@ -266,8 +262,6 @@ public class XSLFColor {
                 if (str != null && !"".equals(str)) {
                     return Integer.parseInt(str);
                 }
-            } finally {
-                cur.dispose();
             }
         }
         return -1;

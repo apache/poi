@@ -190,12 +190,9 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
             String xpath = "declare namespace c='" + DRAWINGML_CHART_URI + "' c:chart";
             XmlObject[] obj = getGraphicalData().selectPath(xpath);
             if (obj != null && obj.length == 1) {
-                XmlCursor c = obj[0].newCursor();
-                try {
+                try (XmlCursor c = obj[0].newCursor()) {
                     QName idQualifiedName = new QName(CORE_PROPERTIES_ECMA376_NS, "id");
                     id = c.getAttributeText(idQualifiedName);
-                } finally {
-                    c.dispose();
                 }
             }
             if (id == null) {
@@ -230,8 +227,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
         String xpath = "declare namespace c='" + DRAWINGML_CHART_URI + "' c:chart";
         XmlObject[] obj = objData.selectPath(xpath);
         if (obj != null && obj.length == 1) {
-            XmlCursor c = obj[0].newCursor();
-            try {
+            try (XmlCursor c = obj[0].newCursor()) {
                 // duplicate chart with embedded workbook
                 QName idQualifiedName = new QName(CORE_PROPERTIES_ECMA376_NS, "id");
                 String id = c.getAttributeText(idQualifiedName);
@@ -254,8 +250,6 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
                 }
             } catch (InvalidFormatException | IOException e) {
                 throw new POIXMLException(e);
-            } finally {
-                c.dispose();
             }
         }
     }
@@ -265,10 +259,8 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
         String xpath = "declare namespace dgm='" + DRAWINGML_DIAGRAM_URI + "' $this//dgm:relIds";
         XmlObject[] obj = objData.selectPath(xpath);
         if(obj != null && obj.length == 1) {
-            XmlCursor c = obj[0].newCursor();
-
             XSLFSheet sheet = srcShape.getSheet();
-            try {
+            try (XmlCursor c = obj[0].newCursor()) {
                 String dm = c.getAttributeText(new QName(CORE_PROPERTIES_ECMA376_NS, "dm"));
                 PackageRelationship dmRel = sheet.getPackagePart().getRelationship(dm);
                 PackagePart dmPart = sheet.getPackagePart().getRelatedPart(dmRel);
@@ -291,8 +283,6 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
 
             } catch (InvalidFormatException e){
                 throw new POIXMLException(e);
-            } finally {
-                c.dispose();
             }
         }
     }

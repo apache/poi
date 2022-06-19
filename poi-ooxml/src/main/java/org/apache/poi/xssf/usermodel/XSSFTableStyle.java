@@ -59,8 +59,7 @@ public class XSSFTableStyle implements TableStyle {
         List<CTDxf> dxfList = new ArrayList<>();
 
         // CT* classes don't handle "mc:AlternateContent" elements, so get the Dxf instances manually
-        final XmlCursor cur = dxfs.newCursor();
-        try {
+        try (XmlCursor cur = dxfs.newCursor()) {
             // sometimes there are namespaces sometimes not.
             String xquery = "declare namespace x='"+XSSFRelation.NS_SPREADSHEETML+"' .//x:dxf | .//dxf";
             cur.selectPath(xquery);
@@ -82,8 +81,6 @@ public class XSSFTableStyle implements TableStyle {
                     }
                 }
             }
-        } finally {
-            cur.dispose();
         }
 
         for (CTTableStyleElement element : tableStyle.getTableStyleElementList()) {

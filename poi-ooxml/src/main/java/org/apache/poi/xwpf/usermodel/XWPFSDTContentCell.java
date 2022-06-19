@@ -50,48 +50,46 @@ public class XWPFSDTContentCell implements ISDTContent {
             return;
         }
         StringBuilder sb = new StringBuilder();
-        XmlCursor cursor = sdtContentCell.newCursor();
+        try (final XmlCursor cursor = sdtContentCell.newCursor()) {
+            //keep track of the following,
+            //and add "\n" only before the start of a body
+            //element if it is not the first body element.
 
-        //keep track of the following,
-        //and add "\n" only before the start of a body
-        //element if it is not the first body element.
+            //index of cell in row
+            int tcCnt = 0;
+            //count of body objects
+            int iBodyCnt = 0;
+            int depth = 1;
 
-        //index of cell in row
-        int tcCnt = 0;
-        //count of body objects
-        int iBodyCnt = 0;
-        int depth = 1;
-
-        while (cursor.hasNextToken() && depth > 0) {
-            TokenType t = cursor.toNextToken();
-            if (t.isText()) {
-                sb.append(cursor.getTextValue());
-            } else if (isStartToken(cursor, "tr")) {
-                tcCnt = 0;
-                iBodyCnt = 0;
-            } else if (isStartToken(cursor, "tc")) {
-                if (tcCnt++ > 0) {
-                    sb.append("\t");
+            while (cursor.hasNextToken() && depth > 0) {
+                TokenType t = cursor.toNextToken();
+                if (t.isText()) {
+                    sb.append(cursor.getTextValue());
+                } else if (isStartToken(cursor, "tr")) {
+                    tcCnt = 0;
+                    iBodyCnt = 0;
+                } else if (isStartToken(cursor, "tc")) {
+                    if (tcCnt++ > 0) {
+                        sb.append("\t");
+                    }
+                    iBodyCnt = 0;
+                } else if (isStartToken(cursor, "p") ||
+                        isStartToken(cursor, "tbl") ||
+                        isStartToken(cursor, "sdt")) {
+                    if (iBodyCnt > 0) {
+                        sb.append("\n");
+                    }
+                    iBodyCnt++;
                 }
-                iBodyCnt = 0;
-            } else if (isStartToken(cursor, "p") ||
-                    isStartToken(cursor, "tbl") ||
-                    isStartToken(cursor, "sdt")) {
-                if (iBodyCnt > 0) {
-                    sb.append("\n");
+                if (cursor.isStart()) {
+                    depth++;
+                } else if (cursor.isEnd()) {
+                    depth--;
                 }
-                iBodyCnt++;
             }
-            if (cursor.isStart()) {
-                depth++;
-            } else if (cursor.isEnd()) {
-                depth--;
-            }
+            text = sb.toString();
         }
-        text = sb.toString();
-        cursor.dispose();
     }
-
 
     private boolean isStartToken(XmlCursor cursor, String string) {
         if (!cursor.isStart()) {

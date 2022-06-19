@@ -256,16 +256,13 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     @SuppressWarnings({"unchecked", "WeakerAccess", "unused", "SameParameterValue"})
     protected <T extends XmlObject> T getChild(Class<T> childClass, String namespace, String nodename) {
         T child = null;
-        XmlCursor cur = getXmlObject().newCursor();
-        try {
+        try (XmlCursor cur = getXmlObject().newCursor()) {
             if (cur.toChild(namespace, nodename)) {
                 child = (T)cur.getObject();
             }
             if (cur.toChild(XSLFRelation.NS_DRAWINGML, nodename)) {
                 child = (T)cur.getObject();
             }
-        } finally {
-            cur.dispose();
         }
         return child;
     }
@@ -461,13 +458,10 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
             return null;
         }
         XSLFFillProperties fp = null;
-        XmlCursor cur = styleLst.newCursor();
-        try {
+        try (XmlCursor cur = styleLst.newCursor()) {
             if (cur.toChild(Math.toIntExact(childIdx))) {
                 fp = XSLFPropertiesDelegate.getFillDelegate(cur.getObject());
             }
-        } finally {
-            cur.dispose();
         }
 
         CTSchemeColor phClr = fillRef.getSchemeClr();

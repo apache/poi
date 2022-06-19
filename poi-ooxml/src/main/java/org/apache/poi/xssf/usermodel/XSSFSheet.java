@@ -4725,8 +4725,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         // we use a XmlCursor here to handle oleObject with-/out AlternateContent wrappers
         String xquery = "declare namespace p='"+XSSFRelation.NS_SPREADSHEETML+"' .//p:oleObject";
-        XmlCursor cur = getCTWorksheet().getOleObjects().newCursor();
-        try {
+        try (XmlCursor cur = getCTWorksheet().getOleObjects().newCursor()) {
             cur.selectPath(xquery);
             CTOleObject coo = null;
             while (cur.toNextSelection()) {
@@ -4765,8 +4764,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                 }
             }
             return coo;
-        } finally {
-            cur.dispose();
         }
     }
 

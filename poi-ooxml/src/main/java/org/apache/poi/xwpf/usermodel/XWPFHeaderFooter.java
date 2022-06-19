@@ -554,8 +554,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     public XWPFTableCell getTableCell(CTTc cell) {
         XmlObject o;
         CTRow row;
-        final XmlCursor cursor = cell.newCursor();
-        try {
+        try (XmlCursor cursor = cell.newCursor()) {
             cursor.toParent();
             o = cursor.getObject();
             if (!(o instanceof CTRow)) {
@@ -564,8 +563,6 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             row = (CTRow) o;
             cursor.toParent();
             o = cursor.getObject();
-        } finally {
-            cursor.dispose();
         }
         if (!(o instanceof CTTbl)) {
             return null;

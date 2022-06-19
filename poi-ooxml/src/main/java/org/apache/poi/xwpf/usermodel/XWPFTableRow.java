@@ -180,8 +180,7 @@ public class XWPFTableRow {
         List<ICell> cells = new ArrayList<>();
         //Can't use ctRow.getTcList because that only gets table cells
         //Can't use ctRow.getSdtList because that only gets sdts that are at cell level
-        XmlCursor cursor = ctRow.newCursor();
-        try {
+        try (XmlCursor cursor = ctRow.newCursor()) {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
@@ -191,8 +190,6 @@ public class XWPFTableRow {
                     cells.add(new XWPFSDTCell((CTSdtCell) o, this, table.getBody()));
                 }
             }
-        } finally {
-            cursor.dispose();
         }
         return cells;
     }

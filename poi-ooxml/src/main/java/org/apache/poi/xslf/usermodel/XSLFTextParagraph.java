@@ -66,8 +66,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         _runs = new ArrayList<>();
         _shape = shape;
 
-        XmlCursor c = _p.newCursor();
-        try {
+        try (XmlCursor c = _p.newCursor()) {
             if (c.toFirstChild()) {
                 do {
                     XmlObject r = c.getObject();
@@ -78,8 +77,6 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                     }
                 } while (c.toNextSibling());
             }
-        } finally {
-            c.dispose();
         }
     }
 
@@ -751,8 +748,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         for (XSLFSheet m = masterSheet; m != null; m = (XSLFSheet)m.getMasterSheet()) {
             masterSheet = m;
             XmlObject xo = masterSheet.getXmlObject();
-            XmlCursor cur = xo.newCursor();
-            try {
+            try (XmlCursor cur = xo.newCursor()) {
                 cur.push();
                 if ((cur.toChild(nsPML, "txStyles") && cur.toChild(nsPML, defaultStyleSelector)) ||
                     (cur.pop() && cur.toChild(nsPML, "notesStyle"))) {
@@ -765,8 +761,6 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                         level--;
                     }
                 }
-            } finally {
-                cur.dispose();
             }
         }
 
@@ -805,17 +799,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
             thisP.removeFld(i-1);
         }
 
-        XmlCursor thisC = thisP.newCursor();
-        try {
+        try (XmlCursor thisC = thisP.newCursor()) {
             thisC.toEndToken();
-            XmlCursor otherC = otherP.newCursor();
-            try {
+            try (XmlCursor otherC = otherP.newCursor()) {
                 otherC.copyXmlContents(thisC);
-            } finally {
-                otherC.dispose();
             }
-        } finally {
-            thisC.dispose();
         }
 
         for (XSLFTextRun tr : other.getTextRuns()) {

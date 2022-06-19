@@ -113,8 +113,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     @SuppressWarnings("deprecation")
     private void buildRunsInOrderFromXml(XmlObject object) {
-        XmlCursor c = object.newCursor();
-        try {
+        try (XmlCursor c = object.newCursor()) {
             c.selectPath("child::*");
             while (c.toNextSelection()) {
                 XmlObject o = c.getObject();
@@ -166,8 +165,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                     }
                 }
             }
-        } finally {
-            c.dispose();
         }
     }
 

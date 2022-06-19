@@ -462,8 +462,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         ole1.setId(olePR.getId());
 
         CTTwoCellAnchor ctAnchor;
-        final XmlCursor cur1 = ole1.newCursor();
-        try {
+        try (XmlCursor cur1 = ole1.newCursor()) {
             cur1.toEndToken();
             cur1.beginElement("objectPr", XSSFRelation.NS_SPREADSHEETML);
             cur1.insertAttributeWithValue("id", PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS, imgSheetPR.getId());
@@ -473,11 +472,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
 
             ctAnchor = createTwoCellAnchor((XSSFClientAnchor) anchor);
 
-            final XmlCursor cur2 = ctAnchor.newCursor();
-            try {
+            try (XmlCursor cur2 = ctAnchor.newCursor()) {
                 cur2.copyXmlContents(cur1);
-            } finally {
-                cur2.dispose();
             }
 
             cur1.toParent();
@@ -485,8 +481,6 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
             cur1.setName(new QName(XSSFRelation.NS_SPREADSHEETML, "from"));
             cur1.toNextSibling();
             cur1.setName(new QName(XSSFRelation.NS_SPREADSHEETML, "to"));
-        } finally {
-            cur1.dispose();
         }
 
         // add a new shape and link OLE & image part
@@ -503,12 +497,9 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         cNvPr.setId(shapeId);
         cNvPr.setName("Object " + shapeId);
 
-        XmlCursor extCur = cNvPr.getExtLst().getExtArray(0).newCursor();
-        try {
+        try (XmlCursor extCur = cNvPr.getExtLst().getExtArray(0).newCursor()) {
             extCur.toFirstChild();
             extCur.setAttributeText(new QName("spid"), "_x0000_s" + shapeId);
-        } finally {
-            extCur.dispose();
         }
 
         XSSFObjectData shape = new XSSFObjectData(this, ctShape);
@@ -595,13 +586,10 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      */
     public List<XSSFShape> getShapes() {
         List<XSSFShape> lst = new ArrayList<>();
-        XmlCursor cur = drawing.newCursor();
-        try {
+        try (XmlCursor cur = drawing.newCursor()) {
             if (cur.toFirstChild()) {
                 addShapes(cur, lst);
             }
-        } finally {
-            cur.dispose();
         }
         return lst;
     }
@@ -611,87 +599,76 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      */
     public List<XSSFShape> getShapes(XSSFShapeGroup groupshape) {
         List<XSSFShape> lst = new ArrayList<>();
-        XmlCursor cur = groupshape.getCTGroupShape().newCursor();
-        try {
+        try (XmlCursor cur = groupshape.getCTGroupShape().newCursor()) {
             addShapes(cur, lst);
-        } finally {
-            cur.dispose();
         }
         return lst;
     }
 
     private void addShapes(XmlCursor cur, List<XSSFShape> lst) {
-        try {
-            do {
-                cur.push();
-                if (cur.toFirstChild()) {
-                    do {
-                        XmlObject obj = cur.getObject();
+        do {
+            cur.push();
+            if (cur.toFirstChild()) {
+                do {
+                    XmlObject obj = cur.getObject();
 
-                        XSSFShape shape;
-                        if (obj instanceof CTMarker) {
-                            // ignore anchor elements
-                            continue;
-                        } else if (obj instanceof CTPicture) {
-                            shape = new XSSFPicture(this, (CTPicture) obj);
-                        } else if (obj instanceof CTConnector) {
-                            shape = new XSSFConnector(this, (CTConnector) obj);
-                        } else if (obj instanceof CTShape) {
-                            shape = hasOleLink(obj) ? new XSSFObjectData(this, (CTShape) obj)
-                                : new XSSFSimpleShape(this, (CTShape) obj);
-                        } else if (obj instanceof CTGraphicalObjectFrame) {
-                            shape = new XSSFGraphicFrame(this, (CTGraphicalObjectFrame) obj);
-                        } else if (obj instanceof CTGroupShape) {
-                            shape = new XSSFShapeGroup(this, (CTGroupShape) obj);
-                        } else if (obj instanceof XmlAnyTypeImpl) {
-                            LOG.atWarn().log("trying to parse AlternateContent, this unlinks the returned Shapes from the underlying xml content, so those shapes can't be used to modify the drawing, i.e. modifications will be ignored!");
+                    XSSFShape shape;
+                    if (obj instanceof CTMarker) {
+                        // ignore anchor elements
+                        continue;
+                    } else if (obj instanceof CTPicture) {
+                        shape = new XSSFPicture(this, (CTPicture) obj);
+                    } else if (obj instanceof CTConnector) {
+                        shape = new XSSFConnector(this, (CTConnector) obj);
+                    } else if (obj instanceof CTShape) {
+                        shape = hasOleLink(obj) ? new XSSFObjectData(this, (CTShape) obj)
+                            : new XSSFSimpleShape(this, (CTShape) obj);
+                    } else if (obj instanceof CTGraphicalObjectFrame) {
+                        shape = new XSSFGraphicFrame(this, (CTGraphicalObjectFrame) obj);
+                    } else if (obj instanceof CTGroupShape) {
+                        shape = new XSSFShapeGroup(this, (CTGroupShape) obj);
+                    } else if (obj instanceof XmlAnyTypeImpl) {
+                        LOG.atWarn().log("trying to parse AlternateContent, this unlinks the returned Shapes from the underlying xml content, so those shapes can't be used to modify the drawing, i.e. modifications will be ignored!");
 
-                            // XmlAnyTypeImpl is returned for AlternateContent
-                            // parts, which might contain a CTDrawing
-                            cur.push();
-                            cur.toFirstChild();
-                            XmlCursor cur2 = null;
-                            try {
-                                // need to parse AlternateContent again,
-                                // otherwise the child elements aren't typed,
-                                // but also XmlAnyTypes
-                                CTDrawing alterWS = CTDrawing.Factory.parse(cur.newXMLStreamReader());
-                                cur2 = alterWS.newCursor();
+                        // XmlAnyTypeImpl is returned for AlternateContent
+                        // parts, which might contain a CTDrawing
+                        cur.push();
+                        cur.toFirstChild();
+                        try {
+                            // need to parse AlternateContent again,
+                            // otherwise the child elements aren't typed,
+                            // but also XmlAnyTypes
+                            CTDrawing alterWS = CTDrawing.Factory.parse(cur.newXMLStreamReader());
+                            try (XmlCursor cur2 = alterWS.newCursor()) {
                                 if (cur2.toFirstChild()) {
                                     addShapes(cur2, lst);
                                 }
-                            } catch (XmlException e) {
-                                LOG.atWarn().withThrowable(e).log("unable to parse CTDrawing in alternate content.");
-                            } finally {
-                                if (cur2 != null) {
-                                    cur2.dispose();
-                                }
-                                cur.pop();
                             }
-                            continue;
-                        } else {
-                            // ignore anything else
-                            continue;
+                        } catch (XmlException e) {
+                            LOG.atWarn().withThrowable(e).log("unable to parse CTDrawing in alternate content.");
+                        } finally {
+                            cur.pop();
                         }
+                        continue;
+                    } else {
+                        // ignore anything else
+                        continue;
+                    }
 
-                        assert (shape != null);
-                        shape.anchor = getAnchorFromParent(obj);
-                        lst.add(shape);
+                    assert (shape != null);
+                    shape.anchor = getAnchorFromParent(obj);
+                    lst.add(shape);
 
-                    } while (cur.toNextSibling());
-                }
-                cur.pop();
-            } while (cur.toNextSibling());
-        } finally {
-            cur.dispose();
-        }
+                } while (cur.toNextSibling());
+            }
+            cur.pop();
+        } while (cur.toNextSibling());
     }
 
     private boolean hasOleLink(XmlObject shape) {
         QName uriName = new QName(null, "uri");
         String xquery = "declare namespace a='" + XSSFRelation.NS_DRAWINGML + "' .//a:extLst/a:ext";
-        XmlCursor cur = shape.newCursor();
-        try {
+        try (XmlCursor cur = shape.newCursor()) {
             cur.selectPath(xquery);
             while (cur.toNextSelection()) {
                 String uri = cur.getAttributeText(uriName);
@@ -699,8 +676,6 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
                     return true;
                 }
             }
-        } finally {
-            cur.dispose();
         }
         return false;
     }
@@ -709,13 +684,10 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         XSSFAnchor anchor = null;
 
         XmlObject parentXbean = null;
-        XmlCursor cursor = obj.newCursor();
-        try {
+        try (XmlCursor cursor = obj.newCursor()) {
             if (cursor.toParent()) {
                 parentXbean = cursor.getObject();
             }
-        } finally {
-            cursor.dispose();
         }
         if (parentXbean != null) {
             if (parentXbean instanceof CTTwoCellAnchor) {
