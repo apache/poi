@@ -155,10 +155,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         String text = xs.getStringValue();
         if (text != null && text.length() >= 1
                 && (Character.isWhitespace(text.charAt(0)) || Character.isWhitespace(text.charAt(text.length()-1)))) {
-            XmlCursor c = xs.newCursor();
-            c.toNextToken();
-            c.insertAttributeWithValue(new QName("http://www.w3.org/XML/1998/namespace", "space"), "preserve");
-            c.dispose();
+            try (XmlCursor c = xs.newCursor()) {
+                c.toNextToken();
+                c.insertAttributeWithValue(new QName("http://www.w3.org/XML/1998/namespace", "space"), "preserve");
+            }
         }
     }
 
@@ -1279,19 +1279,18 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
         // Grab the text and tabs of the text run
         // Do so in a way that preserves the ordering
-        XmlCursor c = run.newCursor();
-        c.selectPath("./*");
-        while (c.toNextSelection()) {
-            XmlObject o = c.getObject();
-            if (o instanceof CTRuby) {
-                handleRuby(o, text, false);
-                continue;
+        try (XmlCursor c = run.newCursor()) {
+            c.selectPath("./*");
+            while (c.toNextSelection()) {
+                XmlObject o = c.getObject();
+                if (o instanceof CTRuby) {
+                    handleRuby(o, text, false);
+                    continue;
+                }
+                _getText(o, text);
             }
-            _getText(o, text);
         }
-        c.dispose();
         return text.toString();
-
     }
 
     /**
@@ -1302,19 +1301,19 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
         // Grab the text and tabs of the text run
         // Do so in a way that preserves the ordering
-        XmlCursor c = run.newCursor();
-        c.selectPath("./*");
-        while (c.toNextSelection()) {
-            XmlObject o = c.getObject();
-            if (o instanceof CTRuby) {
-                handleRuby(o, text, true);
+        try (XmlCursor c = run.newCursor()) {
+            c.selectPath("./*");
+            while (c.toNextSelection()) {
+                XmlObject o = c.getObject();
+                if (o instanceof CTRuby) {
+                    handleRuby(o, text, true);
+                }
+            }
+            // Any picture text?
+            if (pictureText != null && pictureText.length() > 0) {
+                text.append("\n").append(pictureText).append("\n");
             }
         }
-        // Any picture text?
-        if (pictureText != null && pictureText.length() > 0) {
-            text.append("\n").append(pictureText).append("\n");
-        }
-        c.dispose();
         return text.toString();
     }
 
@@ -1324,34 +1323,33 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @param extractPhonetic extract the phonetic (rt) component or the base component
      */
     private void handleRuby(XmlObject rubyObj, StringBuilder text, boolean extractPhonetic) {
-        XmlCursor c = rubyObj.newCursor();
+        try (XmlCursor c = rubyObj.newCursor()) {
+            //according to the spec, a ruby object
+            //has the phonetic (rt) first, then the actual text (base)
+            //second.
 
-        //according to the spec, a ruby object
-        //has the phonetic (rt) first, then the actual text (base)
-        //second.
-
-        c.selectPath(".//*");
-        boolean inRT = false;
-        boolean inBase = false;
-        while (c.toNextSelection()) {
-            XmlObject o = c.getObject();
-            if (o instanceof CTRubyContent) {
-                String tagName = o.getDomNode().getNodeName();
-                if ("w:rt".equals(tagName)) {
-                    inRT = true;
-                } else if ("w:rubyBase".equals(tagName)) {
-                    inRT = false;
-                    inBase = true;
-                }
-            } else {
-                if (extractPhonetic && inRT) {
-                    _getText(o, text);
-                } else if (!extractPhonetic && inBase) {
-                    _getText(o, text);
+            c.selectPath(".//*");
+            boolean inRT = false;
+            boolean inBase = false;
+            while (c.toNextSelection()) {
+                XmlObject o = c.getObject();
+                if (o instanceof CTRubyContent) {
+                    String tagName = o.getDomNode().getNodeName();
+                    if ("w:rt".equals(tagName)) {
+                        inRT = true;
+                    } else if ("w:rubyBase".equals(tagName)) {
+                        inRT = false;
+                        inBase = true;
+                    }
+                } else {
+                    if (extractPhonetic && inRT) {
+                        _getText(o, text);
+                    } else if (!extractPhonetic && inBase) {
+                        _getText(o, text);
+                    }
                 }
             }
         }
-        c.dispose();
     }
 
     private void _getText(XmlObject o, StringBuilder text) {

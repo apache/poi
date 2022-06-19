@@ -47,8 +47,7 @@ public class XWPFFooter extends XWPFHeaderFooter {
 
     public XWPFFooter(XWPFDocument doc, CTHdrFtr hdrFtr) throws IOException {
         super(doc, hdrFtr);
-        XmlCursor cursor = headerFooter.newCursor();
-        try {
+        try (XmlCursor cursor = headerFooter.newCursor()) {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
@@ -64,8 +63,6 @@ public class XWPFFooter extends XWPFHeaderFooter {
                 }
 
             }
-        } finally {
-            cursor.dispose();
         }
     }
 
@@ -98,8 +95,7 @@ public class XWPFFooter extends XWPFHeaderFooter {
             headerFooter = ftrDocument.getFtr();
             // parse the document with cursor and add
             // the XmlObject to its lists
-            XmlCursor cursor = headerFooter.newCursor();
-            try {
+            try (XmlCursor cursor = headerFooter.newCursor()) {
                 cursor.selectPath("./*");
                 while (cursor.toNextSelection()) {
                     XmlObject o = cursor.getObject();
@@ -118,8 +114,6 @@ public class XWPFFooter extends XWPFHeaderFooter {
                         bodyElements.add(c);
                     }
                 }
-            } finally {
-                cursor.dispose();
             }
         } catch (Exception e) {
             throw new POIXMLException(e);

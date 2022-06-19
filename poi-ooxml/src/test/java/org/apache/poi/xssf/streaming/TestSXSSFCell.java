@@ -73,24 +73,24 @@ class TestSXSSFCell extends BaseTestXCell {
                 "\n\nPOI \n",
         };
         for (String str : samplesWithSpaces) {
-            Workbook swb = _testDataProvider.createWorkbook();
-            Cell sCell = swb.createSheet().createRow(0).createCell(0);
-            sCell.setCellValue(str);
-            assertEquals(sCell.getStringCellValue(), str);
+            try (Workbook swb = _testDataProvider.createWorkbook()) {
+                Cell sCell = swb.createSheet().createRow(0).createCell(0);
+                sCell.setCellValue(str);
+                assertEquals(sCell.getStringCellValue(), str);
 
-            // read back as XSSF and check that xml:spaces="preserve" is set
-            XSSFWorkbook xwb = (XSSFWorkbook) _testDataProvider.writeOutAndReadBack(swb);
-            XSSFCell xCell = xwb.getSheetAt(0).getRow(0).getCell(0);
+                // read back as XSSF and check that xml:spaces="preserve" is set
+                try (XSSFWorkbook xwb = (XSSFWorkbook) _testDataProvider.writeOutAndReadBack(swb)) {
+                    XSSFCell xCell = xwb.getSheetAt(0).getRow(0).getCell(0);
 
-            CTRst is = xCell.getCTCell().getIs();
-            assertNotNull(is);
-            XmlCursor c = is.newCursor();
-            c.toNextToken();
-            String t = c.getAttributeText(new QName("http://www.w3.org/XML/1998/namespace", "space"));
-            c.dispose();
-            assertEquals( "preserve", t, "expected xml:spaces=\"preserve\" \"" + str + "\"" );
-            xwb.close();
-            swb.close();
+                    CTRst is = xCell.getCTCell().getIs();
+                    assertNotNull(is);
+                    try (XmlCursor c = is.newCursor()) {
+                        c.toNextToken();
+                        String t = c.getAttributeText(new QName("http://www.w3.org/XML/1998/namespace", "space"));
+                        assertEquals( "preserve", t, "expected xml:spaces=\"preserve\" \"" + str + "\"" );
+                    }
+                }
+            }
         }
     }
 

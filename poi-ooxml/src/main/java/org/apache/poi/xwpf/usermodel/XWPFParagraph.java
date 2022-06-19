@@ -72,8 +72,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
 
             // Check for bits that only apply when attached to a core document
             // TODO Make this nicer by tracking the XWPFFootnotes directly
-            XmlCursor c = r.newCursor();
-            try {
+            try (XmlCursor c = r.newCursor()) {
                 c.selectPath("child::*");
                 while (c.toNextSelection()) {
                     XmlObject o = c.getObject();
@@ -100,8 +99,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
 
                     }
                 }
-            } finally {
-                c.dispose();
             }
         }
     }
@@ -1610,28 +1607,28 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         if (pos >= 0 && pos < runs.size()) {
             XWPFRun run = runs.get(pos);
             CTR ctr = run.getCTR();
-            XmlCursor newCursor = ctr.newCursor();
-            if (!isCursorInParagraph(newCursor)) {
-                // look up correct position for CTP -> XXX -> R array
-                newCursor.toParent();
-            }
-            if (isCursorInParagraph(newCursor)) {
-                // provide a new run
-                T newRun = provider.apply(newCursor);
-
-                // To update the iruns, find where we're going
-                // in the normal runs, and go in there
-                int iPos = iruns.size();
-                int oldAt = iruns.indexOf(run);
-                if (oldAt != -1) {
-                    iPos = oldAt;
+            try (XmlCursor newCursor = ctr.newCursor()) {
+                if (!isCursorInParagraph(newCursor)) {
+                    // look up correct position for CTP -> XXX -> R array
+                    newCursor.toParent();
                 }
-                iruns.add(iPos, newRun);
-                // Runs itself is easy to update
-                runs.add(pos, newRun);
-                return newRun;
+                if (isCursorInParagraph(newCursor)) {
+                    // provide a new run
+                    T newRun = provider.apply(newCursor);
+
+                    // To update the iruns, find where we're going
+                    // in the normal runs, and go in there
+                    int iPos = iruns.size();
+                    int oldAt = iruns.indexOf(run);
+                    if (oldAt != -1) {
+                        iPos = oldAt;
+                    }
+                    iruns.add(iPos, newRun);
+                    // Runs itself is easy to update
+                    runs.add(pos, newRun);
+                    return newRun;
+                }
             }
-            newCursor.dispose();
         }
         return null;
     }
@@ -1640,11 +1637,10 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * verifies that cursor is on the right position
      */
     private boolean isCursorInParagraph(XmlCursor cursor) {
-        XmlCursor verify = cursor.newCursor();
-        verify.toParent();
-        boolean result = (verify.getObject() == this.paragraph);
-        verify.dispose();
-        return result;
+        try (XmlCursor verify = cursor.newCursor()) {
+            verify.toParent();
+            return  (verify.getObject() == this.paragraph);
+        }
     }
 
     /**
@@ -1663,9 +1659,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         for (int runPos = startRun; runPos < rArray.length; runPos++) {
             int beginTextPos = 0, beginCharPos = 0, textPos = 0, charPos;
             CTR ctRun = rArray[runPos];
-            XmlCursor c = ctRun.newCursor();
-            c.selectPath("./*");
-            try {
+
+            try (XmlCursor c = ctRun.newCursor()) {
+                c.selectPath("./*");
                 while (c.toNextSelection()) {
                     XmlObject o = c.getObject();
                     if (o instanceof CTText) {
@@ -1711,8 +1707,6 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                         candCharPos = 0;
                     }
                 }
-            } finally {
-                c.dispose();
             }
         }
         return null;
@@ -1765,10 +1759,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             // CTP -> CTHyperlink -> R array
             if (run instanceof XWPFHyperlinkRun
                     && isTheOnlyCTHyperlinkInRuns((XWPFHyperlinkRun) run)) {
-                XmlCursor c = ((XWPFHyperlinkRun) run).getCTHyperlink()
-                        .newCursor();
-                c.removeXml();
-                c.dispose();
+                try (XmlCursor c = ((XWPFHyperlinkRun) run).getCTHyperlink().newCursor()) {
+                    c.removeXml();
+                }
                 runs.remove(pos);
                 iruns.remove(run);
                 return true;
@@ -1776,16 +1769,16 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             // CTP -> CTField -> R array
             if (run instanceof XWPFFieldRun
                     && isTheOnlyCTFieldInRuns((XWPFFieldRun) run)) {
-                XmlCursor c = ((XWPFFieldRun) run).getCTField().newCursor();
-                c.removeXml();
-                c.dispose();
+                try (XmlCursor c = ((XWPFFieldRun) run).getCTField().newCursor()) {
+                    c.removeXml();
+                }
                 runs.remove(pos);
                 iruns.remove(run);
                 return true;
             }
-            XmlCursor c = run.getCTR().newCursor();
-            c.removeXml();
-            c.dispose();
+            try (XmlCursor c = run.getCTR().newCursor()) {
+                c.removeXml();
+            }
             runs.remove(pos);
             iruns.remove(run);
             return true;

@@ -222,9 +222,9 @@ class TestXWPFTableCell {
 
          // cell have at least one paragraph by default
         XWPFParagraph p0 = cell.getParagraphArray(0);
-        XmlCursor newCursor = p0.getCTP().newCursor();
-        cell.insertNewTbl(newCursor);
-        newCursor.dispose();
+        try (XmlCursor newCursor = p0.getCTP().newCursor()) {
+            cell.insertNewTbl(newCursor);
+        }
 
         assertEquals(1, cell.getTables().size());
         assertEquals(2, cell.getBodyElements().size());

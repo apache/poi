@@ -944,21 +944,21 @@ class TestSignatureInfo {
             boolean found = false;
             for (SignaturePart sp : si.getSignatureParts()) {
                 for (ObjectType ot : sp.getSignatureDocument().getSignature().getObjectArray()) {
-                    XmlCursor xc = ot.newCursor();
-                    if (xc.toChild(SignatureFacet.XADES_132_NS, "QualifyingProperties")) {
-                        QualifyingPropertiesType qpt = (QualifyingPropertiesType) xc.getObject();
-                        assertTrue(qpt.isSetUnsignedProperties());
-                        UnsignedPropertiesType up = qpt.getUnsignedProperties();
-                        assertTrue(up.isSetUnsignedSignatureProperties());
-                        UnsignedSignaturePropertiesType ups = up.getUnsignedSignatureProperties();
-                        assertEquals(1, ups.sizeOfSignatureTimeStampArray());
-                        XAdESTimeStampType ts = ups.getSignatureTimeStampArray(0);
-                        assertEquals(1, ts.sizeOfEncapsulatedTimeStampArray());
-                        EncapsulatedPKIDataType ets = ts.getEncapsulatedTimeStampArray(0);
-                        assertFalse(ets.getStringValue().isEmpty());
-                        found = true;
+                    try (XmlCursor xc = ot.newCursor()) {
+                        if (xc.toChild(SignatureFacet.XADES_132_NS, "QualifyingProperties")) {
+                            QualifyingPropertiesType qpt = (QualifyingPropertiesType) xc.getObject();
+                            assertTrue(qpt.isSetUnsignedProperties());
+                            UnsignedPropertiesType up = qpt.getUnsignedProperties();
+                            assertTrue(up.isSetUnsignedSignatureProperties());
+                            UnsignedSignaturePropertiesType ups = up.getUnsignedSignatureProperties();
+                            assertEquals(1, ups.sizeOfSignatureTimeStampArray());
+                            XAdESTimeStampType ts = ups.getSignatureTimeStampArray(0);
+                            assertEquals(1, ts.sizeOfEncapsulatedTimeStampArray());
+                            EncapsulatedPKIDataType ets = ts.getEncapsulatedTimeStampArray(0);
+                            assertFalse(ets.getStringValue().isEmpty());
+                            found = true;
+                        }
                     }
-                    xc.dispose();
                 }
             }
             assertTrue(found);
