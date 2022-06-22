@@ -171,7 +171,7 @@ public final class ZipPackage extends OPCPackage {
                 throw new InvalidOperationException("Can't open the specified file: '" + file + "'", e);
             }
 
-            LOG.atError().log("Error in zip file {} - falling back to stream processing (i.e. ignoring zip central directory)", file);
+            LOG.atWarn().log("Error in zip file {} - falling back to stream processing (i.e. ignoring zip central directory)", file);
             ze = openZipEntrySourceStream(file);
         }
         this.zipArchive = ze;
