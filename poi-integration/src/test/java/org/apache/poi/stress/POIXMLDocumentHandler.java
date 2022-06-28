@@ -57,11 +57,8 @@ public final class POIXMLDocumentHandler {
      * @param base the entry point
      */
     protected static void cursorRecursive(XmlObject base) {
-        XmlCursor cur = base.newCursor();
-        try {
+        try (XmlCursor cur = base.newCursor()) {
             cursorRecursive(cur);
-        } finally {
-            cur.dispose();
         }
     }
 
