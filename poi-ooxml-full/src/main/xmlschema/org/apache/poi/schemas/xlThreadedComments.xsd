@@ -1,0 +1,59 @@
+<xsd:schema targetNamespace="http://schemas.microsoft.com/office/spreadsheetml/2018/threadedcomments"
+            elementFormDefault="qualified"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
+            xmlns:od06st="http://schemas.openxmlformats.org/officeDocument/2006/sharedTypes"
+            xmlns="http://schemas.microsoft.com/office/spreadsheetml/2018/threadedcomments">
+    <!--
+    <xsd:import namespace="http://schemas.openxmlformats.org/spreadsheetml/2006/main" schemaLocation="xlbasictypes.xsd"/>
+    <xsd:import namespace="http://schemas.openxmlformats.org/spreadsheetml/2006/main" schemaLocation="xlsst.xsd"/>
+    -->
+    <xsd:import namespace="http://schemas.microsoft.com/office/spreadsheetml/2020/threadedcomments2" schemaLocation="xlThreadedComments2.xsd"/>
+    <xsd:element name="personList" type="CT_PersonList"/>
+    <xsd:complexType name="CT_PersonList">
+        <xsd:sequence>
+            <xsd:element name="person" type="CT_Person" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="extLst" type="x:CT_ExtensionList" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CT_Person">
+        <xsd:sequence>
+            <xsd:element name="extLst" type="x:CT_ExtensionList" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+        <xsd:attribute name="displayName" type="od06st:ST_Xstring" use="required"/>
+        <xsd:attribute name="id" type="od06st:ST_Guid" use="required"/>
+        <xsd:attribute name="userId" type="od06st:ST_Xstring" use="optional"/>
+        <xsd:attribute name="providerId" type="od06st:ST_Xstring" use="optional"/>
+    </xsd:complexType>
+    <xsd:element name="ThreadedComments" type="CT_ThreadedComments"/>
+    <xsd:complexType name="CT_ThreadedComments">
+        <xsd:sequence>
+            <xsd:element name="threadedComment" type="CT_ThreadedComment" minOccurs="0" maxOccurs="unbounded"/>
+            <xsd:element name="extLst" type="x:CT_ExtensionList" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CT_ThreadedComment">
+        <xsd:sequence>
+            <xsd:element name="text" type="od06st:ST_Xstring" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="mentions" type="CT_ThreadedCommentMentions" minOccurs="0" maxOccurs="1"/>
+            <xsd:element name="extLst" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+        <xsd:attribute name="ref" type="x:ST_Ref" use="optional"/>
+        <xsd:attribute name="dT" type="xsd:dateTime" use="optional"/>
+        <xsd:attribute name="personId" type="od06st:ST_Guid" use="required"/>
+        <xsd:attribute name="id" type="od06st:ST_Guid" use="required"/>
+        <xsd:attribute name="parentId" type="od06st:ST_Guid" use="optional"/>
+        <xsd:attribute name="done" type="xsd:boolean" use="optional"/>
+    </xsd:complexType>
+    <xsd:complexType name="CT_ThreadedCommentMentions">
+        <xsd:sequence>
+            <xsd:element name="mention" type="CT_Mention" minOccurs="0" maxOccurs="unbounded"/>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CT_Mention">
+        <xsd:attribute name="mentionpersonId" type="od06st:ST_Guid" use="required"/>
+        <xsd:attribute name="mentionId" type="od06st:ST_Guid" use="required"/>
+        <xsd:attribute name="startIndex" type="xsd:unsignedInt" use="required"/>
+        <xsd:attribute name="length" type="xsd:unsignedInt" use="required"/>
+    </xsd:complexType>
+</xsd:schema>

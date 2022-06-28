@@ -1,0 +1,22 @@
+<xsd:schema xmlns="http://schemas.microsoft.com/office/spreadsheetml/2020/threadedcomments2"
+            targetNamespace="http://schemas.microsoft.com/office/spreadsheetml/2020/threadedcomments2"
+            elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:od06st="http://schemas.openxmlformats.org/officeDocument/2006/sharedTypes"
+            xmlns:x="http://schemas.openxmlformats.org/spreadsheetml/2006/main">
+    <xsd:complexType name="CT_ThreadedComments2Ext">
+        <xsd:sequence>
+            <xsd:element name="checksum" type="xsd:unsignedInt" minOccurs="1" maxOccurs="1"/>
+            <xsd:sequence>
+                <xsd:element name="hyperlink" type="CT_CommentHyperlink" minOccurs="0" maxOccurs="unbounded"/>
+            </xsd:sequence>
+        </xsd:sequence>
+    </xsd:complexType>
+    <xsd:complexType name="CT_CommentHyperlink">
+        <xsd:sequence>
+            <xsd:element name="extLst" type="x:CT_ExtensionList" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+        <xsd:attribute name="startIndex" type="xsd:unsignedInt" use="required"/>
+        <xsd:attribute name="length" type="xsd:unsignedInt" use="required"/>
+        <xsd:attribute name="url" type="od06st:ST_Xstring" use="required"/>
+    </xsd:complexType>
+</xsd:schema>
