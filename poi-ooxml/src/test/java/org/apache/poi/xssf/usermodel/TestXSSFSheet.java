@@ -107,13 +107,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     public TestXSSFSheet() {
         super(XSSFITestDataProvider.instance);
     }
-
-    //TODO column styles are not yet supported by XSSF
-    @Override
-    protected void defaultColumnStyle() {
-        //super.defaultColumnStyle();
-    }
-
+    
     @Test
     void existingHeaderFooter() throws IOException {
         try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("45540_classic_Header.xlsx")) {
