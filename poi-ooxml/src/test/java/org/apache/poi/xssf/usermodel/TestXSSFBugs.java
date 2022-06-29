@@ -3673,16 +3673,16 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             r7.createCell(1).setCellStyle(pinkStyle);
             r7.createCell(8).setCellStyle(blueStyle);
 
-            assertEquals(blueStyle.getFillBackgroundColor(), r3.getCell(4).getCellStyle().getFillForegroundColor());
-            assertEquals(pinkStyle.getFillBackgroundColor(), r3.getCell(6).getCellStyle().getFillForegroundColor());
+            assertEquals(blueStyle.getIndex(), r3.getCell(4).getCellStyle().getIndex());
+            assertEquals(pinkStyle.getIndex(), r3.getCell(6).getCellStyle().getIndex());
 
             try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
                 wb.write(bos);
                 try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
                     XSSFSheet wb2Sheet = wb2.getSheetAt(0);
                     XSSFRow wb2R3 = wb2Sheet.getRow(3);
-                    assertEquals(blueStyle.getFillBackgroundColor(), wb2R3.getCell(4).getCellStyle().getFillForegroundColor());
-                    assertEquals(pinkStyle.getFillBackgroundColor(), wb2R3.getCell(6).getCellStyle().getFillForegroundColor());
+                    assertEquals(blueStyle.getIndex(), wb2R3.getCell(4).getCellStyle().getIndex());
+                    assertEquals(pinkStyle.getIndex(), wb2R3.getCell(6).getCellStyle().getIndex());
                 }
             }
         }
