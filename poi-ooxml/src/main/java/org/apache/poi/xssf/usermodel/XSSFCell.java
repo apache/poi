@@ -549,18 +549,49 @@ public final class XSSFCell extends CellBase {
     }
 
     /**
-     * Return the cell's style.
+     * Return the cell's style. Since POI v5.2.3, this returns the column style if the
+     * cell has no style of its own. This method has always fallen back to return the default style
+     * if there is no other style to return.
      *
      * @return the cell's style.
      */
     @Override
     public XSSFCellStyle getCellStyle() {
-        XSSFCellStyle style = null;
-        if(_stylesSource.getNumCellStyles() > 0){
-            long idx = _cell.isSetS() ? _cell.getS() : 0;
-            style = _stylesSource.getStyleAt(Math.toIntExact(idx));
+        XSSFCellStyle style = getExplicitCellStyle();
+        if (style == null) {
+            XSSFSheet sheet = getSheet();
+            if (sheet != null) {
+                style = (XSSFCellStyle) sheet.getColumnStyle(getColumnIndex());
+            }
+            if (style != null) {
+                style = _stylesSource.getStyleAt(0);
+            }
         }
         return style;
+    }
+
+    private XSSFCellStyle getExplicitCellStyle() {
+        XSSFCellStyle style = null;
+        if(_stylesSource.getNumCellStyles() > 0) {
+            if (_cell.isSetS()) {
+                long idx = _cell.getS();
+                style = _stylesSource.getStyleAt(Math.toIntExact(idx));
+            }
+        }
+        return style;
+    }
+
+    protected void applyDefaultCellStyleIfNecessary() {
+        XSSFCellStyle style = getExplicitCellStyle();
+        if (style == null) {
+            XSSFSheet sheet = getSheet();
+            if (sheet != null) {
+                XSSFCellStyle defaultStyle = (XSSFCellStyle) sheet.getColumnStyle(getColumnIndex());
+                if (defaultStyle != null) {
+                    setCellStyle(defaultStyle);
+                }
+            }
+        }
     }
 
     /**
