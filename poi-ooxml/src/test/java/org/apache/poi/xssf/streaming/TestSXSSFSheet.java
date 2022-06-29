@@ -21,7 +21,6 @@ package org.apache.poi.xssf.streaming;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
@@ -33,7 +32,6 @@ import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 
@@ -100,12 +98,6 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
         // TODO: reading cell comments via Sheet does not work currently as it tries
         // to access the underlying sheet for this, but comments are stored as
         // properties on Cells...
-    }
-
-    @Disabled
-    @Override
-    protected void defaultColumnStyle() {
-        //TODO column styles are not yet supported by XSSF
     }
 
     @Test

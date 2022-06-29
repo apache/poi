@@ -48,20 +48,29 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     // override some tests which do not work for SXSSF
-    @Override @Disabled("cloneSheet() not implemented")
+    @Override
+    @Disabled("cloneSheet() not implemented")
     protected void bug18800() { /* cloneSheet() not implemented */ }
-    @Override @Disabled("cloneSheet() not implemented")
+
+    @Override
+    @Disabled("cloneSheet() not implemented")
     protected void bug22720() { /* cloneSheet() not implemented */ }
-    @Override @Disabled("Evaluation is not fully supported")
+
+    @Override
+    @Disabled("Evaluation is not fully supported")
     protected void bug47815() { /* Evaluation is not supported */ }
-    @Override @Disabled("Evaluation is not fully supported")
+
+    @Override
+    @Disabled("Evaluation is not fully supported")
     protected void bug46729_testMaxFunctionArguments() { /* Evaluation is not supported */ }
-    @Override @Disabled("Reading data is not supported")
+
+    @Override
+    @Disabled("Reading data is not supported")
     protected void bug57798() { /* Reading data is not supported */ }
 
     /**
      * Setting repeating rows and columns shouldn't break
-     *  any print settings that were there before
+     * any print settings that were there before
      */
     @Test
     void bug49253() throws Exception {
@@ -105,7 +114,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         // does not work
         try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
             assertThrows(RuntimeException.class, () -> writeWorkbook(wb, SXSSFITestDataProvider.instance),
-                "this is not implemented yet");
+                    "this is not implemented yet");
         }
     }
 
@@ -124,9 +133,9 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         writeRow(sheet, rowIndex++, 80d, "INDEX(A2:A7, MATCH(FALSE, ISBLANK(A2:A7), 0))");
         writeRow(sheet, rowIndex++, 30d, "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B2, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
         writeRow(sheet, rowIndex++, 30d, "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B3, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
-        writeRow(sheet, rowIndex++, 2d,  "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B4, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
+        writeRow(sheet, rowIndex++, 2d, "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B4, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
         writeRow(sheet, rowIndex++, 30d, "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B5, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
-        writeRow(sheet, rowIndex, 2d,  "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B6, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
+        writeRow(sheet, rowIndex, 2d, "IFERROR(INDEX(A2:A7, MATCH(1, (COUNTIF(B2:B6, A2:A7) = 0) * (NOT(ISBLANK(A2:A7))), 0)), \"\")");
 
         /*FileOutputStream fileOut = new FileOutputStream(filename);
         wb.write(fileOut);
@@ -156,7 +165,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     void test62872() throws Exception {
         final int COLUMN_COUNT = 300;
         final int ROW_COUNT = 600000;
-        final int TEN_MINUTES = 1000*60*10;
+        final int TEN_MINUTES = 1000 * 60 * 10;
 
         SXSSFWorkbook workbook = new SXSSFWorkbook(100);
         workbook.setCompressTempFiles(true);
@@ -176,7 +185,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
                 cell = row.createCell(j - 1);
 
                 //make some noise
-                cell.setCellValue(new Date(i*TEN_MINUTES+(j*TEN_MINUTES)/COLUMN_COUNT));
+                cell.setCellValue(new Date(i * TEN_MINUTES + (j * TEN_MINUTES) / COLUMN_COUNT));
             }
             i++;
         }
@@ -299,7 +308,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals(value, cell.getStringCellValue());
             // so far so good
 
-            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()){
+            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
                 wb.write(bos);
 
                 try (XSSFWorkbook testWb = new XSSFWorkbook(bos.toInputStream())) {
@@ -309,6 +318,51 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
 
                     assertEquals(CellType.STRING, testCell.getCachedFormulaResultType());
                     assertEquals(value, testCell.getStringCellValue());
+                }
+            }
+        }
+    }
+
+    @Test
+    void testBug51037() throws IOException {
+        try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
+            CellStyle blueStyle = wb.createCellStyle();
+            blueStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
+            blueStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            CellStyle pinkStyle = wb.createCellStyle();
+            pinkStyle.setFillForegroundColor(IndexedColors.PINK.getIndex());
+            pinkStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            Sheet s1 = wb.createSheet("Pretty columns");
+
+            s1.setDefaultColumnStyle(4, blueStyle);
+            s1.setDefaultColumnStyle(6, pinkStyle);
+
+            Row r3 = s1.createRow(3);
+            r3.createCell(0).setCellValue("The");
+            r3.createCell(1).setCellValue("quick");
+            r3.createCell(2).setCellValue("brown");
+            r3.createCell(3).setCellValue("fox");
+            r3.createCell(4).setCellValue("jumps");
+            r3.createCell(5).setCellValue("over");
+            r3.createCell(6).setCellValue("the");
+            r3.createCell(7).setCellValue("lazy");
+            r3.createCell(8).setCellValue("dog");
+            Row r7 = s1.createRow(7);
+            r7.createCell(1).setCellStyle(pinkStyle);
+            r7.createCell(8).setCellStyle(blueStyle);
+
+            assertEquals(blueStyle.getIndex(), r3.getCell(4).getCellStyle().getIndex());
+            assertEquals(pinkStyle.getIndex(), r3.getCell(6).getCellStyle().getIndex());
+
+            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+                wb.write(bos);
+                try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet wb2Sheet = wb2.getSheetAt(0);
+                    XSSFRow wb2R3 = wb2Sheet.getRow(3);
+                    assertEquals(blueStyle.getIndex(), wb2R3.getCell(4).getCellStyle().getIndex());
+                    assertEquals(pinkStyle.getIndex(), wb2R3.getCell(6).getCellStyle().getIndex());
                 }
             }
         }

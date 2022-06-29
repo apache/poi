@@ -18,7 +18,6 @@
 package org.apache.poi.xssf.usermodel;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.apache.poi.xssf.XSSFTestDataSamples.openSamplePackage;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -77,7 +76,6 @@ import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CalculationChain;
-import org.apache.poi.xssf.model.Comments;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
