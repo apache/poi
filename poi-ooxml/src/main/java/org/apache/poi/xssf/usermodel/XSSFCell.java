@@ -550,7 +550,8 @@ public final class XSSFCell extends CellBase {
 
     /**
      * Return the cell's style. Since POI v5.2.3, this returns the column style if the
-     * cell has no style of its own. This method has always fallen back to return the default style
+     * cell has no style of its own. If no column default style is set, the row default style is checked.
+     * This method has always fallen back to return the default style
      * if there is no other style to return.
      *
      * @return the cell's style.
