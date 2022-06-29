@@ -107,7 +107,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     public TestXSSFSheet() {
         super(XSSFITestDataProvider.instance);
     }
-    
+
     @Test
     void existingHeaderFooter() throws IOException {
         try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("45540_classic_Header.xlsx")) {
