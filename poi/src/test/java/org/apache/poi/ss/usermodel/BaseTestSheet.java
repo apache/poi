@@ -671,7 +671,37 @@ public abstract class BaseTestSheet {
             Cell cell = row.createCell(0);
             CellStyle style2 = cell.getCellStyle();
             assertNotNull(style2);
-            assertEquals(style.getIndex(), style2.getIndex(), "style should match");
+            assertEquals(style.getIndex(), style2.getIndex(), "style2 should match");
+
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb)) {
+                Sheet wb2Sheet = wb2.getSheetAt(0);
+                assertNotNull(wb2Sheet.getColumnStyle(0));
+                assertEquals(style.getIndex(), wb2Sheet.getColumnStyle(0).getIndex());
+
+                Row wb2R0 = wb2Sheet.getRow(0);
+                Cell wb2Cell = row.getCell(0);
+                CellStyle style3 = wb2Cell.getCellStyle();
+                assertNotNull(style3);
+                assertEquals(style.getIndex(), style3.getIndex(), "style3 should match");
+            }
+
+        }
+    }
+
+    @Test
+    protected void defaultRowStyle() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            CellStyle style = wb.createCellStyle();
+            Sheet sheet = wb.createSheet();
+            Row r0 = sheet.createRow(0);
+            r0.setRowStyle(style);
+            assertNotNull(r0.getRowStyle());
+            assertEquals(style.getIndex(), r0.getRowStyle().getIndex());
+
+            //Cell cell = r0.createCell(0);
+            //CellStyle style2 = cell.getCellStyle();
+            //assertNotNull(style2);
+            //assertEquals(style.getIndex(), style2.getIndex(), "style should match");
         }
     }
 
