@@ -25,6 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -70,6 +71,26 @@ class TestFormulaEval {
             //the following asserts should probably be BLANK not ERROR
             assertEquals(CellType.ERROR, cell0.getCellType());
             assertEquals(CellType.ERROR, cell1.getCellType());
+        }
+    }
+
+    @Disabled("currently causes a StackOverflowError")
+    @Test
+    void testBug66152() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow r0 = sheet.createRow(0);
+            HSSFCell c0 = r0.createCell(0);
+            c0.setCellValue(1);
+            HSSFCell cell = null;
+            for (int i = 1; i < 1200; i++) {
+                HSSFRow row = sheet.createRow(i);
+                cell = row.createCell(0);
+                cell.setCellFormula("SUM(A" + i + " + 1)");
+            }
+            HSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            //formulaEvaluator.evaluateAll(); //this workaround avoids the stackoverflow issue
+            assertEquals(CellType.NUMERIC, formulaEvaluator.evaluateFormulaCell(cell));
         }
     }
 }
