@@ -20,8 +20,10 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,8 +36,11 @@ import org.apache.poi.poifs.crypt.EncryptionMode;
 import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.BaseTestSlideShowFactory;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
 public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
@@ -85,6 +90,27 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
     void testFactoryFromProtectedNative() throws Exception {
         File pFile = createProtected();
         testFactoryFromProtectedNative(pFile.getAbsolutePath(), password);
+    }
+
+    @Test
+    void testBug65634() throws IOException {
+        File file = XSSFTestDataSamples.getSampleFile("workbook.xml");
+        try (FileInputStream fis = new FileInputStream(file)) {
+            try {
+                SlideShow slideShow = SlideShowFactory.create(fis);
+                if (slideShow != null) slideShow.close();
+                fail("SlideShowFactory.create should have failed");
+            } catch (IOException ie) {
+                assertEquals("Can't open slideshow - unsupported file type: XML", ie.getMessage());
+            }
+        }
+        try {
+            SlideShow slideShow = SlideShowFactory.create(file);
+            if (slideShow != null) slideShow.close();
+            fail("SlideShowFactory.create should have failed");
+        } catch (IOException ie) {
+            assertEquals("Can't open slideshow - unsupported file type: XML", ie.getMessage());
+        }
     }
 
     private static File createProtected() throws IOException, GeneralSecurityException {

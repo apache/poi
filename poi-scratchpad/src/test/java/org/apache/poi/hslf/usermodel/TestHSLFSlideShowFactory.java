@@ -17,12 +17,43 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.sl.usermodel.BaseTestSlideShowFactory;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public final class TestHSLFSlideShowFactory extends BaseTestSlideShowFactory {
     @Test
     void testFactory() throws Exception {
         testFactory("pictures.ppt", "Password_Protected-hello.ppt", "hello");
+    }
+
+    @Test
+    void testBug65634() throws IOException {
+        File file = HSSFTestDataSamples.getSampleFile("workbook.xml");
+        try (FileInputStream fis = new FileInputStream(file)) {
+            try {
+                SlideShow slideShow = SlideShowFactory.create(fis);
+                if (slideShow != null) slideShow.close();
+                fail("SlideShowFactory.create should have failed");
+            } catch (IOException ie) {
+                assertEquals("Can't open slideshow - unsupported file type: XML", ie.getMessage());
+            }
+        }
+        try {
+            SlideShow slideShow = SlideShowFactory.create(file);
+            if (slideShow != null) slideShow.close();
+            fail("SlideShowFactory.create should have failed");
+        } catch (IOException ie) {
+            assertEquals("Can't open slideshow - unsupported file type: XML", ie.getMessage());
+        }
     }
 }
