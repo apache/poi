@@ -577,7 +577,7 @@ public class SXSSFCell extends CellBase {
     public CellStyle getCellStyle()
     {
         if (_style == null) {
-            CellStyle style = getDefaultCellStyleFromColumnOrRow();
+            CellStyle style = getDefaultCellStyleFromColumn();
             if (style == null) {
                 SXSSFWorkbook wb = getSheet().getWorkbook();
                 style = wb.getCellStyleAt(0);
@@ -588,14 +588,11 @@ public class SXSSFCell extends CellBase {
         }
     }
 
-    private CellStyle getDefaultCellStyleFromColumnOrRow() {
+    private CellStyle getDefaultCellStyleFromColumn() {
         CellStyle style = null;
         SXSSFSheet sheet = getSheet();
         if (sheet != null) {
             style = sheet.getColumnStyle(getColumnIndex());
-            if (style == null && getRow() != null) {
-                style = getRow().getRowStyle();
-            }
         }
         return style;
     }
