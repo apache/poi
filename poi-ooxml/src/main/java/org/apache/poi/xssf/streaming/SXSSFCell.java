@@ -576,12 +576,25 @@ public class SXSSFCell extends CellBase {
     @Override
     public CellStyle getCellStyle()
     {
-        if(_style == null){
-            SXSSFWorkbook wb = (SXSSFWorkbook)getRow().getSheet().getWorkbook();
-            return wb.getCellStyleAt(0);
+        if (_style == null) {
+            CellStyle style = getDefaultCellStyleFromColumn();
+            if (style == null) {
+                SXSSFWorkbook wb = getSheet().getWorkbook();
+                style = wb.getCellStyleAt(0);
+            }
+            return style;
         } else {
             return _style;
         }
+    }
+
+    private CellStyle getDefaultCellStyleFromColumn() {
+        CellStyle style = null;
+        SXSSFSheet sheet = getSheet();
+        if (sheet != null) {
+            style = sheet.getColumnStyle(getColumnIndex());
+        }
+        return style;
     }
 
     /**

@@ -179,6 +179,9 @@ public class ColumnHelper {
      *  as 1 based.
      */
     public CTCol getColumn1Based(long index1, boolean splitColumns) {
+        if (worksheet.sizeOfColsArray() == 0) {
+            return null;
+        }
         CTCols cols = worksheet.getColsArray(0);
         
         // Fetching the array is quicker than working on the new style

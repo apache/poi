@@ -35,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -3639,6 +3640,51 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertDouble(fe, cell, "A1+1", DateUtil.getExcelDate(ldt) + 1);
             LocalDateTime expected = ldt.plusMinutes(90);
             assertDouble(fe, cell, "A1+\"1:30\"", DateUtil.getExcelDate(expected));
+        }
+    }
+
+    @Test
+    void testBug51037() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFCellStyle blueStyle = wb.createCellStyle();
+            blueStyle.setFillForegroundColor(IndexedColors.AQUA.getIndex());
+            blueStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            XSSFCellStyle pinkStyle = wb.createCellStyle();
+            pinkStyle.setFillForegroundColor(IndexedColors.PINK.getIndex());
+            pinkStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            Sheet s1 = wb.createSheet("Pretty columns");
+
+            s1.setDefaultColumnStyle(4, blueStyle);
+            s1.setDefaultColumnStyle(6, pinkStyle);
+
+            Row r3 = s1.createRow(3);
+            r3.createCell(0).setCellValue("The");
+            r3.createCell(1).setCellValue("quick");
+            r3.createCell(2).setCellValue("brown");
+            r3.createCell(3).setCellValue("fox");
+            r3.createCell(4).setCellValue("jumps");
+            r3.createCell(5).setCellValue("over");
+            r3.createCell(6).setCellValue("the");
+            r3.createCell(7).setCellValue("lazy");
+            r3.createCell(8).setCellValue("dog");
+            Row r7 = s1.createRow(7);
+            r7.createCell(1).setCellStyle(pinkStyle);
+            r7.createCell(8).setCellStyle(blueStyle);
+
+            assertEquals(blueStyle.getIndex(), r3.getCell(4).getCellStyle().getIndex());
+            assertEquals(pinkStyle.getIndex(), r3.getCell(6).getCellStyle().getIndex());
+
+            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+                wb.write(bos);
+                try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet wb2Sheet = wb2.getSheetAt(0);
+                    XSSFRow wb2R3 = wb2Sheet.getRow(3);
+                    assertEquals(blueStyle.getIndex(), wb2R3.getCell(4).getCellStyle().getIndex());
+                    assertEquals(pinkStyle.getIndex(), wb2R3.getCell(6).getCellStyle().getIndex());
+                }
+            }
         }
     }
 }

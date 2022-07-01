@@ -562,6 +562,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             Iterator<XSSFCell> it = _cells.values().iterator();
             for (CTCell ctCell : cArrayOrig) {
                 XSSFCell cell = it.next();
+                cell.applyDefaultCellStyleIfNecessary();
 
                 // we want to compare on identity here on purpose
                 // as we want to ensure that both lists contain the
