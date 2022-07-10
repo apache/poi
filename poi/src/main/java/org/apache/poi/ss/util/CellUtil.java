@@ -56,6 +56,10 @@ public final class CellUtil {
     public static final String DATA_FORMAT = "dataFormat";
     public static final String FILL_BACKGROUND_COLOR = "fillBackgroundColor";
     public static final String FILL_FOREGROUND_COLOR = "fillForegroundColor";
+    
+    public static final String FILL_BACKGROUND_COLOR_COLOR = "fillBackgroundColorColor";
+    public static final String FILL_FOREGROUND_COLOR_COLOR = "fillForegroundColorColor";
+
     public static final String FILL_PATTERN = "fillPattern";
     public static final String FONT = "font";
     public static final String HIDDEN = "hidden";
@@ -79,6 +83,13 @@ public final class CellUtil {
                     DATA_FORMAT,
                     ROTATION
             )));
+            
+    private static final Set<String> colorValues = Collections.unmodifiableSet(
+            new HashSet<>(Arrays.asList(
+                    FILL_FOREGROUND_COLOR_COLOR,
+                    FILL_BACKGROUND_COLOR_COLOR
+            )));
+
     private static final Set<String> intValues = Collections.unmodifiableSet(
             new HashSet<>(Collections.singletonList(
                 FONT
@@ -376,6 +387,7 @@ public final class CellUtil {
     public static void setCellStyleProperties(Cell cell, Map<String, Object> properties) {
         Workbook workbook = cell.getSheet().getWorkbook();
         CellStyle originalStyle = cell.getCellStyle();
+        
         CellStyle newStyle = null;
         Map<String, Object> values = getFormatProperties(originalStyle);
         putAll(properties, values);
@@ -447,8 +459,12 @@ public final class CellUtil {
         put(properties, BOTTOM_BORDER_COLOR, style.getBottomBorderColor());
         put(properties, DATA_FORMAT, style.getDataFormat());
         put(properties, FILL_PATTERN, style.getFillPattern());
+        
         put(properties, FILL_FOREGROUND_COLOR, style.getFillForegroundColor());
         put(properties, FILL_BACKGROUND_COLOR, style.getFillBackgroundColor());
+        put(properties, FILL_FOREGROUND_COLOR_COLOR, style.getFillForegroundColorColor());
+        put(properties, FILL_BACKGROUND_COLOR_COLOR, style.getFillBackgroundColorColor());
+
         put(properties, FONT, style.getFontIndex());
         put(properties, HIDDEN, style.getHidden());
         put(properties, INDENTION, style.getIndention());
@@ -475,6 +491,8 @@ public final class CellUtil {
         for (final String key : src.keySet()) {
             if (shortValues.contains(key)) {
                 dest.put(key, getShort(src, key));
+            } else if (colorValues.contains(key)) {
+                dest.put(key, getColor(src, key));
             } else if (intValues.contains(key)) {
                 dest.put(key, getInt(src, key));
             } else if (booleanValues.contains(key)) {
@@ -511,8 +529,12 @@ public final class CellUtil {
         style.setBottomBorderColor(getShort(properties, BOTTOM_BORDER_COLOR));
         style.setDataFormat(getShort(properties, DATA_FORMAT));
         style.setFillPattern(getFillPattern(properties, FILL_PATTERN));
+        
         style.setFillForegroundColor(getShort(properties, FILL_FOREGROUND_COLOR));
         style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
+        style.setFillForegroundColor(getColor(properties, FILL_FOREGROUND_COLOR_COLOR));
+        style.setFillBackgroundColor(getColor(properties, FILL_BACKGROUND_COLOR_COLOR));
+
         style.setFont(workbook.getFontAt(getInt(properties, FONT)));
         style.setHidden(getBoolean(properties, HIDDEN));
         style.setIndention(getShort(properties, INDENTION));
@@ -541,6 +563,23 @@ public final class CellUtil {
         }
         return 0;
     }
+    
+    /**
+     * Utility method that returns the named Color value from the given map.
+     *
+     * @param properties map of named properties (String -> Object)
+     * @param name property name
+     * @return null if the property does not exist, or is not a {@link Color}
+     *         otherwise the property value
+     */
+    private static Color getColor(Map<String, Object> properties, String name) {
+        Object value = properties.get(name);
+        if (value instanceof Color) {
+            return (Color) value;
+        }
+        return null;
+    }
+
 
     /**
      * Utility method that returns the named int value from the given map.

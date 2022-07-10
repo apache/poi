@@ -830,6 +830,19 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     }
 
     /**
+     * Set the background fill color represented as a {@link org.apache.poi.ss.usermodel.Color} value.
+     * <br>
+     * @param color the color to use
+     * @since POI 5.2.3
+     */
+    @Override
+    public void setFillBackgroundColor(org.apache.poi.ss.usermodel.Color color) {
+        if (color instanceof XSSFColor) {
+            setFillBackgroundColor((XSSFColor)color);
+        }
+    }
+    
+    /**
      * Set the background fill color represented as a indexed color value.
      * <p>
      * For example:
@@ -881,6 +894,19 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         }
 
         addFill(ct);
+    }
+ 
+    /**
+     * Set the foreground fill color represented as a {@link org.apache.poi.ss.usermodel.Color} value.
+     * <br>
+     * @param color the color to use
+     * @since POI 5.2.3
+     */
+    @Override
+    public void setFillForegroundColor(org.apache.poi.ss.usermodel.Color color) {
+        if (color instanceof XSSFColor) {
+            setFillForegroundColor((XSSFColor)color);
+        }
     }
 
     /**
