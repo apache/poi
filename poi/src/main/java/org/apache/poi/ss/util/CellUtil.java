@@ -545,25 +545,24 @@ public final class CellUtil {
         style.setDataFormat(getShort(properties, DATA_FORMAT));
         style.setFillPattern(getFillPattern(properties, FILL_PATTERN));
 
+        style.setFillForegroundColor(getShort(properties, FILL_FOREGROUND_COLOR));
+        style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
+
         Color foregroundFillColor = getColor(properties, FILL_FOREGROUND_COLOR_COLOR);
         Color backgroundFillColor = getColor(properties, FILL_BACKGROUND_COLOR_COLOR);
         if (foregroundFillColor != null) {
             try {
                 style.setFillForegroundColor(foregroundFillColor);
             } catch (IllegalArgumentException iae) {
-                style.setFillForegroundColor(getShort(properties, FILL_FOREGROUND_COLOR));
+                LOGGER.atDebug().log("Mismatched FillForegroundColor instance used", iae);
             }
-        } else {
-            style.setFillForegroundColor(getShort(properties, FILL_FOREGROUND_COLOR));
         }
         if (backgroundFillColor != null) {
             try {
                 style.setFillBackgroundColor(backgroundFillColor);
             } catch (IllegalArgumentException iae) {
-                style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
+                LOGGER.atDebug().log("Mismatched FillBackgroundColor instance used", iae);
             }
-        } else {
-            style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
         }
 
         style.setFont(workbook.getFontAt(getInt(properties, FONT)));
