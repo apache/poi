@@ -465,7 +465,7 @@ public abstract class BaseTestCellUtil {
      * @since POI 3.15 beta 3
      */
     @Test
-    void setFillForegroundColorBeforeFillBackgroundColorEnum() throws IOException {
+    protected void setFillForegroundColorBeforeFillBackgroundColorEnum() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Cell A1 = wb1.createSheet().createRow(0).createCell(0);
             Map<String, Object> properties = new HashMap<>();

@@ -838,7 +838,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      */
     @Override
     public void setFillBackgroundColor(org.apache.poi.ss.usermodel.Color color) {
-        if (color instanceof XSSFColor) {
+        if (color == null || color instanceof XSSFColor) {
             setFillBackgroundColor((XSSFColor)color);
         } else {
             throw new IllegalArgumentException("XSSFCellStyle only accepts XSSFColor instances");
@@ -908,7 +908,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      */
     @Override
     public void setFillForegroundColor(org.apache.poi.ss.usermodel.Color color) {
-        if (color instanceof XSSFColor) {
+        if (color == null || color instanceof XSSFColor) {
             setFillForegroundColor((XSSFColor)color);
         } else {
             throw new IllegalArgumentException("XSSFCellStyle only accepts XSSFColor instances");
