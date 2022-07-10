@@ -833,16 +833,14 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * Set the background fill color represented as a {@link org.apache.poi.ss.usermodel.Color} value.
      * <br>
      * @param color org.apache.poi.ss.usermodel.Color to set
-     * @param ignoreInvalidColors when set to true, the method will ignore issues like trying to set a
-     *                            HSSFColor on a XSSFCellStyle
      * @throws IllegalArgumentException if you provide a <code>Color</code> instance that is not a {@link XSSFColor}
      * @since POI 5.2.3
      */
     @Override
-    public void setFillBackgroundColor(org.apache.poi.ss.usermodel.Color color, boolean ignoreInvalidColors) {
+    public void setFillBackgroundColor(org.apache.poi.ss.usermodel.Color color) {
         if (color == null || color instanceof XSSFColor) {
             setFillBackgroundColor((XSSFColor)color);
-        } else if (!ignoreInvalidColors) {
+        } else {
             throw new IllegalArgumentException("XSSFCellStyle only accepts XSSFColor instances");
         }
     }
@@ -905,16 +903,14 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * Set the foreground fill color represented as a {@link org.apache.poi.ss.usermodel.Color} value.
      * <br>
      * @param color the color to use
-     * @param ignoreInvalidColors when set to true, the method will ignore issues like trying to set a
-     *                            HSSFColor on a XSSFCellStyle
      * @throws IllegalArgumentException if you provide a <code>Color</code> instance that is not a {@link XSSFColor}
      * @since POI 5.2.3
      */
     @Override
-    public void setFillForegroundColor(org.apache.poi.ss.usermodel.Color color, boolean ignoreInvalidColors) {
+    public void setFillForegroundColor(org.apache.poi.ss.usermodel.Color color) {
         if (color == null || color instanceof XSSFColor) {
             setFillForegroundColor((XSSFColor)color);
-        } else if (!ignoreInvalidColors) {
+        } else {
             throw new IllegalArgumentException("XSSFCellStyle only accepts XSSFColor instances");
         }
     }

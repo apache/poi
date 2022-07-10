@@ -318,20 +318,7 @@ public interface CellStyle {
      * @param color org.apache.poi.ss.usermodel.Color to set
      * @since POI 5.2.3
      */
-    default void setFillBackgroundColor(Color color) {
-        setFillBackgroundColor(color, false);
-    }
-
-    /**
-     * Set the background fill color.
-     * Uses a {@link org.apache.poi.ss.usermodel.Color} instead of an indexed color.
-     *
-     * @param color org.apache.poi.ss.usermodel.Color to set
-     * @param ignoreInvalidColors when set to true, the method will ignore issues like trying to set a
-     *                            HSSFColor on a XSSFCellStyle
-     * @since POI 5.2.3
-     */
-    void setFillBackgroundColor(Color color, boolean ignoreInvalidColors);
+    void setFillBackgroundColor(Color color);
 
     /**
      * get the background fill color, if the fill
@@ -363,20 +350,7 @@ public interface CellStyle {
      * @param color org.apache.poi.ss.usermodel.Color to set
      * @since POI 5.2.3
      */
-    default void setFillForegroundColor(Color color) {
-        setFillForegroundColor(color, false);
-    }
-
-    /**
-     * Set the foreground fill color.
-     * Uses a {@link org.apache.poi.ss.usermodel.Color} instead of an indexed color.
-     *
-     * @param color org.apache.poi.ss.usermodel.Color to set
-     * @param ignoreInvalidColors when set to true, the method will ignore issues like trying to set a
-     *                            HSSFColor on a XSSFCellStyle
-     * @since POI 5.2.3
-     */
-    void setFillForegroundColor(Color color, boolean ignoreInvalidColors);
+    void setFillForegroundColor(Color color);
 
     /**
      * get the foreground fill color, if the fill  
