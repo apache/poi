@@ -26,7 +26,7 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * Together the the EscherOptRecord this record defines some of the basic
+ * Together the EscherOptRecord this record defines some of the basic
  * properties of a shape.
  */
 public class EscherSpRecord extends EscherRecord {

@@ -1469,7 +1469,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 
         this.throwExceptionIfReadOnly();
 
-        // You shouldn't save the the same file, do a close instead
+        // You shouldn't save the same file, do a close instead
         if(targetFile.exists() &&
                 targetFile.getAbsolutePath().equals(this.originalPackagePath)) {
             throw new InvalidOperationException(

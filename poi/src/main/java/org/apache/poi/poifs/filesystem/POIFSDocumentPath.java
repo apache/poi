@@ -52,7 +52,7 @@ public class POIFSDocumentPath {
      * constructor for the path of a document that is not in the root of the POIFSFileSystem
      *
      * @param components the Strings making up the path to a document.
-     *      The Strings must be ordered as they appear in the directory hierarchy of the the document.
+     *      The Strings must be ordered as they appear in the directory hierarchy of the document.
      *      The first string must be the name of a directory in the root of the POIFSFileSystem, and
      *      every Nth (for N &gt; 1) string thereafter must be the name of a directory in the directory
      *      identified by the (N-1)th string.<p>

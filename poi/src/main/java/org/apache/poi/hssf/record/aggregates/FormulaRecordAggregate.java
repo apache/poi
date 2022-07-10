@@ -82,7 +82,7 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
      * {@link SharedFormulaRecord} does not exist). Normally this would leave no way of determining
      * the {@link Ptg} tokens for the formula.  However as it turns out in these
      * cases, Excel encodes the unshared {@link Ptg} tokens in the right place (inside the {@link
-     * FormulaRecord}).  So the the only thing that needs to be done is to ignore the erroneous
+     * FormulaRecord}).  So the only thing that needs to be done is to ignore the erroneous
      * shared formula flag.<br>
      *
      * This method may also be used for setting breakpoints to help diagnose issues regarding the

@@ -184,7 +184,7 @@ public final class SharedValueManager {
      *
      * @return the SHRFMLA, TABLE or ARRAY record for the formula cell, if it is the first cell of
      * a table or array region. {@code null} if the formula cell is not shared/array/table,
-     * or if the specified formula is not the the first in the group.
+     * or if the specified formula is not the first in the group.
      */
     public SharedValueRecordBase getRecordForFirstCell(FormulaRecordAggregate agg) {
         CellReference firstCell = agg.getFormulaRecord().getFormula().getExpReference();

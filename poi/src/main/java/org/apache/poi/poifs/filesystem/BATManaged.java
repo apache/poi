@@ -39,7 +39,7 @@ public interface BATManaged
      * Set the start block for this instance
      *
      * @param index index into the array of BigBlock instances making
-     *              up the the filesystem
+     *              up the filesystem
      */
 
     void setStartBlock(final int index);

@@ -298,7 +298,7 @@ public final class TestHSSFDataFormatter {
         while (it.hasNext()) {
             HSSFCell cell = (HSSFCell) it.next();
             log(formatter.formatCellValue(cell));
-            // in some locales the the decimal delimiter is a comma, not a dot
+            // in some locales the decimal delimiter is a comma, not a dot
             char decimalSeparator = DecimalFormatSymbols.getInstance(LocaleUtil.getUserLocale()).getDecimalSeparator();
             assertEquals("12345678" + decimalSeparator + "9", formatter.formatCellValue(cell));
         }

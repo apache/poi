@@ -785,7 +785,7 @@ public class VBAMacroReader implements Closeable {
 
     /**
      * Sometimes the offset record in the dirstream is incorrect, but the macro can still be found.
-     * This will try to find the the first RLEDecompressing stream that starts with "Attribute".
+     * This will try to find the first RLEDecompressing stream that starts with "Attribute".
      * This relies on some, er, heuristics, admittedly.
      *
      * @param is full module inputstream to read

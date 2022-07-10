@@ -51,7 +51,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
 
 /**
  *
- * High level representation of the the possible formatting information for the contents of the cells on a sheet in a
+ * High level representation of the possible formatting information for the contents of the cells on a sheet in a
  * SpreadsheetML document.
  *
  * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createCellStyle()

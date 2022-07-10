@@ -25,7 +25,7 @@ final class MutableFPNumber {
     // TODO - what about values between (10<sup>14</sup>-0.5) and (10<sup>14</sup>-0.05) ?
     /**
      * The minimum value in 'Base-10 normalised form'.<br>
-     * When {@link #_binaryExponent} == 46 this is the the minimum {@link #_frac} value
+     * When {@link #_binaryExponent} == 46 this is the minimum {@link #_frac} value
      *  (10<sup>14</sup>-0.05) * 2^17
      *  <br>
      *  Values between (10<sup>14</sup>-0.05) and 10<sup>14</sup> will be represented as '1'

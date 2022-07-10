@@ -338,7 +338,7 @@ public class SXSSFWorkbook implements Workbook {
      *   If the "compress" flag is set to <code>true</code> then the temporary XML is gzipped.
      * </p>
      * <p>
-     *     Please note the the "compress" option may cause performance penalty.
+     *     Please note the "compress" option may cause performance penalty.
      * </p>
      * <p>
      *     Setting this option only affects compression for subsequent <code>createSheet()</code>

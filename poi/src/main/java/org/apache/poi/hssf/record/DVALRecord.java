@@ -118,7 +118,7 @@ public final class DVALRecord extends StandardRecord {
     }
 
     /**
-     * @return the the Vertical position of the dialog
+     * @return the Vertical position of the dialog
      */
     public int getVerticalPos() {
         return field_3_vert_pos;

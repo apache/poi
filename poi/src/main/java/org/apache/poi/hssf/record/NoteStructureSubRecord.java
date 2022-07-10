@@ -43,7 +43,7 @@ public final class NoteStructureSubRecord extends SubRecord {
      * fill its data with the default values
      */
     public NoteStructureSubRecord() {
-        //all we know is that the the length of <code>NoteStructureSubRecord</code> is always 22 bytes
+        //all we know is that the length of <code>NoteStructureSubRecord</code> is always 22 bytes
         reserved = new byte[ENCODED_SIZE];
     }
 

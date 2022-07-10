@@ -51,7 +51,7 @@ public class RepeatingRowsAndColumns {
             sheet1.setRepeatingColumns(CellRangeAddress.valueOf("A:C"));
             // Set the rows to repeat from row 0 to 2 on the second sheet.
             sheet2.setRepeatingRows(CellRangeAddress.valueOf("1:3"));
-            // Set the the repeating rows and columns on the third sheet.
+            // Set the repeating rows and columns on the third sheet.
             CellRangeAddress cra = CellRangeAddress.valueOf("D1:E2");
             sheet3.setRepeatingColumns(cra);
             sheet3.setRepeatingRows(cra);

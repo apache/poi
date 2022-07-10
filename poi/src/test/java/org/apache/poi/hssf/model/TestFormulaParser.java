@@ -139,7 +139,7 @@ final class TestFormulaParser {
             assertEquals("arg", arg.getValue());
 
             // The external FunctionPtg is the last Ptg added to the stack
-            // During formula evaluation, this Ptg pops off the the appropriate number of
+            // During formula evaluation, this Ptg pops off the appropriate number of
             // arguments (getNumberOfOperands()) and pushes the result on the stack
             AbstractFunctionPtg tfunc = (AbstractFunctionPtg) ptg[2]; //FuncVarPtg
             assertTrue(tfunc.isExternalFunction());

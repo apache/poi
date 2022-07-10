@@ -161,7 +161,7 @@ public final class CryptoFunctions {
      *     {@code blockKey: IV = H(KeySalt + blockKey)}</li>
      * <li>If a blockKey is not provided, let IV be equal to the following value:<br>
      *     {@code KeySalt:IV = KeySalt}</li>
-     * <li>If the number of bytes in the value of IV is less than the the value of the blockSize attribute
+     * <li>If the number of bytes in the value of IV is less than the value of the blockSize attribute
      *     corresponding to the cipherAlgorithm attribute, pad the array of bytes by appending 0x36 until
      *     the array is blockSize bytes. If the array of bytes is larger than blockSize bytes, truncate the
      *     array to blockSize bytes.</li>

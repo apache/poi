@@ -65,7 +65,7 @@ public class WorkingWithPageSetup {
 
             // Set the columns to repeat from column 0 to 2 on the first sheet
             sheet1.setRepeatingColumns(CellRangeAddress.valueOf("A:C"));
-            // Set the the repeating rows and columns on the second sheet.
+            // Set the repeating rows and columns on the second sheet.
             CellRangeAddress cra = CellRangeAddress.valueOf("E2:F3");
             sheet2.setRepeatingColumns(cra);
             sheet2.setRepeatingRows(cra);

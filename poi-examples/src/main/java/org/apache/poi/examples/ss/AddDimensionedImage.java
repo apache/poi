@@ -116,7 +116,7 @@ import java.util.Locale;
  * <p>
  * The following example demonstrates a slightly different way to insert an
  * image into cell A1 and to ensure that it occupies the whole of the cell. This
- * is accomplished by specifying the the images bottom right hand corner should be
+ * is accomplished by specifying the images bottom right hand corner should be
  * aligned with the bottom right hand corner of the cell. It is also a case
  * where the image will not increase in size if the user increases the size of
  * the enclosing cell - irrespective of the anchors type - but it will reduce in
@@ -182,7 +182,7 @@ import java.util.Locale;
  *
  * @version 1.00 5th August 2009.
  * 2.00 26th February 2010.
- * Ported to make use of the the SS usermodel classes.
+ * Ported to make use of the SS usermodel classes.
  * Ability to reuse the Drawing Patriarch so that multiple images
  * can be inserted without unintentionally erasing earlier images.
  * Check on image type added; i.e. jpg, jpeg or png.

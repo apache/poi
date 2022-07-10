@@ -111,7 +111,7 @@ public final class ImageUtils {
 
     /**
      * The metadata of PNG and JPEG can contain the width of a pixel in millimeters.
-     * Return the the "effective" dpi calculated as <code>25.4/HorizontalPixelSize</code>
+     * Return the "effective" dpi calculated as <code>25.4/HorizontalPixelSize</code>
      * and <code>25.4/VerticalPixelSize</code>.  Where 25.4 is the number of mm in inch.
      *
      * @return array of two elements: <code>{horizontalDpi, verticalDpi}</code>.

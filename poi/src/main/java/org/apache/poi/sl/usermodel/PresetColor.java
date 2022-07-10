@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public enum PresetColor {
     // the order of this enum can be found in the definition of .net System.Drawing.KnownColor enumeration
-    // or by running the the program in the linked documentation
+    // or by running the program in the linked documentation
     
     // default colors for theme-depending colors taken from ... (last post):
     // https://social.technet.microsoft.com/Forums/windows/en-US/ac76cc56-6ff2-4778-b260-8141d7170a3b/windows-7-highlight-text-color-or-selected-text-color-in-aero

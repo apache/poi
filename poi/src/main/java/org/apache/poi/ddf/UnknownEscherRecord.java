@@ -39,7 +39,7 @@ public final class UnknownEscherRecord extends EscherRecord {
 
     private static final byte[] NO_BYTES = new byte[0];
 
-    /** The data for this record not including the the 8 byte header */
+    /** The data for this record not including the 8 byte header */
     private byte[] thedata = NO_BYTES;
     private final List<EscherRecord> _childRecords = new ArrayList<>();
 

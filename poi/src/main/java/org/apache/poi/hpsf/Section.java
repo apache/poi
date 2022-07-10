@@ -634,7 +634,7 @@ public class Section {
 
     /**
      * Checks whether this section is equal to another object. The result is
-     * {@code false} if one of the the following conditions holds:
+     * {@code false} if one of the following conditions holds:
      *
      * <ul>
      *
