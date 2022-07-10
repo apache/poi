@@ -643,7 +643,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
      * <br>
      * @param color the color to use
      * @param ignoreInvalidColors when set to true, the method will ignore issues like trying to set a
-     *                            HSSFColor on a XSSFCellStyle
+     *                            XSSFColor on a HSSFCellStyle
      * @throws IllegalArgumentException if you provide a <code>Color</code> instance that is not a {@link HSSFColor}
      * @since POI 5.2.3
      */
@@ -704,7 +704,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
      * <br>
      * @param color the color to use
      * @param ignoreInvalidColors when set to true, the method will ignore issues like trying to set a
-     *                            HSSFColor on a XSSFCellStyle
+     *                            XSSFColor on a HSSFCellStyle
      * @throws IllegalArgumentException if you provide a <code>Color</code> instance that is not a {@link HSSFColor}
      * @since POI 5.2.3
      */
