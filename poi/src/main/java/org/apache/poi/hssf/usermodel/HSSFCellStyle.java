@@ -707,7 +707,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public void setFillForegroundColor(org.apache.poi.ss.usermodel.Color color)
     {
-        if (color == null || color instanceof HSSFColor) {
+        if (color instanceof HSSFColor) {
             short index2 = ((HSSFColor)color).getIndex2();
             if (index2 != -1) setFillForegroundColor(index2);
         } else if (color != null) {
