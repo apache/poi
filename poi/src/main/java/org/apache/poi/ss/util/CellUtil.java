@@ -401,7 +401,7 @@ public final class CellUtil {
             Map<String, Object> wbStyleMap = getFormatProperties(wbStyle);
 
             // the desired style already exists in the workbook. Use the existing style.
-            if (wbStyleMap.equals(values)) {
+            if (styleMapsMatch(wbStyleMap, values)) {
                 newStyle = wbStyle;
                 break;
             }
@@ -414,6 +414,21 @@ public final class CellUtil {
         }
 
         cell.setCellStyle(newStyle);
+    }
+
+    private static boolean styleMapsMatch(final Map<String, Object> map1, final Map<String, Object> map2) {
+        final Map<String, Object> map1Copy = new HashMap<>(map1);
+        final Map<String, Object> map2Copy = new HashMap<>(map2);
+        final Object backColor1 = map1Copy.remove(FILL_BACKGROUND_COLOR_COLOR);
+        final Object backColor2 = map2Copy.remove(FILL_BACKGROUND_COLOR_COLOR);
+        final Object foreColor1 = map1Copy.remove(FILL_FOREGROUND_COLOR_COLOR);
+        final Object foreColor2 = map2Copy.remove(FILL_FOREGROUND_COLOR_COLOR);
+        if (map1Copy.equals(map2Copy)) {
+            final boolean backColorsMatch = backColor1 == null || backColor2 == null || backColor1.equals(backColor2);
+            final boolean foreColorsMatch = foreColor1 == null || foreColor2 == null || foreColor1.equals(foreColor2);
+            return backColorsMatch && foreColorsMatch;
+        }
+        return false;
     }
 
     /**
@@ -529,11 +544,27 @@ public final class CellUtil {
         style.setBottomBorderColor(getShort(properties, BOTTOM_BORDER_COLOR));
         style.setDataFormat(getShort(properties, DATA_FORMAT));
         style.setFillPattern(getFillPattern(properties, FILL_PATTERN));
-        
-        style.setFillForegroundColor(getShort(properties, FILL_FOREGROUND_COLOR));
-        style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
-        style.setFillForegroundColor(getColor(properties, FILL_FOREGROUND_COLOR_COLOR), true);
-        style.setFillBackgroundColor(getColor(properties, FILL_BACKGROUND_COLOR_COLOR), true);
+
+        Color foregroundFillColor = getColor(properties, FILL_FOREGROUND_COLOR_COLOR);
+        Color backgroundFillColor = getColor(properties, FILL_BACKGROUND_COLOR_COLOR);
+        if (foregroundFillColor != null) {
+            try {
+                style.setFillForegroundColor(foregroundFillColor);
+            } catch (IllegalArgumentException iae) {
+                style.setFillForegroundColor(getShort(properties, FILL_FOREGROUND_COLOR));
+            }
+        } else {
+            style.setFillForegroundColor(getShort(properties, FILL_FOREGROUND_COLOR));
+        }
+        if (backgroundFillColor != null) {
+            try {
+                style.setFillBackgroundColor(backgroundFillColor);
+            } catch (IllegalArgumentException iae) {
+                style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
+            }
+        } else {
+            style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
+        }
 
         style.setFont(workbook.getFontAt(getInt(properties, FONT)));
         style.setHidden(getBoolean(properties, HIDDEN));
