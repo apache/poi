@@ -532,8 +532,8 @@ public final class CellUtil {
         
         style.setFillForegroundColor(getShort(properties, FILL_FOREGROUND_COLOR));
         style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
-        style.setFillForegroundColor(getColor(properties, FILL_FOREGROUND_COLOR_COLOR));
-        style.setFillBackgroundColor(getColor(properties, FILL_BACKGROUND_COLOR_COLOR));
+        style.setFillForegroundColor(getColor(properties, FILL_FOREGROUND_COLOR_COLOR), true);
+        style.setFillBackgroundColor(getColor(properties, FILL_BACKGROUND_COLOR_COLOR), true);
 
         style.setFont(workbook.getFontAt(getInt(properties, FONT)));
         style.setHidden(getBoolean(properties, HIDDEN));

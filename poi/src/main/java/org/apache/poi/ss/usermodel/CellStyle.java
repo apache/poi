@@ -312,13 +312,26 @@ public interface CellStyle {
     void setFillBackgroundColor(short bg);
 
     /**
-     * set the background fill color.
-     * use not a indexed color but a {@link org.apache.poi.ss.usermodel.Color)
+     * Set the background fill color.
+     * Uses a {@link org.apache.poi.ss.usermodel.Color} instead of an indexed color.
      *
      * @param color org.apache.poi.ss.usermodel.Color to set
      * @since POI 5.2.3
      */
-    void setFillBackgroundColor(Color color);
+    default void setFillBackgroundColor(Color color) {
+        setFillBackgroundColor(color, false);
+    }
+
+    /**
+     * Set the background fill color.
+     * Uses a {@link org.apache.poi.ss.usermodel.Color} instead of an indexed color.
+     *
+     * @param color org.apache.poi.ss.usermodel.Color to set
+     * @param ignoreInvalidColors when set to true, the method will ignore issues like trying to set a
+     *                            HSSFColor on a XSSFCellStyle
+     * @since POI 5.2.3
+     */
+    void setFillBackgroundColor(Color color, boolean ignoreInvalidColors);
 
     /**
      * get the background fill color, if the fill
@@ -344,13 +357,26 @@ public interface CellStyle {
     void setFillForegroundColor(short bg);
 
     /**
-     * set the foreground fill color.
-     * use not a indexed color but a {@link org.apache.poi.ss.usermodel.Color)
+     * Set the foreground fill color.
+     * Uses a {@link org.apache.poi.ss.usermodel.Color} instead of an indexed color.
      *
      * @param color org.apache.poi.ss.usermodel.Color to set
      * @since POI 5.2.3
      */
-    void setFillForegroundColor(Color color);
+    default void setFillForegroundColor(Color color) {
+        setFillForegroundColor(color, false);
+    }
+
+    /**
+     * Set the foreground fill color.
+     * Uses a {@link org.apache.poi.ss.usermodel.Color} instead of an indexed color.
+     *
+     * @param color org.apache.poi.ss.usermodel.Color to set
+     * @param ignoreInvalidColors when set to true, the method will ignore issues like trying to set a
+     *                            HSSFColor on a XSSFCellStyle
+     * @since POI 5.2.3
+     */
+    void setFillForegroundColor(Color color, boolean ignoreInvalidColors);
 
     /**
      * get the foreground fill color, if the fill  
