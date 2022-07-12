@@ -354,9 +354,15 @@ public final class XSSFCell extends CellBase {
             if(_cell.getT() == STCellType.INLINE_STR) {
                 //set the 'pre-evaluated result
                 _cell.setV(str.getString());
-            } else {
+            } else if (str instanceof XSSFRichTextString) {
                 _cell.setT(STCellType.S);
                 XSSFRichTextString rt = (XSSFRichTextString)str;
+                rt.setStylesTableReference(_stylesSource);
+                int sRef = _sharedStringSource.addSharedStringItem(rt);
+                _cell.setV(Integer.toString(sRef));
+            } else {
+                _cell.setT(STCellType.S);
+                XSSFRichTextString rt = new XSSFRichTextString(str.getString());
                 rt.setStylesTableReference(_stylesSource);
                 int sRef = _sharedStringSource.addSharedStringItem(rt);
                 _cell.setV(Integer.toString(sRef));
