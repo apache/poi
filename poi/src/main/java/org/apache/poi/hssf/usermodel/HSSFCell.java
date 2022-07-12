@@ -495,20 +495,29 @@ public class HSSFCell extends CellBase {
         //  so handle things as a normal rich text cell
 
         if (_cellType != CellType.STRING) {
-            int row=_record.getRow();
-            short col=_record.getColumn();
-            short styleIndex=_record.getXFIndex();
+            int row = _record.getRow();
+            short col = _record.getColumn();
+            short styleIndex = _record.getXFIndex();
             setCellType(CellType.STRING, false, row, col, styleIndex);
         }
-        int index;
 
-        HSSFRichTextString hvalue = (HSSFRichTextString) value;
-        UnicodeString str = hvalue.getUnicodeString();
-        index = _book.getWorkbook().addSSTString(str);
-        (( LabelSSTRecord ) _record).setSSTIndex(index);
-        _stringValue = hvalue;
-        _stringValue.setWorkbookReferences(_book.getWorkbook(), (( LabelSSTRecord ) _record));
-        _stringValue.setUnicodeString(_book.getWorkbook().getSSTString(index));
+        if (value instanceof HSSFRichTextString) {
+            HSSFRichTextString hvalue = (HSSFRichTextString) value;
+            UnicodeString str = hvalue.getUnicodeString();
+            int index = _book.getWorkbook().addSSTString(str);
+            (( LabelSSTRecord ) _record).setSSTIndex(index);
+            _stringValue = hvalue;
+            _stringValue.setWorkbookReferences(_book.getWorkbook(), (( LabelSSTRecord ) _record));
+            _stringValue.setUnicodeString(_book.getWorkbook().getSSTString(index));
+        } else {
+            HSSFRichTextString hvalue = new HSSFRichTextString(value.getString());
+            UnicodeString str = hvalue.getUnicodeString();
+            int index = _book.getWorkbook().addSSTString(str);
+            (( LabelSSTRecord ) _record).setSSTIndex(index);
+            _stringValue = hvalue;
+            _stringValue.setWorkbookReferences(_book.getWorkbook(), (( LabelSSTRecord ) _record));
+            _stringValue.setUnicodeString(_book.getWorkbook().getSSTString(index));
+        }
     }
 
     @Override
