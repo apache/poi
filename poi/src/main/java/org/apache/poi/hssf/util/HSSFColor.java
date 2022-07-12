@@ -232,12 +232,7 @@ public class HSSFColor implements Color {
 
     /**
      * Maps the Enums to the HSSFColor, in cases of user code evaluating the classname
-     *
-     * @deprecated in 3.16 - remove mapping when subclasses are removed and access
-     *  HSSFColorPredefined.values() directly (but exclude AUTOMATIC)
      */
-    @Deprecated
-    @Removal(version="3.18")
     private static synchronized Map<HSSFColorPredefined,HSSFColor> mapEnumToColorClass() {
         if (enumList == null) {
             enumList = new EnumMap<>(HSSFColorPredefined.class);
