@@ -83,11 +83,7 @@ public final class PropertyTemplate {
     }
 
     private static Map<String, Object> cloneCellProperties(Map<String, Object> properties) {
-        Map<String, Object> newProperties = new HashMap<>();
-        for(Map.Entry<String, Object> entry : properties.entrySet()) {
-            newProperties.put(entry.getKey(), entry.getValue());
-        }
-        return newProperties;
+        return new HashMap<>(properties);
     }
 
     /**
