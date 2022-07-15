@@ -109,9 +109,10 @@ public final class XPathHelper {
     public static <T extends XmlObject> T selectProperty(XmlObject startObject, Class<T> resultClass, XSLFShape.ReparseFactory<T> factory, QName[]... path)
             throws XmlException {
         XmlObject xo = startObject;
-        XmlCursor innerCur = null;
-        try (XmlCursor cur = startObject.newCursor()) {
-            innerCur = selectProperty(cur, path, 0, factory != null, false);
+        try (
+                XmlCursor cur = startObject.newCursor();
+                XmlCursor innerCur = selectProperty(cur, path, 0, factory != null, false)
+        ) {
             if (innerCur == null) {
                 return null;
             }
@@ -122,7 +123,7 @@ public final class XPathHelper {
             if (xo instanceof XmlAnyTypeImpl) {
                 String errorTxt = OSGI_ERROR
                         .replace("<CLASS>", resultClass.getSimpleName())
-                        .replace("<XSB>", resultClass.getSimpleName().toLowerCase(Locale.ROOT)+"*");
+                        .replace("<XSB>", resultClass.getSimpleName().toLowerCase(Locale.ROOT) + "*");
                 if (factory == null) {
                     throw new XmlException(errorTxt);
                 } else {
@@ -130,11 +131,7 @@ public final class XPathHelper {
                 }
             }
 
-            return (T)xo;
-        } finally {
-            if (innerCur != null) {
-                innerCur.close();
-            }
+            return (T) xo;
         }
     }
 
