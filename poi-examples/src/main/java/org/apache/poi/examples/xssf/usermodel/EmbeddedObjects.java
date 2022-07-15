@@ -37,27 +37,35 @@ public class EmbeddedObjects {
                 String contentType = pPart.getContentType();
                 try (InputStream is = pPart.getInputStream()) {
                     Closeable document;
-                    if (contentType.equals("application/vnd.ms-excel")) {
-                        // Excel Workbook - either binary or OpenXML
-                        document = new HSSFWorkbook(is);
-                    } else if (contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
-                        // Excel Workbook - OpenXML file format
-                        document = new XSSFWorkbook(is);
-                    } else if (contentType.equals("application/msword")) {
-                        // Word Document - binary (OLE2CDF) file format
-                        document = new HWPFDocument(is);
-                    } else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-                        // Word Document - OpenXML file format
-                        document = new XWPFDocument(is);
-                    } else if (contentType.equals("application/vnd.ms-powerpoint")) {
-                        // PowerPoint Document - binary file format
-                        document = new HSLFSlideShow(is);
-                    } else if (contentType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
-                        // PowerPoint Document - OpenXML file format
-                        document = new XMLSlideShow(is);
-                    } else {
-                        // Any other type of embedded object.
-                        document = is;
+                    switch (contentType) {
+                        case "application/vnd.ms-excel":
+                            // Excel Workbook - either binary or OpenXML
+                            document = new HSSFWorkbook(is);
+                            break;
+                        case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                            // Excel Workbook - OpenXML file format
+                            document = new XSSFWorkbook(is);
+                            break;
+                        case "application/msword":
+                            // Word Document - binary (OLE2CDF) file format
+                            document = new HWPFDocument(is);
+                            break;
+                        case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                            // Word Document - OpenXML file format
+                            document = new XWPFDocument(is);
+                            break;
+                        case "application/vnd.ms-powerpoint":
+                            // PowerPoint Document - binary file format
+                            document = new HSLFSlideShow(is);
+                            break;
+                        case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+                            // PowerPoint Document - OpenXML file format
+                            document = new XMLSlideShow(is);
+                            break;
+                        default:
+                            // Any other type of embedded object.
+                            document = is;
+                            break;
                     }
                     document.close();
                 }

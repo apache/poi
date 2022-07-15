@@ -50,15 +50,19 @@ public class PolyLineTo implements GeometryRow {
         for (CellType cell : row.getCellArray()) {
             String cellName = cell.getN();
 
-            if (cellName.equals("X")) {
-                x = XDGFCell.parseDoubleValue(cell);
-            } else if (cellName.equals("Y")) {
-                y = XDGFCell.parseDoubleValue(cell);
-            } else if (cellName.equals("A")) {
-                a = cell.getV();
-            } else {
-                throw new POIXMLException("Invalid cell '" + cellName
-                        + "' in ArcTo row");
+            switch (cellName) {
+                case "X":
+                    x = XDGFCell.parseDoubleValue(cell);
+                    break;
+                case "Y":
+                    y = XDGFCell.parseDoubleValue(cell);
+                    break;
+                case "A":
+                    a = cell.getV();
+                    break;
+                default:
+                    throw new POIXMLException("Invalid cell '" + cellName
+                            + "' in ArcTo row");
             }
         }
     }
