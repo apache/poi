@@ -44,7 +44,7 @@ public class CellDateFormatter extends CellFormatter {
 
     private static final int NUM_MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
 
-    private static /* final */ CellDateFormatter SIMPLE_DATE;
+    private static /* final */ volatile CellDateFormatter SIMPLE_DATE;
 
     class DatePartHandler implements CellFormatPart.PartHandler {
         private int mStart = -1;
@@ -242,11 +242,15 @@ public class CellDateFormatter extends CellFormatter {
      */
     @Override
     public void simpleValue(StringBuffer toAppendTo, Object value) {
-        synchronized (CellDateFormatter.class) {
-            if (SIMPLE_DATE == null || !SIMPLE_DATE.EXCEL_EPOCH_CAL.equals(EXCEL_EPOCH_CAL)) {
-                SIMPLE_DATE = new CellDateFormatter("mm/d/y");
+        CellDateFormatter cellDateFormatter = SIMPLE_DATE;
+        if (cellDateFormatter == null) {
+            synchronized (CellDateFormatter.class) {
+                cellDateFormatter = SIMPLE_DATE;
+                if (cellDateFormatter == null) {
+                    SIMPLE_DATE = cellDateFormatter = new CellDateFormatter("mm/d/y");
+                }
             }
         }
-        SIMPLE_DATE.formatValue(toAppendTo, value);
+        cellDateFormatter.formatValue(toAppendTo, value);
     }
 }
