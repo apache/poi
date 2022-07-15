@@ -40,11 +40,11 @@ public class CellDateFormatter extends CellFormatter {
     private String sFmt;
 
     private static final Calendar EXCEL_EPOCH_CAL =
-        LocaleUtil.getLocaleCalendar(1904, 0, 1);
+            LocaleUtil.getLocaleCalendar(1904, 0, 1);
 
     private static final int NUM_MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
 
-    private static /* final */ CellDateFormatter SIMPLE_DATE;
+    private static /* final */ volatile CellDateFormatter SIMPLE_DATE;
 
     class DatePartHandler implements CellFormatPart.PartHandler {
         private int mStart = -1;
@@ -54,79 +54,79 @@ public class CellDateFormatter extends CellFormatter {
 
         @Override
         public String handlePart(Matcher m, String part, CellFormatType type,
-                StringBuffer desc) {
+                                 StringBuffer desc) {
 
             int pos = desc.length();
             char firstCh = part.charAt(0);
             switch (firstCh) {
-            case 's':
-            case 'S':
-                if (mStart >= 0) {
-                    for (int i = 0; i < mLen; i++)
-                        desc.setCharAt(mStart + i, 'm');
-                    mStart = -1;
-                }
-                return part.toLowerCase(Locale.ROOT);
-
-            case 'h':
-            case 'H':
-                mStart = -1;
-                hStart = pos;
-                hLen = part.length();
-                return part.toLowerCase(Locale.ROOT);
-
-            case 'd':
-            case 'D':
-                mStart = -1;
-                if (part.length() <= 2)
+                case 's':
+                case 'S':
+                    if (mStart >= 0) {
+                        for (int i = 0; i < mLen; i++)
+                            desc.setCharAt(mStart + i, 'm');
+                        mStart = -1;
+                    }
                     return part.toLowerCase(Locale.ROOT);
-                else
-                    return part.toLowerCase(Locale.ROOT).replace('d', 'E');
 
-            case 'm':
-            case 'M':
-                mStart = pos;
-                mLen = part.length();
-                // For 'm' after 'h', output minutes ('m') not month ('M')
-                if (hStart >= 0)
-                    return part.toLowerCase(Locale.ROOT);
-                else
-                    return part.toUpperCase(Locale.ROOT);
-
-            case 'y':
-            case 'Y':
-                mStart = -1;
-                // See https://issues.apache.org/bugzilla/show_bug.cgi?id=53369
-                if (part.length() == 1)
-                    part = "yy";
-                else if (part.length() == 3)
-                    part = "yyyy";
-                return part.toLowerCase(Locale.ROOT);
-
-            case '0':
-                mStart = -1;
-                int sLen = part.length();
-                sFmt = "%0" + (sLen + 2) + "." + sLen + "f";
-                return part.replace('0', 'S');
-
-            case 'a':
-            case 'A':
-            case 'p':
-            case 'P':
-                if (part.length() > 1) {
-                    // am/pm marker
+                case 'h':
+                case 'H':
                     mStart = -1;
-                    showAmPm = true;
-                    showM = StringUtil.toLowerCase(part.charAt(1)).equals("m");
-                    // For some reason "am/pm" becomes AM or PM, but "a/p" becomes a or p
-                    amPmUpper = showM || StringUtil.isUpperCase(part.charAt(0));
+                    hStart = pos;
+                    hLen = part.length();
+                    return part.toLowerCase(Locale.ROOT);
 
-                    return "a";
-                }
-                //noinspection fallthrough
+                case 'd':
+                case 'D':
+                    mStart = -1;
+                    if (part.length() <= 2)
+                        return part.toLowerCase(Locale.ROOT);
+                    else
+                        return part.toLowerCase(Locale.ROOT).replace('d', 'E');
 
-            default:
-                return null;
+                case 'm':
+                case 'M':
+                    mStart = pos;
+                    mLen = part.length();
+                    // For 'm' after 'h', output minutes ('m') not month ('M')
+                    if (hStart >= 0)
+                        return part.toLowerCase(Locale.ROOT);
+                    else
+                        return part.toUpperCase(Locale.ROOT);
+
+                case 'y':
+                case 'Y':
+                    mStart = -1;
+                    // See https://issues.apache.org/bugzilla/show_bug.cgi?id=53369
+                    if (part.length() == 1)
+                        part = "yy";
+                    else if (part.length() == 3)
+                        part = "yyyy";
+                    return part.toLowerCase(Locale.ROOT);
+
+                case '0':
+                    mStart = -1;
+                    int sLen = part.length();
+                    sFmt = "%0" + (sLen + 2) + "." + sLen + "f";
+                    return part.replace('0', 'S');
+
+                case 'a':
+                case 'A':
+                case 'p':
+                case 'P':
+                    if (part.length() > 1) {
+                        // am/pm marker
+                        mStart = -1;
+                        showAmPm = true;
+                        showM = StringUtil.toLowerCase(part.charAt(1)).equals("m");
+                        // For some reason "am/pm" becomes AM or PM, but "a/p" becomes a or p
+                        amPmUpper = showM || StringUtil.isUpperCase(part.charAt(0));
+
+                        return "a";
+                    }
+                    //noinspection fallthrough
+
+                default:
+                    return null;
             }
         }
 
@@ -242,11 +242,15 @@ public class CellDateFormatter extends CellFormatter {
      */
     @Override
     public void simpleValue(StringBuffer toAppendTo, Object value) {
-        synchronized (CellDateFormatter.class) {
-            if (SIMPLE_DATE == null || !SIMPLE_DATE.EXCEL_EPOCH_CAL.equals(EXCEL_EPOCH_CAL)) {
-                SIMPLE_DATE = new CellDateFormatter("mm/d/y");
+        CellDateFormatter cellDateFormatter = SIMPLE_DATE;
+        if (cellDateFormatter == null) {
+            synchronized (CellDateFormatter.class) {
+                cellDateFormatter = SIMPLE_DATE;
+                if (cellDateFormatter == null) {
+                    SIMPLE_DATE = cellDateFormatter = new CellDateFormatter("mm/d/y");
+                }
             }
         }
-        SIMPLE_DATE.formatValue(toAppendTo, value);
+        cellDateFormatter.formatValue(toAppendTo, value);
     }
 }
