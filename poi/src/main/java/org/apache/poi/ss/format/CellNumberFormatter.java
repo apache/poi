@@ -530,7 +530,7 @@ public class CellNumberFormatter extends CellFormatter {
                     int modEndPos = delEndPos + adjust;
 
                     if (modPos < modEndPos) {
-                        if ("".equals(nextChange.getToAdd())) {
+                        if (nextChange.getToAdd() != null && nextChange.getToAdd().length() == 0) {
                             output.delete(modPos, modEndPos);
                         }
                         else {
