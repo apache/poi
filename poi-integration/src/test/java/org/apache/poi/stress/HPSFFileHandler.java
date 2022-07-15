@@ -28,6 +28,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Set;
 
 import org.apache.poi.examples.hpsf.CopyCompare;
@@ -137,7 +139,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
     @SuppressWarnings("java:S2699")
     void test() throws Exception {
         String path = "test-data/diagram/44501.vsd";
-        try (InputStream stream = new FileInputStream(path)) {
+        try (InputStream stream = Files.newInputStream(Paths.get(path))) {
             handleFile(stream, path);
         }
     }

@@ -24,6 +24,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -135,7 +137,7 @@ public final class ToHtml {
      */
     public static ToHtml create(String path, Appendable output)
             throws IOException {
-        return create(new FileInputStream(path), output);
+        return create(Files.newInputStream(Paths.get(path)), output);
     }
 
     /**

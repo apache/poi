@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
@@ -78,7 +79,7 @@ public class TestHwmfParsing {
         //TODO: move test file to framework and fix this
         File dir = new File("C:/somethingOrOther");
         File f = new File(dir, "ZMLH54SPLI76NQ7XMKVB7SMUJA2HTXTS-2.wmf");
-        HwmfPicture wmf = new HwmfPicture(new FileInputStream(f));
+        HwmfPicture wmf = new HwmfPicture(Files.newInputStream(f.toPath()));
 
         Charset charset = LocaleUtil.CHARSET_1252;
         StringBuilder sb = new StringBuilder();

@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.extractor.WordExtractor;
@@ -45,7 +46,7 @@ public class OWPFFileHandler extends POIFSFileHandler {
     public void test() throws Exception {
         File file = new File("test-data/document/52117.doc");
 
-        try (InputStream stream = new FileInputStream(file)) {
+        try (InputStream stream = Files.newInputStream(file.toPath())) {
             handleFile(stream, file.getPath());
         }
 

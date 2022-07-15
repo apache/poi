@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 import org.apache.poi.POIDataSamples;
@@ -73,17 +74,17 @@ class TestFileMagic {
 
     @Test
     void testFileMagicStream() throws IOException {
-        try (InputStream stream = new BufferedInputStream(new FileInputStream(POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xls")))) {
+        try (InputStream stream = new BufferedInputStream(Files.newInputStream(POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xls").toPath()))) {
             assertEquals(FileMagic.OLE2, FileMagic.valueOf(stream));
         }
-        try (InputStream stream = new BufferedInputStream(new FileInputStream(POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xlsx")))) {
+        try (InputStream stream = new BufferedInputStream(Files.newInputStream(POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xlsx").toPath()))) {
             assertEquals(FileMagic.OOXML, FileMagic.valueOf(stream));
         }
     }
 
     @Test
     void testPrepare() throws IOException {
-        try (InputStream stream = new BufferedInputStream(new FileInputStream(POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xlsx")))) {
+        try (InputStream stream = new BufferedInputStream(Files.newInputStream(POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xlsx").toPath()))) {
             assertSame(stream, FileMagic.prepareToCheckMagic(stream));
         }
 

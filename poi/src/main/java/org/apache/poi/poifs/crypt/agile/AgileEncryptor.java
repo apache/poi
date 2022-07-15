@@ -35,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -237,7 +238,7 @@ public class AgileEncryptor extends Encryptor {
         LittleEndian.putLong(buf, 0, oleStreamSize);
         integrityMD.update(buf, 0, LittleEndianConsts.LONG_SIZE);
 
-        try (InputStream fis = new FileInputStream(tmpFile)) {
+        try (InputStream fis = Files.newInputStream(tmpFile.toPath())) {
             int readBytes;
             while ((readBytes = fis.read(buf)) != -1) {
                 integrityMD.update(buf, 0, readBytes);

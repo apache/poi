@@ -42,6 +42,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
 import java.security.cert.X509CRL;
@@ -1171,8 +1172,8 @@ class TestSignatureInfo {
         }
         File tmpFile = new File(buildDir, "sigtest"+extension);
 
-        try (OutputStream fos = new FileOutputStream(tmpFile)) {
-            try (InputStream fis = new FileInputStream(input)) {
+        try (OutputStream fos = Files.newOutputStream(tmpFile.toPath())) {
+            try (InputStream fis = Files.newInputStream(input.toPath())) {
                 IOUtils.copy(fis, fos);
             }
         }

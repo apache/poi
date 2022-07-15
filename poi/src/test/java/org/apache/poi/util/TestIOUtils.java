@@ -37,6 +37,7 @@ import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EmptyFileException;
@@ -53,7 +54,7 @@ final class TestIOUtils {
     @BeforeAll
     public static void setUp() throws IOException {
         TMP = File.createTempFile("poi-ioutils-", "");
-        try (OutputStream os = new FileOutputStream(TMP)) {
+        try (OutputStream os = Files.newOutputStream(TMP.toPath())) {
             for (int i = 0; i < LENGTH; i++) {
                 os.write(0x01);
             }
@@ -213,7 +214,7 @@ final class TestIOUtils {
 
     @Test
     void testSkipFully() throws IOException {
-        try (InputStream is =  new FileInputStream(TMP)) {
+        try (InputStream is = Files.newInputStream(TMP.toPath())) {
             long skipped = IOUtils.skipFully(is, 20000L);
             assertEquals(LENGTH, skipped);
         }
@@ -221,7 +222,7 @@ final class TestIOUtils {
 
     @Test
     void testSkipFullyGtIntMax() throws IOException {
-        try (InputStream is =  new FileInputStream(TMP)) {
+        try (InputStream is = Files.newInputStream(TMP.toPath())) {
             long skipped = IOUtils.skipFully(is, Integer.MAX_VALUE + 20000L);
             assertEquals(LENGTH, skipped);
         }
@@ -230,7 +231,7 @@ final class TestIOUtils {
     @Test
     void testSkipFullyByteArray() throws IOException {
         UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-        try (InputStream is = new FileInputStream(TMP)) {
+        try (InputStream is = Files.newInputStream(TMP.toPath())) {
             assertEquals(LENGTH, IOUtils.copy(is, bos));
             long skipped = IOUtils.skipFully(bos.toInputStream(), 20000L);
             assertEquals(LENGTH, skipped);
@@ -240,7 +241,7 @@ final class TestIOUtils {
     @Test
     void testSkipFullyByteArrayGtIntMax() throws IOException {
         UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
-        try (InputStream is = new FileInputStream(TMP)) {
+        try (InputStream is = Files.newInputStream(TMP.toPath())) {
             assertEquals(LENGTH, IOUtils.copy(is, bos));
             long skipped = IOUtils.skipFully(bos.toInputStream(), Integer.MAX_VALUE + 20000L);
             assertEquals(LENGTH, skipped);
@@ -251,7 +252,7 @@ final class TestIOUtils {
     void testCopyToFile() throws IOException {
         File dest = TempFile.createTempFile("poi-ioutils-", "");
         try {
-            try (InputStream is = new FileInputStream(TMP)) {
+            try (InputStream is = Files.newInputStream(TMP.toPath())) {
                 assertEquals(LENGTH, IOUtils.copy(is, dest));
             }
 
@@ -270,7 +271,7 @@ final class TestIOUtils {
 
     @Test
     void testCopyToInvalidFile() throws IOException {
-        try (InputStream is = new FileInputStream(TMP)) {
+        try (InputStream is = Files.newInputStream(TMP.toPath())) {
             assertThrows(RuntimeException.class,
                     () -> {
                         // try with two different paths so we fail on both Unix and Windows
@@ -294,7 +295,7 @@ final class TestIOUtils {
 
     @Test
     void testSkipZero() throws IOException {
-        try (InputStream is =  new FileInputStream(TMP)) {
+        try (InputStream is = Files.newInputStream(TMP.toPath())) {
             long skipped = IOUtils.skipFully(is, 0);
             assertEquals(0, skipped);
         }
@@ -302,21 +303,21 @@ final class TestIOUtils {
 
     @Test
     void testSkipNegative() throws IOException {
-        try (InputStream is =  new FileInputStream(TMP)) {
+        try (InputStream is = Files.newInputStream(TMP.toPath())) {
             assertThrows(IllegalArgumentException.class, () -> IOUtils.skipFully(is, -1));
         }
     }
 
     @Test
     void testMaxLengthTooLong() throws IOException {
-        try (InputStream is = new FileInputStream(TMP)) {
+        try (InputStream is = Files.newInputStream(TMP.toPath())) {
             assertThrows(RecordFormatException.class, () -> IOUtils.toByteArray(is, Integer.MAX_VALUE, 100));
         }
     }
 
     @Test
     void testMaxLengthIgnored() throws IOException {
-        try (InputStream is = new FileInputStream(TMP)) {
+        try (InputStream is = Files.newInputStream(TMP.toPath())) {
             int len = IOUtils.toByteArray(is, 90, Integer.MAX_VALUE).length;
             assertEquals(90, len);
             len = IOUtils.toByteArray(is, 90, 100).length;
@@ -328,7 +329,7 @@ final class TestIOUtils {
 
     @Test
     void testMaxLengthInvalid() throws IOException {
-        try (InputStream is = new FileInputStream(TMP)) {
+        try (InputStream is = Files.newInputStream(TMP.toPath())) {
             assertThrows(RecordFormatException.class, () -> IOUtils.toByteArray(is, 90, 80));
         }
     }

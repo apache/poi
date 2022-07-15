@@ -27,6 +27,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -321,8 +323,8 @@ public final class ExcelCetabFunctionExtractor {
     }
 
     private static void processFile(InputStream input, File outFile) throws IOException {
-        try (OutputStream os = new SimpleAsciiOutputStream(new FileOutputStream(outFile));
-        PrintStream ps = new PrintStream(os, true, "UTF-8")) {
+        try (OutputStream os = new SimpleAsciiOutputStream(Files.newOutputStream(outFile.toPath()));
+             PrintStream ps = new PrintStream(os, true, "UTF-8")) {
 
             outputLicenseHeader(ps);
             Class<?> genClass = ExcelCetabFunctionExtractor.class;
@@ -369,7 +371,7 @@ public final class ExcelCetabFunctionExtractor {
             throw new IllegalStateException("Did not find file " + SOURCE_DOC_FILE_NAME + " in the resources");
         }
 
-        try (InputStream stream = new FileInputStream(SOURCE_DOC_FILE_NAME)) {
+        try (InputStream stream = Files.newInputStream(Paths.get(SOURCE_DOC_FILE_NAME))) {
             File outFile = new File("functionMetadataCetab.txt");
 
             processFile(stream, outFile);

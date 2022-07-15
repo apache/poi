@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -146,7 +147,7 @@ public class StandardEncryptor extends Encryptor {
             // field of the EncryptedPackage field specifies the number of bytes of
             // unencrypted data as specified in section 2.3.4.4.
             super(
-                new CipherOutputStream(new FileOutputStream(fileOut), getCipher(getSecretKey(), "PKCS5Padding"))
+                new CipherOutputStream(Files.newOutputStream(fileOut.toPath()), getCipher(getSecretKey(), "PKCS5Padding"))
             );
             this.deleteFile = deleteFile;
             this.fileOut = fileOut;

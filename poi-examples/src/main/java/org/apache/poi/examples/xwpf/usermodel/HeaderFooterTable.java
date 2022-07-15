@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.nio.file.Files;
 
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -97,7 +98,7 @@ public class HeaderFooterTable {
             r = p.createRun();
             r.setText("footer text");
 
-            try (OutputStream os = new FileOutputStream(new File("headertable.docx"))) {
+            try (OutputStream os = Files.newOutputStream(new File("headertable.docx").toPath())) {
                 doc.write(os);
             }
         }

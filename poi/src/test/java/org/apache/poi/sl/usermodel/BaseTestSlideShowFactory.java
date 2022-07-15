@@ -26,6 +26,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
@@ -135,7 +137,7 @@ public abstract class BaseTestSlideShowFactory {
     private static byte[] readExternalFile(String path) {
         UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
 
-        try (InputStream fis = new FileInputStream(path)) {
+        try (InputStream fis = Files.newInputStream(Paths.get(path))) {
             byte[] buf = new byte[512];
             while (true) {
                 int bytesRead = fis.read(buf);
@@ -184,7 +186,7 @@ public abstract class BaseTestSlideShowFactory {
 
     private static InputStream fromStream(String file) throws IOException {
         return (file.contains("/") || file.contains("\\"))
-            ? new FileInputStream(file)
+            ? Files.newInputStream(Paths.get(file))
             : _slTests.openResourceAsStream(file);
     }
 

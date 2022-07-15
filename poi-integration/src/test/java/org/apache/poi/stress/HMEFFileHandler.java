@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 
 import org.apache.poi.hmef.HMEFMessage;
@@ -66,7 +68,7 @@ public class HMEFFileHandler extends AbstractFileHandler {
     @Test
     void test() throws Exception {
         String path = "test-data/hmef/quick-winmail.dat";
-        try (InputStream stream = new FileInputStream(path)) {
+        try (InputStream stream = Files.newInputStream(Paths.get(path))) {
             handleFile(stream, path);
         }
     }

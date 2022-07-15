@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -148,7 +149,7 @@ class TestTempFileThreaded {
                 }
 
                 File file = TempFile.createTempFile("TestTempFile-" + threadNum + "-" + iter + "-", ".xlsx");
-                try (OutputStream outputStream = new FileOutputStream(file)) {
+                try (OutputStream outputStream = Files.newOutputStream(file.toPath())) {
                     wb.write(outputStream);
                 }
 

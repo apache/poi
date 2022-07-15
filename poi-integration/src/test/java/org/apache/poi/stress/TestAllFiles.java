@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -194,7 +195,7 @@ public class TestAllFiles {
             System.out.println("Running handleFiles on "+file);
             FileHandler fileHandler = handler.getHandler();
             assertNotNull(fileHandler, "Did not find a handler for file " + file);
-            try (InputStream stream = new BufferedInputStream(new FileInputStream(new File(ROOT_DIR, file)), 64 * 1024)) {
+            try (InputStream stream = new BufferedInputStream(Files.newInputStream(new File(ROOT_DIR, file).toPath()), 64 * 1024)) {
                 Executable exec = () -> fileHandler.handleFile(stream, file);
                 verify(file, exec, exClass, exMessage, password);
             }

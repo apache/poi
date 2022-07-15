@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
@@ -106,7 +108,7 @@ public final class CopyCompare {
         // Read the origin POIFS using the eventing API.
         final POIFSReader r = new POIFSReader();
         try (final POIFSFileSystem poiFs = new POIFSFileSystem();
-             OutputStream fos = new FileOutputStream(copyFileName)) {
+             OutputStream fos = Files.newOutputStream(Paths.get(copyFileName))) {
             r.registerListener(e -> handleEvent(poiFs, e));
             r.setNotifyEmptyDirectories(true);
 

@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -165,7 +166,7 @@ public abstract class AbstractFileHandler implements FileHandler {
     }
 
     private void handleExtractingAsStream(File file) throws IOException {
-        try (InputStream stream = new FileInputStream(file)) {
+        try (InputStream stream = Files.newInputStream(file.toPath())) {
             try (POITextExtractor streamExtractor = ExtractorFactory.createExtractor(stream)) {
                 assertNotNull(streamExtractor);
 

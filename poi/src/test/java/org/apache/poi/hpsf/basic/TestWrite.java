@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -108,7 +109,7 @@ class TestWrite {
         ps.addSection(new Section());
 
         /* Write it to a POIFS and the latter to disk: */
-        try (OutputStream out = new FileOutputStream(filename);
+        try (OutputStream out = Files.newOutputStream(filename.toPath());
              POIFSFileSystem poiFs = new POIFSFileSystem();
              UnsynchronizedByteArrayOutputStream psStream = new UnsynchronizedByteArrayOutputStream()) {
             assertThrows(NoFormatIDException.class, () -> ps.write(psStream));
@@ -130,8 +131,8 @@ class TestWrite {
         final File filename = TempFile.createTempFile(POI_FS, ".doc");
 
         /* Create a mutable property set and write it to a POIFS: */
-        try (OutputStream out = new FileOutputStream(filename);
-            POIFSFileSystem poiFs = new POIFSFileSystem();
+        try (OutputStream out = Files.newOutputStream(filename.toPath());
+             POIFSFileSystem poiFs = new POIFSFileSystem();
              UnsynchronizedByteArrayOutputStream psStream = new UnsynchronizedByteArrayOutputStream()) {
             final PropertySet ps = new PropertySet();
             final Section s = ps.getSections().get(0);
@@ -165,8 +166,8 @@ class TestWrite {
         final String TITLE = "Test Document";
         final File filename = TempFile.createTempFile(POI_FS, ".doc");
 
-        try (OutputStream out = new FileOutputStream(filename);
-            POIFSFileSystem poiFs = new POIFSFileSystem()) {
+        try (OutputStream out = Files.newOutputStream(filename.toPath());
+             POIFSFileSystem poiFs = new POIFSFileSystem()) {
 
             final PropertySet ps = new PropertySet();
             final Section si = new Section();
@@ -219,8 +220,8 @@ class TestWrite {
 
         final File filename = TempFile.createTempFile(POI_FS, ".doc");
 
-        try (OutputStream out = new FileOutputStream(filename);
-            POIFSFileSystem poiFs = new POIFSFileSystem()) {
+        try (OutputStream out = Files.newOutputStream(filename.toPath());
+             POIFSFileSystem poiFs = new POIFSFileSystem()) {
             final PropertySet ps = new PropertySet();
             ps.clearSections();
 
@@ -394,8 +395,8 @@ class TestWrite {
         copy.deleteOnExit();
 
         /* Write: */
-        try (OutputStream out = new FileOutputStream(copy);
-            POIFSFileSystem poiFs = new POIFSFileSystem()) {
+        try (OutputStream out = Files.newOutputStream(copy.toPath());
+             POIFSFileSystem poiFs = new POIFSFileSystem()) {
             final PropertySet ps1 = new PropertySet();
             final Section s = ps1.getSections().get(0);
             final Map<Long, String> m = new HashMap<>(3, 1.0f);
@@ -652,7 +653,7 @@ class TestWrite {
         m.put(2L, "String 2");
         m.put(3L, "String 3");
 
-        try (OutputStream out = new FileOutputStream(copy);
+        try (OutputStream out = Files.newOutputStream(copy.toPath());
              POIFSFileSystem poiFs = new POIFSFileSystem()) {
             s.setDictionary(m);
             s.setFormatID(DocumentSummaryInformation.FORMAT_ID[0]);

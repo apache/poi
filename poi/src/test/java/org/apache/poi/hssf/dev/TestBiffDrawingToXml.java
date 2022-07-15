@@ -23,6 +23,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,7 +70,7 @@ class TestBiffDrawingToXml extends BaseTestIteratingXLS {
 
     @Override
     void runOneFile(File pFile) throws Exception {
-        try (InputStream inp = new FileInputStream(pFile);
+        try (InputStream inp = Files.newInputStream(pFile.toPath());
              OutputStream outputStream = NULL_OUTPUT_STREAM) {
             writeToFile(outputStream, inp);
         }

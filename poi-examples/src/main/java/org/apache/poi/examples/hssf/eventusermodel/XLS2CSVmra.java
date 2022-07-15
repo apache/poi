@@ -20,6 +20,8 @@ package org.apache.poi.examples.hssf.eventusermodel;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,7 +104,7 @@ public class XLS2CSVmra implements HSSFListener {
      */
     public XLS2CSVmra(String filename, int minColumns) throws IOException {
         this(
-                new POIFSFileSystem(new FileInputStream(filename)),
+                new POIFSFileSystem(Files.newInputStream(Paths.get(filename))),
                 System.out, minColumns
         );
     }

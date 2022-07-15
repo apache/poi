@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.IOUtils;
@@ -111,7 +112,7 @@ class TestDataSource {
     }
 
     private void writeDataToFile(File temp) throws IOException {
-        try (OutputStream str = new FileOutputStream(temp)) {
+        try (OutputStream str = Files.newOutputStream(temp.toPath())) {
             try (InputStream in = data.openResourceAsStream("Notes.ole2")) {
                 IOUtils.copy(in, str);
             }

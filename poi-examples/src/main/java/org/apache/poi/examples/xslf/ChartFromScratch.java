@@ -103,7 +103,7 @@ public final class ChartFromScratch {
                 createSlideWithChart(ppt, chartTitle, series, categories, values1, values2);
                 createSlideWithChart(ppt, chartTitle, series, categories, values1, values2);
                 // save the result
-                try (OutputStream out = new FileOutputStream("chart-from-scratch.pptx")) {
+                try (OutputStream out = Files.newOutputStream(Paths.get("chart-from-scratch.pptx"))) {
                     ppt.write(out);
                 }
             }

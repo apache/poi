@@ -45,6 +45,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -117,7 +118,8 @@ public class GenericRecordJsonWriter implements Closeable {
     protected int childIndex = 0;
 
     public GenericRecordJsonWriter(File fileName) throws IOException {
-        OutputStream os = ("null".equals(fileName.getName())) ? NULL_OUTPUT_STREAM : new FileOutputStream(fileName);
+        OutputStream os = ("null".equals(fileName.getName())) ? NULL_OUTPUT_STREAM :
+                Files.newOutputStream(fileName.toPath());
         aw = new AppendableWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
         fw = new PrintWriter(aw);
     }

@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
@@ -130,7 +131,7 @@ public class Msg2txt {
        }
 
         File f = new File(dir, fileName);
-        try (OutputStream fileOut = new FileOutputStream(f)) {
+        try (OutputStream fileOut = Files.newOutputStream(f.toPath())) {
             fileOut.write(attachment.getAttachData().getValue());
         }
     }

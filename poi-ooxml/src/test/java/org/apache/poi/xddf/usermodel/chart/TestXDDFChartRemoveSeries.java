@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Locale;
 
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
@@ -110,7 +111,7 @@ class TestXDDFChartRemoveSeries {
         workbook.setFirstVisibleTab(index);
 
         final File file = new File(resultDir, fileName);
-        try (OutputStream fileOut = new FileOutputStream(file)) {
+        try (OutputStream fileOut = Files.newOutputStream(file.toPath())) {
             workbook.write(fileOut);
         }
         workbook.close();

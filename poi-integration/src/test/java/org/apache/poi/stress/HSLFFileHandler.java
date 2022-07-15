@@ -22,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -79,7 +81,7 @@ public class HSLFFileHandler extends SlideShowHandler {
     private void testOneFile(File file) throws Exception {
         System.out.println(file);
 
-        try (InputStream stream = new FileInputStream(file)) {
+        try (InputStream stream = Files.newInputStream(file.toPath())) {
             handleFile(stream, file.getPath());
         }
 
@@ -87,7 +89,7 @@ public class HSLFFileHandler extends SlideShowHandler {
     }
 
     public static void main(String[] args) throws Exception {
-        try (InputStream stream = new FileInputStream(args[0])) {
+        try (InputStream stream = Files.newInputStream(Paths.get(args[0]))) {
             new HSLFFileHandler().handleFile(stream, args[0]);
         }
     }

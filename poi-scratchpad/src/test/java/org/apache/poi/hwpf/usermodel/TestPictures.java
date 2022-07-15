@@ -27,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
@@ -348,7 +350,7 @@ public final class TestPictures {
             expectImages(docA, 1);
 
             try (HWPFDocument docB = HWPFTestDataSamples.writeOutAndReadBack(docA);
-                OutputStream out = new FileOutputStream("/tmp/58804_1_out.doc")) {
+                OutputStream out = Files.newOutputStream(Paths.get("/tmp/58804_1_out.doc"))) {
                 docB.write(out);
                 expectImages(docB, 1);
             }

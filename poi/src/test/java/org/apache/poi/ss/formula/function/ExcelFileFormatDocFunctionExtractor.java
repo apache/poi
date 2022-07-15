@@ -30,6 +30,7 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -558,7 +559,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 
         byte[]buf = new byte[2048];
         try {
-            InputStream is = new FileInputStream(f);
+            InputStream is = Files.newInputStream(f.toPath());
             while(true) {
                 int bytesRead = is.read(buf);
                 if(bytesRead<1) {
@@ -589,7 +590,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
             InputStream is = conn.getInputStream();
             System.out.println("downloading " + url.toExternalForm());
             result = TempFile.createTempFile("excelfileformat", ".odt");
-            OutputStream os = new FileOutputStream(result);
+            OutputStream os = Files.newOutputStream(result.toPath());
             while(true) {
                 int bytesRead = is.read(buf);
                 if(bytesRead<1) {

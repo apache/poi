@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.Permission;
 
 import org.apache.commons.io.output.NullPrintStream;
@@ -226,7 +227,7 @@ final class TestOldExcelExtractor {
             String filename = "testEXCEL_"+ver+".xls";
             File f = HSSFTestDataSamples.getSampleFile(filename);
 
-            try (InputStream stream = new FileInputStream(f);
+            try (InputStream stream = Files.newInputStream(f.toPath());
                  OldExcelExtractor extractor = new OldExcelExtractor(stream)) {
                 String text = extractor.getText();
                 assertNotNull(text);
@@ -258,7 +259,7 @@ final class TestOldExcelExtractor {
     @Test
     void testInputStream() throws IOException {
         File file = HSSFTestDataSamples.getSampleFile("testEXCEL_3.xls");
-        try (InputStream stream = new FileInputStream(file);
+        try (InputStream stream = Files.newInputStream(file.toPath());
              OldExcelExtractor extractor = new OldExcelExtractor(stream)) {
             String text = extractor.getText();
             assertNotNull(text);
@@ -272,7 +273,7 @@ final class TestOldExcelExtractor {
         //Is it possible that the leading 0 byte in the worksheet name is a signal
         //that these worksheet names should be interpreted as ascii/1252?
         File file = HSSFTestDataSamples.getSampleFile("FormulaRefs.xls");
-        try (InputStream stream = new FileInputStream(file);
+        try (InputStream stream = Files.newInputStream(file.toPath());
              OldExcelExtractor extractor = new OldExcelExtractor(stream)) {
             String text = extractor.getText();
             assertNotNull(text);

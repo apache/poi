@@ -19,6 +19,8 @@ package org.apache.poi.examples.xssf.usermodel;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -62,7 +64,7 @@ public final class WorkingWithRichText {
             cell.setCellValue(rt);
 
             // Write the output to a file
-            try (OutputStream fileOut = new FileOutputStream("xssf-richtext.xlsx")) {
+            try (OutputStream fileOut = Files.newOutputStream(Paths.get("xssf-richtext.xlsx"))) {
                 wb.write(fileOut);
             }
         }

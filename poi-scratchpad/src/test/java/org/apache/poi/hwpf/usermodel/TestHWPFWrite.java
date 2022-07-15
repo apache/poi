@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
@@ -75,7 +76,7 @@ public final class TestHWPFWrite extends HWPFTestCase {
         doc.close();
 
         // Check reading from File and Stream
-        doc = new HWPFDocument(new FileInputStream(file));
+        doc = new HWPFDocument(Files.newInputStream(file.toPath()));
         r = doc.getRange();
         assertEquals("I am a test document\r", r.getParagraph(0).text());
         doc.close();

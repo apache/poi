@@ -19,6 +19,8 @@ package org.apache.poi.examples.ss;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -55,7 +57,7 @@ public class AligningCells {
             createCell(wb, row, 6, HorizontalAlignment.RIGHT, VerticalAlignment.TOP);
 
             // Write the output to a file
-            try (OutputStream fileOut = new FileOutputStream("ss-example-align.xlsx")) {
+            try (OutputStream fileOut = Files.newOutputStream(Paths.get("ss-example-align.xlsx"))) {
                 wb.write(fileOut);
             }
         }

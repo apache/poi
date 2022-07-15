@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -106,7 +107,7 @@ public class HSSFFileHandler extends SpreadsheetHandler {
     void test() throws Exception {
         File file = new File("../test-data/spreadsheet/59074.xls");
 
-        try (InputStream stream = new FileInputStream(file)) {
+        try (InputStream stream = Files.newInputStream(file.toPath())) {
             handleFile(stream, file.getPath());
         }
 

@@ -18,6 +18,8 @@
 import="java.io.*,org.apache.poi.poifs.filesystem.POIFSFileSystem,org.apache.poi
 .hssf.record.*,org.apache.poi.hssf.model.*,org.apache.poi.hssf.usermodel.*,org.a
 pache.poi.hssf.util.*" %>
+<%@ page import="java.nio.file.Files" %>
+<%@ page import="java.nio.file.Paths" %>
 <html>
 <head><title>Read Excel file </title>
 </head>
@@ -42,7 +44,7 @@ Select an Excel file to read.
 
                 // create a poi workbook from the excel spreadsheet file
                 POIFSFileSystem fs =
-                    new POIFSFileSystem(new FileInputStream(filename));
+                    new POIFSFileSystem(Files.newInputStream(Paths.get(filename)));
                 HSSFWorkbook wb = new HSSFWorkbook(fs);
 
                 for (int k = 0; k < wb.getNumberOfSheets(); k++)

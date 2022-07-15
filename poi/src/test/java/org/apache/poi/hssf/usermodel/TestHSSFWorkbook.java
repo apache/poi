@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -1098,7 +1099,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertCloseDoesNotModifyFile(filename, wb);
 
         // InputStream
-        wb = new HSSFWorkbook(new FileInputStream(file));
+        wb = new HSSFWorkbook(Files.newInputStream(file.toPath()));
         assertCloseDoesNotModifyFile(filename, wb);
     }
 

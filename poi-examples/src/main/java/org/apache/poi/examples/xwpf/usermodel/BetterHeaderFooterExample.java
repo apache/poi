@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -48,7 +49,7 @@ public class BetterHeaderFooterExample {
             XWPFFooter foot = doc.createFooter(HeaderFooterType.DEFAULT);
             foot.createParagraph().createRun().setText("footer");
 
-            try (OutputStream os = new FileOutputStream(new File("header2.docx"))) {
+            try (OutputStream os = Files.newOutputStream(new File("header2.docx").toPath())) {
                 doc.write(os);
             }
         }

@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.ooxml.POIXMLException;
@@ -77,7 +78,7 @@ public class XSLFFileHandler extends SlideShowHandler {
     @Test
     void test() throws Exception {
         File file = new File("test-data/slideshow/ca.ubc.cs.people_~emhill_presentations_HowWeRefactor.pptx");
-        try (InputStream stream = new FileInputStream(file)) {
+        try (InputStream stream = Files.newInputStream(file.toPath())) {
             handleFile(stream, file.getPath());
         }
 

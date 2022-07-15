@@ -19,6 +19,8 @@ package org.apache.poi.examples.xssf.streaming;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.poi.xssf.eventusermodel.ReadOnlySharedStringsTable;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
@@ -39,7 +41,7 @@ public class HybridStreaming {
     private static final String SHEET_TO_STREAM = "large sheet";
 
     public static void main(String[] args) throws IOException, SAXException {
-        try (InputStream sourceBytes = new FileInputStream("workbook.xlsx")) {
+        try (InputStream sourceBytes = Files.newInputStream(Paths.get("workbook.xlsx"))) {
             XSSFWorkbook workbook = new XSSFWorkbook(sourceBytes) {
                 /**
                  * Avoid DOM parse of large sheet

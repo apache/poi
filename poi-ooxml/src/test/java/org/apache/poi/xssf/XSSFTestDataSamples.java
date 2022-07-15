@@ -22,6 +22,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -197,7 +198,7 @@ public class XSSFTestDataSamples {
      * @throws IOException If reading the file fails
      */
     public static XSSFWorkbook readBack(File file) throws IOException {
-        try (InputStream in = new FileInputStream(file)) {
+        try (InputStream in = Files.newInputStream(file.toPath())) {
             return new XSSFWorkbook(in);
         }
     }
