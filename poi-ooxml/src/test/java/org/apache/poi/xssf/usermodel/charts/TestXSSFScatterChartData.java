@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel.charts;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -71,7 +72,7 @@ public final class TestXSSFScatterChartData {
         assertEquals(ScatterStyle.LINE_MARKER, scatterChartData.getStyle());
         assertNotNull(series);
         assertEquals(1, scatterChartData.getSeriesCount());
-        assertTrue(scatterChartData.getSeries(0) == series);
+        assertSame(scatterChartData.getSeries(0), series);
 
         chart.plot(scatterChartData);
         wb.close();
