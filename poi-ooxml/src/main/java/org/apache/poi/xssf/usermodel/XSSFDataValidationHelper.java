@@ -160,8 +160,7 @@ public class XSSFDataValidationHelper implements DataValidationHelper {
 
         CellRangeAddress[] cellRangeAddresses = cellRangeAddressList.getCellRangeAddresses();
         List<String> sqref = new ArrayList<>();
-        for (int i = 0; i < cellRangeAddresses.length; i++) {
-            CellRangeAddress cellRangeAddress = cellRangeAddresses[i];
+        for (CellRangeAddress cellRangeAddress : cellRangeAddresses) {
             sqref.add(cellRangeAddress.formatAsString());
         }
         newDataValidation.setSqref(sqref);

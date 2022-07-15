@@ -43,9 +43,9 @@ public class ExObjList extends RecordContainer {
      */
     public ExHyperlink[] getExHyperlinks() {
         ArrayList<ExHyperlink> links = new ArrayList<>();
-        for(int i=0; i<_children.length; i++) {
-            if(_children[i] instanceof ExHyperlink) {
-                links.add( (ExHyperlink)_children[i] );
+        for (Record child : _children) {
+            if (child instanceof ExHyperlink) {
+                links.add((ExHyperlink) child);
             }
         }
 
@@ -114,10 +114,10 @@ public class ExObjList extends RecordContainer {
      * @return found <code>ExHyperlink</code> or <code>null</code>
      */
     public ExHyperlink get(int id){
-        for(int i=0; i<_children.length; i++) {
-            if(_children[i] instanceof ExHyperlink) {
-                ExHyperlink rec = (ExHyperlink)_children[i];
-                if (rec.getExHyperlinkAtom().getNumber() == id){
+        for (Record child : _children) {
+            if (child instanceof ExHyperlink) {
+                ExHyperlink rec = (ExHyperlink) child;
+                if (rec.getExHyperlinkAtom().getNumber() == id) {
                     return rec;
                 }
             }

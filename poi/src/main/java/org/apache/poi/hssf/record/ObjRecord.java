@@ -173,8 +173,7 @@ public final class ObjRecord extends Record {
 
             if (_uninterpretedData == null) {
 
-                for (int i = 0; i < subrecords.size(); i++) {
-                    SubRecord record = subrecords.get(i);
+                for (SubRecord record : subrecords) {
                     record.serialize(out);
                 }
                 int expectedEndIx = offset + dataSize;

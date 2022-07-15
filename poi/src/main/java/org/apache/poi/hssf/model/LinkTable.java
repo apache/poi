@@ -294,10 +294,7 @@ final class LinkTable {
      * @param sheetNumber 1-based sheet number
      */
     public NameRecord getSpecificBuiltinRecord(byte builtInCode, int sheetNumber) {
-        Iterator<NameRecord> iterator = _definedNames.iterator();
-        while (iterator.hasNext()) {
-            NameRecord record = iterator.next();
-
+        for (NameRecord record : _definedNames) {
             //print areas are one based
             if (record.getBuiltInName() == builtInCode && record.getSheetNumber() == sheetNumber) {
                 return record;

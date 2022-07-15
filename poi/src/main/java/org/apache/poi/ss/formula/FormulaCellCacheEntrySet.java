@@ -41,8 +41,7 @@ final class FormulaCellCacheEntrySet {
         }
         FormulaCellCacheEntry[] result = new FormulaCellCacheEntry[nItems];
         int j=0;
-        for(int i=0; i<_arr.length; i++) {
-            FormulaCellCacheEntry cce = _arr[i];
+        for (FormulaCellCacheEntry cce : _arr) {
             if (cce != null) {
                 result[j++] = cce;
             }

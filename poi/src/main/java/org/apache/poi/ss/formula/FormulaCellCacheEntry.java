@@ -80,8 +80,8 @@ final class FormulaCellCacheEntry extends CellCacheEntry {
 
         CellCacheEntry[] prevUsedCells = _sensitiveInputCells;
         int nUsed = usedCells.length;
-        for (int i = 0; i < nUsed; i++) {
-            usedCells[i].addConsumingCell(this);
+        for (CellCacheEntry usedCell : usedCells) {
+            usedCell.addConsumingCell(this);
         }
         if (prevUsedCells == null) {
             return;
@@ -97,8 +97,7 @@ final class FormulaCellCacheEntry extends CellCacheEntry {
             usedSet = new HashSet<>(nUsed * 3 / 2);
             usedSet.addAll(Arrays.asList(usedCells).subList(0, nUsed));
         }
-        for (int i = 0; i < nPrevUsed; i++) {
-            CellCacheEntry prevUsed = prevUsedCells[i];
+        for (CellCacheEntry prevUsed : prevUsedCells) {
             if (!usedSet.contains(prevUsed)) {
                 // previously was used by cellLoc, but not anymore
                 prevUsed.clearConsumingCell(this);

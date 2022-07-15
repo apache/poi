@@ -94,8 +94,7 @@ public class HSSFRequest {
 
         if (listeners != null) {
 
-            for (int k = 0; k < listeners.size(); k++) {
-                Object listenObj = listeners.get(k);
+            for (Object listenObj : listeners) {
                 if (listenObj instanceof AbortableHSSFListener) {
                     AbortableHSSFListener listener = (AbortableHSSFListener) listenObj;
                     userCode = listener.abortableProcessRecord(rec);

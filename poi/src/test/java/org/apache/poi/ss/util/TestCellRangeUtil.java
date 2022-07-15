@@ -78,8 +78,8 @@ final class TestCellRangeUtil {
     private static Set<CellAddress> getCellAddresses(CellRangeAddress[] ranges) {
         final Set<CellAddress> set = new HashSet<>();
         for (final CellRangeAddress range : ranges) {
-            for (Iterator<CellAddress> iter = range.iterator(); iter.hasNext(); ) {
-                set.add(iter.next());
+            for (CellAddress cellAddress : range) {
+                set.add(cellAddress);
             }
         }
         return set;

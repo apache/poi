@@ -114,8 +114,8 @@ public abstract class MultiOperandNumericFunction implements Function {
         }
         DoubleList retval = new DoubleList();
 
-        for (int i = 0, iSize = operands.length; i < iSize; i++) {
-            collectValues(operands[i], retval);
+        for (ValueEval operand : operands) {
+            collectValues(operand, retval);
         }
         return retval.toArray();
     }

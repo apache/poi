@@ -63,13 +63,13 @@ public class Gcd implements FreeRefFunction {
         } else {
             try {
                 ArrayList<Long> evals = new ArrayList<>();
-                for (int i = 0; i < args.length; i++) {
-                    ValueEval ve = OperandResolver.getSingleValue(args[i], ec.getRowIndex(), ec.getColumnIndex());
+                for (ValueEval arg : args) {
+                    ValueEval ve = OperandResolver.getSingleValue(arg, ec.getRowIndex(), ec.getColumnIndex());
                     double d = OperandResolver.coerceValueToDouble(ve);
                     if (isInvalidInput(d)) {
                         return ErrorEval.NUM_ERROR;
                     }
-                    evals.add((long)d);
+                    evals.add((long) d);
                 }
                 long result = evals.get(0);
                 for (int i = 1; i < evals.size(); i++) {

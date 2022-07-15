@@ -161,8 +161,8 @@ public final class Ffn {
         System.arraycopy(_fontSig, 0, buf, offset, _fontSig.length);
         offset += _fontSig.length;
 
-        for (int i = 0; i < _xszFfn.length; i++) {
-            LittleEndian.putShort(buf, offset, (short) _xszFfn[i]);
+        for (char c : _xszFfn) {
+            LittleEndian.putShort(buf, offset, (short) c);
             offset += LittleEndianConsts.SHORT_SIZE;
         }
 

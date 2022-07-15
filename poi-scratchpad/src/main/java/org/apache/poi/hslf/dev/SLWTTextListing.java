@@ -67,19 +67,19 @@ public final class SLWTTextListing {
 
                             // Loop over the records, printing the text
                             Record[] slwtc = thisSets[k].getSlideRecords();
-                            for(int l=0; l<slwtc.length; l++) {
+                            for (Record record : slwtc) {
                                 String text = null;
-                                if(slwtc[l] instanceof TextBytesAtom) {
-                                    TextBytesAtom tba = (TextBytesAtom)slwtc[l];
+                                if (record instanceof TextBytesAtom) {
+                                    TextBytesAtom tba = (TextBytesAtom) record;
                                     text = tba.getText();
                                 }
-                                if(slwtc[l] instanceof TextCharsAtom) {
-                                    TextCharsAtom tca = (TextCharsAtom)slwtc[l];
+                                if (record instanceof TextCharsAtom) {
+                                    TextCharsAtom tca = (TextCharsAtom) record;
                                     text = tca.getText();
                                 }
 
-                                if(text != null) {
-                                    text = text.replace('\r','\n');
+                                if (text != null) {
+                                    text = text.replace('\r', '\n');
                                     System.out.println("        ''" + text + "''");
                                 }
                             }
