@@ -18,7 +18,7 @@ package org.apache.poi.xssf.usermodel.charts;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.IOException;
 
@@ -50,7 +50,7 @@ class TestXSSFLineChartData {
     };
 
     @Test
-    void testOneSeriePlot() throws IOException {
+    void testOneSeriesPlot() throws IOException {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, plotData).build();
         XSSFDrawing drawing = sheet.createDrawingPatriarch();
@@ -68,7 +68,7 @@ class TestXSSFLineChartData {
 
         assertNotNull(series);
         assertEquals(1, lineChartData.getSeriesCount());
-        assertTrue(lineChartData.getSeries(0) == series);
+        assertSame(series, lineChartData.getSeries(0));
 
         chart.plot(lineChartData);
         wb.close();

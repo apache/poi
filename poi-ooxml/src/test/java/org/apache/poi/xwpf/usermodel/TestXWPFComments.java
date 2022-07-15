@@ -55,7 +55,7 @@ class TestXWPFComments {
             assertNotNull(docIn.getDocComments());
             assertEquals(1, docIn.getComments().length);
             comment = docIn.getCommentByID("0");
-            assertTrue(null != comment);
+            assertNotNull(comment);
             assertEquals("Author", comment.getAuthor());
         }
     }

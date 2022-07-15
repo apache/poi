@@ -153,7 +153,7 @@ public abstract class BaseTestRangeCopier {
         assertEquals(cellContent, getCellContent(destSheet, "D6"));
         assertFalse(destSheet.getMergedRegions().isEmpty());
         destSheet.getMergedRegions().forEach((mergedRegion) -> {
-            assertTrue(mergedRegion.equals(mergedRangeAddress));
+            assertEquals(mergedRangeAddress, mergedRegion);
         });
     }
 
