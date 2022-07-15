@@ -165,7 +165,7 @@ class TestXSSFBReader {
     }
 
 
-    private class TestSheetHandler implements XSSFSheetXMLHandler.SheetContentsHandler {
+    private static class TestSheetHandler implements XSSFSheetXMLHandler.SheetContentsHandler {
         private final StringBuilder sb = new StringBuilder();
 
         void startSheet(String sheetName) {
