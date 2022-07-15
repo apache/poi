@@ -175,8 +175,6 @@ public class MemoryUsage {
      * this method does not set string values and, hence, does not involve the Shared Strings Table.
      * </p>
      *
-     * @param wb        the workbook to write to
-     * @param numCols   the number of columns in a row
      */
     @ParameterizedTest
     @ValueSource(booleans = {false, true})

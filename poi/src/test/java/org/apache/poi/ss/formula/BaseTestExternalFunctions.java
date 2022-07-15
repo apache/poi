@@ -133,7 +133,6 @@ public abstract class BaseTestExternalFunctions {
     /**
      * test invoking saved ATP functions
      *
-     * @param testFile  either atp.xls or atp.xlsx
      */
     @Test
     void baseTestInvokeATP() throws IOException {

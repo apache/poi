@@ -87,7 +87,7 @@ public final class TestContentType {
      * Parameters are allowed, provides that they meet the
      * criteria of rule [01.2]
      * Invalid parameters are verified as incorrect in
-     * {@link #testContentTypeParameterFailure()}
+     * {@link #testContentTypeParameterFailure(String)}
      */
     @ParameterizedTest
     @ValueSource(strings = {"mail/toto;titi=tata",
