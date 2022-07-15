@@ -98,7 +98,7 @@ class TestXSLFSheet {
             XMLSlideShow[] sourceSlideShows = new XMLSlideShow[] { textureSlideShow, pictureSlideShow };
             XMLSlideShow targetSlideShow = textureSlideShow;
             for (XMLSlideShow sourceSlideShow : sourceSlideShows) {
-                Boolean sameSlideShow = sourceSlideShow == targetSlideShow;
+                boolean sameSlideShow = sourceSlideShow == targetSlideShow;
                 String assertMessage = "importing charts " + (sameSlideShow ? "within the same slide show" : "from another slideshow") + ": ";
                 XSLFSlide sourceSlide = sourceSlideShow.getSlides().get(0);
                 XSLFSlide slide = targetSlideShow.createSlide();
