@@ -211,13 +211,13 @@ public enum AutoNumberingScheme {
             return getIndexedList(value, ARABIC_LIST, false);
         } else if (name.startsWith("alpha")) {
             return getIndexedList(value, ALPHA_LIST, true);
-        } else if (name.contains("WdWhite")) {
+        } else if (name.contains("wdwhite")) {
             return (value == 10) ? "\u008A"
                 : getIndexedList(value, WINGDINGS_WHITE_LIST, false);
-        } else if (name.contains("WdBlack")) {
+        } else if (name.contains("wdblack")) {
             return (value == 10) ? "\u0095"
                 : getIndexedList(value, WINGDINGS_BLACK_LIST, false);
-        } else if (name.contains("NumDb")) {
+        } else if (name.contains("numdb")) {
             return (value == 10) ? "\u277F"
                 : getIndexedList(value, CIRCLE_DB_LIST, true);
         } else {
