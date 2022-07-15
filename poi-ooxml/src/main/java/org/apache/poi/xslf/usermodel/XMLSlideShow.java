@@ -216,20 +216,24 @@ public class XMLSlideShow extends POIXMLDocument
         }
     }
 
+    private static final Pattern GET_ALL_EMBEDDED_PARTS_PATTERN = Pattern.compile("/ppt/embeddings/.*?");
+
     /**
      * Get the document's embedded files.
      */
     @Override
     public List<PackagePart> getAllEmbeddedParts() {
         return Collections.unmodifiableList(
-                getPackage().getPartsByName(Pattern.compile("/ppt/embeddings/.*?"))
+                getPackage().getPartsByName(GET_ALL_EMBEDDED_PARTS_PATTERN)
         );
     }
+
+    private static final Pattern GET_PICTURE_DATA_PATTERN = Pattern.compile("/ppt/media/.*?");
 
     @Override
     public List<XSLFPictureData> getPictureData() {
         if (_pictures.isEmpty()) {
-            getPackage().getPartsByName(Pattern.compile("/ppt/media/.*?")).forEach(part -> {
+            getPackage().getPartsByName(GET_PICTURE_DATA_PATTERN).forEach(part -> {
                 XSLFPictureData pd = new XSLFPictureData(part);
                 pd.setIndex(_pictures.size());
                 _pictures.add(pd);

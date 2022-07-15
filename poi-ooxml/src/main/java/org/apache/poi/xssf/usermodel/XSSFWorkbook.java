@@ -984,6 +984,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         return (int)workbook.getBookViews().getWorkbookViewArray(0).getActiveTab();
     }
 
+    private static final Pattern GET_ALL_PICTURES_PATTERN = Pattern.compile("/xl/media/.*?");
+
     /**
      * Gets all pictures from the Workbook.
      *
@@ -993,7 +995,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     @Override
     public List<XSSFPictureData> getAllPictures() {
         if(pictures == null){
-            List<PackagePart> mediaParts = getPackage().getPartsByName(Pattern.compile("/xl/media/.*?"));
+            List<PackagePart> mediaParts = getPackage().getPartsByName(GET_ALL_PICTURES_PATTERN);
             pictures = new ArrayList<>(mediaParts.size());
             for(PackagePart part : mediaParts){
                 pictures.add(new XSSFPictureData(part));

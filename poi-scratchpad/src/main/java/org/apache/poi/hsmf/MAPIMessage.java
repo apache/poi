@@ -403,6 +403,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
       return names;
    }
 
+    private static final Pattern GUESS_7_BIT_ENCODING_PATTERN = Pattern.compile("content-type:.*?charset=[\"']?([^;'\"]+)[\"']?", Pattern.CASE_INSENSITIVE);
+
    /**
     * Tries to identify the correct encoding for 7-bit (non-unicode)
     *  strings in the file.
@@ -457,10 +459,9 @@ public class MAPIMessage extends POIReadOnlyDocument {
        try {
          String[] headers = getHeaders();
          if (headers != null && headers.length > 0) {
-           Pattern p = Pattern.compile("content-type:.*?charset=[\"']?([^;'\"]+)[\"']?", Pattern.CASE_INSENSITIVE);
            for (String header : headers) {
              if (header.toLowerCase(LocaleUtil.getUserLocale()).startsWith("content-type")) {
-               Matcher m = p.matcher(header);
+               Matcher m = GUESS_7_BIT_ENCODING_PATTERN.matcher(header);
                if (m.matches()) {
                  String encoding = m.group(1);
                  generalcodepage = encoding;
