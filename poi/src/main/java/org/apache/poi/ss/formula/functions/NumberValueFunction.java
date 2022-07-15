@@ -50,7 +50,7 @@ public final class NumberValueFunction implements FreeRefFunction {
         String decSep = String.valueOf(decimalFormatSymbols.getDecimalSeparator());
         String groupSep = String.valueOf(decimalFormatSymbols.getGroupingSeparator());
 
-        Double result = Double.NaN;
+        double result = Double.NaN;
         ValueEval v1 = null;
         ValueEval v2 = null;
         ValueEval v3 = null;
@@ -105,7 +105,7 @@ public final class NumberValueFunction implements FreeRefFunction {
         }
 
         try {
-            result = Double.valueOf(text);
+            result = Double.parseDouble(text);
             result = result / Math.pow(100, countPercent); //If the Text argument ends in one or more percent signs (%), they are used in the calculation of the result.
             checkValue(result);
         } catch (EvaluationException e) {

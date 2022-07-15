@@ -59,7 +59,7 @@ final class TestIntercept {
 
     @Test
     void testBasic() {
-        Double exp = Math.pow(10, 7.5);
+        double exp = Math.pow(10, 7.5);
         ValueEval[] yValues = {
             new NumberEval(3+exp),
             new NumberEval(4+exp),
