@@ -142,7 +142,7 @@ public abstract class XDDFChartData {
     public abstract XDDFChartData.Series addSeries(XDDFDataSource<?> category,
             XDDFNumericalDataSource<? extends Number> values);
 
-    public abstract class Series {
+    public abstract static class Series {
         protected abstract CTSerTx getSeriesText();
 
         public abstract void setShowLeaderLines(boolean showLeaderLines);

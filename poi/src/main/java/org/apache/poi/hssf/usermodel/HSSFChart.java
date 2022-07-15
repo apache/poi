@@ -1120,7 +1120,7 @@ public final class HSSFChart {
                 }
             }
 
-            linkedDataRecord.setFormulaOfLink(ptgList.toArray(new Ptg[0]));
+            linkedDataRecord.setFormulaOfLink(ptgList.toArray(Ptg.EMPTY_PTG_ARRAY));
 
             return rowCount * colCount;
         }
