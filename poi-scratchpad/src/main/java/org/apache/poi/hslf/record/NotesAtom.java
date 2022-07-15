@@ -35,7 +35,7 @@ import org.apache.poi.util.LittleEndian;
 public final class NotesAtom extends RecordAtom {
 
     private byte[] _header;
-    private static long _type = 1009l;
+    private static long _type = 1009L;
 
     private int slideID;
     private boolean followMasterObjects;

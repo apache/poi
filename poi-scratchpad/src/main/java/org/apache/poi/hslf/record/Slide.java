@@ -31,7 +31,7 @@ import org.apache.poi.util.LittleEndian;
 public final class Slide extends SheetContainer
 {
     private byte[] _header;
-    private static long _type = 1006l;
+    private static long _type = 1006L;
 
     // Links to our more interesting children
     private SlideAtom slideAtom;

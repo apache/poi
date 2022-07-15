@@ -195,7 +195,7 @@ public final class Chunks implements ChunkGroupWithProperties {
         // Work out what MAPIProperty this corresponds to
         MAPIProperty prop = MAPIProperty.get(chunk.getChunkId());
         if (prop == MAPIProperty.UNKNOWN) {
-            long id = (chunk.getChunkId() << 16) + (long)chunk.getType().getId();
+            long id = ((long) chunk.getChunkId() << 16) + (long)chunk.getType().getId();
             prop = unknownProperties.get(id);
             if (prop == null) {
                 prop = MAPIProperty.createCustom(chunk.getChunkId(), chunk.getType(), chunk.getEntryName());

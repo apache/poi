@@ -39,7 +39,7 @@ public class TestExObjList {
         // Get the ExObjList
         ExObjList exObjList = doc.getExObjList(false);
         assertNotNull(exObjList);
-        assertEquals(1033l, exObjList.getRecordType());
+        assertEquals(1033L, exObjList.getRecordType());
 
         // Check the atom
         assertNotNull(exObjList.getExObjListAtom());

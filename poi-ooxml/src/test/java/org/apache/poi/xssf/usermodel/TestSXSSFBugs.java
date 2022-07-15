@@ -185,7 +185,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
                 cell = row.createCell(j - 1);
 
                 //make some noise
-                cell.setCellValue(new Date(i * TEN_MINUTES + (j * TEN_MINUTES) / COLUMN_COUNT));
+                cell.setCellValue(new Date((long) i * TEN_MINUTES + (j * TEN_MINUTES) / COLUMN_COUNT));
             }
             i++;
         }
