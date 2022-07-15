@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.poi.util.StringUtil;
+
 /**
  * The types list and details are available from
  * http://msdn.microsoft.com/en-us/library/microsoft.exchange.data.contenttypes.tnef.tnefpropertytype%28v=EXCHG.140%29.aspx
@@ -148,11 +150,12 @@ public final class Types {
     }
 
     public static String asFileEnding(int type) {
-        String str = Integer.toHexString(type).toUpperCase(Locale.ROOT);
-        while (str.length() < 4) {
-            str = "0" + str;
+        StringBuilder str = new StringBuilder(Integer.toHexString(type).toUpperCase(Locale.ROOT));
+        int need0count = 4 - str.length();
+        if (need0count > 0) {
+            str.insert(0, StringUtil.repeat('0', need0count));
         }
-        return str;
+        return str.toString();
     }
 
     public static String asName(int typeId) {

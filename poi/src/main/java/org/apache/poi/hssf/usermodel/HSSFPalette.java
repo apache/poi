@@ -22,6 +22,7 @@ import java.util.Locale;
 import org.apache.poi.hssf.record.PaletteRecord;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Represents a workbook color palette.
@@ -218,22 +219,22 @@ public final class HSSFPalette {
 
         private String getGnumericPart(byte color)
         {
-            String s;
+            StringBuilder s;
             if (color == 0)
             {
-                s = "0";
+                s = new StringBuilder("0");
             }
             else
             {
                 int c = color & 0xff; //as unsigned
                 c = (c << 8) | c; //pad to 16-bit
-                s = Integer.toHexString(c).toUpperCase(Locale.ROOT);
-                while (s.length() < 4)
-                {
-                    s = "0" + s;
+                s = new StringBuilder(Integer.toHexString(c).toUpperCase(Locale.ROOT));
+                int need0count = 4 - s.length();
+                if (need0count > 0) {
+                    s.insert(0, StringUtil.repeat('0', need0count));
                 }
             }
-            return s;
+            return s.toString();
         }
     }
 }

@@ -17,8 +17,6 @@
 
 package org.apache.poi.hsmf.datatypes;
 
-import static org.apache.logging.log4j.util.Unbox.box;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,6 +46,9 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndian.BufferUnderrunException;
+import org.apache.poi.util.StringUtil;
+
+import static org.apache.logging.log4j.util.Unbox.box;
 
 /**
  * <p>
@@ -419,9 +420,10 @@ public abstract class PropertiesChunk extends Chunk {
     }
 
     private String getFileName(MAPIProperty property, MAPIType actualType) {
-        String str = Integer.toHexString(property.id).toUpperCase(Locale.ROOT);
-        while (str.length() < 4) {
-            str = "0" + str;
+        StringBuilder str = new StringBuilder(Integer.toHexString(property.id).toUpperCase(Locale.ROOT));
+        int need0count = 4 - str.length();
+        if (need0count > 0) {
+            str.insert(0, StringUtil.repeat('0', need0count));
         }
         MAPIType type = getTypeMapping(actualType);
         return str + type.asFileEnding();

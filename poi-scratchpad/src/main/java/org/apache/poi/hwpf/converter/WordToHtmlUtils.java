@@ -29,7 +29,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
 {
     public static void addBold( final boolean bold, StringBuilder style )
     {
-        style.append( "font-weight:" + ( bold ? "bold" : "normal" ) + ";" );
+        style.append("font-weight:").append(bold ? "bold" : "normal").append(";");
     }
 
     public static void addBorder( BorderCode borderCode, String where,
@@ -71,13 +71,11 @@ public class WordToHtmlUtils extends AbstractWordUtils
         }
         if ( characterRun.getIco24() != -1 )
         {
-            style.append( "color:" + getColor24( characterRun.getIco24() )
-                    + ";" );
+            style.append("color:").append(getColor24(characterRun.getIco24())).append(";");
         }
         if ( characterRun.isHighlighted() )
         {
-            style.append( "background-color:"
-                    + getColor( characterRun.getHighlightedColor() ) + ";" );
+            style.append("background-color:").append(getColor(characterRun.getHighlightedColor())).append(";");
         }
         if ( characterRun.isStrikeThrough() )
         {
@@ -85,8 +83,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
         }
         if ( characterRun.isShadowed() )
         {
-            style.append( "text-shadow:" + characterRun.getFontSize() / 24
-                    + "pt;" );
+            style.append("text-shadow:").append(characterRun.getFontSize() / 24).append("pt;");
         }
         if ( characterRun.isSmallCaps() )
         {
@@ -118,12 +115,12 @@ public class WordToHtmlUtils extends AbstractWordUtils
         if ( isEmpty( fontFamily ) )
             return;
 
-        style.append( "font-family:" + fontFamily + ";" );
+        style.append("font-family:").append(fontFamily).append(";");
     }
 
     public static void addFontSize( final int fontSize, StringBuilder style )
     {
-        style.append( "font-size:" + fontSize + "pt;" );
+        style.append("font-size:").append(fontSize).append("pt;");
     }
 
     public static void addIndent( Paragraph paragraph, StringBuilder style )
@@ -143,7 +140,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
         if ( twipsValue == 0 )
             return;
 
-        style.append( cssName + ":" + ( twipsValue / TWIPS_PER_INCH ) + "in;" );
+        style.append(cssName).append(":").append(twipsValue / TWIPS_PER_INCH).append("in;");
     }
 
     public static void addJustification( Paragraph paragraph,
@@ -151,7 +148,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
     {
         String justification = getJustification( paragraph.getJustification() );
         if ( isNotEmpty( justification ) )
-            style.append( "text-align:" + justification + ";" );
+            style.append("text-align:").append(justification).append(";");
     }
 
     public static void addParagraphProperties( Paragraph paragraph,
@@ -170,8 +167,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
             style.append( "break-before:page;" );
         }
 
-        style.append( "hyphenate:"
-                + ( paragraph.isAutoHyphenated() ? "auto" : "none" ) + ";" );
+        style.append("hyphenate:").append(paragraph.isAutoHyphenated() ? "auto" : "none").append(";");
 
         if ( paragraph.keepOnPage() )
         {
@@ -188,12 +184,9 @@ public class WordToHtmlUtils extends AbstractWordUtils
             TableCell tableCell, boolean toppest, boolean bottomest,
             boolean leftest, boolean rightest, StringBuilder style )
     {
-        style.append( "width:" + ( tableCell.getWidth() / TWIPS_PER_INCH )
-                + "in;" );
-        style.append( "padding-start:"
-                + ( tableRow.getGapHalf() / TWIPS_PER_INCH ) + "in;" );
-        style.append( "padding-end:"
-                + ( tableRow.getGapHalf() / TWIPS_PER_INCH ) + "in;" );
+        style.append("width:").append(tableCell.getWidth() / TWIPS_PER_INCH).append("in;");
+        style.append("padding-start:").append(tableRow.getGapHalf() / TWIPS_PER_INCH).append("in;");
+        style.append("padding-end:").append(tableRow.getGapHalf() / TWIPS_PER_INCH).append("in;");
 
         BorderCode top = tableCell.getBrcTop() != null
                 && tableCell.getBrcTop().getBorderType() != 0 ? tableCell
@@ -224,8 +217,7 @@ public class WordToHtmlUtils extends AbstractWordUtils
     {
         if ( tableRow.getRowHeight() > 0 )
         {
-            style.append( "height:"
-                    + ( tableRow.getRowHeight() / TWIPS_PER_INCH ) + "in;" );
+            style.append("height:").append(tableRow.getRowHeight() / TWIPS_PER_INCH).append("in;");
         }
         if ( !tableRow.cantSplit() )
         {

@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.util.Locale;
 
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
+import org.apache.poi.util.StringUtil;
 
 public abstract class Chunk {
     public static final String DEFAULT_NAME_PREFIX = "__substg1.0_";
@@ -62,13 +63,14 @@ public abstract class Chunk {
     public String getEntryName() {
         String type = this.type.asFileEnding();
 
-        String chunkId = Integer.toHexString(this.chunkId);
-        while (chunkId.length() < 4) {
-            chunkId = "0" + chunkId;
+        StringBuilder chunkId = new StringBuilder(Integer.toHexString(this.chunkId));
+        int need0count = 4 - chunkId.length();
+        if (need0count > 0) {
+            chunkId.insert(0, StringUtil.repeat('0', need0count));
         }
 
         return this.namePrefix
-            + chunkId.toUpperCase(Locale.ROOT)
+            + chunkId.toString().toUpperCase(Locale.ROOT)
             + type.toUpperCase(Locale.ROOT);
     }
 
