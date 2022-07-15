@@ -37,15 +37,15 @@ public final class XPathHelper {
     private static final Logger LOG = LogManager.getLogger(XPathHelper.class);
 
     private static final String OSGI_ERROR =
-        "Schemas (*.xsb) for <CLASS> can't be loaded - usually this happens when OSGI " +
-        "loading is used and the thread context classloader has no reference to " +
-        "the xmlbeans classes - please either verify if the <XSB>.xsb is on the " +
-        "classpath or alternatively try to use the poi-ooxml-full-x.x.jar";
+            "Schemas (*.xsb) for <CLASS> can't be loaded - usually this happens when OSGI " +
+                    "loading is used and the thread context classloader has no reference to " +
+                    "the xmlbeans classes - please either verify if the <XSB>.xsb is on the " +
+                    "classpath or alternatively try to use the poi-ooxml-full-x.x.jar";
 
     private static final String MC_NS = "http://schemas.openxmlformats.org/markup-compatibility/2006";
     private static final String MAC_DML_NS = "http://schemas.microsoft.com/office/mac/drawingml/2008/main";
     private static final QName ALTERNATE_CONTENT_TAG = new QName(MC_NS, "AlternateContent");
-     // AlternateContentDocument.AlternateContent.type.getName();
+    // AlternateContentDocument.AlternateContent.type.getName();
 
     private XPathHelper() {}
 
@@ -109,9 +109,10 @@ public final class XPathHelper {
     public static <T extends XmlObject> T selectProperty(XmlObject startObject, Class<T> resultClass, XSLFShape.ReparseFactory<T> factory, QName[]... path)
             throws XmlException {
         XmlObject xo = startObject;
-        XmlCursor innerCur = null;
-        try (XmlCursor cur = startObject.newCursor()) {
-            innerCur = selectProperty(cur, path, 0, factory != null, false);
+        try (
+                XmlCursor cur = startObject.newCursor();
+                XmlCursor innerCur = selectProperty(cur, path, 0, factory != null, false)
+        ) {
             if (innerCur == null) {
                 return null;
             }
@@ -122,7 +123,7 @@ public final class XPathHelper {
             if (xo instanceof XmlAnyTypeImpl) {
                 String errorTxt = OSGI_ERROR
                         .replace("<CLASS>", resultClass.getSimpleName())
-                        .replace("<XSB>", resultClass.getSimpleName().toLowerCase(Locale.ROOT)+"*");
+                        .replace("<XSB>", resultClass.getSimpleName().toLowerCase(Locale.ROOT) + "*");
                 if (factory == null) {
                     throw new XmlException(errorTxt);
                 } else {
@@ -130,11 +131,7 @@ public final class XPathHelper {
                 }
             }
 
-            return (T)xo;
-        } finally {
-            if (innerCur != null) {
-                innerCur.close();
-            }
+            return (T) xo;
         }
     }
 
@@ -169,8 +166,8 @@ public final class XPathHelper {
             // it never happens when using poi-ooxml-full jar but may happen with the abridged poi-ooxml-lite jar
             if (!reparseAlternate) {
                 throw new XmlException(OSGI_ERROR
-                                               .replace("<CLASS>", "AlternateContent")
-                                               .replace("<XSB>", "alternatecontentelement")
+                        .replace("<CLASS>", "AlternateContent")
+                        .replace("<XSB>", "alternatecontentelement")
                 );
             }
             try {
