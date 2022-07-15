@@ -254,8 +254,8 @@ public final class TestStreamComplex extends StreamTest {
 
         // One of which is Text
         boolean hasText = false;
-        for(int i=0; i<cs.getChunks().length; i++) {
-            if(cs.getChunks()[i].getName().equals("Text")) {
+        for(int i = 0; !hasText && i < cs.getChunks().length; i++) {
+            if (cs.getChunks()[i].getName().equals("Text")) {
                 hasText = true;
             }
         }
