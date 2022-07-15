@@ -114,7 +114,7 @@ public final class PieChartDemo {
                 chart.plot(pie);
 
                 // save the result
-                try (OutputStream out = new FileOutputStream("pie-chart-demo-output.pptx")) {
+                try (OutputStream out = Files.newOutputStream(Paths.get("pie-chart-demo-output.pptx"))) {
                     pptx.write(out);
                 }
             }

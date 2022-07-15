@@ -94,7 +94,7 @@ public final class ChartFromScratch {
             Double[] values2 = listSpeakers.toArray(new Double[0]);
 
             try (XWPFDocument doc = new XWPFDocument();
-                 OutputStream out = new FileOutputStream("chart-from-scratch.docx")) {
+                 OutputStream out = Files.newOutputStream(Paths.get("chart-from-scratch.docx"))) {
                 XWPFChart chart = doc.createChart(XDDFChart.DEFAULT_WIDTH * 10, XDDFChart.DEFAULT_HEIGHT * 15);
                 setBarData(chart, chartTitle, series, categories, values1, values2);
                 // save the result

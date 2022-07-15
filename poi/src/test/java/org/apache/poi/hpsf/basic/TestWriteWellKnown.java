@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -294,7 +295,7 @@ class TestWriteWellKnown {
 
         /* Write the POI filesystem to a (temporary) file <em>doc2</em>
          * and close the latter. */
-        OutputStream out = new FileOutputStream(fileOut);
+        OutputStream out = Files.newOutputStream(fileOut.toPath());
         poifs.writeFilesystem(out);
         out.close();
         poifs.close();

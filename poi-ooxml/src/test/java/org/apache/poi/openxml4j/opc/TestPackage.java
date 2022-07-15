@@ -263,7 +263,7 @@ public final class TestPackage {
 
         // Save and re-load
         File tmp = TempFile.createTempFile("testCreatePackageWithCoreDocument", ".zip");
-        try (OutputStream fout = new FileOutputStream(tmp)) {
+        try (OutputStream fout = java.nio.file.Files.newOutputStream(tmp.toPath())) {
             baos.writeTo(fout);
             fout.flush();
         }
@@ -960,7 +960,7 @@ public final class TestPackage {
 
         // create a corrupted zip file by truncating a valid zip file to the first 100 bytes
         try (InputStream is = openSampleStream("dcterms_bug_56479.zip");
-            OutputStream os = new FileOutputStream(tmp)) {
+            OutputStream os = java.nio.file.Files.newOutputStream(tmp.toPath())) {
             IOUtils.copy(is, os, 100);
         }
 

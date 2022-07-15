@@ -25,6 +25,8 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.StyleDescription;
@@ -218,8 +220,8 @@ public final class Word2Forrest
 
 
     public static void main(String[] args) throws IOException {
-      try (InputStream is = new FileInputStream(args[0]);
-           OutputStream out = new FileOutputStream("test.xml")) {
+      try (InputStream is = Files.newInputStream(Paths.get(args[0]));
+           OutputStream out = Files.newOutputStream(Paths.get("test.xml"))) {
         new Word2Forrest(new HWPFDocument(is), out);
       }
     }

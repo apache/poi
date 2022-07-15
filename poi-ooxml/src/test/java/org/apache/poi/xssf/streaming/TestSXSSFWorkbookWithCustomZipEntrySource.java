@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -119,7 +120,7 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         assertEquals(1, tempFiles.size());
         File tempFile = tempFiles.get(0);
         assertTrue(tempFile.exists(), "tempFile exists?");
-        try (InputStream stream = new FileInputStream(tempFile)) {
+        try (InputStream stream = Files.newInputStream(tempFile.toPath())) {
             byte[] data = IOUtils.toByteArray(stream);
             String text = new String(data, UTF_8);
             assertFalse(text.contains(sheetName));

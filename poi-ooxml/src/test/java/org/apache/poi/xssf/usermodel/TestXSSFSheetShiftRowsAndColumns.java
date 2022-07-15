@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Locale;
 
 import org.apache.poi.ss.usermodel.CellType;
@@ -105,7 +106,7 @@ class TestXSSFSheetShiftRowsAndColumns {
 
     private void writeFile(String procName) throws IOException {
         final File file = new File(resultDir,fileName);
-        try (OutputStream fileOut = new FileOutputStream(file)) {
+        try (OutputStream fileOut = Files.newOutputStream(file.toPath())) {
             workbook.write(fileOut);
         }
     }

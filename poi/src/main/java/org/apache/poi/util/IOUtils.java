@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.zip.CRC32;
@@ -431,7 +432,7 @@ public final class IOUtils {
         if (!(destDirectory.exists() || destDirectory.mkdirs())) {
             throw new RuntimeException("Can't create destination directory: "+destDirectory);
         }
-        try (OutputStream destStream = new FileOutputStream(destFile)) {
+        try (OutputStream destStream = Files.newOutputStream(destFile.toPath())) {
             return IOUtils.copy(srcStream, destStream);
         }
     }

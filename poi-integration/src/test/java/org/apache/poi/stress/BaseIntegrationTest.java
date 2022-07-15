@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.zip.ZipException;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -159,7 +160,7 @@ public class BaseIntegrationTest {
     }
 
     private void handleFile(File inputFile) throws Exception {
-        try (InputStream newStream = new BufferedInputStream(new FileInputStream(inputFile), 64*1024)) {
+        try (InputStream newStream = new BufferedInputStream(Files.newInputStream(inputFile.toPath()), 64*1024)) {
             handler.handleFile(newStream, inputFile.getAbsolutePath());
         }
     }

@@ -100,7 +100,7 @@ public final class DoughnutChartFromScratch {
                 createSlideWithChart(ppt, chartTitle, series, categories, values1, COLUMN_COUNTRIES);
                 createSlideWithChart(ppt, chartTitle, series, categories, values2, COLUMN_SPEAKERS);
                 // save the result
-                try (OutputStream out = new FileOutputStream("doughnut-chart-from-scratch.pptx")) {
+                try (OutputStream out = Files.newOutputStream(Paths.get("doughnut-chart-from-scratch.pptx"))) {
                     ppt.write(out);
                 }
             }

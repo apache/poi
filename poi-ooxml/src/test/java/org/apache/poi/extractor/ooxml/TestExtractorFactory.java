@@ -28,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Locale;
 import java.util.stream.Stream;
 
@@ -243,7 +244,7 @@ class TestExtractorFactory {
 
         try {
             // Check we get the right extractors now
-            try (POITextExtractor extractor = createExtractor(new POIFSFileSystem(new FileInputStream(xls)))) {
+            try (POITextExtractor extractor = createExtractor(new POIFSFileSystem(Files.newInputStream(xls.toPath())))) {
                 assertTrue(extractor instanceof EventBasedExcelExtractor);
                 assertTrue(extractor.getText().length() > 200);
             }
@@ -262,7 +263,7 @@ class TestExtractorFactory {
         assertNull(ExtractorFactory.getAllThreadsPreferEventExtractors());
 
         // And back
-        try (POITextExtractor extractor = createExtractor(new POIFSFileSystem(new FileInputStream(xls)))) {
+        try (POITextExtractor extractor = createExtractor(new POIFSFileSystem(Files.newInputStream(xls.toPath())))) {
             assertTrue(extractor instanceof ExcelExtractor);
             assertTrue(extractor.getText().length() > 200);
         }

@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -863,7 +864,7 @@ public final class TestBugs {
 
     //It isn't pretty, but it works...
     private Map<String, String> getMacrosFromHSLF(String fileName) throws IOException {
-        try (InputStream is = new FileInputStream(POIDataSamples.getSlideShowInstance().getFile(fileName));
+        try (InputStream is = Files.newInputStream(POIDataSamples.getSlideShowInstance().getFile(fileName).toPath());
              POIFSFileSystem poifs = new POIFSFileSystem(is);
              HSLFSlideShow ppt = new HSLFSlideShow(poifs)) {
             //TODO: should we run the VBAMacroReader on this poifs?

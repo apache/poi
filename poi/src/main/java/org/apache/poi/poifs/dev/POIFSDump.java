@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.util.Iterator;
 
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -103,7 +104,7 @@ public final class POIFSDump {
                 byte[] bytes = IOUtils.toByteArray(is);
                 is.close();
 
-                try (OutputStream out = new FileOutputStream(new File(parent, node.getName().trim()))) {
+                try (OutputStream out = Files.newOutputStream(new File(parent, node.getName().trim()).toPath())) {
                     out.write(bytes);
                 }
             } else if (entry instanceof DirectoryEntry){

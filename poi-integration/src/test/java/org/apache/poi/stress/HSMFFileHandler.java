@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
@@ -79,7 +80,7 @@ public class HSMFFileHandler extends POIFSFileHandler {
     @Test
     void test() throws Exception {
         File file = new File("test-data/hsmf/logsat.com_signatures_valid.msg");
-        try (InputStream stream = new FileInputStream(file)) {
+        try (InputStream stream = Files.newInputStream(file.toPath())) {
             handleFile(stream, file.getPath());
         }
 

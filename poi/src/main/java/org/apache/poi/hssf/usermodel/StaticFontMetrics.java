@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -118,7 +119,7 @@ final class StaticFontMetrics {
         }
 
         try (InputStream metricsIn = (propFile != null)
-                ? new FileInputStream(propFile)
+                ? Files.newInputStream(propFile.toPath())
                 : FontDetails.class.getResourceAsStream("/font_metrics.properties")
         )  {
             // Use the built-in font metrics file off the classpath

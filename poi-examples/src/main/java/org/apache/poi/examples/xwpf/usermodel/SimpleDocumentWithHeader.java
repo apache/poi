@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -57,7 +58,7 @@ public class SimpleDocumentWithHeader {
             pars[0] = new XWPFParagraph(ctP, doc);
             hfPolicy.createFooter(XWPFHeaderFooterPolicy.DEFAULT, pars);
 
-            try (OutputStream os = new FileOutputStream(new File("header.docx"))) {
+            try (OutputStream os = Files.newOutputStream(new File("header.docx").toPath())) {
                 doc.write(os);
             }
         }

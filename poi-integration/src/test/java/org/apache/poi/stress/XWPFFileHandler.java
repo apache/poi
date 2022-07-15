@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Set;
 
 import org.apache.poi.ooxml.POIXMLException;
@@ -53,7 +54,7 @@ public class XWPFFileHandler extends AbstractFileHandler {
     void test() throws Exception {
         File file = new File("test-data/document/51921-Word-Crash067.docx");
 
-        try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
+        try (InputStream stream = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
             handleFile(stream, file.getPath());
         }
 

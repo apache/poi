@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 class TestXDDFChart {
     @Test
@@ -88,7 +89,7 @@ class TestXDDFChart {
 
             File file = TempFile.createTempFile("chart20201220", ".xlsx");
             try {
-                try (OutputStream out = new FileOutputStream(file)) {
+                try (OutputStream out = Files.newOutputStream(file.toPath())) {
                     wb.write(out);
                 }
             } finally {

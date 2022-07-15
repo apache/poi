@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.poi.hdgf.HDGFDiagram;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
@@ -57,7 +58,7 @@ public class HDGFFileHandler extends POIFSFileHandler {
     void test() throws Exception {
         File file = new File("test-data/diagram/44501.vsd");
 
-        InputStream stream = new FileInputStream(file);
+        InputStream stream = Files.newInputStream(file.toPath());
         try {
             handleFile(stream, file.getPath());
         } finally {
@@ -66,7 +67,7 @@ public class HDGFFileHandler extends POIFSFileHandler {
 
         handleExtracting(file);
 
-        stream = new FileInputStream(file);
+        stream = Files.newInputStream(file.toPath());
         try {
             try (VisioTextExtractor extractor = new VisioTextExtractor(stream)) {
                 assertNotNull(extractor.getText());

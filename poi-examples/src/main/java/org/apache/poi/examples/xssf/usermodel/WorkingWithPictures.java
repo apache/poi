@@ -22,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -46,7 +48,7 @@ public final class WorkingWithPictures {
             CreationHelper helper = wb.getCreationHelper();
 
             //add a picture in this workbook.
-            InputStream is = new FileInputStream(args[0]);
+            InputStream is = Files.newInputStream(Paths.get(args[0]));
             byte[] bytes = IOUtils.toByteArray(is);
             is.close();
             int pictureIdx = wb.addPicture(bytes, Workbook.PICTURE_TYPE_JPEG);
@@ -68,7 +70,7 @@ public final class WorkingWithPictures {
 
             //save workbook
             String file = "picture.xlsx";
-            try (OutputStream fileOut = new FileOutputStream(file)) {
+            try (OutputStream fileOut = Files.newOutputStream(Paths.get(file))) {
                 wb.write(fileOut);
             }
         }

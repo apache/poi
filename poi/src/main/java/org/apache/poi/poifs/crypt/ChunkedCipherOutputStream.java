@@ -24,6 +24,7 @@ import java.io.FileOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 
 import javax.crypto.Cipher;
@@ -71,7 +72,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         this.plainByteFlags = new SparseBitSet(cs);
         this.chunkBits = Integer.bitCount(cs-1);
         this.fileOut = TempFile.createTempFile("encrypted_package", "crypt");
-        this.out = new FileOutputStream(fileOut);
+        this.out = Files.newOutputStream(fileOut.toPath());
         this.dir = dir;
         this.cipher = initCipherForBlock(null, 0, false);
     }

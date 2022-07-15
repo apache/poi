@@ -37,6 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -1197,7 +1198,7 @@ final class TestPOIFSStream {
 
     private static POIFSFileSystem writeOutFileAndReadBack(POIFSFileSystem original) throws IOException {
         final File file = TempFile.createTempFile("TestPOIFS", ".ole2");
-        try (OutputStream fout = new FileOutputStream(file)) {
+        try (OutputStream fout = Files.newOutputStream(file.toPath())) {
             original.writeFilesystem(fout);
         }
         return new POIFSFileSystem(file, false);
@@ -2715,7 +2716,7 @@ final class TestPOIFSStream {
                 copyAllEntries(srcFileSystem.getRoot(), destFileSystem.getRoot());
 
                 File file = File.createTempFile("npoi", ".dat");
-                try (OutputStream outputStream = new FileOutputStream(file)) {
+                try (OutputStream outputStream = Files.newOutputStream(file.toPath())) {
                     destFileSystem.writeFilesystem(outputStream);
                 }
 

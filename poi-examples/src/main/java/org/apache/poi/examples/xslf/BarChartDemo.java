@@ -97,7 +97,7 @@ public final class BarChartDemo {
                 setColumnData(chart, "Column variant");
 
                 // save the result
-                try (OutputStream out = new FileOutputStream("bar-chart-demo-output.pptx")) {
+                try (OutputStream out = Files.newOutputStream(Paths.get("bar-chart-demo-output.pptx"))) {
                     pptx.write(out);
                 }
             }

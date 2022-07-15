@@ -20,6 +20,8 @@ package org.apache.poi.examples.xssf.usermodel;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -46,7 +48,7 @@ public class Outlining {
             sheet1.groupColumn((short) 9, (short) 12);
             sheet1.groupColumn((short) 10, (short) 11);
 
-            try (OutputStream fileOut = new FileOutputStream("outlining.xlsx")) {
+            try (OutputStream fileOut = Files.newOutputStream(Paths.get("outlining.xlsx"))) {
                 wb.write(fileOut);
             }
         }
@@ -70,7 +72,7 @@ public class Outlining {
             sheet2.setColumnGroupCollapsed((short) 4, true);
             sheet2.setColumnGroupCollapsed((short) 4, false);
 
-            try (OutputStream fileOut = new FileOutputStream("outlining_collapsed.xlsx")) {
+            try (OutputStream fileOut = Files.newOutputStream(Paths.get("outlining_collapsed.xlsx"))) {
                 wb2.write(fileOut);
             }
         }

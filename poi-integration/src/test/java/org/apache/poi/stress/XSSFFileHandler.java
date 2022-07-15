@@ -30,6 +30,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -212,7 +213,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
     void test() throws Exception {
         File file = new File("test-data/spreadsheet/ref-56737.xlsx");
 
-        try (InputStream stream = new BufferedInputStream(new FileInputStream(file))) {
+        try (InputStream stream = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
             handleFile(stream, file.getPath());
         }
 

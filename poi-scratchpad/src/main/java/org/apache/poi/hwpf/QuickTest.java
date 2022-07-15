@@ -19,6 +19,8 @@ package org.apache.poi.hwpf;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
@@ -30,7 +32,7 @@ public final class QuickTest {
     }
 
     public static void main(String[] args) throws IOException {
-        HWPFDocument doc = new HWPFDocument(new FileInputStream(args[0]));
+        HWPFDocument doc = new HWPFDocument(Files.newInputStream(Paths.get(args[0])));
         Range r = doc.getRange();
 
         System.out.println("Example you supplied:");

@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.file.Files;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -218,7 +219,7 @@ public final class BigGridDemo {
                     }
                 }
                 zos.putArchiveEntry(new ZipArchiveEntry(entry));
-                try (InputStream is = new FileInputStream(tmpfile)) {
+                try (InputStream is = Files.newInputStream(tmpfile.toPath())) {
                     copyStream(is, zos);
                 }
                 zos.closeArchiveEntry();

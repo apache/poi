@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.poi.hpbf.HPBFDocument;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
@@ -45,7 +46,7 @@ public class HPBFFileHandler extends POIFSFileHandler {
     void test() throws Exception {
         File file = new File("test-data/publisher/SampleBrochure.pub");
 
-        InputStream stream = new FileInputStream(file);
+        InputStream stream = Files.newInputStream(file.toPath());
         try {
             handleFile(stream, file.getPath());
         } finally {
@@ -54,7 +55,7 @@ public class HPBFFileHandler extends POIFSFileHandler {
 
         handleExtracting(file);
 
-        stream = new FileInputStream(file);
+        stream = Files.newInputStream(file.toPath());
         try {
             try (PublisherTextExtractor extractor = new PublisherTextExtractor(stream)) {
                 assertNotNull(extractor.getText());

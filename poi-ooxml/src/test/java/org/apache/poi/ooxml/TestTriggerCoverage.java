@@ -46,6 +46,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -88,7 +89,7 @@ class TestTriggerCoverage {
     @ParameterizedTest
     @MethodSource("files")
     void testFile(File file) throws Exception {
-        try (InputStream stream = new FileInputStream(file)) {
+        try (InputStream stream = Files.newInputStream(file.toPath())) {
             if (file.getName().endsWith(".docx")) {
                 try (XWPFDocument doc = new XWPFDocument(stream)) {
                     assertNotNull(doc);
@@ -113,7 +114,7 @@ class TestTriggerCoverage {
             throw e;
         }
 
-        try (InputStream stream = new FileInputStream(file)) {
+        try (InputStream stream = Files.newInputStream(file.toPath())) {
             try (POITextExtractor extractor = ExtractorFactory.createExtractor(stream)) {
                 assertNotNull(extractor.getText());
             }

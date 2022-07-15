@@ -19,6 +19,8 @@ package org.apache.poi.examples.xssf.usermodel;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +70,7 @@ public class AligningCells {
             centerAcrossSelection(wb, row, 1, 3, VerticalAlignment.CENTER);
 
             // Write the output to a file
-            try (OutputStream fileOut = new FileOutputStream("xssf-align.xlsx")) {
+            try (OutputStream fileOut = Files.newOutputStream(Paths.get("xssf-align.xlsx"))) {
                 wb.write(fileOut);
             }
         }

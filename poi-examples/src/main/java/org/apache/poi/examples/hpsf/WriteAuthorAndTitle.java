@@ -22,6 +22,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.poi.hpsf.HPSFRuntimeException;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
@@ -99,7 +101,7 @@ public final class WriteAuthorAndTitle {
          * in the class ModifySICopyTheRest which is registered here as a
          * POIFSReader. */
         try (POIFSFileSystem poifs = new POIFSFileSystem();
-             OutputStream out = new FileOutputStream(dstName)) {
+             OutputStream out = Files.newOutputStream(Paths.get(dstName))) {
             final POIFSReader r = new POIFSReader();
             r.registerListener(e -> handleEvent(poifs, e));
             r.read(new File(srcName));

@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -144,7 +145,7 @@ public class DummyKeystore {
     public DummyKeystore(File storeFile, String storePass) throws GeneralSecurityException, IOException {
         CryptoFunctions.registerBouncyCastle();
         keystore = KeyStore.getInstance("PKCS12");
-        try (InputStream fis = storeFile != null && storeFile.exists() ? new FileInputStream(storeFile) : null) {
+        try (InputStream fis = storeFile != null && storeFile.exists() ? Files.newInputStream(storeFile.toPath()) : null) {
             keystore.load(fis, storePass.toCharArray());
         }
     }
@@ -169,7 +170,7 @@ public class DummyKeystore {
         PrivateKey key = null;
         X509Certificate x509 = null;
 
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(pemFile), StandardCharsets.ISO_8859_1))) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(Files.newInputStream(pemFile.toPath()), StandardCharsets.ISO_8859_1))) {
             PEMParser parser = new PEMParser(br);
             for (Object obj; (obj = parser.readObject()) != null; ) {
                 if (obj instanceof PrivateKeyInfo) {
@@ -388,7 +389,7 @@ public class DummyKeystore {
     }
 
     public void importX509(File file) throws CertificateException, KeyStoreException, IOException {
-        try (InputStream is = new FileInputStream(file)) {
+        try (InputStream is = Files.newInputStream(file.toPath())) {
             X509Certificate cert = (X509Certificate) CertificateFactory.getInstance("X.509").generateCertificate(is);
             keystore.setCertificateEntry(cert.getSubjectX500Principal().getName(), cert);
         }

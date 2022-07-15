@@ -27,6 +27,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -959,7 +960,7 @@ public class POIFSFileSystem extends BlockStore
     public static POIFSFileSystem create(File file) throws IOException {
         // Create a new empty POIFS in the file
         try (POIFSFileSystem tmp = new POIFSFileSystem();
-             OutputStream out = new FileOutputStream(file)) {
+             OutputStream out = Files.newOutputStream(file.toPath())) {
             tmp.writeFilesystem(out);
         }
 

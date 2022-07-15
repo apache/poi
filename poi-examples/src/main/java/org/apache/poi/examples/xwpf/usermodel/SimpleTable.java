@@ -19,6 +19,8 @@ package org.apache.poi.examples.xwpf.usermodel;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
@@ -88,7 +90,7 @@ public class SimpleTable {
 
             table.getRow(2).getCell(2).setText("only text");
 
-            try (OutputStream out = new FileOutputStream("simpleTable.docx")) {
+            try (OutputStream out = Files.newOutputStream(Paths.get("simpleTable.docx"))) {
                 doc.write(out);
             }
         }
@@ -188,7 +190,7 @@ public class SimpleTable {
             } // for row
 
             // write the file
-            try (OutputStream out = new FileOutputStream("styledTable.docx")) {
+            try (OutputStream out = Files.newOutputStream(Paths.get("styledTable.docx"))) {
                 doc.write(out);
             }
         }

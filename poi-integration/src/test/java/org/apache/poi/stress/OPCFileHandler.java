@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.nio.file.Files;
 import java.util.Set;
 
 import org.apache.poi.openxml4j.opc.ContentTypes;
@@ -71,7 +72,7 @@ public class OPCFileHandler extends AbstractFileHandler {
     void test() throws Exception {
         File file = new File("test-data/diagram/test.vsdx");
 
-        try (InputStream stream = new PushbackInputStream(new FileInputStream(file), 100000)) {
+        try (InputStream stream = new PushbackInputStream(Files.newInputStream(file.toPath()), 100000)) {
             handleFile(stream, file.getPath());
         }
 
