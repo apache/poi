@@ -77,6 +77,8 @@ public class XMLSlideShow extends POIXMLDocument
     //arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 1_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+    private static final Pattern GET_ALL_EMBEDDED_PARTS_PATTERN = Pattern.compile("/ppt/embeddings/.*?");
+    private static final Pattern GET_PICTURE_DATA_PATTERN = Pattern.compile("/ppt/media/.*?");
 
     private CTPresentation _presentation;
     private final List<XSLFSlide> _slides = new ArrayList<>();
@@ -222,14 +224,14 @@ public class XMLSlideShow extends POIXMLDocument
     @Override
     public List<PackagePart> getAllEmbeddedParts() {
         return Collections.unmodifiableList(
-                getPackage().getPartsByName(Pattern.compile("/ppt/embeddings/.*?"))
+                getPackage().getPartsByName(GET_ALL_EMBEDDED_PARTS_PATTERN)
         );
     }
 
     @Override
     public List<XSLFPictureData> getPictureData() {
         if (_pictures.isEmpty()) {
-            getPackage().getPartsByName(Pattern.compile("/ppt/media/.*?")).forEach(part -> {
+            getPackage().getPartsByName(GET_PICTURE_DATA_PATTERN).forEach(part -> {
                 XSLFPictureData pd = new XSLFPictureData(part);
                 pd.setIndex(_pictures.size());
                 _pictures.add(pd);

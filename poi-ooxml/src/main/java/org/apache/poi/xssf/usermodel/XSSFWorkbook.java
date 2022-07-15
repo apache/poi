@@ -107,6 +107,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  */
 public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Support {
     private static final Pattern COMMA_PATTERN = Pattern.compile(",");
+    private static final Pattern GET_ALL_PICTURES_PATTERN = Pattern.compile("/xl/media/.*?");
 
     /**
      * Images formats supported by XSSF but not by HSSF
@@ -993,7 +994,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     @Override
     public List<XSSFPictureData> getAllPictures() {
         if(pictures == null){
-            List<PackagePart> mediaParts = getPackage().getPartsByName(Pattern.compile("/xl/media/.*?"));
+            List<PackagePart> mediaParts = getPackage().getPartsByName(GET_ALL_PICTURES_PATTERN);
             pictures = new ArrayList<>(mediaParts.size());
             for(PackagePart part : mediaParts){
                 pictures.add(new XSSFPictureData(part));
