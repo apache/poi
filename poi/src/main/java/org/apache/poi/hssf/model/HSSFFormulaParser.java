@@ -26,7 +26,6 @@ import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 
 /**
  * HSSF wrapper for the {@link FormulaParser} and {@link FormulaRenderer}

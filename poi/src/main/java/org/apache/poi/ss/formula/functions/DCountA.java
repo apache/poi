@@ -19,7 +19,6 @@ package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**

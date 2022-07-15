@@ -17,9 +17,6 @@
 package org.apache.poi.hwpf.converter;
 
 import static org.apache.logging.log4j.util.Unbox.box;
-import static org.apache.poi.hwpf.converter.AbstractWordUtils.TWIPS_PER_INCH;
-import static org.apache.poi.hwpf.converter.AbstractWordUtils.isNotEmpty;
-import static org.apache.poi.hwpf.converter.AbstractWordUtils.loadDoc;
 import static org.apache.poi.hwpf.converter.WordToFoUtils.*;
 
 import java.io.File;

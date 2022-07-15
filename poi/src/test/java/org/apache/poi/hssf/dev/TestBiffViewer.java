@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.util.RecordFormatException;
 
 class TestBiffViewer extends BaseTestIteratingXLS {

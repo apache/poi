@@ -30,7 +30,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
 
 /**
  * Various utility functions that make working with a cells and rows easier. The various methods

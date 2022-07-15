@@ -18,9 +18,6 @@
 package org.apache.poi.util;
 
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.Set;
 
 /**
  * Utilities for working with Microsoft CodePages.

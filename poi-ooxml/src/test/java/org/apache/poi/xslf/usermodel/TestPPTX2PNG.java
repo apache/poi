@@ -21,7 +21,6 @@ package org.apache.poi.xslf.usermodel;
 
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.Closeable;
 import java.io.File;

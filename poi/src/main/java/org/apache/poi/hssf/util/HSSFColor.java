@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.poi.ss.usermodel.Color;
-import org.apache.poi.util.Removal;
 
 
 /**

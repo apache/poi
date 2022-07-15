@@ -27,7 +27,6 @@ import java.io.IOException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestCase;
-import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.junit.jupiter.api.Test;

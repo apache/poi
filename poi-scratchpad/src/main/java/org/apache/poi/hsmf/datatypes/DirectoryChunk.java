@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.util.Removal;
 
 /**
  * A Chunk that is just a placeholder in the MAPIMessage directory structure,

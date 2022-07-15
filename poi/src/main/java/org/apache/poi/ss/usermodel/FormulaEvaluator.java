@@ -17,8 +17,6 @@
 
 package org.apache.poi.ss.usermodel;
 
-import org.apache.poi.util.Removal;
-
 import java.util.Map;
 
 /**

@@ -28,7 +28,6 @@ import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
 import org.apache.poi.poifs.crypt.temp.EncryptedTempData;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.TempFile;
 
 import java.io.*;
 

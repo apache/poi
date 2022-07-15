@@ -18,14 +18,11 @@
  */
 package org.apache.poi.hssf.usermodel;
 
-import java.io.IOException;
-
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestSheetShiftColumns;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
 class TestHSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
     public TestHSSFSheetShiftColumns() {

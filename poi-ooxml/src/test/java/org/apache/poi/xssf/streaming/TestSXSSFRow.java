@@ -23,7 +23,6 @@ import org.apache.poi.ss.tests.usermodel.BaseTestXRow;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
 
 /**
  * Tests for XSSFRow

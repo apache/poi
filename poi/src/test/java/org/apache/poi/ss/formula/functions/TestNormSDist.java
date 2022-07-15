@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

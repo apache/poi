@@ -20,9 +20,6 @@
 package org.apache.poi.xddf.usermodel.chart;
 
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.Internal;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
 
 @Beta
 public interface XDDFNumericalDataSource<T extends Number> extends XDDFDataSource<T> {

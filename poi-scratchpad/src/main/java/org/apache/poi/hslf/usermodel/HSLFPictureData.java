@@ -47,7 +47,6 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 

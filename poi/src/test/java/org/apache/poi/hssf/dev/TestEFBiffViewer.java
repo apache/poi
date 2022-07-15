@@ -26,7 +26,6 @@ import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
 import org.apache.poi.hssf.eventusermodel.HSSFRequest;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Assertions;
 
 class TestEFBiffViewer extends BaseTestIteratingXLS {
