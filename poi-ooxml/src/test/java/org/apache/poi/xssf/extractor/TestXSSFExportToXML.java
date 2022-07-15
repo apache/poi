@@ -74,7 +74,7 @@ public final class TestXSSFExportToXML {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(os, true);
-                String xml = os.toString("UTF-8");
+                String xml = os.toString(StandardCharsets.UTF_8);
 
                 assertNotNull(xml);
                 assertFalse(xml.isEmpty());
@@ -122,7 +122,7 @@ public final class TestXSSFExportToXML {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(os, true);
-                String xml = os.toString("UTF-8");
+                String xml = os.toString(StandardCharsets.UTF_8);
 
                 assertNotNull(xml);
                 assertFalse(xml.isEmpty());
@@ -196,7 +196,7 @@ public final class TestXSSFExportToXML {
                     String xml;
                     try (UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream()) {
                         exporter.exportToXML(os, true);
-                        xml = os.toString("UTF-8");
+                        xml = os.toString(StandardCharsets.UTF_8);
                     }
                     assertNotNull(xml);
 
@@ -258,7 +258,7 @@ public final class TestXSSFExportToXML {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(os, true);
-                String xmlData = os.toString("UTF-8");
+                String xmlData = os.toString(StandardCharsets.UTF_8);
 
                 assertNotNull(xmlData);
                 assertFalse(xmlData.isEmpty());
@@ -302,7 +302,7 @@ public final class TestXSSFExportToXML {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(os, true);
-                String xmlData = os.toString("UTF-8");
+                String xmlData = os.toString(StandardCharsets.UTF_8);
 
                 assertNotNull(xmlData);
                 assertFalse(xmlData.isEmpty());
@@ -337,7 +337,7 @@ public final class TestXSSFExportToXML {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(os, true);
-                String xmlData = os.toString("UTF-8");
+                String xmlData = os.toString(StandardCharsets.UTF_8);
 
                 assertNotNull(xmlData);
                 assertFalse(xmlData.isEmpty());
@@ -376,7 +376,7 @@ public final class TestXSSFExportToXML {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(os, true);
-                String xmlData = os.toString("UTF-8");
+                String xmlData = os.toString(StandardCharsets.UTF_8);
 
                 assertNotNull(xmlData);
                 assertFalse(xmlData.isEmpty());
@@ -402,7 +402,7 @@ public final class TestXSSFExportToXML {
 
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(os, true);
-                String xmlData = os.toString("UTF-8");
+                String xmlData = os.toString(StandardCharsets.UTF_8);
 
                 assertNotNull(xmlData);
                 assertFalse(xmlData.isEmpty());
@@ -480,7 +480,7 @@ public final class TestXSSFExportToXML {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(os, true);
-                String xmlData = os.toString("UTF-8");
+                String xmlData = os.toString(StandardCharsets.UTF_8);
 
                 assertNotNull(xmlData);
                 assertFalse(xmlData.isEmpty());
@@ -558,7 +558,7 @@ public final class TestXSSFExportToXML {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(os, true);
-                String xmlData = os.toString("UTF-8");
+                String xmlData = os.toString(StandardCharsets.UTF_8);
 
                 assertNotNull(xmlData);
                 assertFalse(xmlData.isEmpty());
@@ -589,7 +589,7 @@ public final class TestXSSFExportToXML {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(os, false);
-                String xmlData = os.toString("UTF-8");
+                String xmlData = os.toString(StandardCharsets.UTF_8);
 
                 assertNotNull(xmlData);
                 assertFalse(xmlData.isEmpty());
@@ -621,7 +621,7 @@ public final class TestXSSFExportToXML {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(os, true);
-                String xmlData = os.toString("UTF-8");
+                String xmlData = os.toString(StandardCharsets.UTF_8);
 
                 assertNotNull(xmlData);
                 assertFalse(xmlData.isEmpty());
@@ -647,7 +647,7 @@ public final class TestXSSFExportToXML {
 
                 UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(os, false);
-                assertNotNull(os.toString("UTF-8"));
+                assertNotNull(os.toString(StandardCharsets.UTF_8));
             }
         }
     }
@@ -660,7 +660,7 @@ public final class TestXSSFExportToXML {
                 UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
                 exporter.exportToXML(bos, true);
                 assertNotNull(DocumentHelper.readDocument(bos.toInputStream()));
-                String exportedXml = bos.toString("UTF-8");
+                String exportedXml = bos.toString(StandardCharsets.UTF_8);
                 assertEquals("<Test><Test>1</Test></Test>", exportedXml.replaceAll("\\s+", ""));
             }
         }

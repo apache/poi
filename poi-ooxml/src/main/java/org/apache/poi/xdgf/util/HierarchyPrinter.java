@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.xdgf.usermodel.XDGFPage;
 import org.apache.poi.xdgf.usermodel.XDGFShape;
@@ -46,7 +47,7 @@ public class HierarchyPrinter {
 
         try (
                 OutputStream os = new FileOutputStream(pageFile);
-                PrintStream pos = new PrintStream(os, false, "utf-8")
+                PrintStream pos = new PrintStream(os, false, StandardCharsets.UTF_8.name())
             ) {
             printHierarchy(page, pos);
         }

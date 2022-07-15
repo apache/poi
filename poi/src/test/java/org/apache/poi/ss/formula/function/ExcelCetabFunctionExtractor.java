@@ -322,7 +322,7 @@ public final class ExcelCetabFunctionExtractor {
 
     private static void processFile(InputStream input, File outFile) throws IOException {
         try (OutputStream os = new SimpleAsciiOutputStream(new FileOutputStream(outFile));
-        PrintStream ps = new PrintStream(os, true, "UTF-8")) {
+        PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8.name())) {
 
             outputLicenseHeader(ps);
             Class<?> genClass = ExcelCetabFunctionExtractor.class;

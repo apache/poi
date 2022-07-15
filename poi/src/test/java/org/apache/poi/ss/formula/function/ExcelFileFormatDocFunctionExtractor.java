@@ -30,6 +30,7 @@ import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -492,7 +493,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
         os = new SimpleAsciiOutputStream(os);
         PrintStream ps;
         try {
-            ps = new PrintStream(os, true, "UTF-8");
+            ps = new PrintStream(os, true, StandardCharsets.UTF_8.name());
         } catch(UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }

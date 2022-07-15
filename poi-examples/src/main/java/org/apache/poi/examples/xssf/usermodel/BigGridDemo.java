@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -77,7 +78,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  */
 public final class BigGridDemo {
     private static final Logger LOG = LogManager.getLogger(BigGridDemo.class);
-    private static final String XML_ENCODING = "UTF-8";
 
     private static final Random rnd = new Random();
 
@@ -105,7 +105,7 @@ public final class BigGridDemo {
             tmp = TempFile.createTempFile("sheet", ".xml");
             try (
                     FileOutputStream stream = new FileOutputStream(tmp);
-                    Writer fw = new OutputStreamWriter(stream, XML_ENCODING)
+                    Writer fw = new OutputStreamWriter(stream, StandardCharsets.UTF_8)
                 ) {
                 generate(fw, styles);
             }
@@ -247,7 +247,7 @@ public final class BigGridDemo {
         }
 
         void beginSheet() throws IOException {
-            _out.write("<?xml version=\"1.0\" encoding=\""+XML_ENCODING+"\"?>" +
+            _out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                     "<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\">" );
             _out.write("<sheetData>\n");
         }

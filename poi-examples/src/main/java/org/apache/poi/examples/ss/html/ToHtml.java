@@ -190,7 +190,7 @@ public final class ToHtml {
             return;
         }
 
-        try (PrintWriter pw = new PrintWriter(args[1], "UTF-8")) {
+        try (PrintWriter pw = new PrintWriter(args[1], StandardCharsets.UTF_8.name())) {
             ToHtml toHtml = create(args[0], pw);
             toHtml.setCompleteHTML(true);
             toHtml.printPage();

@@ -18,6 +18,7 @@
 package org.apache.poi.hdgf.chunks;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A chunk header from v4 or v5
@@ -59,7 +60,7 @@ public final class ChunkHeaderV4V5 extends ChunkHeader {
 
     @Override
     public Charset getChunkCharset() {
-        return Charset.forName("ASCII");
+        return StandardCharsets.US_ASCII;
     }
 
     void setUnknown2(short unknown2) {

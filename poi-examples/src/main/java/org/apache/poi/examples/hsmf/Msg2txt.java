@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
@@ -62,7 +63,7 @@ public class Msg2txt {
     public void processMessage() throws IOException {
         String txtFileName = fileNameStem + ".txt";
         String attDirName = fileNameStem + "-att";
-        try (PrintWriter txtOut = new PrintWriter(txtFileName, "UTF-8")) {
+        try (PrintWriter txtOut = new PrintWriter(txtFileName, StandardCharsets.UTF_8.name())) {
             try {
                 String displayFrom = msg.getDisplayFrom();
                 txtOut.println("From: " + displayFrom);

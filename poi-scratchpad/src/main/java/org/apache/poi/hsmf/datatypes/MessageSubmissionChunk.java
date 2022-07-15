@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,7 +63,7 @@ public class MessageSubmissionChunk extends Chunk {
     public void readValue(InputStream value) throws IOException {
         // Stored in the file as us-ascii
         byte[] data = IOUtils.toByteArray(value);
-        rawId = new String(data, Charset.forName("ASCII"));
+        rawId = new String(data, StandardCharsets.US_ASCII);
 
         // Now process the date
         String[] parts = rawId.split(";");
@@ -112,7 +113,7 @@ public class MessageSubmissionChunk extends Chunk {
 
     @Override
     public void writeValue(OutputStream out) throws IOException {
-        byte[] data = rawId.getBytes(Charset.forName("ASCII"));
+        final byte[] data = rawId.getBytes(StandardCharsets.US_ASCII);
         out.write(data);
     }
 

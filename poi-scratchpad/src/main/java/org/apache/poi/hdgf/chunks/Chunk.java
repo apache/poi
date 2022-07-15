@@ -222,7 +222,7 @@ public final class Chunk {
                     }
 
                     int strLen = endsAt - startsAt;
-                    command.value = new String(contents, startsAt, strLen, header.getChunkCharset().name());
+                    command.value = new String(contents, startsAt, strLen, header.getChunkCharset());
                     break;
                 case 25:
                     command.value = LittleEndian.getShort(contents, offset);

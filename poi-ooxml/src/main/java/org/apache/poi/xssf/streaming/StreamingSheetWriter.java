@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -64,7 +65,7 @@ public class StreamingSheetWriter extends SheetDataWriter {
      * @param out the output stream to write to
      */
     protected static Writer createWriter(OutputStream out) throws IOException {
-        return new BufferedWriter(new OutputStreamWriter(out, "UTF-8"));
+        return new BufferedWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
     }
 
     @Override

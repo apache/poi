@@ -42,7 +42,7 @@ public class TestXLSX2CSV {
         // remember and replace default error streams
         err = System.err;
 
-        PrintStream error = new PrintStream(errorBytes, true, "UTF-8");
+        PrintStream error = new PrintStream(errorBytes, true, StandardCharsets.UTF_8.name());
         System.setErr(error);
     }
 
@@ -71,14 +71,14 @@ public class TestXLSX2CSV {
         // returns with some System.err
         XLSX2CSV.main(new String[] { "not-existing-file.xlsx" });
 
-        String output = errorBytes.toString("UTF-8");
+        String output = errorBytes.toString(StandardCharsets.UTF_8);
         assertTrue(output.contains("Not found or not a file: not-existing-file.xlsx"), "Had: " + output);
     }
 
     @Test
     public void testSampleFile() throws Exception {
         final UnsynchronizedByteArrayOutputStream outputBytes = new UnsynchronizedByteArrayOutputStream();
-        PrintStream out = new PrintStream(outputBytes, true, "UTF-8");
+        PrintStream out = new PrintStream(outputBytes, true, StandardCharsets.UTF_8.name());
 
         // The package open is instantaneous, as it should be.
         try (OPCPackage p = OPCPackage.open(XSSFTestDataSamples.getSampleFile("sample.xlsx").getAbsolutePath(), PackageAccess.READ)) {
@@ -97,7 +97,7 @@ public class TestXLSX2CSV {
     @Test
     public void testMinColumns() throws Exception {
         final UnsynchronizedByteArrayOutputStream outputBytes = new UnsynchronizedByteArrayOutputStream();
-        PrintStream out = new PrintStream(outputBytes, true, "UTF-8");
+        PrintStream out = new PrintStream(outputBytes, true, StandardCharsets.UTF_8.name());
 
         // The package open is instantaneous, as it should be.
         try (OPCPackage p = OPCPackage.open(XSSFTestDataSamples.getSampleFile("sample.xlsx").getAbsolutePath(), PackageAccess.READ)) {
