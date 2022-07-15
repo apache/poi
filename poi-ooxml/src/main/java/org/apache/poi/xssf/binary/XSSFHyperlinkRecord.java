@@ -89,17 +89,16 @@ public class XSSFHyperlinkRecord {
 
         XSSFHyperlinkRecord that = (XSSFHyperlinkRecord) o;
 
-        if (cellRangeAddress != null ? !cellRangeAddress.equals(that.cellRangeAddress) : that.cellRangeAddress != null)
-            return false;
-        if (relId != null ? !relId.equals(that.relId) : that.relId != null) return false;
-        if (location != null ? !location.equals(that.location) : that.location != null) return false;
-        if (toolTip != null ? !toolTip.equals(that.toolTip) : that.toolTip != null) return false;
-        return display != null ? display.equals(that.display) : that.display == null;
+        return Objects.equals(cellRangeAddress, that.cellRangeAddress) &&
+                Objects.equals(relId, that.relId) &&
+                Objects.equals(location, that.location) &&
+                Objects.equals(toolTip, that.toolTip) &&
+                Objects.equals(display, that.display);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(cellRangeAddress,relId,location,toolTip,display);
+        return Objects.hash(cellRangeAddress, relId, location, toolTip, display);
     }
 
     @Override
