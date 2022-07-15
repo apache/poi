@@ -89,12 +89,12 @@ public class XSSFHyperlinkRecord {
 
         XSSFHyperlinkRecord that = (XSSFHyperlinkRecord) o;
 
-        if (cellRangeAddress != null ? !cellRangeAddress.equals(that.cellRangeAddress) : that.cellRangeAddress != null)
+        if (!Objects.equals(cellRangeAddress, that.cellRangeAddress))
             return false;
-        if (relId != null ? !relId.equals(that.relId) : that.relId != null) return false;
-        if (location != null ? !location.equals(that.location) : that.location != null) return false;
-        if (toolTip != null ? !toolTip.equals(that.toolTip) : that.toolTip != null) return false;
-        return display != null ? display.equals(that.display) : that.display == null;
+        if (!Objects.equals(relId, that.relId)) return false;
+        if (!Objects.equals(location, that.location)) return false;
+        if (!Objects.equals(toolTip, that.toolTip)) return false;
+        return Objects.equals(display, that.display);
     }
 
     @Override
