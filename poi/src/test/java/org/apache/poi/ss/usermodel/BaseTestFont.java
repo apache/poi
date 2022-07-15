@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,6 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.poi.ss.ITestDataProvider;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -218,6 +220,16 @@ public abstract class BaseTestFont {
                     "Thingy", false, true, (short) 2, (byte) 2
                 )
             );
+        }
+    }
+
+    @Test
+    void testRGBColor() throws Exception {
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            String colorHex = "FFEB84";
+            ExtendedColor color = wb1.getCreationHelper().createExtendedColor();
+            color.setRGB(Hex.decodeHex(colorHex));
+            assertArrayEquals(Hex.decodeHex(colorHex), color.getRGB());
         }
     }
 }

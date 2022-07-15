@@ -89,6 +89,7 @@ public class HSSFExtendedColor extends ExtendedColor {
             byte[] rgba = new byte[4];
             System.arraycopy(rgb, 0, rgba, 0, 3);
             rgba[3] = -1;
+            color.setRGBA(rgba);
         } else {
             // Shuffle from ARGB to RGBA
             byte a = rgb[0];

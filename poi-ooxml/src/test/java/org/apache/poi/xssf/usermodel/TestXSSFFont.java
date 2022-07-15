@@ -52,7 +52,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTVerticalAlignFontPr
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STFontScheme;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
 
-public final class TestXSSFFont extends BaseTestFont{
+public final class TestXSSFFont extends BaseTestFont {
 
     public TestXSSFFont() {
         super(XSSFITestDataProvider.instance);
