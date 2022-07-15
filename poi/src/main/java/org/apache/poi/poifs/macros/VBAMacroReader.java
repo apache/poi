@@ -658,7 +658,7 @@ public class VBAMacroReader implements Closeable {
             } catch (EOFException e) {
                 return;
             }
-            if (mbcs.trim().length() > 0 && unicode.trim().length() > 0) {
+            if (StringUtil.isNotBlank(mbcs) && StringUtil.isNotBlank(unicode)) {
                 moduleNames.put(mbcs, unicode);
             }
 

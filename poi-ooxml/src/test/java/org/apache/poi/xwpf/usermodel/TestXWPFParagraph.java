@@ -779,7 +779,7 @@ public final class TestXWPFParagraph {
                 str.append(par.getText()).append("\n");
             }
             String s = str.toString();
-            assertTrue(s.trim().length() > 0, "Having text: \n" + s + "\nTrimmed length: " + s.trim().length());
+            assertTrue(StringUtil.isNotBlank(s), "Having text: \n" + s + "\nTrimmed length: " + s.trim().length());
         }
     }
 

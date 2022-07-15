@@ -40,6 +40,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.xssf.binary.XSSFBCommentsTable;
 import org.apache.poi.xssf.binary.XSSFBParseException;
 import org.apache.poi.xssf.binary.XSSFBParser;
@@ -254,7 +255,7 @@ public class XSSFBReader extends XSSFReader {
             String relId = sb.toString(); sb.setLength(0);
             /*offset +=*/ XSSFBUtils.readXLWideString(data, offset, sb);
             String name = sb.toString();
-            if (relId.trim().length() > 0) {
+            if (StringUtil.isNotBlank(relId)) {
                 sheets.add(new XSSFSheetRef(relId, name));
             }
         }
@@ -273,7 +274,7 @@ public class XSSFBReader extends XSSFReader {
             sb.setLength(0);
             offset += XSSFBUtils.readXLWideString(data, offset, sb);
             String name = sb.toString();
-            if (relId.trim().length() > 0) {
+            if (StringUtil.isNotBlank(relId)) {
                 sheets.add(new XSSFSheetRef(relId, name));
             }
             if (offset == data.length) {

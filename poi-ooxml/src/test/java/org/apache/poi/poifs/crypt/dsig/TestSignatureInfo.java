@@ -90,6 +90,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.ConditionalExecution.DisabledOnJreEx;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
@@ -146,7 +147,7 @@ class TestSignatureInfo {
         // in the xmlsec jar file
         String additionalJar = System.getProperty("additionaljar");
         //System.out.println("Having: " + additionalJar);
-        assumeTrue(additionalJar == null || additionalJar.trim().length() == 0,
+        assumeTrue(StringUtil.isBlank(additionalJar),
             "Not running TestSignatureInfo because we are testing with additionaljar set to " + additionalJar);
 
         System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
@@ -475,7 +476,7 @@ class TestSignatureInfo {
 
             //set proxy info if any
             String proxy = System.getProperty("http_proxy");
-            if (proxy != null && proxy.trim().length() > 0) {
+            if (StringUtil.isNotBlank(proxy)) {
                 signatureConfig.setProxyUrl(proxy);
             }
 

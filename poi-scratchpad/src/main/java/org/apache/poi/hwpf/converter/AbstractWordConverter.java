@@ -52,6 +52,7 @@ import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.StringUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -553,7 +554,7 @@ public abstract class AbstractWordConverter {
                 }
             }
 
-            haveAnyText |= text.trim().length() != 0;
+            haveAnyText |= StringUtil.isNotBlank(text);
         }
 
         return haveAnyText;

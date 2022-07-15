@@ -42,6 +42,7 @@ import org.apache.poi.ss.util.CellRangeAddressBase;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.SheetUtil;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Evaluates Data Validation constraints.<p>
@@ -418,7 +419,7 @@ public class DataValidationEvaluator {
          * @throws NumberFormatException if the formula is non-numeric when it should be
          */
         private Double evalOrConstant(String formula, DataValidationContext context) throws NumberFormatException {
-            if (formula == null || formula.trim().isEmpty()) return null; // shouldn't happen, but just in case
+            if (StringUtil.isBlank(formula)) return null; // shouldn't happen, but just in case
             try {
                 return Double.valueOf(formula);
             } catch (NumberFormatException e) {
@@ -433,7 +434,7 @@ public class DataValidationEvaluator {
             if (eval instanceof NumberEval) return Double.valueOf(((NumberEval) eval).getNumberValue());
             if (eval instanceof StringEval) {
                 final String value = ((StringEval) eval).getStringValue();
-                if (value == null || value.trim().isEmpty()) return null; 
+                if (StringUtil.isBlank(value)) return null;
                 // try to parse the cell value as a double and return it 
                 return Double.valueOf(value);
             }

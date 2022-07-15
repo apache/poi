@@ -29,7 +29,7 @@ import java.util.List;
  * Implementation of Excel function TEXTJOIN()
  *
  * <b>Syntax</b><br>
- * <b>TEXTJOIN</b>(<b>delimiter</b>, <b>ignore_empty</b>, <b>text1</b>, <b>[text2]<b>, …)<p>
+ * <b>TEXTJOIN</b>(<b>delimiter</b>, <b>ignore_empty</b>, <b>text1</b>, <b>[text2]<b>, ...)<p>
  *
  * <b>delimiter</b> A text string, either empty, or one or more characters enclosed by double quotes, or a reference to a valid text string.
  * If a number is supplied, it will be treated as text.<br>

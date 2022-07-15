@@ -63,6 +63,7 @@ import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.TextShape.TextDirection;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 
 public class DrawTextParagraph implements Drawable {
@@ -242,7 +243,7 @@ public class DrawTextParagraph implements Drawable {
     }
 
     public boolean isEmptyParagraph() {
-        return (lines.isEmpty() || rawText.trim().isEmpty());
+        return (lines.isEmpty() || StringUtil.isBlank(rawText));
     }
 
     @Override

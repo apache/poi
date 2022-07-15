@@ -48,6 +48,7 @@ import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
 import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.StringUtil;
 
 
 /**
@@ -355,7 +356,7 @@ public class DataFormatter {
 
         int formatIndex = numFmt.getIdx();
         String formatStr = numFmt.getFormat();
-        if(formatStr == null || formatStr.trim().length() == 0) {
+        if(StringUtil.isBlank(formatStr)) {
             return null;
         }
         return getFormat(cell.getNumericCellValue(), formatIndex, formatStr, isDate1904(cell));
@@ -483,7 +484,7 @@ public class DataFormatter {
         }
 
         // Check for special cases
-        if(formatStr == null || formatStr.trim().isEmpty()) {
+        if(StringUtil.isBlank(formatStr)) {
             return getDefaultFormat(cellValue);
         }
 
@@ -1361,10 +1362,10 @@ public class DataFormatter {
             seg2 = result.substring(Math.max(0, len - 7), len - 4);
             seg1 = result.substring(Math.max(0, len - 10), Math.max(0, len - 7));
 
-            if(seg1.trim().length() > 0) {
+            if(StringUtil.isNotBlank(seg1)) {
                 sb.append('(').append(seg1).append(") ");
             }
-            if(seg2.trim().length() > 0) {
+            if(StringUtil.isNotBlank(seg2)) {
                 sb.append(seg2).append('-');
             }
             sb.append(seg3);
