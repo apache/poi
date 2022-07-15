@@ -28,7 +28,6 @@ import java.util.Set;
 
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.Removal;
 
 /**
  * A calculator for workdays, considering dates as excel representations.

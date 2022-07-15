@@ -27,7 +27,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.crypt.temp.EncryptedTempData;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.StringUtil;

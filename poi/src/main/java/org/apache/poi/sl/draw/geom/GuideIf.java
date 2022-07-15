@@ -20,7 +20,6 @@
 package org.apache.poi.sl.draw.geom;
 
 import static java.lang.Math.*;
-import static java.lang.Math.toRadians;
 
 import java.util.regex.Pattern;
 

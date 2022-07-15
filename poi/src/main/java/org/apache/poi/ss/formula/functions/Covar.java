@@ -17,7 +17,6 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.commons.math3.stat.correlation.Covariance;
-import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;

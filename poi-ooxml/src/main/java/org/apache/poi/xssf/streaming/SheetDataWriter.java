@@ -44,7 +44,6 @@ import org.apache.poi.util.CodepointsUtil;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 /**

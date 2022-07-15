@@ -20,7 +20,6 @@ package org.apache.poi.hsmf;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 

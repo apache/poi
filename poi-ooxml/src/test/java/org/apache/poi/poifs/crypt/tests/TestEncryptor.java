@@ -46,7 +46,6 @@ import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionMode;
-import org.apache.poi.poifs.crypt.EncryptionVerifier;
 import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.agile.AgileDecryptor;

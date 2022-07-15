@@ -19,7 +19,6 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.usermodel.BaseTestSheetAutosizeColumn;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 

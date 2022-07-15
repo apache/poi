@@ -18,8 +18,6 @@
 
 package org.apache.poi.hssf.eventusermodel;
 
-import org.apache.poi.hssf.record.Record;
-
 /**
  * Abstract class for use with the HSSFRequest and HSSFEventFactory, which
  *  allows for the halting of processing. 

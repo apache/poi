@@ -29,7 +29,6 @@ import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherPropertyTypes;
-import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.record.Document;

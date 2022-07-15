@@ -25,7 +25,6 @@ import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.BoundSheetRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.ExternSheetRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.SupBookRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;

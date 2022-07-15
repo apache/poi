@@ -28,8 +28,6 @@ import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.hdgf.streams.TrailerStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public final class TestHDGFCore {

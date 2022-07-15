@@ -19,7 +19,6 @@
 
 package org.apache.poi.sl.draw.geom;
 
-import java.awt.geom.Path2D;
 import java.util.Objects;
 
 /**

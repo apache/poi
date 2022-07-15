@@ -18,8 +18,6 @@
 
 package org.apache.poi.hssf.eventusermodel;
 
-import org.apache.poi.hssf.record.Record;
-
 /**
  * Interface for use with the HSSFRequest and HSSFEventFactory.  Users should create
  * a listener supporting this interface and register it with the HSSFRequest (associating

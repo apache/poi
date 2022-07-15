@@ -22,16 +22,13 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.apache.poi.ss.util.Utils.addRow;
 import static org.apache.poi.ss.util.Utils.assertDouble;
 import static org.apache.poi.ss.util.Utils.assertError;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Testcase for function NUMBERVALUE()

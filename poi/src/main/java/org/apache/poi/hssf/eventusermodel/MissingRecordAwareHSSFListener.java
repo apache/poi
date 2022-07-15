@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.MulBlankRecord;
 import org.apache.poi.hssf.record.MulRKRecord;
 import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.hssf.record.SharedFormulaRecord;

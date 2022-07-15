@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
 

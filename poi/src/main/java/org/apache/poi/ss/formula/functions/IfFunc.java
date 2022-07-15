@@ -23,8 +23,6 @@ import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 
-import java.util.function.BiFunction;
-
 /**
  * Implementation for the Excel function IF
  * <p>

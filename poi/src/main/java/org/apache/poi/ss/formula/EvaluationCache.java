@@ -17,7 +17,6 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.ss.formula.FormulaCellCache.IEntryOperation;
 import org.apache.poi.ss.formula.FormulaUsedBlankCellSet.BookSheetKey;
 import org.apache.poi.ss.formula.PlainCellCache.Loc;
 import org.apache.poi.ss.formula.eval.BlankEval;
