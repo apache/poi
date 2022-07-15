@@ -185,14 +185,14 @@ public final class SlideShowDumper {
             byte opt = docstream[pos];
 
             String fmt = ind + "At position %2$d (%2$04x): type is %3$d (%3$04x), len is %4$d (%4$04x)";
-            out.println(String.format(Locale.ROOT, fmt, "", pos, type, len));
+            out.printf(Locale.ROOT, (fmt) + "%n", "", pos, type, len);
 
             // See if we know about the type of it
             String recordName = RecordTypes.forTypeID((short) type).name();
 
             // Jump over header, and think about going on more
             pos += 8;
-            out.println(String.format(Locale.ROOT, ind + "That's a %2$s", "", recordName));
+            out.printf(Locale.ROOT, ind + "That's a %2$s%n", "", recordName);
 
             // Now check if it's a container or not
             int container = opt & 0x0f;
@@ -247,17 +247,17 @@ public final class SlideShowDumper {
         int recordLen = record.getRecordSize();
 
         String fmt = ind + "At position %2$d (%2$04x): type is %3$d (%3$04x), len is %4$d (%4$04x) (%5$d) - record claims %6$d";
-        out.println(String.format(Locale.ROOT, fmt, "", pos, atomType, atomLen, atomLen + 8, recordLen));
+        out.printf(Locale.ROOT, (fmt) + "%n", "", pos, atomType, atomLen, atomLen + 8, recordLen);
 
 
         // Check for corrupt / lying ones
         if (recordLen != 8 && (recordLen != (atomLen + 8))) {
-            out.println(String.format(Locale.ROOT, ind + "** Atom length of $2d ($3d) doesn't match record length of %4d", "", atomLen, atomLen + 8, recordLen));
+            out.printf(Locale.ROOT, ind + "** Atom length of $2d ($3d) doesn't match record length of %4d%n", "", atomLen, atomLen + 8, recordLen);
         }
 
         // Print the record's details
         String recordStr = record.toString().replace("\n", String.format(Locale.ROOT, "\n" + ind, ""));
-        out.println(String.format(Locale.ROOT, ind + "%2$s", "", recordStr));
+        out.printf(Locale.ROOT, ind + "%2$s%n", "", recordStr);
 
         if (record instanceof EscherContainerRecord) {
             walkEscherDDF((indent + 3), pos + 8, (int) atomLen);
@@ -273,7 +273,7 @@ public final class SlideShowDumper {
             recordLen = (int) atomLen + 8;
             record.fillFields(contents, 0, erf);
             if (!(record instanceof EscherTextboxRecord)) {
-                out.println(String.format(Locale.ROOT, ind + "%2$s", "", "** Really a msofbtClientTextbox !"));
+                out.printf(Locale.ROOT, ind + "%2$s%n", "", "** Really a msofbtClientTextbox !");
             }
         }
 
@@ -315,10 +315,10 @@ public final class SlideShowDumper {
         long atomlen = LittleEndian.getUInt(docstream, pos + 4);
 
         String fmt = ind + "At position %2$d ($2$04x): type is %3$d (%3$04x), len is %4$d (%4$04x)";
-        out.println(String.format(Locale.ROOT, fmt, "", pos, type, atomlen));
+        out.printf(Locale.ROOT, (fmt) + "%n", "", pos, type, atomlen);
 
         String typeName = RecordTypes.forTypeID((short) type).name();
-        out.println(String.format(Locale.ROOT, ind + "%2$s", "That's an Escher Record: ", typeName));
+        out.printf(Locale.ROOT, ind + "%2$s%n", "That's an Escher Record: ", typeName);
 
         // Record specific dumps
         if (type == 61453L) {
