@@ -255,7 +255,7 @@ public class TypedPropertyValue {
         for (int i=0; i<skipBytes; i++) {
             lei.mark(1);
             int b = lei.read();
-            if (b == -1 || b != 0) {
+            if (b != 0) {
                 lei.reset();
                 break;
             }

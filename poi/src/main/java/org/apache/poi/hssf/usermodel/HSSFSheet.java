@@ -2552,7 +2552,7 @@ public final class HSSFSheet implements Sheet {
         if (rowDef != null) {
             row1 = rowDef.getFirstRow();
             row2 = rowDef.getLastRow();
-            if ((row1 == -1 && row2 != -1) || (row1 > row2)
+            if ((row1 > row2)
                     || (row1 < 0 || row1 > maxRowIndex)
                     || (row2 < 0 || row2 > maxRowIndex)) {
                 throw new IllegalArgumentException("Invalid row range specification");
@@ -2561,7 +2561,7 @@ public final class HSSFSheet implements Sheet {
         if (colDef != null) {
             col1 = colDef.getFirstColumn();
             col2 = colDef.getLastColumn();
-            if ((col1 == -1 && col2 != -1) || (col1 > col2)
+            if ((col1 > col2)
                     || (col1 < 0 || col1 > maxColIndex)
                     || (col2 < 0 || col2 > maxColIndex)) {
                 throw new IllegalArgumentException("Invalid column range specification");
