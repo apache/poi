@@ -74,12 +74,11 @@ public final class HSLFSoundData {
      */
     public static HSLFSoundData[] find(Document document){
         ArrayList<HSLFSoundData> lst = new ArrayList<>();
-        org.apache.poi.hslf.record.Record[] ch = document.getChildRecords();
-        for (Record value : ch) {
+        for (org.apache.poi.hslf.record.Record value : document.getChildRecords()) {
             if (value.getRecordType() == RecordTypes.SoundCollection.typeID) {
                 RecordContainer col = (RecordContainer) value;
-                Record[] sr = col.getChildRecords();
-                for (Record record : sr) {
+                org.apache.poi.hslf.record.Record[] sr = col.getChildRecords();
+                for (org.apache.poi.hslf.record.Record record : sr) {
                     if (record instanceof Sound) {
                         lst.add(new HSLFSoundData((Sound) record));
                     }
