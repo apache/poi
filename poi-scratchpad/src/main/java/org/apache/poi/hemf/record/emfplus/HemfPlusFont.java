@@ -102,7 +102,7 @@ public class HemfPlusFont {
 
             // A string of Length Unicode characters that contains the name of the font family.
             family = StringUtil.readUnicodeLE(leis, len);
-            size += len*LittleEndianConsts.SHORT_SIZE;
+            size += (long) len * LittleEndianConsts.SHORT_SIZE;
 
             return size;
         }

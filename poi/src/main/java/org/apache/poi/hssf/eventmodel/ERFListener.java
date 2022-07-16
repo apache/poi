@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.eventmodel;
 
+import org.apache.poi.hssf.record.Record;
+
 /**
  * An ERFListener is registered with the EventRecordFactory.
  * An ERFListener listens for Records coming from the stream

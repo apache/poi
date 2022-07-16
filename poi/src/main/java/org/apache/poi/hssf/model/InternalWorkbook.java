@@ -39,6 +39,7 @@ import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherSplitMenuColorsRecord;
 import org.apache.poi.hssf.extractor.OldExcelExtractor;
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;

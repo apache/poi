@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.ChartSubstreamRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.ColumnInfoRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
