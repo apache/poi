@@ -25,7 +25,7 @@ final class MutableFPNumber {
     // TODO - what about values between (10<sup>14</sup>-0.5) and (10<sup>14</sup>-0.05) ?
     /**
      * The minimum value in 'Base-10 normalised form'.<br>
-     * When {@link #_binaryExponent} == 46 this is the minimum {@link #_frac} value
+     * When {@link #_binaryExponent} == 46 this is the minimum {@link #_significand} value
      *  (10<sup>14</sup>-0.05) * 2^17
      *  <br>
      *  Values between (10<sup>14</sup>-0.05) and 10<sup>14</sup> will be represented as '1'
@@ -37,7 +37,7 @@ final class MutableFPNumber {
     private static final BigInteger BI_MIN_BASE = new BigInteger("0B5E620F47FFFE666", 16);
     /**
      * For 'Base-10 normalised form'<br>
-     * The maximum {@link #_frac} value when {@link #_binaryExponent} == 49
+     * The maximum {@link #_significand} value when {@link #_binaryExponent} == 49
      * (10^15-0.5) * 2^14
      */
     private static final BigInteger BI_MAX_BASE = new BigInteger("0E35FA9319FFFE000", 16);

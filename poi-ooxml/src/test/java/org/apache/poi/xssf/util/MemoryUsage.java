@@ -53,7 +53,7 @@ public class MemoryUsage {
 
     /**
      * Generate a spreadsheet until OutOfMemoryError using low-level OOXML XmlBeans.
-     * Similar to {@link #numberSpreadsheet(org.apache.poi.ss.usermodel.Workbook, int)}
+     * Similar to {@link #testNumberHSSF(boolean)} (org.apache.poi.ss.usermodel.Workbook, int)}
      *
      * <p>
      *
@@ -171,12 +171,11 @@ public class MemoryUsage {
      * Generate a spreadsheet who's all cell values are numbers.
      * The data is generated until OutOfMemoryError.
      * <p>
-     * as compared to {@link #mixedSpreadsheet(org.apache.poi.ss.usermodel.Workbook, int)},
+     * as compared to {@link #testMixed},
      * this method does not set string values and, hence, does not involve the Shared Strings Table.
      * </p>
      *
-     * @param wb        the workbook to write to
-     * @param numCols   the number of columns in a row
+     * @param useXSSF   use XSSF as opposed to HSSF
      */
     @ParameterizedTest
     @ValueSource(booleans = {false, true})
