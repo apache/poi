@@ -61,17 +61,22 @@ public class InfiniteLine implements GeometryRow {
         for (CellType cell : row.getCellArray()) {
             String cellName = cell.getN();
 
-            if (cellName.equals("X")) {
-                x = XDGFCell.parseDoubleValue(cell);
-            } else if (cellName.equals("Y")) {
-                y = XDGFCell.parseDoubleValue(cell);
-            } else if (cellName.equals("A")) {
-                a = XDGFCell.parseDoubleValue(cell);
-            } else if (cellName.equals("B")) {
-                b = XDGFCell.parseDoubleValue(cell);
-            } else {
-                throw new POIXMLException("Invalid cell '" + cellName
-                        + "' in InfiniteLine row");
+            switch (cellName) {
+                case "X":
+                    x = XDGFCell.parseDoubleValue(cell);
+                    break;
+                case "Y":
+                    y = XDGFCell.parseDoubleValue(cell);
+                    break;
+                case "A":
+                    a = XDGFCell.parseDoubleValue(cell);
+                    break;
+                case "B":
+                    b = XDGFCell.parseDoubleValue(cell);
+                    break;
+                default:
+                    throw new POIXMLException("Invalid cell '" + cellName
+                            + "' in InfiniteLine row");
             }
         }
     }

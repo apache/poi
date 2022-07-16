@@ -111,20 +111,22 @@ public final class ContentTypes {
     public static String getContentTypeFromFileExtension(String filename) {
         String extension = filename.substring(filename.lastIndexOf('.') + 1)
                 .toLowerCase(Locale.ROOT);
-        if (extension.equals(EXTENSION_JPG_1)
-                || extension.equals(EXTENSION_JPG_2))
-            return IMAGE_JPEG;
-        else if (extension.equals(EXTENSION_GIF))
-            return IMAGE_GIF;
-        else if (extension.equals(EXTENSION_PICT))
-            return IMAGE_PICT;
-        else if (extension.equals(EXTENSION_PNG))
-            return IMAGE_PNG;
-        else if (extension.equals(EXTENSION_TIFF))
-            return IMAGE_TIFF;
-        else if (extension.equals(EXTENSION_XML))
-            return XML;
-        else
-            return null;
+        switch (extension) {
+            case EXTENSION_JPG_1:
+            case EXTENSION_JPG_2:
+                return IMAGE_JPEG;
+            case EXTENSION_GIF:
+                return IMAGE_GIF;
+            case EXTENSION_PICT:
+                return IMAGE_PICT;
+            case EXTENSION_PNG:
+                return IMAGE_PNG;
+            case EXTENSION_TIFF:
+                return IMAGE_TIFF;
+            case EXTENSION_XML:
+                return XML;
+            default:
+                return null;
+        }
     }
 }

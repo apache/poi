@@ -68,79 +68,96 @@ public final class LoadEmbedded {
        for (HSSFObjectData obj : workbook.getAllEmbeddedObjects()) {
            //the OLE2 Class Name of the object
            String oleName = obj.getOLE2ClassName();
-           if (oleName.equals("Worksheet")) {
-               DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-               HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(dn, false);
-               embeddedWorkbook.close();
-           } else if (oleName.equals("Document")) {
-               DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-               HWPFDocument embeddedWordDocument = new HWPFDocument(dn);
-               embeddedWordDocument.close();
-           }  else if (oleName.equals("Presentation")) {
-               DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-               SlideShow<?,?> embeddedSlieShow = new HSLFSlideShow(dn);
-               embeddedSlieShow.close();
-           } else {
-               if(obj.hasDirectoryEntry()){
-                   // The DirectoryEntry is a DocumentNode. Examine its entries to find out what it is
+           switch (oleName) {
+               case "Worksheet": {
                    DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-                   for (Entry entry : dn) {
-                       //System.out.println(oleName + "." + entry.getName());
-                   }
-               } else {
-                   // There is no DirectoryEntry
-                   // Recover the object's data from the HSSFObjectData instance.
-                   byte[] objectData = obj.getObjectData();
+                   HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(dn, false);
+                   embeddedWorkbook.close();
+                   break;
                }
+               case "Document": {
+                   DirectoryNode dn = (DirectoryNode) obj.getDirectory();
+                   HWPFDocument embeddedWordDocument = new HWPFDocument(dn);
+                   embeddedWordDocument.close();
+                   break;
+               }
+               case "Presentation": {
+                   DirectoryNode dn = (DirectoryNode) obj.getDirectory();
+                   SlideShow<?, ?> embeddedSlieShow = new HSLFSlideShow(dn);
+                   embeddedSlieShow.close();
+                   break;
+               }
+               default:
+                   if (obj.hasDirectoryEntry()) {
+                       // The DirectoryEntry is a DocumentNode. Examine its entries to find out what it is
+                       DirectoryNode dn = (DirectoryNode) obj.getDirectory();
+                       for (Entry entry : dn) {
+                           //System.out.println(oleName + "." + entry.getName());
+                       }
+                   } else {
+                       // There is no DirectoryEntry
+                       // Recover the object's data from the HSSFObjectData instance.
+                       byte[] objectData = obj.getObjectData();
+                   }
+                   break;
            }
        }
    }
 
-   public static void loadEmbedded(XSSFWorkbook workbook) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
+   public static void loadEmbedded(XSSFWorkbook workbook) throws IOException, InvalidFormatException,
+           OpenXML4JException, XmlException {
        for (PackagePart pPart : workbook.getAllEmbeddedParts()) {
            String contentType = pPart.getContentType();
-           if (contentType.equals("application/vnd.ms-excel")) {
-               // Excel Workbook - either binary or OpenXML
-               try (InputStream stream = pPart.getInputStream()) {
-                   HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(stream);
-                   embeddedWorkbook.close();
-               }
-           } else if (contentType.equals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) {
-               // Excel Workbook - OpenXML file format
-               try (InputStream stream = pPart.getInputStream()) {
-                   XSSFWorkbook embeddedWorkbook = new XSSFWorkbook(stream);
-                   embeddedWorkbook.close();
-               }
-           } else if (contentType.equals("application/msword")) {
-               // Word Document - binary (OLE2CDF) file format
-               try (InputStream stream = pPart.getInputStream()) {
-                   HWPFDocument document = new HWPFDocument(stream);
-                   document.close();
-               }
-           } else if (contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-               // Word Document - OpenXML file format
-               try (InputStream stream = pPart.getInputStream()) {
-                   XWPFDocument document = new XWPFDocument(stream);
-                   document.close();
-               }
-           } else if (contentType.equals("application/vnd.ms-powerpoint")) {
-               // PowerPoint Document - binary file format
-               try (InputStream stream = pPart.getInputStream()) {
-                   HSLFSlideShow slideShow = new HSLFSlideShow(stream);
-                   slideShow.close();
-               }
-           } else if (contentType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
-               // PowerPoint Document - OpenXML file format
-               try (InputStream stream = pPart.getInputStream()) {
-                   XMLSlideShow slideShow = new XMLSlideShow(stream);
-                   slideShow.close();
-               }
-           } else {
-               // Any other type of embedded object.
-               System.out.println("Unknown Embedded Document: " + contentType);
-               try (InputStream inputStream = pPart.getInputStream()) {
+           switch (contentType) {
+               case "application/vnd.ms-excel":
+                   // Excel Workbook - either binary or OpenXML
+                   try (InputStream stream = pPart.getInputStream()) {
+                       HSSFWorkbook embeddedWorkbook = new HSSFWorkbook(stream);
+                       embeddedWorkbook.close();
+                   }
+                   break;
+               case "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                   // Excel Workbook - OpenXML file format
+                   try (InputStream stream = pPart.getInputStream()) {
+                       XSSFWorkbook embeddedWorkbook = new XSSFWorkbook(stream);
+                       embeddedWorkbook.close();
+                   }
+                   break;
+               case "application/msword":
+                   // Word Document - binary (OLE2CDF) file format
+                   try (InputStream stream = pPart.getInputStream()) {
+                       HWPFDocument document = new HWPFDocument(stream);
+                       document.close();
+                   }
+                   break;
+               case "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                   // Word Document - OpenXML file format
+                   try (InputStream stream = pPart.getInputStream()) {
+                       XWPFDocument document = new XWPFDocument(stream);
+                       document.close();
+                   }
+                   break;
+               case "application/vnd.ms-powerpoint":
+                   // PowerPoint Document - binary file format
+                   try (InputStream stream = pPart.getInputStream()) {
+                       HSLFSlideShow slideShow = new HSLFSlideShow(stream);
+                       slideShow.close();
+                   }
+                   break;
+               case "application/vnd.openxmlformats-officedocument.presentationml.presentation":
+                   // PowerPoint Document - OpenXML file format
+                   try (InputStream stream = pPart.getInputStream()) {
+                       XMLSlideShow slideShow = new XMLSlideShow(stream);
+                       slideShow.close();
+                   }
+                   break;
+               default:
+                   // Any other type of embedded object.
+                   System.out.println("Unknown Embedded Document: " + contentType);
+                   try (InputStream inputStream = pPart.getInputStream()) {
 
-               }
+                   }
+                   break;
            }
        }
    }
