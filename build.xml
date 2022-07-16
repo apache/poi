@@ -341,7 +341,7 @@ under the License.
     <dependency prefix="ooxml.test.opczip" artifact="com.github.rzymek:opczip:1.2.0" usage="ooxml-tests"/>
 
     <!-- coverage libs -->
-    <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.6" usage="util" packaging="zip"/>
+    <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.8" usage="util" packaging="zip"/>
     <dependency prefix="asm" artifact="org.ow2.asm:asm:9.0" usage="util"/>
     <dependency prefix="asm-commons" artifact="org.ow2.asm:asm-commons:9.0" usage="util"/>
     <dependency prefix="asm-tree" artifact="org.ow2.asm:asm-tree:9.0" usage="util"/>
@@ -712,10 +712,12 @@ under the License.
             <fileset dir="${basedir}/lib/util">
                 <include name="asm*7.2.jar"/>
                 <include name="org.jacoco.*-0.8.5.*.jar"/>
+                <include name="org.jacoco.*-0.8.6.*.jar"/>
                 <include name="forbiddenapis-3.1.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/util">
                 <include name="jacoco-0.8.5.zip"/>
+                <include name="jacoco-0.8.6.zip"/>
             </fileset>
             <fileset dir="${basedir}/lib/excelant">
                 <include name="ant*1.10.1.jar"/>
