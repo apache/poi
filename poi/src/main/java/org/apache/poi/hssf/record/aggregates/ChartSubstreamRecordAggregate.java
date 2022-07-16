@@ -73,7 +73,7 @@ public final class ChartSubstreamRecordAggregate extends RecordAggregate {
             if (rb instanceof RecordAggregate) {
                 ((RecordAggregate) rb).visitContainedRecords(rv);
             } else {
-                rv.visitRecord((Record) rb);
+                rv.visitRecord((org.apache.poi.hssf.record.Record) rb);
             }
         }
         rv.visitRecord(EOFRecord.instance);
