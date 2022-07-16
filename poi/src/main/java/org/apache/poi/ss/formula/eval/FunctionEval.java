@@ -428,7 +428,7 @@ public final class FunctionEval {
         Collection<String> lst = new TreeSet<>();
         for (int i = 0; i < functions.length; i++) {
             Function func = functions[i];
-            if (func != null && (func instanceof NotImplementedFunction)) {
+            if ((func instanceof NotImplementedFunction)) {
                 FunctionMetadata metaData = FunctionMetadataRegistry.getFunctionByIndex(i);
                 lst.add(metaData.getName());
             }

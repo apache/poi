@@ -110,7 +110,7 @@ public class XWPFHeaderFooterPolicy {
             CTHdrFtrRef ref = sectPr.getHeaderReferenceArray(i);
             POIXMLDocumentPart relatedPart = doc.getRelationById(ref.getId());
             XWPFHeader hdr = null;
-            if (relatedPart != null && relatedPart instanceof XWPFHeader) {
+            if (relatedPart instanceof XWPFHeader) {
                 hdr = (XWPFHeader) relatedPart;
             }
             // Assign it; treat invalid options as "default" POI-60293
@@ -128,7 +128,7 @@ public class XWPFHeaderFooterPolicy {
             CTHdrFtrRef ref = sectPr.getFooterReferenceArray(i);
             POIXMLDocumentPart relatedPart = doc.getRelationById(ref.getId());
             XWPFFooter ftr = null;
-            if (relatedPart != null && relatedPart instanceof XWPFFooter) {
+            if (relatedPart instanceof XWPFFooter) {
                 ftr = (XWPFFooter) relatedPart;
             }
             // Assign it; treat invalid options as "default" POI-60293

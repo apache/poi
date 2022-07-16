@@ -142,7 +142,7 @@ public class Msg2txt {
      * @param args the list of MSG files to process
      */
     public static void main(String[] args) {
-        if(args.length <= 0) {
+        if(args.length == 0) {
             System.err.println("No files names provided");
         } else {
             for (String arg : args) {

@@ -290,7 +290,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      */
     public XWPFPictureData getPictureDataByID(String blipID) {
         POIXMLDocumentPart relatedPart = getRelationById(blipID);
-        if (relatedPart != null && relatedPart instanceof XWPFPictureData) {
+        if (relatedPart instanceof XWPFPictureData) {
             return (XWPFPictureData) relatedPart;
         }
         return null;
