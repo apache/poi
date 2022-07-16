@@ -67,11 +67,10 @@ public class POIFSViewEngine
                 {
                     Object[] data = inspected.getViewableArray();
 
-                    for (int j = 0; j < data.length; j++)
-                    {
-                        objects.addAll(inspectViewable(data[ j ], drilldown,
-                                                       indentLevel + 1,
-                                                       indentString));
+                    for (Object datum : data) {
+                        objects.addAll(inspectViewable(datum, drilldown,
+                                indentLevel + 1,
+                                indentString));
                     }
                 }
                 else

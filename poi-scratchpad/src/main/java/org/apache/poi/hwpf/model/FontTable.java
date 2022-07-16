@@ -129,9 +129,8 @@ public final class FontTable
         LittleEndian.putShort(buf, 0, _extraDataSz);
         tableStream.write(buf);
 
-        for(int i = 0; i < _fontNames.length; i++)
-        {
-            tableStream.write(_fontNames[i].toByteArray());
+        for (Ffn fontName : _fontNames) {
+            tableStream.write(fontName.toByteArray());
         }
 
     }

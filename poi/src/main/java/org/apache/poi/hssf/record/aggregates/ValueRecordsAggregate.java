@@ -131,11 +131,10 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
 
     public int getPhysicalNumberOfCells() {
         int count = 0;
-        for (int r = 0; r < records.length; r++) {
-            CellValueRecordInterface[] rowCells = records[r];
+        for (CellValueRecordInterface[] rowCells : records) {
             if (rowCells != null) {
-                for (int c = 0; c < rowCells.length; c++) {
-                    if (rowCells[c] != null)
+                for (CellValueRecordInterface rowCell : rowCells) {
+                    if (rowCell != null)
                         count++;
                 }
             }
@@ -201,8 +200,9 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
         }
         CellValueRecordInterface[] rowCells=records[row];
         if(rowCells==null) return false;
-        for(int col=0;col<rowCells.length;col++) {
-            if(rowCells[col]!=null) return true;
+        for (CellValueRecordInterface rowCell : rowCells) {
+            if (rowCell != null)
+                return true;
         }
         return false;
     }
@@ -281,17 +281,16 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
     }
 
     public void updateFormulasAfterRowShift(FormulaShifter shifter, int currentExternSheetIndex) {
-        for (int i = 0; i < records.length; i++) {
-            CellValueRecordInterface[] rowCells = records[i];
+        for (CellValueRecordInterface[] rowCells : records) {
             if (rowCells == null) {
                 continue;
             }
-            for (int j = 0; j < rowCells.length; j++) {
-                CellValueRecordInterface cell = rowCells[j];
+            for (CellValueRecordInterface cell : rowCells) {
                 if (cell instanceof FormulaRecordAggregate) {
-                    FormulaRecordAggregate fra = (FormulaRecordAggregate)cell;
+                    FormulaRecordAggregate fra = (FormulaRecordAggregate) cell;
                     Ptg[] ptgs = fra.getFormulaTokens(); // needs clone() inside this getter?
-                    Ptg[] ptgs2 = ((FormulaRecordAggregate)cell).getFormulaRecord().getParsedExpression(); // needs clone() inside this getter?
+                    Ptg[] ptgs2 = ((FormulaRecordAggregate) cell).getFormulaRecord().getParsedExpression(); // needs
+                    // clone() inside this getter?
 
                     if (shifter.adjustFormula(ptgs, currentExternSheetIndex)) {
                         fra.setParsedExpression(ptgs);

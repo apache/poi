@@ -55,9 +55,7 @@ public final class HSSFDataFormat implements DataFormat {
     HSSFDataFormat(InternalWorkbook workbook) {
         _workbook = workbook;
 
-        Iterator<FormatRecord> i = workbook.getFormats().iterator();
-        while (i.hasNext()) {
-            FormatRecord r = i.next();
+        for (FormatRecord r : workbook.getFormats()) {
             ensureFormatsSize(r.getIndexCode());
             _formats.set(r.getIndexCode(), r.getFormatString());
         }

@@ -52,11 +52,11 @@ public final class Environment extends PositionDependentRecordContainer
         _children = Record.findChildRecords(source,start+8,len-8);
 
         // Find our FontCollection record
-        for(int i=0; i<_children.length; i++) {
-            if(_children[i] instanceof FontCollection) {
-                fontCollection = (FontCollection)_children[i];
-            } else if (_children[i] instanceof TxMasterStyleAtom){
-                txmaster = (TxMasterStyleAtom)_children[i];
+        for (Record child : _children) {
+            if (child instanceof FontCollection) {
+                fontCollection = (FontCollection) child;
+            } else if (child instanceof TxMasterStyleAtom) {
+                txmaster = (TxMasterStyleAtom) child;
             }
         }
 

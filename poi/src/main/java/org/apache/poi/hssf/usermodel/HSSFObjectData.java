@@ -82,10 +82,8 @@ public final class HSSFObjectData extends HSSFPicture implements ObjectData {
      * Exception if there wasn't one
      */
     protected EmbeddedObjectRefSubRecord findObjectRecord() {
-        Iterator<SubRecord> subRecordIter = getObjRecord().getSubRecords().iterator();
 
-        while (subRecordIter.hasNext()) {
-            Object subRecord = subRecordIter.next();
+        for (Object subRecord : getObjRecord().getSubRecords()) {
             if (subRecord instanceof EmbeddedObjectRefSubRecord) {
                 return (EmbeddedObjectRefSubRecord) subRecord;
             }

@@ -85,15 +85,15 @@ public abstract class EscherPart extends HPBFPart {
      */
     protected void generateData() {
         int size = 0;
-        for(int i=0; i<records.length; i++) {
-            size += records[i].getRecordSize();
+        for (EscherRecord escherRecord : records) {
+            size += escherRecord.getRecordSize();
         }
 
         byte[] data = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
         size = 0;
-        for(int i=0; i<records.length; i++) {
+        for (EscherRecord record : records) {
             int thisSize =
-                records[i].serialize(size, data);
+                    record.serialize(size, data);
             size += thisSize;
         }
         

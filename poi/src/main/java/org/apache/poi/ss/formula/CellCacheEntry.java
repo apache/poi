@@ -111,8 +111,7 @@ abstract class CellCacheEntry implements ICacheEntry {
     protected final void recurseClearCachedFormulaResults() {
         FormulaCellCacheEntry[] formulaCells = getConsumingCells();
 
-        for (int i = 0; i < formulaCells.length; i++) {
-            FormulaCellCacheEntry fc = formulaCells[i];
+        for (FormulaCellCacheEntry fc : formulaCells) {
             fc.clearFormulaEntry();
             if (fc != this) {
                 fc.recurseClearCachedFormulaResults();
@@ -127,11 +126,10 @@ abstract class CellCacheEntry implements ICacheEntry {
         FormulaCellCacheEntry[] formulaCells = getConsumingCells();
 
         listener.sortDependentCachedValues(formulaCells);
-        for (int i = 0; i < formulaCells.length; i++) {
-            FormulaCellCacheEntry fc = formulaCells[i];
+        for (FormulaCellCacheEntry fc : formulaCells) {
             listener.onClearDependentCachedValue(fc, depth);
             fc.clearFormulaEntry();
-            fc.recurseClearCachedFormulaResults(listener, depth+1);
+            fc.recurseClearCachedFormulaResults(listener, depth + 1);
         }
     }
 }

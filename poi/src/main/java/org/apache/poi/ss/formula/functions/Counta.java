@@ -57,8 +57,8 @@ public final class Counta implements Function {
 
         int temp = 0;
 
-        for(int i=0; i<nArgs; i++) {
-            temp += CountUtils.countArg(args[i], _predicate);
+        for (ValueEval arg : args) {
+            temp += CountUtils.countArg(arg, _predicate);
 
         }
         return new NumberEval(temp);

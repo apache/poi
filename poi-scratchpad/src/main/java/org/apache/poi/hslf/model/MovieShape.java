@@ -160,12 +160,12 @@ public final class MovieShape extends HSLFPictureShape {
         }
 
         Record[]  r = lst.getChildRecords();
-        for (int i = 0; i < r.length; i++) {
-            if(r[i] instanceof ExMCIMovie){
-                ExMCIMovie mci = (ExMCIMovie)r[i];
+        for (Record record : r) {
+            if (record instanceof ExMCIMovie) {
+                ExMCIMovie mci = (ExMCIMovie) record;
                 ExVideoContainer exVideo = mci.getExVideo();
                 int objectId = exVideo.getExMediaAtom().getObjectId();
-                if(objectId == idx){
+                if (objectId == idx) {
                     return exVideo.getPathAtom().getText();
                 }
             }
