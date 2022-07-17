@@ -17,6 +17,15 @@
 
 package org.apache.poi.hsmf.datatypes;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+
+import org.apache.poi.hsmf.datatypes.Types.MAPIType;
+import org.apache.poi.util.StringUtil;
+
 import static org.apache.poi.hsmf.datatypes.Types.ASCII_STRING;
 import static org.apache.poi.hsmf.datatypes.Types.BINARY;
 import static org.apache.poi.hsmf.datatypes.Types.BOOLEAN;
@@ -26,14 +35,6 @@ import static org.apache.poi.hsmf.datatypes.Types.LONG;
 import static org.apache.poi.hsmf.datatypes.Types.LONG_LONG;
 import static org.apache.poi.hsmf.datatypes.Types.SHORT;
 import static org.apache.poi.hsmf.datatypes.Types.TIME;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.poi.hsmf.datatypes.Types.MAPIType;
 
 /**
  * Holds the list of MAPI Attributes, and allows lookup by friendly name, ID and
@@ -1069,9 +1070,10 @@ public class MAPIProperty {
     }
 
     public String asFileName() {
-        String str = Integer.toHexString(id).toUpperCase(Locale.ROOT);
-        while (str.length() < 4) {
-            str = "0" + str;
+        StringBuilder str = new StringBuilder(Integer.toHexString(id).toUpperCase(Locale.ROOT));
+        int need0count = 4 - str.length();
+        if (need0count > 0) {
+            str.insert(0, StringUtil.repeat('0', need0count));
         }
         return str + usualType.asFileEnding();
     }

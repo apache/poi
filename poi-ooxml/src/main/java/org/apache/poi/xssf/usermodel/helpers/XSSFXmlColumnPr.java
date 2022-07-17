@@ -78,7 +78,7 @@ public class XSSFXmlColumnPr {
 
         String[] xPathTokens = ctXmlColumnPr.getXpath().split("/");
         for (int i = numberOfCommonXPathAxis; i < xPathTokens.length; i++) {
-            localXPath.append("/" + xPathTokens[i]);
+            localXPath.append("/").append(xPathTokens[i]);
         }
         return localXPath.toString();
     }

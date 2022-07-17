@@ -398,14 +398,15 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
      * Convert an integer to its alpha equivalent e.g. 1 = A, 2 = B, 27 = AA etc
      */
     private String valueToAlpha(int value) {
-        String alpha = "";
+        StringBuilder alpha = new StringBuilder();
         int modulo;
         while (value > 0) {
             modulo = (value - 1) % 26;
-            alpha = (char) (65 + modulo) + alpha;
+            alpha.append((char) (65 + modulo));
             value = (value - modulo) / 26;
         }
-        return alpha;
+        alpha.reverse();
+        return alpha.toString();
     }
 
     private static String[] _romanChars = new String[] { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V",

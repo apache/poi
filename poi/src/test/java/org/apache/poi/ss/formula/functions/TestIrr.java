@@ -106,7 +106,7 @@ final class TestIrr {
                 assertFormulaResult(cv, cellA);
             } catch (Throwable e){
                 if(failures.length() > 0) failures.append('\n');
-                failures.append("Row[" + (cellA.getRowIndex() + 1)+ "]: " + cellA.getCellFormula() + " ");
+                failures.append("Row[").append(cellA.getRowIndex() + 1).append("]: ").append(cellA.getCellFormula()).append(" ");
                 failures.append(e.getMessage());
             }
 
@@ -116,7 +116,7 @@ final class TestIrr {
                 assertEquals(0, cv.getNumberValue(), 0.0001);  // should agree within 0.01%
             } catch (Throwable e){
                 if(failures.length() > 0) failures.append('\n');
-                failures.append("Row[" + (cellC.getRowIndex() + 1)+ "]: " + cellC.getCellFormula() + " ");
+                failures.append("Row[").append(cellC.getRowIndex() + 1).append("]: ").append(cellC.getCellFormula()).append(" ");
                 failures.append(e.getMessage());
             }
         }

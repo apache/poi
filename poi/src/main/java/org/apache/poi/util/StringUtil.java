@@ -21,6 +21,7 @@ import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Locale;
 
 /**
@@ -757,6 +758,36 @@ public final class StringUtil {
      */
     public static boolean isNotBlank(final CharSequence cs) {
         return !isBlank(cs);
+    }
+
+    /**
+     * <p>Returns padding using the specified delimiter repeated
+     * to a given length.</p>
+     *
+     * <pre>
+     * StringUtil.repeat('e', 0)  = ""
+     * StringUtil.repeat('e', 3)  = "eee"
+     * StringUtil.repeat('e', -2) = ""
+     * </pre>
+     *
+     * <p>Note: this method does not support padding with
+     * <a href="http://www.unicode.org/glossary/#supplementary_character">Unicode Supplementary Characters</a>
+     * as they require a pair of {@code char}s to be represented.
+     * </p>
+     *
+     * copied from commons-lang3
+     *
+     * @param ch  character to repeat
+     * @param repeat  number of times to repeat char, negative treated as zero
+     * @return String with repeated character
+     */
+    public static String repeat(final char ch, final int repeat) {
+        if (repeat <= 0) {
+            return "";
+        }
+        final char[] buf = new char[repeat];
+        Arrays.fill(buf, ch);
+        return new String(buf);
     }
 
 }

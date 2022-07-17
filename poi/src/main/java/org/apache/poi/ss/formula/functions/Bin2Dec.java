@@ -22,6 +22,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Implementation for Excel Bin2Dec() function.
@@ -109,9 +110,12 @@ public class Bin2Dec extends Fixed1ArgFunction implements FreeRefFunction {
     private static String toggleBits(String s) {
         long i = Long.parseLong(s, 2);
         long i2 = i ^ ((1L << s.length()) - 1);
-        String s2 = Long.toBinaryString(i2);
-        while (s2.length() < s.length()) s2 = '0' + s2;
-        return s2;
+        StringBuilder s2 = new StringBuilder(Long.toBinaryString(i2));
+        int need0count = s.length() - s2.length();
+        if (need0count > 0) {
+            s2.insert(0, StringUtil.repeat('0', need0count));
+        }
+        return s2.toString();
     }
 
     @Override

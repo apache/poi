@@ -212,7 +212,7 @@ final class TestMissingRecordAwareHSSFListener {
                 dig = "ur";
             }
             if (lastRow != row && row > -1) {
-                sb.append((lastRow > -1 ? "," : "") + row + ":");
+                sb.append(lastRow > -1 ? "," : "").append(row).append(":");
                 lastRow = row;
             }
             sb.append(dig);

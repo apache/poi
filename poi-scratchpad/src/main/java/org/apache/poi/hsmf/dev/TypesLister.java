@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Lists the different MAPI types
@@ -49,8 +50,11 @@ public class TypesLister {
    }
    private void list(ArrayList<MAPIProperty> list, PrintStream out) {
       for(MAPIProperty attr : list) {
-         String id = Integer.toHexString(attr.id);
-         while(id.length() < 4) { id = "0"+id; }
+         StringBuilder id = new StringBuilder(Integer.toHexString(attr.id));
+         int need0count = 4 - id.length();
+         if (need0count > 0) {
+            id.insert(0, StringUtil.repeat('0', need0count));
+         }
          
          int typeId = attr.usualType.getId();
          String typeIdStr = Integer.toString(typeId);
