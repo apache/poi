@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
