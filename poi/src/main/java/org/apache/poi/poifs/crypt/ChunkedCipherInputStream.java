@@ -172,11 +172,11 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
 
     private void nextChunk() throws GeneralSecurityException, IOException {
         if (chunkSize != -1) {
-            int index = (int)(pos >> chunkBits);
+            int index = (int) (pos >> chunkBits);
             initCipherForBlock(cipher, index);
 
             if (lastIndex != index) {
-                long skipN = (index - lastIndex) << chunkBits;
+                long skipN = ((long) index - lastIndex) << chunkBits;
                 if (super.skip(skipN) < skipN) {
                     throw new EOFException("buffer underrun");
                 }

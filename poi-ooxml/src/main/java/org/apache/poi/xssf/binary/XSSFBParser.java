@@ -92,7 +92,7 @@ public abstract class XSSFBParser {
             b2 &= ~(1<<7); //unset highest bit (if it exists?)
             recordId = ((int)b2 << 7)+(int)b1;
         } else {
-            recordId = (int)b1;
+            recordId = b1;
         }
 
         long recordLength = 0;
@@ -102,7 +102,7 @@ public abstract class XSSFBParser {
             byte b = is.readByte();
             halt = (b >> 7 & 1) == 0; //if highest bit !=1 then continue
             b &= ~(1<<7);
-            recordLength += (int)b << (i*7); //multiply by 128^i
+            recordLength += (long) (int)b << (i*7); //multiply by 128^i
             i++;
 
         }
