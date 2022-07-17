@@ -27,6 +27,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.xssf.eventusermodel.XSSFSheetXMLHandler;
 import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.usermodel.XSSFComment;
@@ -226,7 +227,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
 
     private void outputHeaderFooter(XSSFBHeaderFooter headerFooter) {
         String text = headerFooter.getString();
-        if (text != null && !text.trim().isEmpty()) {
+        if (StringUtil.isNotBlank(text)) {
             handler.headerFooter(text, headerFooter.isHeader(), headerFooter.getHeaderFooterTypeLabel());
         }
     }

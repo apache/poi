@@ -689,4 +689,74 @@ public final class StringUtil {
         return prefix + ((newLen == 0) ? "" : new String(string, newOffset, newLen * 2, UTF16LE));
     }
 
+
+    /**
+     * Gets a CharSequence length or {@code 0} if the CharSequence is
+     * {@code null}.
+     *
+     * copied from commons-lang3
+     *
+     * @param cs
+     *            a CharSequence or {@code null}
+     * @return CharSequence length or {@code 0} if the CharSequence is
+     *         {@code null}.
+     */
+    public static int length(final CharSequence cs) {
+        return cs == null ? 0 : cs.length();
+    }
+
+    /**
+     * <p>Checks if a CharSequence is empty (""), null or whitespace only.</p>
+     *
+     * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
+     *
+     * <pre>
+     * StringUtil.isBlank(null)      = true
+     * StringUtil.isBlank("")        = true
+     * StringUtil.isBlank(" ")       = true
+     * StringUtil.isBlank("bob")     = false
+     * StringUtil.isBlank("  bob  ") = false
+     * </pre>
+     *
+     * copied from commons-lang3
+     *
+     * @param cs  the CharSequence to check, may be null
+     * @return {@code true} if the CharSequence is null, empty or whitespace only
+     */
+    public static boolean isBlank(final CharSequence cs) {
+        final int strLen = length(cs);
+        if (strLen == 0) {
+            return true;
+        }
+        for (int i = 0; i < strLen; i++) {
+            if (!Character.isWhitespace(cs.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * <p>Checks if a CharSequence is not empty (""), not null and not whitespace only.</p>
+     *
+     * <p>Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
+     *
+     * <pre>
+     * StringUtil.isNotBlank(null)      = false
+     * StringUtil.isNotBlank("")        = false
+     * StringUtil.isNotBlank(" ")       = false
+     * StringUtil.isNotBlank("bob")     = true
+     * StringUtil.isNotBlank("  bob  ") = true
+     * </pre>
+     *
+     * copied from commons-lang3
+     *
+     * @param cs  the CharSequence to check, may be null
+     * @return {@code true} if the CharSequence is
+     *  not empty and not null and not whitespace only
+     */
+    public static boolean isNotBlank(final CharSequence cs) {
+        return !isBlank(cs);
+    }
+
 }

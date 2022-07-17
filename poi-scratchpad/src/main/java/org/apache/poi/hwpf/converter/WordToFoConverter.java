@@ -48,6 +48,7 @@ import org.apache.poi.hwpf.usermodel.Table;
 import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -438,7 +439,7 @@ public class WordToFoConverter extends AbstractWordConverter
             Text textNode = foDocumentFacade.createText( bulletText );
             inline.appendChild( textNode );
 
-            haveAnyText |= bulletText.trim().length() != 0;
+            haveAnyText |= StringUtil.isNotBlank(bulletText);
         }
 
         haveAnyText = processCharacters( hwpfDocument, currentTableLevel,

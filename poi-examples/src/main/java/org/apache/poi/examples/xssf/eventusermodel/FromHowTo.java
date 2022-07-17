@@ -25,6 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
+import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStrings;
@@ -132,7 +133,7 @@ public class FromHowTo {
                 throws SAXException {
             // Process the last contents as required.
             // Do now, as characters() may be called more than once
-            if(nextIsString && !lastContents.trim().isEmpty()) {
+            if(nextIsString && StringUtil.isNotBlank(lastContents)) {
                 Integer idx = Integer.valueOf(lastContents);
                 lastContents = lruCache.get(idx);
                 if (lastContents == null && !lruCache.containsKey(idx)) {

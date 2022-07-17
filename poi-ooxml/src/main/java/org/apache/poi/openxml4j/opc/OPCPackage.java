@@ -61,6 +61,7 @@ import org.apache.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NotImplemented;
+import org.apache.poi.util.StringUtil;
 
 /**
  * Represents a container that can store multiple data objects.
@@ -234,7 +235,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      */
     public static OPCPackage open(String path, PackageAccess access)
             throws InvalidFormatException, InvalidOperationException {
-        if (path == null || path.trim().isEmpty()) {
+        if (StringUtil.isBlank(path)) {
             throw new IllegalArgumentException("'path' must be given");
         }
 
@@ -458,8 +459,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
             return;
         }
 
-        if (this.originalPackagePath != null
-                && !this.originalPackagePath.trim().isEmpty()) {
+        if (StringUtil.isNotBlank(this.originalPackagePath)) {
             File targetFile = new File(this.originalPackagePath);
             if (!targetFile.exists()
                     || !(this.originalPackagePath

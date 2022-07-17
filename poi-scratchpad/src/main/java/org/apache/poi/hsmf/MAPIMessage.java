@@ -53,6 +53,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.StringUtil;
 
 import static org.apache.logging.log4j.util.Unbox.box;
 
@@ -630,7 +631,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
      */
     public MESSAGE_CLASS getMessageClassEnum() throws ChunkNotFoundException {
         String mc = getStringFromChunk(mainChunks.getMessageClass());
-        if (mc == null || mc.trim().length() == 0) {
+        if (StringUtil.isBlank(mc)) {
             return MESSAGE_CLASS.UNSPECIFIED;
         } else if (mc.equalsIgnoreCase("IPM.Note")) {
             return MESSAGE_CLASS.NOTE;
