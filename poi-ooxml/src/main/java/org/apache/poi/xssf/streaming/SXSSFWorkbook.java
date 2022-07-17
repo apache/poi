@@ -311,6 +311,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
+     * Sets the <a href="https://commons.apache.org/proper/commons-compress/apidocs/org/apache/commons/compress/archivers/zip/Zip64Mode.html">Zip64 Mode</a>
      * @param zip64Mode {@link Zip64Mode}
      *
      * @since 4.1.0
