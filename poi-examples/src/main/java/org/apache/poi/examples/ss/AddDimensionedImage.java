@@ -949,10 +949,10 @@ public class AddDimensionedImage {
          * pixel units to excel width units(units of 1/256th of a character width)
          */
         public static short pixel2WidthUnits(int pxs) {
-            short widthUnits = (short) (EXCEL_COLUMN_WIDTH_FACTOR *
+            int widthUnits = (EXCEL_COLUMN_WIDTH_FACTOR *
                     (pxs / UNIT_OFFSET_LENGTH));
             widthUnits += UNIT_OFFSET_MAP[(pxs % UNIT_OFFSET_LENGTH)];
-            return widthUnits;
+            return (short) widthUnits;
         }
 
         /**
