@@ -230,6 +230,7 @@ subprojects {
                 links 'https://poi.apache.org/apidocs/dev/'
                 links 'https://docs.oracle.com/javase/8/docs/api/'
                 links 'https://xmlbeans.apache.org/docs/5.0.0/'
+                links 'https://commons.apache.org/proper/commons-compress/apidocs/'
                 use = true
                 splitIndex = true
                 source = "1.8"
