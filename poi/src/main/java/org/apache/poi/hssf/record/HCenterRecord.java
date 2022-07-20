@@ -43,7 +43,7 @@ public final class HCenterRecord extends StandardRecord {
     }
 
     /**
-     * set whether or not to horizonatally center this sheet.
+     * set whether or not to horizontally center this sheet.
      * @param hc  center - t/f
      */
     public void setHCenter(boolean hc) {
@@ -51,7 +51,7 @@ public final class HCenterRecord extends StandardRecord {
     }
 
     /**
-     * get whether or not to horizonatally center this sheet.
+     * get whether or not to horizontally center this sheet.
      * @return center - t/f
      */
     public boolean getHCenter()
