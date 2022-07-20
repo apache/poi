@@ -55,6 +55,7 @@ import org.apache.poi.ss.util.SSCellRange;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.Comments;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigurator;
@@ -743,19 +744,59 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * @param topRow        Top row visible in bottom pane
      * @param leftmostColumn   Left column visible in right pane.
      * @param activePane    Active pane.  One of: PANE_LOWER_RIGHT,
-     *                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT
-     * @see Sheet#PANE_LOWER_LEFT
-     * @see Sheet#PANE_LOWER_RIGHT
-     * @see Sheet#PANE_UPPER_LEFT
-     * @see Sheet#PANE_UPPER_RIGHT
+     *                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT (but there is a
+     *                      <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=66173">bug</a>, so add 1)
+     * @see #PANE_LOWER_LEFT
+     * @see #PANE_LOWER_RIGHT
+     * @see #PANE_UPPER_LEFT
+     * @see #PANE_UPPER_RIGHT
+     * @deprecated use {@link #createSplitPane(int, int, int, int, PaneType)}
      */
     @Override
+    @Deprecated
+    @Removal(version = "POI 7.0.0")
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
         createFreezePane(xSplitPos, ySplitPos, leftmostColumn, topRow);
         if (xSplitPos > 0 || ySplitPos > 0) {
             final CTPane pane = getPane(true);
             pane.setState(STPaneState.SPLIT);
             pane.setActivePane(STPane.Enum.forInt(activePane));
+        }
+    }
+
+    /**
+     * Creates a split pane. Any existing freezepane or split pane is overwritten.
+     * @param xSplitPos      Horizontal position of split (in 1/20th of a point).
+     * @param ySplitPos      Vertical position of split (in 1/20th of a point).
+     * @param topRow        Top row visible in bottom pane
+     * @param leftmostColumn   Left column visible in right pane.
+     * @param activePane    Active pane.
+     * @see PaneType
+     * @since POI 5.2.3
+     */
+    @Override
+    public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, PaneType activePane) {
+        createFreezePane(xSplitPos, ySplitPos, leftmostColumn, topRow);
+        if (xSplitPos > 0 || ySplitPos > 0) {
+            final CTPane pane = getPane(true);
+            pane.setState(STPaneState.SPLIT);
+            STPane.Enum stPaneEnum;
+            switch (activePane) {
+                case LOWER_RIGHT:
+                    stPaneEnum = STPane.BOTTOM_RIGHT;
+                    break;
+                case UPPER_RIGHT:
+                    stPaneEnum = STPane.TOP_RIGHT;
+                    break;
+                case LOWER_LEFT:
+                    stPaneEnum = STPane.BOTTOM_LEFT;
+                    break;
+                case UPPER_LEFT:
+                default:
+                    stPaneEnum = STPane.TOP_LEFT;
+                    break;
+            }
+            pane.setActivePane(stPaneEnum);
         }
     }
 

@@ -40,6 +40,7 @@ import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.WorksheetProtectionBlock;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.FormulaShifter;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.util.Internal;
@@ -103,10 +104,10 @@ public final class InternalSheet {
     /** Add an UncalcedRecord if not true indicating formulas have not been calculated */
     protected boolean _isUncalced;
 
-    public static final byte PANE_LOWER_RIGHT = (byte)0;
-    public static final byte PANE_UPPER_RIGHT = (byte)1;
-    public static final byte PANE_LOWER_LEFT = (byte)2;
-    public static final byte PANE_UPPER_LEFT = (byte)3;
+    public static final byte PANE_LOWER_RIGHT = Sheet.PANE_LOWER_RIGHT;
+    public static final byte PANE_UPPER_RIGHT = Sheet.PANE_UPPER_RIGHT;
+    public static final byte PANE_LOWER_LEFT = Sheet.PANE_LOWER_LEFT;
+    public static final byte PANE_UPPER_LEFT = Sheet.PANE_UPPER_LEFT;
 
     /**
      * read support  (offset used as starting point for search) for low level

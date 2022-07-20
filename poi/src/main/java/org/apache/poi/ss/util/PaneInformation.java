@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.util;
 
+import org.apache.poi.ss.usermodel.PaneType;
+
 import java.util.Objects;
 
 /**
@@ -49,7 +51,6 @@ public class PaneInformation
         this.activePane = active;
         this.frozen = frozen;
     }
-
 
     /**
      * Returns the vertical position of the split.
@@ -88,7 +89,7 @@ public class PaneInformation
     }
 
     /**
-     * Returns the active pane
+     * Returns the active pane.
      * @see #PANE_LOWER_RIGHT
      * @see #PANE_UPPER_RIGHT
      * @see #PANE_LOWER_LEFT
@@ -97,6 +98,25 @@ public class PaneInformation
      */
     public byte getActivePane() {
         return activePane;
+    }
+
+    /**
+     * @return the active pane type - can return <code>null</code> if no active pane type is set
+     * @since POI 5.2.3
+     */
+    public PaneType getActivePaneType() {
+        switch (activePane) {
+            case PANE_LOWER_RIGHT:
+                return PaneType.LOWER_RIGHT;
+            case PANE_UPPER_RIGHT:
+                return PaneType.UPPER_RIGHT;
+            case PANE_LOWER_LEFT:
+                return PaneType.LOWER_LEFT;
+            case PANE_UPPER_LEFT:
+                return PaneType.UPPER_LEFT;
+            default:
+                return null;
+        }
     }
 
     /** Returns true if this is a Freeze pane, false if it is a split pane.
