@@ -1355,7 +1355,11 @@ public final class HSSFSheet implements Sheet {
     @Deprecated
     @Removal(version = "7.0.0")
     public void setMargin(short margin, double size) {
-        setMargin(PageMargin.getByShortValue(margin), size);
+        final PageMargin pageMargin = PageMargin.getByShortValue(margin);
+        if (pageMargin == null) {
+            throw new IllegalArgumentException( "Unknown margin constant:  " + margin );
+        }
+        setMargin(pageMargin, size);
     }
 
     /**

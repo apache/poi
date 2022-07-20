@@ -1278,7 +1278,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     @Deprecated
     @Removal(version = "7.0.0")
     public void setMargin(short margin, double size) {
-        setMargin(PageMargin.getByShortValue(margin), size);
+        final PageMargin pageMargin = PageMargin.getByShortValue(margin);
+        if (pageMargin == null) {
+            throw new IllegalArgumentException( "Unknown margin constant:  " + margin );
+        }
+        setMargin(pageMargin, size);
     }
 
     /**
@@ -1311,7 +1315,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             case FOOTER:
                 pageMargins.setFooter(size);
                 break;
-            default :
+            default:
                 throw new IllegalArgumentException( "Unknown margin constant:  " + margin );
         }
     }
