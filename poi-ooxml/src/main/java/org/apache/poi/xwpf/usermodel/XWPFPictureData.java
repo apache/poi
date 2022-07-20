@@ -145,7 +145,9 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PICT
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_JPEG
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PNG
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_GIF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_DIB
+     * @see {@link #getPictureTypeEnum()}
      */
     public int getPictureType() {
         String contentType = getPackagePart().getContentType();
@@ -159,6 +161,16 @@ public class XWPFPictureData extends POIXMLDocumentPart {
             }
         }
         return 0;
+    }
+
+    /**
+     * Return a {@link PictureType} that specifies type of this picture
+     *
+     * @return a {@link PictureType}, returns null if an unknown type
+     * @since POI 5.2.3
+     */
+    public PictureType getPictureTypeEnum() {
+        return PictureType.findById(getPictureType());
     }
 
     public Long getChecksum() {
