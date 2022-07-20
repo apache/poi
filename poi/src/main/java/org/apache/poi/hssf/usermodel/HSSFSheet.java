@@ -69,6 +69,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.PaneType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -83,6 +84,7 @@ import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Configurator;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 import static java.lang.System.currentTimeMillis;
 import static org.apache.logging.log4j.util.Unbox.box;
@@ -1827,21 +1829,55 @@ public final class HSSFSheet implements Sheet {
 
     /**
      * Creates a split pane. Any existing freezepane or split pane is overwritten.
-     *
      * @param xSplitPos      Horizontal position of split (in 1/20th of a point).
      * @param ySplitPos      Vertical position of split (in 1/20th of a point).
-     * @param topRow         Top row visible in bottom pane
-     * @param leftmostColumn Left column visible in right pane.
-     * @param activePane     Active pane.  One of: PANE_LOWER_RIGHT,
-     *                       PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT
+     * @param topRow        Top row visible in bottom pane
+     * @param leftmostColumn   Left column visible in right pane.
+     * @param activePane    Active pane.  One of: PANE_LOWER_RIGHT,
+     *                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT (but there is a
+     *                      <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=66173">bug</a>, so add 1)
      * @see #PANE_LOWER_LEFT
      * @see #PANE_LOWER_RIGHT
      * @see #PANE_UPPER_LEFT
      * @see #PANE_UPPER_RIGHT
+     * @deprecated use {@link #createSplitPane(int, int, int, int, PaneType)}
      */
     @Override
+    @Deprecated
+    @Removal(version = "POI 7.0.0")
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
         getSheet().createSplitPane(xSplitPos, ySplitPos, topRow, leftmostColumn, activePane);
+    }
+
+    /**
+     * Creates a split pane. Any existing freezepane or split pane is overwritten.
+     * @param xSplitPos      Horizontal position of split (in 1/20th of a point).
+     * @param ySplitPos      Vertical position of split (in 1/20th of a point).
+     * @param topRow        Top row visible in bottom pane
+     * @param leftmostColumn   Left column visible in right pane.
+     * @param activePane    Active pane.
+     * @see PaneType
+     * @since POI 5.2.3
+     */
+    @Override
+    public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, PaneType activePane) {
+        byte activePaneByte;
+        switch (activePane) {
+            case LOWER_RIGHT:
+                activePaneByte = Sheet.PANE_LOWER_RIGHT + 1;
+                break;
+            case UPPER_RIGHT:
+                activePaneByte = Sheet.PANE_UPPER_RIGHT + 1;
+                break;
+            case LOWER_LEFT:
+                activePaneByte = Sheet.PANE_LOWER_LEFT + 1;
+                break;
+            case UPPER_LEFT:
+            default:
+                activePaneByte = Sheet.PANE_UPPER_LEFT + 1;
+                break;
+        }
+        getSheet().createSplitPane(xSplitPos, ySplitPos, topRow, leftmostColumn, activePaneByte);
     }
 
     /**

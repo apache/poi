@@ -27,6 +27,7 @@ import java.util.Spliterators;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
+import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a Excel worksheet.
@@ -772,13 +773,29 @@ public interface Sheet extends Iterable<Row> {
      * @param topRow        Top row visible in bottom pane
      * @param leftmostColumn   Left column visible in right pane.
      * @param activePane    Active pane.  One of: PANE_LOWER_RIGHT,
-     *                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT
+     *                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT (but there is a
+     *                      <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=66173">bug</a>, so add 1)
      * @see #PANE_LOWER_LEFT
      * @see #PANE_LOWER_RIGHT
      * @see #PANE_UPPER_LEFT
      * @see #PANE_UPPER_RIGHT
+     * @deprecated use {@link #createSplitPane(int, int, int, int, PaneType)}
      */
+    @Deprecated
+    @Removal(version = "POI 7.0.0")
     void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane);
+
+    /**
+     * Creates a split pane. Any existing freezepane or split pane is overwritten.
+     * @param xSplitPos      Horizontal position of split (in 1/20th of a point).
+     * @param ySplitPos      Vertical position of split (in 1/20th of a point).
+     * @param topRow        Top row visible in bottom pane
+     * @param leftmostColumn   Left column visible in right pane.
+     * @param activePane    Active pane.
+     * @see PaneType
+     * @since POI 5.2.3
+     */
+    void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, PaneType activePane);
 
     /**
      * Returns the information regarding the currently configured pane (split or freeze)
