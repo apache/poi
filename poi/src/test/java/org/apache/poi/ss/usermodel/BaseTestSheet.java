@@ -804,7 +804,7 @@ public abstract class BaseTestSheet {
     }
 
     @Test
-    void testGetSetMargin() throws IOException {
+    void testGetSetMarginDeprecated() throws IOException {
         double[] defaultMargins = (getClass().getName().contains("xssf"))
             ? new double[]{0.7, 0.7, 0.75, 0.75, 0.3, 0.3}
             : new double[]{0.75, 0.75, 1.0, 1.0, 0.3, 0.3};
@@ -843,6 +843,42 @@ public abstract class BaseTestSheet {
                 () -> sheet.setMargin((short) 65, 15)
             );
             assertEquals("Unknown margin constant:  65", ex.getMessage());
+        }
+    }
+
+    @Test
+    void testGetSetMargin() throws IOException {
+        double[] defaultMargins = (getClass().getName().contains("xssf"))
+                ? new double[]{0.7, 0.7, 0.75, 0.75, 0.3, 0.3}
+                : new double[]{0.75, 0.75, 1.0, 1.0, 0.3, 0.3};
+
+        double marginLeft = defaultMargins[0];
+        double marginRight = defaultMargins[1];
+        double marginTop = defaultMargins[2];
+        double marginBottom = defaultMargins[3];
+        //double marginHeader = defaultMargins[4];
+        //double marginFooter = defaultMargins[5];
+
+        try (Workbook workbook = _testDataProvider.createWorkbook()) {
+            Sheet sheet = workbook.createSheet("Sheet 1");
+            assertEquals(marginLeft, sheet.getMargin(PageMargin.LEFT), 0.0);
+            sheet.setMargin(PageMargin.LEFT, 10.0);
+            //left margin is custom, all others are default
+            assertEquals(10.0, sheet.getMargin(PageMargin.LEFT), 0.0);
+            assertEquals(marginRight, sheet.getMargin(PageMargin.RIGHT), 0.0);
+            assertEquals(marginTop, sheet.getMargin(PageMargin.TOP), 0.0);
+            assertEquals(marginBottom, sheet.getMargin(PageMargin.BOTTOM), 0.0);
+            sheet.setMargin(PageMargin.RIGHT, 11.0);
+            assertEquals(11.0, sheet.getMargin(PageMargin.RIGHT), 0.0);
+            sheet.setMargin(PageMargin.TOP, 12.0);
+            assertEquals(12.0, sheet.getMargin(PageMargin.TOP), 0.0);
+            sheet.setMargin(PageMargin.BOTTOM, 13.0);
+            assertEquals(13.0, sheet.getMargin(PageMargin.BOTTOM), 0.0);
+
+            sheet.setMargin(PageMargin.FOOTER, 5.6);
+            assertEquals(5.6, sheet.getMargin(PageMargin.FOOTER), 0.0);
+            sheet.setMargin(PageMargin.HEADER, 11.5);
+            assertEquals(11.5, sheet.getMargin(PageMargin.HEADER), 0.0);
         }
     }
 
