@@ -102,6 +102,7 @@ public class PaneInformation
 
     /**
      * @return the active pane type.
+     * @since POI 5.2.3
      */
     public PaneType getActivePaneType() {
         switch (activePane) {
