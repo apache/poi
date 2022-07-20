@@ -642,10 +642,22 @@ public interface Sheet extends Iterable<Row> {
     /**
      * Sets the size of the margin in inches.
      *
-     * @param margin which margin to get
+     * @param margin which margin to set
      * @param size the size of the margin
+     * @deprecated use {@link #setMargin(PageMargin, double)} instead
      */
+    @Deprecated
+    @Removal(version = "7.0.0")
     void setMargin(short margin, double size);
+
+    /**
+     * Sets the size of the margin in inches.
+     *
+     * @param margin which margin to set
+     * @param size the size of the margin
+     * @since POI 5.2.3
+     */
+    void setMargin(PageMargin margin, double size);
 
     /**
      * Answer whether protection is enabled or disabled

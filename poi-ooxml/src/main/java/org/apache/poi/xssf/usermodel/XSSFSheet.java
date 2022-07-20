@@ -1264,7 +1264,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     /**
      * Sets the size of the margin in inches.
      *
-     * @param margin which margin to get
+     * @param margin which margin to set
      * @param size the size of the margin
      * @see Sheet#LeftMargin
      * @see Sheet#RightMargin
@@ -1272,28 +1272,43 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * @see Sheet#BottomMargin
      * @see Sheet#HeaderMargin
      * @see Sheet#FooterMargin
+     * @deprecated use {@link #setMargin(PageMargin, double)} instead
      */
     @Override
+    @Deprecated
+    @Removal(version = "7.0.0")
     public void setMargin(short margin, double size) {
+        setMargin(PageMargin.getByShortValue(margin), size);
+    }
+
+    /**
+     * Sets the size of the margin in inches.
+     *
+     * @param margin which margin to set
+     * @param size the size of the margin
+     * @since POI 5.2.3
+     */
+    @Override
+    public void setMargin(PageMargin margin, double size) {
         CTPageMargins pageMargins = worksheet.isSetPageMargins() ?
                 worksheet.getPageMargins() : worksheet.addNewPageMargins();
         switch (margin) {
-            case LeftMargin:
+            case LEFT:
                 pageMargins.setLeft(size);
                 break;
-            case RightMargin:
+            case RIGHT:
                 pageMargins.setRight(size);
                 break;
-            case TopMargin:
+            case TOP:
                 pageMargins.setTop(size);
                 break;
-            case BottomMargin:
+            case BOTTOM:
                 pageMargins.setBottom(size);
                 break;
-            case HeaderMargin:
+            case HEADER:
                 pageMargins.setHeader(size);
                 break;
-            case FooterMargin:
+            case FOOTER:
                 pageMargins.setFooter(size);
                 break;
             default :
