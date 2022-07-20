@@ -18,7 +18,7 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * Type of pane used in sheet.
- * @since POI 3.15 beta 3
+ * @since POI 5.2.3
  */
 public enum PaneType {
     LOWER_RIGHT, UPPER_RIGHT, LOWER_LEFT, UPPER_LEFT
