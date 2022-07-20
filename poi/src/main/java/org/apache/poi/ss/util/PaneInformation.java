@@ -101,7 +101,7 @@ public class PaneInformation
     }
 
     /**
-     * @return the active pane type.
+     * @return the active pane type - can return <code>null</code> if no active pane type is set
      * @since POI 5.2.3
      */
     public PaneType getActivePaneType() {
@@ -113,8 +113,9 @@ public class PaneInformation
             case PANE_LOWER_LEFT:
                 return PaneType.LOWER_LEFT;
             case PANE_UPPER_LEFT:
-            default:
                 return PaneType.UPPER_LEFT;
+            default:
+                return null;
         }
     }
 

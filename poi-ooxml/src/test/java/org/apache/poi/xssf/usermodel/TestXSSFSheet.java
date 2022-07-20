@@ -300,6 +300,8 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             sheet.createFreezePane(2, 4);
             assertEquals(2.0, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getXSplit(), 0.0);
             assertSame(STPane.BOTTOM_RIGHT, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getActivePane());
+            assertSame(PaneType.LOWER_RIGHT, sheet.getPaneInformation().getActivePaneType());
+
             sheet.createFreezePane(3, 6, 10, 10);
             assertEquals(3.0, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getXSplit(), 0.0);
             //    assertEquals(10, sheet.getTopRow());
@@ -307,6 +309,14 @@ public final class TestXSSFSheet extends BaseTestXSheet {
             sheet.createSplitPane(4, 8, 12, 12, PaneType.LOWER_RIGHT);
             assertEquals(8.0, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getYSplit(), 0.0);
             assertSame(STPane.BOTTOM_RIGHT, ctWorksheet.getSheetViews().getSheetViewArray(0).getPane().getActivePane());
+        }
+    }
+
+    @Test
+    void defaultActivePaneType() throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFSheet sheet = workbook.createSheet();
+            assertNull(sheet.getPaneInformation());
         }
     }
 
