@@ -624,8 +624,20 @@ public interface Sheet extends Iterable<Row> {
      *
      * @param margin which margin to get
      * @return the size of the margin
+     * @deprecated use {@link #getMargin(PageMargin)}
      */
+    @Deprecated
+    @Removal(version = "7.0.0")
     double getMargin(short margin);
+
+    /**
+     * Gets the size of the margin in inches.
+     *
+     * @param margin which margin to get
+     * @return the size of the margin
+     * @since POI 5.2.3
+     */
+    double getMargin(PageMargin margin);
 
     /**
      * Sets the size of the margin in inches.
@@ -781,7 +793,7 @@ public interface Sheet extends Iterable<Row> {
      * @deprecated use {@link #createSplitPane(int, int, int, int, PaneType)}
      */
     @Deprecated
-    @Removal(version = "POI 7.0.0")
+    @Removal(version = "7.0.0")
     void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane);
 
     /**

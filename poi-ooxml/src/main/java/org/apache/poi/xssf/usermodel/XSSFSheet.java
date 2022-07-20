@@ -754,7 +754,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      */
     @Override
     @Deprecated
-    @Removal(version = "POI 7.0.0")
+    @Removal(version = "7.0.0")
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
         createFreezePane(xSplitPos, ySplitPos, leftmostColumn, topRow);
         if (xSplitPos > 0 || ySplitPos > 0) {
@@ -1220,26 +1220,41 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * @see Sheet#BottomMargin
      * @see Sheet#HeaderMargin
      * @see Sheet#FooterMargin
+     * @deprecated use {@link #getMargin(PageMargin)}
      */
     @Override
+    @Deprecated
+    @Removal(version = "7.0.0")
     public double getMargin(short margin) {
+        return getMargin(PageMargin.getByShortValue(margin));
+    }
+
+    /**
+     * Gets the size of the margin in inches.
+     *
+     * @param margin which margin to get
+     * @return the size of the margin
+     * @since POI 5.2.3
+     */
+    @Override
+    public double getMargin(PageMargin margin) {
         if (!worksheet.isSetPageMargins()) {
             return 0;
         }
 
         CTPageMargins pageMargins = worksheet.getPageMargins();
         switch (margin) {
-            case LeftMargin:
+            case LEFT:
                 return pageMargins.getLeft();
-            case RightMargin:
+            case RIGHT:
                 return pageMargins.getRight();
-            case TopMargin:
+            case TOP:
                 return pageMargins.getTop();
-            case BottomMargin:
+            case BOTTOM:
                 return pageMargins.getBottom();
-            case HeaderMargin:
+            case HEADER:
                 return pageMargins.getHeader();
-            case FooterMargin:
+            case FOOTER:
                 return pageMargins.getFooter();
             default :
                 throw new IllegalArgumentException("Unknown margin constant:  " + margin);

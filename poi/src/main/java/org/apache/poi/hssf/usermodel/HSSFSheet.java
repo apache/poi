@@ -69,6 +69,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.PageMargin;
 import org.apache.poi.ss.usermodel.PaneType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -1309,16 +1310,31 @@ public final class HSSFSheet implements Sheet {
      *
      * @param margin which margin to get
      * @return the size of the margin
+     * @deprecated use {@link #getMargin(PageMargin)}
      */
     @Override
+    @Deprecated
+    @Removal(version = "7.0.0")
     public double getMargin(short margin) {
+        return getMargin(PageMargin.getByShortValue(margin));
+    }
+
+    /**
+     * Gets the size of the margin in inches.
+     *
+     * @param margin which margin to get
+     * @return the size of the margin
+     * @since POI 5.2.3
+     */
+    @Override
+    public double getMargin(PageMargin margin) {
         switch (margin) {
-            case FooterMargin:
+            case FOOTER:
                 return _sheet.getPageSettings().getPrintSetup().getFooterMargin();
-            case HeaderMargin:
+            case HEADER:
                 return _sheet.getPageSettings().getPrintSetup().getHeaderMargin();
             default:
-                return _sheet.getPageSettings().getMargin(margin);
+                return _sheet.getPageSettings().getMargin(margin.getLegacyApiValue());
         }
     }
 
@@ -1843,7 +1859,7 @@ public final class HSSFSheet implements Sheet {
      */
     @Override
     @Deprecated
-    @Removal(version = "POI 7.0.0")
+    @Removal(version = "7.0.0")
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
         getSheet().createSplitPane(xSplitPos, ySplitPos, topRow, leftmostColumn, activePane);
     }

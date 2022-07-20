@@ -774,9 +774,25 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      *
      * @param margin which margin to get
      * @return the size of the margin
+     * @deprecated use {@link #getMargin(PageMargin)}
      */
     @Override
+    @Deprecated
+    @Removal(version = "7.0.0")
     public double getMargin(short margin) {
+        return _sh.getMargin(margin);
+    }
+
+
+    /**
+     * Gets the size of the margin in inches.
+     *
+     * @param margin which margin to get
+     * @return the size of the margin
+     * @since POI 5.2.3
+     */
+    @Override
+    public double getMargin(PageMargin margin) {
         return _sh.getMargin(margin);
     }
 
@@ -985,7 +1001,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      */
     @Override
     @Deprecated
-    @Removal(version = "POI 7.0.0")
+    @Removal(version = "7.0.0")
     public void createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, int activePane) {
         _sh.createSplitPane(xSplitPos, ySplitPos, leftmostColumn, topRow, activePane);
     }
