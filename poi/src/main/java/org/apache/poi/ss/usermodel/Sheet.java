@@ -53,13 +53,13 @@ public interface Sheet extends Iterable<Row> {
 
     short FooterMargin = 5;
 
-    byte PANE_LOWER_RIGHT = (byte) 0;
+    byte PANE_LOWER_RIGHT = PaneInformation.PANE_LOWER_RIGHT;
 
-    byte PANE_UPPER_RIGHT = (byte) 1;
+    byte PANE_UPPER_RIGHT = PaneInformation.PANE_UPPER_RIGHT;
 
-    byte PANE_LOWER_LEFT = (byte) 2;
+    byte PANE_LOWER_LEFT = PaneInformation.PANE_LOWER_LEFT;
 
-    byte PANE_UPPER_LEFT = (byte) 3;
+    byte PANE_UPPER_LEFT = PaneInformation.PANE_UPPER_LEFT;
 
     /**
      * Create a new row within the sheet and return the high level representation
