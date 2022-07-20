@@ -24,6 +24,7 @@ import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.PaneType;
 import org.apache.poi.ss.usermodel.Sheet;
 
 public class SplitAndFreezePanes {
@@ -41,7 +42,7 @@ public class SplitAndFreezePanes {
             // Freeze the columns and rows (forget about scrolling position of the lower right quadrant).
             sheet3.createFreezePane(2, 2);
             // Create a split with the lower left side being the active quadrant
-            sheet4.createSplitPane(2000, 2000, 0, 0, Sheet.PANE_LOWER_LEFT);
+            sheet4.createSplitPane(2000, 2000, 0, 0, PaneType.LOWER_LEFT);
 
             try (FileOutputStream fileOut = new FileOutputStream("workbook.xls")) {
                 wb.write(fileOut);

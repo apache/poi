@@ -1834,8 +1834,7 @@ public final class HSSFSheet implements Sheet {
      * @param topRow        Top row visible in bottom pane
      * @param leftmostColumn   Left column visible in right pane.
      * @param activePane    Active pane.  One of: PANE_LOWER_RIGHT,
-     *                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT (but there is a
-     *                      <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=66173">bug</a>, so add 1)
+     *                      PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT
      * @see #PANE_LOWER_LEFT
      * @see #PANE_LOWER_RIGHT
      * @see #PANE_UPPER_LEFT
@@ -1864,17 +1863,17 @@ public final class HSSFSheet implements Sheet {
         byte activePaneByte;
         switch (activePane) {
             case LOWER_RIGHT:
-                activePaneByte = Sheet.PANE_LOWER_RIGHT + 1;
+                activePaneByte = Sheet.PANE_LOWER_RIGHT;
                 break;
             case UPPER_RIGHT:
-                activePaneByte = Sheet.PANE_UPPER_RIGHT + 1;
+                activePaneByte = Sheet.PANE_UPPER_RIGHT;
                 break;
             case LOWER_LEFT:
-                activePaneByte = Sheet.PANE_LOWER_LEFT + 1;
+                activePaneByte = Sheet.PANE_LOWER_LEFT;
                 break;
             case UPPER_LEFT:
             default:
-                activePaneByte = Sheet.PANE_UPPER_LEFT + 1;
+                activePaneByte = Sheet.PANE_UPPER_LEFT;
                 break;
         }
         getSheet().createSplitPane(xSplitPos, ySplitPos, topRow, leftmostColumn, activePaneByte);

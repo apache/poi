@@ -47,10 +47,12 @@ import org.apache.poi.ss.usermodel.BaseTestSheet;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.PaneType;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.ss.util.PaneInformation;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -1110,6 +1112,24 @@ final class TestHSSFSheet extends BaseTestSheet {
 
                 assertEquals((short) 0xbecc, wb2.getSheetAt(0).getPassword());
             }
+        }
+    }
+
+    @Test
+    void createSplitPane() throws IOException {
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            HSSFSheet sheet = workbook.createSheet();
+            sheet.createSplitPane(4, 8, 12, 12, PaneType.LOWER_RIGHT);
+            assertSame(PaneType.LOWER_RIGHT, sheet.getPaneInformation().getActivePaneType());
+        }
+    }
+
+    @Test
+    void createSplitPaneWithPaneByte() throws IOException {
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            HSSFSheet sheet = workbook.createSheet();
+            sheet.createSplitPane(4, 8, 12, 12, PaneInformation.PANE_LOWER_RIGHT);
+            assertSame(PaneType.LOWER_RIGHT, sheet.getPaneInformation().getActivePaneType());
         }
     }
 }
