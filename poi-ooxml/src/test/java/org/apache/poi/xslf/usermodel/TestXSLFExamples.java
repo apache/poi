@@ -55,7 +55,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeType;
  */
 class TestXSLFExamples {
     @Test
-    void LinkVideoToPptx() throws IOException, URISyntaxException {
+    void linkVideoToPptx() throws IOException, URISyntaxException {
         String videoFileName = "file_example_MP4_640_3MG.mp4";
         File previewJpg = POIDataSamples.getDocumentInstance().getFile("abstract1.jpg");
 
