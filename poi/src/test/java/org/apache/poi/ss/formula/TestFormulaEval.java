@@ -100,14 +100,16 @@ class TestFormulaEval {
             HSSFCell c0 = r0.createCell(0);
             c0.setCellValue(1);
             HSSFCell cell = null;
-            for (int i = 1; i < 1200; i++) {
+            final int size = 1200;
+            for (int i = 1; i < size; i++) {
                 HSSFRow row = sheet.createRow(i);
                 cell = row.createCell(0);
-                cell.setCellFormula("SUM(A" + i + " + 1)");
+                cell.setCellFormula("A" + i + " + 1");
             }
             HSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
             //formulaEvaluator.evaluateAll(); //this workaround avoids the stackoverflow issue
             assertEquals(CellType.NUMERIC, formulaEvaluator.evaluateFormulaCell(cell));
+            assertEquals(size, cell.getNumericCellValue());
         }
     }
 }
