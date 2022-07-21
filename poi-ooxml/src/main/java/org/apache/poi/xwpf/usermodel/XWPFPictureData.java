@@ -147,7 +147,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PNG
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_GIF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_DIB
-     * @see {@link #getPictureTypeEnum()}
+     * @see #getPictureTypeEnum()
      */
     public int getPictureType() {
         String contentType = getPackagePart().getContentType();
