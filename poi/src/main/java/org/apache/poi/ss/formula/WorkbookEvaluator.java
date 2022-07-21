@@ -24,6 +24,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.Future;
 
@@ -58,7 +59,9 @@ public final class WorkbookEvaluator {
 
     private static final Logger LOG = LogManager.getLogger(WorkbookEvaluator.class);
 
-    private static ForkJoinPool forkJoinPool = new ForkJoinPool();
+    private static ExecutorService executorService;
+    private static boolean useExecutorService = false;
+    private static final Object executorServiceLock = new Object();
 
     private final EvaluationWorkbook _workbook;
     private EvaluationCache _cache;
@@ -85,6 +88,22 @@ public final class WorkbookEvaluator {
     private final Logger EVAL_LOG = LogManager.getLogger("POI.FormulaEval");
     // current indent level for evaluation; negative value for no output
     private int dbgEvaluationOutputIndent = -1;
+
+    /**
+     * @return whether WorkbookEvaluators use a {@link ExecutorService} to run some work asynchronously
+     * @since POI 5.2.3
+     */
+    public static boolean usesAsyncTasks() {
+        return useExecutorService;
+    }
+
+    /**
+     * @param useAsyncTasks sets whether WorkbookEvaluators use a {@link ExecutorService} to run some work asynchronously
+     * @since POI 5.2.3
+     */
+    public static void setUseAsyncTasks(boolean useAsyncTasks) {
+        useExecutorService = useAsyncTasks;
+    }
 
     /**
      * @param udfFinder pass {@code null} for default (AnalysisToolPak only)
@@ -538,13 +557,17 @@ public final class WorkbookEvaluator {
                 ec.setArrayMode(arrayMode);
 
 //                logDebug("invoke " + operation + " (nAgs=" + numops + ")");
-                Future<ValueEval> valueEvalFuture =
-                        forkJoinPool.submit(() -> OperationEvaluatorFactory.evaluate(optg, ops, ec));
 
-                try {
-                    opResult = valueEvalFuture.get();
-                } catch (Exception e) {
-                    throw new RuntimeException("Failed to evaluate downstream formula", e);
+                if (useExecutorService) {
+                    Future<ValueEval> valueEvalFuture =
+                            getExecutorService().submit(() -> OperationEvaluatorFactory.evaluate(optg, ops, ec));
+                    try {
+                        opResult = valueEvalFuture.get();
+                    } catch (Exception e) {
+                        throw new RuntimeException("Failed to evaluate downstream formula", e);
+                    }
+                } else {
+                    opResult = OperationEvaluatorFactory.evaluate(optg, ops, ec);
                 }
 
                 ec.setArrayMode(false);
@@ -1011,5 +1034,16 @@ public final class WorkbookEvaluator {
 
     public boolean isDebugEvaluationOutputForNextEval() {
         return dbgEvaluationOutputForNextEval;
+    }
+
+    private static ExecutorService getExecutorService() {
+        if (executorService == null) {
+            synchronized (executorServiceLock) {
+                if (executorService == null) {
+                    executorService = new ForkJoinPool();
+                }
+            }
+        }
+        return executorService;
     }
 }

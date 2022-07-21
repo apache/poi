@@ -25,12 +25,14 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TestFormulaEval {
 
@@ -74,9 +76,24 @@ class TestFormulaEval {
         }
     }
 
-    //@Disabled("currently causes a StackOverflowError")
     @Test
-    void testBug66152() throws IOException {
+    void testBug66152WithoutForkJoinPool() {
+        assertFalse(WorkbookEvaluator.usesAsyncTasks());
+        assertThrows(StackOverflowError.class, () -> _testBug66152());
+    }
+
+    @Test
+    void testBug66152WithForkJoinPool() throws IOException {
+        WorkbookEvaluator.setUseAsyncTasks(true);
+        try {
+            assertTrue(WorkbookEvaluator.usesAsyncTasks());
+            _testBug66152();
+        } finally {
+            WorkbookEvaluator.setUseAsyncTasks(false);
+        }
+    }
+
+    private void _testBug66152() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             HSSFRow r0 = sheet.createRow(0);
