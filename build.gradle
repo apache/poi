@@ -486,13 +486,13 @@ subprojects {
                             name = 'POI Users List'
                             subscribe = 'user-subscribe@poi.apache.org'
                             unsubscribe = 'user-unsubscribe@poi.apache.org'
-                            archive = 'http://mail-archives.apache.org/mod_mbox/poi-user/'
+                            archive = 'https://lists.apache.org/list.html?user@poi.apache.org'
                         }
                         mailingList {
                             name = 'POI Developer List'
                             subscribe = 'dev-subscribe@poi.apache.org'
                             unsubscribe = 'dev-unsubscribe@poi.apache.org'
-                            archive = 'http://mail-archives.apache.org/mod_mbox/poi-dev/'
+                            archive = 'https://lists.apache.org/list.html?dev@poi.apache.org'
                         }
                     }
 
@@ -507,6 +507,20 @@ subprojects {
                     organization {
                         name = 'Apache Software Foundation'
                         url = 'http://www.apache.org/'
+                    }
+
+                    issueManagement {
+                        system = 'bugzilla'
+                        url = 'https://bz.apache.org/bugzilla'
+                    }
+
+                    developers {
+                        developer {
+                            name = 'POI Team'
+                            id = 'poi'
+                            email = 'user@poi.apache.org'
+                            organization = 'Apache POI'
+                        }
                     }
 
                     withXml {
