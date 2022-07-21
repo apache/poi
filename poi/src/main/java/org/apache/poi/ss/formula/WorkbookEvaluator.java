@@ -24,6 +24,8 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Future;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -55,6 +57,8 @@ import static org.apache.logging.log4j.util.Unbox.box;
 public final class WorkbookEvaluator {
 
     private static final Logger LOG = LogManager.getLogger(WorkbookEvaluator.class);
+
+    private static ForkJoinPool forkJoinPool = new ForkJoinPool();
 
     private final EvaluationWorkbook _workbook;
     private EvaluationCache _cache;
@@ -534,7 +538,14 @@ public final class WorkbookEvaluator {
                 ec.setArrayMode(arrayMode);
 
 //                logDebug("invoke " + operation + " (nAgs=" + numops + ")");
-                opResult = OperationEvaluatorFactory.evaluate(optg, ops, ec);
+                Future<ValueEval> valueEvalFuture =
+                        forkJoinPool.submit(() -> OperationEvaluatorFactory.evaluate(optg, ops, ec));
+
+                try {
+                    opResult = valueEvalFuture.get();
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to evaluate downstream formula", e);
+                }
 
                 ec.setArrayMode(false);
 
