@@ -90,7 +90,7 @@ public final class WorkbookEvaluator {
     private int dbgEvaluationOutputIndent = -1;
 
     /**
-     * @return whether WorkbookEvaluators use a {@link ExecutorService} to run some work asynchronously
+     * @return whether WorkbookEvaluators use an {@link ExecutorService} to run some work asynchronously
      * @since POI 5.2.3
      */
     public static boolean usesAsyncTasks() {
@@ -98,6 +98,10 @@ public final class WorkbookEvaluator {
     }
 
     /**
+     * Set whether WorkbookEvaluators should use an {@link ExecutorService} to run some work asynchronously.
+     * This is recommended if you have to evaluate formulas that depend on cells via a deeply nested path.
+     * The default is <code>false</code>.
+     *
      * @param useAsyncTasks sets whether WorkbookEvaluators use a {@link ExecutorService} to run some work asynchronously
      * @since POI 5.2.3
      */
