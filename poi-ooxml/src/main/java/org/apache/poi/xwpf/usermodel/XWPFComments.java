@@ -17,6 +17,7 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.POIXMLRelation;
@@ -100,7 +101,7 @@ public class XWPFComments extends POIXMLDocumentPart {
      * Adds a picture to the comments.
      *
      * @param is     The stream to read image from
-     * @param format The format of the picture.
+     * @param format The format of the picture, see {@link Document}
      * @return the index to this picture (0 based), the added picture can be
      * obtained from {@link #getAllPictures()} .
      * @throws InvalidFormatException If the format of the picture is not known.
@@ -132,13 +133,13 @@ public class XWPFComments extends POIXMLDocumentPart {
      * Adds a picture to the comments.
      *
      * @param pictureData The picture data
-     * @param format      The format of the picture.
+     * @param format      The format of the picture, see {@link Document}
      * @return the index to this picture (0 based), the added picture can be
      * obtained from {@link #getAllPictures()} .
      * @throws InvalidFormatException If the format of the picture is not known.
      */
     public String addPictureData(byte[] pictureData, int format) throws InvalidFormatException {
-        return addPictureData(pictureData, PictureType.findById(format));
+        return addPictureData(pictureData, PictureType.findByOoxmlId(format));
     }
 
     /**
@@ -153,10 +154,10 @@ public class XWPFComments extends POIXMLDocumentPart {
      */
     public String addPictureData(byte[] pictureData, PictureType pictureType) throws InvalidFormatException {
         if (pictureType == null) {
-            throw new InvalidFormatException("pictureType parameter is invalid");
+            throw new InvalidFormatException("pictureType is not supported");
         }
         XWPFPictureData xwpfPicData = document.findPackagePictureData(pictureData);
-        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[pictureType.getId()];
+        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[pictureType.ooxmlId];
 
         if (xwpfPicData == null) {
             /* Part doesn't exist, create a new one */

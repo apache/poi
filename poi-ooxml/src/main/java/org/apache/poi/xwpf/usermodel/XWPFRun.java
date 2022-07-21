@@ -30,6 +30,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ooxml.util.POIXMLUnits;
@@ -1072,7 +1073,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public XWPFPicture addPicture(InputStream pictureData, int pictureType, String filename, int width, int height)
             throws InvalidFormatException, IOException {
-        return addPicture(pictureData, PictureType.findById(pictureType), filename, width, height);
+        return addPicture(pictureData, PictureType.findByOoxmlId(pictureType), filename, width, height);
     }
 
     /**
@@ -1090,7 +1091,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public XWPFPicture addPicture(InputStream pictureData, PictureType pictureType, String filename, int width, int height)
             throws InvalidFormatException, IOException {
         if (pictureType == null) {
-            throw new InvalidFormatException("pictureType parameter is invalid");
+            throw new InvalidFormatException("pictureType is not supported");
         }
         String relationId;
         XWPFPictureData picData;

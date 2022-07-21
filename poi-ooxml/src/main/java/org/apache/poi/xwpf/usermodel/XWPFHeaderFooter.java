@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.POIXMLRelation;
@@ -236,7 +237,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @see #addPictureData(byte[], PictureType)
      */
     public String addPictureData(byte[] pictureData, int format) throws InvalidFormatException {
-        return addPictureData(pictureData, PictureType.findById(format));
+        return addPictureData(pictureData, PictureType.findByOoxmlId(format));
     }
 
     /**
@@ -250,10 +251,10 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      */
     public String addPictureData(byte[] pictureData, PictureType pictureType) throws InvalidFormatException {
         if (pictureType == null) {
-            throw new InvalidFormatException("pictureType parameter is invalid");
+            throw new InvalidFormatException("pictureType is not supported");
         }
         XWPFPictureData xwpfPicData = document.findPackagePictureData(pictureData);
-        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[pictureType.getId()];
+        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[pictureType.ooxmlId];
 
         if (xwpfPicData == null) {
             /* Part doesn't exist, create a new one */

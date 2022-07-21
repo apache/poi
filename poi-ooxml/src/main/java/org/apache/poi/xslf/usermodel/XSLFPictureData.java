@@ -255,7 +255,7 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
             case EPS: return XSLFRelation.IMAGE_EPS;
             case BMP: return XSLFRelation.IMAGE_BMP;
             case WPG: return XSLFRelation.IMAGE_WPG;
-            case WDP: return XSLFRelation.IMAGE_WDP;
+            case WDP: return XSLFRelation.HDPHOTO_WDP;
             case TIFF: return XSLFRelation.IMAGE_TIFF;
             case SVG: return XSLFRelation.IMAGE_SVG;
             default: return null;

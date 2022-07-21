@@ -39,6 +39,7 @@ import javax.xml.namespace.QName;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
@@ -1486,7 +1487,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @see #addPictureData(byte[], PictureType)
      */
     public String addPictureData(byte[] pictureData, int format) throws InvalidFormatException {
-        return addPictureData(pictureData, PictureType.findById(format));
+        return addPictureData(pictureData, PictureType.findByOoxmlId(format));
     }
 
     /**
@@ -1501,10 +1502,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     public String addPictureData(byte[] pictureData, PictureType pictureType) throws InvalidFormatException {
         if (pictureType == null) {
-            throw new InvalidFormatException("pictureType parameter is invalid");
+            throw new InvalidFormatException("pictureType is not supported");
         }
         XWPFPictureData xwpfPicData = findPackagePictureData(pictureData);
-        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[pictureType.getId()];
+        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[pictureType.ooxmlId];
 
         if (xwpfPicData == null) {
             /* Part doesn't exist, create a new one */
@@ -1584,7 +1585,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @see #getNextPicNameNumber(PictureType)
      */
     public int getNextPicNameNumber(int format) throws InvalidFormatException {
-        return getNextPicNameNumber(PictureType.findById(format));
+        return getNextPicNameNumber(PictureType.findByOoxmlId(format));
     }
 
     /**
@@ -1597,14 +1598,14 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     public int getNextPicNameNumber(PictureType pictureType) throws InvalidFormatException {
         if (pictureType == null) {
-            throw new InvalidFormatException("pictureType parameter is invalid");
+            throw new InvalidFormatException("pictureType is not supported");
         }
         int img = getAllPackagePictures().size() + 1;
-        String proposal = XWPFPictureData.RELATIONS[pictureType.getId()].getFileName(img);
+        String proposal = XWPFPictureData.RELATIONS[pictureType.ooxmlId].getFileName(img);
         PackagePartName createPartName = PackagingURIHelper.createPartName(proposal);
         while (this.getPackage().getPart(createPartName) != null) {
             img++;
-            proposal = XWPFPictureData.RELATIONS[pictureType.getId()].getFileName(img);
+            proposal = XWPFPictureData.RELATIONS[pictureType.ooxmlId].getFileName(img);
             createPartName = PackagingURIHelper.createPartName(proposal);
         }
         return img;

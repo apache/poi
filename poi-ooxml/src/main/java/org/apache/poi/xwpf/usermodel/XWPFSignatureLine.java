@@ -22,6 +22,7 @@ import javax.xml.namespace.QName;
 
 import com.microsoft.schemas.office.office.CTSignatureLine;
 import com.microsoft.schemas.vml.CTImageData;
+import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.crypt.dsig.SignatureLine;
@@ -83,6 +84,8 @@ public class XWPFSignatureLine extends SignatureLine {
                 return PictureType.WMF;
             case WPG:
                 return PictureType.WPG;
+            case WDP:
+                return PictureType.WDP;
             default:
                 throw new InvalidFormatException("Unsupported picture format "+type);
         }

@@ -20,12 +20,13 @@ package org.apache.poi.xwpf.usermodel;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
-import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.HDPHOTO_PART;
 import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.IMAGE_PART;
 
 public final class XWPFRelation extends POIXMLRelation {
@@ -158,69 +159,75 @@ public final class XWPFRelation extends POIXMLRelation {
      * Supported image formats
      */
     public static final XWPFRelation IMAGE_EMF = new XWPFRelation(
-            PictureData.PictureType.EMF.contentType,
+            PictureType.EMF.contentType,
             IMAGE_PART,
             "/word/media/image#.emf",
             XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_WMF = new XWPFRelation(
-            PictureData.PictureType.WMF.contentType,
+            PictureType.WMF.contentType,
             IMAGE_PART,
             "/word/media/image#.wmf",
             XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_PICT = new XWPFRelation(
-            PictureData.PictureType.PICT.contentType,
+            PictureType.PICT.contentType,
             IMAGE_PART,
             "/word/media/image#.pict",
             XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_JPEG = new XWPFRelation(
-            PictureData.PictureType.JPEG.contentType,
+            PictureType.JPEG.contentType,
             IMAGE_PART,
             "/word/media/image#.jpeg",
             XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_PNG = new XWPFRelation(
-            PictureData.PictureType.PNG.contentType,
+            PictureType.PNG.contentType,
             IMAGE_PART,
             "/word/media/image#.png",
             XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_DIB = new XWPFRelation(
-            PictureData.PictureType.DIB.contentType,
+            PictureType.DIB.contentType,
             IMAGE_PART,
             "/word/media/image#.dib",
             XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_GIF = new XWPFRelation(
-            PictureData.PictureType.GIF.contentType,
+            PictureType.GIF.contentType,
             IMAGE_PART,
             "/word/media/image#.gif",
             XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_TIFF = new XWPFRelation(
-            PictureData.PictureType.TIFF.contentType,
+            PictureType.TIFF.contentType,
             IMAGE_PART,
             "/word/media/image#.tiff",
             XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_EPS = new XWPFRelation(
-            PictureData.PictureType.EPS.contentType,
+            PictureType.EPS.contentType,
             IMAGE_PART,
             "/word/media/image#.eps",
             XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_BMP = new XWPFRelation(
-            PictureData.PictureType.BMP.contentType,
+            PictureType.BMP.contentType,
             IMAGE_PART,
             "/word/media/image#.bmp",
             XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGE_WPG = new XWPFRelation(
-            PictureData.PictureType.WPG.contentType,
+            PictureType.WPG.contentType,
             IMAGE_PART,
             "/word/media/image#.wpg",
+            XWPFPictureData::new, XWPFPictureData::new
+    );
+    public static final XWPFRelation HDPHOTO_WDP = new XWPFRelation(
+            PictureType.WDP.contentType,
+            HDPHOTO_PART,
+            "/ppt/media/hdphoto#.wdp",
             XWPFPictureData::new, XWPFPictureData::new
     );
     public static final XWPFRelation IMAGES = new XWPFRelation(
