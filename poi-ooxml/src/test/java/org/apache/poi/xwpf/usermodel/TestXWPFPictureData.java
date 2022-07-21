@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -59,6 +60,17 @@ class TestXWPFPictureData {
             assertNotNull(pict);
             assertEquals("jpeg", pict.suggestFileExtension());
             assertArrayEquals(pictureData, pict.getData());
+
+            byte[] pictureData2 = XWPFTestDataSamples.getImage("nature1.png");
+
+            String relationId2 = sampleDoc.addPictureData(pictureData2, PictureType.PNG);
+            assertNotEquals(relationId, relationId2);
+            // picture list was updated
+            assertEquals(num + 2, pictures.size());
+            XWPFPictureData pict2 = (XWPFPictureData) sampleDoc.getRelationById(relationId2);
+            assertNotNull(pict2);
+            assertEquals("png", pict2.suggestFileExtension());
+            assertArrayEquals(pictureData2, pict2.getData());
         }
     }
 
