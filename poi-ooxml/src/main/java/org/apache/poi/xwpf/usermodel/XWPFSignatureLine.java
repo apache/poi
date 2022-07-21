@@ -22,7 +22,6 @@ import javax.xml.namespace.QName;
 
 import com.microsoft.schemas.office.office.CTSignatureLine;
 import com.microsoft.schemas.vml.CTImageData;
-import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.crypt.dsig.SignatureLine;
@@ -60,30 +59,30 @@ public class XWPFSignatureLine extends SignatureLine {
         imageData.setId2(relId);
     }
 
-    private static int mapType(PictureType type) throws InvalidFormatException {
+    private static PictureType mapType(org.apache.poi.common.usermodel.PictureType type) throws InvalidFormatException {
         switch (type) {
             case BMP:
-                return Document.PICTURE_TYPE_BMP;
+                return PictureType.BMP;
             case DIB:
-                return Document.PICTURE_TYPE_DIB;
+                return PictureType.DIB;
             case EMF:
-                return Document.PICTURE_TYPE_EMF;
+                return PictureType.EMF;
             case EPS:
-                return Document.PICTURE_TYPE_EPS;
+                return PictureType.EPS;
             case GIF:
-                return Document.PICTURE_TYPE_GIF;
+                return PictureType.GIF;
             case JPEG:
-                return Document.PICTURE_TYPE_JPEG;
+                return PictureType.JPEG;
             case PICT:
-                return Document.PICTURE_TYPE_PICT;
+                return PictureType.PICT;
             case PNG:
-                return Document.PICTURE_TYPE_PNG;
+                return PictureType.PNG;
             case TIFF:
-                return Document.PICTURE_TYPE_TIFF;
+                return PictureType.TIFF;
             case WMF:
-                return Document.PICTURE_TYPE_WMF;
+                return PictureType.WMF;
             case WPG:
-                return Document.PICTURE_TYPE_WPG;
+                return PictureType.WPG;
             default:
                 throw new InvalidFormatException("Unsupported picture format "+type);
         }

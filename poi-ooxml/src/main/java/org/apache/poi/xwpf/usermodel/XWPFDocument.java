@@ -1455,7 +1455,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         }
     }
 
-    XWPFPictureData findPackagePictureData(byte[] pictureData, int format) {
+    XWPFPictureData findPackagePictureData(byte[] pictureData) {
         long checksum = IOUtils.calculateChecksum(pictureData);
         XWPFPictureData xwpfPicData = null;
         /*
@@ -1475,13 +1475,40 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return xwpfPicData;
     }
 
+    /**
+     * Adds a picture to the document.
+     *
+     * @param pictureData The picture data
+     * @param format the format of the picture, see constants in {@link Document}
+     * @return the index to this picture (0 based), the added picture can be
+     * obtained from {@link #getAllPictures()} .
+     * @throws InvalidFormatException if the format is not known
+     * @see #addPictureData(byte[], PictureType)
+     */
     public String addPictureData(byte[] pictureData, int format) throws InvalidFormatException {
-        XWPFPictureData xwpfPicData = findPackagePictureData(pictureData, format);
-        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[format];
+        return addPictureData(pictureData, PictureType.findById(format));
+    }
+
+    /**
+     * Adds a picture to the document.
+     *
+     * @param pictureData The picture data
+     * @param pictureType the {@link PictureType}
+     * @return the index to this picture (0 based), the added picture can be
+     * obtained from {@link #getAllPictures()} .
+     * @throws InvalidFormatException if the format is not known
+     * @since POI 5.2.3
+     */
+    public String addPictureData(byte[] pictureData, PictureType pictureType) throws InvalidFormatException {
+        if (pictureType == null) {
+            throw new InvalidFormatException("pictureType parameter is invalid");
+        }
+        XWPFPictureData xwpfPicData = findPackagePictureData(pictureData);
+        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[pictureType.getId()];
 
         if (xwpfPicData == null) {
             /* Part doesn't exist, create a new one */
-            int idx = getNextPicNameNumber(format);
+            int idx = getNextPicNameNumber(pictureType);
             xwpfPicData = (XWPFPictureData) createRelationship(relDesc, XWPFFactory.getInstance(), idx);
             /* write bytes to new part */
             PackagePart picDataPart = xwpfPicData.getPackagePart();
@@ -1510,6 +1537,16 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         }
     }
 
+    /**
+     * Adds a picture to the document.
+     *
+     * @param is The picture data
+     * @param format the format of the picture, see constants in {@link Document}
+     * @return the index to this picture (0 based), the added picture can be
+     * obtained from {@link #getAllPictures()} .
+     * @throws InvalidFormatException if the format is not known
+     * @see #addPictureData(InputStream, PictureType)
+     */
     public String addPictureData(InputStream is, int format) throws InvalidFormatException {
         try {
             byte[] data = IOUtils.toByteArrayWithMaxLength(is, XWPFPictureData.getMaxImageSize());
@@ -1520,18 +1557,54 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
+     * Adds a picture to the document.
+     *
+     * @param is The picture data
+     * @param pictureType the {@link PictureType}
+     * @return the index to this picture (0 based), the added picture can be
+     * obtained from {@link #getAllPictures()} .
+     * @throws InvalidFormatException if the pictureType is not known
+     * @since POI 5.2.3
+     */
+    public String addPictureData(InputStream is, PictureType pictureType) throws InvalidFormatException {
+        try {
+            byte[] data = IOUtils.toByteArrayWithMaxLength(is, XWPFPictureData.getMaxImageSize());
+            return addPictureData(data, pictureType);
+        } catch (IOException e) {
+            throw new POIXMLException(e);
+        }
+    }
+
+    /**
      * get the next free ImageNumber
      *
+     * @param format the format of the picture, see constants in {@link Document}
      * @return the next free ImageNumber
      * @throws InvalidFormatException If the format of the picture is not known.
+     * @see #getNextPicNameNumber(PictureType)
      */
     public int getNextPicNameNumber(int format) throws InvalidFormatException {
+        return getNextPicNameNumber(PictureType.findById(format));
+    }
+
+    /**
+     * get the next free ImageNumber
+     *
+     * @param pictureType the {@link PictureType}
+     * @return the next free ImageNumber
+     * @throws InvalidFormatException If the pictureType of the picture is not known.
+     * @since POI 5.2.3
+     */
+    public int getNextPicNameNumber(PictureType pictureType) throws InvalidFormatException {
+        if (pictureType == null) {
+            throw new InvalidFormatException("pictureType parameter is invalid");
+        }
         int img = getAllPackagePictures().size() + 1;
-        String proposal = XWPFPictureData.RELATIONS[format].getFileName(img);
+        String proposal = XWPFPictureData.RELATIONS[pictureType.getId()].getFileName(img);
         PackagePartName createPartName = PackagingURIHelper.createPartName(proposal);
         while (this.getPackage().getPart(createPartName) != null) {
             img++;
-            proposal = XWPFPictureData.RELATIONS[format].getFileName(img);
+            proposal = XWPFPictureData.RELATIONS[pictureType.getId()].getFileName(img);
             createPartName = PackagingURIHelper.createPartName(proposal);
         }
         return img;

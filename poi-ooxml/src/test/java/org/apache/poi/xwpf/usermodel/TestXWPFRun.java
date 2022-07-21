@@ -446,6 +446,8 @@ class TestXWPFRun {
                 for (XWPFPicture pic : pictures) {
                     assertNotNull(pic.getPictureData());
                     assertEquals("DOZOR", pic.getDescription());
+                    assertEquals(5, pic.getPictureData().getPictureType());
+                    assertEquals(PictureType.JPEG, pic.getPictureData().getPictureTypeEnum());
                 }
 
                 count += pictures.size();

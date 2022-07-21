@@ -233,14 +233,31 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @param format      The format of the picture.
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
      * @throws InvalidFormatException If the format of the picture is not known.
+     * @see #addPictureData(byte[], PictureType)
      */
     public String addPictureData(byte[] pictureData, int format) throws InvalidFormatException {
-        XWPFPictureData xwpfPicData = document.findPackagePictureData(pictureData, format);
-        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[format];
+        return addPictureData(pictureData, PictureType.findById(format));
+    }
+
+    /**
+     * Adds a picture to the document.
+     *
+     * @param pictureData The picture data
+     * @param pictureType The {@link PictureType} of the picture.
+     * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
+     * @throws InvalidFormatException If the format of the picture is not known.
+     * @since POI 5.2.3
+     */
+    public String addPictureData(byte[] pictureData, PictureType pictureType) throws InvalidFormatException {
+        if (pictureType == null) {
+            throw new InvalidFormatException("pictureType parameter is invalid");
+        }
+        XWPFPictureData xwpfPicData = document.findPackagePictureData(pictureData);
+        POIXMLRelation relDesc = XWPFPictureData.RELATIONS[pictureType.getId()];
 
         if (xwpfPicData == null) {
             /* Part doesn't exist, create a new one */
-            int idx = document.getNextPicNameNumber(format);
+            int idx = document.getNextPicNameNumber(pictureType);
             xwpfPicData = (XWPFPictureData) createRelationship(relDesc, XWPFFactory.getInstance(), idx);
             /* write bytes to new part */
             PackagePart picDataPart = xwpfPicData.getPackagePart();
@@ -277,10 +294,26 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
      * @throws InvalidFormatException If the format of the picture is not known.
      * @throws IOException If reading the picture-data from the stream fails.
+     * @see #addPictureData(InputStream, PictureType)
      */
     public String addPictureData(InputStream is, int format) throws InvalidFormatException, IOException {
         byte[] data = IOUtils.toByteArrayWithMaxLength(is, XWPFPictureData.getMaxImageSize());
         return addPictureData(data, format);
+    }
+
+    /**
+     * Adds a picture to the document.
+     *
+     * @param is     The stream to read image from
+     * @param pictureType The {@link PictureType} of the picture.
+     * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
+     * @throws InvalidFormatException If the format of the picture is not known.
+     * @throws IOException If reading the picture-data from the stream fails.
+     * @since POI 5.2.3
+     */
+    public String addPictureData(InputStream is, PictureType pictureType) throws InvalidFormatException, IOException {
+        byte[] data = IOUtils.toByteArrayWithMaxLength(is, XWPFPictureData.getMaxImageSize());
+        return addPictureData(data, pictureType);
     }
 
     /**

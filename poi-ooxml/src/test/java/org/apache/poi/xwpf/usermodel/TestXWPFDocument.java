@@ -301,7 +301,7 @@ public final class TestXWPFDocument {
     void testFindPackagePictureData() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("issue_51265_1.docx")) {
             byte[] nature1 = XWPFTestDataSamples.getImage("nature1.gif");
-            XWPFPictureData part = doc.findPackagePictureData(nature1, Document.PICTURE_TYPE_GIF);
+            XWPFPictureData part = doc.findPackagePictureData(nature1);
             assertNotNull(part);
             assertTrue(doc.getAllPictures().contains(part));
             assertTrue(doc.getAllPackagePictures().contains(part));

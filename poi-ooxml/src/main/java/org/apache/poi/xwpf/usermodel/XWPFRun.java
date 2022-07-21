@@ -1066,10 +1066,32 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PICT
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_JPEG
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PNG
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_GIF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_DIB
+     * @see #addPicture(InputStream, PictureType, String, int, int)
      */
     public XWPFPicture addPicture(InputStream pictureData, int pictureType, String filename, int width, int height)
             throws InvalidFormatException, IOException {
+        return addPicture(pictureData, PictureType.findById(pictureType), filename, width, height);
+    }
+
+    /**
+     * Adds a picture to the run. This method handles
+     * attaching the picture data to the overall file.
+     *
+     * @param pictureData The raw picture data
+     * @param pictureType The {@link PictureType} of the picture
+     * @param width       width in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @param height      height in EMUs. To convert to / from points use {@link org.apache.poi.util.Units}
+     * @throws InvalidFormatException If the format of the picture is not known.
+     * @throws IOException            If reading the picture-data from the stream fails.
+     * @since POI 5.2.3
+     */
+    public XWPFPicture addPicture(InputStream pictureData, PictureType pictureType, String filename, int width, int height)
+            throws InvalidFormatException, IOException {
+        if (pictureType == null) {
+            throw new InvalidFormatException("pictureType parameter is invalid");
+        }
         String relationId;
         XWPFPictureData picData;
 
