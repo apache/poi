@@ -20,6 +20,7 @@ import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +44,7 @@ public class TestXSLFDiagram {
     }
 
     private static String colorToHex(Color color) {
-        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+        return String.format(LocaleUtil.getUserLocale(), "#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 
     private static Color hexToColor(String hex) {
