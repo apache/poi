@@ -41,8 +41,7 @@ public class TestXSLFDiagram {
                 .map(s -> (XSLFDiagram) s)
                 .collect(Collectors.toList());
     }
-
-    // https://stackoverflow.com/a/3607942
+    
     private static String colorToHex(Color color) {
         return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
