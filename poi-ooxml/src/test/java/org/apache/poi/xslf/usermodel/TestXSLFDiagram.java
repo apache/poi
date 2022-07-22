@@ -143,7 +143,6 @@ public class TestXSLFDiagram {
             assertEquals(TextAlign.RIGHT, greenCircleText.getTextParagraphs().get(0).getTextAlign());
 
             // Shape 4 - Circle with Picture Fill - no text
-            XSLFSlide slide1 = inputPptx.getSlides().get(0);
             XSLFAutoShape pictureShape = (XSLFAutoShape) shapes.get(6);
             assertTrue(pictureShape.getText().isEmpty(), "text is empty?");
             XSLFTexturePaint texturePaint = (XSLFTexturePaint) pictureShape.getFillPaint();
