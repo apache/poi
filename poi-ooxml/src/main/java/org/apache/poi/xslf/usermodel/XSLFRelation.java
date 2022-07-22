@@ -150,6 +150,13 @@ public final class XSLFRelation extends POIXMLRelation {
         XSLFChart::new, XSLFChart::new
     );
 
+    public static final XSLFRelation DIAGRAM_DRAWING = new XSLFRelation(
+            "application/vnd.ms-office.drawingml.diagramDrawing+xml",
+            "http://schemas.microsoft.com/office/2007/relationships/diagramDrawing",
+            "/ppt/diagrams/drawing#.xml",
+            XSLFDiagramDrawing::new, XSLFDiagramDrawing::new
+    );
+
     public static final XSLFRelation IMAGE_EMF = new XSLFRelation(
         PictureType.EMF.contentType,
         IMAGE_PART,

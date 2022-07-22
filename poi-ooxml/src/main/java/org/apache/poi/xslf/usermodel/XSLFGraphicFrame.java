@@ -53,7 +53,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 @Beta
 public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFShape, XSLFTextParagraph> {
     private static final String DRAWINGML_CHART_URI = "http://schemas.openxmlformats.org/drawingml/2006/chart";
-    private static final String DRAWINGML_DIAGRAM_URI = "http://schemas.openxmlformats.org/drawingml/2006/diagram";
     private static final Logger LOG = LogManager.getLogger(XSLFGraphicFrame.class);
 
     /*package*/ XSLFGraphicFrame(CTGraphicalObjectFrame shape, XSLFSheet sheet){
@@ -100,6 +99,8 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
             return new XSLFTable(shape, sheet);
         case XSLFObjectShape.OLE_URI:
             return new XSLFObjectShape(shape, sheet);
+        case XSLFDiagram.DRAWINGML_DIAGRAM_URI:
+            return new XSLFDiagram(shape, sheet);
         default:
             return new XSLFGraphicFrame(shape, sheet);
         }
@@ -177,7 +178,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
      */
     public boolean hasDiagram() {
         String uri = getGraphicalData().getUri();
-        return uri.equals(DRAWINGML_DIAGRAM_URI);
+        return uri.equals(XSLFDiagram.DRAWINGML_DIAGRAM_URI);
     }
 
     private CTGraphicalObjectData getGraphicalData() {
@@ -211,7 +212,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
 
         CTGraphicalObjectData data = getGraphicalData();
         String uri = data.getUri();
-        if(uri.equals(DRAWINGML_DIAGRAM_URI)){
+        if(uri.equals(XSLFDiagram.DRAWINGML_DIAGRAM_URI)){
             copyDiagram(data, (XSLFGraphicFrame)sh);
         } if(uri.equals(DRAWINGML_CHART_URI)){
             copyChart(data, (XSLFGraphicFrame)sh);
@@ -256,7 +257,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
 
     // TODO should be moved to a sub-class
     private void copyDiagram(CTGraphicalObjectData objData, XSLFGraphicFrame srcShape){
-        String xpath = "declare namespace dgm='" + DRAWINGML_DIAGRAM_URI + "' $this//dgm:relIds";
+        String xpath = "declare namespace dgm='" + XSLFDiagram.DRAWINGML_DIAGRAM_URI + "' $this//dgm:relIds";
         XmlObject[] obj = objData.selectPath(xpath);
         if(obj != null && obj.length == 1) {
             XSLFSheet sheet = srcShape.getSheet();
