@@ -2490,3 +2490,17 @@ org/w3/x2000/x09/xmldsig/impl/SignedInfoTypeImpl
 org/w3/x2000/x09/xmldsig/impl/TransformDocumentImpl
 org/w3/x2000/x09/xmldsig/impl/TransformTypeImpl
 org/w3/x2000/x09/xmldsig/impl/X509IssuerSerialTypeImpl
+com/microsoft/schemas/office/drawing/x2008/diagram/DrawingDocument
+com/microsoft/schemas/office/drawing/x2008/diagram/impl/DrawingDocumentImpl
+org/openxmlformats/schemas/drawingml/x2006/diagram/impl/CTRelIdsImpl
+org/openxmlformats/schemas/drawingml/x2006/diagram/CTRelIds
+com/microsoft/schemas/office/drawing/x2008/diagram/impl/CTDrawingImpl
+com/microsoft/schemas/office/drawing/x2008/diagram/CTDrawing
+com/microsoft/schemas/office/drawing/x2008/diagram/impl/CTGroupShapeImpl
+com/microsoft/schemas/office/drawing/x2008/diagram/CTGroupShape
+com/microsoft/schemas/office/drawing/x2008/diagram/CTShape
+com/microsoft/schemas/office/drawing/x2008/diagram/impl/CTGroupShapeNonVisualImpl
+com/microsoft/schemas/office/drawing/x2008/diagram/CTGroupShapeNonVisual
+com/microsoft/schemas/office/drawing/x2008/diagram/impl/CTShapeImpl
+com/microsoft/schemas/office/drawing/x2008/diagram/impl/CTShapeNonVisualImpl
+com/microsoft/schemas/office/drawing/x2008/diagram/CTShapeNonVisual

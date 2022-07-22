@@ -86,6 +86,9 @@ public class TestAllFiles {
         "poifs/protected_sha512.xlsx",
         "poifs/60320-protected.xlsx",
         "poifs/protected_sha512.xlsx",
+
+        // exclude to https://bz.apache.org/bugzilla/show_bug.cgi?id=66176#c2
+        "slideshow/smartart-simple.pptx",
     };
 
     // cheap workaround of skipping the few problematic files
