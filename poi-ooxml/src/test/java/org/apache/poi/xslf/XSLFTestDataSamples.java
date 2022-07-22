@@ -16,12 +16,15 @@
 ==================================================================== */
 package org.apache.poi.xslf;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 
 public class XSLFTestDataSamples {
@@ -32,6 +35,11 @@ public class XSLFTestDataSamples {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static XMLSlideShow openSampleDocumentReadOnly(String sampleName) throws InvalidFormatException {
+        File file = POIDataSamples.getSlideShowInstance().getFile(sampleName);
+        return new XMLSlideShow(OPCPackage.open(file, PackageAccess.READ));
     }
 
     public static XMLSlideShow writeOutAndReadBack(XMLSlideShow doc) throws IOException {
