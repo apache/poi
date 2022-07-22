@@ -23,7 +23,6 @@ import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.awt.Color;
@@ -40,7 +39,13 @@ public class TestXSLFDiagram {
     private static List<XSLFDiagram> extractDiagrams(XMLSlideShow slideShow) {
         return slideShow.getSlides()
                 .stream()
-                .flatMap(s -> s.getShapes().stream())
+                .flatMap(s -> extractDiagrams(s).stream())
+                .collect(Collectors.toList());
+    }
+
+    private static List<XSLFDiagram> extractDiagrams(XSLFSlide slide) {
+        return slide.getShapes()
+                .stream()
                 .filter(s -> s instanceof XSLFDiagram)
                 .map(s -> (XSLFDiagram) s)
                 .collect(Collectors.toList());
@@ -65,7 +70,6 @@ public class TestXSLFDiagram {
         }
     }
 
-    @Disabled("https://bz.apache.org/bugzilla/show_bug.cgi?id=66176#c2")
     @Test
     public void testHasDiagramReadOnlyFile() throws IOException, InvalidFormatException {
         try (XMLSlideShow inputPptx = XSLFTestDataSamples.openSampleDocumentReadOnly(SIMPLE_DIAGRAM)) {
@@ -139,8 +143,9 @@ public class TestXSLFDiagram {
             assertEquals(TextAlign.RIGHT, greenCircleText.getTextParagraphs().get(0).getTextAlign());
 
             // Shape 4 - Circle with Picture Fill - no text
+            XSLFSlide slide1 = inputPptx.getSlides().get(0);
             XSLFAutoShape pictureShape = (XSLFAutoShape) shapes.get(6);
-            assertTrue(pictureShape.getText().isEmpty());
+            assertTrue(pictureShape.getText().isEmpty(), "text is empty?");
             XSLFTexturePaint texturePaint = (XSLFTexturePaint) pictureShape.getFillPaint();
             assertEquals(ContentTypes.IMAGE_JPEG, texturePaint.getContentType());
         }

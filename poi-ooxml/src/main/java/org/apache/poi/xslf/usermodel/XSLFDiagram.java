@@ -33,6 +33,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
 import javax.xml.namespace.QName;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -75,6 +76,7 @@ public class XSLFDiagram extends XSLFGraphicFrame {
     public static final String DRAWINGML_DIAGRAM_URI = "http://schemas.openxmlformats.org/drawingml/2006/diagram";
     private final XSLFDiagramDrawing _drawing;
     private final XSLFGroupShape _groupShape;
+    private final HashMap<String, POIXMLDocumentPart> blipDocumentParts = new HashMap<>();
 
     /* package protected */ XSLFDiagram(CTGraphicalObjectFrame shape, XSLFSheet sheet) {
         super(shape, sheet);
@@ -129,7 +131,7 @@ public class XSLFDiagram extends XSLFGraphicFrame {
     }
 
     // If the shape has text, two XSLFShapes are created. One shape element and one textbox element.
-    public List<org.openxmlformats.schemas.presentationml.x2006.main.CTShape> convertShape(CTShape msShapeCt, XSLFSheet sheet) {
+    public List<org.openxmlformats.schemas.presentationml.x2006.main.CTShape> convertShape(CTShape msShapeCt) {
         org.openxmlformats.schemas.presentationml.x2006.main.CTShape shapeCt
                 = org.openxmlformats.schemas.presentationml.x2006.main.CTShape.Factory.newInstance();
 
@@ -152,18 +154,17 @@ public class XSLFDiagram extends XSLFGraphicFrame {
             shapes.add(textShapeCT);
         }
 
+        return shapes;
+    }
+
+    private void mapDocumentParts(CTShape msShapeCt) {
         if (hasBlipEmbed(msShapeCt)) {
             String embedId = msShapeCt.getSpPr().getBlipFill().getBlip().getEmbed();
             POIXMLDocumentPart part = _drawing.getRelationById(embedId);
             if (part != null) {
-                // When reading the blip, POI looks into the `slide#.xml.rels` file. However, the blip relationship is
-                // defined inside `drawing#.xml.rels`. Copy this relationship to the parent.
-                POIXMLDocumentPart.RelationPart updatedRelation = sheet.addRelation(null, XSLFRelation.IMAGES, part);
-                shapeCt.getSpPr().getBlipFill().getBlip().setEmbed(updatedRelation.getRelationship().getId());
+                blipDocumentParts.put(embedId, part);
             }
         }
-
-        return shapes;
     }
 
     private org.openxmlformats.schemas.presentationml.x2006.main.CTShape convertText(CTShape msShapeCt, CTShapeNonVisual nonVisualCt) {
@@ -215,6 +216,10 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         return _groupShape;
     }
 
+    POIXMLDocumentPart getDocumentPart(String blipId) {
+        return blipDocumentParts.get(blipId);
+    }
+
     private XSLFGroupShape convertMsGroupToGroupShape(CTGroupShape msGroupShapeCt, XSLFSheet sheet) {
         org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape groupShapeCt
                 = org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape.Factory.newInstance();
@@ -227,7 +232,8 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         groupShapeNonVisualCt.setNvPr(CTApplicationNonVisualDrawingProps.Factory.newInstance());
 
         for (CTShape msShapeCt : msGroupShapeCt.getSpList()) {
-            List<org.openxmlformats.schemas.presentationml.x2006.main.CTShape> shapes = convertShape(msShapeCt, sheet);
+            List<org.openxmlformats.schemas.presentationml.x2006.main.CTShape> shapes = convertShape(msShapeCt);
+            mapDocumentParts(msShapeCt);
             groupShapeCt.getSpList().addAll(shapes);
         }
 

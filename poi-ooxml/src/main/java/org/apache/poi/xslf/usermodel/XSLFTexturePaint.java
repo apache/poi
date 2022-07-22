@@ -19,12 +19,13 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -66,22 +67,24 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
     }
 
 
-    private PackagePart getPart() {
-        try {
-            String blipId = blip.getEmbed();
-            PackageRelationship rel = parentPart.getRelationship(blipId);
-            return parentPart.getRelatedPart(rel);
-        } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
+    private PackagePart getPart() throws InvalidFormatException {
+        String blipId = blip.getEmbed();
+        for (XSLFDiagram diagram : extractDiagrams(sheet.getSlideShow())) {
+            POIXMLDocumentPart documentPart = diagram.getDocumentPart(blipId);
+            if (documentPart != null) {
+                return documentPart.getPackagePart();
+            }
         }
+        PackageRelationship rel = parentPart.getRelationship(blipId);
+        return parentPart.getRelatedPart(rel);
     }
 
     @Override
     public InputStream getImageData() {
         try {
             return getPart().getInputStream();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to read image data", e);
         }
     }
 
@@ -90,8 +93,12 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
         if (blip == null || !blip.isSetEmbed() || blip.getEmbed().isEmpty()) {
             return null;
         }
-        /* TOOD: map content-type */
-        return getPart().getContentType();
+        //TODO map content-type
+        try {
+            return getPart().getContentType();
+        } catch (InvalidFormatException e) {
+            throw new RuntimeException("Failed to read package part", e);
+        }
     }
 
     @Override
@@ -184,5 +191,14 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
 
     private static int getRectVal(Supplier<Boolean> isSet, Supplier<STPercentage> val) {
         return isSet.get() ? POIXMLUnits.parsePercent(val.get()) : 0;
+    }
+
+    private static List<XSLFDiagram> extractDiagrams(XMLSlideShow slideShow) {
+        return slideShow.getSlides()
+                .stream()
+                .flatMap(s -> s.getShapes().stream())
+                .filter(s -> s instanceof XSLFDiagram)
+                .map(s -> (XSLFDiagram) s)
+                .collect(Collectors.toList());
     }
 }
