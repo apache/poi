@@ -17,6 +17,7 @@
 package org.apache.poi.examples.xslf;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xslf.usermodel.*;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
@@ -48,7 +49,7 @@ public class SmartArtConversionDemo {
 
         File inputFile = new File(args[0]);
         if (!inputFile.exists()) {
-            System.out.printf("Unable to find input file at path: %s", args[0]);
+            System.out.printf(LocaleUtil.getUserLocale(), "Unable to find input file at path: %s", args[0]);
             System.exit(1);
         }
 
