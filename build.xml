@@ -957,9 +957,9 @@ under the License.
             <zipfileset src="${ooxml.xsds.izip.1}"/>
             <fileset dir="${ooxml.visio.xsd.dir}"/>
             <fileset dir="${ooxml.schema.xsdconfig.dir}" includes="ooxmlSchemas.xsdconfig,markup-compatibility.xsd,vmlDrawing.xsd"/>
+            <fileset dir="${ooxml.schema.xsdconfig.dir}" includes="dml-drawing.xsd,word12.xsd,XAdES*.xsd,xlThreaded*.xsd,xmldsig*.xsd"/>
             <zipfileset src="${ooxml.xsds.izip.2}" includes="opc-digSig.xsd,opc-relationships.xsd"/>
             <fileset dir="${ooxml.security.xsd.dir}" includes="signatureInfo.xsd"/>
-            <fileset dir="${ooxml.schema.xsdconfig.dir}" includes="dml-drawing.xml,word12.xsd,XAdES*.xsd,*.xsdconfig,xlThreaded*.xsd,xmldsig*.xsd"/>
         </copy>
 
         <taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
