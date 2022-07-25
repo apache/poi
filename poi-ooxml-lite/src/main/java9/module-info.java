@@ -23,8 +23,6 @@ open module org.apache.poi.ooxml.schemas {
     requires java.xml;
 
 
-
-
     exports com.microsoft.schemas.compatibility;
     exports com.microsoft.schemas.office.drawing.x2008.diagram;
     exports com.microsoft.schemas.office.excel;

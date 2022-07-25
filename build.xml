@@ -1074,8 +1074,10 @@ under the License.
                 </filterchain>
             </loadresource>
 
+            <echo message="Building classes for @{module}"/>
+
             <!-- compile the sources -->
-            <javac release="8"
+            <javac
                    target="${jdk.version.class}"
                    source="${jdk.version.source}"
                    destdir="@{classes}"
@@ -1096,6 +1098,8 @@ under the License.
                     <replacestring from="poi-" to=""/>
                 </filterchain>
             </loadresource>
+
+            <echo message="Building java9+ classes for @{module}"/>
 
             <!-- compile jigsaw files to sources, so we don't forget to update/provide them for Java 8 builds -->
             <javac release="9"
