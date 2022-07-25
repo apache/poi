@@ -32,7 +32,7 @@ open module org.apache.poi.ooxml.schemas {
     exports com.microsoft.schemas.office.spreadsheetml.x2020.threadedcomments2;
     exports com.microsoft.schemas.office.visio.x2012.main;
     exports com.microsoft.schemas.office.word;
-    exports com.microsoft.schemas.office.word.x2021.wordml;
+    exports com.microsoft.schemas.office.word.x2012.wordml;
     exports com.microsoft.schemas.office.x2006.digsig;
     exports com.microsoft.schemas.vml;
     exports org.apache.poi.schemas.ooxml.system.ooxml;
