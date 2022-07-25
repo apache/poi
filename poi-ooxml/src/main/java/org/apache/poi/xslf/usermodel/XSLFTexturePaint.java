@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.util.POIXMLUnits;
@@ -69,8 +68,9 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
 
     private PackagePart getPart() throws InvalidFormatException {
         String blipId = blip.getEmbed();
-        for (XSLFDiagram diagram : extractDiagrams(sheet.getSlideShow())) {
-            POIXMLDocumentPart documentPart = diagram.getDocumentPart(blipId);
+        if (shape.getParent() != null && shape.getParent() instanceof XSLFDiagram.XSLFDiagramGroupShape) {
+            XSLFDiagram.XSLFDiagramGroupShape diagramGroupShape = (XSLFDiagram.XSLFDiagramGroupShape) shape.getParent();
+            POIXMLDocumentPart documentPart = diagramGroupShape.getRelationById(blipId);
             if (documentPart != null) {
                 return documentPart.getPackagePart();
             }
@@ -191,14 +191,5 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
 
     private static int getRectVal(Supplier<Boolean> isSet, Supplier<STPercentage> val) {
         return isSet.get() ? POIXMLUnits.parsePercent(val.get()) : 0;
-    }
-
-    private static List<XSLFDiagram> extractDiagrams(XMLSlideShow slideShow) {
-        return slideShow.getSlides()
-                .stream()
-                .flatMap(s -> s.getShapes().stream())
-                .filter(s -> s instanceof XSLFDiagram)
-                .map(s -> (XSLFDiagram) s)
-                .collect(Collectors.toList());
     }
 }

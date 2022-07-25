@@ -26,6 +26,7 @@ open module org.apache.poi.ooxml.schemas {
 
 
     exports com.microsoft.schemas.compatibility;
+    exports com.microsoft.schemas.office.drawing.x2008.diagram;
     exports com.microsoft.schemas.office.excel;
     exports com.microsoft.schemas.office.office;
     exports com.microsoft.schemas.office.visio.x2012.main;
@@ -37,6 +38,7 @@ open module org.apache.poi.ooxml.schemas {
     exports org.etsi.uri.x01903.v13;
     exports org.etsi.uri.x01903.v14;
     exports org.openxmlformats.schemas.drawingml.x2006.chart;
+    exports org.openxmlformats.schemas.drawingml.x2006.diagram;
     exports org.openxmlformats.schemas.drawingml.x2006.main;
     exports org.openxmlformats.schemas.drawingml.x2006.picture;
     exports org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing;

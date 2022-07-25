@@ -23,32 +23,44 @@ open module org.apache.poi.ooxml.schemas {
     requires java.xml;
 
 
-
-
     exports com.microsoft.schemas.compatibility;
+    exports com.microsoft.schemas.office.drawing.x2008.diagram;
     exports com.microsoft.schemas.office.excel;
     exports com.microsoft.schemas.office.office;
+    exports com.microsoft.schemas.office.powerpoint;
+    exports com.microsoft.schemas.office.spreadsheetml.x2018.threadedcomments;
+    exports com.microsoft.schemas.office.spreadsheetml.x2020.threadedcomments2;
     exports com.microsoft.schemas.office.visio.x2012.main;
     exports com.microsoft.schemas.office.word;
+    exports com.microsoft.schemas.office.word.x2021.wordml;
     exports com.microsoft.schemas.office.x2006.digsig;
     exports com.microsoft.schemas.vml;
     exports org.apache.poi.schemas.ooxml.system.ooxml;
     exports org.apache.poi.schemas.vmldrawing;
     exports org.etsi.uri.x01903.v13;
+    exports org.etsi.uri.x01903.v14;
     exports org.openxmlformats.schemas.drawingml.x2006.chart;
+    exports org.openxmlformats.schemas.drawingml.x2006.chartDrawing;
+    exports org.openxmlformats.schemas.drawingml.x2006.diagram;
+    exports org.openxmlformats.schemas.drawingml.x2006.lockedCanvas;
     exports org.openxmlformats.schemas.drawingml.x2006.main;
     exports org.openxmlformats.schemas.drawingml.x2006.picture;
     exports org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing;
     exports org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing;
+    exports org.openxmlformats.schemas.officeDocument.x2006.bibliography;
+    exports org.openxmlformats.schemas.officeDocument.x2006.characteristics;
     exports org.openxmlformats.schemas.officeDocument.x2006.customProperties;
+    exports org.openxmlformats.schemas.officeDocument.x2006.customXml;
     exports org.openxmlformats.schemas.officeDocument.x2006.docPropsVTypes;
     exports org.openxmlformats.schemas.officeDocument.x2006.extendedProperties;
     exports org.openxmlformats.schemas.officeDocument.x2006.math;
     exports org.openxmlformats.schemas.officeDocument.x2006.relationships;
     exports org.openxmlformats.schemas.officeDocument.x2006.sharedTypes;
     exports org.openxmlformats.schemas.presentationml.x2006.main;
+    exports org.openxmlformats.schemas.schemaLibrary.x2006.main;
     exports org.openxmlformats.schemas.spreadsheetml.x2006.main;
     exports org.openxmlformats.schemas.wordprocessingml.x2006.main;
     exports org.openxmlformats.schemas.xpackage.x2006.digitalSignature;
+    exports org.openxmlformats.schemas.xpackage.x2006.relationships;
     exports org.w3.x2000.x09.xmldsig;
 }

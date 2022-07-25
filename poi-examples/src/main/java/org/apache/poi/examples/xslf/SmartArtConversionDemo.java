@@ -77,9 +77,8 @@ public class SmartArtConversionDemo {
 
             CTBlipFillProperties blipFillProps = ctShape.getSpPr().getBlipFill();
             CTBlip blip = blipFillProps.getBlip();
-            // In SmartArt diagrams, the references to images/embeds are stored in drawing#.xml.rels. When read by
-            // POI it copies this relationship to the parent slide to allow POI to correctly resolve the images.
-            POIXMLDocumentPart inputPicturePart = diagram.getSheet().getRelationById(blip.getEmbed());
+            // Relationships for SmartArt diagrams are stored in `drawing#.xml.rels`, not `slide#.xml.rels`.
+            POIXMLDocumentPart inputPicturePart = diagram.getDiagramDrawing().getRelationById(blip.getEmbed());
 
             if (inputPicturePart == null || inputPicturePart.getPackagePart() == null) {
                 continue;

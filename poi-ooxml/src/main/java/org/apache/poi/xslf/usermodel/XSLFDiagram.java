@@ -14,6 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
+
 package org.apache.poi.xslf.usermodel;
 
 import com.microsoft.schemas.office.drawing.x2008.diagram.CTGroupShape;
@@ -33,7 +34,6 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShapeNonVisual;
 import javax.xml.namespace.QName;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -75,13 +75,12 @@ public class XSLFDiagram extends XSLFGraphicFrame {
 
     public static final String DRAWINGML_DIAGRAM_URI = "http://schemas.openxmlformats.org/drawingml/2006/diagram";
     private final XSLFDiagramDrawing _drawing;
-    private final XSLFGroupShape _groupShape;
-    private final HashMap<String, POIXMLDocumentPart> blipDocumentParts = new HashMap<>();
+    private final XSLFDiagramGroupShape _groupShape;
 
     /* package protected */ XSLFDiagram(CTGraphicalObjectFrame shape, XSLFSheet sheet) {
         super(shape, sheet);
         _drawing = readDiagramDrawing(shape, sheet);
-        _groupShape = initGroupShape(sheet);
+        _groupShape = initGroupShape();
     }
 
     private static boolean hasTextContent(CTShape msShapeCt) {
@@ -93,14 +92,6 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         return paragraphs.stream()
                 .flatMap(p -> p.getRList().stream())
                 .anyMatch(run -> run.getT() != null && !run.getT().trim().isEmpty());
-    }
-
-    private static boolean hasBlipEmbed(CTShape msShapeCt) {
-        return msShapeCt != null
-                && msShapeCt.getSpPr() != null
-                && msShapeCt.getSpPr().getBlipFill() != null
-                && msShapeCt.getSpPr().getBlipFill().getBlip() != null
-                && msShapeCt.getSpPr().getBlipFill().getBlip().getEmbed() != null;
     }
 
     private static XSLFDiagramDrawing readDiagramDrawing(CTGraphicalObjectFrame shape, XSLFSheet sheet) {
@@ -130,8 +121,24 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         return null;
     }
 
+    /**
+     * Returns the underlying {@link XSLFDiagramDrawing} used to create this diagram.
+     * <p>
+     * NOTE: Modifying this drawing will not update the groupShape returned from {@link #getGroupShape()}.
+     */
+    public XSLFDiagramDrawing getDiagramDrawing() {
+        return _drawing;
+    }
+
+    /**
+     * Returns the diagram represented as a grouped shape.
+     */
+    public XSLFDiagramGroupShape getGroupShape() {
+        return _groupShape;
+    }
+
     // If the shape has text, two XSLFShapes are created. One shape element and one textbox element.
-    public List<org.openxmlformats.schemas.presentationml.x2006.main.CTShape> convertShape(CTShape msShapeCt) {
+    private List<org.openxmlformats.schemas.presentationml.x2006.main.CTShape> convertShape(CTShape msShapeCt) {
         org.openxmlformats.schemas.presentationml.x2006.main.CTShape shapeCt
                 = org.openxmlformats.schemas.presentationml.x2006.main.CTShape.Factory.newInstance();
 
@@ -157,16 +164,6 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         return shapes;
     }
 
-    private void mapDocumentParts(CTShape msShapeCt) {
-        if (hasBlipEmbed(msShapeCt)) {
-            String embedId = msShapeCt.getSpPr().getBlipFill().getBlip().getEmbed();
-            POIXMLDocumentPart part = _drawing.getRelationById(embedId);
-            if (part != null) {
-                blipDocumentParts.put(embedId, part);
-            }
-        }
-    }
-
     private org.openxmlformats.schemas.presentationml.x2006.main.CTShape convertText(CTShape msShapeCt, CTShapeNonVisual nonVisualCt) {
         org.openxmlformats.schemas.presentationml.x2006.main.CTShape textShapeCT
                 = org.openxmlformats.schemas.presentationml.x2006.main.CTShape.Factory.newInstance();
@@ -187,16 +184,7 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         return textShapeCT;
     }
 
-    /**
-     * Returns the underlying {@link XSLFDiagramDrawing} used to create this diagram.
-     * <p>
-     * NOTE: Modifying this drawing will not update the groupShape returned from {@link #getGroupShape()}.
-     */
-    public XSLFDiagramDrawing getDiagramDrawing() {
-        return _drawing;
-    }
-
-    private XSLFGroupShape initGroupShape(XSLFSheet sheet) {
+    private XSLFDiagramGroupShape initGroupShape() {
         XSLFDiagramDrawing drawing = getDiagramDrawing();
         if (drawing == null || drawing.getDrawingDocument() == null) {
             return null;
@@ -206,21 +194,10 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         if (msGroupShapeCt == null || msGroupShapeCt.getSpList().isEmpty()) {
             return null;
         }
-        return convertMsGroupToGroupShape(msGroupShapeCt, sheet);
+        return convertMsGroupToGroupShape(msGroupShapeCt, drawing);
     }
 
-    /**
-     * Returns the diagram represented as a grouped shape.
-     */
-    public XSLFGroupShape getGroupShape() {
-        return _groupShape;
-    }
-
-    POIXMLDocumentPart getDocumentPart(String blipId) {
-        return blipDocumentParts.get(blipId);
-    }
-
-    private XSLFGroupShape convertMsGroupToGroupShape(CTGroupShape msGroupShapeCt, XSLFSheet sheet) {
+    private XSLFDiagramGroupShape convertMsGroupToGroupShape(CTGroupShape msGroupShapeCt, XSLFDiagramDrawing drawing) {
         org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape groupShapeCt
                 = org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape.Factory.newInstance();
 
@@ -233,17 +210,43 @@ public class XSLFDiagram extends XSLFGraphicFrame {
 
         for (CTShape msShapeCt : msGroupShapeCt.getSpList()) {
             List<org.openxmlformats.schemas.presentationml.x2006.main.CTShape> shapes = convertShape(msShapeCt);
-            mapDocumentParts(msShapeCt);
             groupShapeCt.getSpList().addAll(shapes);
         }
 
         Rectangle2D anchor = super.getAnchor();
         Rectangle2D interiorAnchor = new Rectangle2D.Double(0, 0, anchor.getWidth(), anchor.getHeight());
 
-        XSLFGroupShape groupShape = new XSLFGroupShape(groupShapeCt, getSheet());
+        XSLFDiagramGroupShape groupShape = new XSLFDiagramGroupShape(groupShapeCt, getSheet(), drawing);
         groupShape.setAnchor(anchor);
         groupShape.setInteriorAnchor(interiorAnchor);
         groupShape.setRotation(super.getRotation());
         return groupShape;
+    }
+
+    /**
+     * Simple wrapper around XSLFGroupShape to enable accessing underlying diagram relations correctly.
+     * <p>
+     * Diagrams store relationships to media in `drawing#.xml.rels`. These relationships are accessible using
+     * {@link #getRelationById(String)}.
+     */
+    static class XSLFDiagramGroupShape extends XSLFGroupShape {
+
+        private XSLFDiagramDrawing diagramDrawing;
+
+        protected XSLFDiagramGroupShape(org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape shape,
+                                        XSLFSheet sheet) {
+            super(shape, sheet);
+        }
+
+        private XSLFDiagramGroupShape(org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape shape,
+                                      XSLFSheet sheet,
+                                      XSLFDiagramDrawing diagramDrawing) {
+            super(shape, sheet);
+            this.diagramDrawing = diagramDrawing;
+        }
+
+        POIXMLDocumentPart getRelationById(String id) {
+            return diagramDrawing.getRelationById(id);
+        }
     }
 }
