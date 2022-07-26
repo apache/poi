@@ -106,6 +106,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     private List<CellRangeAddress> arrayFormulas;
     private final XSSFDataValidationHelper dataValidationHelper;
     private XSSFVMLDrawing xssfvmlDrawing;
+    private CellRangeAddress dimensionOverride;
 
     /**
      * Creates new XSSFSheet   - called by XSSFWorkbook to create a sheet from scratch.
@@ -3747,29 +3748,34 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             }*/
         }
 
-        int minCell = Integer.MAX_VALUE, maxCell = Integer.MIN_VALUE;
-        for(Map.Entry<Integer, XSSFRow> entry : _rows.entrySet()) {
-            XSSFRow row = entry.getValue();
+        CellRangeAddress cellRangeAddress = dimensionOverride;
+        if (cellRangeAddress == null) {
+            int minCell = Integer.MAX_VALUE, maxCell = Integer.MIN_VALUE;
+            for(Map.Entry<Integer, XSSFRow> entry : _rows.entrySet()) {
+                XSSFRow row = entry.getValue();
 
-            // first perform the normal write actions for the row
-            row.onDocumentWrite();
+                // first perform the normal write actions for the row
+                row.onDocumentWrite();
 
-            // then calculate min/max cell-numbers for the worksheet-dimension
-            if(row.getFirstCellNum() != -1) {
-                minCell = Math.min(minCell, row.getFirstCellNum());
+                // then calculate min/max cell-numbers for the worksheet-dimension
+                if(row.getFirstCellNum() != -1) {
+                    minCell = Math.min(minCell, row.getFirstCellNum());
+                }
+                if(row.getLastCellNum() != -1) {
+                    maxCell = Math.max(maxCell, row.getLastCellNum()-1);
+                }
             }
-            if(row.getLastCellNum() != -1) {
-                maxCell = Math.max(maxCell, row.getLastCellNum()-1);
+
+            // finally, if we had at least one cell we can populate the optional dimension-field
+            if(minCell != Integer.MAX_VALUE) {
+                cellRangeAddress = new CellRangeAddress(getFirstRowNum(), getLastRowNum(), minCell, maxCell);
             }
         }
-
-        // finally, if we had at least one cell we can populate the optional dimension-field
-        if(minCell != Integer.MAX_VALUE) {
-            String ref = new CellRangeAddress(getFirstRowNum(), getLastRowNum(), minCell, maxCell).formatAsString();
-            if(worksheet.isSetDimension()) {
-                worksheet.getDimension().setRef(ref);
+        if (cellRangeAddress != null) {
+            if (worksheet.isSetDimension()) {
+                worksheet.getDimension().setRef(cellRangeAddress.formatAsString());
             } else {
-                worksheet.addNewDimension().setRef(ref);
+                worksheet.addNewDimension().setRef(cellRangeAddress.formatAsString());
             }
         }
 
@@ -4051,6 +4057,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * @since POI 5.2.3
      */
     public CellRangeAddress getDimension() {
+        if (dimensionOverride != null) {
+            return dimensionOverride;
+        }
         CTSheetDimension ctSheetDimension = worksheet.getDimension();
         String ref = ctSheetDimension == null ? null : ctSheetDimension.getRef();
         if (ref != null) {
@@ -4844,5 +4853,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
     public XSSFHeaderFooterProperties getHeaderFooterProperties() {
         return new XSSFHeaderFooterProperties(getSheetTypeHeaderFooter());
+    }
+
+    /**
+     * Currently, this is for internal use. Overrides the default dimensions of the sheet.
+     * @param dimension {@link CellRangeAddress}, <code>null</code> removes the existing override
+     * @since POI 5.2.3
+     */
+    @Beta
+    public void setDimensionOverride(CellRangeAddress dimension) {
+        this.dimensionOverride = dimension;
     }
 }

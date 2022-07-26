@@ -136,6 +136,8 @@ public class SXSSFWorkbook implements Workbook {
      */
     protected Zip64Mode zip64Mode = Zip64Mode.Always;
 
+    private boolean shouldCalculateSheetDimensions = true;
+
     /**
      * Construct a new workbook with default row window size
      */
@@ -349,6 +351,24 @@ public class SXSSFWorkbook implements Workbook {
      */
     public void setCompressTempFiles(boolean compress) {
         _compressTmpFiles = compress;
+    }
+
+    /**
+     * @param shouldCalculateSheetDimensions defaults to <code>true</code>, set to <code>false</code> if
+     *                                       the calculated dimensions are causing trouble
+     * @since POI 5.2.3
+     */
+    public void setShouldCalculateSheetDimensions(boolean shouldCalculateSheetDimensions) {
+        this.shouldCalculateSheetDimensions = shouldCalculateSheetDimensions;
+    }
+
+    /**
+     * @return shouldCalculateSheetDimensions defaults to <code>true</code>, set to <code>false</code> if
+     * the calculated dimensions are causing trouble
+     * @since POI 5.2.3
+     */
+    public boolean shouldCalculateSheetDimensions() {
+        return shouldCalculateSheetDimensions;
     }
 
     @Internal
@@ -971,8 +991,10 @@ public class SXSSFWorkbook implements Workbook {
             }
 
             //Substitute the template entries with the generated sheet data files
-            try (ZipSecureFile zf = new ZipSecureFile(tmplFile);
-                 ZipFileZipEntrySource source = new ZipFileZipEntrySource(zf)) {
+            try (
+                    ZipSecureFile zf = new ZipSecureFile(tmplFile);
+                    ZipFileZipEntrySource source = new ZipFileZipEntrySource(zf)
+            ) {
                 injectData(source, stream);
             }
         } finally {
@@ -1012,8 +1034,8 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     protected void flushSheets() throws IOException {
-        for (SXSSFSheet sheet : _xFromSxHash.values())
-        {
+        for (SXSSFSheet sheet : _xFromSxHash.values()) {
+            sheet.deriveDimension();
             sheet.flushRows();
         }
     }

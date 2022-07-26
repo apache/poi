@@ -141,6 +141,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         checkBounds(column);
         SXSSFCell cell = new SXSSFCell(this, type);
         _cells.put(column, cell);
+        _sheet.trackNewCell(cell);
         return cell;
     }
 

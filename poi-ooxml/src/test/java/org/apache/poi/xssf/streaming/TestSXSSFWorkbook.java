@@ -48,6 +48,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -556,6 +557,45 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
                 assertEquals("Example Website", xssfCell.getStringCellValue());
                 XSSFHyperlink xssfHyperlink = xssfCell.getHyperlink();
                 assertEquals(hyperlink.getAddress(), xssfHyperlink.getAddress());
+            }
+        }
+    }
+
+    @Test
+    void addDimension() throws IOException {
+        try (
+                SXSSFWorkbook wb = new SXSSFWorkbook();
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            SXSSFSheet sheet = wb.createSheet();
+            sheet.createRow(2).createCell(3).setCellValue("top left");
+            sheet.createRow(6).createCell(5).setCellValue("bottom right");
+            assertEquals(2, sheet.getFirstRowNum());
+            assertEquals(6, sheet.getLastRowNum());
+            wb.write(bos);
+            try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
+                XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+                assertEquals(CellRangeAddress.valueOf("D3:F7"), xssfSheet.getDimension());
+            }
+        }
+    }
+
+    @Test
+    void addDimensionDisabled() throws IOException {
+        try (
+                SXSSFWorkbook wb = new SXSSFWorkbook();
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            wb.setShouldCalculateSheetDimensions(false);
+            SXSSFSheet sheet = wb.createSheet();
+            sheet.createRow(2).createCell(3).setCellValue("top left");
+            sheet.createRow(6).createCell(5).setCellValue("bottom right");
+            assertEquals(2, sheet.getFirstRowNum());
+            assertEquals(6, sheet.getLastRowNum());
+            wb.write(bos);
+            try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
+                XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+                assertEquals(CellRangeAddress.valueOf("A1:A1"), xssfSheet.getDimension());
             }
         }
     }

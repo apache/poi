@@ -27,6 +27,8 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.TreeMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellAddress;
@@ -47,6 +49,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
  * Streaming version of XSSFSheet implementing the "BigGridDemo" strategy.
  */
 public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
+    private static final Logger LOG = LogManager.getLogger(SXSSFSheet.class);
+
     /*package*/ final XSSFSheet _sh;
     protected final SXSSFWorkbook _workbook;
     private final TreeMap<Integer,SXSSFRow> _rows = new TreeMap<>();
@@ -56,12 +60,36 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     private int outlineLevelRow;
     private int lastFlushedRowNumber = -1;
     private boolean allFlushed;
+    private int leftMostColumn = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
+    private int rightMostColumn;
 
     protected SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet, int randomAccessWindowSize) {
         _workbook = workbook;
         _sh = xSheet;
+        calculateLeftAndRightMostColumns(xSheet);
         setRandomAccessWindowSize(randomAccessWindowSize);
         _autoSizeColumnTracker = new AutoSizeColumnTracker(this);
+    }
+
+    private void calculateLeftAndRightMostColumns(XSSFSheet xssfSheet) {
+        if (_workbook.shouldCalculateSheetDimensions()) {
+            int rowCount = 0;
+            int leftMostColumn = Integer.MAX_VALUE;
+            int rightMostColumn = 0;
+            for (Row row : xssfSheet) {
+                rowCount++;
+                if (row.getFirstCellNum() < leftMostColumn) {
+                    final int first = row.getFirstCellNum();
+                    final int last = row.getLastCellNum() - 1;
+                    leftMostColumn = Math.min(first, leftMostColumn);
+                    rightMostColumn = Math.max(last, rightMostColumn);
+                }
+            }
+            if (rowCount > 0) {
+                this.leftMostColumn = leftMostColumn;
+                this.rightMostColumn = rightMostColumn;
+            }
+        }
     }
 
     public SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException {
@@ -2105,5 +2133,22 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     @Override
     public void shiftColumns(int startColumn, int endColumn, int n){
         throw new UnsupportedOperationException("Not Implemented");
+    }
+
+    void trackNewCell(SXSSFCell cell) {
+        leftMostColumn = Math.min(cell.getColumnIndex(), leftMostColumn);
+        rightMostColumn = Math.max(cell.getColumnIndex(), rightMostColumn);
+    }
+
+    void deriveDimension() {
+        if (_workbook.shouldCalculateSheetDimensions()) {
+            try {
+                CellRangeAddress cellRangeAddress = new CellRangeAddress(
+                        getFirstRowNum(), getLastRowNum(), leftMostColumn, rightMostColumn);
+                _sh.setDimensionOverride(cellRangeAddress);
+            } catch (Exception e) {
+                LOG.atDebug().log("Failed to set dimension details on sheet", e);
+            }
+        }
     }
 }
