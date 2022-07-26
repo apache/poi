@@ -185,10 +185,6 @@ subprojects {
         options.compilerArgs << '-Xlint:unchecked'
         options.deprecation = true
         options.incremental = true
-
-        onlyIf {
-            (name != "compileJava9" && name != "compileTest9") // || jdkVersion > 8
-        }
     }
 
     repositories {
@@ -201,10 +197,6 @@ subprojects {
         testImplementation "org.mockito:mockito-core:${mockitoVersion}"
         testImplementation "org.hamcrest:hamcrest:${hamcrestVersion}"
         testImplementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
-    }
-
-    task wrapper(type: Wrapper){
-        gradleVersion = '7.4.2'
     }
 
     java {
