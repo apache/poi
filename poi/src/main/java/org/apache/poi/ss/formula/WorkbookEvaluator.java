@@ -75,12 +75,12 @@ public final class WorkbookEvaluator {
     /**
      * whether print detailed messages about the next formula evaluation
      */
-    private boolean dbgEvaluationOutputForNextEval = true;
+    private boolean dbgEvaluationOutputForNextEval;
 
     // special logger for formula evaluation output (because of possibly very large output)
     private final Logger EVAL_LOG = LogManager.getLogger("POI.FormulaEval");
     // current indent level for evaluation; negative value for no output
-    private int dbgEvaluationOutputIndent = 1;
+    private int dbgEvaluationOutputIndent = -1;
 
     /**
      * @param udfFinder pass {@code null} for default (AnalysisToolPak only)
@@ -376,7 +376,7 @@ public final class WorkbookEvaluator {
         if (dbgEvaluationOutputForNextEval) {
             // first evaluation call when ouput is desired, so iit. this evaluator instance
             dbgEvaluationOutputIndent = 1;
-            //dbgEvaluationOutputForNextEval = true;
+            dbgEvaluationOutputForNextEval = true;
         }
         if (dbgEvaluationOutputIndent > 0) {
             // init. indent string to needed spaces (create as substring from very long space-only string;
