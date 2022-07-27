@@ -151,6 +151,7 @@ def jdkMapping = [
         '1.16': [ jenkinsJdk: 'jdk_16_latest', jdkVersion: 16, jdkVendor: '' ],
         '1.17': [ jenkinsJdk: 'jdk_17_latest', jdkVersion: 17, jdkVendor: '' ],
         '1.18': [ jenkinsJdk: 'jdk_18_latest', jdkVersion: 18, jdkVendor: '' ],
+        '1.19': [ jenkinsJdk: 'jdk_19_latest', jdkVersion: 19, jdkVendor: '' ],
         'OpenJDK 1.8': [ jenkinsJdk: 'adoptopenjdk_hotspot_8u282', jdkVersion: 8, jdkVendor: 'adoptopenjdk' ],
         'IBMJDK': [ jenkinsJdk: 'ibmjdk_1.8.0_261', jdkVersion: 8, jdkVendor: 'ibm' ]
 ]
