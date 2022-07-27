@@ -74,7 +74,7 @@ class TestFormulaEval {
         }
     }
 
-    @Disabled("currently causes a StackOverflowError")
+    //@Disabled("currently causes a StackOverflowError")
     @Test
     void testBug66152() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {

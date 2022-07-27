@@ -180,6 +180,7 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         // If we shared the one object, a consumer may be surprised that updating the text shape properties
         // also updates the parent shape.
         textShapeCT.setNvSpPr((CTShapeNonVisual) nonVisualCt.copy());
+        textShapeCT.getNvSpPr().getCNvSpPr().setTxBox(true);
 
         return textShapeCT;
     }

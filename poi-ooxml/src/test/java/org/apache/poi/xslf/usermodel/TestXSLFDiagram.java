@@ -107,7 +107,7 @@ public class TestXSLFDiagram {
             assertTrue(yellowCircle.getText().isEmpty());
             assertEquals(accent4Hex, colorToHex(yellowCircle.getFillColor()));
 
-            XSLFAutoShape yellowCircleText = (XSLFAutoShape) shapes.get(1);
+            XSLFTextBox yellowCircleText = (XSLFTextBox) shapes.get(1);
             assertEquals(yellowCircleText.getText(), "abc");
             assertEquals(TextAlign.CENTER, yellowCircleText.getTextParagraphs().get(0).getTextAlign());
 
@@ -116,7 +116,7 @@ public class TestXSLFDiagram {
             assertTrue(gradientCircle.getFillPaint() instanceof PaintStyle.GradientPaint);
             assertTrue(gradientCircle.getText().isEmpty());
 
-            XSLFAutoShape gradientCircleText = (XSLFAutoShape) shapes.get(3);
+            XSLFTextBox gradientCircleText = (XSLFTextBox) shapes.get(3);
             assertEquals(gradientCircleText.getText(), "def");
             // Even with left justification, the text is rendered on the right side of the circle because SmartArt defines
             // a better visual placement for the textbox inside the txXfrm property.
@@ -138,7 +138,7 @@ public class TestXSLFDiagram {
             assertEquals(6405, greenCircleColorStyle.getLumOff());
             assertEquals(-27185, greenCircleColorStyle.getSatOff());
 
-            XSLFAutoShape greenCircleText = (XSLFAutoShape) shapes.get(5);
+            XSLFTextBox greenCircleText = (XSLFTextBox) shapes.get(5);
             assertEquals(greenCircleText.getText(), "ghi");
             assertEquals(TextAlign.RIGHT, greenCircleText.getTextParagraphs().get(0).getTextAlign());
 
