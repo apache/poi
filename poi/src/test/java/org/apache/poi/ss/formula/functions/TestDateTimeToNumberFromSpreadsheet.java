@@ -23,6 +23,6 @@ import org.junit.jupiter.params.provider.Arguments;
 
 class TestDateTimeToNumberFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
-        return data(TestDateTimeToNumberFromSpreadsheet.class, "DateTimeToNumberTestCases.xls");
+        return dataFromClass(TestDateTimeToNumberFromSpreadsheet.class, "DateTimeToNumberTestCases.xls");
     }
 }

@@ -25,6 +25,6 @@ import org.junit.jupiter.params.provider.Arguments;
  */
 class TestDeltaFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
-        return data(TestDeltaFunctionsFromSpreadsheet.class, "DeltaFunctionTestCaseData.xls");
+        return dataFromClass(TestDeltaFunctionsFromSpreadsheet.class, "DeltaFunctionTestCaseData.xls");
     }
 }

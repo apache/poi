@@ -67,8 +67,7 @@ public abstract class BaseTestFunctionsFromSpreadsheet {
     }
 
 
-
-    protected static Stream<Arguments> data(Class<? extends BaseTestFunctionsFromSpreadsheet> clazz, String filename) throws Exception {
+    protected static Stream<Arguments> dataFromClass(Class<? extends BaseTestFunctionsFromSpreadsheet> clazz, String filename) throws Exception {
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook(filename);
         confirmReadMeSheet(workbook, clazz);
 

@@ -32,6 +32,6 @@ import org.junit.jupiter.params.provider.Arguments;
  */
 final class TestLookupFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
-        return data(TestLookupFunctionsFromSpreadsheet.class, "LookupFunctionsTestCaseData.xls");
+        return dataFromClass(TestLookupFunctionsFromSpreadsheet.class, "LookupFunctionsTestCaseData.xls");
     }
 }

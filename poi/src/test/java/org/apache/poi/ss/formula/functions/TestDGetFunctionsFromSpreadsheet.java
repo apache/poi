@@ -25,6 +25,6 @@ import org.junit.jupiter.params.provider.Arguments;
 */
 class TestDGetFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
-        return data(TestDGetFunctionsFromSpreadsheet.class, "DGet.xls");
+        return dataFromClass(TestDGetFunctionsFromSpreadsheet.class, "DGet.xls");
     }
 }

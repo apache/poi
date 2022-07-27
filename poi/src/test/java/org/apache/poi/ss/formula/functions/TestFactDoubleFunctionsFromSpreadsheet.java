@@ -26,6 +26,6 @@ import org.junit.jupiter.params.provider.Arguments;
  */
 class TestFactDoubleFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
-        return data(TestFactDoubleFunctionsFromSpreadsheet.class, "FactDoubleFunctionTestCaseData.xls");
+        return dataFromClass(TestFactDoubleFunctionsFromSpreadsheet.class, "FactDoubleFunctionTestCaseData.xls");
     }
 }

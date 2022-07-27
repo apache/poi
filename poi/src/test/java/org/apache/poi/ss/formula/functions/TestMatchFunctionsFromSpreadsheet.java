@@ -30,6 +30,6 @@ import org.junit.jupiter.params.provider.Arguments;
  */
 final class TestMatchFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
-        return data(TestMatchFunctionsFromSpreadsheet.class, "MatchFunctionTestCaseData.xls");
+        return dataFromClass(TestMatchFunctionsFromSpreadsheet.class, "MatchFunctionTestCaseData.xls");
     }
 }

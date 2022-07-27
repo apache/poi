@@ -26,6 +26,6 @@ import org.junit.jupiter.params.provider.Arguments;
  */
 class TestImRealFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
-        return data(TestImRealFunctionsFromSpreadsheet.class, "ImRealFunctionTestCaseData.xls");
+        return dataFromClass(TestImRealFunctionsFromSpreadsheet.class, "ImRealFunctionTestCaseData.xls");
     }
 }

@@ -25,6 +25,6 @@ import org.junit.jupiter.params.provider.Arguments;
 */
 class TestTrendFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
-        return data(TestTrendFunctionsFromSpreadsheet.class, "Trend.xls");
+        return dataFromClass(TestTrendFunctionsFromSpreadsheet.class, "Trend.xls");
     }
 }

@@ -26,6 +26,6 @@ import org.junit.jupiter.params.provider.Arguments;
  */
 final class TestIndexFunctionFromSpreadsheet  extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
-        return data(TestIndexFunctionFromSpreadsheet.class, "IndexFunctionTestCaseData.xls");
+        return dataFromClass(TestIndexFunctionFromSpreadsheet.class, "IndexFunctionTestCaseData.xls");
     }
 }

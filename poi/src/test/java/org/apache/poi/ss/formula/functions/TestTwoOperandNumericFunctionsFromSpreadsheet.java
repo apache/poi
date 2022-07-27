@@ -27,6 +27,6 @@ import org.junit.jupiter.params.provider.Arguments;
  */
 class TestTwoOperandNumericFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
-        return data(TestTwoOperandNumericFunctionsFromSpreadsheet.class, "TwoOperandNumericFunctionTestCaseData.xls");
+        return dataFromClass(TestTwoOperandNumericFunctionsFromSpreadsheet.class, "TwoOperandNumericFunctionTestCaseData.xls");
     }
 }

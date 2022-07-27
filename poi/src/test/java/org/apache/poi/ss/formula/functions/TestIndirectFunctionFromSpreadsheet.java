@@ -30,6 +30,6 @@ import org.junit.jupiter.params.provider.Arguments;
  */
 final class TestIndirectFunctionFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
-        return data(TestIndirectFunctionFromSpreadsheet.class, "IndirectFunctionTestCaseData.xls");
+        return dataFromClass(TestIndirectFunctionFromSpreadsheet.class, "IndirectFunctionTestCaseData.xls");
     }
 }

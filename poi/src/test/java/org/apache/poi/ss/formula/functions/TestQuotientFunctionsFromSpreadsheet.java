@@ -26,6 +26,6 @@ import org.junit.jupiter.params.provider.Arguments;
  */
 class TestQuotientFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
-        return data(TestQuotientFunctionsFromSpreadsheet.class, "QuotientFunctionTestCaseData.xls");
+        return dataFromClass(TestQuotientFunctionsFromSpreadsheet.class, "QuotientFunctionTestCaseData.xls");
     }
 }

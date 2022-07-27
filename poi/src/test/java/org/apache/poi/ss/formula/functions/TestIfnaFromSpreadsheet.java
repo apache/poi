@@ -27,6 +27,6 @@ import org.junit.jupiter.params.provider.Arguments;
 class TestIfnaFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
 
     public static Stream<Arguments> data() throws Exception {
-        return data(TestIfnaFromSpreadsheet.class, "IfNaTestCaseData.xls");
+        return dataFromClass(TestIfnaFromSpreadsheet.class, "IfNaTestCaseData.xls");
     }
 }

@@ -26,6 +26,6 @@ import org.junit.jupiter.params.provider.Arguments;
  */
 class TestFixedFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
     public static Stream<Arguments> data() throws Exception {
-        return data(TestFixedFunctionsFromSpreadsheet.class, "57003-FixedFunctionTestCaseData.xls");
+        return dataFromClass(TestFixedFunctionsFromSpreadsheet.class, "57003-FixedFunctionTestCaseData.xls");
     }
 }
