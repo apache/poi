@@ -60,7 +60,7 @@ task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(jdkVersion)
+        languageVersion = JavaLanguageVersion.of(jdkVersion >= 17 ? 17 : 11)
         if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
     }
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
