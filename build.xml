@@ -342,9 +342,9 @@ under the License.
 
     <!-- coverage libs -->
     <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.8" usage="util" packaging="zip"/>
-    <dependency prefix="asm" artifact="org.ow2.asm:asm:9.0" usage="util"/>
-    <dependency prefix="asm-commons" artifact="org.ow2.asm:asm-commons:9.0" usage="util"/>
-    <dependency prefix="asm-tree" artifact="org.ow2.asm:asm-tree:9.0" usage="util"/>
+    <dependency prefix="asm" artifact="org.ow2.asm:asm:9.3" usage="util"/>
+    <dependency prefix="asm-commons" artifact="org.ow2.asm:asm-commons:9.3" usage="util"/>
+    <dependency prefix="asm-tree" artifact="org.ow2.asm:asm-tree:9.3" usage="util"/>
 
     <!-- license and api checks -->
     <dependency prefix="rat" artifact="org.apache.rat:apache-rat:0.13" usage="util"/>
@@ -687,7 +687,7 @@ under the License.
                 <include name="hamcrest-core*"/>
                 <include name="junit-4*.jar"/>
                 <include name="*slf4j*.jar"/>
-                <include name="junit-jupiter-*-5.8.0.jar"/>
+                <include name="junit-jupiter-*-5.8.*.jar"/>
                 <include name="junit-jupiter-*-5.7.*.jar"/>
                 <include name="junit-platform-*-1.7.*.jar"/>
                 <include name="log4j-core-2.14*.jar"/>
@@ -711,6 +711,7 @@ under the License.
             </fileset>
             <fileset dir="${basedir}/lib/util">
                 <include name="asm*7.2.jar"/>
+                <include name="asm*9.0.jar"/>
                 <include name="org.jacoco.*-0.8.5.*.jar"/>
                 <include name="org.jacoco.*-0.8.6.*.jar"/>
                 <include name="forbiddenapis-3.1.jar"/>
@@ -2583,11 +2584,11 @@ under the License.
         <dependency prefix="spotbugs" artifact="com.github.spotbugs:spotbugs:4.2.0" usage="${spotbugs.lib}" target="spotbugs.jar"/>
         <dependency prefix="spotbugs-ant" artifact="com.github.spotbugs:spotbugs-ant:4.2.0" usage="${spotbugs.lib}" target="spotbugs-ant.jar"/>
         <dependency prefix="spotbugs-anno" artifact="com.github.spotbugs:spotbugs-annotations:4.2.0" usage="${spotbugs.lib}" target="spotbugs-annotations.jar"/>
-        <dependency prefix="spotbugs.asm" artifact="org.ow2.asm:asm:9.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.asm-analysis" artifact="org.ow2.asm:asm-analysis:9.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.asm-commons" artifact="org.ow2.asm:asm-commons:9.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.asm-tree" artifact="org.ow2.asm:asm-tree:9.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.asm-util" artifact="org.ow2.asm:asm-util:9.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm" artifact="org.ow2.asm:asm:9.3" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-analysis" artifact="org.ow2.asm:asm-analysis:9.3" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-commons" artifact="org.ow2.asm:asm-commons:9.3" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-tree" artifact="org.ow2.asm:asm-tree:9.3" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-util" artifact="org.ow2.asm:asm-util:9.3" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.jsr305" artifact="com.google.code.findbugs:jsr305:3.0.2" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.dom4j" artifact="org.dom4j:dom4j:2.1.3" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.jaxen" artifact="jaxen:jaxen:1.2.0" usage="${spotbugs.lib}"/>
