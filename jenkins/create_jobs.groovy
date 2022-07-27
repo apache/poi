@@ -21,13 +21,35 @@ def poijobs = [
           slaves: 'ubuntu',
           skipcigame: true, gradle: true
         ],
+//        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true,
+//          // let's save some CPU cycles here, 10 had EOL in September 2018
+//          disabled: true
+//        ],
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true, gradle: true
+        ],
+//        [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
+//          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA as of 17 September 2019
+//          disabled: true
+//        ],
+//        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true,
+//          // let's save some CPU cycles here, 13 is not a LTS and JDK 14 is GA as of 17 March 2020
+//          disabled: true
+//        ],
+//        [ name: 'POI-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true,
+//          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
+//          disabled: true
+//        ],
+        [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true, gradle: true,
+          // let's save some CPU cycles here, 15 is not a LTS and JDK 16 is GA
+          disabled: true
+        ],
+        [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: 'H */12 * * *', skipcigame: true, gradle: true,
+          // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
+          disabled: true
         ],
         [ name: 'POI-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true, gradle: true
-        ],
-        [ name: 'POI-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true, gradle: true
         ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, gradle: true
         ],
@@ -92,6 +114,10 @@ def xmlbeansjobs = [
         ],
         [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true, gradle: true,
         ],
+        [ name: 'POI-XMLBeans-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true, gradle: true,
+          // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
+          disabled: true
+        ],
         [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true, gradle: true,
         ],
         [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true, gradle: true,
@@ -116,10 +142,15 @@ def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H29'
 
 def jdkMapping = [
         '1.8': [ jenkinsJdk: 'jdk_1.8_latest', jdkVersion: 8, jdkVendor: 'oracle' ],
+        '1.10': [ jenkinsJdk: 'jdk_10_latest', jdkVersion: 10, jdkVendor: 'oracle' ],
         '1.11': [ jenkinsJdk: 'jdk_11_latest', jdkVersion: 11, jdkVendor: 'oracle' ],
+        '1.12': [ jenkinsJdk: 'jdk_12_latest', jdkVersion: 12, jdkVendor: '' ],
+        '1.13': [ jenkinsJdk: 'jdk_13_latest', jdkVersion: 13, jdkVendor: '' ],
+        '1.14': [ jenkinsJdk: 'jdk_14_latest', jdkVersion: 14, jdkVendor: '' ],
+        '1.15': [ jenkinsJdk: 'jdk_15_latest', jdkVersion: 15, jdkVendor: '' ],
+        '1.16': [ jenkinsJdk: 'jdk_16_latest', jdkVersion: 16, jdkVendor: '' ],
         '1.17': [ jenkinsJdk: 'jdk_17_latest', jdkVersion: 17, jdkVendor: '' ],
         '1.18': [ jenkinsJdk: 'jdk_18_latest', jdkVersion: 18, jdkVendor: '' ],
-        '1.19': [ jenkinsJdk: 'jdk_19_latest', jdkVersion: 19, jdkVendor: '' ],
         'OpenJDK 1.8': [ jenkinsJdk: 'adoptopenjdk_hotspot_8u282', jdkVersion: 8, jdkVendor: 'adoptopenjdk' ],
         'IBMJDK': [ jenkinsJdk: 'ibmjdk_1.8.0_261', jdkVersion: 8, jdkVendor: 'ibm' ]
 ]
@@ -619,6 +650,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
     axes {
         jdk(
                 'jdk_1.8_latest',
+                'jdk_10_latest',
                 'jdk_11_latest',
                 /* don't look for JDKs that are out of support
                 'jdk_12_latest',
