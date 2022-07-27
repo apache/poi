@@ -168,7 +168,8 @@ public class TestPOIFSDump {
     @Test
     @SuppressForbidden("tests java.security features deprecated in java 17 - no other option though")
     void testMainNoArgs() {
-        Assumptions.assumeFalse(System.getProperty("java.version").startsWith("18"),
+        final String javaVersion = System.getProperty("java.version");
+        Assumptions.assumeFalse(javaVersion.startsWith("18") || javaVersion.startsWith("19") || javaVersion.startsWith("2"),
                 "SecurityManager does not work any more since JDK 18");
 
         SecurityManager sm = System.getSecurityManager();
