@@ -581,6 +581,46 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
+    void addDimension1() throws IOException {
+        try (
+                SXSSFWorkbook wb = new SXSSFWorkbook(1);
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            SXSSFSheet sheet = wb.createSheet();
+            sheet.createRow(2).createCell(3).setCellValue("top left");
+            sheet.createRow(6).createCell(5).setCellValue("bottom right");
+            assertEquals(2, sheet.getFirstRowNum());
+            assertEquals(6, sheet.getLastRowNum());
+            wb.write(bos);
+            try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
+                XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+                assertEquals(CellRangeAddress.valueOf("D3:F7"), xssfSheet.getDimension());
+            }
+        }
+    }
+
+    @Test
+    void addDimensionXSSFtoSXSSF() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            sheet.createRow(2).createCell(3).setCellValue("top left");
+            sheet.createRow(6).createCell(5).setCellValue("bottom right");
+            assertEquals(2, sheet.getFirstRowNum());
+            assertEquals(6, sheet.getLastRowNum());
+            try (
+                    SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook(wb);
+                    UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+            ) {
+                sxssfWorkbook.write(bos);
+                try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+                    assertEquals(CellRangeAddress.valueOf("D3:F7"), xssfSheet.getDimension());
+                }
+            }
+        }
+    }
+
+    @Test
     void addDimensionDisabled() throws IOException {
         try (
                 SXSSFWorkbook wb = new SXSSFWorkbook();
