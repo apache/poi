@@ -92,10 +92,6 @@ def xmlbeansjobs = [
         ],
         [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true, gradle: true,
         ],
-        [ name: 'POI-XMLBeans-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true, gradle: true,
-          // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
-          disabled: true
-        ],
         [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true, gradle: true,
         ],
         [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true, gradle: true,
