@@ -301,6 +301,7 @@ under the License.
     <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk15on:1.70" usage="ooxml-provided"/>
     <!-- only used for signing the release - not used with the ooxml signatures -->
     <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk15on:1.70" usage="util"/>
+    <dependency prefix="ooxml.test.stax2" artifact="org.codehaus.woodstox:stax2-api:4.2.1" usage="ooxml-provided"/>
 
     <!-- svg/batik/pdf libs - not part of the distribution - move batik to its own directory because of JPMS module-path issues -->
     <dependency prefix="svg.xml-apis-ext" artifact="xml-apis:xml-apis-ext:1.3.04" usage="ooxml-batik"/>
@@ -831,6 +832,7 @@ under the License.
                     <available file="${ooxml.test.javassist.jar}"/>
                     <available file="${ooxml.test.slf4j-api.jar}"/>
                     <available file="${ooxml.test.opczip.jar}"/>
+                    <available file="${ooxml.test.stax2.jar}"/>
                     <available file="${svg.xml-apis-ext.jar}"/>
                     <available file="${svg.batik-anim.jar}"/>
                     <available file="${svg.batik-awt-util.jar}"/>
@@ -871,6 +873,7 @@ under the License.
         <downloadfile src="${ooxml.test.javassist.url}" dest="${ooxml.test.javassist.jar}"/>
         <downloadfile src="${ooxml.test.slf4j-api.url}" dest="${ooxml.test.slf4j-api.jar}"/>
         <downloadfile src="${ooxml.test.opczip.url}" dest="${ooxml.test.opczip.jar}"/>
+        <downloadfile src="${ooxml.test.stax2.url}" dest="${ooxml.test.stax2.jar}"/>
         <downloadfile src="${svg.batik-anim.url}" dest="${svg.batik-anim.jar}"/>
         <downloadfile src="${svg.batik-awt-util.url}" dest="${svg.batik-awt-util.jar}"/>
         <downloadfile src="${svg.batik-bridge.url}" dest="${svg.batik-bridge.jar}"/>
