@@ -33,9 +33,6 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class TestArcTo {
 
@@ -129,22 +126,16 @@ public class TestArcTo {
     // classes into poi-ooxml-lite
     @Test
     public void testSnapshot() {
-        SectionType sectionType = mock(SectionType.class);
-        RowType rowType = mock(RowType.class);
-
-        when(sectionType.getCellArray()).thenReturn(new CellType[0]);
-        when(sectionType.getRowArray()).thenReturn(new RowType[] {
-                rowType
-        });
-        when(rowType.getIX()).thenReturn(0L);
-        when(rowType.getT()).thenReturn("ArcTo");
-        when(rowType.getCellArray()).thenReturn(new CellType[0]);
+        SectionType sectionType = SectionType.Factory.newInstance();
 
         GeometrySection section = new GeometrySection(sectionType, null);
         assertNotNull(section);
 
         TriggerType[] triggerArray = sectionType.getTriggerArray();
-        assertNull(triggerArray);
+        assertNotNull(triggerArray);
+
+        RowType[] rowArray = sectionType.getRowArray();
+        assertNotNull(rowArray);
     }
 
     private static ArcTo createArcTo(double a) {
