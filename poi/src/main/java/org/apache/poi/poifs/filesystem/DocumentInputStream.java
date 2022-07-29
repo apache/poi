@@ -263,7 +263,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
             throw new IllegalStateException("cannot perform requested operation on a closed stream");
         }
         if (requestedSize > _document_size - _current_offset) {
-            throw new RuntimeException("Buffer underrun - requested " + requestedSize
+            throw new IllegalStateException("Buffer underrun - requested " + requestedSize
                     + " bytes but " + (_document_size - _current_offset) + " was available");
         }
     }
@@ -276,7 +276,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
     @Override
     public void readFully(byte[] buf, int off, int len) {
         if (len < 0) {
-           throw new RuntimeException("Can't read negative number of bytes");
+           throw new IllegalArgumentException("Can't read negative number of bytes, but had: " + len);
         }
 
         checkAvaliable(len);

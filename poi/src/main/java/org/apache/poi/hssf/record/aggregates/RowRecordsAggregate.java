@@ -108,7 +108,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
                 continue;
             }
             if (!(rec instanceof CellValueRecordInterface)) {
-                throw new RuntimeException("Unexpected record type (" + rec.getClass().getName() + ")");
+                throw new IllegalArgumentException("Unexpected record type (" + rec.getClass().getName() + ")");
             }
             _valuesAgg.construct((CellValueRecordInterface)rec, rs, svm);
         }
@@ -145,11 +145,11 @@ public final class RowRecordsAggregate extends RecordAggregate {
         _valuesAgg.removeAllCellsValuesForRow(rowIndex);
         RowRecord rr = _rowRecords.remove(rowIndex);
         if (rr == null) {
-            throw new RuntimeException("Invalid row index (" + rowIndex + ")");
+            throw new IllegalArgumentException("Invalid row index (" + rowIndex + ")");
         }
         if (row != rr) {
             _rowRecords.put(rowIndex, rr);
-            throw new RuntimeException("Attempt to remove row that does not belong to this sheet");
+            throw new IllegalArgumentException("Attempt to remove row that does not belong to this sheet");
         }
 
         // Clear the cached values
@@ -215,7 +215,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
         try {
             return _rowRecordValues[startIndex].getRowNumber();
         } catch(ArrayIndexOutOfBoundsException e) {
-            throw new RuntimeException("Did not find start row for block " + block);
+            throw new IllegalArgumentException("Did not find start row for block " + block);
         }
     }
 
@@ -232,7 +232,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
         try {
             return _rowRecordValues[endIndex].getRowNumber();
         } catch(ArrayIndexOutOfBoundsException e) {
-            throw new RuntimeException("Did not find end row for block " + block);
+            throw new IllegalArgumentException("Did not find end row for block " + block);
       }
     }
 

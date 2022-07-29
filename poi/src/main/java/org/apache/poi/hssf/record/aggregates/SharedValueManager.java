@@ -74,7 +74,8 @@ public final class SharedValueManager {
                 }
             }
             if (_numberOfFormulas >= _frAggs.length) {
-                throw new RuntimeException("Too many formula records for shared formula group");
+                throw new IllegalStateException("Too many formula records for shared formula group: " + _numberOfFormulas +
+						", expecting less than " + _frAggs.length);
             }
             _frAggs[_numberOfFormulas++] = agg;
         }
@@ -153,7 +154,7 @@ public final class SharedValueManager {
     public SharedFormulaRecord linkSharedFormulaRecord(CellReference firstCell, FormulaRecordAggregate agg) {
         SharedFormulaGroup result = findFormulaGroupForCell(firstCell);
         if(null == result) {
-            throw new RuntimeException("Failed to find a matching shared formula record");
+            throw new IllegalArgumentException("Failed to find a matching shared formula record for cell: " + firstCell);
         }
         result.add(agg);
         return result.getSFR();

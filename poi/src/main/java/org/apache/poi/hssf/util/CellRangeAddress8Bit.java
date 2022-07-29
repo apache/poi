@@ -41,7 +41,7 @@ public final class CellRangeAddress8Bit extends CellRangeAddressBase {
     private static int readUShortAndCheck(LittleEndianInput in) {
         if (in.available() < ENCODED_SIZE) {
             // Ran out of data
-            throw new RuntimeException("Ran out of data reading CellRangeAddress");
+            throw new IllegalArgumentException("Ran out of data reading CellRangeAddress, available: " + in.available());
         }
         return in.readUShort();
     }

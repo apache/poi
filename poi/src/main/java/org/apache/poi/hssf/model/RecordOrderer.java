@@ -112,7 +112,7 @@ final class RecordOrderer {
         if (recClass == WorksheetProtectionBlock.class) {
             return getWorksheetProtectionBlockInsertPos(records);
         }
-        throw new RuntimeException("Unexpected record class (" + recClass.getName() + ")");
+        throw new IllegalArgumentException("Unexpected record class (" + recClass.getName() + ")");
     }
 
     /**
@@ -182,7 +182,7 @@ final class RecordOrderer {
                 return i+1;
             }
         }
-        throw new RuntimeException("Did not find insert point for GUTS");
+        throw new IllegalArgumentException("Did not find insert point for GUTS");
     }
     private static boolean isPageBreakPriorRecord(Object rb) {
         if (rb instanceof Record) {
@@ -242,7 +242,7 @@ final class RecordOrderer {
                 // DataValidityTable
             }
         }
-        throw new RuntimeException("Did not find Window2 record");
+        throw new IllegalArgumentException("Did not find Window2 record");
     }
 
     private static int findInsertPosForNewMergedRecordTable(List<RecordBase> records) {
@@ -265,7 +265,7 @@ final class RecordOrderer {
                     return i + 1;
             }
         }
-        throw new RuntimeException("Did not find Window2 record");
+        throw new IllegalArgumentException("Did not find Window2 record");
     }
 
 
@@ -332,7 +332,7 @@ final class RecordOrderer {
             // ConditionalFormattingTable
             case HyperlinkRecord.sid:
             case UnknownRecord.QUICKTIP_0800:
-            // name of a VBA module    
+            // name of a VBA module
             case UnknownRecord.CODENAME_1BA:
                 return true;
         }
@@ -361,7 +361,7 @@ final class RecordOrderer {
             }
         }
         // worksheet stream is seriously broken
-        throw new RuntimeException("DimensionsRecord not found");
+        throw new IllegalArgumentException("DimensionsRecord not found");
     }
 
     private static int getGutsRecordInsertPos(List<RecordBase> records) {
@@ -374,7 +374,7 @@ final class RecordOrderer {
                 return i+1;
             }
         }
-        throw new RuntimeException("Did not find insert point for GUTS");
+        throw new IllegalArgumentException("Did not find insert point for GUTS");
     }
 
     private static boolean isGutsPriorRecord(RecordBase rb) {
@@ -427,7 +427,7 @@ final class RecordOrderer {
                 return true;
             case EOFRecord.sid:
                 // WINDOW2 should always be present, so shouldn't have got this far
-                throw new RuntimeException("Found EOFRecord before WindowTwoRecord was encountered");
+                throw new IllegalArgumentException("Found EOFRecord before WindowTwoRecord was encountered");
         }
         return PageSettingsBlock.isComponentRecord(sid);
     }

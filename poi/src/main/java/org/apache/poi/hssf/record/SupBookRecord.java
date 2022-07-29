@@ -132,11 +132,11 @@ public final class SupBookRecord extends StandardRecord {
             // 5.38.3 'Add-In Functions'
             _isAddInFunctions = true;
             if(field_1_number_of_sheets != 1) {
-                throw new RuntimeException("Expected 0x0001 for number of sheets field in 'Add-In Functions' but got ("
+                throw new IllegalArgumentException("Expected 0x0001 for number of sheets field in 'Add-In Functions' but got ("
                      + field_1_number_of_sheets + ")");
             }
         } else {
-            throw new RuntimeException("invalid EXTERNALBOOK code ("
+            throw new IllegalArgumentException("invalid EXTERNALBOOK code ("
                      + Integer.toHexString(nextShort) + ")");
         }
      }

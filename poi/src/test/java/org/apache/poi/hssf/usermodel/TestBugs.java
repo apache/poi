@@ -2457,7 +2457,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
                 RuntimeException.class,
                 () -> new PropertySet(new DocumentInputStream(entry))
             );
-            assertEquals("Can't read negative number of bytes", ex.getMessage());
+            assertEquals("Can't read negative number of bytes, but had: -218103608", ex.getMessage());
         }
     }
 

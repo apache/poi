@@ -76,7 +76,7 @@ public class LittleEndianByteArrayInputStream extends ByteArrayInputStream imple
 
     protected void checkPosition(int i) {
         if (i > count - pos) {
-            throw new RuntimeException("Buffer overrun, having " + count + " bytes in the stream and position is at " + pos +
+            throw new IllegalStateException("Buffer overrun, having " + count + " bytes in the stream and position is at " + pos +
                     ", but trying to increment position by " + i);
         }
     }

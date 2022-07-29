@@ -61,7 +61,7 @@ public final class RowBlocksReader {
             // records from a subsequent sheet.  For example, if SharedFormulaRecords
             // are taken from the wrong sheet, this could cause bug 44449.
             if (!rs.hasNext()) {
-                throw new RuntimeException("Failed to find end of row/cell records");
+                throw new IllegalStateException("Failed to find end of row/cell records");
 
             }
             Record rec = rs.getNext();
@@ -70,7 +70,7 @@ public final class RowBlocksReader {
                 case MergeCellsRecord.sid:    dest = mergeCellRecords; break;
                 case SharedFormulaRecord.sid: dest = shFrmRecords;
                     if (!(prevRec instanceof FormulaRecord)) {
-                        throw new RuntimeException("Shared formula record should follow a FormulaRecord");
+                        throw new IllegalStateException("Shared formula record should follow a FormulaRecord, but had " + prevRec);
                     }
                     FormulaRecord fr = (FormulaRecord)prevRec;
                     firstCellRefs.add(new CellReference(fr.getRow(), fr.getColumn()));

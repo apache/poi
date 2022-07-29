@@ -71,7 +71,7 @@ public abstract class Ptg implements Duplicatable, GenericRecord {
             temp.add(ptg);
         }
         if(pos != size) {
-            throw new RuntimeException("Ptg array size mismatch");
+            throw new IllegalArgumentException("Ptg array size mismatch");
         }
         if (hasArrayPtgs) {
             Ptg[] result = toPtgArray(temp);
@@ -167,7 +167,7 @@ public abstract class Ptg implements Duplicatable, GenericRecord {
             case IntPtg.sid:          return new IntPtg(in);          // 0x1e
             case NumberPtg.sid:       return new NumberPtg(in);       // 0x1f
         }
-        throw new RuntimeException("Unexpected base token id (" + id + ")");
+        throw new IllegalArgumentException("Unexpected base token id (" + id + ")");
     }
 
     private static Ptg[] toPtgArray(List<Ptg> l) {
@@ -254,7 +254,7 @@ public abstract class Ptg implements Duplicatable, GenericRecord {
 
     public final void setClass(byte thePtgClass) {
         if (isBaseToken()) {
-            throw new RuntimeException("setClass should not be called on a base token");
+            throw new IllegalStateException("setClass should not be called on a base token");
         }
         ptgClass = thePtgClass;
     }
@@ -279,7 +279,7 @@ public abstract class Ptg implements Duplicatable, GenericRecord {
             case Ptg.CLASS_VALUE: return 'V';
             case Ptg.CLASS_ARRAY: return 'A';
         }
-        throw new RuntimeException("Unknown operand class (" + ptgClass + ")");
+        throw new IllegalArgumentException("Unknown operand class (" + ptgClass + ")");
     }
 
     public abstract byte getDefaultOperandClass();

@@ -416,7 +416,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
         try {
             ctSettings = SettingsDocument.Factory.parse(inputStream, DEFAULT_XML_OPTIONS).getSettings();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("Failed to read data from input-stream", e);
         }
     }
 

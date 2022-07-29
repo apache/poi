@@ -64,7 +64,7 @@ public class CellRangeAddress extends CellRangeAddressBase {
     private static int readUShortAndCheck(RecordInputStream in) {
         if (in.remaining() < ENCODED_SIZE) {
             // Ran out of data
-            throw new RuntimeException("Ran out of data reading CellRangeAddress");
+            throw new IllegalArgumentException("Ran out of data reading CellRangeAddress");
         }
         return in.readUShort();
     }

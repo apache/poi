@@ -75,7 +75,7 @@ public final class ConstantValueParser {
                 in.readInt();
                 return ErrorConstant.valueOf(errCode);
         }
-        throw new RuntimeException("Unknown grbit value (" + grbit + ")");
+        throw new IllegalArgumentException("Unknown grbit value (" + grbit + ")");
     }
 
     private static Object readBoolean(LittleEndianInput in) {
@@ -87,7 +87,7 @@ public final class ConstantValueParser {
                 return Boolean.TRUE;
         }
         // Don't tolerate unusual boolean encoded values (unless it becomes evident that they occur)
-        throw new RuntimeException("unexpected boolean encoding (" + val + ")");
+        throw new IllegalArgumentException("unexpected boolean encoding (" + val + ")");
     }
 
     public static int getEncodedSize(Object[] values) {

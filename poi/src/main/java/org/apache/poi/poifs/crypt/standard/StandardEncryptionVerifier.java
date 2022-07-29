@@ -34,8 +34,8 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
     protected StandardEncryptionVerifier(LittleEndianInput is, StandardEncryptionHeader header) {
         int saltSize = is.readInt();
 
-        if (saltSize!=16) {
-            throw new RuntimeException("Salt size != 16 !?");
+        if (saltSize != 16) {
+            throw new IllegalArgumentException("Salt size != 16: " + saltSize);
         }
 
         byte[] salt = new byte[16];

@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.model;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.apache.poi.hssf.record.Record;
 /**
@@ -54,7 +55,7 @@ public final class RecordStream {
 
     public Record getNext() {
         if(!hasNext()) {
-            throw new RuntimeException("Attempt to read past end of record stream");
+            throw new NoSuchElementException("Attempt to read past end of record stream");
         }
         _countRead ++;
         return _list.get(_nextIndex++);

@@ -85,7 +85,7 @@ public final class ColumnInfoRecord extends StandardRecord {
                 field_6_reserved  = 0;
                 break;
             default:
-                throw new RuntimeException("Unusual record size remaining=(" + in.remaining() + ")");
+                throw new IllegalArgumentException("Unusual record size remaining=(" + in.remaining() + ")");
         }
     }
 
