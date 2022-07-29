@@ -1333,6 +1333,7 @@ under the License.
         <attribute name="modulepath-ref"/>
         <attribute name="module1" default=""/>
         <attribute name="module2" default=""/>
+        <attribute name="module3" default=""/>
         <attribute name="outputDir"/>
         <element name="elements" implicit="true"/>
         <sequential>
@@ -1385,11 +1386,15 @@ under the License.
 
             <local name="use_module1"/>
             <local name="use_module2"/>
+            <local name="use_module3"/>
             <condition property="use_module1" value="true" unless:true="${isJava8}">
                 <length string="@{module1}" when="greater" length="0"/>
             </condition>
             <condition property="use_module2" value="true" unless:true="${isJava8}">
                 <length string="@{module2}" when="greater" length="0"/>
+            </condition>
+            <condition property="use_module3" value="true" unless:true="${isJava8}">
+                <length string="@{module3}" when="greater" length="0"/>
             </condition>
 
             <!-- As of 2018, JaCoCo is managing expectations and stay on Java 5 and therefore don't support junitlauncher -->
@@ -1435,6 +1440,7 @@ under the License.
                         <jvmarg line="--add-modules org.junit.jupiter.params" unless:true="${isJava8}"/>
                         <jvmarg line="--add-modules org.apache.poi.@{module1}" if:set="use_module1"/>
                         <jvmarg line="--add-modules org.apache.poi.@{module2}" if:set="use_module2"/>
+                        <jvmarg line="--add-modules @{module3}" if:set="use_module3"/>
                     </fork>
 
                     <listener classname="Junit5Progress" />
@@ -1461,7 +1467,7 @@ under the License.
         </path>
 
         <poiunit failureproperty="ooxml.test.failed" heap="768" modulepath-ref="restest.modules"
-            module1="ooxml" module2="scratchpad" outputDir="${ooxml.reports.test}">
+            module1="ooxml" module2="scratchpad" module3="org.bouncycastle.pkix" outputDir="${ooxml.reports.test}">
             <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
                 <include name="**/${testpattern}.class"/>
                 <exclude name="**/*$*.class"/>
@@ -1782,7 +1788,7 @@ under the License.
         <attribute name="type"/>
         <sequential>
             <poiunit failureproperty="ooxml.test.failed" heap="768" jacocodest="build/jacoco-@{type}.exec"
-                     modulepath-ref="@{modulepath-ref}" module1="ooxml" module2="scratchpad" outputDir="${ooxml.reports.test}">
+                     modulepath-ref="@{modulepath-ref}" module1="ooxml" module2="scratchpad" module3="org.bouncycastle.pkix" outputDir="${ooxml.reports.test}">
                 <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
                     <include name="**/${testpattern}.class"/>
                     <exclude name="**/*$*.class"/>
