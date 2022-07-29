@@ -157,4 +157,14 @@ public final class POITestCase {
         }
         ImageIO.setCacheDirectory(tmpDir);
     }
+
+    /**
+     * Returns the major version of Java as simple integer, i.e.
+     * "8" for JDK 1.8, "11" for JDK 11, "12" for JDK 12 and so on.
+     *
+     * @return The major version of Java
+     */
+    public static int getJDKVersion() {
+        return Integer.parseInt(System.getProperty("java.version").replaceAll("^(?:1\\.)?(\\d+).*", "$1"));
+    }
 }

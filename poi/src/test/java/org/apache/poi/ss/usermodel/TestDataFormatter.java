@@ -35,6 +35,7 @@ import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.TestHSSFDataFormatter;
@@ -774,13 +775,14 @@ class TestDataFormatter {
         assertTrue(DateUtil.isADateFormat(-1, "[h]"));
     }
 
-
     @Test
     void testLargeNumbersAndENotation() throws IOException{
         assertFormatsTo("1E+86", 99999999999999999999999999999999999999999999999999999999999999999999999999999999999999d);
         assertFormatsTo("1E-84", 0.000000000000000000000000000000000000000000000000000000000000000000000000000000000001d);
         // Smallest double
-        assertFormatsTo("1E-323", 0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001d);
+        // See https://bugs.openjdk.org/browse/JDK-8291240
+        assertFormatsTo(POITestCase.getJDKVersion() >= 19 ? "9.9E-324" : "1E-323",
+                0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001d);
 
         // "up to 11 numeric characters, with the decimal point counting as a numeric character"
         // https://support.microsoft.com/en-us/kb/65903
@@ -821,8 +823,16 @@ class TestDataFormatter {
             DataFormat dataFormat = wb.createDataFormat();
             newStyle.setDataFormat(dataFormat.getFormat("General"));
             String actual = new DataFormatter().formatCellValue(rawValue);
-            assertEquals(expected, actual);
+            assertEquals(expected, actual,
+                    "Failed for input " + input);
         }
+    }
+
+    @Test
+    public void testJDK19() {
+        // See https://bugs.openjdk.org/browse/JDK-8291240
+        assertEquals(POITestCase.getJDKVersion() >= 19 ? "9.9E-324" : "1.0E-323",
+                Double.toString(0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001d));
     }
 
     @Test

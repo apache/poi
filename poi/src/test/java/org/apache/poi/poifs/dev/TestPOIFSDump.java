@@ -30,6 +30,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.Permission;
 
 import org.apache.commons.io.output.NullPrintStream;
+import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
@@ -168,8 +169,7 @@ public class TestPOIFSDump {
     @Test
     @SuppressForbidden("tests java.security features deprecated in java 17 - no other option though")
     void testMainNoArgs() {
-        final String javaVersion = System.getProperty("java.version");
-        Assumptions.assumeFalse(javaVersion.startsWith("18") || javaVersion.startsWith("19") || javaVersion.startsWith("2"),
+        Assumptions.assumeFalse(POITestCase.getJDKVersion() >= 18,
                 "SecurityManager does not work any more since JDK 18");
 
         SecurityManager sm = System.getSecurityManager();
