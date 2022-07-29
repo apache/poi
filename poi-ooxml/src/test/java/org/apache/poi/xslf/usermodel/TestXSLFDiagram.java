@@ -35,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestXSLFDiagram {
 
     private static final String SIMPLE_DIAGRAM = "smartart-simple.pptx";
+    private static final String ROTATED_TEXT_DIAGRAM = "smartart-rotated-text.pptx";
 
     private static List<XSLFDiagram> extractDiagrams(XMLSlideShow slideShow) {
         return slideShow.getSlides()
@@ -147,6 +148,32 @@ public class TestXSLFDiagram {
             assertTrue(pictureShape.getText().isEmpty(), "text is empty?");
             XSLFTexturePaint texturePaint = (XSLFTexturePaint) pictureShape.getFillPaint();
             assertEquals(ContentTypes.IMAGE_JPEG, texturePaint.getContentType());
+        }
+    }
+
+    @Test
+    public void testTextRotationOnShape() throws IOException {
+        try (XMLSlideShow inputPptx = XSLFTestDataSamples.openSampleDocument(ROTATED_TEXT_DIAGRAM)) {
+            List<XSLFDiagram> diagrams = extractDiagrams(inputPptx);
+            assertEquals(1, diagrams.size());
+
+            XSLFDiagram diagram = diagrams.get(0);
+            XSLFGroupShape groupShape = diagram.getGroupShape();
+
+            List<XSLFShape> shapes = groupShape.getShapes();
+
+            // Text shapes have separate rotation calculation
+            XSLFTextBox abcText = (XSLFTextBox) shapes.get(1);
+            assertEquals(-41.3187, abcText.getRotation(), 1E-4);
+
+            XSLFTextBox defText = (XSLFTextBox) shapes.get(5);
+            assertEquals(49.1812, defText.getRotation(), 1E-4);
+
+            XSLFTextBox ghiText = (XSLFTextBox) shapes.get(9);
+            assertEquals(0.0, ghiText.getRotation(), 1E-4);
+
+            XSLFTextBox jklText = (XSLFTextBox) shapes.get(11);
+            assertEquals(0.0, jklText.getRotation(), 1E-4);
         }
     }
 }

@@ -172,7 +172,6 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         // We can't easily (is it even possible?) set a separate xfrm for the text on the openxml CTShape.
         // Instead, we create a separate textbox shape with the same xfrm.
         org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties textShapeProps = textShapeCT.addNewSpPr();
-        textShapeProps.setXfrm(msShapeCt.getTxXfrm());
 
         textShapeCT.setTxBody(msShapeCt.getTxBody());
         textShapeCT.setStyle(msShapeCt.getStyle());
@@ -181,6 +180,16 @@ public class XSLFDiagram extends XSLFGraphicFrame {
         // also updates the parent shape.
         textShapeCT.setNvSpPr((CTShapeNonVisual) nonVisualCt.copy());
         textShapeCT.getNvSpPr().getCNvSpPr().setTxBox(true);
+
+        textShapeProps.setXfrm(msShapeCt.getTxXfrm());
+        int shapeRotation = msShapeCt.getSpPr().getXfrm().getRot();
+        int textRotation = msShapeCt.getTxXfrm().getRot();
+        if (textRotation != 0) {
+            // SmartArt diagrams (e.g. hexagon) have rotated shapes and the txXfrm can change the rotation for visual
+            // reasons. We perform that same calculation here again and calculate a new rotation for the text box.
+            int resolvedRotation = shapeRotation + textRotation;
+            textShapeProps.getXfrm().setRot(resolvedRotation);
+        }
 
         return textShapeCT;
     }
