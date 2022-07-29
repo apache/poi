@@ -70,6 +70,10 @@ class TestTriggerCoverage {
             dataDirName = "test-data";
         }
 
+        if (!new File(dataDirName).exists()) {
+            dataDirName = "../test-data";
+        }
+
         List<Arguments> files = new ArrayList<>();
         findFile(files, dataDirName + "/integration");
 

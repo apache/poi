@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDggRecord;
@@ -127,7 +128,12 @@ class TestDrawingAggregate {
     }
 
     public static Stream<Arguments> samples() {
-        File testData = new File(System.getProperty("POI.testdata.path"), "spreadsheet");
+        String property = System.getProperty(POIDataSamples.TEST_PROPERTY, "test-data");
+        File testData = new File(property, "spreadsheet");
+        if (!testData.exists()) {
+            testData = new File("../" + property, "spreadsheet");
+        }
+
         File[] files = testData.listFiles((dir, name) -> name.endsWith(".xls"));
         assertNotNull(files, "Need to find files in test-data path, had path: " + testData);
         return Stream.of(files).map(Arguments::of);

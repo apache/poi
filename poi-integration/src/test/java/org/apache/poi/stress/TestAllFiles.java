@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.tools.ant.DirectoryScanner;
 import org.junit.jupiter.api.function.Executable;
@@ -71,7 +72,15 @@ import org.opentest4j.AssertionFailedError;
 @Execution(ExecutionMode.CONCURRENT)
 public class TestAllFiles {
     private static final String DEFAULT_TEST_DATA_PATH = "test-data";
-    public static final File ROOT_DIR = new File(System.getProperty("POI.testdata.path", DEFAULT_TEST_DATA_PATH));
+    public static final File ROOT_DIR;
+    static {
+		File dir = new File(System.getProperty(POIDataSamples.TEST_PROPERTY, DEFAULT_TEST_DATA_PATH));
+		if (!dir.exists()) {
+			dir = new File(System.getProperty(POIDataSamples.TEST_PROPERTY, "../" + DEFAULT_TEST_DATA_PATH));
+		}
+
+		ROOT_DIR = dir;
+	}
 
     public static final String[] SCAN_EXCLUDES = {
         "**/.svn/**",

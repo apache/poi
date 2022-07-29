@@ -50,7 +50,8 @@ public abstract class BaseTestIteratingXLS {
     };
 
     public Stream<Arguments> files() {
-        String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY, "test-data");
+        String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY,
+                new File("test-data").exists() ? "test-data" : "../test-data");
 
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(dataDirName);
