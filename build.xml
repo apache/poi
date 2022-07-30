@@ -1955,6 +1955,10 @@ under the License.
                 <attribute name="Automatic-Module-Name" value="org.apache.poi.ooxml.schemas"/>
             </manifest>
         </jar>
+
+        <delete file="${ooxml.lite.report}.clazz1"/>
+        <delete file="${ooxml.lite.report}.clazz2"/>
+        <delete file="${ooxml.lite.report}.xsb2"/>
     </target>
 
     <target name="test-ooxml-lite" depends="jacocotask,compile-ooxml-lite">
