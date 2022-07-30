@@ -14,18 +14,18 @@ def xercesUrl = 'https://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesIm
 def xercesLib = './xercesImpl-2.6.1.jar'
 
 def poijobs = [
-        [ name: 'POI-DSL-1.8', trigger: 'H */12 * * *', gradle: true
+        [ name: 'POI-DSL-1.8', trigger: 'H */12 * * *'
         ],
         [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK 1.8', trigger: 'H */12 * * *',
           // only a limited set of nodes still have OpenJDK 8 (on Ubuntu) installed
           slaves: 'ubuntu',
-          skipcigame: true, gradle: true
+          skipcigame: true
         ],
 //        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true,
 //          // let's save some CPU cycles here, 10 had EOL in September 2018
 //          disabled: true
 //        ],
-        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true, gradle: true
+        [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
         ],
 //        [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
 //          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA as of 17 September 2019
@@ -39,24 +39,26 @@ def poijobs = [
 //          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
 //          disabled: true
 //        ],
-        [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true, gradle: true,
+        [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true,
           // let's save some CPU cycles here, 15 is not a LTS and JDK 16 is GA
           disabled: true
         ],
-        [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: 'H */12 * * *', skipcigame: true, gradle: true,
+        [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: 'H */12 * * *', skipcigame: true,
           // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
           disabled: true
         ],
-        [ name: 'POI-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true, gradle: true
+        [ name: 'POI-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true
         ],
-        [ name: 'POI-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true, gradle: true
+        [ name: 'POI-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true
         ],
-        //Gradle 7.5 does not support Java 19 (change to gradle: true when we have Gradle support)
-        [ name: 'POI-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true, gradle: false
+        // Use Ant build for as Gradle 7.5 does not support Java 19 yet (change to gradle: true when we have Gradle support)
+        [ name: 'POI-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true, useAnt: true
         ],
-        [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, gradle: true
+        // Use Ant-build for now as selecting IBM JDK via toolchain does not work (yet)
+        [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, useAnt: true
         ],
-        [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays, skipcigame: true,
+        // Use Ant-build for now as passing the "additionaljar" does not work in Gradle build (yet)
+        [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays, skipcigame: true, useAnt: true,
           shell: "test -s ${xercesLib} || wget -O ${xercesLib} ${xercesUrl}\n",
           // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
           properties: ["-Dadditionaljar=${xercesLib}"]
@@ -68,42 +70,42 @@ def poijobs = [
         [ name: 'POI-DSL-regenerate-javadoc', trigger: triggerSundays, javadoc: true
         ],
         // it was impossible to make this run stable in Gradle, thus disabling this for now
-        [ name: 'POI-DSL-API-Check', trigger: '@daily', apicheck: true, disabled: true
+        [ name: 'POI-DSL-API-Check', trigger: '@daily', apicheck: true, disabled: true, useAnt: true
         ],
-//        [ name: 'POI-DSL-Gradle', trigger: triggerSundays, email: 'centic@apache.org', gradle: true
+//        [ name: 'POI-DSL-Gradle', trigger: triggerSundays, email: 'centic@apache.org'
 //        ],
-        [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true, gradle: true
+        [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
         ],
-        [ name: 'POI-DSL-saxon-test', trigger: triggerSundays, saxonTest: true, gradle: true
+        [ name: 'POI-DSL-saxon-test', trigger: triggerSundays, saxonTest: true
         ],
 //        [ name: 'POI-DSL-SonarQube', jdk: '1.11', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
 //          email: 'kiwiwings@apache.org',
 //		  // replaced by Gradle-based build now
 //		  disabled: true
 //        ],
-        [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.11', trigger: 'H 7 * * *', gradle: true, sonar: true, skipcigame: true
+        [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.11', trigger: 'H 7 * * *', sonar: true, skipcigame: true
         ],
-        [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', gradle: true
+        [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
         ],
-//        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
+//        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
 //          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
 //          disabled: true
 //        ],
-//        [ name: 'POI-DSL-Windows-1.14', jdk: '1.14', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
+//        [ name: 'POI-DSL-Windows-1.14', jdk: '1.14', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
 //		  // let's only verify the latest two JDKs
 //		  disabled: true
 //        ],
-        [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
+        [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
           // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
           disabled: true
         ],
-        [ name: 'POI-DSL-Windows-1.16', jdk: '1.16', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true, gradle: true,
+        [ name: 'POI-DSL-Windows-1.16', jdk: '1.16', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true,
           // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
           disabled: true
         ],
-        [ name: 'POI-DSL-Windows-1.17', jdk: '1.17', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true, gradle: true
+        [ name: 'POI-DSL-Windows-1.17', jdk: '1.17', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true
         ],
-        [ name: 'POI-DSL-Windows-1.18', jdk: '1.18', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true, gradle: true
+        [ name: 'POI-DSL-Windows-1.18', jdk: '1.18', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
           // ensure the file which is needed from the separate documentation module does exist
@@ -113,22 +115,21 @@ def poijobs = [
 ]
 
 def xmlbeansjobs = [
-        [ name: 'POI-XMLBeans-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true, gradle: true,
+        [ name: 'POI-XMLBeans-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true,
         ],
-        [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true, gradle: true,
+        [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
         ],
-        [ name: 'POI-XMLBeans-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true, gradle: true,
+        [ name: 'POI-XMLBeans-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true,
           // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
           disabled: true
         ],
-        [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true, gradle: true,
+        [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true,
         ],
-        [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true, gradle: true,
+        [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
           sonar: true
         ]
-
 ]
 
 def svnBase = 'https://svn.apache.org/repos/asf/poi/trunk'
@@ -428,7 +429,7 @@ poijobs.each { poijob ->
                     shellEx(delegate, poijob.addShell, poijob)
                 }
                 // For Jobs that should still have the default set of publishers we can configure different steps here
-                if(poijob.gradle) {
+                if(!poijob.useAnt) {
                     if (!poijob.windows) {
                         // Gradle will not run any tests if the code is up-to-date, therefore manually mark the files as updated
                         shellEx(delegate, 'touch --no-create build/*/build/test-results/TEST-*.xml build/*/build/test-results/test/TEST-*.xml', poijob)
