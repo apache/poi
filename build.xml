@@ -2594,9 +2594,9 @@ under the License.
 
         <!-- findbugs successor, spotbugs ... need to use the dependencies used in the spotbugs release. -->
         <!-- compare with the entries found in the MANIFEST.MF of spotbugs.jar -->
-        <dependency prefix="spotbugs" artifact="com.github.spotbugs:spotbugs:4.2.0" usage="${spotbugs.lib}" target="spotbugs.jar"/>
-        <dependency prefix="spotbugs-ant" artifact="com.github.spotbugs:spotbugs-ant:4.2.0" usage="${spotbugs.lib}" target="spotbugs-ant.jar"/>
-        <dependency prefix="spotbugs-anno" artifact="com.github.spotbugs:spotbugs-annotations:4.2.0" usage="${spotbugs.lib}" target="spotbugs-annotations.jar"/>
+        <dependency prefix="spotbugs" artifact="com.github.spotbugs:spotbugs:4.7.1" usage="${spotbugs.lib}" target="spotbugs.jar"/>
+        <dependency prefix="spotbugs-ant" artifact="com.github.spotbugs:spotbugs-ant:4.7.1" usage="${spotbugs.lib}" target="spotbugs-ant.jar"/>
+        <dependency prefix="spotbugs-anno" artifact="com.github.spotbugs:spotbugs-annotations:4.7.1" usage="${spotbugs.lib}" target="spotbugs-annotations.jar"/>
         <dependency prefix="spotbugs.asm" artifact="org.ow2.asm:asm:9.3" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.asm-analysis" artifact="org.ow2.asm:asm-analysis:9.3" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.asm-commons" artifact="org.ow2.asm:asm-commons:9.3" usage="${spotbugs.lib}"/>
@@ -2607,14 +2607,17 @@ under the License.
         <dependency prefix="spotbugs.jaxen" artifact="jaxen:jaxen:1.2.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.bcel" artifact="org.apache.bcel:bcel:6.5.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.slf4j-api" artifact="org.slf4j:slf4j-api:1.8.0-beta4" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.commons-lang3" artifact="org.apache.commons:commons-lang3:3.11" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.commons-lang3" artifact="org.apache.commons:commons-lang3:3.12.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.commons-text" artifact="org.apache.commons:commons-text:1.9" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.commons-codec" artifact="commons-codec:commons-codec:1.11" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.jcip-annotations" artifact="net.jcip:jcip-annotations:1.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.icu4j" artifact="com.ibm.icu:icu4j:68.2" usage="${spotbugs.lib}" target="icu4j-63.1.jar"/>
-        <dependency prefix="spotbugs.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.18.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.18.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.log4j-slf4j18-impl" artifact="org.apache.logging.log4j:log4j-slf4j18-impl:2.18.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.saxon" artifact="net.sf.saxon:Saxon-HE:9.9.1-8" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.icu4j" artifact="com.ibm.icu:icu4j:68.2" usage="${spotbugs.lib}" target="icu4j-68.2.jar"/>
+        <dependency prefix="spotbugs.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.17.2" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.17.1" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-slf4j18-impl" artifact="org.apache.logging.log4j:log4j-slf4j18-impl:2.17.2" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.saxon" artifact="net.sf.saxon:Saxon-HE:11.3" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.xmlresolver" artifact="org.xmlresolver:xmlresolver:4.2.0" usage="${spotbugs.lib}"/>
 
         <mkdir dir="${basedir}${spotbugs.lib}/config"/>
 
@@ -2627,6 +2630,8 @@ under the License.
         <downloadfile src="${spotbugs.slf4j-api.url}" dest="${spotbugs.slf4j-api.jar}"/>
         <downloadfile src="${spotbugs.commons-lang3.url}" dest="${spotbugs.commons-lang3.jar}"/>
         <downloadfile src="${spotbugs.commons-text.url}" dest="${spotbugs.commons-text.jar}"/>
+        <downloadfile src="${spotbugs.commons-codec.url}" dest="${spotbugs.commons-codec.jar}"/>
+        <downloadfile src="${spotbugs.commons-logging.url}" dest="${spotbugs.commons-logging.jar}"/>
         <downloadfile src="${spotbugs.jcip-annotations.url}" dest="${spotbugs.jcip-annotations.jar}"/>
         <downloadfile src="${spotbugs.jsr305.url}" dest="${spotbugs.jsr305.jar}"/>
         <downloadfile src="${spotbugs.asm.url}" dest="${spotbugs.asm.jar}"/>
@@ -2638,6 +2643,7 @@ under the License.
         <downloadfile src="${spotbugs.log4j-core.url}" dest="${spotbugs.log4j-core.jar}"/>
         <downloadfile src="${spotbugs.log4j-slf4j18-impl.url}" dest="${spotbugs.log4j-slf4j18-impl.jar}"/>
         <downloadfile src="${spotbugs.saxon.url}" dest="${spotbugs.saxon.jar}"/>
+        <downloadfile src="${spotbugs.xmlresolver.url}" dest="${spotbugs.xmlresolver.jar}"/>
         <downloadfile src="${spotbugs.icu4j.url}" dest="${spotbugs.icu4j.jar}"/>
 
         <taskdef resource="edu/umd/cs/findbugs/anttask/tasks.properties">
@@ -2741,6 +2747,7 @@ under the License.
             </style>
             <classpath>
                 <pathelement location="${spotbugs.saxon.jar}"/>
+                <pathelement location="${spotbugs.xmlresolver.jar}"/>
             </classpath>
             <factory name="net.sf.saxon.TransformerFactoryImpl"/>
         </xslt>
