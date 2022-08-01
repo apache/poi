@@ -100,10 +100,12 @@ class TestMRound {
             Cell b3 = row2.createCell(1);
             b3.setCellValue(1.35);
 
-            double accuracy = 1E-9;
+            double accuracy = 1E-12;
 
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
+            assertEquals(1.2205, evaluator.evaluate(a2).getNumberValue(), accuracy);
+            assertEquals(1.175, evaluator.evaluate(b2).getNumberValue(), accuracy);
             assertEquals(0.19775, evaluator.evaluate(c1).getNumberValue(), accuracy);
             assertEquals(19.78, evaluator.evaluate(d1).getNumberValue(), accuracy);
             d1.setCellFormula("MROUND(C1 * 100, 2)");
