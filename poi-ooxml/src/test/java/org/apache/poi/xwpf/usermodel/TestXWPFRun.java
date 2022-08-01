@@ -678,10 +678,10 @@ class TestXWPFRun {
     void testSetGetTextHighlightColor() throws IOException {
         try (XWPFDocument document = new XWPFDocument()) {
             final XWPFRun run = document.createParagraph().createRun();
-            assertSame(STHighlightColor.NONE, run.getTextHightlightColor());
+            assertSame(STHighlightColor.NONE, run.getTextHighlightColor());
             assertFalse(run.isHighlighted());
             run.setTextHighlightColor("darkGreen"); // See 17.18.40 ST_HighlightColor (Text Highlight Colors)
-            assertSame(STHighlightColor.DARK_GREEN, run.getTextHightlightColor());
+            assertSame(STHighlightColor.DARK_GREEN, run.getTextHighlightColor());
             assertTrue(run.isHighlighted());
             run.setTextHighlightColor("none");
             assertFalse(run.isHighlighted());

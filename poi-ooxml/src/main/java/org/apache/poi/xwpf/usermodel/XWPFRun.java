@@ -1495,8 +1495,21 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @return {@link STHighlightColor} for the run.
      * @since 4.0.0
+     * @deprecated use {@link #getTextHighlightColor()} instead
      */
+    @Deprecated
+    @Removal(version = "7.0.0")
     public STHighlightColor.Enum getTextHightlightColor() {
+        return getTextHighlightColor();
+    }
+
+    /**
+     * Gets the highlight color for the run
+     *
+     * @return {@link STHighlightColor} for the run.
+     * @since 5.2.3
+     */
+    public STHighlightColor.Enum getTextHighlightColor() {
         CTRPr pr = getRunProperties(true);
         CTHighlight highlight = pr.sizeOfHighlightArray() > 0 ? pr.getHighlightArray(0) : pr.addNewHighlight();
         STHighlightColor color = highlight.xgetVal();
