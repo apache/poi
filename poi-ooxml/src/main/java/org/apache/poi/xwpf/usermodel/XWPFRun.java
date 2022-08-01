@@ -40,12 +40,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.CharacterRun;
-import org.apache.xmlbeans.SimpleValue;
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlString;
-import org.apache.xmlbeans.XmlToken;
+import org.apache.xmlbeans.*;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
@@ -239,8 +234,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public String getLang() {
         CTRPr pr = getRunProperties(false);
-        Object lang = (pr == null || pr.sizeOfLangArray() == 0) ? null : pr.getLangArray(0).getVal();
-        return (String) lang;
+        return (pr == null || pr.sizeOfLangArray() == 0) ? null : pr.getLangArray(0).getVal();
     }
 
     /**
@@ -299,7 +293,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Get text color. The returned value is a string in the hex form "RRGGBB".
+     * Get text color. The returned value is a string in the hex form "RRGGBB". This can be <code>null</code>.
      */
     public String getColor() {
         String color = null;
@@ -963,10 +957,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     *
+     * Not yet implemented.
      */
     public void removeBreak() {
-        // TODO
+        // TODO not yet implemented
     }
 
     /**
@@ -1506,11 +1500,14 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * Gets the highlight color for the run
      *
-     * @return {@link STHighlightColor} for the run.
+     * @return {@link STHighlightColor} for the run. The default is <code>NONE</code>;
      * @since 5.2.3
      */
     public STHighlightColor.Enum getTextHighlightColor() {
-        CTRPr pr = getRunProperties(true);
+        CTRPr pr = getRunProperties(false);
+        if (pr == null) {
+            return STHighlightColor.NONE;
+        }
         CTHighlight highlight = pr.sizeOfHighlightArray() > 0 ? pr.getHighlightArray(0) : pr.addNewHighlight();
         STHighlightColor color = highlight.xgetVal();
         if (color == null) {
@@ -1527,7 +1524,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @since 4.0.0
      */
     public boolean isVanish() {
-        CTRPr pr = getRunProperties(true);
+        CTRPr pr = getRunProperties(false);
         return pr != null && pr.sizeOfVanishArray() > 0 && isCTOnOff(pr.getVanishArray(0));
     }
 
@@ -1546,11 +1543,15 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * Get the vertical alignment value
      *
-     * @return {@link STVerticalAlignRun.Enum} value (see 22.9.2.17 ST_VerticalAlignRun (Vertical Positioning Location))
+     * @return {@link STVerticalAlignRun.Enum} value (see 22.9.2.17 ST_VerticalAlignRun (Vertical Positioning Location)).
+     * The default is <code>BASELINE</code>.
      * @since 4.0.0
      */
     public STVerticalAlignRun.Enum getVerticalAlignment() {
-        CTRPr pr = getRunProperties(true);
+        CTRPr pr = getRunProperties(false);
+        if (pr == null) {
+            return STVerticalAlignRun.BASELINE;
+        }
         CTVerticalAlignRun vertAlign = pr.sizeOfVertAlignArray() > 0 ? pr.getVertAlignArray(0) : pr.addNewVertAlign();
         STVerticalAlignRun.Enum val = vertAlign.getVal();
         if (val == null) {
@@ -1585,10 +1586,14 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Get the emphasis mark value for the run.
      *
      * @return {@link STEm.Enum} emphasis mark type enumeration. See 17.18.24 ST_Em (Emphasis Mark Type).
+     * The default is <code>NONE</code>.
      * @since 4.0.0
      */
     public STEm.Enum getEmphasisMark() {
-        CTRPr pr = getRunProperties(true);
+        CTRPr pr = getRunProperties(false);
+        if (pr == null) {
+            return STEm.NONE;
+        }
         CTEm emphasis = pr.sizeOfEmArray() > 0 ? pr.getEmArray(0) : pr.addNewEm();
 
         STEm.Enum val = emphasis.getVal();
