@@ -23,6 +23,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.StringUtil;
 
 import java.time.DateTimeException;
 
@@ -52,6 +53,9 @@ public final class Value extends Fixed1ArgFunction implements ArrayFunction {
             return e.getErrorEval();
         }
         String strText = OperandResolver.coerceValueToString(veText);
+        if (StringUtil.isBlank(strText)) {
+            return ErrorEval.VALUE_INVALID;
+        }
         Double result = convertTextToNumber(strText);
         if (result == null) result = parseDateTime(strText);
         if (result == null) {

@@ -93,5 +93,6 @@ final class TestValue {
         confirmValueError(",300");
         confirmValueError("0.233,4");
         confirmValueError("1e2.5");
+        confirmValueError("");
     }
 }

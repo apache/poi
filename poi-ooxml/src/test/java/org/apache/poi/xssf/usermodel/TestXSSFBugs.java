@@ -3701,8 +3701,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals(CellType.ERROR, a1.getCachedFormulaResultType());
             FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
             CellValue cv1 = evaluator.evaluate(a1);
-            //this next line should probably return CellType.ERROR
-            assertEquals(CellType.NUMERIC, cv1.getCellType());
+            assertEquals(CellType.ERROR, cv1.getCellType());
+            assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), cv1.getErrorValue());
         }
     }
 }
