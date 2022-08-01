@@ -73,6 +73,8 @@ final class TestValue {
         confirmValue("$1,000e2", 100000);
         confirmValue("30%", 0.3);
         confirmValue("30 %", 0.3);
+        //next test is based on https://support.microsoft.com/en-us/office/value-function-257d0108-07dc-437d-ae1c-bc2d3953d8c2
+        confirmValue("4:48:00", 0.2);
     }
 
     @Test
