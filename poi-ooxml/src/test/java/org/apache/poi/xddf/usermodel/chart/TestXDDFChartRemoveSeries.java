@@ -43,7 +43,6 @@ class TestXDDFChartRemoveSeries {
     XSSFSheet sheet = null;
     XDDFScatterChartData chartData = null;
     XDDFChart chart = null;
-    final int MAX_NUM_SERIES = 1;
 
     public TestXDDFChartRemoveSeries() {
         resultDir.mkdirs();
