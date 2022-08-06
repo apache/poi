@@ -53,12 +53,7 @@ public class SettingExternalFunction {
             // dummy function that returns NA
             // don't care about the implementation, we are not interested in evaluation
             // and this method will never be called
-            FreeRefFunction NA = new FreeRefFunction() {
-                @Override
-                public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-                    return ErrorEval.NA;
-                }
-            };
+            FreeRefFunction NA = (args, ec) -> ErrorEval.NA;
             _functionsByName = new HashMap<>();
             _functionsByName.put("BDP", NA);
             _functionsByName.put("BDH", NA);

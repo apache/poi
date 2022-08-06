@@ -78,13 +78,11 @@ public class DataSpaceMapUtils {
             dir.getEntry(fileName).delete();
         }
         
-        return dir.createDocument(fileName, bos.getWriteIndex(), new POIFSWriterListener(){
-            public void processPOIFSWriterEvent(POIFSWriterEvent event) {
-                try {
-                    event.getStream().write(buf, 0, event.getLimit());
-                } catch (IOException e) {
-                    throw new EncryptedDocumentException(e);
-                }
+        return dir.createDocument(fileName, bos.getWriteIndex(), event -> {
+            try {
+                event.getStream().write(buf, 0, event.getLimit());
+            } catch (IOException e) {
+                throw new EncryptedDocumentException(e);
             }
         });
     }   

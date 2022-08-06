@@ -59,11 +59,7 @@ public interface IStabilityClassifier {
      * Convenience implementation for situations where all cell definitions remain fixed after
      * evaluation begins.
      */
-    IStabilityClassifier TOTALLY_IMMUTABLE = new IStabilityClassifier() {
-        public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
-            return true;
-        }
-    };
+    IStabilityClassifier TOTALLY_IMMUTABLE = (sheetIndex, rowIndex, columnIndex) -> true;
 
     /**
      * Checks if a cell's value(/formula) is fixed - in other words - not expected to be modified

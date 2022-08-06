@@ -29,12 +29,7 @@ package org.apache.poi.ss.formula.functions;
  */
 public final class Sumx2py2 extends XYNumericFunction {
 
-    private static final Accumulator XSquaredPlusYSquaredAccumulator = new Accumulator() {
-        @Override
-        public double accumulate(double x, double y) {
-            return x * x + y * y;
-        }
-    };
+    private static final Accumulator XSquaredPlusYSquaredAccumulator = (x, y) -> x * x + y * y;
 
     @Override
     protected Accumulator createAccumulator() {

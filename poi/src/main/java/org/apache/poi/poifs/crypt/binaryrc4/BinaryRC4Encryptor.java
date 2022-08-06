@@ -106,14 +106,11 @@ public class BinaryRC4Encryptor extends Encryptor {
         final EncryptionInfo info = getEncryptionInfo();
         final BinaryRC4EncryptionHeader header = (BinaryRC4EncryptionHeader)info.getHeader();
         final BinaryRC4EncryptionVerifier verifier = (BinaryRC4EncryptionVerifier)info.getVerifier();
-        EncryptionRecord er = new EncryptionRecord() {
-            @Override
-            public void write(LittleEndianByteArrayOutputStream bos) {
-                bos.writeShort(info.getVersionMajor());
-                bos.writeShort(info.getVersionMinor());
-                header.write(bos);
-                verifier.write(bos);
-            }
+        EncryptionRecord er = bos -> {
+            bos.writeShort(info.getVersionMajor());
+            bos.writeShort(info.getVersionMinor());
+            header.write(bos);
+            verifier.write(bos);
         };
         DataSpaceMapUtils.createEncryptionEntry(dir, "EncryptionInfo", er);
     }

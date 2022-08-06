@@ -32,20 +32,12 @@ public class TypesLister {
    
    public void listByName(PrintStream out) {
       ArrayList<MAPIProperty> all = new ArrayList<>(MAPIProperty.getAll());
-      all.sort(new Comparator<MAPIProperty>() {
-          public int compare(MAPIProperty a, MAPIProperty b) {
-              return a.name.compareTo(b.name);
-          }
-      });
+      all.sort((a, b) -> a.name.compareTo(b.name));
       list(all, out);
    }
    public void listById(PrintStream out) {
       ArrayList<MAPIProperty> all = new ArrayList<>(MAPIProperty.getAll());
-      all.sort(new Comparator<MAPIProperty>() {
-          public int compare(MAPIProperty a, MAPIProperty b) {
-              return Integer.compare(a.id, b.id);
-          }
-      });
+      all.sort((a, b) -> Integer.compare(a.id, b.id));
       list(all, out);
    }
    private void list(ArrayList<MAPIProperty> list, PrintStream out) {

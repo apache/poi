@@ -164,14 +164,10 @@ public class PAPBinTable
                 papxToFileOrder.put( papx, Integer.valueOf( counter++ ) );
             }
         }
-        final Comparator<PAPX> papxFileOrderComparator = new Comparator<PAPX>()
-        {
-            public int compare( PAPX o1, PAPX o2 )
-            {
-                Integer i1 = papxToFileOrder.get( o1 );
-                Integer i2 = papxToFileOrder.get( o2 );
-                return i1.compareTo( i2 );
-            }
+        final Comparator<PAPX> papxFileOrderComparator = (o1, o2) -> {
+            Integer i1 = papxToFileOrder.get( o1 );
+            Integer i2 = papxToFileOrder.get( o2 );
+            return i1.compareTo( i2 );
         };
 
         LOG.atDebug().log("PAPX's order map created in {} ms", box(currentTimeMillis() - start));

@@ -43,12 +43,7 @@ public abstract class ShapeVisitor {
      * mixing visitors and acceptors
      */
     protected ShapeVisitorAcceptor getAcceptor() {
-        return new ShapeVisitorAcceptor() {
-            @Override
-            public boolean accept(XDGFShape shape) {
-                return !shape.isDeleted();
-            }
-        };
+        return shape -> !shape.isDeleted();
     }
 
     public void setAcceptor(ShapeVisitorAcceptor acceptor) {
