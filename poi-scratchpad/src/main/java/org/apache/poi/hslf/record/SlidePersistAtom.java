@@ -38,7 +38,7 @@ public final class SlidePersistAtom extends RecordAtom {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 32;
 
-    private static final long _type = 1011l;
+    private static final long _type = 1011L;
     private static final int HAS_SHAPES_OTHER_THAN_PLACEHOLDERS = 4;
 
     private static final int[] FLAGS_MASKS = { HAS_SHAPES_OTHER_THAN_PLACEHOLDERS };

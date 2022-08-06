@@ -29,7 +29,7 @@ import java.util.Arrays;
 public final class Notes extends SheetContainer
 {
     private byte[] _header;
-    private static long _type = 1008l;
+    private static long _type = 1008L;
 
     // Links to our more interesting children
     private NotesAtom notesAtom;
