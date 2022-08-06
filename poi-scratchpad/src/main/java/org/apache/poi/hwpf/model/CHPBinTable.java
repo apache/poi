@@ -178,14 +178,10 @@ public class CHPBinTable
                 chpxToFileOrder.put( chpx, Integer.valueOf( counter++ ) );
             }
         }
-        final Comparator<CHPX> chpxFileOrderComparator = new Comparator<CHPX>()
-        {
-            public int compare( CHPX o1, CHPX o2 )
-            {
-                Integer i1 = chpxToFileOrder.get( o1 );
-                Integer i2 = chpxToFileOrder.get( o2 );
-                return i1.compareTo( i2 );
-            }
+        final Comparator<CHPX> chpxFileOrderComparator = (o1, o2) -> {
+            Integer i1 = chpxToFileOrder.get( o1 );
+            Integer i2 = chpxToFileOrder.get( o2 );
+            return i1.compareTo( i2 );
         };
 
         LOG.atDebug().log("CHPX's order map created in {} ms", box(currentTimeMillis() - start));

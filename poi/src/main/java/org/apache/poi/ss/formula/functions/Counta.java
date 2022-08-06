@@ -64,19 +64,16 @@ public final class Counta implements Function {
         return new NumberEval(temp);
     }
 
-    private static final I_MatchPredicate defaultPredicate = new I_MatchPredicate() {
+    private static final I_MatchPredicate defaultPredicate = valueEval -> {
+        // Note - observed behavior of Excel:
+        // Error values like #VALUE!, #REF!, #DIV/0!, #NAME? etc don't cause this COUNTA to return an error
+        // in fact, they seem to get counted
 
-        public boolean matches(ValueEval valueEval) {
-            // Note - observed behavior of Excel:
-            // Error values like #VALUE!, #REF!, #DIV/0!, #NAME? etc don't cause this COUNTA to return an error
-            // in fact, they seem to get counted
-
-            if(valueEval == BlankEval.instance) {
-                return false;
-            }
-            // Note - everything but BlankEval counts
-            return true;
+        if(valueEval == BlankEval.instance) {
+            return false;
         }
+        // Note - everything but BlankEval counts
+        return true;
     };
 
     private static final I_MatchPredicate subtotalPredicate = new I_MatchAreaPredicate() {

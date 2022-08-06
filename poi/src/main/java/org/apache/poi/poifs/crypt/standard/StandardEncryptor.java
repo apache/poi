@@ -221,15 +221,12 @@ public class StandardEncryptor extends Encryptor {
         final StandardEncryptionHeader header = (StandardEncryptionHeader)info.getHeader();
         final StandardEncryptionVerifier verifier = (StandardEncryptionVerifier)info.getVerifier();
 
-        EncryptionRecord er = new EncryptionRecord(){
-            @Override
-            public void write(LittleEndianByteArrayOutputStream bos) {
-                bos.writeShort(info.getVersionMajor());
-                bos.writeShort(info.getVersionMinor());
-                bos.writeInt(info.getEncryptionFlags());
-                header.write(bos);
-                verifier.write(bos);
-            }
+        EncryptionRecord er = bos -> {
+            bos.writeShort(info.getVersionMajor());
+            bos.writeShort(info.getVersionMinor());
+            bos.writeInt(info.getEncryptionFlags());
+            header.write(bos);
+            verifier.write(bos);
         };
 
         createEncryptionEntry(dir, "EncryptionInfo", er);
