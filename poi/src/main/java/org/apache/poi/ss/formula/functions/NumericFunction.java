@@ -104,7 +104,7 @@ public abstract class NumericFunction implements Function {
             }
 
             DecimalFormat nf = (DecimalFormat) NumberFormat.getCurrencyInstance(LocaleUtil.getUserLocale());
-            int decimalPlaces = nPlaces < 0 ? 0 : nPlaces;
+            int decimalPlaces = Math.max(nPlaces, 0);
             if (LocaleUtil.getUserLocale().getCountry().equalsIgnoreCase("US")) {
                 nf.setNegativePrefix("(" + nf.getDecimalFormatSymbols().getCurrencySymbol());
                 nf.setNegativeSuffix(")");

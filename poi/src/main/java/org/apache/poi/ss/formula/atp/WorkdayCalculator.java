@@ -152,8 +152,8 @@ public class WorkdayCalculator {
      */
     protected int pastDaysOfWeek(double start, double end, int dayOfWeek) {
         int pastDaysOfWeek = 0;
-        int startDay = (int) Math.floor(start < end ? start : end);
-        int endDay = (int) Math.floor(end > start ? end : start);
+        int startDay = (int) Math.floor(Math.min(start, end));
+        int endDay = (int) Math.floor(Math.max(end, start));
         for (; startDay <= endDay; startDay++) {
             Calendar today = LocaleUtil.getLocaleCalendar();
             today.setTime(DateUtil.getJavaDate(startDay));
@@ -174,8 +174,8 @@ public class WorkdayCalculator {
      */
     protected int calculateNonWeekendHolidays(double start, double end, double[] holidays) {
         int nonWeekendHolidays = 0;
-        double startDay = start < end ? start : end;
-        double endDay = end > start ? end : start;
+        double startDay = Math.min(start, end);
+        double endDay = Math.max(end, start);
         for (double holiday : holidays) {
             if (isInARange(startDay, endDay, holiday)) {
                 if (!isWeekend(holiday)) {

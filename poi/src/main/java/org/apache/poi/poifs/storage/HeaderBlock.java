@@ -218,13 +218,8 @@ public final class HeaderBlock implements HeaderBlockConstants {
     }
 
     private static IOException alertShortRead(int pRead) {
-        int read;
-        if (pRead < 0) {
-            //Can't have -1 bytes read in the error message!
-            read = 0;
-        } else {
-            read = pRead;
-        }
+        int read = Math.max(pRead, 0);
+        //Can't have -1 bytes read in the error message!
         String type = " byte" + (read == 1 ? (""): ("s"));
 
         return new IOException("Unable to read entire header; "

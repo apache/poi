@@ -76,8 +76,7 @@ public final class SLWTListing {
                     }
 
                     // Report the first 5 children, to give a flavour
-                    int upTo = 5;
-                    if(children.length < 5) { upTo = children.length; }
+                    int upTo = Math.min(children.length, 5);
                     for(int k=0; k<upTo; k++) {
                         Record r = children[k];
                         int typeID = (int)r.getRecordType();
