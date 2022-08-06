@@ -492,8 +492,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     private boolean isCursorInHdrF(XmlCursor cursor) {
         try (XmlCursor verify = cursor.newCursor()) {
             verify.toParent();
-            boolean result = (verify.getObject() == this.headerFooter);
-            return result;
+            return (verify.getObject() == this.headerFooter);
         }
     }
 

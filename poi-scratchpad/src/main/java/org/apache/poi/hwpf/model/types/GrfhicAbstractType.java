@@ -91,7 +91,7 @@ public abstract class GrfhicAbstractType
 
     public String toString()
     {
-        String builder = "[Grfhic]\n" +
+        return "[Grfhic]\n" +
             "    .grfhic               = " +
             " ( " + field_1_grfhic + " )\n" +
             "         .fHtmlChecked             = " + isFHtmlChecked() + '\n' +
@@ -103,7 +103,6 @@ public abstract class GrfhicAbstractType
             "         .fHtmlHangingIndentBeneathNumber     = " + isFHtmlHangingIndentBeneathNumber() + '\n' +
             "         .fHtmlBuiltInBullet       = " + isFHtmlBuiltInBullet() + '\n' +
             "[/Grfhic]";
-        return builder;
     }
 
     /**

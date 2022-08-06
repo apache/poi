@@ -447,8 +447,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
         if (val != null && !val.isEmpty()) {
             int codepage = ((LongPropertyValue) val.get(0)).getValue();
             try {
-                String encoding = CodePageUtil.codepageToEncoding(codepage, true);
-                generalcodepage = encoding;
+                generalcodepage = CodePageUtil.codepageToEncoding(codepage, true);
             } catch (UnsupportedEncodingException e) {
                 LOG.atWarn().log("Invalid codepage ID {} set for the message via {}, ignoring", box(codepage), MAPIProperty.MESSAGE_CODEPAGE);
             }
@@ -463,8 +462,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
                 int codepage = LocaleUtil.getDefaultCodePageFromLCID(lcid);
                 try {
                     if (codepage != 0) {
-                        String encoding = CodePageUtil.codepageToEncoding(codepage, true);
-                        generalcodepage = encoding;
+                        generalcodepage = CodePageUtil.codepageToEncoding(codepage, true);
                     }
                 } catch (UnsupportedEncodingException e) {
                     LOG.atWarn().log("Invalid codepage ID {}from locale ID{} set for the message via {}, ignoring", box(codepage), box(lcid), MAPIProperty.MESSAGE_LOCALE_ID);
@@ -482,8 +480,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
                         if (header.toLowerCase(LocaleUtil.getUserLocale()).startsWith("content-type")) {
                             Matcher m = GUESS_7_BIT_ENCODING_PATTERN.matcher(header);
                             if (m.matches()) {
-                                String encoding = m.group(1);
-                                generalcodepage = encoding;
+                                generalcodepage = m.group(1);
                             }
                         }
                     }
