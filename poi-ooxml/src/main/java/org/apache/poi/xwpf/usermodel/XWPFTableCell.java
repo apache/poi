@@ -336,8 +336,7 @@ public class XWPFTableCell implements IBody, ICell {
     private boolean isCursorInTableCell(XmlCursor cursor) {
         try (XmlCursor verify = cursor.newCursor()) {
             verify.toParent();
-            boolean result = (verify.getObject() == this.ctTc);
-            return result;
+            return (verify.getObject() == this.ctTc);
         }
     }
 

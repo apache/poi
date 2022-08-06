@@ -40,8 +40,7 @@ public final class Areas implements Function {
                 RefListEval refListEval = (RefListEval) valueEval;
                 result = refListEval.getList().size();
             }
-            NumberEval numberEval = new NumberEval(new NumberPtg(result));
-            return numberEval;
+            return new NumberEval(new NumberPtg(result));
         } catch (Exception e) {
             return ErrorEval.VALUE_INVALID;
         }
