@@ -90,7 +90,7 @@ public class FractionFormat extends Format {
                 }
             } else if (m.group(1) != null) {
                 int len = m.group(1).length();
-                len = len > MAX_DENOM_POW ? MAX_DENOM_POW : len;
+                len = Math.min(len, MAX_DENOM_POW);
                 tmpMax = (int)Math.pow(10, len);
             } else {
                 tmpExact = 100;
