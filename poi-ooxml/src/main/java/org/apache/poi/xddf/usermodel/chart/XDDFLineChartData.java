@@ -23,13 +23,7 @@ import java.util.Map;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTDPt;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineSer;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTMarker;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.*;
 
 @Beta
 public class XDDFLineChartData extends XDDFChartData {
@@ -120,6 +114,13 @@ public class XDDFLineChartData extends XDDFChartData {
         protected Series(CTLineSer series, CTAxDataSource category, CTNumDataSource values) {
             super(XDDFDataSourcesFactory.fromDataSource(category), XDDFDataSourcesFactory.fromDataSource(values));
             this.series = series;
+        }
+
+        /**
+         * @since POI 5.2.3
+         */
+        public CTLineSer getCTLineSer() {
+            return series;
         }
 
         @Override

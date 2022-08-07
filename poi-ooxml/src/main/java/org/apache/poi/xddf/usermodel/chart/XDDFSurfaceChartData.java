@@ -128,6 +128,13 @@ public class XDDFSurfaceChartData extends XDDFChartData {
             this.series = series;
         }
 
+        /**
+         * @since POI 5.2.3
+         */
+        public CTSurfaceSer getCTSurfaceSer() {
+            return series;
+        }
+
         @Override
         protected CTSerTx getSeriesText() {
             if (series.isSetTx()) {

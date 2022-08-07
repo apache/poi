@@ -116,6 +116,13 @@ public class XDDFPieChartData extends XDDFChartData {
             this.series = series;
         }
 
+        /**
+         * @since POI 5.2.3
+         */
+        public CTPieSer getCTPieSer() {
+            return series;
+        }
+
         @Override
         protected CTSerTx getSeriesText() {
             if (series.isSetTx()) {

@@ -380,7 +380,7 @@ public abstract class XDDFChartData {
             return strCache;
         }
 
-        private CTNumData retrieveNumCache(final CTNumDataSource numDataSource, XDDFDataSource<?> data) {
+        protected CTNumData retrieveNumCache(final CTNumDataSource numDataSource, XDDFDataSource<?> data) {
             CTNumData numCache;
             if (data.isReference()) {
                 CTNumRef numRef;

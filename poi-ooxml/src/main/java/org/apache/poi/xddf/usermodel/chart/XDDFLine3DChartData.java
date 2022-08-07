@@ -87,31 +87,31 @@ public class XDDFLine3DChartData extends XDDFChartData {
         return Grouping.valueOf(chart.getGrouping().getVal());
     }
 
-   public void setGrouping(Grouping grouping) {
-      if (chart.getGrouping() != null) {
-         chart.getGrouping().setVal(grouping.underlying);
-      } else {
-         chart.addNewGrouping().setVal(grouping.underlying);
-      }
-   }
+    public void setGrouping(Grouping grouping) {
+        if (chart.getGrouping() != null) {
+            chart.getGrouping().setVal(grouping.underlying);
+        } else {
+            chart.addNewGrouping().setVal(grouping.underlying);
+        }
+    }
 
-   public Integer getGapDepth() {
-       return (chart.isSetGapDepth()) ? POIXMLUnits.parsePercent(chart.getGapDepth().xgetVal()) / 1000 : null;
-   }
+    public Integer getGapDepth() {
+        return (chart.isSetGapDepth()) ? POIXMLUnits.parsePercent(chart.getGapDepth().xgetVal()) / 1000 : null;
+    }
 
-   public void setGapDepth(Integer depth) {
-       if (depth == null) {
-           if (chart.isSetGapDepth()) {
-               chart.unsetGapDepth();
-           }
-       } else {
-           if (chart.isSetGapDepth()) {
-               chart.getGapDepth().setVal(depth);
-           } else {
-               chart.addNewGapDepth().setVal(depth);
-           }
-       }
-   }
+    public void setGapDepth(Integer depth) {
+        if (depth == null) {
+            if (chart.isSetGapDepth()) {
+                chart.unsetGapDepth();
+            }
+        } else {
+            if (chart.isSetGapDepth()) {
+                chart.getGapDepth().setVal(depth);
+            } else {
+                chart.addNewGapDepth().setVal(depth);
+            }
+        }
+    }
 
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
@@ -139,6 +139,13 @@ public class XDDFLine3DChartData extends XDDFChartData {
         protected Series(CTLineSer series, CTAxDataSource category, CTNumDataSource values) {
             super(XDDFDataSourcesFactory.fromDataSource(category), XDDFDataSourcesFactory.fromDataSource(values));
             this.series = series;
+        }
+
+        /**
+         * @since POI 5.2.3
+         */
+        public CTLineSer getCTLineSer() {
+            return series;
         }
 
         @Override

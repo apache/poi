@@ -23,12 +23,7 @@ import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTDPt;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTDoughnutChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPieSer;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.*;
 
 @Beta
 public class XDDFDoughnutChartData extends XDDFChartData {
@@ -140,6 +135,13 @@ public class XDDFDoughnutChartData extends XDDFChartData {
         protected Series(CTPieSer series, CTAxDataSource category, CTNumDataSource values) {
             super(XDDFDataSourcesFactory.fromDataSource(category), XDDFDataSourcesFactory.fromDataSource(values));
             this.series = series;
+        }
+
+        /**
+         * @since POI 5.2.3
+         */
+        public CTPieSer getCTPieSer() {
+            return series;
         }
 
         @Override

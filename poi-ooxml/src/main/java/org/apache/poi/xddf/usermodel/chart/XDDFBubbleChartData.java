@@ -14,37 +14,57 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
 package org.apache.poi.xddf.usermodel.chart;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
-import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTArea3DChart;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTAreaSer;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDPt;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBubbleChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTBubbleSer;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 
+/**
+ * @since POI 5.2.3
+ */
 @Beta
-public class XDDFArea3DChartData extends XDDFChartData {
-    private CTArea3DChart chart;
+public class XDDFBubbleChartData extends XDDFChartData {
+    private CTBubbleChart chart;
+
+    public XDDFBubbleChartData(
+            XDDFChart parent,
+            CTBubbleChart chart,
+            XDDFChartAxis category,
+            XDDFValueAxis values) {
+        super(parent);
+        this.chart = chart;
+        Map<Long, XDDFChartAxis> categories = null;
+        Map<Long, XDDFValueAxis> mapValues = null;
+        categories = Collections.singletonMap(category.getId(), category);
+        mapValues = Collections.singletonMap(values.getId(), values);
+        for (CTBubbleSer series : chart.getSerList()) {
+            this.series.add(new Series(series, series.getXVal(), series.getYVal()));
+        }
+        defineAxes(categories, mapValues);
+    }
 
     @Internal
-    protected XDDFArea3DChartData(
+    protected XDDFBubbleChartData(
             XDDFChart parent,
-            CTArea3DChart chart,
+            CTBubbleChart chart,
             Map<Long, XDDFChartAxis> categories,
             Map<Long, XDDFValueAxis> values) {
         super(parent);
         this.chart = chart;
-        for (CTAreaSer series : chart.getSerList()) {
-            this.series.add(new Series(series, series.getCat(), series.getVal()));
+        for (CTBubbleSer series : chart.getSerList()) {
+            this.series.add(new Series(series, series.getXVal(), series.getYVal()));
         }
         defineAxes(categories, values);
     }
@@ -82,79 +102,53 @@ public class XDDFArea3DChartData extends XDDFChartData {
         }
     }
 
-    public Grouping getGrouping() {
-        if (chart.isSetGrouping()) {
-            return Grouping.valueOf(chart.getGrouping().getVal());
-        } else {
-            return null;
-        }
-    }
-
-    public void setGrouping(Grouping grouping) {
-        if (grouping == null) {
-            if (chart.isSetGrouping()) {
-                chart.unsetGrouping();
-            }
-        } else {
-            if (chart.isSetGrouping()) {
-                chart.getGrouping().setVal(grouping.underlying);
-            } else {
-                chart.addNewGrouping().setVal(grouping.underlying);
-            }
-        }
-    }
-
-    public Integer getGapDepth() {
-        return chart.isSetGapDepth() ? POIXMLUnits.parsePercent(chart.getGapDepth().xgetVal()) / 1000 : null;
-    }
-
-    public void setGapDepth(Integer depth) {
-        if (depth == null) {
-            if (chart.isSetGapDepth()) {
-                chart.unsetGapDepth();
-            }
-        } else {
-            if (chart.isSetGapDepth()) {
-                chart.getGapDepth().setVal(depth);
-            } else {
-                chart.addNewGapDepth().setVal(depth);
-            }
-        }
-    }
-
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
-            XDDFNumericalDataSource<? extends Number> values) {
+                                          XDDFNumericalDataSource<? extends Number> values) {
         final long index = this.parent.incrementSeriesCount();
-        final CTAreaSer ctSer = this.chart.addNewSer();
-        ctSer.addNewCat();
-        ctSer.addNewVal();
-        ctSer.addNewIdx().setVal(index);
-        ctSer.addNewOrder().setVal(index);
-        final Series added = new Series(ctSer, category, values);
-        this.series.add(added);
-        return added;
+        try {
+            final CTBubbleSer ctSer = this.chart.addNewSer();
+            ctSer.addNewXVal();
+            ctSer.addNewYVal();
+            ctSer.addNewIdx().setVal(index);
+            ctSer.addNewOrder().setVal(index);
+            final Series added = new Series(ctSer, category, values);
+            this.series.add(added);
+            return added;
+        } catch (Exception ex) {
+           throw new RuntimeException(ex);
+        }
     }
 
     public class Series extends XDDFChartData.Series {
-        private CTAreaSer series;
+        private CTBubbleSer series;
 
-        protected Series(CTAreaSer series, XDDFDataSource<?> category,
-                XDDFNumericalDataSource<? extends Number> values) {
+        protected Series(CTBubbleSer series, XDDFDataSource<?> category, XDDFNumericalDataSource<?> values) {
             super(category, values);
-            this.series = series;
-        }
-
-        protected Series(CTAreaSer series, CTAxDataSource category, CTNumDataSource values) {
-            super(XDDFDataSourcesFactory.fromDataSource(category), XDDFDataSourcesFactory.fromDataSource(values));
             this.series = series;
         }
 
         /**
          * @since POI 5.2.3
          */
-        public CTAreaSer getCTAreaSer() {
+        public CTBubbleSer getCTBubbleSer() {
             return series;
+        }
+
+        protected Series(CTBubbleSer series, CTAxDataSource category, CTNumDataSource values) {
+            super(XDDFDataSourcesFactory.fromDataSource(category), XDDFDataSourcesFactory.fromDataSource(values));
+            this.series = series;
+        }
+
+        public void setBubbleSizes(XDDFNumericalDataSource<?> values) {
+            try {
+                if (series.isSetBubbleSize()) series.unsetBubbleSize();
+                CTNumDataSource bubbleSizes = series.addNewBubbleSize();
+                CTNumData cache = retrieveNumCache(bubbleSizes, values);
+                values.fillNumericalCache(cache);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
         }
 
         @Override
@@ -204,12 +198,12 @@ public class XDDFArea3DChartData extends XDDFChartData {
 
         @Override
         protected CTAxDataSource getAxDS() {
-            return series.getCat();
+            return series.getXVal();
         }
 
         @Override
         protected CTNumDataSource getNumDS() {
-            return series.getVal();
+            return series.getYVal();
         }
 
         @Override
