@@ -106,18 +106,14 @@ public class XDDFBubbleChartData extends XDDFChartData {
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
                                           XDDFNumericalDataSource<? extends Number> values) {
         final long index = this.parent.incrementSeriesCount();
-        try {
-            final CTBubbleSer ctSer = this.chart.addNewSer();
-            ctSer.addNewXVal();
-            ctSer.addNewYVal();
-            ctSer.addNewIdx().setVal(index);
-            ctSer.addNewOrder().setVal(index);
-            final Series added = new Series(ctSer, category, values);
-            this.series.add(added);
-            return added;
-        } catch (Exception ex) {
-           throw new RuntimeException(ex);
-        }
+        final CTBubbleSer ctSer = this.chart.addNewSer();
+        ctSer.addNewXVal();
+        ctSer.addNewYVal();
+        ctSer.addNewIdx().setVal(index);
+        ctSer.addNewOrder().setVal(index);
+        final Series added = new Series(ctSer, category, values);
+        this.series.add(added);
+        return added;
     }
 
     public class Series extends XDDFChartData.Series {
@@ -141,14 +137,10 @@ public class XDDFBubbleChartData extends XDDFChartData {
         }
 
         public void setBubbleSizes(XDDFNumericalDataSource<?> values) {
-            try {
-                if (series.isSetBubbleSize()) series.unsetBubbleSize();
-                CTNumDataSource bubbleSizes = series.addNewBubbleSize();
-                CTNumData cache = retrieveNumCache(bubbleSizes, values);
-                values.fillNumericalCache(cache);
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
+            if (series.isSetBubbleSize()) series.unsetBubbleSize();
+            CTNumDataSource bubbleSizes = series.addNewBubbleSize();
+            CTNumData cache = retrieveNumCache(bubbleSizes, values);
+            values.fillNumericalCache(cache);
         }
 
         @Override
