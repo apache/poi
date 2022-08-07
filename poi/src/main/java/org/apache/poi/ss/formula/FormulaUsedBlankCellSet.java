@@ -73,9 +73,7 @@ final class FormulaUsedBlankCellSet {
                 _firstColumnIndex = columnIndex;
                 _lastColumnIndex = columnIndex;
             } else {
-                if (_currentRowIndex == rowIndex && _lastColumnIndex+1 == columnIndex) {
-                    _lastColumnIndex = columnIndex;
-                } else {
+                if (_currentRowIndex != rowIndex || _lastColumnIndex + 1 != columnIndex) {
                     // cell does not fit on end of current row
                     if (_currentRectangleGroup == null) {
                         _currentRectangleGroup = new BlankCellRectangleGroup(_currentRowIndex, _firstColumnIndex, _lastColumnIndex);
@@ -87,8 +85,8 @@ final class FormulaUsedBlankCellSet {
                     }
                     _currentRowIndex = rowIndex;
                     _firstColumnIndex = columnIndex;
-                    _lastColumnIndex = columnIndex;
                 }
+                _lastColumnIndex = columnIndex;
             }
         }
 

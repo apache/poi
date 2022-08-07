@@ -105,17 +105,18 @@ public abstract class ColumnShifter extends BaseRowColShifter {
         // build a range of the columns that are overwritten, i.e. the target-area, but without
         // columns that are moved along
         final CellRangeAddress overwrite;
+        final int firstCol;
+        final int lastCol;
         if(n > 0) {
             // area is moved down => overwritten area is [endColumn + n - movedColumns, endColumn + n]
-            final int firstCol = Math.max(endColumn + 1, endColumn + n - movedColumns);
-            final int lastCol = endColumn + n;
-            overwrite = new CellRangeAddress(0, 0, firstCol, lastCol);
+            firstCol = Math.max(endColumn + 1, endColumn + n - movedColumns);
+            lastCol = endColumn + n;
         } else {
             // area is moved up => overwritten area is [startColumn + n, startColumn + n + movedColumns]
-            final int firstCol = startColumn + n;
-            final int lastCol = Math.min(startColumn - 1, startColumn + n + movedColumns);
-            overwrite = new CellRangeAddress(0, 0, firstCol, lastCol);
+            firstCol = startColumn + n;
+            lastCol = Math.min(startColumn - 1, startColumn + n + movedColumns);
         }
+        overwrite = new CellRangeAddress(0, 0, firstCol, lastCol);
 
         // if the merged-region and the overwritten area intersect, we need to remove it
         return merged.intersects(overwrite);
