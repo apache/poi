@@ -207,28 +207,21 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
       case 0xa:
         newCHP.setFOle2 (getFlag (sprm.getOperand()));
         break;
+      // Obsolete
       case 0xb:
-
-        // Obsolete
+        case 0x67:
         break;
       case 0xc:
         newCHP.setIcoHighlight ((byte) sprm.getOperand());
         newCHP.setFHighlight (getFlag (sprm.getOperand()));
         break;
+      //  undocumented
       case 0xd:
-
-        //  undocumented
+        case 0x10:
+        case 0xf:
         break;
       case 0xe:
         newCHP.setFcObj (sprm.getOperand());
-        break;
-      case 0xf:
-
-        // undocumented
-        break;
-      case 0x10:
-
-        // undocumented
         break;
 
         // undocumented till 0x30
@@ -355,7 +348,8 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         newCHP.setFVanish (getCHPFlag ((byte) sprm.getOperand(), oldCHP.isFVanish ()));
         break;
       case 0x3d:
-        newCHP.setFtcAscii ((short) sprm.getOperand());
+        case 0x4f:
+            newCHP.setFtcAscii ((short) sprm.getOperand());
         break;
       case 0x3e:
         newCHP.setKul ((byte) sprm.getOperand());
@@ -396,7 +390,8 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         newCHP.setDxaSpace (sprm.getOperand());
         break;
       case 0x41:
-        newCHP.setLidDefault ((short) sprm.getOperand());
+        case 0x6d:
+            newCHP.setLidDefault ((short) sprm.getOperand());
         break;
       case 0x42:
         newCHP.setIco ((byte) sprm.getOperand());
@@ -531,10 +526,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
                     (short) sprm.getOperand() );
             newCHP.setHresi( hyphenation );
             break;
-      case 0x4f:
-        newCHP.setFtcAscii ((short) sprm.getOperand());
-        break;
-      case 0x50:
+        case 0x50:
         newCHP.setFtcFE ((short) sprm.getOperand());
         break;
       case 0x51:
@@ -650,10 +642,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
                     .toShadingDescriptor();
             newCHP.setShd( newDescriptor );
             break;
-      case 0x67:
-        // Obsolete
-        break;
-      case 0x68:
+        case 0x68:
         //  sprmCFUsePgsuSettings
         break;
       case 0x69:
@@ -664,10 +653,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         break;
       case 0x6c:
         break;
-      case 0x6d:
-        newCHP.setLidDefault ((short) sprm.getOperand());
-        break;
-      case 0x6e:
+        case 0x6e:
         newCHP.setLidFE ((short) sprm.getOperand());
         break;
       case 0x6f:
