@@ -229,7 +229,7 @@ public final class NameIdChunks implements ChunkGroup {
         Consumer<String> propertyNameSetter, Consumer<Long> propertyNameCRC32Setter) {
         if (propertyKind == 0) {
             // numerical named property
-            return 0x1000L + (nameOffset ^ (guidIndex << 1)) % 0x1F;
+            return 0x1000L + (nameOffset ^ ((long) guidIndex << 1)) % 0x1F;
         }
 
         // string named property
@@ -250,7 +250,7 @@ public final class NameIdChunks implements ChunkGroup {
                 propertyNameCRC32Setter.accept(propertyNameCRC32);
             }
         }
-        return 0x1000 + (propertyNameCRC32 ^ ((guidIndex << 1) | 1)) % 0x1F;
+        return 0x1000 + (propertyNameCRC32 ^ (((long) guidIndex << 1) | 1)) % 0x1F;
     }
 
     /**

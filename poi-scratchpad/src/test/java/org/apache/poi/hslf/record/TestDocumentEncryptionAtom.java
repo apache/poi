@@ -89,10 +89,10 @@ public final class TestDocumentEncryptionAtom {
     @Test
     void recordType() throws IOException {
         DocumentEncryptionAtom dea1 = new DocumentEncryptionAtom(data_a, 0, data_a.length);
-        assertEquals(12052l, dea1.getRecordType());
+        assertEquals(12052L, dea1.getRecordType());
 
         DocumentEncryptionAtom dea2 = new DocumentEncryptionAtom(data_b, 0, data_b.length);
-        assertEquals(12052l, dea2.getRecordType());
+        assertEquals(12052L, dea2.getRecordType());
 
         assertEquals(199, data_a.length);
         assertEquals(198, data_b.length);

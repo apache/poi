@@ -39,7 +39,7 @@ public final class SlideAtom extends RecordAtom {
     // private static final int MASTER_SLIDE_ID      =  0x00000000;
 
     private byte[] _header;
-    private static long _type = 1007l;
+    private static long _type = 1007L;
 
     private int masterID;
     private int notesID;
