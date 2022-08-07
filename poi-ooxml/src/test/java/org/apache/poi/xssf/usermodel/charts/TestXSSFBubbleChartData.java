@@ -23,6 +23,7 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xddf.usermodel.PresetColor;
 import org.apache.poi.xddf.usermodel.XDDFColor;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
@@ -33,7 +34,7 @@ import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.chart.*;
 
 import java.io.IOException;
-import java.util.GregorianCalendar;
+import java.util.Calendar;
 
 /**
  * Tests for XSSFBubbleChartData.
@@ -45,14 +46,14 @@ public final class TestXSSFBubbleChartData {
         Object[][] chartData = new Object[][]{
                 new Object[]{"", "Category 1"},
                 new Object[]{"Bubble Size", "Bubble Date"},
-                new Object[]{1000, new GregorianCalendar(2020, 0, 1)},
-                new Object[]{10, new GregorianCalendar(2020, 0, 1)},
-                new Object[]{300, new GregorianCalendar(2021, 0, 1)},
+                new Object[]{1000, newCalendar(2020, 0, 1)},
+                new Object[]{10, newCalendar(2020, 0, 1)},
+                new Object[]{300, newCalendar(2021, 0, 1)},
                 new Object[]{"", ""},
                 new Object[]{"", "Category 2"},
                 new Object[]{"Bubble Size", "Bubble Date"},
-                new Object[]{100, new GregorianCalendar(2018, 0, 1)},
-                new Object[]{100, new GregorianCalendar(2020, 0, 1)}
+                new Object[]{100, newCalendar(2018, 0, 1)},
+                new Object[]{100, newCalendar(2020, 0, 1)}
         };
 
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -71,10 +72,10 @@ public final class TestXSSFBubbleChartData {
                 colIndex = 0;
                 for (Object value : dataRow) {
                     cell = row.createCell((short) colIndex);
-                    if (value instanceof String) cell.setCellValue((String)value);
+                    if (value instanceof String) cell.setCellValue((String) value);
                     if (value instanceof Number) cell.setCellValue(((Number)value).doubleValue());
-                    if (value instanceof GregorianCalendar) {
-                        cell.setCellValue((GregorianCalendar)value);
+                    if (value instanceof Calendar) {
+                        cell.setCellValue((Calendar) value);
                         cell.setCellStyle(dateStyle);
                     }
                     colIndex++;
@@ -158,6 +159,10 @@ public final class TestXSSFBubbleChartData {
                 }
             }
         }
+    }
+
+    private static Calendar newCalendar(int year, int month, int dayOfMonth) {
+        return LocaleUtil.getLocaleCalendar(year, month, dayOfMonth);
     }
 
     private static void solidFillSeries(XDDFChartData data, int index, PresetColor color) {
