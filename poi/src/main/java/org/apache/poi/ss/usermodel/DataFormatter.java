@@ -380,7 +380,7 @@ public class DataFormatter {
         // String formatStr = (i < formatBits.length) ? formatBits[i] : formatBits[0];
 
         // this replace is done to fix https://bz.apache.org/bugzilla/show_bug.cgi?id=63211
-        String formatStr = formatStrIn.replace("\\%", "\'%\'");
+        String formatStr = formatStrIn.replace("\\%", "'%'");
 
         // Excel supports 2+ part conditional data formats, eg positive/negative/zero,
         //  or (>1000),(>0),(0),(negative). As Java doesn't handle these kinds
@@ -696,7 +696,7 @@ public class DataFormatter {
 
     private String cleanFormatForNumber(String formatStrIn) {
         // this replace is done to fix https://bz.apache.org/bugzilla/show_bug.cgi?id=63211
-        String formatStr = formatStrIn.replace("\\%", "\'%\'");
+        String formatStr = formatStrIn.replace("\\%", "'%'");
 
         StringBuilder sb = new StringBuilder(formatStr);
 

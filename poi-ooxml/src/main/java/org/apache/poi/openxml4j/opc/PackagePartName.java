@@ -326,7 +326,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
             /* Check rule M1.7 */
             if (decodedChar == '/' || decodedChar == '\\') {
                 throw new InvalidFormatException(
-                    "A segment shall not contain percent-encoded forward slash ('/'), or backward slash ('\') characters. [M1.7]");
+                        "A segment shall not contain percent-encoded forward slash ('/'), or backward slash ('\') characters. [M1.7]");
             }
 
             /* Check rule M1.8 */
