@@ -45,6 +45,7 @@ import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 public final class TestXSSFTable {
 
@@ -724,6 +725,17 @@ public final class TestXSSFTable {
             assertEquals(cols.get(2).getName(), updatedCols.get(2).getName());
             assertEquals(cols.get(3).getName(), updatedCols.get(3).getName());
             assertEquals(cols.get(4).getName(), updatedCols.get(4).getName());
+        }
+    }
+
+    @Test
+    void bug66212() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("table-sample.xlsx")) {
+            XSSFTable table = wb.getTable("Tabelle1");
+            XSSFSheet sheet = table.getXSSFSheet();
+            assertEquals(1, sheet.getCTWorksheet().getTableParts().sizeOfTablePartArray());
+            sheet.removeTable(table);
+            assertEquals(0, sheet.getCTWorksheet().getTableParts().sizeOfTablePartArray());
         }
     }
 }

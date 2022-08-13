@@ -4312,10 +4312,16 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             removeRelation(getRelationById(toDelete.getKey()), true);
             tables.remove(toDelete.getKey());
             toDelete.getValue().onTableDelete();
-            OPCPackage opcPackage = getWorkbook().getPackage();
-            PackagePart packagePart = t.getPackagePart();
-            if (packagePart != null && opcPackage.containPart(packagePart.getPartName())) {
-                opcPackage.removePart(packagePart);
+            CTTableParts tblParts = worksheet.getTableParts();
+            int matchedPos = -1;
+            for (int i = 0; i < tblParts.sizeOfTablePartArray(); i++) {
+                if (toDelete.getKey().equals(tblParts.getTablePartArray(i).getId())) {
+                    matchedPos = i;
+                    break;
+                }
+            }
+            if (matchedPos != -1) {
+                tblParts.removeTablePart(matchedPos);
             }
         }
     }
