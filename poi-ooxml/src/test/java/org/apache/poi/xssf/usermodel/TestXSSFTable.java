@@ -703,4 +703,27 @@ public final class TestXSSFTable {
             }
         }
     }
+
+    @Test
+    void bug66211() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("table-sample.xlsx")) {
+            XSSFTable table = wb.getTable("Tabelle1");
+            assertEquals(1, table.getHeaderRowCount());
+            assertEquals(3, table.getStartRowIndex());
+            List<XSSFTableColumn> cols = table.getColumns();
+            assertEquals(5, cols.size());
+            assertEquals("Field 1", cols.get(0).getName());
+            XSSFSheet sheet = table.getXSSFSheet();
+            XSSFRow headerRow = sheet.getRow(3);
+            headerRow.getCell(2).setCellValue("Column 1");
+            table.updateHeaders();
+            List<XSSFTableColumn> updatedCols = table.getColumns();
+            assertEquals(5, updatedCols.size());
+            assertEquals("Column 1", updatedCols.get(0).getName());
+            assertEquals(cols.get(1).getName(), updatedCols.get(1).getName());
+            assertEquals(cols.get(2).getName(), updatedCols.get(2).getName());
+            assertEquals(cols.get(3).getName(), updatedCols.get(3).getName());
+            assertEquals(cols.get(4).getName(), updatedCols.get(4).getName());
+        }
+    }
 }
