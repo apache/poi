@@ -248,7 +248,7 @@ public class TestAllFiles {
                 fail(errPrefix + "Unexpected exception, expected " + exClass + " and message " + exMessage, e);
             }
         } else if (exClass != null) {
-            Exception e = assertThrows((Class<? extends Exception>)exClass, exec);
+            Exception e = assertThrows((Class<? extends Exception>)exClass, exec, errPrefix + " expected " + exClass);
             String actMsg = pathReplace(e.getMessage());
             if (NullPointerException.class.isAssignableFrom(exClass)) {
                 if (actMsg != null) {
