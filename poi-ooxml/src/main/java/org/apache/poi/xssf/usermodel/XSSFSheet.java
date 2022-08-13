@@ -4271,7 +4271,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         tables.put(tbl.getId(), table);
 
-        if(tableArea != null) {
+        if(tableArea != null && table.supportsAreaReference(tableArea)) {
             table.setArea(tableArea);
         }
 
@@ -4921,7 +4921,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             }
 
             // clone calculated column formulas
-            if (clonedTable.getCTTable().getTableColumns().getTableColumnList().size() > 0) {
+            if (clonedTable.getCTTable().getTableColumns() != null
+                    && clonedTable.getCTTable().getTableColumns().getTableColumnList().size() > 0) {
                 clonedTable.getCTTable().setTotalsRowCount(totalsRowCount);
                 for (int i = 0; i < clonedTable.getCTTable().getTableColumns().getTableColumnList().size(); i++) {
                     CTTableColumn tableCol = table.getCTTable().getTableColumns().getTableColumnList().get(i);

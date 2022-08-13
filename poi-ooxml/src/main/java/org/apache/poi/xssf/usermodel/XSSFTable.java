@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentSkipListMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.SpreadsheetVersion;
@@ -55,6 +57,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.TableDocument;
  * elements with maxOccurs=1 property set.
  */
 public class XSSFTable extends POIXMLDocumentPart implements Table {
+
+    private static final Logger LOG = LogManager.getLogger(XSSFTable.class);
 
     private CTTable ctTable;
     private transient List<XSSFXmlColumnPr> xmlColumnPrs;
@@ -399,7 +403,11 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
     public void setStyleName(String newStyleName) {
         if (newStyleName == null) {
             if (ctTable.isSetTableStyleInfo()) {
-                ctTable.getTableStyleInfo().unsetName();
+                try {
+                    ctTable.getTableStyleInfo().unsetName();
+                } catch (Exception e) {
+                    LOG.atDebug().log("Failed to unset style name", e);
+                }
             }
             styleName = null;
             return;
@@ -498,6 +506,12 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         updateHeaders();
     }
 
+    boolean supportsAreaReference(final AreaReference tableArea) {
+        int rowCount = (tableArea.getLastCell().getRow() - tableArea.getFirstCell().getRow()) + 1;
+        int minimumRowCount = 1 + getHeaderRowCount() + getTotalsRowCount();
+        return rowCount >= minimumRowCount;
+    }
+
     /**
      * Set the area reference for the cells which this table covers. The area
      * includes includes header rows and totals rows.
@@ -525,9 +539,8 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
                     "The AreaReference must not reference a different sheet");
         }
 
-        int rowCount = (tableArea.getLastCell().getRow() - tableArea.getFirstCell().getRow()) + 1;
-        int minimumRowCount = 1 + getHeaderRowCount() + getTotalsRowCount();
-        if (rowCount < minimumRowCount) {
+        if (!supportsAreaReference(tableArea)) {
+            int minimumRowCount = 1 + getHeaderRowCount() + getTotalsRowCount();
             throw new IllegalArgumentException("AreaReference needs at least " + minimumRowCount
                     + " rows, to cover at least one data row and all header rows and totals rows");
         }

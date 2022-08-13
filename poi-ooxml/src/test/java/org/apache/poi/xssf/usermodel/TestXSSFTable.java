@@ -752,4 +752,36 @@ public final class TestXSSFTable {
             }
         }
     }
+
+    @Test
+    void testCloneConditionalFormattingSamples() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ConditionalFormattingSamples.xlsx")) {
+            wb.cloneSheet(0, "Test");
+            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+                wb.write(bos);
+                try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet sheet0 = wb2.getSheetAt(0);
+                    XSSFSheet sheet1 = wb2.getSheetAt(1);
+                    assertEquals(0, sheet0.getTables().size());
+                    assertEquals(0, sheet1.getTables().size());
+                }
+            }
+        }
+    }
+
+    @Test
+    void testCloneSingleCellTable() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("SingleCellTable.xlsx")) {
+            wb.cloneSheet(0, "Test");
+            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+                wb.write(bos);
+                try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet sheet0 = wb2.getSheetAt(0);
+                    XSSFSheet sheet1 = wb2.getSheetAt(1);
+                    assertEquals(1, sheet0.getTables().size());
+                    assertEquals(1, sheet1.getTables().size());
+                }
+            }
+        }
+    }
 }

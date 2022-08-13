@@ -2513,3 +2513,7 @@ org/openxmlformats/schemas/drawingml/x2006/chart/CTDLblPos
 org/openxmlformats/schemas/drawingml/x2006/chart/STDLblPos$Enum
 org/openxmlformats/schemas/drawingml/x2006/chart/impl/STDLblPosImpl
 org/openxmlformats/schemas/drawingml/x2006/chart/STDLblPos
+org/openxmlformats/schemas/spreadsheetml/x2006/main/impl/STTotalsRowFunctionImpl
+org/openxmlformats/schemas/spreadsheetml/x2006/main/STTotalsRowFunction
+org/openxmlformats/schemas/spreadsheetml/x2006/main/impl/CTTableFormulaImpl
+org/openxmlformats/schemas/spreadsheetml/x2006/main/CTTableFormula
