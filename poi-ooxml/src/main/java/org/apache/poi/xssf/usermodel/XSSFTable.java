@@ -798,7 +798,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         XSSFRow row = sheet.getRow(headerRow);
         DataFormatter formatter = new DataFormatter();
 
-        if (row != null && row.getCTRow().validate()) {
+        if (row != null) {
             int cellnum = firstHeaderColumn;
             CTTableColumns ctTableColumns = getCTTable().getTableColumns();
             if(ctTableColumns != null) {
