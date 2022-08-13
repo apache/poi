@@ -36,10 +36,7 @@ import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
-import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
-import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.openxml4j.opc.*;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
@@ -4315,6 +4312,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             removeRelation(getRelationById(toDelete.getKey()), true);
             tables.remove(toDelete.getKey());
             toDelete.getValue().onTableDelete();
+            OPCPackage opcPackage = getWorkbook().getPackage();
+            PackagePart packagePart = t.getPackagePart();
+            if (packagePart != null && opcPackage.containPart(packagePart.getPartName())) {
+                opcPackage.removePart(packagePart);
+            }
         }
     }
 

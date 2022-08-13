@@ -2504,3 +2504,12 @@ com/microsoft/schemas/office/drawing/x2008/diagram/CTGroupShapeNonVisual
 com/microsoft/schemas/office/drawing/x2008/diagram/impl/CTShapeImpl
 com/microsoft/schemas/office/drawing/x2008/diagram/impl/CTShapeNonVisualImpl
 com/microsoft/schemas/office/drawing/x2008/diagram/CTShapeNonVisual
+org/openxmlformats/schemas/drawingml/x2006/chart/impl/CTBubbleChartImpl
+org/openxmlformats/schemas/drawingml/x2006/chart/CTBubbleChart
+org/openxmlformats/schemas/drawingml/x2006/chart/CTBubbleSer
+org/openxmlformats/schemas/drawingml/x2006/chart/impl/CTBubbleSerImpl
+org/openxmlformats/schemas/drawingml/x2006/chart/impl/CTDLblPosImpl
+org/openxmlformats/schemas/drawingml/x2006/chart/CTDLblPos
+org/openxmlformats/schemas/drawingml/x2006/chart/STDLblPos$Enum
+org/openxmlformats/schemas/drawingml/x2006/chart/impl/STDLblPosImpl
+org/openxmlformats/schemas/drawingml/x2006/chart/STDLblPos
