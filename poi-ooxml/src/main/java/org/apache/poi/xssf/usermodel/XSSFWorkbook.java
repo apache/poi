@@ -714,6 +714,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                 }
             }
         }
+        XSSFSheet.cloneTables(clonedSheet);
         return clonedSheet;
     }
 

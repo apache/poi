@@ -4872,4 +4872,129 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     public void setDimensionOverride(CellRangeAddress dimension) {
         this.dimensionOverride = dimension;
     }
+
+    static void cloneTables(XSSFSheet sheet) {
+        for (XSSFTable table : sheet.getTables()) {
+            // clone table
+            XSSFTable clonedTable = sheet.createTable(table.getArea());
+            clonedTable.updateHeaders();
+
+            // clone style
+            clonedTable.setStyleName(table.getStyleName());
+            XSSFTableStyleInfo style = (XSSFTableStyleInfo)table.getStyle();
+            XSSFTableStyleInfo clonedStyle = (XSSFTableStyleInfo)clonedTable.getStyle();
+            if (style != null && clonedStyle != null) {
+                clonedStyle.setShowColumnStripes(style.isShowColumnStripes());
+                clonedStyle.setShowRowStripes(style.isShowRowStripes());
+                clonedStyle.setFirstColumn(style.isShowFirstColumn());
+                clonedStyle.setLastColumn(style.isShowLastColumn());
+            }
+
+            //clone autofilter
+            clonedTable.getCTTable().setAutoFilter(table.getCTTable().getAutoFilter());
+
+            //clone totalsrow
+            int totalsRowCount = table.getTotalsRowCount();
+            if (totalsRowCount == 1) { // never seen more than one totals row
+                XSSFRow totalsRow = sheet.getRow(clonedTable.getEndCellReference().getRow());
+                if (clonedTable.getCTTable().getTableColumns().getTableColumnList().size() > 0) {
+                    clonedTable.getCTTable().setTotalsRowCount(totalsRowCount);
+                    for (int i = 0; i < clonedTable.getCTTable().getTableColumns().getTableColumnList().size(); i++) {
+                        CTTableColumn tableCol = table.getCTTable().getTableColumns().getTableColumnList().get(i);
+                        CTTableColumn clonedTableCol = clonedTable.getCTTable().getTableColumns().getTableColumnList().get(i);
+                        clonedTableCol.setTotalsRowFunction(tableCol.getTotalsRowFunction());
+                        int intTotalsRowFunction = clonedTableCol.getTotalsRowFunction().intValue();
+                        sheet.getWorkbook().setCellFormulaValidation(false);
+                        if (intTotalsRowFunction == 10) { //custom
+                            CTTableFormula totalsRowFormula = tableCol.getTotalsRowFormula();
+                            clonedTableCol.setTotalsRowFormula(totalsRowFormula);
+                            totalsRow.getCell(clonedTable.getStartCellReference().getCol()+i).setCellFormula(totalsRowFormula.getStringValue());
+                        } else if (intTotalsRowFunction == 1) { //none
+                            //totalsRow.getCell(clonedTable.getStartCellReference().getCol()+i).setBlank();
+                        } else {
+                            String subtotalFormulaStart = getSubtotalFormulaStartFromTotalsRowFunction(intTotalsRowFunction);
+                            if (subtotalFormulaStart != null)
+                                totalsRow.getCell(clonedTable.getStartCellReference().getCol()+i).setCellFormula(subtotalFormulaStart + "," + clonedTable.getName() +"[" + clonedTableCol.getName()+ "])");
+                        }
+                    }
+                }
+            }
+
+            // clone calculated column formulas
+            if (clonedTable.getCTTable().getTableColumns().getTableColumnList().size() > 0) {
+                clonedTable.getCTTable().setTotalsRowCount(totalsRowCount);
+                for (int i = 0; i < clonedTable.getCTTable().getTableColumns().getTableColumnList().size(); i++) {
+                    CTTableColumn tableCol = table.getCTTable().getTableColumns().getTableColumnList().get(i);
+                    CTTableColumn clonedTableCol = clonedTable.getCTTable().getTableColumns().getTableColumnList().get(i);
+                    if (tableCol.getCalculatedColumnFormula() != null) {
+                        clonedTableCol.setCalculatedColumnFormula(tableCol.getCalculatedColumnFormula());
+                        CTTableFormula calculatedColumnFormula = clonedTableCol.getCalculatedColumnFormula();
+                        String formula = tableCol.getCalculatedColumnFormula().getStringValue();
+                        String clonedFormula = formula.replace(table.getName(), clonedTable.getName());
+                        calculatedColumnFormula.setStringValue(clonedFormula);
+                        int rFirst = clonedTable.getStartCellReference().getRow() + clonedTable.getHeaderRowCount();
+                        int rLast = clonedTable.getEndCellReference().getRow() - clonedTable.getTotalsRowCount();
+                        int c = clonedTable.getStartCellReference().getCol() + i;
+                        sheet.getWorkbook().setCellFormulaValidation(false);
+                        for (int r = rFirst; r <= rLast; r++) {
+                            sheet.getRow(r).getCell(c).setCellFormula(clonedFormula);
+                        }
+                    }
+                }
+            }
+
+            // remove old table
+            String rId = sheet.getRelationId(table);
+            sheet.removeTable(table);
+        }
+    }
+
+    private static String getSubtotalFormulaStartFromTotalsRowFunction(int intTotalsRowFunction) {
+        final int INT_NONE = 1;
+        final int INT_SUM = 2;
+        final int INT_MIN = 3;
+        final int INT_MAX = 4;
+        final int INT_AVERAGE = 5;
+        final int INT_COUNT = 6;
+        final int INT_COUNT_NUMS = 7;
+        final int INT_STD_DEV = 8;
+        final int INT_VAR = 9;
+        final int INT_CUSTOM = 10;
+        String subtotalFormulaStart = null;
+        switch (intTotalsRowFunction) {
+            case INT_NONE:
+                subtotalFormulaStart = null;
+                break;
+            case INT_SUM:
+                subtotalFormulaStart = "SUBTOTAL(109";
+                break;
+            case INT_MIN:
+                subtotalFormulaStart = "SUBTOTAL(105";
+                break;
+            case INT_MAX:
+                subtotalFormulaStart = "SUBTOTAL(104";
+                break;
+            case INT_AVERAGE:
+                subtotalFormulaStart = "SUBTOTAL(101";
+                break;
+            case INT_COUNT:
+                subtotalFormulaStart = "SUBTOTAL(103";
+                break;
+            case INT_COUNT_NUMS:
+                subtotalFormulaStart = "SUBTOTAL(102";
+                break;
+            case INT_STD_DEV:
+                subtotalFormulaStart = "SUBTOTAL(107";
+                break;
+            case INT_VAR:
+                subtotalFormulaStart = "SUBTOTAL(110";
+                break;
+            case INT_CUSTOM:
+                subtotalFormulaStart = null;
+                break;
+            default:
+                subtotalFormulaStart = null;
+        }
+        return subtotalFormulaStart;
+    }
 }

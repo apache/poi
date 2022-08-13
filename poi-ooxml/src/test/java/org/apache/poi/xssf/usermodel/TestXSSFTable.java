@@ -17,12 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -46,6 +40,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public final class TestXSSFTable {
 
@@ -736,6 +732,24 @@ public final class TestXSSFTable {
             assertEquals(1, sheet.getCTWorksheet().getTableParts().sizeOfTablePartArray());
             sheet.removeTable(table);
             assertEquals(0, sheet.getCTWorksheet().getTableParts().sizeOfTablePartArray());
+        }
+    }
+
+    @Test
+    void bug66213() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("table-sample.xlsx")) {
+            wb.cloneSheet(0, "Test");
+            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+                wb.write(bos);
+                try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet sheet0 = wb2.getSheetAt(0);
+                    XSSFSheet sheet1 = wb2.getSheetAt(1);
+                    assertEquals(1, sheet0.getTables().size());
+                    assertEquals(1, sheet1.getTables().size());
+                    assertEquals("Tabelle1", sheet0.getTables().get(0).getName());
+                    assertEquals("Table2", sheet1.getTables().get(0).getName());
+                }
+            }
         }
     }
 }
