@@ -4938,7 +4938,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                         int c = clonedTable.getStartCellReference().getCol() + i;
                         sheet.getWorkbook().setCellFormulaValidation(false);
                         for (int r = rFirst; r <= rLast; r++) {
-                            sheet.getRow(r).getCell(c).setCellFormula(clonedFormula);
+                            XSSFRow row = sheet.getRow(r);
+                            if (row == null) {
+                                row = sheet.createRow(r);
+                            }
+                            XSSFCell cell = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                            cell.setCellFormula(clonedFormula);
                         }
                     }
                 }
