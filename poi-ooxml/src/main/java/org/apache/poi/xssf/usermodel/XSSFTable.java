@@ -508,13 +508,14 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
 
     boolean supportsAreaReference(final AreaReference tableArea) {
         int rowCount = (tableArea.getLastCell().getRow() - tableArea.getFirstCell().getRow()) + 1;
-        int minimumRowCount = 1 + getHeaderRowCount() + getTotalsRowCount();
+        int headerRowCount = Math.max(1, getHeaderRowCount());
+        int minimumRowCount = 1 + headerRowCount + getTotalsRowCount();
         return rowCount >= minimumRowCount;
     }
 
     /**
      * Set the area reference for the cells which this table covers. The area
-     * includes includes header rows and totals rows.
+     * includes header rows and totals rows.
      *
      * Updating the area with this method will create new column as necessary to
      * the right side of the table but will not modify any cell values.

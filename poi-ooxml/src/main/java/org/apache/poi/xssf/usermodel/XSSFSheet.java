@@ -4302,6 +4302,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * @param t table to remove
      */
     public void removeTable(XSSFTable t) {
+        String rId = getRelationId(t);
         long id = t.getCTTable().getId();
         Map.Entry<String, XSSFTable> toDelete = null;
 
@@ -4314,10 +4315,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             toDelete.getValue().onTableDelete();
             CTTableParts tblParts = worksheet.getTableParts();
             int matchedPos = -1;
-            for (int i = 0; i < tblParts.sizeOfTablePartArray(); i++) {
-                if (toDelete.getKey().equals(tblParts.getTablePartArray(i).getId())) {
-                    matchedPos = i;
-                    break;
+            if (rId != null) {
+                for (int i = 0; i < tblParts.sizeOfTablePartArray(); i++) {
+                    if (rId.equals(tblParts.getTablePartArray(i).getId())) {
+                        matchedPos = i;
+                        break;
+                    }
                 }
             }
             if (matchedPos != -1) {
@@ -4875,82 +4878,86 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
     static void cloneTables(XSSFSheet sheet) {
         for (XSSFTable table : sheet.getTables()) {
-            // clone table
-            XSSFTable clonedTable = sheet.createTable(table.getArea());
-            clonedTable.updateHeaders();
 
-            // clone style
-            clonedTable.setStyleName(table.getStyleName());
-            XSSFTableStyleInfo style = (XSSFTableStyleInfo)table.getStyle();
-            XSSFTableStyleInfo clonedStyle = (XSSFTableStyleInfo)clonedTable.getStyle();
-            if (style != null && clonedStyle != null) {
-                clonedStyle.setShowColumnStripes(style.isShowColumnStripes());
-                clonedStyle.setShowRowStripes(style.isShowRowStripes());
-                clonedStyle.setFirstColumn(style.isShowFirstColumn());
-                clonedStyle.setLastColumn(style.isShowLastColumn());
+            // clone table; XSSFTable.setArea fails and throws exception for too small tables
+            XSSFTable clonedTable = null;
+            if (table.supportsAreaReference(table.getArea())) {
+                clonedTable = sheet.createTable(table.getArea());
             }
 
-            //clone autofilter
-            clonedTable.getCTTable().setAutoFilter(table.getCTTable().getAutoFilter());
+            if (clonedTable != null) {
+                clonedTable.updateHeaders();
 
-            //clone totalsrow
-            int totalsRowCount = table.getTotalsRowCount();
-            if (totalsRowCount == 1) { // never seen more than one totals row
-                XSSFRow totalsRow = sheet.getRow(clonedTable.getEndCellReference().getRow());
-                if (clonedTable.getCTTable().getTableColumns().getTableColumnList().size() > 0) {
+                // clone style
+                clonedTable.setStyleName(table.getStyleName());
+                XSSFTableStyleInfo style = (XSSFTableStyleInfo)table.getStyle();
+                XSSFTableStyleInfo clonedStyle = (XSSFTableStyleInfo)clonedTable.getStyle();
+                if (style != null && clonedStyle != null) {
+                    clonedStyle.setShowColumnStripes(style.isShowColumnStripes());
+                    clonedStyle.setShowRowStripes(style.isShowRowStripes());
+                    clonedStyle.setFirstColumn(style.isShowFirstColumn());
+                    clonedStyle.setLastColumn(style.isShowLastColumn());
+                }
+
+                //clone autofilter
+                clonedTable.getCTTable().setAutoFilter(table.getCTTable().getAutoFilter());
+
+                //clone totalsrow
+                int totalsRowCount = table.getTotalsRowCount();
+                if (totalsRowCount == 1) { // never seen more than one totals row
+                    XSSFRow totalsRow = sheet.getRow(clonedTable.getEndCellReference().getRow());
+                    if (clonedTable.getCTTable().getTableColumns() != null
+                            && clonedTable.getCTTable().getTableColumns().getTableColumnList().size() > 0) {
+                        clonedTable.getCTTable().setTotalsRowCount(totalsRowCount);
+                        for (int i = 0; i < clonedTable.getCTTable().getTableColumns().getTableColumnList().size(); i++) {
+                            CTTableColumn tableCol = table.getCTTable().getTableColumns().getTableColumnList().get(i);
+                            CTTableColumn clonedTableCol = clonedTable.getCTTable().getTableColumns().getTableColumnList().get(i);
+                            clonedTableCol.setTotalsRowFunction(tableCol.getTotalsRowFunction());
+                            int intTotalsRowFunction = clonedTableCol.getTotalsRowFunction().intValue();
+                            sheet.getWorkbook().setCellFormulaValidation(false);
+                            if (intTotalsRowFunction == 10) { //custom
+                                CTTableFormula totalsRowFormula = tableCol.getTotalsRowFormula();
+                                clonedTableCol.setTotalsRowFormula(totalsRowFormula);
+                                totalsRow.getCell(clonedTable.getStartCellReference().getCol()+i).setCellFormula(totalsRowFormula.getStringValue());
+                            } else if (intTotalsRowFunction == 1) { //none
+                                //totalsRow.getCell(clonedTable.getStartCellReference().getCol()+i).setBlank();
+                            } else {
+                                String subtotalFormulaStart = getSubtotalFormulaStartFromTotalsRowFunction(intTotalsRowFunction);
+                                if (subtotalFormulaStart != null)
+                                    totalsRow.getCell(clonedTable.getStartCellReference().getCol()+i).setCellFormula(subtotalFormulaStart + "," + clonedTable.getName() +"[" + clonedTableCol.getName()+ "])");
+                            }
+                        }
+                    }
+                }
+
+                // clone calculated column formulas
+                if (clonedTable.getCTTable().getTableColumns() != null
+                        && clonedTable.getCTTable().getTableColumns().getTableColumnList().size() > 0) {
                     clonedTable.getCTTable().setTotalsRowCount(totalsRowCount);
                     for (int i = 0; i < clonedTable.getCTTable().getTableColumns().getTableColumnList().size(); i++) {
                         CTTableColumn tableCol = table.getCTTable().getTableColumns().getTableColumnList().get(i);
                         CTTableColumn clonedTableCol = clonedTable.getCTTable().getTableColumns().getTableColumnList().get(i);
-                        clonedTableCol.setTotalsRowFunction(tableCol.getTotalsRowFunction());
-                        int intTotalsRowFunction = clonedTableCol.getTotalsRowFunction().intValue();
-                        sheet.getWorkbook().setCellFormulaValidation(false);
-                        if (intTotalsRowFunction == 10) { //custom
-                            CTTableFormula totalsRowFormula = tableCol.getTotalsRowFormula();
-                            clonedTableCol.setTotalsRowFormula(totalsRowFormula);
-                            totalsRow.getCell(clonedTable.getStartCellReference().getCol()+i).setCellFormula(totalsRowFormula.getStringValue());
-                        } else if (intTotalsRowFunction == 1) { //none
-                            //totalsRow.getCell(clonedTable.getStartCellReference().getCol()+i).setBlank();
-                        } else {
-                            String subtotalFormulaStart = getSubtotalFormulaStartFromTotalsRowFunction(intTotalsRowFunction);
-                            if (subtotalFormulaStart != null)
-                                totalsRow.getCell(clonedTable.getStartCellReference().getCol()+i).setCellFormula(subtotalFormulaStart + "," + clonedTable.getName() +"[" + clonedTableCol.getName()+ "])");
-                        }
-                    }
-                }
-            }
-
-            // clone calculated column formulas
-            if (clonedTable.getCTTable().getTableColumns() != null
-                    && clonedTable.getCTTable().getTableColumns().getTableColumnList().size() > 0) {
-                clonedTable.getCTTable().setTotalsRowCount(totalsRowCount);
-                for (int i = 0; i < clonedTable.getCTTable().getTableColumns().getTableColumnList().size(); i++) {
-                    CTTableColumn tableCol = table.getCTTable().getTableColumns().getTableColumnList().get(i);
-                    CTTableColumn clonedTableCol = clonedTable.getCTTable().getTableColumns().getTableColumnList().get(i);
-                    if (tableCol.getCalculatedColumnFormula() != null) {
-                        clonedTableCol.setCalculatedColumnFormula(tableCol.getCalculatedColumnFormula());
-                        CTTableFormula calculatedColumnFormula = clonedTableCol.getCalculatedColumnFormula();
-                        String formula = tableCol.getCalculatedColumnFormula().getStringValue();
-                        String clonedFormula = formula.replace(table.getName(), clonedTable.getName());
-                        calculatedColumnFormula.setStringValue(clonedFormula);
-                        int rFirst = clonedTable.getStartCellReference().getRow() + clonedTable.getHeaderRowCount();
-                        int rLast = clonedTable.getEndCellReference().getRow() - clonedTable.getTotalsRowCount();
-                        int c = clonedTable.getStartCellReference().getCol() + i;
-                        sheet.getWorkbook().setCellFormulaValidation(false);
-                        for (int r = rFirst; r <= rLast; r++) {
-                            XSSFRow row = sheet.getRow(r);
-                            if (row == null) {
-                                row = sheet.createRow(r);
+                        if (tableCol.getCalculatedColumnFormula() != null) {
+                            clonedTableCol.setCalculatedColumnFormula(tableCol.getCalculatedColumnFormula());
+                            CTTableFormula calculatedColumnFormula = clonedTableCol.getCalculatedColumnFormula();
+                            String formula = tableCol.getCalculatedColumnFormula().getStringValue();
+                            String clonedFormula = formula.replace(table.getName(), clonedTable.getName());
+                            calculatedColumnFormula.setStringValue(clonedFormula);
+                            int rFirst = clonedTable.getStartCellReference().getRow() + clonedTable.getHeaderRowCount();
+                            int rLast = clonedTable.getEndCellReference().getRow() - clonedTable.getTotalsRowCount();
+                            int c = clonedTable.getStartCellReference().getCol() + i;
+                            sheet.getWorkbook().setCellFormulaValidation(false);
+                            for (int r = rFirst; r <= rLast; r++) {
+                                XSSFRow row = sheet.getRow(r); if (row == null) row = sheet.createRow(r);
+                                XSSFCell cell = row.getCell(c); if (cell == null) cell = row.createCell(c);
+                                cell.setCellFormula(clonedFormula);
                             }
-                            XSSFCell cell = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                            cell.setCellFormula(clonedFormula);
                         }
                     }
                 }
             }
 
             // remove old table
-            String rId = sheet.getRelationId(table);
             sheet.removeTable(table);
         }
     }

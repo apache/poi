@@ -779,7 +779,7 @@ public final class TestXSSFTable {
                     XSSFSheet sheet0 = wb2.getSheetAt(0);
                     XSSFSheet sheet1 = wb2.getSheetAt(1);
                     assertEquals(1, sheet0.getTables().size());
-                    assertEquals(1, sheet1.getTables().size());
+                    assertEquals(0, sheet1.getTables().size());
                 }
             }
         }
