@@ -284,7 +284,7 @@ under the License.
     <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.35" usage="main-tests"/>
     <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest:2.2" usage="main-tests"/>
     <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.9.0" usage="main-tests"/>
-    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:4.6.1" usage="main-tests"/>
+    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:4.7.0" usage="main-tests"/>
     <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.12.13" usage="main-tests"/>
     <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.12.13" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
@@ -676,7 +676,7 @@ under the License.
                 <include name="log4j-api-2.14*.jar"/>
                 <include name="log4j-api-2.15*.jar"/>
                 <include name="log4j-api-2.16*.jar"/>
-                <include name="log4j-api-2.17.0.jar"/>
+                <include name="log4j-api-2.17*.jar"/>
                 <include name="commons-logging-1.2.jar"/>
                 <include name="*slf4j*.jar"/>
             </fileset>
@@ -685,6 +685,7 @@ under the License.
                 <include name="mockito-core-4.0*.jar"/>
                 <include name="mockito-core-4.2*.jar"/>
                 <include name="mockito-core-4.5*.jar"/>
+                <include name="mockito-core-4.6*.jar"/>
                 <include name="hamcrest-core*"/>
                 <include name="junit-4*.jar"/>
                 <include name="*slf4j*.jar"/>
@@ -694,7 +695,7 @@ under the License.
                 <include name="log4j-core-2.14*.jar"/>
                 <include name="log4j-core-2.15*.jar"/>
                 <include name="log4j-core-2.16*.jar"/>
-                <include name="log4j-core-2.17.0.jar"/>
+                <include name="log4j-core-2.17*.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml">
                 <include name="xmlbeans-3*.jar"/>
