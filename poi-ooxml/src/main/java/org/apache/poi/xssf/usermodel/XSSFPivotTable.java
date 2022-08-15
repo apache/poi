@@ -97,6 +97,7 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
         for (POIXMLDocumentPart documentPart : getRelations()) {
             if (documentPart instanceof XSSFPivotCacheDefinition) {
                 pivotCacheDefinition = (XSSFPivotCacheDefinition) documentPart;
+                break;
             }
         }
     }
