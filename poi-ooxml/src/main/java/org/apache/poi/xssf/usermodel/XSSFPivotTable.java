@@ -87,8 +87,17 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
             //Removing root element
             options.setLoadReplaceDocumentElement(null);
             pivotTableDefinition = CTPivotTableDefinition.Factory.parse(is, options);
+            pivotCacheDefinition = null;
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
+        }
+    }
+
+    private void lazyInitXSSFPivotCacheDefinition() {
+        for (POIXMLDocumentPart documentPart : getRelations()) {
+            if (documentPart instanceof XSSFPivotCacheDefinition) {
+                pivotCacheDefinition = (XSSFPivotCacheDefinition) documentPart;
+            }
         }
     }
 
@@ -126,6 +135,9 @@ public class XSSFPivotTable extends POIXMLDocumentPart {
 
     @Beta
     public XSSFPivotCacheDefinition getPivotCacheDefinition() {
+        if (pivotCacheDefinition == null) {
+            lazyInitXSSFPivotCacheDefinition();
+        }
         return pivotCacheDefinition;
     }
 

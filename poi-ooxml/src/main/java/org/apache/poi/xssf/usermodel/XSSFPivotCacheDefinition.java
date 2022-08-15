@@ -48,7 +48,7 @@ public class XSSFPivotCacheDefinition extends POIXMLDocumentPart{
     private CTPivotCacheDefinition ctPivotCacheDefinition;
 
     @Beta
-    public XSSFPivotCacheDefinition(){
+    public XSSFPivotCacheDefinition() {
         super();
         ctPivotCacheDefinition = CTPivotCacheDefinition.Factory.newInstance();
         createDefaultValues();

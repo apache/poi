@@ -3705,4 +3705,23 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), cv1.getErrorValue());
         }
     }
+
+    @Test
+    void testBug66216() throws IOException {
+        File file = XSSFTestDataSamples.getSampleFile("ExcelPivotTableSample.xlsx");
+        try (
+                FileInputStream fis = new FileInputStream(file);
+                XSSFWorkbook workbook = new XSSFWorkbook(fis)
+        ) {
+            for (XSSFPivotTable pivotTable : workbook.getPivotTables()) {
+                assertNotNull(pivotTable.getCTPivotTableDefinition());
+                assertNotNull(pivotTable.getPivotCacheDefinition());
+                assertEquals(1, pivotTable.getRelations().size());
+                assertInstanceOf(XSSFPivotCacheDefinition.class, pivotTable.getRelations().get(0));
+                assertEquals("rId1", pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition().getId());
+                assertEquals(3,
+                        pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition().getRecordCount());
+            }
+        }
+    }
 }
