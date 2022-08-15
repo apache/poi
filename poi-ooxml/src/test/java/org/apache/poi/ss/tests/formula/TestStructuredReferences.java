@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -30,11 +31,7 @@ import org.apache.poi.ss.usermodel.Table;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFTable;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -134,6 +131,52 @@ class TestStructuredReferences {
             formulaCell.setCellFormula(tableName + "[[#This Row],[Field1]]");
 
             assertEquals("Table1[[#This Row],[Field1]]", formulaCell.getCellFormula());
+        }
+    }
+
+    @Test
+    void testBug66215() throws Exception {
+        //relates to https://bz.apache.org/bugzilla/show_bug.cgi?id=66215 (this does not work as it should)
+        try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("bug66215.xlsx")) {
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            XSSFRow row3 = sheet.getRow(3);
+            XSSFRow row5 = sheet.getRow(5);
+            assertEquals("Tabelle1[[#This Row],[Total]]/Tabelle1[[#Totals],[Total]]", row3.getCell(5).getCellFormula());
+            assertEquals("Tabelle1[[#This Row],[Total]]/Tabelle1[[#Totals],[Total]]", row5.getCell(5).getCellFormula());
+            XSSFTable table = sheet.getTables().get(0);
+
+            int lastTableRow = table.getEndCellReference().getRow();
+            int totalsRowCount = table.getTotalsRowCount();
+            int lastTableDataRow = lastTableRow - totalsRowCount;
+
+            // we will add one row in table data
+            lastTableRow++;
+            lastTableDataRow++;
+
+            // new table area plus one row
+            AreaReference newTableArea = new AreaReference(
+                    table.getStartCellReference(),
+                    new CellReference(
+                            lastTableRow,
+                            table.getEndCellReference().getCol()
+                    ),
+                    SpreadsheetVersion.EXCEL2007
+            );
+
+            if (totalsRowCount > 0) {
+                workbook.setCellFormulaValidation(false);
+                sheet.shiftRows(lastTableDataRow, lastTableRow++, 1);
+            }
+
+            // set new table area
+            table.setArea(newTableArea);
+
+            XSSFRow row4 = sheet.getRow(4);
+            //the next formula has been adjusted more than it should but seems to return correct value
+            assertEquals("Tabelle2!E5:E5/Tabelle2!E8:E8", row4.getCell(5).getCellFormula());
+            XSSFRow row7 = sheet.getRow(7);
+            //the next formula is completely wrong (should be the same as the value in the row4 assertion above)
+            assertEquals("SUBTOTAL(109,Tabelle1[Percentage])", row7.getCell(5).getCellFormula());
         }
     }
 
