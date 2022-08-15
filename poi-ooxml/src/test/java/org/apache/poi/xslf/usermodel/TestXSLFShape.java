@@ -220,6 +220,23 @@ class TestXSLFShape {
                         }
                     }
                 }
+                XSLFSlide ppt2Slide0 = ppt2.getSlides().get(0);
+                int shapeNumber = 0;
+                for (XSLFShape shape : ppt2Slide0.getShapes()) {
+                    if (shape instanceof XSLFTextShape) {
+                        XSLFTextShape textShape = (XSLFTextShape) shape;
+                        List<XSLFTextParagraph> textBoxParagraphs = textShape.getTextParagraphs();
+                        List<XSLFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
+                                .map(XSLFTextParagraph::getTextRuns)
+                                .flatMap(List::stream)
+                                .collect(Collectors.toList());
+                        assertEquals(1, textBoxParagraphTextRuns.size());
+                        String expected = shapeNumber == 0 ? "Learning PPTX" : "Cloud";
+                        assertEquals(expected, textBoxParagraphTextRuns.get(0).getRawText());
+                    }
+                    shapeNumber++;
+                }
+
             }
         }
     }
