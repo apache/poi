@@ -161,6 +161,102 @@ class TestXSLFShape {
                 for (XSLFShape shape : updatedSlide.getShapes()) {
                     if (shape instanceof XSLFTextShape) {
                         XSLFTextShape textShape = (XSLFTextShape) shape;
+                        List<XSLFTextParagraph> textBoxParagraphs = textShape.getTextParagraphs();
+                        List<XSLFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
+                                .map(XSLFTextParagraph::getTextRuns)
+                                .flatMap(List::stream)
+                                .collect(Collectors.toList());
+                        int pos = 0;
+                        for (XSLFTextRun r : textBoxParagraphTextRuns) {
+                            assertEquals("Replaced" + pos++, r.getRawText());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void testCloneSlideAndReplaceText() throws IOException {
+        try (
+                XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            assertEquals(6, ppt.getSlides().size());
+            XSLFSlide slide0 = ppt.getSlides().get(0);
+            XSLFSlide newSlide = ppt.createSlide(slide0.getSlideLayout());
+            newSlide = newSlide.importContent(slide0);
+            for (XSLFShape shape : newSlide.getShapes()) {
+                if (shape instanceof XSLFTextShape) {
+                    XSLFTextShape textShape = (XSLFTextShape) shape;
+                    List<XDDFTextParagraph> textBoxParagraphs = textShape.getTextBody().getParagraphs();
+                    List<XDDFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
+                            .map(XDDFTextParagraph::getTextRuns)
+                            .flatMap(List::stream)
+                            .collect(Collectors.toList());
+                    int pos = 0;
+                    for (XDDFTextRun r : textBoxParagraphTextRuns) {
+                        r.setText("Replaced" + pos++);
+                    }
+                }
+            }
+            ppt.write(bos);
+
+            try (XMLSlideShow ppt2 = new XMLSlideShow(bos.toInputStream())) {
+                assertEquals(7, ppt2.getSlides().size());
+                XSLFSlide updatedSlide = ppt2.getSlides().get(6);
+                assertEquals(newSlide.getSlideName(), updatedSlide.getSlideName());
+                for (XSLFShape shape : updatedSlide.getShapes()) {
+                    if (shape instanceof XSLFTextShape) {
+                        XSLFTextShape textShape = (XSLFTextShape) shape;
+                        List<XSLFTextParagraph> textBoxParagraphs = textShape.getTextParagraphs();
+                        List<XSLFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
+                                .map(XSLFTextParagraph::getTextRuns)
+                                .flatMap(List::stream)
+                                .collect(Collectors.toList());
+                        int pos = 0;
+                        for (XSLFTextRun r : textBoxParagraphTextRuns) {
+                            assertEquals("Replaced" + pos++, r.getRawText());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void testCloneSlideAndReplaceTextXDDF() throws IOException {
+        try (
+                XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            assertEquals(6, ppt.getSlides().size());
+            XSLFSlide slide0 = ppt.getSlides().get(0);
+            XSLFSlide newSlide = ppt.createSlide(slide0.getSlideLayout());
+            newSlide = newSlide.importContent(slide0);
+            for (XSLFShape shape : newSlide.getShapes()) {
+                if (shape instanceof XSLFTextShape) {
+                    XSLFTextShape textShape = (XSLFTextShape) shape;
+                    List<XDDFTextParagraph> textBoxParagraphs = textShape.getTextBody().getParagraphs();
+                    List<XDDFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
+                            .map(XDDFTextParagraph::getTextRuns)
+                            .flatMap(List::stream)
+                            .collect(Collectors.toList());
+                    int pos = 0;
+                    for (XDDFTextRun r : textBoxParagraphTextRuns) {
+                        r.setText("Replaced" + pos++);
+                    }
+                }
+            }
+            ppt.write(bos);
+
+            try (XMLSlideShow ppt2 = new XMLSlideShow(bos.toInputStream())) {
+                assertEquals(7, ppt2.getSlides().size());
+                XSLFSlide updatedSlide = ppt2.getSlides().get(6);
+                assertEquals(newSlide.getSlideName(), updatedSlide.getSlideName());
+                for (XSLFShape shape : updatedSlide.getShapes()) {
+                    if (shape instanceof XSLFTextShape) {
+                        XSLFTextShape textShape = (XSLFTextShape) shape;
                         List<XDDFTextParagraph> textBoxParagraphs = textShape.getTextBody().getParagraphs();
                         List<XDDFTextRun> textBoxParagraphTextRuns = textBoxParagraphs.stream()
                                 .map(XDDFTextParagraph::getTextRuns)
