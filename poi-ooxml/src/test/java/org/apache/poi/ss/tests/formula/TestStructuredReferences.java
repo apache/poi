@@ -33,6 +33,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.*;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 
 /**
  * Tests Excel Table expressions (structured references)
@@ -176,6 +177,29 @@ class TestStructuredReferences {
             assertEquals("Tabelle2!E5:E5/Tabelle2!E8:E8", row4.getCell(5).getCellFormula());
             XSSFRow row7 = sheet.getRow(7);
             //the next formula is completely wrong (should be the same as the value in the row4 assertion above)
+            assertEquals("SUBTOTAL(109,Tabelle1[Percentage])", row7.getCell(5).getCellFormula());
+
+            //correct all sheet table-reference-formulas which probably got damaged after shift rows
+            for (CTTableColumn tableCol : table.getCTTable().getTableColumns().getTableColumnList()) {
+                if (tableCol.getCalculatedColumnFormula() != null) {
+                    int id = (int) tableCol.getId();
+                    String formula = tableCol.getCalculatedColumnFormula().getStringValue();
+                    int rFirst = table.getStartCellReference().getRow() + table.getHeaderRowCount();
+                    int rLast = table.getEndCellReference().getRow() - table.getTotalsRowCount();
+                    int c = table.getStartCellReference().getCol() + id - 1;
+                    sheet.getWorkbook().setCellFormulaValidation(false);
+                    for (int r = rFirst; r <= rLast; r++) {
+                        XSSFRow row = sheet.getRow(r);
+                        if (row == null) row = sheet.createRow(r);
+                        XSSFCell cell = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                        cell.setCellFormula(formula);
+                    }
+                }
+            }
+
+            //is it right that this reverts back to Tabelle1 when it was Tabelle2 for the 'correct all sheet table-reference-formulas' loop?
+            assertEquals("Tabelle1[[#This Row],[Total]]/Tabelle1[[#Totals],[Total]]", row4.getCell(5).getCellFormula());
+            //the next formula is still completely wrong (should be the same as the value in the row4 assertion above)
             assertEquals("SUBTOTAL(109,Tabelle1[Percentage])", row7.getCell(5).getCellFormula());
         }
     }
