@@ -3042,6 +3042,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      */
     @Override
     public void shiftRows(int startRow, int endRow, final int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
+        List<XSSFTable> overlappingTables = new ArrayList<>();
+        for (XSSFTable table : getTables()) {
+            if (table.getStartRowIndex() <= endRow || table.getEndRowIndex() >= startRow) {
+                overlappingTables.add(table);
+            }
+        }
         int sheetIndex = getWorkbook().getSheetIndex(this);
         String sheetName = getWorkbook().getSheetName(sheetIndex);
         FormulaShifter formulaShifter = FormulaShifter.createForRowShift(
@@ -3057,6 +3063,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         rowShifter.updateHyperlinks(formulaShifter);
 
         rebuildRows();
+
+        for (XSSFTable table : overlappingTables) {
+            rebuildTableFormulas(table);
+        }
     }
 
     /**
@@ -3070,6 +3080,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      */
     @Override
     public void shiftColumns(int startColumn, int endColumn, final int n) {
+        List<XSSFTable> overlappingTables = new ArrayList<>();
+        for (XSSFTable table : getTables()) {
+            if (table.getStartColIndex() <= endColumn || table.getEndRowIndex() >= startColumn) {
+                overlappingTables.add(table);
+            }
+        }
         XSSFVMLDrawing vml = getVMLDrawing(false);
         shiftCommentsForColumns(vml, startColumn, endColumn, n);
         FormulaShifter formulaShifter = FormulaShifter.createForColumnShift(this.getWorkbook().getSheetIndex(this), this.getSheetName(), startColumn, endColumn, n, SpreadsheetVersion.EXCEL2007);
@@ -3082,6 +3098,35 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         columnShifter.updateNamedRanges(formulaShifter);
 
         rebuildRows();
+
+        for (XSSFTable table : overlappingTables) {
+            rebuildTableFormulas(table);
+        }
+    }
+
+    private void rebuildTableFormulas(XSSFTable table) {
+        //correct all sheet table-reference-formulas which probably got damaged after shift rows/columns
+        for (CTTableColumn tableCol : table.getCTTable().getTableColumns().getTableColumnList()) {
+            if (tableCol.getCalculatedColumnFormula() != null) {
+                int id = Math.toIntExact(tableCol.getId());
+                String formula = tableCol.getCalculatedColumnFormula().getStringValue();
+                int rFirst = table.getStartCellReference().getRow() + table.getHeaderRowCount();
+                int rLast = table.getEndCellReference().getRow() - table.getTotalsRowCount();
+                int c = table.getStartCellReference().getCol() + id - 1;
+                final boolean cellFormulaValidationFlag = getWorkbook().getCellFormulaValidation();
+                try {
+                    getWorkbook().setCellFormulaValidation(false);
+                    for (int r = rFirst; r <= rLast; r++) {
+                        XSSFRow row = getRow(r);
+                        if (row == null) row = createRow(r);
+                        XSSFCell cell = row.getCell(c, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                        cell.setCellFormula(formula);
+                    }
+                } finally {
+                    getWorkbook().setCellFormulaValidation(cellFormulaValidationFlag);
+                }
+            }
+        }
     }
 
     private void rebuildRows() {
