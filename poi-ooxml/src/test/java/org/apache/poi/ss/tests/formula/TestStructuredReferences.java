@@ -182,7 +182,7 @@ class TestStructuredReferences {
             //correct all sheet table-reference-formulas which probably got damaged after shift rows
             for (CTTableColumn tableCol : table.getCTTable().getTableColumns().getTableColumnList()) {
                 if (tableCol.getCalculatedColumnFormula() != null) {
-                    int id = (int) tableCol.getId();
+                    int id = Math.toIntExact(tableCol.getId());
                     String formula = tableCol.getCalculatedColumnFormula().getStringValue();
                     int rFirst = table.getStartCellReference().getRow() + table.getHeaderRowCount();
                     int rLast = table.getEndCellReference().getRow() - table.getTotalsRowCount();
