@@ -149,7 +149,7 @@ subprojects {
         log4jVersion = '2.18.0'
         mockitoVersion = '4.7.0'
         hamcrestVersion = '2.2'
-        xmlbeansVersion = '5.1.0'
+        xmlbeansVersion = '5.1.1'
         batikVersion = '1.14'
         graphics2dVersion = '0.38'
         pdfboxVersion = '2.0.26'
@@ -189,7 +189,7 @@ subprojects {
 
     repositories {
         mavenCentral()
-        //maven { url 'https://repository.apache.org/content/repositories/staging' }
+        maven { url 'https://repository.apache.org/content/repositories/staging' }
     }
 
     dependencies {
