@@ -3044,7 +3044,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     public void shiftRows(int startRow, int endRow, final int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
         List<XSSFTable> overlappingTables = new ArrayList<>();
         for (XSSFTable table : getTables()) {
-            if (table.getStartRowIndex() <= endRow || table.getEndRowIndex() >= startRow) {
+            if ((table.getStartRowIndex() < startRow && table.getEndRowIndex() < startRow)
+                    || (table.getStartRowIndex() > endRow && table.getEndRowIndex() > endRow))  {
+                // not overlapping
+            } else {
                 overlappingTables.add(table);
             }
         }
@@ -3082,7 +3085,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     public void shiftColumns(int startColumn, int endColumn, final int n) {
         List<XSSFTable> overlappingTables = new ArrayList<>();
         for (XSSFTable table : getTables()) {
-            if (table.getStartColIndex() <= endColumn || table.getEndRowIndex() >= startColumn) {
+            if ((table.getStartColIndex() < startColumn && table.getEndColIndex() < startColumn)
+                    || (table.getStartColIndex() > endColumn && table.getEndColIndex() > endColumn))  {
+                // not overlapping
+            } else {
                 overlappingTables.add(table);
             }
         }
