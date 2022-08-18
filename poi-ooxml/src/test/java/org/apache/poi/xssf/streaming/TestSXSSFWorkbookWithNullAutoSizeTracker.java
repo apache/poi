@@ -671,4 +671,15 @@ public final class TestSXSSFWorkbookWithNullAutoSizeTracker extends BaseTestXWor
         }
     }
 
+    @Test
+    public void disableAutoSizeTracker() throws IOException {
+        try (Workbook workbook = _testDataProvider.createWorkbook(10)) {
+            assertThrows(IllegalStateException.class, () -> {
+                Sheet sheet = workbook.createSheet("testSheet");
+                sheet.createRow(0).createCell(0).setCellValue(0);
+                sheet.autoSizeColumn(0);
+            });
+        }
+    }
+
 }

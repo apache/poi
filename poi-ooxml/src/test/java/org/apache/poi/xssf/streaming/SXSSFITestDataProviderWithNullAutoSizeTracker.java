@@ -31,7 +31,7 @@ public class SXSSFITestDataProviderWithNullAutoSizeTracker extends SXSSFITestDat
 
     @Override
     public SXSSFWorkbook createWorkbook() {
-        SXSSFWorkbook wb = new SXSSFWorkbook();
+        SXSSFWorkbook wb = new SXSSFWorkbookWithNullAutoSizeTracker();
         instances.add(wb);
         return wb;
     }
@@ -39,7 +39,7 @@ public class SXSSFITestDataProviderWithNullAutoSizeTracker extends SXSSFITestDat
     //************ SXSSF-specific methods ***************//
     @Override
     public SXSSFWorkbook createWorkbook(int rowAccessWindowSize) {
-        SXSSFWorkbook wb = new SXSSFWorkbook(rowAccessWindowSize);
+        SXSSFWorkbook wb = new SXSSFWorkbookWithNullAutoSizeTracker(rowAccessWindowSize);
         instances.add(wb);
         return wb;
     }
