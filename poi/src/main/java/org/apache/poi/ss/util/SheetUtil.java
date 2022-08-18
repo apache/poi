@@ -233,7 +233,7 @@ public class SheetUtil {
             AffineTransform trans = new AffineTransform();
             trans.concatenate(AffineTransform.getRotateInstance(style.getRotation()*2.0*Math.PI/360.0));
             trans.concatenate(
-            AffineTransform.getScaleInstance(1, fontHeightMultiple)
+                    AffineTransform.getScaleInstance(1, fontHeightMultiple)
             );
             bounds = layout.getOutline(trans).getBounds();
         } else {
@@ -245,7 +245,8 @@ public class SheetUtil {
     }
 
     /**
-     * Compute width of a column and return the result
+     * Compute width of a column and return the result.
+     * Note that this fall can fail if you do not have the right fonts installed in your OS.
      *
      * @param sheet the sheet to calculate
      * @param column    0-based index of the column
@@ -257,7 +258,8 @@ public class SheetUtil {
     }
 
     /**
-     * Compute width of a column based on a subset of the rows and return the result
+     * Compute width of a column based on a subset of the rows and return the result.
+     * Note that this fall can fail if you do not have the right fonts installed in your OS.
      *
      * @param sheet the sheet to calculate
      * @param column    0-based index of the column
@@ -283,7 +285,8 @@ public class SheetUtil {
     }
 
     /**
-     * Get default character width using the Workbook's default font
+     * Get default character width using the Workbook's default font. Note that this can
+     * fail if your OS does not have the right fonts installed.
      *
      * @param wb the workbook to get the default character width from
      * @return default character width in pixels
