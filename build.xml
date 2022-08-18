@@ -2121,6 +2121,11 @@ under the License.
                 <package name="org.apache.poi.ddf*"/>
             </group>
             <group>
+                <title>XDDF - Open Office XML Dreadful Drawing Format</title>
+                <package name="org.apache.poi.xddf*"/>
+            </group>
+
+            <group>
                 <title>HPSF - Horrible Property Set Format</title>
                 <package name="org.apache.poi.hpsf*"/>
             </group>
@@ -2176,11 +2181,20 @@ under the License.
             <group>
                 <title>Utilities</title>
                 <package name="org.apache.poi.util*"/>
+                <package name="org.apache.poi.ooxml.util*"/>
+            </group>
+            <group>
+                <title>Common</title>
+                <package name="org.apache.poi.common*"/>
+            </group>
+            <group>
+                <title>Extractor</title>
+                <package name="org.apache.poi.extractor*"/>
+                <package name="org.apache.poi.ooxml.extractor*"/>
             </group>
             <group>
                 <title>Examples</title>
-                <package name="org.apache.poi.hpsf.examples*"/>
-                <package name="org.apache.poi.hssf.usermodel.examples*"/>
+                <package name="org.apache.poi.examples*"/>
             </group>
         </javadoc>
     </target>
