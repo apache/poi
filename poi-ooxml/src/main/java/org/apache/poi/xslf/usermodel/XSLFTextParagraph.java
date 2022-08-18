@@ -799,20 +799,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
             thisP.removeFld(i-1);
         }
 
-        try (XmlCursor thisC = thisP.newCursor()) {
-            thisC.toEndToken();
-            try (XmlCursor otherC = otherP.newCursor()) {
-                otherC.copyXmlContents(thisC);
-            }
-        }
-
         for (XSLFTextRun tr : other.getTextRuns()) {
-            XmlObject xo = tr.getXmlObject();
-            XSLFTextRun run = (xo instanceof CTTextLineBreak)
-                ? newTextRun((CTTextLineBreak)xo)
-                : newTextRun(xo);
+            XmlObject xo = tr.getXmlObject().copy();
+            XSLFTextRun run = addNewTextRun();
+            run.getXmlObject().set(xo);
             run.copy(tr);
-            _runs.add(run);
         }
 
         // set properties again, in case we are based on a different
