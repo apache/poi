@@ -19,13 +19,7 @@ package org.apache.poi.xssf.streaming;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Spliterator;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,7 +50,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     private final TreeMap<Integer,SXSSFRow> _rows = new TreeMap<>();
     protected SheetDataWriter _writer;
     private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
-    protected final AutoSizeColumnTracker _autoSizeColumnTracker;
+    protected AutoSizeColumnTracker _autoSizeColumnTracker;
     private int outlineLevelRow;
     private int lastFlushedRowNumber = -1;
     private boolean allFlushed;
@@ -97,7 +91,11 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         _sh = xSheet;
         _writer = workbook.createSheetDataWriter();
         setRandomAccessWindowSize(_workbook.getRandomAccessWindowSize());
-        _autoSizeColumnTracker = new AutoSizeColumnTracker(this);
+        try {
+            _autoSizeColumnTracker = new AutoSizeColumnTracker(this);
+        } catch (Exception e) {
+            LOG.atWarn().log("Failed to create AutoSizeColumnTracker, possibly due to fonts not being installed in your OS", e);
+        }
     }
 
     /**
@@ -1439,11 +1437,15 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * If <code>column</code> is already tracked, this call does nothing.
      *
      * @param column the column to track for auto-sizing
+     * @throws IllegalStateException if autoSizeColumnTracker failed to initialize (possibly due to fonts not being installed in your OS)
      * @since 3.14beta1
      * @see #trackColumnsForAutoSizing(Collection)
      * @see #trackAllColumnsForAutoSizing()
      */
     public void trackColumnForAutoSizing(int column) {
+        if (_autoSizeColumnTracker == null) {
+            throw new IllegalStateException("Cannot trackColumnForAutoSizing because autoSizeColumnTracker failed to initialize (possibly due to fonts not being installed in your OS)");
+        }
         _autoSizeColumnTracker.trackColumn(column);
     }
 
@@ -1453,18 +1455,26 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * Any column in <code>columns</code> that are already tracked are ignored by this call.
      *
      * @param columns the columns to track for auto-sizing
+     * @throws IllegalStateException if autoSizeColumnTracker failed to initialize (possibly due to fonts not being installed in your OS)
      * @since 3.14beta1
      */
     public void trackColumnsForAutoSizing(Collection<Integer> columns) {
+        if (_autoSizeColumnTracker == null) {
+            throw new IllegalStateException("Cannot trackColumnForAutoSizing because autoSizeColumnTracker failed to initialize (possibly due to fonts not being installed in your OS)");
+        }
         _autoSizeColumnTracker.trackColumns(columns);
     }
 
     /**
      * Tracks all columns in the sheet for auto-sizing. If this is called, individual columns do not need to be tracked.
      * Because determining the best-fit width for a cell is expensive, this may affect the performance.
+     * @throws IllegalStateException if autoSizeColumnTracker failed to initialize (possibly due to fonts not being installed in your OS)
      * @since 3.14beta1
      */
     public void trackAllColumnsForAutoSizing() {
+        if (_autoSizeColumnTracker == null) {
+            throw new IllegalStateException("Cannot trackColumnForAutoSizing because autoSizeColumnTracker failed to initialize (possibly due to fonts not being installed in your OS)");
+        }
         _autoSizeColumnTracker.trackAllColumns();
     }
 
@@ -1480,7 +1490,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * @see #untrackAllColumnsForAutoSizing()
      */
     public boolean untrackColumnForAutoSizing(int column) {
-        return _autoSizeColumnTracker.untrackColumn(column);
+        return _autoSizeColumnTracker != null && _autoSizeColumnTracker.untrackColumn(column);
     }
 
     /**
@@ -1493,7 +1503,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * @since 3.14beta1
      */
     public boolean untrackColumnsForAutoSizing(Collection<Integer> columns) {
-        return _autoSizeColumnTracker.untrackColumns(columns);
+        return _autoSizeColumnTracker != null && _autoSizeColumnTracker.untrackColumns(columns);
     }
 
     /**
@@ -1502,7 +1512,9 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * @since 3.14beta1
      */
     public void untrackAllColumnsForAutoSizing() {
-        _autoSizeColumnTracker.untrackAllColumns();
+        if (_autoSizeColumnTracker != null) {
+            _autoSizeColumnTracker.untrackAllColumns();
+        }
     }
 
     /**
@@ -1513,7 +1525,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * @since 3.14beta1
      */
     public boolean isColumnTrackedForAutoSizing(int column) {
-        return _autoSizeColumnTracker.isColumnTracked(column);
+        return _autoSizeColumnTracker != null && _autoSizeColumnTracker.isColumnTracked(column);
     }
 
     /**
@@ -1525,7 +1537,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * @since 3.14beta1
      */
     public Set<Integer> getTrackedColumnsForAutoSizing() {
-        return _autoSizeColumnTracker.getTrackedColumns();
+        return _autoSizeColumnTracker == null ? Collections.emptySet() : _autoSizeColumnTracker.getTrackedColumns();
     }
 
     /**
@@ -1576,9 +1588,14 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      *
      * @param column the column index to auto-size
      * @param useMergedCells whether to use the contents of merged cells when calculating the width of the column
+     * @throws IllegalStateException if autoSizeColumnTracker failed to initialize (possibly due to fonts not being installed in your OS)
      */
     @Override
     public void autoSizeColumn(int column, boolean useMergedCells) {
+        if (_autoSizeColumnTracker == null) {
+            throw new IllegalStateException("Cannot trackColumnForAutoSizing because autoSizeColumnTracker failed to initialize (possibly due to fonts not being installed in your OS)");
+        }
+
         // Multiple calls to autoSizeColumn need to look up the best-fit width
         // of rows already flushed to disk plus re-calculate the best-fit width
         // of rows in the current window. It isn't safe to update the column
@@ -1889,9 +1906,13 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         if (firstRowNum!=null) {
             int rowIndex = firstRowNum;
             SXSSFRow row = _rows.get(firstRowNum);
-            // Update the best fit column widths for auto-sizing just before the rows are flushed
-            _autoSizeColumnTracker.updateColumnWidths(row);
-            if (_writer != null) _writer.writeRow(rowIndex, row);
+            if (_autoSizeColumnTracker != null) {
+                // Update the best fit column widths for auto-sizing just before the rows are flushed
+                _autoSizeColumnTracker.updateColumnWidths(row);
+            }
+            if (_writer != null) {
+                _writer.writeRow(rowIndex, row);
+            }
             _rows.remove(firstRowNum);
             lastFlushedRowNumber = rowIndex;
         }

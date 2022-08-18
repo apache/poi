@@ -36,14 +36,14 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public final class SXSSFITestDataProvider implements ITestDataProvider {
+public class SXSSFITestDataProvider implements ITestDataProvider {
     public static final SXSSFITestDataProvider instance = new SXSSFITestDataProvider();
 
     // an instance of all SXSSFWorkbooks opened by this TestDataProvider,
     // so that the temporary files created can be disposed up by cleanup()
-    private final Collection<SXSSFWorkbook> instances = new ArrayList<>();
+    protected final Collection<SXSSFWorkbook> instances = new ArrayList<>();
 
-    private SXSSFITestDataProvider() {
+    protected SXSSFITestDataProvider() {
         // enforce singleton
     }
 
