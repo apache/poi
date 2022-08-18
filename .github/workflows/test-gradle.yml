@@ -24,7 +24,7 @@ jobs:
       with:
         distribution: 'temurin'
         java-version: '11'
-        cache: 'maven'
+        cache: 'gradle'
 
     - name: Verify Gradle wrapper
       uses: gradle/wrapper-validation-action@v1
