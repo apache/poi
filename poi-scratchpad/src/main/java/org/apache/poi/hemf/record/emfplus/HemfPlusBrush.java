@@ -709,7 +709,7 @@ public class HemfPlusBrush {
             // that appears at the center point of the brush. The color of the brush changes gradually from the
             // boundary color to the center color as it moves from the boundary to the center point.
             centerColor = readARGB(leis.readInt());
-            int size = 3*LittleEndianConsts.INT_SIZE;
+            long size = 3*LittleEndianConsts.INT_SIZE;
 
             if (wrapMode == null) {
                 return size;
@@ -785,7 +785,7 @@ public class HemfPlusBrush {
                 size += 3*LittleEndianConsts.INT_SIZE;
             }
 
-            return size;
+            return Math.toIntExact(size);
         }
 
         @Override
@@ -846,7 +846,7 @@ public class HemfPlusBrush {
             // across a shape, when the image is smaller than the area being filled.
             wrapMode = EmfPlusWrapMode.valueOf(leis.readInt());
 
-            int size = 2*LittleEndianConsts.INT_SIZE;
+            long size = 2*LittleEndianConsts.INT_SIZE;
 
             if (TRANSFORM.isSet(dataFlags)) {
                 size += readXForm(leis, (brushTransform = new AffineTransform()));
@@ -856,7 +856,7 @@ public class HemfPlusBrush {
                 size += (image = new EmfPlusImage()).init(leis, dataSize-size, EmfPlusObjectType.IMAGE, 0);
             }
 
-            return size;
+            return Math.toIntExact(size);
         }
 
         @Override

@@ -113,7 +113,7 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
                 _childRecords.add(r);
             }
             long rlen = LittleEndian.getUInt(remainingData,offset+4);
-            offset += 8 + rlen;
+            offset = Math.toIntExact(offset + 8 + rlen);
         }
     }
 

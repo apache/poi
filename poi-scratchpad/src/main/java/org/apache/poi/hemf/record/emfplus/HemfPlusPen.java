@@ -533,7 +533,7 @@ public class HemfPlusPen {
         @SuppressWarnings("unused")
         private long initCustomCap(Consumer<EmfPlusCustomLineCap> setter, LittleEndianInputStream leis) throws IOException {
             int CustomStartCapSize = leis.readInt();
-            int size = LittleEndianConsts.INT_SIZE;
+            long size = LittleEndianConsts.INT_SIZE;
 
             EmfPlusGraphicsVersion version = new EmfPlusGraphicsVersion();
             size += version.init(leis);
@@ -547,13 +547,13 @@ public class HemfPlusPen {
 
             setter.accept(cap);
 
-            return size;
+            return Math.toIntExact(size);
         }
 
         @Override
         public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
             final HemfDrawProperties prop = ctx.getProperties();
-            // TOOD:
+            // TODO:
             // - set width according unit type
             // - provide logic for different start and end cap
             // - provide standard caps like diamond
