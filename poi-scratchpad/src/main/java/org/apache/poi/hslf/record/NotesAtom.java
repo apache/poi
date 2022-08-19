@@ -98,9 +98,9 @@ public final class NotesAtom extends RecordAtom {
 
         // Flags
         short flags = 0;
-        if(followMasterObjects)    { flags += 1; }
-        if(followMasterScheme)     { flags += 2; }
-        if(followMasterBackground) { flags += 4; }
+        if(followMasterObjects)    { flags += (short) 1; }
+        if(followMasterScheme)     { flags += (short) 2; }
+        if(followMasterBackground) { flags += (short) 4; }
         writeLittleEndian(flags,out);
 
         // Reserved fields

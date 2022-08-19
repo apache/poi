@@ -143,15 +143,15 @@ public final class SlideAtom extends RecordAtom {
         layoutAtom.writeOut(out);
 
         // IDs
-        writeLittleEndian(masterID,out);
-        writeLittleEndian(notesID,out);
+        writeLittleEndian(masterID, out);
+        writeLittleEndian(notesID, out);
 
         // Flags
         short flags = 0;
-        if(followMasterObjects)    { flags += 1; }
-        if(followMasterScheme)     { flags += 2; }
-        if(followMasterBackground) { flags += 4; }
-        writeLittleEndian(flags,out);
+        if(followMasterObjects)    { flags += (short) 1; }
+        if(followMasterScheme)     { flags += (short) 2; }
+        if(followMasterBackground) { flags += (short) 4; }
+        writeLittleEndian(flags, out);
 
         // Reserved data
         out.write(reserved);
