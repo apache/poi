@@ -47,10 +47,10 @@ public abstract class ChunkHeader {
             } else {
                 ch = new ChunkHeaderV6();
             }
-            ch.setType(Math.toIntExact(LittleEndian.getUInt(data, offset)));
-            ch.setId(Math.toIntExact(LittleEndian.getUInt(data, offset + 4)));
-            ch.setUnknown1(Math.toIntExact(LittleEndian.getUInt(data, offset + 8)));
-            ch.setLength(Math.toIntExact(LittleEndian.getUInt(data, offset + 12)));
+            ch.setType((int) LittleEndian.getUInt(data, offset));
+            ch.setId((int) LittleEndian.getUInt(data, offset + 4));
+            ch.setUnknown1((int) LittleEndian.getUInt(data, offset + 8));
+            ch.setLength((int) LittleEndian.getUInt(data, offset + 12));
             ch.setUnknown2(LittleEndian.getShort(data, offset + 16));
             ch.setUnknown3(LittleEndian.getUByte(data, offset + 18));
 
