@@ -666,6 +666,10 @@ public class XSSFFont implements Font {
         return _index;
     }
 
+    /**
+     * @return index
+     * @deprecated use {@link #getIndex()} instead
+     */
     @Deprecated
     @Removal(version = "6.0.0")
     @Override
