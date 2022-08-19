@@ -569,9 +569,9 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
             case DARKEN_COLOR: {
                 // see java.awt.Color#darken()
                 double FACTOR = (ecr.getRGB()[2])/255.;
-                int r = (int)Math.rint(col.getRed()*FACTOR);
-                int g = (int)Math.rint(col.getGreen()*FACTOR);
-                int b = (int)Math.rint(col.getBlue()*FACTOR);
+                int r = Math.toIntExact(Math.round(col.getRed()*FACTOR));
+                int g = Math.toIntExact(Math.round(col.getGreen()*FACTOR));
+                int b = Math.toIntExact(Math.round(col.getBlue()*FACTOR));
                 return new Color(r,g,b);
             }
             case LIGHTEN_COLOR: {
@@ -581,9 +581,9 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
                 int g = col.getGreen();
                 int b = col.getBlue();
 
-                r += Math.rint((0xFF-r)*FACTOR);
-                g += Math.rint((0xFF-g)*FACTOR);
-                b += Math.rint((0xFF-b)*FACTOR);
+                r = Math.toIntExact(Math.round(r + (0xFF-r)*FACTOR));
+                g = Math.toIntExact(Math.round(g + (0xFF-g)*FACTOR));
+                b = Math.toIntExact(Math.round(b + (0xFF-b)*FACTOR));
 
                 return new Color(r,g,b);
             }

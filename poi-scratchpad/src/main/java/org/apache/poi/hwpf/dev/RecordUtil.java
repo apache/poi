@@ -121,7 +121,7 @@ public class RecordUtil
 
         for ( int x = 0; x < parentSize; x++ )
         {
-            numBits += ( mask >> x ) & 0x1;
+            numBits += (byte) (( mask >> x ) & 0x1);
         }
 
         if ( numBits == 1 )

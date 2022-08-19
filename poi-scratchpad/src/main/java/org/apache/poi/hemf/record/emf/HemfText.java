@@ -166,19 +166,19 @@ public class HemfText {
                             // invalid dx array
                             dx.clear();
                         }
-                        strEnd = (int)recordSize;
+                        strEnd = Math.toIntExact(recordSize);
                         break;
                     }
                     default:
                     case 's': {
-                        int undefinedSpace1 = (int)(offString - (size + HEADER_SIZE));
+                        int undefinedSpace1 = Math.toIntExact(offString - (size + HEADER_SIZE));
                         if (offString > 0 && undefinedSpace1 >= 0 && offString-HEADER_SIZE < recordSize) {
                             leis.skipFully(undefinedSpace1);
                             size += undefinedSpace1;
 
                             // read all available bytes and not just "stringLength * 1(ansi)/2(unicode)"
                             // in case we need to deal with surrogate pairs
-                            final int maxSize = (int)(Math.min(recordSize, strEnd)-size);
+                            final int maxSize = Math.toIntExact(Math.min(recordSize, strEnd)-size);
                             rawTextBytes = IOUtils.safelyAllocate(maxSize, MAX_RECORD_LENGTH);
                             leis.readFully(rawTextBytes);
                             size += maxSize;

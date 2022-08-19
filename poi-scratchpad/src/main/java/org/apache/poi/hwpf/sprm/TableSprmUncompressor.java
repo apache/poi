@@ -96,7 +96,7 @@ public final class TableSprmUncompressor extends SprmUncompressor {
         int adjust = sprm.getOperand() - (rgdxaCenter[0] + newTAP.getDxaGapHalf ());
         for (int x = 0; x < itcMac; x++)
         {
-          rgdxaCenter[x] += adjust;
+          rgdxaCenter[x] += (short) adjust;
         }
         break;
       }
@@ -106,7 +106,7 @@ public final class TableSprmUncompressor extends SprmUncompressor {
         if (rgdxaCenter != null)
         {
           int adjust = newTAP.getDxaGapHalf () - sprm.getOperand();
-          rgdxaCenter[0] += adjust;
+          rgdxaCenter[0] += (short) adjust;
         }
         newTAP.setDxaGapHalf (sprm.getOperand());
         break;

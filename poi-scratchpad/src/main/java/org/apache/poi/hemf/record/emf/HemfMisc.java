@@ -433,7 +433,7 @@ public class HemfMisc {
             int size = 6*LittleEndianConsts.INT_SIZE;
 
             patternDib = new HwmfBitmapDib();
-            size += readBitmap(leis, patternDib, startIdx, offBmi, cbBmi, offBits, cbBits);
+            size = Math.toIntExact(size + readBitmap(leis, patternDib, startIdx, offBmi, cbBmi, offBits, cbBits));
             return size;
         }
 
@@ -634,9 +634,9 @@ public class HemfMisc {
                 emfPS.setLineDashes(dashPattern);
             }
 
-            size += numStyleEntries * LittleEndianConsts.INT_SIZE;
+            size = Math.addExact(size, numStyleEntries * LittleEndianConsts.INT_SIZE);
 
-            size += readBitmap(leis, bitmap, startIdx, offBmi, cbBmi, offBits, cbBits);
+            size = Math.toIntExact(size + readBitmap(leis, bitmap, startIdx, offBmi, cbBmi, offBits, cbBits));
 
             return size;
         }
@@ -896,11 +896,11 @@ public class HemfMisc {
 
             // A 32-bit unsigned integer that specifies the size of the DIB bits, if the record
             // contains a DIB.
-            int cbBits = (int) leis.readUInt();
+            int cbBits = Math.toIntExact(leis.readUInt());
 
             int size = 6 * LittleEndianConsts.INT_SIZE;
 
-            size += readBitmap(leis, bitmap, startIdx, offBmi, cbBmi, offBits, cbBits);
+            size = Math.toIntExact(size + readBitmap(leis, bitmap, startIdx, offBmi, cbBmi, offBits, cbBits));
 
             return size;
         }

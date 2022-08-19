@@ -694,7 +694,7 @@ public class CellNumberFormatter extends CellFormatter {
                 d = frac.getDenominator();
             }
             if (improperFraction) {
-                n += Math.round(value * d);
+                n = Math.toIntExact(n + Math.round(value * d));
             }
             writeSingleInteger(numeratorFmt, n, output, numeratorSpecials, mods);
             writeSingleInteger(denominatorFmt, d, output, denominatorSpecials, mods);

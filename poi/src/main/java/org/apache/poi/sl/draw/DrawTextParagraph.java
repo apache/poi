@@ -368,9 +368,9 @@ public class DrawTextParagraph implements Drawable {
             buSz = 100d;
         }
         if (buSz > 0) {
-            fontSize *= buSz* 0.01;
+            fontSize *= (float) (buSz * 0.01);
         } else {
-            fontSize = (float)-buSz;
+            fontSize = (float) -buSz;
         }
 
         String buFontStr = bulletStyle.getBulletFont();

@@ -271,12 +271,12 @@ public abstract class Property implements Child, POIFSViewable {
         for (; j < limit; j++)
         {
             new ShortField(offset, ( short ) char_array[ j ], _raw_data);
-            offset += LittleEndianConsts.SHORT_SIZE;
+            offset += (short) LittleEndianConsts.SHORT_SIZE;
         }
         for (; j < _max_name_length + 1; j++)
         {
             new ShortField(offset, ( short ) 0, _raw_data);
-            offset += LittleEndianConsts.SHORT_SIZE;
+            offset += (short) LittleEndianConsts.SHORT_SIZE;
         }
 
         // double the count, and include the null at the end

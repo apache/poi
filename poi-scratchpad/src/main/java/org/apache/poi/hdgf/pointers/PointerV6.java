@@ -52,7 +52,7 @@ public final class PointerV6 extends Pointer {
     }
     public static int getNumPointersOffsetV6(byte[] data) {    
         // V6 stores it as the first value in the stream
-        return (int)LittleEndian.getUInt(data, 0);
+        return Math.toIntExact(LittleEndian.getUInt(data, 0));
     }
     /**
      * 32 bit int at the given offset
@@ -62,7 +62,7 @@ public final class PointerV6 extends Pointer {
     }
     public static int getNumPointersV6(int offset, byte[] data) {
         // V6 stores it a 32 bit number at the offset
-        return (int)LittleEndian.getUInt(data, offset);
+        return Math.toIntExact(LittleEndian.getUInt(data, offset));
     }
     /**
      * 4 bytes of the number, and 4 more unknown bytes
