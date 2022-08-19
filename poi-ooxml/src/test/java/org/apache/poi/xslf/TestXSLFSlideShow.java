@@ -26,13 +26,9 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.usermodel.ShapeType;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.apache.poi.xslf.usermodel.XSLFAutoShape;
-import org.apache.poi.xslf.usermodel.XSLFBackground;
-import org.apache.poi.xslf.usermodel.XSLFRelation;
-import org.apache.poi.xslf.usermodel.XSLFSlide;
-import org.apache.poi.xslf.usermodel.XSLFSlideShow;
+import org.apache.poi.xslf.usermodel.*;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -155,5 +151,20 @@ class TestXSLFSlideShow {
         assertEquals(Color.RED, b2.getFillColor());
 
         ppt2.close();
+    }
+
+    @Test
+    void testSlideImportContent() throws IOException{
+        try (XMLSlideShow ppt = new XMLSlideShow(slTests.openResourceAsStream("templatePPTWithOnlyOneText.pptx"))) {
+            XSLFSlide templateSlide = ppt.getSlides().get(0);
+            XSLFTextShape templateTextShape = (XSLFTextShape) templateSlide.getShapes().get(0);
+            XmlObject templateTextRunXmlObject = templateTextShape.getTextParagraphs().get(0).getTextRuns().get(0).getXmlObject();
+
+            XSLFSlide copySlide = ppt.createSlide();
+            copySlide.importContent(templateSlide);
+            XSLFTextShape copyTextShape = (XSLFTextShape) copySlide.getShapes().get(0);
+            XmlObject copyTextRunXmlObject = copyTextShape.getTextParagraphs().get(0).getTextRuns().get(0).getXmlObject();
+            assertNotEquals(templateTextRunXmlObject, copyTextRunXmlObject);
+        }
     }
 }
