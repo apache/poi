@@ -33,4 +33,4 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew check -PjdkVersion=11 --no-daemon
+      run: ./gradlew check -PjdkVersion=11 --no-daemon --refresh-dependencies
