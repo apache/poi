@@ -335,26 +335,19 @@ public class CHPBinTable
     {
       chpx = _textRuns.get(++endIndex);
     }
-    if (listIndex == endIndex)
-    {
-      chpx = _textRuns.get(endIndex);
-      chpx.setEnd((chpx.getEnd() - endMark) + offset);
-    }
-    else
-    {
-      chpx = _textRuns.get(listIndex);
-      chpx.setEnd(offset);
-      for (int x = listIndex + 1; x < endIndex; x++)
-      {
-        chpx = _textRuns.get(x);
-        chpx.setStart(offset);
-        chpx.setEnd(offset);
+      if (listIndex != endIndex) {
+          chpx = _textRuns.get(listIndex);
+          chpx.setEnd(offset);
+          for (int x = listIndex + 1; x < endIndex; x++) {
+              chpx = _textRuns.get(x);
+              chpx.setStart(offset);
+              chpx.setEnd(offset);
+          }
       }
       chpx = _textRuns.get(endIndex);
       chpx.setEnd((chpx.getEnd() - endMark) + offset);
-    }
 
-    for (int x = endIndex + 1; x < size; x++)
+      for (int x = endIndex + 1; x < size; x++)
     {
       chpx = _textRuns.get(x);
       chpx.setStart(chpx.getStart() - length);

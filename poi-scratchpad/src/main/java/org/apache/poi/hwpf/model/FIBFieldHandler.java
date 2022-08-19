@@ -239,15 +239,14 @@ public final class FIBFieldHandler
 
         _fields[(x * 2) + 1] = buf.length;
         LittleEndian.putInt(mainStream, offset, buf.length);
-        offset += LittleEndianConsts.INT_SIZE;
       }
       else
       {
         LittleEndian.putInt(mainStream, offset, _fields[x * 2]);
         offset += LittleEndianConsts.INT_SIZE;
         LittleEndian.putInt(mainStream, offset, _fields[(x * 2) + 1]);
-        offset += LittleEndianConsts.INT_SIZE;
       }
+        offset += LittleEndianConsts.INT_SIZE;
     }
   }
 

@@ -283,17 +283,13 @@ public final class SlideShowDumper {
             walkEscherDDF((indent + 3), pos + 8, (int) atomLen);
 
             // Wind on our length + our header
-            pos += atomLen;
-            pos += 8;
-            len -= atomLen;
-            len -= 8;
         } else {
             // No children, wind on our real length
-            pos += atomLen;
-            pos += 8;
-            len -= atomLen;
-            len -= 8;
         }
+        pos += atomLen;
+        pos += 8;
+        len -= atomLen;
+        len -= 8;
 
         // Move on to the next one, if we're not at the end yet
         if (len >= 8) {

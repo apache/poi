@@ -253,10 +253,8 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
                     }
                 }
             }
-            return false;
-        } else {
-            return false;
         }
+        return false;
     }
 
     @Override

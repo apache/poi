@@ -1593,12 +1593,11 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                         HSLFTextRun nextRun = new HSLFTextRun(para);
                         nextRun.setText("");
                         runs.add(nextRun);
-                        ccRun++;
                     } else {
                         // need to add +1 to the last run of the last paragraph
                         trun.getCharacterStyle().updateTextSize(trun.getLength()+1);
-                        ccRun++;
                     }
+                    ccRun++;
                 }
 
                 // need to compare it again, in case a run has been added after
