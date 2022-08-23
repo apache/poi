@@ -640,6 +640,14 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
+    @Test
+    void getStylesSource() throws IOException {
+        try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
+            assertNotNull(workbook.getXSSFWorkbook().getStylesSource(), "style source available");
+            assertNotNull(workbook.getXSSFWorkbook().getStylesSource().getIndexedColors(), "indexed colors available");
+        }
+    }
+
     @Override
     @Disabled("not implemented")
     protected void changeSheetNameWithSharedFormulas() {
