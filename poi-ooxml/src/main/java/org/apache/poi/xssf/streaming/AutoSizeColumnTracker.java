@@ -234,7 +234,11 @@ import org.apache.poi.util.Internal;
     public boolean untrackColumns(Collection<Integer> columns)
     {
         untrackedColumns.addAll(columns);
-        return maxColumnWidths.keySet().removeAll(columns);
+        boolean result = false;
+        for (Integer col : columns) {
+            result = maxColumnWidths.remove(col) != null || result;
+        }
+        return result;
     }
     
     /**
@@ -248,7 +252,7 @@ import org.apache.poi.util.Internal;
      */
     public boolean untrackColumn(int column) {
         untrackedColumns.add(column);
-        return maxColumnWidths.keySet().remove(column);
+        return maxColumnWidths.remove(column) != null;
     }
 
     /**

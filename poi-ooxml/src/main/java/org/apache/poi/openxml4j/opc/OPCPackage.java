@@ -282,7 +282,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
            throw new IllegalArgumentException("file must not be a directory");
        }
 
-       OPCPackage pack = new ZipPackage(file, access);
+       OPCPackage pack = new ZipPackage(file, access); //NOSONAR
        try {
            if (pack.partList == null && access != PackageAccess.WRITE) {
                pack.getParts();
