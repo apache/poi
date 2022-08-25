@@ -355,7 +355,7 @@ public class HemfPlusBrush {
                 size += LittleEndianConsts.INT_SIZE;
             }
 
-            brushBytes = IOUtils.toByteArray(leis, (int)(dataSize-size), MAX_OBJECT_SIZE);
+            brushBytes = IOUtils.toByteArray(leis, Math.toIntExact(dataSize-size), MAX_OBJECT_SIZE);
 
             return dataSize;
         }
@@ -542,7 +542,7 @@ public class HemfPlusBrush {
             // gradient is repeated.
             wrapMode = EmfPlusWrapMode.valueOf(leis.readInt());
 
-            int size = 2 * LittleEndianConsts.INT_SIZE;
+            long size = 2L * LittleEndianConsts.INT_SIZE;
             size += readRectF(leis, rect);
 
             // An EmfPlusARGB object that specifies the color at the starting/ending boundary point of the linear gradient brush.
@@ -552,10 +552,11 @@ public class HemfPlusBrush {
             // skip reserved1/2 fields
             leis.skipFully(2 * LittleEndianConsts.INT_SIZE);
 
-            size += 4 * LittleEndianConsts.INT_SIZE;
+            size += 4L * LittleEndianConsts.INT_SIZE;
 
             if (TRANSFORM.isSet(dataFlags)) {
-                size += readXForm(leis, (blendTransform = new AffineTransform()));
+                blendTransform = new AffineTransform();
+                size += readXForm(leis, blendTransform);
             }
 
             if (isPreset() && (isBlendH() || isBlendV())) {
@@ -709,7 +710,7 @@ public class HemfPlusBrush {
             // that appears at the center point of the brush. The color of the brush changes gradually from the
             // boundary color to the center color as it moves from the boundary to the center point.
             centerColor = readARGB(leis.readInt());
-            long size = 3*LittleEndianConsts.INT_SIZE;
+            long size = 3L * LittleEndianConsts.INT_SIZE;
 
             if (wrapMode == null) {
                 return size;
@@ -727,7 +728,7 @@ public class HemfPlusBrush {
             for (int i = 0; i < colorCount; i++) {
                 surroundingColor[i] = readARGB(leis.readInt());
             }
-            size += (colorCount + 1) * LittleEndianConsts.INT_SIZE;
+            size += (colorCount + 1L) * LittleEndianConsts.INT_SIZE;
 
             // The boundary of the path gradient brush, which is specified by either a path or a closed cardinal spline.
             // If the BrushDataPath flag is set in the BrushDataFlags field, this field MUST contain an
@@ -785,7 +786,7 @@ public class HemfPlusBrush {
                 size += 3*LittleEndianConsts.INT_SIZE;
             }
 
-            return Math.toIntExact(size);
+            return size;
         }
 
         @Override
@@ -846,14 +847,16 @@ public class HemfPlusBrush {
             // across a shape, when the image is smaller than the area being filled.
             wrapMode = EmfPlusWrapMode.valueOf(leis.readInt());
 
-            long size = 2*LittleEndianConsts.INT_SIZE;
+            long size = 2L * LittleEndianConsts.INT_SIZE;
 
             if (TRANSFORM.isSet(dataFlags)) {
-                size += readXForm(leis, (brushTransform = new AffineTransform()));
+                brushTransform = new AffineTransform();
+                size += readXForm(leis, brushTransform);
             }
 
             if (dataSize > size) {
-                size += (image = new EmfPlusImage()).init(leis, dataSize-size, EmfPlusObjectType.IMAGE, 0);
+                image = new EmfPlusImage();
+                size += image.init(leis, dataSize-size, EmfPlusObjectType.IMAGE, 0);
             }
 
             return Math.toIntExact(size);

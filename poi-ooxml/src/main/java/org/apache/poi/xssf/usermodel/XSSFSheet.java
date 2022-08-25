@@ -4958,7 +4958,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
                 if (totalsRowCount == 1) { // never seen more than one totals row
                     XSSFRow totalsRow = sheet.getRow(clonedTable.getEndCellReference().getRow());
                     if (clonedTable.getCTTable().getTableColumns() != null
-                            && clonedTable.getCTTable().getTableColumns().getTableColumnList().size() > 0) {
+                            && !clonedTable.getCTTable().getTableColumns().getTableColumnList().isEmpty()) {
                         clonedTable.getCTTable().setTotalsRowCount(totalsRowCount);
                         for (int i = 0; i < clonedTable.getCTTable().getTableColumns().getTableColumnList().size(); i++) {
                             CTTableColumn tableCol = table.getCTTable().getTableColumns().getTableColumnList().get(i);
@@ -4983,7 +4983,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
                 // clone calculated column formulas
                 if (clonedTable.getCTTable().getTableColumns() != null
-                        && clonedTable.getCTTable().getTableColumns().getTableColumnList().size() > 0) {
+                        && !clonedTable.getCTTable().getTableColumns().getTableColumnList().isEmpty()) {
                     clonedTable.getCTTable().setTotalsRowCount(totalsRowCount);
                     for (int i = 0; i < clonedTable.getCTTable().getTableColumns().getTableColumnList().size(); i++) {
                         CTTableColumn tableCol = table.getCTTable().getTableColumns().getTableColumnList().get(i);

@@ -36,7 +36,6 @@ import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.RandomSingleton;
 
 public class BinaryRC4Encryptor extends Encryptor {

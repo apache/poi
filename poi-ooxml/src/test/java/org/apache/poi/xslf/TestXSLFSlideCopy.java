@@ -31,11 +31,11 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-public class TestXSLFSlideCopy {
+class TestXSLFSlideCopy {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
-    public void testCopySlide() throws IOException {
+    void testCopySlide() throws IOException {
         final String shapeName = "title";
         try (
                 InputStream stream = slTests.openResourceAsStream("copy-slide-demo.pptx");

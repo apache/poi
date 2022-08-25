@@ -39,7 +39,7 @@ import java.util.Calendar;
 /**
  * Tests for XSSFBubbleChartData.
  */
-public final class TestXSSFBubbleChartData {
+final class TestXSSFBubbleChartData {
 
     @Test
     void testExample() throws IOException {

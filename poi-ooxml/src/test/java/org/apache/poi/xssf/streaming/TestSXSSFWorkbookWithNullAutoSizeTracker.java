@@ -49,9 +49,9 @@ import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.jupiter.api.Assertions.*;
 
-public final class TestSXSSFWorkbookWithNullAutoSizeTracker extends BaseTestXWorkbook {
+final class TestSXSSFWorkbookWithNullAutoSizeTracker extends BaseTestXWorkbook {
 
-    public TestSXSSFWorkbookWithNullAutoSizeTracker() {
+    TestSXSSFWorkbookWithNullAutoSizeTracker() {
         super(SXSSFITestDataProviderWithNullAutoSizeTracker.instance);
     }
 
@@ -672,7 +672,7 @@ public final class TestSXSSFWorkbookWithNullAutoSizeTracker extends BaseTestXWor
     }
 
     @Test
-    public void disableAutoSizeTracker() throws IOException {
+    void disableAutoSizeTracker() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook(10)) {
             assertThrows(IllegalStateException.class, () -> {
                 Sheet sheet = workbook.createSheet("testSheet");

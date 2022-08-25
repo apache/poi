@@ -19,7 +19,6 @@ package org.apache.poi.hsmf.dev;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Comparator;
 
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.StringUtil;

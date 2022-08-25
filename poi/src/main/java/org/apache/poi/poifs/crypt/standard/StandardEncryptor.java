@@ -47,7 +47,6 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSWriterEvent;
 import org.apache.poi.poifs.filesystem.POIFSWriterListener;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutputStream;
 import org.apache.poi.util.RandomSingleton;
