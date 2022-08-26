@@ -72,9 +72,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
          HSSFName nr1 = wb.getNameAt(0);
 
          assertEquals("Print_Titles", nr1.getNameName());
-         // TODO - full column references not rendering properly, absolute markers not present either
-         // assertEquals("FirstSheet!$A:$A,FirstSheet!$1:$3", nr1.getRefersToFormula());
-         assertEquals("FirstSheet!A:A,FirstSheet!$A$1:$IV$3", nr1.getRefersToFormula());
+         assertEquals("FirstSheet!$A:$A,FirstSheet!$1:$3", nr1.getRefersToFormula());
 
          // Save and re-open
          HSSFWorkbook nwb = HSSFTestDataSamples.writeOutAndReadBack(wb);
@@ -84,7 +82,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
          nr1 = nwb.getNameAt(0);
 
          assertEquals("Print_Titles", nr1.getNameName());
-         assertEquals("FirstSheet!A:A,FirstSheet!$A$1:$IV$3", nr1.getRefersToFormula());
+         assertEquals("FirstSheet!$A:$A,FirstSheet!$1:$3", nr1.getRefersToFormula());
 
          // check that setting RR&C on a second sheet causes a new Print_Titles built-in
          // name to be created
@@ -97,7 +95,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
          HSSFName nr2 = nwb.getNameAt(1);
 
          assertEquals("Print_Titles", nr2.getNameName());
-         assertEquals("SecondSheet!B:C,SecondSheet!$A$1:$IV$1", nr2.getRefersToFormula());
+         assertEquals("SecondSheet!$B:$C,SecondSheet!$1:$1", nr2.getRefersToFormula());
 
          nwb.close();
      }

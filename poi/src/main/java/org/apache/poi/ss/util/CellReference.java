@@ -494,6 +494,13 @@ public class CellReference implements GenericRecord {
         return formatAsString(true);
     }
 
+    public String formatAsColumnString() {
+        StringBuilder sb = new StringBuilder();
+        appendColumnReference(sb);
+        return sb.toString();
+    }
+
+
     /**
      * Returns a text representation of this cell reference in R1C1 format.
      * <p>
@@ -599,12 +606,20 @@ public class CellReference implements GenericRecord {
      * Sheet name is not included.
      */
     /* package */ void appendCellReference(StringBuilder sb) {
+        appendColumnReference(sb);
+        appendRowReference(sb);
+    }
+
+    public void appendColumnReference(StringBuilder sb) {
         if (_colIndex != -1) {
             if(_isColAbs) {
                 sb.append(ABSOLUTE_REFERENCE_MARKER);
             }
             sb.append( convertNumToColString(_colIndex));
         }
+    }
+
+    public void appendRowReference(StringBuilder sb) {
         if (_rowIndex != -1) {
             if(_isRowAbs) {
                 sb.append(ABSOLUTE_REFERENCE_MARKER);

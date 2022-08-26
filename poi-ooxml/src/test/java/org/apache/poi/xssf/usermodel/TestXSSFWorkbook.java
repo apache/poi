@@ -61,6 +61,7 @@ import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.model.StylesTable;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalLink;
@@ -79,6 +80,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.zip.CRC32;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
@@ -98,6 +100,11 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     public TestXSSFWorkbook() {
         super(XSSFITestDataProvider.instance);
+    }
+
+    @BeforeAll
+    static void setup() {
+        Locale.setDefault(Locale.US);
     }
 
     /**
@@ -1427,6 +1434,44 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
+    @Test
+    public void changeSheetNameWithRowRanges() throws IOException {
+        String sampleFile = "multiple_sheets_with_row_and_column_ranges.xlsx";
+        try (Workbook wb = _testDataProvider.openSampleWorkbook(sampleFile)) {
+            String initialFormula = wb.getName("sheet2_rows_2_4").getRefersToFormula();
+
+            wb.setSheetName(0, "new_first_sheet_name");
+            String newFormula = wb.getName("sheet2_rows_2_4").getRefersToFormula();
+            assertEquals(initialFormula, newFormula);
+
+            wb.setSheetName(1, "new_second_sheet_name");
+            newFormula = wb.getName("sheet2_rows_2_4").getRefersToFormula();
+            assertEquals(initialFormula.replace("sheet2", "new_second_sheet_name"), newFormula);
+
+            Workbook reloaded = writeOutAndReadBack(wb);
+            newFormula = reloaded.getName("sheet2_rows_2_4").getRefersToFormula();
+            assertEquals(initialFormula.replace("sheet2", "new_second_sheet_name"), newFormula);
+        }
+    }
+    @Test
+    public void changeSheetNameWithRowRangesColumn() throws IOException {
+        String sampleFile = "multiple_sheets_with_row_and_column_ranges.xlsx";
+        try (Workbook wb = _testDataProvider.openSampleWorkbook(sampleFile)) {
+            String initialFormula = wb.getName("sheet2_columns_B_C").getRefersToFormula();
+
+            wb.setSheetName(0, "new_first_sheet_name");
+            String newFormula = wb.getName("sheet2_columns_B_C").getRefersToFormula();
+            assertEquals(initialFormula, newFormula);
+
+            wb.setSheetName(1, "new_second_sheet_name");
+            newFormula = wb.getName("sheet2_columns_B_C").getRefersToFormula();
+            assertEquals(initialFormula.replace("sheet2", "new_second_sheet_name"), newFormula);
+
+            Workbook reloaded = writeOutAndReadBack(wb);
+            newFormula = reloaded.getName("sheet2_columns_B_C").getRefersToFormula();
+            assertEquals(initialFormula.replace("sheet2", "new_second_sheet_name"), newFormula);
+        }
+    }
     private static void expectFormattedContent(Cell cell, String value) {
         assertEquals(value, new DataFormatter().formatCellValue(cell),
                 "Cell " + ref(cell) + " has wrong formatted content.");

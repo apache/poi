@@ -37,6 +37,10 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
     private static final BitField rowRelative = BitFieldFactory.getInstance(0x8000);
     private static final BitField colRelative = BitFieldFactory.getInstance(0x4000);
     private static final BitField columnMask  = BitFieldFactory.getInstance(0x3FFF);
+    private boolean firstCellIsRow;
+    private boolean firstCellIsColumn;
+    private boolean lastCellIsRow;
+    private boolean lastCellIsColumn;
 
     /** zero based, unsigned 16 bit */
     private int field_1_first_row;
@@ -55,15 +59,19 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
         field_2_last_row = other.field_2_last_row;
         field_3_first_column = other.field_3_first_column;
         field_4_last_column = other.field_4_last_column;
+        firstCellIsRow = other.firstCellIsRow;
+        firstCellIsColumn = other.firstCellIsColumn;
+        lastCellIsRow = other.lastCellIsRow;
+        lastCellIsColumn = other.lastCellIsColumn;
     }
 
     protected AreaPtgBase(AreaReference ar) {
         CellReference firstCell = ar.getFirstCell();
         CellReference lastCell = ar.getLastCell();
         setFirstRow(firstCell.getRow());
-        setFirstColumn(firstCell.getCol() == -1 ? 0 : firstCell.getCol());
+        setFirstColumn(firstCell.getCol());
         setLastRow(lastCell.getRow());
-        setLastColumn(lastCell.getCol() == -1 ? 0xFF : lastCell.getCol());
+        setLastColumn(lastCell.getCol());
         setFirstColRelative(!firstCell.isColAbsolute());
         setLastColRelative(!lastCell.isColAbsolute());
         setFirstRowRelative(!firstCell.isRowAbsolute());
@@ -144,7 +152,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
      * @return the first row in the area
      */
     public final int getFirstRow() {
-        return field_1_first_row;
+        return firstCellIsRow ? -1 : field_1_first_row;
     }
 
     /**
@@ -152,28 +160,30 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
      * @param rowIx number (0-based)
      */
     public final void setFirstRow(int rowIx) {
-        field_1_first_row = rowIx;
+        firstCellIsRow = rowIx == -1;
+        field_1_first_row = rowIx== -1 ? 0 : rowIx;
     }
 
     /**
      * @return last row in the range (x2 in x1,y1-x2,y2)
      */
     public final int getLastRow() {
-        return field_2_last_row;
+        return lastCellIsRow ? -1 : field_2_last_row;
     }
 
     /**
      * @param rowIx last row number in the area
      */
     public final void setLastRow(int rowIx) {
-        field_2_last_row = rowIx;
+        lastCellIsRow = rowIx == -1;
+        field_2_last_row = rowIx== -1 ? 0 : rowIx;
     }
 
     /**
      * @return the first column number in the area.
      */
     public final int getFirstColumn() {
-        return columnMask.getValue(field_3_first_column);
+        return firstCellIsColumn ? -1 : columnMask.getValue(field_3_first_column);
     }
 
     /**
@@ -216,7 +226,8 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
      * set the first column in the area
      */
     public final void setFirstColumn(int colIx) {
-        field_3_first_column=columnMask.setValue(field_3_first_column, colIx);
+        firstCellIsColumn = colIx == -1;
+        field_3_first_column=columnMask.setValue(field_3_first_column, colIx == -1 ? 0 : colIx);
     }
 
     /**
@@ -230,7 +241,7 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
      * @return lastcolumn in the area
      */
     public final int getLastColumn() {
-        return columnMask.getValue(field_4_last_column);
+        return lastCellIsColumn ? -1 : columnMask.getValue(field_4_last_column);
     }
 
     /**
@@ -274,7 +285,8 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
      * set the last column in the area
      */
     public final void setLastColumn(int colIx) {
-        field_4_last_column=columnMask.setValue(field_4_last_column, colIx);
+        lastCellIsColumn = colIx == -1;
+        field_4_last_column=columnMask.setValue(field_4_last_column, colIx == -1 ? 0 : colIx);
     }
 
     /**
@@ -287,11 +299,13 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
         CellReference topLeft = new CellReference(getFirstRow(),getFirstColumn(),!isFirstRowRelative(),!isFirstColRelative());
         CellReference botRight = new CellReference(getLastRow(),getLastColumn(),!isLastRowRelative(),!isLastColRelative());
 
-        if(AreaReference.isWholeColumnReference(SpreadsheetVersion.EXCEL97, topLeft, botRight)) {
-            return (new AreaReference(topLeft, botRight, SpreadsheetVersion.EXCEL97)).formatAsString();
-        }
-        if (AreaReference.isWholeColumnReference(SpreadsheetVersion.EXCEL2007, topLeft, botRight)){
-            return new AreaReference(topLeft, botRight,SpreadsheetVersion.EXCEL2007).formatAsString();
+        for (SpreadsheetVersion version : SpreadsheetVersion.values()) {
+            if (AreaReference.isWholeColumnReference(version, topLeft, botRight)) {
+                return (new AreaReference(topLeft, botRight, version)).formatAsString();
+            }
+            if (AreaReference.isWholeRowReference(version, topLeft, botRight)) {
+                return (new AreaReference(topLeft, botRight, version)).formatAsString();
+            }
         }
         return topLeft.formatAsString() + ":" + botRight.formatAsString();
     }
