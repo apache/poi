@@ -23,8 +23,11 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
@@ -78,6 +81,61 @@ class TestXSLFSlideShow {
 
         XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
         assertEquals(1, ppt2.getSlides().size());
+
+        // Check that the slide is actually removed from the package.
+        String slidePartRegEx = "/ppt/slides/slide[0-9]+\\.xml";
+        List<PackagePart> slideParts = ppt2.getPackage().getPartsByName(Pattern.compile(slidePartRegEx));
+        assertEquals(1, slideParts.size());
+
+        ppt2.close();
+        ppt.close();
+    }
+
+
+    /**
+     * This test ensures that if a slide (with notes) is removed, that it
+     * is ACTUALLY removed, and not left orphaned when the PPTX is later written.
+     *
+     * @throws IOException If there is an I/O issue during the test.
+     */
+    @Test
+    void testRemoveSlideThatHasNotes() throws IOException {
+        XMLSlideShow  ppt = new XMLSlideShow();
+        assertEquals(0, ppt.getSlides().size());
+
+        XSLFSlide slide1 = ppt.createSlide();
+        XSLFSlide slide2 = ppt.createSlide();
+
+        XSLFNotes note = ppt.getNotesSlide(slide1);
+        for (XSLFTextShape shape : note.getPlaceholders()) {
+            if (shape.getTextType() == Placeholder.BODY) {
+                shape.setText("Some notes");
+                break;
+            }
+        }
+
+        assertEquals(2, ppt.getSlides().size());
+        assertSame(slide1, ppt.getSlides().get(0));
+        assertSame(slide2, ppt.getSlides().get(1));
+
+        XSLFSlide removedSlide = ppt.removeSlide(0);
+        assertSame(slide1, removedSlide);
+
+        assertEquals(1, ppt.getSlides().size());
+        assertSame(slide2, ppt.getSlides().get(0));
+
+        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
+        assertEquals(1, ppt2.getSlides().size());
+
+        // Check that the slide is actually removed from the package.
+        String slidePartRegEx = "/ppt/slides/slide[0-9]+\\.xml";
+        List<PackagePart> slideParts = ppt2.getPackage().getPartsByName(Pattern.compile(slidePartRegEx));
+        assertEquals(1, slideParts.size());
+
+        // Check that there is no note slide part.
+        String notePartRegEx = "/ppt/notesSlides/notesSlide[0-9]+\\.xml";
+        List<PackagePart> noteParts = ppt2.getPackage().getPartsByName(Pattern.compile(notePartRegEx));
+        assertEquals(0, noteParts.size());
 
         ppt2.close();
         ppt.close();

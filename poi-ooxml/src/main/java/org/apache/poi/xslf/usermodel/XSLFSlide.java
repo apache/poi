@@ -239,6 +239,21 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         return _notes;
     }
 
+    public XSLFNotes removeNotes(XSLFNotesMaster master) {
+        XSLFNotes notesForSlide = getNotes();
+        if (notesForSlide == null) {
+            // No notes to remove.
+            return null;
+        }
+
+        notesForSlide.removeRelations(this, master);
+        removeRelation(notesForSlide);
+
+        _notes = null;
+
+        return notesForSlide;
+    }
+
     @Override
     public String getTitle(){
         XSLFTextShape txt = getTextShapeByType(Placeholder.TITLE);

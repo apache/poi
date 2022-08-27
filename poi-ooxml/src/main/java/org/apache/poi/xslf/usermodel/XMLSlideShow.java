@@ -466,6 +466,15 @@ public class XMLSlideShow extends POIXMLDocument
         sldIdLst.setSldIdArray(entries);
     }
 
+    /**
+     * Remove a slide from this presentation.
+     * *
+     * @param index The slide number to remove.
+     * @return The slide that was removed.
+     *
+     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * input format*
+     */
     public XSLFSlide removeSlide(int index) {
         XSLFSlide slide = _slides.remove(index);
         removeRelation(slide);
@@ -478,6 +487,9 @@ public class XMLSlideShow extends POIXMLDocument
             } else if (p instanceof XSLFSlideLayout) {
                 XSLFSlideLayout layout = (XSLFSlideLayout) p;
                 slide.removeLayoutRelation(layout);
+            } else if (p instanceof XSLFNotes) {
+                XSLFNotes notes = slide.removeNotes(_notesMaster);
+                removeRelation(notes);
             }
         }
         return slide;

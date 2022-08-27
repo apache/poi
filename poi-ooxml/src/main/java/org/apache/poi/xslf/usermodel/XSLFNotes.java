@@ -111,4 +111,9 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
     String mapSchemeColor(String schemeColor) {
         return mapSchemeColor(_notes.getClrMapOvr(), schemeColor);
     }
+
+    void removeRelations(XSLFSlide slide, XSLFNotesMaster master) {
+        super.removeRelation(slide);
+        super.removeRelation(master);
+    }
 }
