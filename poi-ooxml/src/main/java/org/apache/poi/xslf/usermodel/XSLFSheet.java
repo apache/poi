@@ -18,6 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_PRESENTATIONML;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -390,7 +391,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         if(_spTree == null) {
             XmlObject root = getXmlObject();
             XmlObject[] sp = root.selectPath(
-                    "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:spTree");
+                    "declare namespace p='" + NS_PRESENTATIONML + "' .//*/p:spTree");
             if(sp.length == 0) {
                 throw new IllegalStateException("CTGroupShape was not found");
             }
@@ -404,8 +405,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         String docName = getRootElementName();
         if(docName != null) {
-            xmlOptions.setSaveSyntheticDocumentElement(
-                    new QName("http://schemas.openxmlformats.org/presentationml/2006/main", docName));
+            xmlOptions.setSaveSyntheticDocumentElement(new QName(NS_PRESENTATIONML, docName));
         }
 
         PackagePart part = getPackagePart();

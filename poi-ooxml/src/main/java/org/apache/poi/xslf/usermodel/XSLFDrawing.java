@@ -28,6 +28,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_PRESENTATIONML;
 
 @Beta
 public class XSLFDrawing {
@@ -38,7 +39,7 @@ public class XSLFDrawing {
         _sheet = sheet;
         _spTree = spTree;
         XmlObject[] cNvPr = sheet.getSpTree().selectPath(
-                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' .//*/p:cNvPr");
+                "declare namespace p='" + NS_PRESENTATIONML + "' .//*/p:cNvPr");
         for(XmlObject o : cNvPr) {
             // powerpoint generates AlternateContent elements which cNvPr elements aren't recognized
             // ignore them for now

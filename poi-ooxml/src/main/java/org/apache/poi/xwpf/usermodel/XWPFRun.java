@@ -27,7 +27,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
 import javax.xml.namespace.QName;
 
@@ -38,6 +37,7 @@ import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.*;
 import org.apache.poi.wp.usermodel.CharacterRun;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.xmlbeans.*;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
@@ -107,7 +107,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         pictTextObjs.addAll(Arrays.asList(r.getPictArray()));
         pictTextObjs.addAll(Arrays.asList(r.getDrawingArray()));
         for (XmlObject o : pictTextObjs) {
-            XmlObject[] ts = o.selectPath("declare namespace w='" + XWPFDocument.NS_OOXML_WP_MAIN + "' .//w:t");
+            XmlObject[] ts = o.selectPath("declare namespace w='" + XSSFRelation.NS_WORDPROCESSINGML + "' .//w:t");
             for (XmlObject t : ts) {
                 NodeList kids = t.getDomNode().getChildNodes();
                 for (int n = 0; n < kids.getLength(); n++) {
@@ -1351,7 +1351,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                 XmlObject o = c.getObject();
                 if (o instanceof CTRubyContent) {
                     final Node node = o.getDomNode();
-                    if (XWPFDocument.NS_OOXML_WP_MAIN.equals(node.getNamespaceURI())) {
+                    if (XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI())) {
                         final String tagName = node.getLocalName();
                         if ("rt".equals(tagName)) {
                             inRT = true;
@@ -1378,7 +1378,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             // Field Codes (w:instrText, defined in spec sec. 17.16.23)
             //  come up as instances of CTText, but we don't want them
             //  in the normal text output
-            if (!("instrText".equals(node.getLocalName()) && XWPFDocument.NS_OOXML_WP_MAIN.equals(node.getNamespaceURI()))) {
+            if (!("instrText".equals(node.getLocalName()) && XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI()))) {
                 String textValue = ((CTText) o).getStringValue();
                 if (textValue != null) {
                     if (isCapitalized() || isSmallCaps()) {
@@ -1416,7 +1416,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             // This bit works around it, and replicates the above
             //  rules for that case
             final Node node = o.getDomNode();
-            if (XWPFDocument.NS_OOXML_WP_MAIN.equals(node.getNamespaceURI())) {
+            if (XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI())) {
                 switch (node.getLocalName()) {
                     case "tab":
                         text.append('\t');

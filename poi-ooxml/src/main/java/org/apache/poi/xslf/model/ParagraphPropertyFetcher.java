@@ -20,6 +20,7 @@
 package org.apache.poi.xslf.model;
 
 import static org.apache.poi.ooxml.util.XPathHelper.selectProperty;
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_PRESENTATIONML;
 
 import java.util.function.Consumer;
 
@@ -44,7 +45,7 @@ public final class ParagraphPropertyFetcher<T> extends PropertyFetcher<T> {
     }
 
 
-    static final String PML_NS = "http://schemas.openxmlformats.org/presentationml/2006/main";
+    static final String PML_NS = NS_PRESENTATIONML;
     static final String DML_NS = "http://schemas.openxmlformats.org/drawingml/2006/main";
 
     private static final QName[] TX_BODY = { new QName(PML_NS, "txBody") };

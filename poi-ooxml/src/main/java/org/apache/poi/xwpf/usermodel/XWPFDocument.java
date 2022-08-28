@@ -101,7 +101,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
  */
 @SuppressWarnings("unused")
 public class XWPFDocument extends POIXMLDocument implements Document, IBody {
-    public static final String NS_OOXML_WP_MAIN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
     private static final Logger LOG = LogManager.getLogger(XWPFDocument.class);
 
     protected List<XWPFFooter> footers = new ArrayList<>();
