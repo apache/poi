@@ -22,7 +22,7 @@ import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFile;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFileName;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream;
 import static org.apache.poi.openxml4j.opc.PackagingURIHelper.createPartName;
-import static org.apache.poi.xwpf.usermodel.XWPFDocument.NS_OOXML_WP_MAIN;
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_WORDPROCESSINGML;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -192,15 +192,15 @@ public final class TestPackage {
         PackagePart corePart = pkg.createPart(corePartName, XWPFRelation.DOCUMENT.getContentType());
 
         Document doc = DocumentHelper.createDocument();
-        Element elDocument = doc.createElementNS(NS_OOXML_WP_MAIN, "w:document");
+        Element elDocument = doc.createElementNS(NS_WORDPROCESSINGML, "w:document");
         doc.appendChild(elDocument);
-        Element elBody = doc.createElementNS(NS_OOXML_WP_MAIN, "w:body");
+        Element elBody = doc.createElementNS(NS_WORDPROCESSINGML, "w:body");
         elDocument.appendChild(elBody);
-        Element elParagraph = doc.createElementNS(NS_OOXML_WP_MAIN, "w:p");
+        Element elParagraph = doc.createElementNS(NS_WORDPROCESSINGML, "w:p");
         elBody.appendChild(elParagraph);
-        Element elRun = doc.createElementNS(NS_OOXML_WP_MAIN, "w:r");
+        Element elRun = doc.createElementNS(NS_WORDPROCESSINGML, "w:r");
         elParagraph.appendChild(elRun);
-        Element elText = doc.createElementNS(NS_OOXML_WP_MAIN, "w:t");
+        Element elText = doc.createElementNS(NS_WORDPROCESSINGML, "w:t");
         elRun.appendChild(elText);
         elText.setTextContent("Hello Open XML !");
 
@@ -339,15 +339,15 @@ public final class TestPackage {
 
         // Create a content
         Document doc = DocumentHelper.createDocument();
-        Element elDocument = doc.createElementNS(NS_OOXML_WP_MAIN, "w:document");
+        Element elDocument = doc.createElementNS(NS_WORDPROCESSINGML, "w:document");
         doc.appendChild(elDocument);
-        Element elBody = doc.createElementNS(NS_OOXML_WP_MAIN, "w:body");
+        Element elBody = doc.createElementNS(NS_WORDPROCESSINGML, "w:body");
         elDocument.appendChild(elBody);
-        Element elParagraph = doc.createElementNS(NS_OOXML_WP_MAIN, "w:p");
+        Element elParagraph = doc.createElementNS(NS_WORDPROCESSINGML, "w:p");
         elBody.appendChild(elParagraph);
-        Element elRun = doc.createElementNS(NS_OOXML_WP_MAIN, "w:r");
+        Element elRun = doc.createElementNS(NS_WORDPROCESSINGML, "w:r");
         elParagraph.appendChild(elRun);
-        Element elText = doc.createElementNS(NS_OOXML_WP_MAIN, "w:t");
+        Element elText = doc.createElementNS(NS_WORDPROCESSINGML, "w:t");
         elRun.appendChild(elText);
         elText.setTextContent("Hello Open XML !");
 
