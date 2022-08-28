@@ -41,6 +41,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
+
 /**
  * Table style names defined in the OOXML spec.
  * The actual styling is defined in presetTableStyles.xml
@@ -424,7 +426,7 @@ public enum XSSFBuiltinTableStyle {
         dxfsNode.insertBefore(dxfsNode.getOwnerDocument().createElement("dxf"), dxfsNode.getFirstChild());
 
         return "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
-            "<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" " +
+            "<styleSheet xmlns=\"" + NS_SPREADSHEETML + "\" " +
             "xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" " +
             "xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\" " +
             "xmlns:x16r2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/02/main\" " +
