@@ -402,6 +402,14 @@ public final class TestWordExtractor {
         }
     }
 
+    @Test
+    void testCapitalized() throws Exception {
+        try (WordExtractor wExt = openExtractor("capitalized.doc")) {
+            String text = wExt.getText().trim();
+            assertEquals("The following word is: CAPITALIZED.", text);
+        }
+    }
+
     private WordExtractor openExtractor(String fileName) throws IOException {
         try (InputStream is = docTests.openResourceAsStream(fileName)) {
             return new WordExtractor(is);
