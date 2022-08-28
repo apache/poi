@@ -22,6 +22,7 @@ import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFile;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFileName;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream;
 import static org.apache.poi.openxml4j.opc.PackagingURIHelper.createPartName;
+import static org.apache.poi.xwpf.usermodel.XWPFDocument.NS_OOXML_WP_MAIN;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -100,7 +101,6 @@ import org.xml.sax.SAXParseException;
 
 public final class TestPackage {
     private static final Logger LOG = LogManager.getLogger(TestPackage.class);
-    private static final String NS_OOXML_WP_MAIN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
     private static final String CONTENT_EXT_PROPS = "application/vnd.openxmlformats-officedocument.extended-properties+xml";
     private static final POIDataSamples xlsSamples = POIDataSamples.getSpreadSheetInstance();
 

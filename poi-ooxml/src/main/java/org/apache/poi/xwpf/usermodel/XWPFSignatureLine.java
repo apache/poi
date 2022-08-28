@@ -29,8 +29,9 @@ import org.apache.poi.poifs.crypt.dsig.SignatureLine;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPicture;
 
+import static org.apache.poi.xwpf.usermodel.XWPFDocument.NS_OOXML_WP_MAIN;
+
 public class XWPFSignatureLine extends SignatureLine {
-    static final String NS_OOXML_WP_MAIN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
     private static final String MS_VML_URN = "urn:schemas-microsoft-com:vml";
 
     private CTSignatureLine line;
