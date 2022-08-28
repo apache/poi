@@ -196,11 +196,11 @@ class TestXWPFHeaderFooterPolicy {
         policy = oddEven.getHeaderFooterPolicy();
 
         assertEquals(
-                "[ODD Page Header text]\n\n",
+                "[ODD PAGE HEADER TEXT]\n\n",
                 policy.getDefaultHeader().getText()
         );
         assertEquals(
-                "[This is an Even Page, with a Header]\n\n",
+                "[THIS IS AN EVEN PAGE, WITH A HEADER]\n\n",
                 policy.getEvenPageHeader().getText()
         );
     }
