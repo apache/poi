@@ -190,7 +190,7 @@ public class XMLSlideShow extends POIXMLDocument
             _masters.clear();
             if (_presentation.isSetSldMasterIdLst()) {
                 _presentation.getSldMasterIdLst().getSldMasterIdList().forEach(
-                   id -> _masters.add(masterMap.get(id.getId2()))
+                        id -> _masters.add(masterMap.get(id.getId2()))
                 );
             }
 
@@ -248,10 +248,10 @@ public class XMLSlideShow extends POIXMLDocument
      */
     public XSLFSlide createSlide(XSLFSlideLayout layout) {
         CTSlideIdList slideList = _presentation.isSetSldIdLst()
-            ? _presentation.getSldIdLst() : _presentation.addNewSldIdLst();
+                ? _presentation.getSldIdLst() : _presentation.addNewSldIdLst();
 
         OptionalLong maxId = Stream.of(slideList.getSldIdArray())
-            .mapToLong(CTSlideIdListEntry::getId).max();
+                .mapToLong(CTSlideIdListEntry::getId).max();
 
         final XSLFRelation relationType = XSLFRelation.SLIDE;
         final int slideNumber = (int)(Math.max(maxId.orElse(0),255)+1);
@@ -466,6 +466,15 @@ public class XMLSlideShow extends POIXMLDocument
         sldIdLst.setSldIdArray(entries);
     }
 
+    /**
+     * Remove a slide from this presentation.
+     *
+     * @param index The slide number to remove.
+     * @return The slide that was removed.
+     *
+     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     */
     public XSLFSlide removeSlide(int index) {
         XSLFSlide slide = _slides.remove(index);
         removeRelation(slide);
@@ -478,9 +487,36 @@ public class XMLSlideShow extends POIXMLDocument
             } else if (p instanceof XSLFSlideLayout) {
                 XSLFSlideLayout layout = (XSLFSlideLayout) p;
                 slide.removeLayoutRelation(layout);
+            } else if (p instanceof XSLFNotes) {
+                XSLFNotes notes = slide.removeNotes(_notesMaster);
+                removeRelation(notes);
+            } else if (p instanceof XSLFPictureData) {
+                XSLFPictureData picture = (XSLFPictureData) p;
+                removePictureRelations(slide, picture);
+                _pictures.remove(picture);
             }
         }
         return slide;
+    }
+
+    private void removePictureRelations(XSLFSlide slide, XSLFPictureData picture) {
+        removePictureRelations(slide, slide, picture);
+    }
+
+    private void removePictureRelations(XSLFSlide slide, XSLFShapeContainer container, XSLFPictureData picture) {
+        for (XSLFShape shape : container.getShapes()) {
+            // Find either group shapes (and recurse) ...
+            if (shape instanceof XSLFGroupShape) {
+                removePictureRelations(slide, (XSLFGroupShape)shape, picture);
+            }
+            // ... or the picture shape with this picture data and remove it's relation to the picture data.
+            if (shape instanceof XSLFPictureShape) {
+                XSLFPictureShape pic = (XSLFPictureShape) shape;
+                if (pic.getPictureData() == picture) {
+                    slide.removePictureRelation(pic);
+                }
+            }
+        }
     }
 
     @Override
