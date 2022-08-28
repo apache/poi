@@ -27,6 +27,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import javax.xml.namespace.QName;
 
@@ -35,10 +36,7 @@ import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
-import org.apache.poi.util.Units;
+import org.apache.poi.util.*;
 import org.apache.poi.wp.usermodel.CharacterRun;
 import org.apache.xmlbeans.*;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
@@ -1381,7 +1379,13 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             //  come up as instances of CTText, but we don't want them
             //  in the normal text output
             if (!("instrText".equals(node.getLocalName()) && XWPFDocument.NS_OOXML_WP_MAIN.equals(node.getNamespaceURI()))) {
-                text.append(((CTText) o).getStringValue());
+                String textValue = ((CTText) o).getStringValue();
+                if (textValue != null) {
+                    if (isCapitalized() || isSmallCaps()) {
+                        textValue = textValue.toUpperCase(LocaleUtil.getUserLocale());
+                    }
+                    text.append(textValue);
+                }
             }
         }
 
@@ -1391,7 +1395,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             if (ctfldChar.getFldCharType() == STFldCharType.BEGIN) {
                 if (ctfldChar.getFfData() != null) {
                     for (CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxList()) {
-                        text.append((checkBox.getDefault() != null && POIXMLUnits.parseOnOff(checkBox.getDefault().xgetVal())) ? "|X|" : "|_|");
+                        String textValue = checkBox.getDefault() != null && POIXMLUnits.parseOnOff(checkBox.getDefault().xgetVal()) ?
+                                "|X|" : "|_|";
+                        text.append(textValue);
                     }
                 }
             }

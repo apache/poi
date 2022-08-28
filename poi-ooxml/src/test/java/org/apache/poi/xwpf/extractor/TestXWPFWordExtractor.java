@@ -478,4 +478,13 @@ class TestXWPFWordExtractor {
             assertEquals(expected, actual);
         }
     }
+
+    @Test
+    void testCapitalizedFlag() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("capitalized.docx");
+             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+            String txt = extractor.getText();
+            assertEquals( "The following word is: CAPITALIZED.", txt.trim());
+        }
+    }
 }
