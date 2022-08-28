@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel;
 
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_DRAWINGML;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,7 +39,7 @@ import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Diff;
 
 class TestXDDFColor {
-    private static final String XMLNS = "xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\"/>";
+    private static final String XMLNS = "xmlns:a=\"" + NS_DRAWINGML + "\"/>";
 
     @Test
     void testSchemeColor() throws IOException {

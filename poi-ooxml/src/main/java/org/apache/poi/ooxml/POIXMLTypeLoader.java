@@ -54,7 +54,7 @@ public class POIXMLTypeLoader {
         // DEFAULT_XML_OPTIONS.setUnsynchronized();
 
         Map<String, String> map = new HashMap<>();
-        map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
+        map.put(XSSFRelation.NS_DRAWINGML, "a");
         map.put("http://schemas.openxmlformats.org/drawingml/2006/chart", "c");
         map.put("http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing", "wp");
         map.put(PackageNamespaces.MARKUP_COMPATIBILITY, "ve");
