@@ -20,7 +20,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS;
-import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_WORDPROCESSINGML;
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_PRESENTATIONML;
 
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -292,7 +292,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
     @Override
     public XSLFPictureShape getFallbackPicture() {
         String xquery =
-                  "declare namespace p='" + NS_WORDPROCESSINGML + "'; "
+                  "declare namespace p='" + NS_PRESENTATIONML + "'; "
                 + "declare namespace mc='http://schemas.openxmlformats.org/markup-compatibility/2006' "
                 + ".//mc:Fallback/*/p:pic"
                 ;
