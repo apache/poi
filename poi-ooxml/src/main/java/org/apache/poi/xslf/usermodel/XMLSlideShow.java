@@ -490,9 +490,33 @@ public class XMLSlideShow extends POIXMLDocument
             } else if (p instanceof XSLFNotes) {
                 XSLFNotes notes = slide.removeNotes(_notesMaster);
                 removeRelation(notes);
+            } else if (p instanceof XSLFPictureData) {
+                XSLFPictureData picture = (XSLFPictureData) p;
+                removePictureRelations(slide, picture);
+                _pictures.remove(picture);
             }
         }
         return slide;
+    }
+
+    private void removePictureRelations(XSLFSlide slide, XSLFPictureData picture) {
+        removePictureRelations(slide, slide, picture);
+    }
+
+    private void removePictureRelations(XSLFSlide slide, XSLFShapeContainer container, XSLFPictureData picture) {
+        for (XSLFShape shape : container.getShapes()) {
+            // Find either group shapes (and recurse) ...
+            if (shape instanceof XSLFGroupShape) {
+                removePictureRelations(slide, (XSLFGroupShape)shape, picture);
+            }
+            // ... or the picture shape with this picture data and remove it's relation to the picture data.
+            if (shape instanceof XSLFPictureShape) {
+                XSLFPictureShape pic = (XSLFPictureShape) shape;
+                if (pic.getPictureData() == picture) {
+                    slide.removePictureRelation(pic);
+                }
+            }
+        }
     }
 
     @Override
