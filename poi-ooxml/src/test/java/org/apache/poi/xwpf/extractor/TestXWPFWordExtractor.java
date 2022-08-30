@@ -487,4 +487,13 @@ class TestXWPFWordExtractor {
             assertEquals( "The following word is: CAPITALIZED.", txt.trim());
         }
     }
+
+    @Test
+    void testTika2163() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ChronologicalResume.dotx");
+             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+            String txt = extractor.getText();
+            assertContains(txt, "but a great-looking résumé doesn’t have to be!");
+        }
+    }
 }
