@@ -276,7 +276,7 @@ public class Ole10Native {
         byte[] buf = new byte[MAX_STRING_LENGTH];
         for (int i=0; i<buf.length; i++) {
             if ((buf[i] = is.readByte()) == 0) {
-                return StringUtil.getFromCompressedUnicode(buf, 0, i);
+                return StringUtil.getFromCompressedUTF8(buf, 0, i);
             }
         }
         throw new Ole10NativeException("AsciiZ string was not null terminated after " + MAX_STRING_LENGTH + " bytes - Exiting.");

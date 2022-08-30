@@ -48,7 +48,7 @@ public final class StringPtg extends ScalarConstantPtg {
         if (_is16bitUnicode) {
             field_3_string = StringUtil.readUnicodeLE(in, nChars);
         } else {
-            field_3_string = StringUtil.readCompressedLatinA(in, nChars);
+            field_3_string = StringUtil.readCompressedUnicode(in, nChars);
         }
     }
 
