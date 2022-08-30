@@ -1108,4 +1108,16 @@ class TestXSLFBugs {
             }
         }
     }
+
+    @Test
+    void tika2605() throws IOException {
+        try (XMLSlideShow slideShowModel = openSampleDocument("tika-2605.pptx")) {
+            for (XSLFSlide slide : slideShowModel.getSlides()) {
+                assertNotNull(slide);
+                for (XSLFShape shape : slide.getShapes()) {
+                    assertNotNull(shape);
+                }
+            }
+        }
+    }
 }
