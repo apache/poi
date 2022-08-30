@@ -448,6 +448,7 @@ poijobs.each { poijob ->
                         if (jdkMapping.get(jdkKey).jdkVendor != '') {
                             switches("-PjdkVendor=${jdkMapping.get(jdkKey).jdkVendor}")
                         }
+                        switches("--refresh-dependencies")
                     }
                 } else {
                     ant {
