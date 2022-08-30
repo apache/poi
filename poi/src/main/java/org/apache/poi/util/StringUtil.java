@@ -135,13 +135,13 @@ public final class StringUtil {
             final int offset,
             final int len) {
         int len_to_use = Math.min(len, string.length - offset);
-        return new String(string, offset, len_to_use, ISO_8859_1);
+        return new String(string, offset, len_to_use, UTF8);
     }
 
     public static String readCompressedUnicode(LittleEndianInput in, int nChars) {
         byte[] buf = IOUtils.safelyAllocate(nChars, MAX_RECORD_LENGTH);
         in.readFully(buf);
-        return new String(buf, ISO_8859_1);
+        return new String(buf, UTF8);
     }
 
     /**

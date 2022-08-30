@@ -32,10 +32,14 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -157,6 +161,24 @@ class TestXWPFBugs {
     void bug65649() throws IOException {
         try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug65649.docx"))) {
             assertEquals(731, document.getParagraphs().size());
+        }
+    }
+
+    @Test
+    void tika3388() throws Exception {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("tika-3388.docx"))) {
+            assertEquals(1, document.getParagraphs().size());
+            PackagePartName partName = PackagingURIHelper.createPartName("/word/embeddings/oleObject1.bin");
+            PackagePart part = document.getPackage().getPart(partName);
+            assertNotNull(part);
+            try (
+                    InputStream partStream = part.getInputStream();
+                    POIFSFileSystem poifs = new POIFSFileSystem(partStream)
+            ) {
+                Ole10Native ole = Ole10Native.createFromEmbeddedOleObject(poifs);
+                assertEquals("C:\\Users\\ross\\AppData\\Local\\Microsoft\\Windows\\INetCache\\Content.Word\\約翰的測試文件\uD83D\uDD96.msg",
+                        ole.getFileName());
+            }
         }
     }
 }
