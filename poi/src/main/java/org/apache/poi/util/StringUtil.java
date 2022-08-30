@@ -138,10 +138,26 @@ public final class StringUtil {
         return new String(string, offset, len_to_use, UTF8);
     }
 
+    /**
+     * @param in stream,
+     * @param nChars number pf chars
+     * @return UTF-8 encoded result
+     */
     public static String readCompressedUnicode(LittleEndianInput in, int nChars) {
         byte[] buf = IOUtils.safelyAllocate(nChars, MAX_RECORD_LENGTH);
         in.readFully(buf);
         return new String(buf, UTF8);
+    }
+
+    /**
+     * @param in stream,
+     * @param nChars number pf chars
+     * @return LATIN-A (ISO-8859-1) encoded result
+     */
+    public static String readCompressedLatinA(LittleEndianInput in, int nChars) {
+        byte[] buf = IOUtils.safelyAllocate(nChars, MAX_RECORD_LENGTH);
+        in.readFully(buf);
+        return new String(buf, ISO_8859_1);
     }
 
     /**
