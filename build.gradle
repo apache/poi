@@ -189,7 +189,7 @@ subprojects {
 
     repositories {
         mavenCentral()
-        maven { url 'https://repository.apache.org/content/repositories/staging' }
+        //maven { url 'https://repository.apache.org/content/repositories/staging' }
     }
 
     dependencies {
