@@ -176,8 +176,9 @@ class TestXWPFBugs {
                     POIFSFileSystem poifs = new POIFSFileSystem(partStream)
             ) {
                 Ole10Native ole = Ole10Native.createFromEmbeddedOleObject(poifs);
-                assertEquals("C:\\Users\\ross\\AppData\\Local\\Microsoft\\Windows\\INetCache\\Content.Word\\約翰的測試文件\uD83D\uDD96.msg",
-                        ole.getFileName());
+                String fn = "C:\\Users\\ross\\AppData\\Local\\Microsoft\\Windows\\INetCache\\Content.Word\\約翰的測試文件\uD83D\uDD96.msg";
+                assertEquals(fn, ole.getFileName());
+                assertEquals(fn, ole.getFileName2());
             }
         }
     }
