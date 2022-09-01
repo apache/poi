@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -415,16 +416,16 @@ public final class CellUtil {
         cell.setCellStyle(newStyle);
     }
 
-    private static boolean styleMapsMatch(final Map<String, Object> map1, final Map<String, Object> map2) {
-        final Map<String, Object> map1Copy = new HashMap<>(map1);
-        final Map<String, Object> map2Copy = new HashMap<>(map2);
+    private static boolean styleMapsMatch(final Map<String, Object> newProps, final Map<String, Object> storedProps) {
+        final Map<String, Object> map1Copy = new HashMap<>(newProps);
+        final Map<String, Object> map2Copy = new HashMap<>(storedProps);
         final Object backColor1 = map1Copy.remove(FILL_BACKGROUND_COLOR_COLOR);
         final Object backColor2 = map2Copy.remove(FILL_BACKGROUND_COLOR_COLOR);
         final Object foreColor1 = map1Copy.remove(FILL_FOREGROUND_COLOR_COLOR);
         final Object foreColor2 = map2Copy.remove(FILL_FOREGROUND_COLOR_COLOR);
         if (map1Copy.equals(map2Copy)) {
-            final boolean backColorsMatch = backColor1 == null || backColor2 == null || backColor1.equals(backColor2);
-            final boolean foreColorsMatch = foreColor1 == null || foreColor2 == null || foreColor1.equals(foreColor2);
+            final boolean backColorsMatch = backColor2 == null || Objects.equals(backColor1, backColor2);
+            final boolean foreColorsMatch = foreColor2 == null || Objects.equals(foreColor1, foreColor2);
             return backColorsMatch && foreColorsMatch;
         }
         return false;

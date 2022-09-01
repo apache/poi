@@ -28,7 +28,6 @@ import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -41,7 +40,6 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
         super(XSSFITestDataProvider.instance);
     }
 
-    @Disabled("see bug-66052 comment 10")
     @Test
     public void testSetForegroundColorCellStyleProperty() throws IOException, DecoderException {
         try (Workbook workbook = new XSSFWorkbook()) {
