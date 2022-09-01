@@ -17,11 +17,46 @@
 
 package org.apache.poi.ss.tests.util;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.BaseTestCellUtil;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class TestXSSFCellUtil extends BaseTestCellUtil {
     public TestXSSFCellUtil() {
         super(XSSFITestDataProvider.instance);
+    }
+
+    @Disabled("see bug-66052 comment 10")
+    @Test
+    public void testSetForegroundColorCellStyleProperty() throws IOException, DecoderException {
+        try (Workbook workbook = new XSSFWorkbook()) {
+
+            final Sheet sheet = workbook.createSheet("Sheet");
+            final Row row = sheet.createRow(0);
+            final Cell cell = row.createCell(0);
+            final XSSFColor color = new XSSFColor(Hex.decodeHex("AAAAAA"));
+
+            assertNull(cell.getCellStyle().getFillForegroundColorColor());
+
+            CellUtil.setCellStyleProperty(
+                    cell, CellUtil.FILL_FOREGROUND_COLOR_COLOR, color);
+
+            assertNotNull(cell.getCellStyle().getFillForegroundColorColor());
+        }
     }
 }
