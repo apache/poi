@@ -20,6 +20,7 @@ package org.apache.poi.ss.tests.util;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -32,8 +33,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestXSSFCellUtil extends BaseTestCellUtil {
     public TestXSSFCellUtil() {
@@ -54,7 +54,33 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
             CellUtil.setCellStyleProperty(
                     cell, CellUtil.FILL_FOREGROUND_COLOR_COLOR, color);
 
-            assertNotNull(cell.getCellStyle().getFillForegroundColorColor());
+            assertEquals(color, cell.getCellStyle().getFillForegroundColorColor());
+        }
+    }
+
+    @Test
+    public void testSetForegroundColorCellStylePropertyToNull() throws IOException, DecoderException {
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+
+            final Sheet sheet = workbook.createSheet("Sheet");
+            final Row row = sheet.createRow(0);
+            final Cell cell = row.createCell(0);
+            final XSSFColor color = new XSSFColor(Hex.decodeHex("AAAAAA"));
+
+            assertNull(cell.getCellStyle().getFillForegroundColorColor());
+
+            CellUtil.setCellStyleProperty(
+                    cell, CellUtil.FILL_FOREGROUND_COLOR_COLOR, color);
+
+            assertEquals(color, cell.getCellStyle().getFillForegroundColorColor());
+
+            CellUtil.setCellStyleProperty(
+                    cell, CellUtil.FILL_FOREGROUND_COLOR_COLOR, null);
+
+            assertNotEquals(color, cell.getCellStyle().getFillForegroundColorColor());
+            assertEquals(IndexedColors.AUTOMATIC.getIndex(),
+                    ((XSSFColor) cell.getCellStyle().getFillForegroundColorColor()).getIndex());
         }
     }
 }

@@ -385,9 +385,14 @@ public final class CellUtil {
      * @since POI 3.14 beta 2
      */
     public static void setCellStyleProperties(Cell cell, Map<String, Object> properties) {
+        setCellStyleProperties(cell, properties, false);
+    }
+
+    private static void setCellStyleProperties(final Cell cell, final Map<String, Object> properties,
+                                               final boolean disableNullColorCheck) {
         Workbook workbook = cell.getSheet().getWorkbook();
         CellStyle originalStyle = cell.getCellStyle();
-        
+
         CellStyle newStyle = null;
         Map<String, Object> values = getFormatProperties(originalStyle);
         putAll(properties, values);
@@ -401,7 +406,7 @@ public final class CellUtil {
             Map<String, Object> wbStyleMap = getFormatProperties(wbStyle);
 
             // the desired style already exists in the workbook. Use the existing style.
-            if (styleMapsMatch(wbStyleMap, values)) {
+            if (styleMapsMatch(wbStyleMap, values, disableNullColorCheck)) {
                 newStyle = wbStyle;
                 break;
             }
@@ -416,7 +421,8 @@ public final class CellUtil {
         cell.setCellStyle(newStyle);
     }
 
-    private static boolean styleMapsMatch(final Map<String, Object> newProps, final Map<String, Object> storedProps) {
+    private static boolean styleMapsMatch(final Map<String, Object> newProps,
+                                          final Map<String, Object> storedProps, final boolean disableNullColorCheck) {
         final Map<String, Object> map1Copy = new HashMap<>(newProps);
         final Map<String, Object> map2Copy = new HashMap<>(storedProps);
         final Object backColor1 = map1Copy.remove(FILL_BACKGROUND_COLOR_COLOR);
@@ -424,8 +430,10 @@ public final class CellUtil {
         final Object foreColor1 = map1Copy.remove(FILL_FOREGROUND_COLOR_COLOR);
         final Object foreColor2 = map2Copy.remove(FILL_FOREGROUND_COLOR_COLOR);
         if (map1Copy.equals(map2Copy)) {
-            final boolean backColorsMatch = backColor2 == null || Objects.equals(backColor1, backColor2);
-            final boolean foreColorsMatch = foreColor2 == null || Objects.equals(foreColor1, foreColor2);
+            final boolean backColorsMatch = (!disableNullColorCheck && backColor2 == null)
+                    || Objects.equals(backColor1, backColor2);
+            final boolean foreColorsMatch = (!disableNullColorCheck && foreColor2 == null)
+                    || Objects.equals(foreColor1, foreColor2);
             return backColorsMatch && foreColorsMatch;
         }
         return false;
@@ -449,8 +457,22 @@ public final class CellUtil {
      * @param propertyValue The value of the property that is to be changed.
      */
     public static void setCellStyleProperty(Cell cell, String propertyName, Object propertyValue) {
-        Map<String, Object> property = Collections.singletonMap(propertyName, propertyValue);
-        setCellStyleProperties(cell, property);
+        boolean disableNullColorCheck = false;
+        final Map<String, Object> propMap;
+        if (CellUtil.FILL_FOREGROUND_COLOR_COLOR.equals(propertyName) && propertyValue == null) {
+            disableNullColorCheck = true;
+            propMap = new HashMap<>();
+            propMap.put(CellUtil.FILL_FOREGROUND_COLOR_COLOR, null);
+            propMap.put(CellUtil.FILL_FOREGROUND_COLOR, IndexedColors.AUTOMATIC.getIndex());
+        } else if (CellUtil.FILL_BACKGROUND_COLOR_COLOR.equals(propertyName) && propertyValue == null) {
+            disableNullColorCheck = true;
+            propMap = new HashMap<>();
+            propMap.put(CellUtil.FILL_BACKGROUND_COLOR_COLOR, null);
+            propMap.put(CellUtil.FILL_BACKGROUND_COLOR, IndexedColors.AUTOMATIC.getIndex());
+        } else {
+            propMap = Collections.singletonMap(propertyName, propertyValue);
+        }
+        setCellStyleProperties(cell, propMap, disableNullColorCheck);
     }
 
     /**
