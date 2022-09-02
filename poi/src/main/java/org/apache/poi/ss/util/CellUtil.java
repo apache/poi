@@ -395,6 +395,12 @@ public final class CellUtil {
 
         CellStyle newStyle = null;
         Map<String, Object> values = getFormatProperties(originalStyle);
+        if (properties.containsKey(FILL_FOREGROUND_COLOR_COLOR) && properties.get(FILL_FOREGROUND_COLOR_COLOR) == null) {
+            values.remove(FILL_FOREGROUND_COLOR);
+        }
+        if (properties.containsKey(FILL_BACKGROUND_COLOR_COLOR) && properties.get(FILL_BACKGROUND_COLOR_COLOR) == null) {
+            values.remove(FILL_BACKGROUND_COLOR);
+        }
         putAll(properties, values);
 
         // index seems like what index the cellstyle is in the list of styles for a workbook.

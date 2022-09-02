@@ -20,6 +20,7 @@ package org.apache.poi.ss.tests.util;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -31,7 +32,11 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -79,6 +84,39 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
                     cell, CellUtil.FILL_FOREGROUND_COLOR_COLOR, null);
 
             assertNotEquals(color, cell.getCellStyle().getFillForegroundColorColor());
+            assertNull(cell.getCellStyle().getFillForegroundColorColor());
+            assertEquals(IndexedColors.AUTOMATIC.getIndex(), cell.getCellStyle().getFillForegroundColor());
+        }
+    }
+
+    @Test
+    public void testSetForegroundColorCellStylePropertiesToNull() throws IOException, DecoderException {
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+
+            final Sheet sheet = workbook.createSheet("Sheet");
+            final Row row = sheet.createRow(0);
+            final Cell cell = row.createCell(0);
+            final XSSFColor color = new XSSFColor(Hex.decodeHex("FF0000"));
+
+            {
+                final Map<String, Object> properties = new LinkedHashMap<>();
+
+                properties.put(CellUtil.FILL_FOREGROUND_COLOR_COLOR, color);
+                properties.put(CellUtil.FILL_PATTERN, FillPatternType.SOLID_FOREGROUND);
+
+                CellUtil.setCellStyleProperties(cell, properties);
+            }
+            assertEquals(color, cell.getCellStyle().getFillForegroundColorColor());
+
+            {
+                final Map<String, Object> properties = new LinkedHashMap<>();
+
+                properties.put(CellUtil.FILL_FOREGROUND_COLOR_COLOR, null);
+                properties.put(CellUtil.FILL_PATTERN, FillPatternType.NO_FILL);
+
+                CellUtil.setCellStyleProperties(cell, properties);
+            }
             assertNull(cell.getCellStyle().getFillForegroundColorColor());
             assertEquals(IndexedColors.AUTOMATIC.getIndex(), cell.getCellStyle().getFillForegroundColor());
         }
