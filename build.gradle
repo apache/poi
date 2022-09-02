@@ -41,6 +41,7 @@ plugins {
     id "com.github.spotbugs" version '5.0.10'
     id 'de.thetaphi.forbiddenapis' version '3.3'
     id 'com.github.jk1.dependency-license-report' version '2.0'
+    id 'org.cyclonedx.bom' version '1.7.1'
 }
 
 repositories {
@@ -118,12 +119,16 @@ task adjustWrapperPropertiesFile {
 }
 wrapper.finalizedBy adjustWrapperPropertiesFile
 
+group = 'org.apache.poi'
+
 /**
  Define properties for all projects, including this one
  */
 allprojects {
 //    apply plugin: 'eclipse'
     apply plugin: 'idea'
+
+    version = '5.2.3-SNAPSHOT'
 }
 
 /**
@@ -138,7 +143,6 @@ subprojects {
     apply plugin: 'de.thetaphi.forbiddenapis'
     apply plugin: 'com.github.spotbugs'
 
-    version = '5.2.3-SNAPSHOT'
     ext {
         bouncyCastleVersion = '1.70'
         commonsCodecVersion = '1.15'
@@ -870,3 +874,22 @@ binDistZip.finalizedBy fixDistDir
 binDistTar.finalizedBy fixDistDir
 srcDistZip.finalizedBy fixDistDir
 srcDistTar.finalizedBy fixDistDir
+
+cyclonedxBom {
+    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
+    includeConfigs = ["runtimeClasspath"]
+    // skipConfigs is a list of configuration names to exclude when generating the BOM
+    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
+    // Specified the type of project being built. Defaults to 'library'
+    projectType = "library"
+    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
+    schemaVersion = "1.4"
+    // Boms destination directory (defaults to build/reports)
+    destination = file("build/reports")
+    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
+    outputName = "pom-${project.version}.bom"
+    // The file format generated, can be xml, json or all for generating both
+    outputFormat = "xml"
+    // Exclude BOM Serial Number
+    includeBomSerialNumber = true
+}
