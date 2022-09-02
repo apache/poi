@@ -463,12 +463,12 @@ public final class CellUtil {
             disableNullColorCheck = true;
             propMap = new HashMap<>();
             propMap.put(CellUtil.FILL_FOREGROUND_COLOR_COLOR, null);
-            propMap.put(CellUtil.FILL_FOREGROUND_COLOR, IndexedColors.AUTOMATIC.getIndex());
+            propMap.put(CellUtil.FILL_FOREGROUND_COLOR, null);
         } else if (CellUtil.FILL_BACKGROUND_COLOR_COLOR.equals(propertyName) && propertyValue == null) {
             disableNullColorCheck = true;
             propMap = new HashMap<>();
             propMap.put(CellUtil.FILL_BACKGROUND_COLOR_COLOR, null);
-            propMap.put(CellUtil.FILL_BACKGROUND_COLOR, IndexedColors.AUTOMATIC.getIndex());
+            propMap.put(CellUtil.FILL_BACKGROUND_COLOR, null);
         } else {
             propMap = Collections.singletonMap(propertyName, propertyValue);
         }
@@ -527,7 +527,7 @@ public final class CellUtil {
     private static void putAll(final Map<String, Object> src, Map<String, Object> dest) {
         for (final String key : src.keySet()) {
             if (shortValues.contains(key)) {
-                dest.put(key, getShort(src, key));
+                dest.put(key, nullableShort(src, key));
             } else if (colorValues.contains(key)) {
                 dest.put(key, getColor(src, key));
             } else if (intValues.contains(key)) {
@@ -567,11 +567,18 @@ public final class CellUtil {
         style.setDataFormat(getShort(properties, DATA_FORMAT));
         style.setFillPattern(getFillPattern(properties, FILL_PATTERN));
 
-        style.setFillForegroundColor(getShort(properties, FILL_FOREGROUND_COLOR));
-        style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
+        Short fillForeColorShort = nullableShort(properties, FILL_FOREGROUND_COLOR);
+        if (fillForeColorShort != null) {
+            style.setFillForegroundColor(fillForeColorShort);
+        }
+        Short fillBackColorShort = nullableShort(properties, FILL_BACKGROUND_COLOR);
+        if (fillBackColorShort != null) {
+            style.setFillBackgroundColor(fillBackColorShort);
+        }
 
         Color foregroundFillColor = getColor(properties, FILL_FOREGROUND_COLOR_COLOR);
         Color backgroundFillColor = getColor(properties, FILL_BACKGROUND_COLOR_COLOR);
+
         if (foregroundFillColor != null) {
             try {
                 style.setFillForegroundColor(foregroundFillColor);
@@ -614,6 +621,17 @@ public final class CellUtil {
             return ((Number) value).shortValue();
         }
         return 0;
+    }
+
+    private static Short nullableShort(Map<String, Object> properties, String name) {
+        Object value = properties.get(name);
+        if (value instanceof Short) {
+            return (Short) value;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).shortValue();
+        }
+        return null;
     }
     
     /**
@@ -672,7 +690,7 @@ public final class CellUtil {
             border = BorderStyle.NONE;
         }
         else {
-            throw new RuntimeException("Unexpected border style class. Must be BorderStyle or Short (deprecated).");
+            throw new IllegalStateException("Unexpected border style class. Must be BorderStyle or Short (deprecated).");
         }
         return border;
     }
@@ -701,7 +719,7 @@ public final class CellUtil {
             pattern = FillPatternType.NO_FILL;
         }
         else {
-            throw new RuntimeException("Unexpected fill pattern style class. Must be FillPatternType or Short (deprecated).");
+            throw new IllegalStateException("Unexpected fill pattern style class. Must be FillPatternType or Short (deprecated).");
         }
         return pattern;
     }
@@ -730,7 +748,7 @@ public final class CellUtil {
             align = HorizontalAlignment.GENERAL;
         }
         else {
-            throw new RuntimeException("Unexpected horizontal alignment style class. Must be HorizontalAlignment or Short (deprecated).");
+            throw new IllegalStateException("Unexpected horizontal alignment style class. Must be HorizontalAlignment or Short (deprecated).");
         }
         return align;
     }
@@ -759,7 +777,7 @@ public final class CellUtil {
             align = VerticalAlignment.BOTTOM;
         }
         else {
-            throw new RuntimeException("Unexpected vertical alignment style class. Must be VerticalAlignment or Short (deprecated).");
+            throw new IllegalStateException("Unexpected vertical alignment style class. Must be VerticalAlignment or Short (deprecated).");
         }
         return align;
     }

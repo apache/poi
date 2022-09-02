@@ -79,8 +79,8 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
                     cell, CellUtil.FILL_FOREGROUND_COLOR_COLOR, null);
 
             assertNotEquals(color, cell.getCellStyle().getFillForegroundColorColor());
-            assertEquals(IndexedColors.AUTOMATIC.getIndex(),
-                    ((XSSFColor) cell.getCellStyle().getFillForegroundColorColor()).getIndex());
+            assertNull(cell.getCellStyle().getFillForegroundColorColor());
+            assertEquals(IndexedColors.AUTOMATIC.getIndex(), cell.getCellStyle().getFillForegroundColor());
         }
     }
 }
