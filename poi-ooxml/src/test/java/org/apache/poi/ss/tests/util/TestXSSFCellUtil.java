@@ -108,6 +108,7 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
                 CellUtil.setCellStyleProperties(cell, properties);
             }
             assertEquals(color, cell.getCellStyle().getFillForegroundColorColor());
+            assertEquals(FillPatternType.SOLID_FOREGROUND, cell.getCellStyle().getFillPattern());
 
             {
                 final Map<String, Object> properties = new LinkedHashMap<>();
@@ -119,6 +120,7 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
             }
             assertNull(cell.getCellStyle().getFillForegroundColorColor());
             assertEquals(IndexedColors.AUTOMATIC.getIndex(), cell.getCellStyle().getFillForegroundColor());
+            assertEquals(FillPatternType.NO_FILL, cell.getCellStyle().getFillPattern());
         }
     }
 }
