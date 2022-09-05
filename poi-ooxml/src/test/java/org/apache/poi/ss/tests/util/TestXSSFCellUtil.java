@@ -123,4 +123,86 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
             assertEquals(FillPatternType.NO_FILL, cell.getCellStyle().getFillPattern());
         }
     }
+
+    @Test
+    public void testBug66052WithWorkaround() throws IOException, DecoderException {
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+
+            final Sheet sheet = workbook.createSheet("Sheet");
+            final Row row = sheet.createRow(0);
+            final Cell cell = row.createCell(0);
+            final XSSFColor color = new XSSFColor(Hex.decodeHex("FFAAAA"));
+
+            assertNull(cell.getCellStyle().getFillForegroundColorColor());
+            assertNull(cell.getCellStyle().getFillBackgroundColorColor());
+
+            {
+                Map<String, Object> properties = new LinkedHashMap<>();
+
+                properties.put(CellUtil.FILL_FOREGROUND_COLOR_COLOR, color);
+                properties.put(CellUtil.FILL_BACKGROUND_COLOR_COLOR, null); // WORKAROUND
+                properties.put(CellUtil.FILL_PATTERN, FillPatternType.SOLID_FOREGROUND);
+
+                CellUtil.setCellStyleProperties(cell, properties);
+            }
+
+            assertNotNull(cell.getCellStyle().getFillForegroundColorColor());
+            assertNull(cell.getCellStyle().getFillBackgroundColorColor());
+
+            {
+                Map<String, Object> properties = new LinkedHashMap<>();
+
+                properties.put(CellUtil.FILL_FOREGROUND_COLOR_COLOR, null);
+                properties.put(CellUtil.FILL_BACKGROUND_COLOR_COLOR, null); // WORKAROUND
+                properties.put(CellUtil.FILL_PATTERN, FillPatternType.NO_FILL);
+
+                CellUtil.setCellStyleProperties(cell, properties);
+            }
+
+            assertNull(cell.getCellStyle().getFillForegroundColorColor());
+            assertNull(cell.getCellStyle().getFillBackgroundColorColor());
+        }
+    }
+
+    @Test
+    public void testBug66052WithoutWorkaround() throws IOException, DecoderException {
+
+        try (Workbook workbook = new XSSFWorkbook()) {
+
+            final Sheet sheet = workbook.createSheet("Sheet");
+            final Row row = sheet.createRow(0);
+            final Cell cell = row.createCell(0);
+            final XSSFColor color = new XSSFColor(Hex.decodeHex("FFAAAA"));
+
+            assertNull(cell.getCellStyle().getFillForegroundColorColor());
+            assertNull(cell.getCellStyle().getFillBackgroundColorColor());
+
+            {
+                Map<String, Object> properties = new LinkedHashMap<>();
+
+                properties.put(CellUtil.FILL_FOREGROUND_COLOR_COLOR, color);
+                properties.put(CellUtil.FILL_PATTERN, FillPatternType.SOLID_FOREGROUND);
+
+                CellUtil.setCellStyleProperties(cell, properties);
+            }
+
+            assertEquals(color, cell.getCellStyle().getFillForegroundColorColor());
+            assertEquals(IndexedColors.AUTOMATIC.getIndex(),
+                    ((XSSFColor) cell.getCellStyle().getFillBackgroundColorColor()).getIndex());
+
+            {
+                Map<String, Object> properties = new LinkedHashMap<>();
+
+                properties.put(CellUtil.FILL_FOREGROUND_COLOR_COLOR, null);
+                properties.put(CellUtil.FILL_PATTERN, FillPatternType.NO_FILL);
+
+                CellUtil.setCellStyleProperties(cell, properties);
+            }
+
+            assertNull(cell.getCellStyle().getFillForegroundColorColor());
+            assertEquals(IndexedColors.AUTOMATIC.getIndex(),
+                    ((XSSFColor) cell.getCellStyle().getFillBackgroundColorColor()).getIndex());
+        }
+    }
 }
