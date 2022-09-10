@@ -349,6 +349,9 @@ public class XSSFReader {
             String sheetId = xssfSheetRef.getId();
             try {
                 PackagePart sheetPkg = sheetMap.get(sheetId);
+                if (sheetPkg == null) {
+                    throw new POIXMLException("Failed to find sheet package for sheetId=" + sheetId);
+                }
                 return sheetPkg.getInputStream();
             } catch (IOException e) {
                 throw new POIXMLException(e);
