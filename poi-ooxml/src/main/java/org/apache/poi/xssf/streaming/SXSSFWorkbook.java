@@ -1025,8 +1025,9 @@ public class SXSSFWorkbook implements Workbook {
             //Substitute the template entries with the generated sheet data files
             try (
                     InputStream is = bos.toInputStream();
+                    ZipArchiveInputStream zis = new ZipArchiveInputStream(is);
                     ZipInputStreamZipEntrySource source = new ZipInputStreamZipEntrySource(
-                        new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(is)))
+                        new ZipArchiveThresholdInputStream(zis))
             ) {
                 injectData(source, stream);
             }
