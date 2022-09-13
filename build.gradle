@@ -150,7 +150,7 @@ subprojects {
         commonsIoVersion = '2.11.0'
         commonsMathVersion = '3.6.1'
         junitVersion = '5.9.0'
-        log4jVersion = '2.18.0'
+        log4jVersion = '2.19.0'
         mockitoVersion = '4.8.0'
         hamcrestVersion = '2.2'
         xmlbeansVersion = '5.1.1'
@@ -178,7 +178,7 @@ subprojects {
         all {
             resolutionStrategy {
                 force "commons-io:commons-io:${commonsIoVersion}"
-                force 'org.slf4j:slf4j-api:1.7.36'
+                force 'org.slf4j:slf4j-api:2.0.0'
                 force 'com.fasterxml.woodstox:woodstox-core:6.3.1'
             }
         }
@@ -193,7 +193,7 @@ subprojects {
 
     repositories {
         mavenCentral()
-        //maven { url 'https://repository.apache.org/content/repositories/staging' }
+        maven { url 'https://repository.apache.org/content/repositories/staging' }
     }
 
     dependencies {
