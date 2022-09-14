@@ -208,7 +208,7 @@ public final class OperationEvaluationContext {
      * @param isA1Style    specifies the format for {@code refStrPart1} and {@code refStrPart2}.
      *                     Pass {@code true} for 'A1' style and {@code false} for 'R1C1' style.
      * @return a {@link RefEval} or {@link AreaEval}
-     * @throws RuntimeException If invalid parameters are provided
+     * @throws IllegalStateException If invalid parameters are provided
      */
     public ValueEval getDynamicReference(String workbookName, String sheetName, String refStrPart1,
                                          String refStrPart2, boolean isA1Style) {

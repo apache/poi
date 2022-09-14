@@ -1002,7 +1002,7 @@ public class HSSFCell extends CellBase {
     }
 
     /**
-     * @throws RuntimeException if the bounds are exceeded.
+     * @throws IllegalStateException if the bounds are exceeded.
      */
     private static void checkBounds(int cellIndex) {
         if (cellIndex < 0 || cellIndex > LAST_COLUMN_NUMBER) {

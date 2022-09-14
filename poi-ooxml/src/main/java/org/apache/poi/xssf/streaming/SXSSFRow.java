@@ -146,7 +146,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     }
 
     /**
-     * @throws RuntimeException if the bounds are exceeded.
+     * @throws IllegalStateException if the bounds are exceeded.
      */
     private static void checkBounds(int cellIndex) {
         SpreadsheetVersion v = SpreadsheetVersion.EXCEL2007;
@@ -219,7 +219,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * @param cellnum  0 based column number
      * @return Cell representing that column or null if undefined.
      * @see #getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)
-     * @throws RuntimeException if cellnum is out of bounds
+     * @throws IllegalStateException if cellnum is out of bounds
      */
     @Override
     public SXSSFCell getCell(int cellnum) {

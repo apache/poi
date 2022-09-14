@@ -97,7 +97,7 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
      * get an unsigned int value from an InputStream
      *
      * @return the unsigned int (32-bit) value
-     * @throws RuntimeException
+     * @throws IllegalStateException
      *                wraps any IOException thrown from reading the stream.
      */
     //@Override

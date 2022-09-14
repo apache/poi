@@ -1315,7 +1315,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param name The name the workbook will be referenced as in formulas
      * @param workbook The open workbook to fetch the link required information from
      *
-     * @throws RuntimeException stating that this method is not implemented yet.
+     * @throws IllegalStateException stating that this method is not implemented yet.
      */
     @Override
     @NotImplemented

@@ -51,7 +51,7 @@ public final class HMEFMessage {
     /**
      * @param inp input stream
      * @throws IOException If reading data from the stream fails
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public HMEFMessage(InputStream inp) throws IOException {

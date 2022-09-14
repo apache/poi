@@ -71,6 +71,7 @@ class OpcOutputStream extends DeflaterOutputStream {
     }
 
     /**
+     * @throws IllegalStateException if no entry found
      * @see ZipOutputStream#closeEntry()
      */
     public void closeEntry() throws IOException {

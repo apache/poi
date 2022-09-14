@@ -43,7 +43,7 @@ public class SimpleFraction {
      * @param value the double value to convert to a fraction.
      * @param maxDenominator maximum denominator value allowed.
      *
-     * @throws RuntimeException if the continued fraction failed to
+     * @throws IllegalStateException if the continued fraction failed to
      *      converge.
      * @throws IllegalArgumentException if value &gt; Integer.MAX_VALUE
      */
@@ -68,7 +68,7 @@ public class SimpleFraction {
      *        {@code epsilon} of {@code value}, in absolute terms.
      * @param maxDenominator maximum denominator value allowed.
      * @param maxIterations maximum number of convergents
-     * @throws RuntimeException if the continued fraction failed to
+     * @throws IllegalStateException if the continued fraction failed to
      *         converge.
      * @throws IllegalArgumentException if value > Integer.MAX_VALUE
      */

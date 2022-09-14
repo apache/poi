@@ -110,7 +110,7 @@ public class XMLSlideShow extends POIXMLDocument
     /**
      * @param pkg OPC package
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public XMLSlideShow(OPCPackage pkg) {
@@ -132,7 +132,7 @@ public class XMLSlideShow extends POIXMLDocument
      * @param is InputStream
      * @throws IOException If reading data from the stream fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public XMLSlideShow(InputStream is) throws IOException {
@@ -472,7 +472,7 @@ public class XMLSlideShow extends POIXMLDocument
      * @param index The slide number to remove.
      * @return The slide that was removed.
      *
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public XSLFSlide removeSlide(int index) {

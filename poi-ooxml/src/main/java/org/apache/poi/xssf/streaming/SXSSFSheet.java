@@ -1353,7 +1353,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      *
      * @param row   start row of a groupped range of rows (0-based)
      * @param collapse whether to expand/collapse the detail rows
-     * @throws RuntimeException if collapse is false as this is not implemented for SXSSF.
+     * @throws IllegalStateException if collapse is false as this is not implemented for SXSSF.
      */
     @Override
     public void setRowGroupCollapsed(int row, boolean collapse) {

@@ -236,7 +236,7 @@ public class XSLFSlideShow extends POIXMLDocument {
         try {
             commentRels = slidePart.getRelationshipsByType(XSLFRelation.COMMENTS.getRelation());
         } catch(InvalidFormatException e) {
-            throw new IllegalStateException(e);
+            throw new IOException(e);
         }
 
         if(commentRels.isEmpty()) {
@@ -244,7 +244,7 @@ public class XSLFSlideShow extends POIXMLDocument {
             return null;
         }
         if(commentRels.size() > 1) {
-            throw new IllegalStateException("Expecting 0 or 1 comments for a slide, but found " + commentRels.size());
+            throw new IOException("Expecting 0 or 1 comments for a slide, but found " + commentRels.size());
         }
 
         try {
@@ -256,7 +256,7 @@ public class XSLFSlideShow extends POIXMLDocument {
                 return commDoc.getCmLst();
             }
         } catch(InvalidFormatException e) {
-            throw new IllegalStateException(e);
+            throw new IOException(e);
         }
     }
 

@@ -160,7 +160,7 @@ public final class POIDataSamples {
      *
      * @param sampleFileName    the name of the test file
      * @return Verifies that the file with the given name exists in the test-data directory
-     * @throws RuntimeException if the file was not found
+     * @throws IllegalStateException if the file was not found
      */
     public File getFile(String sampleFileName) {
         File f = new File(_resolvedDataDir, sampleFileName);

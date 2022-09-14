@@ -247,7 +247,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @param pkg the OpenXML4J {@code OPC Package} object.
      * @throws IOException If reading data from the package fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public XSSFWorkbook(OPCPackage pkg) throws IOException {
@@ -279,7 +279,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      *
      * @throws IOException If reading data from the stream fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public XSSFWorkbook(InputStream is) throws IOException {
@@ -304,7 +304,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @throws IOException If reading data from the file fails
      * @throws InvalidFormatException If the file has a format that cannot be read or if the file is corrupted
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public XSSFWorkbook(File file) throws IOException, InvalidFormatException {
@@ -325,7 +325,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @param path   the file name.
      * @throws IOException If reading data from the file fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      *
      */
@@ -338,7 +338,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @param part  package part
      * @throws IOException If reading data from the Package Part fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      * @since POI 4.0.0
      */
@@ -455,7 +455,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * the DOM based parse of large sheets (see examples).
      *
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public void parseSheet(Map<String, XSSFSheet> shIdMap, CTSheet ctSheet) {
