@@ -232,7 +232,7 @@ public class DirectoryNode
                 _filesystem.remove(entry);
             } catch (IOException e) {
                 // TODO Work out how to report this, given we can't change the method signature...
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
         return rval;

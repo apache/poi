@@ -134,7 +134,7 @@ public final class OperationEvaluationContext {
             try {
                 targetEvaluator = _bookEvaluator.getOtherWorkbookEvaluator(workbookName);
             } catch (WorkbookNotFoundException e) {
-                throw new RuntimeException(e.getMessage(), e);
+                throw new IllegalStateException(e.getMessage(), e);
             }
 
             otherFirstSheetIndex = targetEvaluator.getSheetIndex(externalSheet.getSheetName());
@@ -144,7 +144,7 @@ public final class OperationEvaluationContext {
             }
 
             if (otherFirstSheetIndex < 0) {
-                throw new RuntimeException("Invalid sheet name '" + externalSheet.getSheetName()
+                throw new IllegalStateException("Invalid sheet name '" + externalSheet.getSheetName()
                         + "' in bool '" + workbookName + "'.");
             }
         }
@@ -227,11 +227,11 @@ public final class OperationEvaluationContext {
             case NAMED_RANGE:
                 EvaluationName nm = _workbook.getName(refStrPart1, _sheetIndex);
                 if (nm == null) {
-                    throw new RuntimeException("Specified name '" + refStrPart1 +
+                    throw new IllegalStateException("Specified name '" + refStrPart1 +
                             "' is not found in the workbook (sheetIndex=" + _sheetIndex + ").");
                 }
                 if (!nm.isRange()) {
-                    throw new RuntimeException("Specified name '" + refStrPart1 + "' is not a range as expected.");
+                    throw new IllegalStateException("Specified name '" + refStrPart1 + "' is not a range as expected.");
                 }
                 return _bookEvaluator.evaluateNameFormula(nm.getNameDefinition(), this);
         }
@@ -298,7 +298,7 @@ public final class OperationEvaluationContext {
             case BAD_CELL_OR_NAMED_RANGE:
                 return ErrorEval.REF_INVALID;
             case NAMED_RANGE:
-                throw new RuntimeException("Cannot evaluate '" + refStrPart1
+                throw new IllegalStateException("Cannot evaluate '" + refStrPart1
                         + "'. Indirect evaluation of defined names not supported yet");
         }
 
@@ -417,7 +417,7 @@ public final class OperationEvaluationContext {
 
     private ValueEval convertObjectEval(Object token) {
         if (token == null) {
-            throw new RuntimeException("Array item cannot be null");
+            throw new IllegalStateException("Array item cannot be null");
         }
         if (token instanceof String) {
             return new StringEval((String) token);
@@ -533,7 +533,7 @@ public final class OperationEvaluationContext {
             EvaluationName evaluationName = refWorkbookEvaluator.getName(externName.getName(), externName.getIx() - 1);
             if (evaluationName != null && evaluationName.hasFormula()) {
                 if (evaluationName.getNameDefinition().length > 1) {
-                    throw new RuntimeException("Complex name formulas not supported yet");
+                    throw new IllegalStateException("Complex name formulas not supported yet");
                 }
 
                 // Need to evaluate the reference in the context of the other book

@@ -119,7 +119,7 @@ public final class Countif extends Fixed2ArgFunction {
                 case NE:
                     return !cmpResult;
             }
-            throw new RuntimeException("Cannot call boolean evaluate on non-equality operator '"
+            throw new IllegalStateException("Cannot call boolean evaluate on non-equality operator '"
                     + _representation + "'");
         }
         public boolean evaluate(int cmpResult) {
@@ -133,7 +133,7 @@ public final class Countif extends Fixed2ArgFunction {
                 case GT: return cmpResult >  0;
                 case GE: return cmpResult >= 0;
             }
-            throw new RuntimeException("Cannot call boolean evaluate on non-equality operator '"
+            throw new IllegalStateException("Cannot call boolean evaluate on non-equality operator '"
                     + _representation + "'");
         }
         @Override
@@ -477,7 +477,7 @@ public final class Countif extends Fixed2ArgFunction {
         if(evaluatedCriteriaArg == BlankEval.instance) {
             return null;
         }
-        throw new RuntimeException("Unexpected type for criteria ("
+        throw new IllegalStateException("Unexpected type for criteria ("
                 + evaluatedCriteriaArg.getClass().getName() + ")");
     }
 

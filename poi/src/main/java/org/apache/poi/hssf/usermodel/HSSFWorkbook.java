@@ -1156,7 +1156,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         for (int defNameIndex = 0; defNameIndex < names.size(); defNameIndex++) {
             NameRecord r = workbook.getNameRecord(defNameIndex);
             if (r == null) {
-                throw new RuntimeException("Unable to find all defined names to iterate over");
+                throw new IllegalStateException("Unable to find all defined names to iterate over");
             }
             if (!r.isBuiltInName() || r.getBuiltInName() != builtinCode) {
                 continue;

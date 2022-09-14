@@ -360,7 +360,7 @@ public class ExcelExtractor implements POIOLE2TextExtractor, org.apache.poi.ss.e
                                 }
                                 break;
                             default:
-                                throw new RuntimeException("Unexpected cell type (" + cell.getCellType() + ")");
+                                throw new IllegalStateException("Unexpected cell type (" + cell.getCellType() + ")");
                         }
 
                         // Output the comment, if requested and exists

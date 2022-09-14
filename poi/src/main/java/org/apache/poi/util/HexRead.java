@@ -134,7 +134,7 @@ public class HexRead {
         try {
             return readData(new ByteArrayInputStream( data.getBytes(StringUtil.UTF8) ), -1);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

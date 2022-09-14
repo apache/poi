@@ -99,7 +99,7 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
         double result = Double.longBitsToDouble(valueLongBits);
         if (Double.isNaN(result)) {
             // (Because Excel typically doesn't write NaN
-            throw new RuntimeException("Did not expect to read NaN");
+            throw new IllegalStateException("Did not expect to read NaN");
         }
         return result;
     }

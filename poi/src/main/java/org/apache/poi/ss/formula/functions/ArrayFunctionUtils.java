@@ -129,7 +129,7 @@ final class ArrayFunctionUtils {
         if (ve == BlankEval.instance) {
             return null;
         }
-        throw new RuntimeException("Invalid ValueEval type passed for conversion: ("
+        throw new IllegalStateException("Invalid ValueEval type passed for conversion: ("
                 + ve.getClass() + ")");
     }
 

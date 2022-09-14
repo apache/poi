@@ -41,7 +41,7 @@ public class TempFilePOIFSFileSystem extends POIFSFileSystem {
             tempFile = TempFile.createTempFile("poifs", ".tmp");
             _data = new FileBackedDataSource(tempFile, false);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to create data source", e);
+            throw new IllegalStateException("Failed to create data source", e);
         }
     }
 

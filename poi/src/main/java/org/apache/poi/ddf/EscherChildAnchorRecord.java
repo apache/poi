@@ -69,7 +69,7 @@ public class EscherChildAnchorRecord extends EscherRecord {
             field_4_dy2 =  LittleEndian.getShort( data, pos + size );size+=2;
             break;
         default:
-            throw new RuntimeException("Invalid EscherChildAnchorRecord - neither 8 nor 16 bytes.");
+            throw new IllegalStateException("Invalid EscherChildAnchorRecord - neither 8 nor 16 bytes.");
         }
 
         return 8 + size;

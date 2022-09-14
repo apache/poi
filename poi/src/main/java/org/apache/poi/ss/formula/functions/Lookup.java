@@ -84,7 +84,7 @@ public final class Lookup extends Var2or3ArgFunction {
             ValueVector resultVector = createVector(aeResultVector);
             if(lookupVector.getSize() > resultVector.getSize()) {
                 // Excel seems to handle this by accessing past the end of the result vector.
-                throw new RuntimeException("Lookup vector and result vector of differing sizes not supported yet");
+                throw new IllegalStateException("Lookup vector and result vector of differing sizes not supported yet");
             }
             int index = LookupUtils.lookupFirstIndexOfValue(lookupValue, lookupVector, true);
 
@@ -100,6 +100,6 @@ public final class Lookup extends Var2or3ArgFunction {
             return result;
         }
         // extra complexity required to emulate the way LOOKUP can handles these abnormal cases.
-        throw new RuntimeException("non-vector lookup or result areas not supported yet");
+        throw new IllegalStateException("non-vector lookup or result areas not supported yet");
     }
 }

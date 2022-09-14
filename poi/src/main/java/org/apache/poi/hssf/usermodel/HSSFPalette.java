@@ -173,7 +173,7 @@ public final class HSSFPalette {
                 return getColor(i);
             }
         }
-        throw new RuntimeException("Could not find free color index");
+        throw new IllegalStateException("Could not find free color index");
     }
 
     private static final class CustomColor extends HSSFColor {

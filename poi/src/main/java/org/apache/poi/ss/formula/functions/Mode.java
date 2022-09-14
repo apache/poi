@@ -128,6 +128,6 @@ public final class Mode implements Function {
             temp.add(Double.valueOf(((NumberEval) arg).getNumberValue()));
             return;
         }
-        throw new RuntimeException("Unexpected value type (" + arg.getClass().getName() + ")");
+        throw new IllegalStateException("Unexpected value type (" + arg.getClass().getName() + ")");
     }
 }

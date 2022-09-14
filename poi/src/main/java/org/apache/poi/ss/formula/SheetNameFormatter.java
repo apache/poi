@@ -68,7 +68,7 @@ public final class SheetNameFormatter {
                 appendAndEscape(out, rawSheetName);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -96,7 +96,7 @@ public final class SheetNameFormatter {
                 appendOrREF(out, rawSheetName);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -125,7 +125,7 @@ public final class SheetNameFormatter {
                 sb.append(ch);
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -196,7 +196,7 @@ public final class SheetNameFormatter {
             case '\n':
             case '\r':
             case '\t':
-                throw new RuntimeException("Illegal character (0x"
+                throw new IllegalStateException("Illegal character (0x"
                         + Integer.toHexString(ch) + ") found in sheet name");
         }
         return true;

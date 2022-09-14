@@ -177,7 +177,7 @@ public class VariantSupport extends Variant {
                 final byte[] v = IOUtils.toByteArray(lei, length, CodePageString.getMaxRecordLength());
                 throw new ReadingNotSupportedException( type, v );
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
 

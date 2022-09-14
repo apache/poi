@@ -1138,7 +1138,7 @@ public class DataFormatter {
             case ERROR:
                 return FormulaError.forInt(cell.getErrorCellValue()).getString();
             default:
-                throw new RuntimeException("Unexpected celltype (" + cellType + ")");
+                throw new IllegalStateException("Unexpected celltype (" + cellType + ")");
         }
     }
 

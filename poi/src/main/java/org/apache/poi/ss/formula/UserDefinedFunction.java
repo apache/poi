@@ -36,11 +36,20 @@ final class UserDefinedFunction implements FreeRefFunction {
         // enforce singleton
     }
 
+    /**
+     * @param args the pre-evaluated arguments for this function. args is never {@code null},
+     *             nor are any of its elements.
+     * @param ec primarily used to identify the source cell containing the formula being evaluated.
+     *             may also be used to dynamically create reference evals.
+     * @return value
+     * @throws IllegalStateException if first arg is not a {@link FunctionNameEval}
+     * @throws NotImplementedFunctionException if function is not implemented
+     */
     @Override
     public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
         int nIncomingArgs = args.length;
-        if(nIncomingArgs < 1) {
-            throw new RuntimeException("function name argument missing");
+        if (nIncomingArgs < 1) {
+            throw new IllegalStateException("function name argument missing");
         }
 
         ValueEval nameArg = args[0];
@@ -48,7 +57,7 @@ final class UserDefinedFunction implements FreeRefFunction {
         if (nameArg instanceof FunctionNameEval) {
             functionName = ((FunctionNameEval) nameArg).getFunctionName();
         } else {
-            throw new RuntimeException("First argument should be a NameEval, but got ("
+            throw new IllegalStateException("First argument should be a NameEval, but got ("
                     + nameArg.getClass().getName() + ")");
         }
         FreeRefFunction targetFunc = ec.findUserDefinedFunction(functionName);

@@ -192,7 +192,7 @@ public final class ArrayPtg extends Ptg {
     private static String getConstantText(Object o) {
 
         if (o == null) {
-            throw new RuntimeException("Array item cannot be null");
+            throw new IllegalStateException("Array item cannot be null");
         }
         if (o instanceof String) {
             return "\"" + o + "\"";

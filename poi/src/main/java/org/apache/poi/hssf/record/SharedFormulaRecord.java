@@ -95,7 +95,7 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
         int formulaColumn = formula.getColumn();
         //Sanity checks
         if (!isInRange(formulaRow, formulaColumn)) {
-            throw new RuntimeException("Shared Formula Conversion: Coding Error");
+            throw new IllegalStateException("Shared Formula Conversion: Coding Error");
         }
 
         SharedFormula sf = new SharedFormula(SpreadsheetVersion.EXCEL97);

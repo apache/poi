@@ -1659,7 +1659,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
         try {
             return (Graphics)clone();
         } catch (CloneNotSupportedException e){
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

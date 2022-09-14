@@ -214,10 +214,10 @@ public final class FormulaParser {
     }
 
     /** Read New Character From Input Stream */
-    private void GetChar() {
+    private void nextChar() {
         // The intersection operator is a space.  We track whether the run of
         // whitespace preceding "look" counts as an intersection operator.
-        if (IsWhite(look)) {
+        if (isWhite(look)) {
             if (look == ' ') {
                 _inIntersection = true;
             }
@@ -228,7 +228,7 @@ public final class FormulaParser {
 
         // Check to see if we've walked off the end of the string.
         if (_pointer > _formulaLength) {
-            throw new RuntimeException("Parsed past the end of the formula, pos: " + _pointer +
+            throw new IllegalStateException("Parsed past the end of the formula, pos: " + _pointer +
                     ", length: " + _formulaLength + ", formula: " + _formulaString);
         }
         if (_pointer < _formulaLength) {
@@ -275,24 +275,24 @@ public final class FormulaParser {
     }
 
     /** Recognize an Alpha Character */
-    private static boolean IsAlpha(int c) {
+    private static boolean isAlpha(int c) {
         return Character.isLetter(c) || c == '$' || c=='_';
     }
 
     /** Recognize a Decimal Digit */
-    private static boolean IsDigit(int c) {
+    private static boolean isDigit(int c) {
         return Character.isDigit(c);
     }
 
     /** Recognize White Space */
-    private static boolean IsWhite(int c) {
+    private static boolean isWhite(int c) {
         return  c ==' ' || c== TAB || c == CR || c == LF;
     }
 
     /** Skip Over Leading White Space */
-    private void SkipWhite() {
-        while (IsWhite(look)) {
-            GetChar();
+    private void skipWhite() {
+        while (isWhite(look)) {
+            nextChar();
         }
     }
 
@@ -301,7 +301,7 @@ public final class FormulaParser {
      *  unchecked exception. This method does <b>not</b> consume whitespace (before or after the
      *  matched character).
      */
-    private void Match(int x) {
+    private void match(int x) {
         if (look != x) {
             throw expected(new StringBuilder()
                     .append("'")
@@ -309,16 +309,16 @@ public final class FormulaParser {
                     .append("'")
                     .toString());
         }
-        GetChar();
+        nextChar();
     }
 
     /** Get a Number */
-    private String GetNum() {
+    private String nextNum() {
         StringBuilder value = new StringBuilder();
 
-        while (IsDigit(this.look)){
+        while (isDigit(this.look)){
             value.appendCodePoint(this.look);
-            GetChar();
+            nextChar();
         }
         return value.length() == 0 ? null : value.toString();
     }
@@ -328,7 +328,7 @@ public final class FormulaParser {
         boolean hasRange = false;
         while (look == ':') {
             int pos = _pointer;
-            GetChar();
+            nextChar();
             ParseNode nextPart = parseRangeable();
             // Note - no range simplification here. An expr like "A1:B2:C3:D4:E5" should be
             // grouped into area ref pairs like: "(A1:B2):(C3:D4):E5"
@@ -464,14 +464,14 @@ public final class FormulaParser {
      *
      */
     private ParseNode parseRangeable() {
-        SkipWhite();
+        skipWhite();
         int savePointer = _pointer;
         SheetIdentifier sheetIden = parseSheetName(false);
 
         if (sheetIden == null) {
             resetPointer(savePointer);
         } else {
-            SkipWhite();
+            skipWhite();
             savePointer = _pointer;
         }
 
@@ -497,15 +497,15 @@ public final class FormulaParser {
             }
             return parseNonRange(savePointer);
         }
-        boolean whiteAfterPart1 = IsWhite(look);
+        boolean whiteAfterPart1 = isWhite(look);
         if (whiteAfterPart1) {
-            SkipWhite();
+            skipWhite();
         }
 
         if (look == ':') {
             int colonPos = _pointer;
-            GetChar();
-            SkipWhite();
+            nextChar();
+            skipWhite();
             SimpleRangePart part2 = parseSimpleRangePart();
             if (part2 != null && !part1.isCompatibleForArea(part2)) {
                 // second part is not compatible with an area ref e.g. S!A1:S!B2
@@ -529,15 +529,15 @@ public final class FormulaParser {
         }
 
         if (look == '.') {
-            GetChar();
+            nextChar();
             int dotCount = 1;
             while (look =='.') {
                 dotCount ++;
-                GetChar();
+                nextChar();
             }
-            boolean whiteBeforePart2 = IsWhite(look);
+            boolean whiteBeforePart2 = isWhite(look);
 
-            SkipWhite();
+            skipWhite();
             SimpleRangePart part2 = parseSimpleRangePart();
             String part1And2 = _formulaString.substring(savePointer-1, _pointer-1);
             if (part2 == null) {
@@ -635,7 +635,7 @@ public final class FormulaParser {
         // Do NOT return before done reading all the structured reference tokens from the input stream.
         // Throwing exceptions is okay.
         int savePtr0 = _pointer;
-        GetChar();
+        nextChar();
 
         boolean isTotalsSpec = false;
         boolean isThisRowSpec = false;
@@ -671,16 +671,16 @@ public final class FormulaParser {
             }
             nSpecQuantifiers++;
             if (look == ','){
-                GetChar();
+                nextChar();
             } else {
                 break;
             }
         }
         boolean isThisRow = false;
-        SkipWhite();
+        skipWhite();
         if (look == '@') {
             isThisRow = true;
-            GetChar();
+            nextChar();
         }
         // parse column quantifier
         String endColumnName = null;
@@ -694,7 +694,7 @@ public final class FormulaParser {
             if (look == ','){
                 throw new FormulaParseException("The formula "+ _formulaString + " is illegal: you should not use ',' with column quantifiers");
             } else if (look == ':') {
-                GetChar();
+                nextChar();
                 endColumnName = parseAsColumnQuantifier();
                 nColQuantifiers++;
                 if (endColumnName == null) {
@@ -738,7 +738,7 @@ public final class FormulaParser {
                 }
             }
         } else {
-            Match(']');
+            match(']');
         }
         // Done reading from input stream
         // Ok to return now
@@ -836,19 +836,19 @@ public final class FormulaParser {
         if ( look != '[') {
             return null;
         }
-        GetChar();
+        nextChar();
         if (look == '#') {
             return null;
         }
         if (look == '@') {
-            GetChar();
+            nextChar();
         }
         StringBuilder name = new StringBuilder();
         while (look!=']') {
            name.appendCodePoint(look);
-           GetChar();
+           nextChar();
         }
-        Match(']');
+        match(']');
         return name.toString();
     }
     /**
@@ -859,16 +859,16 @@ public final class FormulaParser {
         if ( look != '[') {
             return null;
         }
-        GetChar();
+        nextChar();
         if( look != '#') {
             return null;
         }
-        GetChar();
+        nextChar();
         String name = parseAsName();
         if ( name.equals("This")) {
             name = name + ' ' + parseAsName();
         }
-        Match(']');
+        match(']');
         return name;
     }
 
@@ -934,9 +934,9 @@ public final class FormulaParser {
         }
         while (isValidDefinedNameChar(look)) {
             sb.appendCodePoint(look);
-            GetChar();
+            nextChar();
         }
-        SkipWhite();
+        skipWhite();
 
         return sb.toString();
     }
@@ -1142,12 +1142,12 @@ public final class FormulaParser {
 
     private String getBookName() {
         StringBuilder sb = new StringBuilder();
-        GetChar();
+        nextChar();
         while (look != ']') {
             sb.appendCodePoint(look);
-            GetChar();
+            nextChar();
         }
-        GetChar();
+        nextChar();
         return sb.toString();
     }
 
@@ -1165,7 +1165,7 @@ public final class FormulaParser {
 
         if (look == '\'' || isSndPartOfQuotedRange) {
             if (!isSndPartOfQuotedRange) {
-                Match('\'');
+                match('\'');
             }
 
             if (look == '[')
@@ -1175,14 +1175,14 @@ public final class FormulaParser {
             boolean done = look == '\'';
             while(!done) {
                 sb.appendCodePoint(look);
-                GetChar();
+                nextChar();
                 switch (look){
                     case '\'' : {
-                        GetChar();
+                        nextChar();
                         if (look == '\''){
                             // Any single quotes which were already present in the sheet name will be converted to double single quotes ('')
                             // so switch back to single quote
-                            GetChar();
+                            nextChar();
                             break;
                         }
                     }
@@ -1193,9 +1193,9 @@ public final class FormulaParser {
 
             NameIdentifier iden = new NameIdentifier(sb.toString(), true);
             // quoted identifier - can't concatenate anything more
-            SkipWhite();
+            skipWhite();
             if (look == '!') {
-                GetChar();
+                nextChar();
                 return new SheetIdentifier(bookName, iden);
             }
             // See if it's a multi-sheet range, eg Sheet1:Sheet3!A1
@@ -1211,15 +1211,15 @@ public final class FormulaParser {
             // can concatenate idens with dots
             while (isUnquotedSheetNameChar(look)) {
                 sb.appendCodePoint(look);
-                GetChar();
+                nextChar();
             }
             if (look == '\'') {
-                GetChar();
+                nextChar();
             }
             NameIdentifier iden = new NameIdentifier(sb.toString(), false);
-            SkipWhite();
+            skipWhite();
             if (look == '!') {
-                GetChar();
+                nextChar();
                 return new SheetIdentifier(bookName, iden);
             }
             // See if it's a multi-sheet range, eg Sheet1:Sheet3!A1
@@ -1230,7 +1230,7 @@ public final class FormulaParser {
         }
         if (look == '!' && bookName != null) {
             // Raw book reference, without a sheet
-            GetChar();
+            nextChar();
             return new SheetIdentifier(bookName, null);
         }
         return null;
@@ -1241,7 +1241,7 @@ public final class FormulaParser {
      *  Sheet1, see if it's actually a range eg Sheet1:Sheet2!
      */
     private SheetIdentifier parseSheetRange(String bookname, NameIdentifier sheet1Name, boolean isSndPartOfQuotedRange) {
-        GetChar();
+        nextChar();
         SheetIdentifier sheet2 = parseSheetName(isSndPartOfQuotedRange);
         if (sheet2 != null) {
            return new SheetRangeIdentifier(bookname, sheet1Name, sheet2.getSheetIdentifier());
@@ -1290,7 +1290,7 @@ public final class FormulaParser {
             if(isFunc){
                 int savePointer = _pointer;
                 resetPointer(_pointer + str.length());
-                SkipWhite();
+                skipWhite();
                 // open bracket indicates that the argument is a function,
                 // the returning value should be false, i.e. "not a valid cell reference"
                 result = look != '(';
@@ -1356,9 +1356,9 @@ public final class FormulaParser {
             }
         }
 
-        Match('(');
+        match('(');
         ParseNode[] args = Arguments();
-        Match(')');
+        match(')');
 
         return getFunction(name, nameToken, args);
     }
@@ -1465,14 +1465,14 @@ public final class FormulaParser {
     private ParseNode[] Arguments() {
         //average 2 args per function
         List<ParseNode> temp = new ArrayList<>(2);
-        SkipWhite();
+        skipWhite();
         if(look == ')') {
             return ParseNode.EMPTY_ARRAY;
         }
 
         boolean missedPrevArg = true;
         while (true) {
-            SkipWhite();
+            skipWhite();
             if (isArgumentDelimiter(look)) {
                 if (missedPrevArg) {
                     temp.add(new ParseNode(MissingArgPtg.instance));
@@ -1480,13 +1480,13 @@ public final class FormulaParser {
                 if (look == ')') {
                     break;
                 }
-                Match(',');
+                match(',');
                 missedPrevArg = true;
                 continue;
             }
             temp.add(intersectionExpression());
             missedPrevArg = false;
-            SkipWhite();
+            skipWhite();
             if (!isArgumentDelimiter(look)) {
                 throw expected("',' or ')'");
             }
@@ -1500,11 +1500,11 @@ public final class FormulaParser {
     private ParseNode powerFactor() {
         ParseNode result = percentFactor();
         while(true) {
-            SkipWhite();
+            skipWhite();
             if(look != '^') {
                 return result;
             }
-            Match('^');
+            match('^');
             ParseNode other = percentFactor();
             result = new ParseNode(PowerPtg.instance, result, other);
         }
@@ -1513,11 +1513,11 @@ public final class FormulaParser {
     private ParseNode percentFactor() {
         ParseNode result = parseSimpleFactor();
         while(true) {
-            SkipWhite();
+            skipWhite();
             if(look != '%') {
                 return result;
             }
-            Match('%');
+            match('%');
             result = new ParseNode(PercentPtg.instance, result);
         }
     }
@@ -1527,32 +1527,32 @@ public final class FormulaParser {
      * factors (without ^ or % )
      */
     private ParseNode parseSimpleFactor() {
-        SkipWhite();
+        skipWhite();
         switch(look) {
             case '#':
                 return new ParseNode(ErrPtg.valueOf(parseErrorLiteral()));
             case '-':
-                Match('-');
+                match('-');
                 return parseUnary(false);
             case '+':
-                Match('+');
+                match('+');
                 return parseUnary(true);
             case '(':
-                Match('(');
+                match('(');
                 ParseNode inside = unionExpression();
-                Match(')');
+                match(')');
                 return new ParseNode(ParenthesisPtg.instance, inside);
             case '"':
                 return new ParseNode(new StringPtg(parseStringLiteral()));
             case '{':
-                Match('{');
+                match('{');
                 ParseNode arrayNode = parseArray();
-                Match('}');
+                match('}');
                 return arrayNode;
         }
         // named ranges and tables can start with underscore or backslash
         // see https://support.office.com/en-us/article/Define-and-use-names-in-formulas-4d0f13ac-53b7-422e-afd2-abd7ff379c64?ui=en-US&rs=en-US&ad=US#bmsyntax_rules_for_names
-        if (IsAlpha(look) || Character.isDigit(look) || look == '\'' || look == '[' || look == '_' || look == '\\' ) {
+        if (isAlpha(look) || Character.isDigit(look) || look == '\'' || look == '[' || look == '_' || look == '\\' ) {
             return parseRangeExpression();
         }
         if (look == '.') {
@@ -1564,7 +1564,7 @@ public final class FormulaParser {
 
     private ParseNode parseUnary(boolean isPlus) {
 
-        boolean numberFollows = IsDigit(look) || look=='.';
+        boolean numberFollows = isDigit(look) || look=='.';
         ParseNode factor = powerFactor();
 
         if (numberFollows) {
@@ -1602,7 +1602,7 @@ public final class FormulaParser {
             if (look != ';') {
                 throw expected("'}' or ';'");
             }
-            Match(';');
+            match(';');
         }
         int nRows = rowsData.size();
         Object[][] values2d = new Object[nRows][];
@@ -1626,13 +1626,13 @@ public final class FormulaParser {
         List<Object> temp = new ArrayList<>();
         while (true) {
             temp.add(parseArrayItem());
-            SkipWhite();
+            skipWhite();
             switch(look) {
                 case '}':
                 case ';':
                     break;
                 case ',':
-                    Match(',');
+                    match(',');
                     continue;
                 default:
                     throw expected("'}' or ','");
@@ -1647,7 +1647,7 @@ public final class FormulaParser {
     }
 
     private Object parseArrayItem() {
-        SkipWhite();
+        skipWhite();
         switch(look) {
             case '"': return parseStringLiteral();
             case '#': return ErrorConstant.valueOf(parseErrorLiteral());
@@ -1655,8 +1655,8 @@ public final class FormulaParser {
             case 'T': case 't':
                 return parseBooleanLiteral();
             case '-':
-                Match('-');
-                SkipWhite();
+                match('-');
+                skipWhite();
                 return convertArrayNumber(parseNumber(), false);
         }
         // else assume number
@@ -1681,7 +1681,7 @@ public final class FormulaParser {
         } else  if (ptg instanceof NumberPtg) {
             value = ((NumberPtg)ptg).getValue();
         } else {
-            throw new RuntimeException("Unexpected ptg (" + ptg.getClass().getName() + ")");
+            throw new IllegalStateException("Unexpected ptg (" + ptg.getClass().getName() + ")");
         }
         if (!isPositive) {
             value = -value;
@@ -1692,25 +1692,25 @@ public final class FormulaParser {
     private Ptg parseNumber() {
         String number2 = null;
         String exponent = null;
-        String number1 = GetNum();
+        String number1 = nextNum();
 
         if (look == '.') {
-            GetChar();
-            number2 = GetNum();
+            nextChar();
+            number2 = nextNum();
         }
 
         if (look == 'E') {
-            GetChar();
+            nextChar();
 
             String sign = "";
             if (look == '+') {
-                GetChar();
+                nextChar();
             } else if (look == '-') {
-                GetChar();
+                nextChar();
                 sign = "-";
             }
 
-            String number = GetNum();
+            String number = nextNum();
             if (number == null) {
                 throw expected("Integer");
             }
@@ -1726,7 +1726,7 @@ public final class FormulaParser {
 
 
     private int parseErrorLiteral() {
-        Match('#');
+        match('#');
         String part1 = parseUnquotedIdentifier();
         if (part1 == null) {
             throw expected("remainder of error constant literal");
@@ -1737,7 +1737,7 @@ public final class FormulaParser {
             case 'V': {
                 FormulaError fe = FormulaError.VALUE;
                 if(part1.equals(fe.name())) {
-                    Match('!');
+                    match('!');
                     return fe.getCode();
                 }
                 throw expected(fe.getString());
@@ -1745,7 +1745,7 @@ public final class FormulaParser {
             case 'R': {
                 FormulaError fe = FormulaError.REF;
                 if(part1.equals(fe.name())) {
-                    Match('!');
+                    match('!');
                     return fe.getCode();
                 }
                 throw expected(fe.getString());
@@ -1753,9 +1753,9 @@ public final class FormulaParser {
             case 'D': {
                 FormulaError fe = FormulaError.DIV0;
                 if(part1.equals("DIV")) {
-                    Match('/');
-                    Match('0');
-                    Match('!');
+                    match('/');
+                    match('0');
+                    match('!');
                     return fe.getCode();
                 }
                 throw expected(fe.getString());
@@ -1764,26 +1764,26 @@ public final class FormulaParser {
                 FormulaError fe = FormulaError.NAME;
                 if(part1.equals(fe.name())) {
                     // only one that ends in '?'
-                    Match('?');
+                    match('?');
                     return fe.getCode();
                 }
                 fe = FormulaError.NUM;
                 if(part1.equals(fe.name())) {
-                    Match('!');
+                    match('!');
                     return fe.getCode();
                 }
                 fe = FormulaError.NULL;
                 if(part1.equals(fe.name())) {
-                    Match('!');
+                    match('!');
                     return fe.getCode();
                 }
                 fe = FormulaError.NA;
                 if(part1.equals("N")) {
-                    Match('/');
+                    match('/');
                     if(look != 'A' && look != 'a') {
                         throw expected(fe.getString());
                     }
-                    Match(look);
+                    match(look);
                     // Note - no '!' or '?' suffix
                     return fe.getCode();
                 }
@@ -1800,7 +1800,7 @@ public final class FormulaParser {
         StringBuilder sb = new StringBuilder();
         while (Character.isLetterOrDigit(look) || look == '.') {
             sb.appendCodePoint(look);
-            GetChar();
+            nextChar();
         }
         if (sb.length() < 1) {
             return null;
@@ -1854,18 +1854,18 @@ public final class FormulaParser {
 
 
     private String parseStringLiteral() {
-        Match('"');
+        match('"');
 
         StringBuilder token = new StringBuilder();
         while (true) {
             if (look == '"') {
-                GetChar();
+                nextChar();
                 if (look != '"') {
                     break;
                 }
              }
             token.appendCodePoint(look);
-            GetChar();
+            nextChar();
         }
         return token.toString();
     }
@@ -1874,15 +1874,15 @@ public final class FormulaParser {
     private ParseNode  Term() {
         ParseNode result = powerFactor();
         while(true) {
-            SkipWhite();
+            skipWhite();
             Ptg operator;
             switch(look) {
                 case '*':
-                    Match('*');
+                    match('*');
                     operator = MultiplyPtg.instance;
                     break;
                 case '/':
-                    Match('/');
+                    match('/');
                     operator = DividePtg.instance;
                     break;
                 default:
@@ -1897,9 +1897,9 @@ public final class FormulaParser {
         ParseNode result = intersectionExpression();
         boolean hasUnions = false;
         while (true) {
-            SkipWhite();
+            skipWhite();
             if (look == ',') {
-                GetChar();
+                nextChar();
                 hasUnions = true;
                 ParseNode other = intersectionExpression();
                 result = new ParseNode(UnionPtg.instance, result, other);
@@ -1916,7 +1916,7 @@ public final class FormulaParser {
         ParseNode result = comparisonExpression();
         boolean hasIntersections = false;
         while (true) {
-            SkipWhite();
+            skipWhite();
             if (_inIntersection) {
                 int savePointer = _pointer;
 
@@ -1942,7 +1942,7 @@ public final class FormulaParser {
     private ParseNode comparisonExpression() {
         ParseNode result = concatExpression();
         while (true) {
-            SkipWhite();
+            skipWhite();
             switch(look) {
                 case '=':
                 case '>':
@@ -1958,24 +1958,24 @@ public final class FormulaParser {
 
     private Ptg getComparisonToken() {
         if(look == '=') {
-            Match(look);
+            match(look);
             return EqualPtg.instance;
         }
         boolean isGreater = look == '>';
-        Match(look);
+        match(look);
         if(isGreater) {
             if(look == '=') {
-                Match('=');
+                match('=');
                 return GreaterEqualPtg.instance;
             }
             return GreaterThanPtg.instance;
         }
         switch(look) {
             case '=':
-                Match('=');
+                match('=');
                 return LessEqualPtg.instance;
             case '>':
-                Match('>');
+                match('>');
                 return NotEqualPtg.instance;
         }
         return LessThanPtg.instance;
@@ -1985,11 +1985,11 @@ public final class FormulaParser {
     private ParseNode concatExpression() {
         ParseNode result = additiveExpression();
         while (true) {
-            SkipWhite();
+            skipWhite();
             if(look != '&') {
                 break; // finished with concat expression
             }
-            Match('&');
+            match('&');
             ParseNode other = additiveExpression();
             result = new ParseNode(ConcatPtg.instance, result, other);
         }
@@ -2001,15 +2001,15 @@ public final class FormulaParser {
     private ParseNode additiveExpression() {
         ParseNode result = Term();
         while (true) {
-            SkipWhite();
+            skipWhite();
             Ptg operator;
             switch(look) {
                 case '+':
-                    Match('+');
+                    match('+');
                     operator = AddPtg.instance;
                     break;
                 case '-':
-                    Match('-');
+                    match('-');
                     operator = SubtractPtg.instance;
                     break;
                 default:
@@ -2040,7 +2040,7 @@ end;
      */
     private void parse() {
         _pointer=0;
-        GetChar();
+        nextChar();
         _rootNode = unionExpression();
 
         if(_pointer <= _formulaLength) {

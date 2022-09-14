@@ -56,14 +56,14 @@ final class FunctionDataBuilder {
         prevFM = _functionDataByName.get(functionName);
         if(prevFM != null) {
             if(!hasFootnote || !_mutatingFunctionIndexes.contains(indexKey)) {
-                throw new RuntimeException("Multiple entries for function name '" + functionName + "'");
+                throw new IllegalStateException("Multiple entries for function name '" + functionName + "'");
             }
             _functionDataByIndex.remove(prevFM.getIndex());
         }
         prevFM = _functionDataByIndex.get(indexKey);
         if(prevFM != null) {
             if(!hasFootnote || !_mutatingFunctionIndexes.contains(indexKey)) {
-                throw new RuntimeException("Multiple entries for function index (" + functionIndex + ")");
+                throw new IllegalStateException("Multiple entries for function index (" + functionIndex + ")");
             }
             _functionDataByName.remove(prevFM.getName());
         }

@@ -219,7 +219,7 @@ public class HSSFCell extends CellBase {
                          ? CellType.BOOLEAN
                          : CellType.ERROR;
         }
-        throw new RuntimeException("Bad cell value rec (" + cval.getClass().getName() + ")");
+        throw new IllegalStateException("Bad cell value rec (" + cval.getClass().getName() + ")");
     }
 
     /**

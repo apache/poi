@@ -59,7 +59,7 @@ final class StaticFontMetrics {
             try {
                 fontMetricsProps = loadMetrics();
             } catch (IOException e) {
-                throw new RuntimeException("Could not load font metrics", e);
+                throw new IllegalStateException("Could not load font metrics", e);
             }
         }
 

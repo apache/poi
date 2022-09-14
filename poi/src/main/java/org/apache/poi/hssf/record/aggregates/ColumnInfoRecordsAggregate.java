@@ -53,7 +53,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
             cirPrev = cir;
         }
         if (records.size() < 1) {
-            throw new RuntimeException("No column info records found");
+            throw new IllegalStateException("No column info records found");
         }
         if (!isInOrder) {
             records.sort(ColumnInfoRecordsAggregate::compareColInfos);
@@ -97,7 +97,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
             if (cirPrev != null && compareColInfos(cirPrev, cir) > 0) {
                 // Excel probably wouldn't mind, but there is much logic in this class
                 // that assumes the column info records are kept in order
-                throw new RuntimeException("Column info records are out of order");
+                throw new IllegalStateException("Column info records are out of order");
             }
             cirPrev = cir;
         }

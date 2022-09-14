@@ -38,7 +38,7 @@ public final class FuncPtg extends AbstractFunctionPtg {
     public static FuncPtg create(int functionIndex) {
         FunctionMetadata fm = FunctionMetadataRegistry.getFunctionByIndex(functionIndex);
         if(fm == null) {
-            throw new RuntimeException("Invalid built-in function index (" + functionIndex + ")");
+            throw new IllegalStateException("Invalid built-in function index (" + functionIndex + ")");
         }
         return new FuncPtg(functionIndex, fm);
     }

@@ -429,7 +429,7 @@ public final class IOUtils {
     public static long copy(InputStream srcStream, File destFile) throws IOException {
         File destDirectory = destFile.getParentFile();
         if (!(destDirectory.exists() || destDirectory.mkdirs())) {
-            throw new RuntimeException("Can't create destination directory: "+destDirectory);
+            throw new IllegalStateException("Can't create destination directory: "+destDirectory);
         }
         try (OutputStream destStream = new FileOutputStream(destFile)) {
             return IOUtils.copy(srcStream, destStream);

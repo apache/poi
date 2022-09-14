@@ -158,7 +158,7 @@ public class POIFSStream implements Iterable<ByteBuffer>
             try {
                 this.loopDetector = blockStore.getChainLoopDetector();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
 
@@ -194,7 +194,7 @@ public class POIFSStream implements Iterable<ByteBuffer>
             try {
                 this.loopDetector = blockStore.getChainLoopDetector();
             } catch(IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
 
@@ -213,7 +213,7 @@ public class POIFSStream implements Iterable<ByteBuffer>
                 nextBlock = blockStore.getNextBlock(nextBlock);
                 return data;
             } catch(IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
 

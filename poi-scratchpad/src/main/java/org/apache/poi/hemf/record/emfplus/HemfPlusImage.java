@@ -447,6 +447,11 @@ public class HemfPlusImage {
             return new Rectangle2D.Double(1,1,1,1);
         }
 
+        /**
+         * @param continuedObjectData list of object data
+         * @return byte array
+         * @throws IllegalStateException if the data cannot be read
+         */
         public byte[] getRawData(List<? extends EmfPlusObjectData> continuedObjectData) {
             try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
                 bos.write(getImageData());
@@ -457,7 +462,7 @@ public class HemfPlusImage {
                 }
                 return bos.toByteArray();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
 
@@ -491,7 +496,7 @@ public class HemfPlusImage {
 
         private HemfPlusGDIImageRenderer getGDIRenderer() {
             if (getImageDataType() != EmfPlusImageDataType.BITMAP || getBitmapType() != EmfPlusBitmapDataType.PIXEL) {
-                throw new RuntimeException("image data is not a GDI image");
+                throw new IllegalStateException("image data is not a GDI image");
             }
             HemfPlusGDIImageRenderer renderer = new HemfPlusGDIImageRenderer();
             renderer.setWidth(getBitmapWidth());

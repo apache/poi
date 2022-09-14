@@ -31,7 +31,7 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
         try {
             out.write(v);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -52,7 +52,7 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
             out.write(b2);
             out.write(b3);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -70,7 +70,7 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
             out.write(b0);
             out.write(b1);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
     @Override
@@ -79,7 +79,7 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
         try {
             super.write(b);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
     @Override
@@ -88,7 +88,7 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
         try {
             super.write(b, off, len);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -106,7 +106,7 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
             out.write( (byte) ( ( value >>> 16 ) & 0xFF ) );
             out.write( (byte) ( ( value >>> 24 ) & 0xFF ) );
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -121,7 +121,7 @@ public final class LittleEndianOutputStream extends FilterOutputStream implement
             out.write( (byte) ( ( value ) & 0xFF ) );
             out.write( (byte) ( ( value >>> 8 ) & 0xFF ) );
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 }

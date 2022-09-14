@@ -236,7 +236,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
             }
         } catch (IOException e) {
             // need to wrap checked exception, because of LittleEndianInput interface :(
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

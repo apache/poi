@@ -166,7 +166,7 @@ public final class XMLHelper {
             throw re;
         } catch (Exception e) {
             logThrowable(e, "Failed to create SAXParserFactory", "-");
-            throw new RuntimeException("Failed to create SAXParserFactory", e);
+            throw new IllegalStateException("Failed to create SAXParserFactory", e);
         }
     }
 

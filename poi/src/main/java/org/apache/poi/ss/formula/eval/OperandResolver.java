@@ -267,7 +267,7 @@ public final class OperandResolver {
             }
             return dd;
         }
-        throw new RuntimeException("Unexpected arg eval type (" + ev.getClass().getName() + ")");
+        throw new IllegalStateException("Unexpected arg eval type (" + ev.getClass().getName() + ")");
     }
 
     /**
@@ -368,6 +368,6 @@ public final class OperandResolver {
         if (ve instanceof ErrorEval) {
             throw new EvaluationException((ErrorEval) ve);
         }
-        throw new RuntimeException("Unexpected eval (" + ve.getClass().getName() + ")");
+        throw new IllegalStateException("Unexpected eval (" + ve.getClass().getName() + ")");
     }
 }

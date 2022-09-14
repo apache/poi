@@ -48,10 +48,10 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     protected AbstractFunctionPtg(int functionIndex, int pReturnClass, byte[] paramTypes, int nParams) {
         _numberOfArgs = nParams;
         if (functionIndex < Short.MIN_VALUE || functionIndex > Short.MAX_VALUE)
-            throw new RuntimeException("functionIndex " + functionIndex + " cannot be cast to short");
+            throw new IllegalStateException("functionIndex " + functionIndex + " cannot be cast to short");
         _functionIndex = (short) functionIndex;
         if (pReturnClass < Byte.MIN_VALUE || pReturnClass > Byte.MAX_VALUE)
-            throw new RuntimeException("pReturnClass " + pReturnClass + " cannot be cast to byte");
+            throw new IllegalStateException("pReturnClass " + pReturnClass + " cannot be cast to byte");
         returnClass = (byte) pReturnClass;
         paramClass = paramTypes;
     }
@@ -140,7 +140,7 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
             fm = FunctionMetadataRegistry.getFunctionByIndex(index);
         }
         if(fm == null) {
-            throw new RuntimeException("bad function index (" + index + ", " + isCetab + ")");
+            throw new IllegalStateException("bad function index (" + index + ", " + isCetab + ")");
         }
         return fm.getName();
     }

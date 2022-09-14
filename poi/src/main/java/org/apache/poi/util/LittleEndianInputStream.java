@@ -46,7 +46,7 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
         try {
             return super.available();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -61,7 +61,7 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
         try {
             checkEOF(read(buf), 1);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         return LittleEndian.getUByte(buf);
     }
@@ -88,7 +88,7 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
         try {
             checkEOF(read(buf), buf.length);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         return LittleEndian.getInt(buf);
     }
@@ -112,7 +112,7 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
         try {
             checkEOF(read(buf), LittleEndianConsts.LONG_SIZE);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         return LittleEndian.getLong(buf);
     }
@@ -128,14 +128,14 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
         try {
             checkEOF(read(buf), LittleEndianConsts.SHORT_SIZE);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         return LittleEndian.getUShort(buf);
     }
 
     private static void checkEOF(int actualBytes, int expectedBytes) {
         if (expectedBytes != 0 && (actualBytes == -1 || actualBytes != expectedBytes)) {
-            throw new RuntimeException("Unexpected end-of-file");
+            throw new IllegalStateException("Unexpected end-of-file");
         }
     }
 
@@ -149,7 +149,7 @@ public class LittleEndianInputStream extends FilterInputStream implements Little
         try {
             checkEOF(_read(buf, off, len), len);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

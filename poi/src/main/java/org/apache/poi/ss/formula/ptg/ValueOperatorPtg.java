@@ -54,6 +54,6 @@ public abstract class ValueOperatorPtg extends OperationPtg {
     @Override
     public final String toFormulaString() {
         // TODO - prune this method out of the hierarchy
-        throw new RuntimeException("toFormulaString(String[] operands) should be used for subclasses of OperationPtgs");
+        throw new IllegalStateException("toFormulaString(String[] operands) should be used for subclasses of OperationPtgs");
     }
 }

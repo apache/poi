@@ -92,7 +92,7 @@ public final class ErrPtg extends ScalarConstantPtg {
             case REF: return REF_INVALID;
             case VALUE: return VALUE_INVALID;
             default:
-                throw new RuntimeException("Unexpected error code (" + code + ")");
+                throw new IllegalStateException("Unexpected error code (" + code + ")");
         }
     }
 
