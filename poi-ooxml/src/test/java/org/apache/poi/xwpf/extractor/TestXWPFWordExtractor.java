@@ -496,4 +496,13 @@ class TestXWPFWordExtractor {
             assertContains(txt, "but a great-looking résumé doesn’t have to be!");
         }
     }
+
+    @Test
+    void testTika3816() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("tika-3816.docx");
+             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+            String txt = extractor.getText();
+            assertContains(txt, "Note\tDetails");
+        }
+    }
 }
