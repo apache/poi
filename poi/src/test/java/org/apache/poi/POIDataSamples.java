@@ -165,7 +165,7 @@ public final class POIDataSamples {
     public File getFile(String sampleFileName) {
         File f = new File(_resolvedDataDir, sampleFileName);
         if (!f.exists()) {
-            throw new RuntimeException("Sample file '" + sampleFileName
+            throw new IllegalStateException("Sample file '" + sampleFileName
                     + "' not found in data dir '" + _resolvedDataDir.getAbsolutePath() + "'");
         }
         try {
@@ -175,12 +175,12 @@ public final class POIDataSamples {
                   fn = fn.substring(fn.indexOf('/')+1);
                }
                if(!fn.equals(f.getCanonicalFile().getName())){
-                   throw new RuntimeException("File name is case-sensitive: requested '" + fn
+                   throw new IllegalStateException("File name is case-sensitive: requested '" + fn
                         + "' but actual file is '" + f.getCanonicalFile().getName() + "'");
                }
             }
         } catch (IOException e){
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         return f;
     }
