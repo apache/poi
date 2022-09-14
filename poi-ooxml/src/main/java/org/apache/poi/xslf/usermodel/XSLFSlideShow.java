@@ -192,7 +192,7 @@ public class XSLFSlideShow extends POIXMLDocument {
         try {
             notes = slidePart.getRelationshipsByType(XSLFRelation.NOTES.getRelation());
         } catch(InvalidFormatException e) {
-            throw new IllegalStateException(e);
+            throw new IOException(e);
         }
 
         if(notes.isEmpty()) {
@@ -200,7 +200,7 @@ public class XSLFSlideShow extends POIXMLDocument {
             return null;
         }
         if(notes.size() > 1) {
-            throw new IllegalStateException("Expecting 0 or 1 notes for a slide, but found " + notes.size());
+            throw new IOException("Expecting 0 or 1 notes for a slide, but found " + notes.size());
         }
 
         try {

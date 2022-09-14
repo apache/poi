@@ -91,7 +91,7 @@ public class XWPFStyles extends POIXMLDocumentPart {
     @Override
     protected void commit() throws IOException {
         if (ctStyles == null) {
-            throw new IllegalStateException("Unable to write out styles that were never read in!");
+            throw new IOException("Unable to write out styles that were never read in!");
         }
 
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);

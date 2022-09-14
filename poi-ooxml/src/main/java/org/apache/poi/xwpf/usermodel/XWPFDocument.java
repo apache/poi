@@ -581,10 +581,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         try {
             parts = getRelatedByType(XWPFRelation.STYLES.getRelation());
         } catch (InvalidFormatException e) {
-            throw new IllegalStateException(e);
+            throw new IOException(e);
         }
         if (parts.length != 1) {
-            throw new IllegalStateException("Expecting one Styles document part, but found " + parts.length);
+            throw new IOException("Expecting one Styles document part, but found " + parts.length);
         }
 
         try (InputStream stream = parts[0].getInputStream()) {

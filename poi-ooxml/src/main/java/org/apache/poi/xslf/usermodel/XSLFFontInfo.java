@@ -212,7 +212,7 @@ public class XSLFFontInfo implements FontInfo {
                 try {
                     fntDataIdx = ppt.getPackage().getUnusedPartIndex(fntRel.getDefaultFileName());
                 } catch (InvalidFormatException e) {
-                    throw new IllegalStateException(e);
+                    throw new IOException(e);
                 }
 
                 POIXMLDocumentPart.RelationPart rp = ppt.createRelationship(fntRel, XSLFFactory.getInstance(), fntDataIdx, false);

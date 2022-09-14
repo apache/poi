@@ -136,8 +136,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     /**
      * Constructor.
      *
-     * @param access
-     *            Package access.
+     * @param access Package access.
+     * @throws OpenXML4JRuntimeException if there are issues creating properties part
      */
     OPCPackage(PackageAccess access) {
         if (getClass() != ZipPackage.class) {
