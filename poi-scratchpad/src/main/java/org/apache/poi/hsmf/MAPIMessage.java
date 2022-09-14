@@ -278,7 +278,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
             );
             return rtf.getDataString();
         } catch (IOException e) {
-            throw new RuntimeException("Shouldn't happen", e);
+            throw new IllegalStateException("Shouldn't happen", e);
         }
     }
 

@@ -208,7 +208,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
         if (inner != null) {
             return inner;
         }
-        throw new RuntimeException("invalid wmf file - window records are incomplete.");
+        throw new IllegalStateException("invalid wmf file - window records are incomplete.");
     }
 
     /**

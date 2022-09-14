@@ -279,7 +279,7 @@ public class XMLSlideShow extends POIXMLDocument
         try {
             return getPackage().getUnusedPartIndex(relationType.getDefaultFileName());
         } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -695,14 +695,14 @@ public class XMLSlideShow extends POIXMLDocument
     String importBlip(String blipId, POIXMLDocumentPart parent, POIXMLDocumentPart target) {
         OPCPackage targetPackage = target.getPackagePart().getPackage();
         if (targetPackage != getPackage()) {
-            throw new RuntimeException("the target document part is not a child of this package");
+            throw new IllegalStateException("the target document part is not a child of this package");
         }
         final POIXMLDocumentPart docPart = parent.getRelationPartById(blipId).getDocumentPart();
         XSLFPictureData parData;
         if (docPart instanceof XSLFPictureData) {
             parData = (XSLFPictureData)docPart;
         } else {
-            throw new RuntimeException("cannot import blip " + blipId + " - its document part is not XSLFPictureData");
+            throw new IllegalStateException("cannot import blip " + blipId + " - its document part is not XSLFPictureData");
         }
         final XSLFPictureData pictureData;
         if (targetPackage == parent.getPackagePart().getPackage()) {

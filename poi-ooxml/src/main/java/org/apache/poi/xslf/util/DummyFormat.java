@@ -37,7 +37,7 @@ public class DummyFormat implements OutputFormat {
             bos = new UnsynchronizedByteArrayOutputStream();
             dummy2d = new DummyGraphics2d(new PrintStream(bos, true, StandardCharsets.UTF_8.name()));
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

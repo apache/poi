@@ -154,7 +154,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
             try {
                 flushRows(_randomAccessWindowSize);
             } catch (IOException ioe) {
-                throw new RuntimeException(ioe);
+                throw new IllegalStateException(ioe);
             }
         }
         return newRow;
@@ -981,7 +981,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     @NotImplemented
     @Override
     public void shiftRows(int startRow, int endRow, int n) {
-        throw new RuntimeException("Not Implemented");
+        throw new IllegalStateException("Not Implemented");
     }
 
     /**
@@ -1005,7 +1005,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     @NotImplemented
     @Override
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
-        throw new RuntimeException("Not Implemented");
+        throw new IllegalStateException("Not Implemented");
     }
 
     /**
@@ -1361,7 +1361,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
             collapseRow(row);
         } else {
             //expandRow(rowIndex);
-            throw new RuntimeException("Unable to expand row: Not Implemented");
+            throw new IllegalStateException("Unable to expand row: Not Implemented");
         }
     }
 
@@ -1761,7 +1761,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         // corrupted .xlsx files as rows appear multiple times in the resulting sheetX.xml files
         // return _sh.setArrayFormula(formula, range);
 
-        throw new RuntimeException("Not Implemented");
+        throw new IllegalStateException("Not Implemented");
     }
 
     /**
@@ -1776,7 +1776,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         // corrupted .xlsx files as rows appear multiple times in the resulting sheetX.xml files
         // return _sh.removeArrayFormula(cell);
 
-        throw new RuntimeException("Not Implemented");
+        throw new IllegalStateException("Not Implemented");
     }
 
     @Override

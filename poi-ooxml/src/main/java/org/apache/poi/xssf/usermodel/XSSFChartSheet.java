@@ -99,7 +99,7 @@ public class XSSFChartSheet extends XSSFSheet  {
         try {
             new XSSFSheet().write(out);
         } catch (IOException e){
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
         return out.toByteArray();
     }

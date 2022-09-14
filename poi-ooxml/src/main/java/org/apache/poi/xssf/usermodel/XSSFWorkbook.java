@@ -1918,13 +1918,13 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     @Override
     @NotImplemented
     public boolean isHidden() {
-        throw new RuntimeException("Not implemented yet");
+        throw new IllegalStateException("Not implemented yet");
     }
 
     @Override
     @NotImplemented
     public void setHidden(boolean hiddenFlag) {
-        throw new RuntimeException("Not implemented yet");
+        throw new IllegalStateException("Not implemented yet");
     }
 
     @Override

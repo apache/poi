@@ -725,7 +725,7 @@ public class SXSSFWorkbook implements Workbook {
         try {
             sxSheet = new SXSSFSheet(this,xSheet);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
+            throw new IllegalStateException(ioe);
         }
         registerSheetMapping(sxSheet,xSheet);
         return sxSheet;
@@ -755,7 +755,7 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     @NotImplemented
     public Sheet cloneSheet(int sheetNum) {
-        throw new RuntimeException("Not Implemented");
+        throw new IllegalStateException("Not Implemented");
     }
 
 
@@ -1320,7 +1320,7 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     @NotImplemented
     public int linkExternalWorkbook(String name, Workbook workbook) {
-        throw new RuntimeException("Not Implemented");
+        throw new IllegalStateException("Not Implemented");
     }
 
     /**

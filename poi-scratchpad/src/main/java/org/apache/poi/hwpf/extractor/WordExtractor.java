@@ -259,7 +259,7 @@ public final class WordExtractor implements POIOLE2TextExtractor {
         } catch (RuntimeException e) {
             throw e;
         } catch ( Exception exc ) {
-            throw new RuntimeException( exc );
+            throw new IllegalStateException( exc );
         }
     }
 

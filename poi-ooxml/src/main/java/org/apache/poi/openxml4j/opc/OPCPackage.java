@@ -1413,7 +1413,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         try {
             partMarshallers.remove(new ContentType(contentType));
         } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -1427,7 +1427,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         try {
             partUnmarshallers.remove(new ContentType(contentType));
         } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

@@ -75,7 +75,7 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
         if (eval instanceof ErrorEval) {
             return CellValue.getError(((ErrorEval)eval).getErrorCode());
         }
-        throw new RuntimeException("Unexpected eval class (" + eval.getClass().getName() + ")");
+        throw new IllegalStateException("Unexpected eval class (" + eval.getClass().getName() + ")");
     }
 
     /**

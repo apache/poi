@@ -84,7 +84,7 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
             try {
                 keyValue = keyInfoFactory.newKeyValue(signingCertificate.getPublicKey());
             } catch (KeyException e) {
-                throw new RuntimeException("key exception: " + e.getMessage(), e);
+                throw new IllegalStateException("key exception: " + e.getMessage(), e);
             }
             keyInfoContent.add(keyValue);
         }
@@ -137,7 +137,7 @@ public class KeyInfoSignatureFacet implements SignatureFacet {
         if (nextSibling != null) {
             NodeList kiNl = document.getElementsByTagNameNS(XML_DIGSIG_NS, "KeyInfo");
             if (kiNl.getLength() != 1) {
-                throw new RuntimeException("KeyInfo wasn't set");
+                throw new IllegalStateException("KeyInfo wasn't set");
             }
             nextSibling.getParentNode().insertBefore(kiNl.item(0), nextSibling);
         }

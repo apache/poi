@@ -1218,7 +1218,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      */
     protected static void setWidthValue(String widthValue, CTTblWidth ctWidth) {
         if (!widthValue.matches(REGEX_WIDTH_VALUE)) {
-            throw new RuntimeException("Table width value \"" + widthValue + "\" "
+            throw new IllegalStateException("Table width value \"" + widthValue + "\" "
                     + "must match regular expression \"" + REGEX_WIDTH_VALUE + "\".");
         }
         if (widthValue.matches("auto")) {
@@ -1250,7 +1250,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         } else if (widthValue.matches("[0-9]+")) {
             ctWidth.setW(new BigInteger(widthValue));
         } else {
-            throw new RuntimeException("setWidthPercentage(): Width value must be a percentage (\"33.3%\" or an integer, was \"" + widthValue + "\"");
+            throw new IllegalStateException("setWidthPercentage(): Width value must be a percentage (\"33.3%\" or an integer, was \"" + widthValue + "\"");
         }
     }
 

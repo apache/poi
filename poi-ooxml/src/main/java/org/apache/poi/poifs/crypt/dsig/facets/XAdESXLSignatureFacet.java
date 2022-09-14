@@ -94,7 +94,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         try {
             this.certificateFactory = CertificateFactory.getInstance("X.509");
         } catch (CertificateException e) {
-            throw new RuntimeException("X509 JCA error: " + e.getMessage(), e);
+            throw new IllegalStateException("X509 JCA error: " + e.getMessage(), e);
         }
     }
 
@@ -225,7 +225,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                     crl = (X509CRL) this.certificateFactory
                         .generateCRL(new UnsynchronizedByteArrayInputStream(encodedCrl));
                 } catch (CRLException e) {
-                    throw new RuntimeException("CRL parse error: " + e.getMessage(), e);
+                    throw new IllegalStateException("CRL parse error: " + e.getMessage(), e);
                 }
 
                 CRLIdentifierType crlIdentifier = crlRef.addNewCRLIdentifier();
@@ -277,7 +277,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                         responderId.setByName(nameStr);
                     }
                 } catch (Exception e) {
-                    throw new RuntimeException("OCSP decoding error: " + e.getMessage(), e);
+                    throw new IllegalStateException("OCSP decoding error: " + e.getMessage(), e);
                 }
             }
         }
@@ -294,7 +294,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 certificateValues.addNewEncapsulatedX509Certificate().setByteArrayValue(certificate.getEncoded());
             }
         } catch (CertificateEncodingException e) {
-            throw new RuntimeException("certificate encoding error: " + e.getMessage(), e);
+            throw new IllegalStateException("certificate encoding error: " + e.getMessage(), e);
         }
     }
 
@@ -312,7 +312,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            throw new RuntimeException("c14n error: " + e.getMessage(), e);
+            throw new IllegalStateException("c14n error: " + e.getMessage(), e);
         }
     }
 
@@ -330,7 +330,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 return integer.getPositiveValue();
             }
         } catch (IOException e) {
-            throw new RuntimeException("I/O error: " + e.getMessage(), e);
+            throw new IllegalStateException("I/O error: " + e.getMessage(), e);
         }
     }
 
@@ -346,7 +346,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
         try {
             timeStampToken = signatureConfig.getTspService().timeStamp(signatureInfo, c14nSignatureValueElement, revocationData);
         } catch (Exception e) {
-            throw new RuntimeException("error while creating a time-stamp: "
+            throw new IllegalStateException("error while creating a time-stamp: "
                 + e.getMessage(), e);
         }
 

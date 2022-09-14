@@ -133,7 +133,7 @@ public class TSPTimeStampService implements TimeStampService {
         byte[] responseBytes = response.getResponseBytes();
 
         if (responseBytes.length == 0) {
-            throw new RuntimeException("Content-Length is zero");
+            throw new IllegalStateException("Content-Length is zero");
         }
 
         // TSP response parsing and validation
@@ -150,7 +150,7 @@ public class TSPTimeStampService implements TimeStampService {
                     LOG.atDebug().log("unaccepted policy");
                 }
             }
-            throw new RuntimeException("timestamp response status != 0: "
+            throw new IllegalStateException("timestamp response status != 0: "
                     + timeStampResponse.getStatus());
         }
         TimeStampToken timeStampToken = timeStampResponse.getTimeStampToken();
@@ -171,7 +171,7 @@ public class TSPTimeStampService implements TimeStampService {
             .filter(h -> signerCertIssuer.equals(h.getIssuer())
                 && signerCertSerialNumber.equals(h.getSerialNumber()))
             .findFirst()
-            .orElseThrow(() -> new RuntimeException("TSP response token has no signer certificate"));
+            .orElseThrow(() -> new IllegalStateException("TSP response token has no signer certificate"));
 
         JcaX509CertificateConverter x509converter = new JcaX509CertificateConverter();
         x509converter.setProvider("BC");
