@@ -2517,3 +2517,7 @@ org/openxmlformats/schemas/spreadsheetml/x2006/main/impl/STTotalsRowFunctionImpl
 org/openxmlformats/schemas/spreadsheetml/x2006/main/STTotalsRowFunction
 org/openxmlformats/schemas/spreadsheetml/x2006/main/impl/CTTableFormulaImpl
 org/openxmlformats/schemas/spreadsheetml/x2006/main/CTTableFormula
+org/openxmlformats/schemas/wordprocessingml/x2006/main/impl/CTSdtRowImpl
+org/openxmlformats/schemas/wordprocessingml/x2006/main/CTSdtRow
+org/openxmlformats/schemas/wordprocessingml/x2006/main/impl/CTSdtContentRowImpl
+org/openxmlformats/schemas/wordprocessingml/x2006/main/CTSdtContentRow
