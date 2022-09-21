@@ -338,7 +338,7 @@ under the License.
     <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.10.2" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:31.1-jre" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
-    <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.36" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:2.0.2" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.opczip" artifact="com.github.rzymek:opczip:1.2.0" usage="ooxml-tests"/>
 
     <!-- coverage libs -->
@@ -348,7 +348,7 @@ under the License.
     <dependency prefix="asm-tree" artifact="org.ow2.asm:asm-tree:9.3" usage="util"/>
 
     <!-- license and api checks -->
-    <dependency prefix="rat" artifact="org.apache.rat:apache-rat:0.13" usage="util"/>
+    <dependency prefix="rat" artifact="org.apache.rat:apache-rat:0.15" usage="util"/>
     <dependency prefix="forbidden" artifact="de.thetaphi:forbiddenapis:3.3" usage="util"/>
 
     <!-- See https://www.ecma-international.org/publications/standards/Ecma-376.htm -->
@@ -705,7 +705,7 @@ under the License.
             <fileset dir="${basedir}/lib/ooxml-provided">
                 <include name="bc*-1.6*.jar"/>
                 <include name="batik*.jar"/>
-                <include name="slf4j*-1.7.30.jar"/>
+                <include name="slf4j*-1.*.jar"/>
                 <include name="xmlsec-2*.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml-tests">
