@@ -95,7 +95,7 @@ configurations {
 }
 
 dependencies {
-    antLibs("org.junit.jupiter:junit-jupiter:5.9.0")
+    antLibs("org.junit.jupiter:junit-jupiter:5.9.1")
     antLibs("org.apache.ant:ant-junitlauncher:1.10.12")
 }
 
