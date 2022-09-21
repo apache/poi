@@ -149,7 +149,7 @@ subprojects {
         commonsCompressVersion = '1.21'
         commonsIoVersion = '2.11.0'
         commonsMathVersion = '3.6.1'
-        junitVersion = '5.9.0'
+        junitVersion = '5.9.1'
         log4jVersion = '2.19.0'
         mockitoVersion = '4.8.0'
         hamcrestVersion = '2.2'
