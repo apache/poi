@@ -306,25 +306,25 @@ under the License.
     <!-- svg/batik/pdf libs - not part of the distribution - move batik to its own directory because of JPMS module-path issues -->
     <dependency prefix="svg.xml-apis-ext" artifact="xml-apis:xml-apis-ext:1.3.04" usage="ooxml-batik"/>
     <dependency prefix="svg.xmlgraphics-commons" artifact="org.apache.xmlgraphics:xmlgraphics-commons:2.7" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-anim" artifact="org.apache.xmlgraphics:batik-anim:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-awt-util" artifact="org.apache.xmlgraphics:batik-awt-util:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-bridge" artifact="org.apache.xmlgraphics:batik-bridge:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-codec" artifact="org.apache.xmlgraphics:batik-codec:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-constants" artifact="org.apache.xmlgraphics:batik-constants:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-css" artifact="org.apache.xmlgraphics:batik-css:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-dom" artifact="org.apache.xmlgraphics:batik-dom:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-ext" artifact="org.apache.xmlgraphics:batik-ext:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-gvt" artifact="org.apache.xmlgraphics:batik-gvt:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-i18n" artifact="org.apache.xmlgraphics:batik-i18n:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-parser" artifact="org.apache.xmlgraphics:batik-parser:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-script" artifact="org.apache.xmlgraphics:batik-script:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-shared-resources" artifact="org.apache.xmlgraphics:batik-shared-resources:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-svg-dom" artifact="org.apache.xmlgraphics:batik-svg-dom:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-svggen" artifact="org.apache.xmlgraphics:batik-svggen:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-svgrasterizer" artifact="org.apache.xmlgraphics:batik-svgrasterizer:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-transcoder" artifact="org.apache.xmlgraphics:batik-transcoder:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-util" artifact="org.apache.xmlgraphics:batik-util:1.14" usage="ooxml-batik"/>
-    <dependency prefix="svg.batik-xml" artifact="org.apache.xmlgraphics:batik-xml:1.14" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-anim" artifact="org.apache.xmlgraphics:batik-anim:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-awt-util" artifact="org.apache.xmlgraphics:batik-awt-util:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-bridge" artifact="org.apache.xmlgraphics:batik-bridge:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-codec" artifact="org.apache.xmlgraphics:batik-codec:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-constants" artifact="org.apache.xmlgraphics:batik-constants:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-css" artifact="org.apache.xmlgraphics:batik-css:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-dom" artifact="org.apache.xmlgraphics:batik-dom:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-ext" artifact="org.apache.xmlgraphics:batik-ext:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-gvt" artifact="org.apache.xmlgraphics:batik-gvt:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-i18n" artifact="org.apache.xmlgraphics:batik-i18n:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-parser" artifact="org.apache.xmlgraphics:batik-parser:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-script" artifact="org.apache.xmlgraphics:batik-script:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-shared-resources" artifact="org.apache.xmlgraphics:batik-shared-resources:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-svg-dom" artifact="org.apache.xmlgraphics:batik-svg-dom:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-svggen" artifact="org.apache.xmlgraphics:batik-svggen:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-svgrasterizer" artifact="org.apache.xmlgraphics:batik-svgrasterizer:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-transcoder" artifact="org.apache.xmlgraphics:batik-transcoder:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-util" artifact="org.apache.xmlgraphics:batik-util:1.15" usage="ooxml-batik"/>
+    <dependency prefix="svg.batik-xml" artifact="org.apache.xmlgraphics:batik-xml:1.15" usage="ooxml-batik"/>
     <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:2.0.26" usage="ooxml-provided"/>
     <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:2.0.26" usage="ooxml-provided"/>
     <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:0.41" usage="ooxml-provided"/>

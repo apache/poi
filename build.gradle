@@ -105,7 +105,7 @@ ant.taskdef(name: "junit",
 
 
 wrapper {
-    gradleVersion = '7.5'
+    gradleVersion = '7.5.1'
 }
 
 task adjustWrapperPropertiesFile {
@@ -193,7 +193,7 @@ subprojects {
 
     repositories {
         mavenCentral()
-        maven { url 'https://repository.apache.org/content/repositories/staging' }
+        //maven { url 'https://repository.apache.org/content/repositories/staging' }
     }
 
     dependencies {
