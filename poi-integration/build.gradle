@@ -189,11 +189,9 @@ test {
     }
 }
 
-javadoc.onlyIf { false }
+javadoc { enabled(false) }
 
-javadocJar.onlyIf { false }
-
-sourcesJar.onlyIf { false }
+sourcesJar { enabled(false) }
 
 generateMetadataFileForPOIPublication.enabled = false
 publishPOIPublicationToMavenLocal.enabled = false
