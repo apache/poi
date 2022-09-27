@@ -613,7 +613,21 @@ public class DrawPaint {
         // need to remap the fractions, because Java doesn't like repeating fraction values
         Map<Float,Color> m = new TreeMap<>();
         for (float fraction : fill.getGradientFractions()) {
-            m.put(fraction, styles.next());
+            float gradientFraction = fraction;
+
+            // Multiple gradient stops at the same location
+            // can lead to failure when creating AWT gradient, especially
+            // if there are only two stops and they are both on the exact
+            // same location.
+            //   (The example of (only) 2 stops at exactly the same location will cause:
+            //    java.lang.IllegalArgumentException: User must specify at least 2 colors).
+            //
+            // To fix this we nudge the stop a teeny tiny bit.
+            if (m.containsKey(gradientFraction)) {
+                gradientFraction += (gradientFraction == 1.0 ? -1.0 : 1.0) * 0.00000005;
+            }
+
+            m.put(gradientFraction, styles.next());
         }
 
         return init.apply(toArray(m.keySet()), m.values().toArray(new Color[0]));
