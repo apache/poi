@@ -629,7 +629,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public void setBorderTop(Borders border) {
         CTPBdr ct = getCTPBrd(true);
         if (ct == null) {
-            throw new RuntimeException("invalid paragraph state");
+            throw new IllegalStateException("invalid paragraph state");
         }
 
         CTBorder pr = (ct.isSetTop()) ? ct.getTop() : ct.addNewTop();

@@ -41,7 +41,7 @@ public class StreamingSheetWriter extends SheetDataWriter {
     private boolean closed = false;
 
     public StreamingSheetWriter() throws IOException {
-        throw new RuntimeException("StreamingSheetWriter requires OutputStream");
+        throw new IllegalStateException("StreamingSheetWriter requires OutputStream");
     }
 
     public StreamingSheetWriter(OutputStream out) throws IOException {
@@ -51,12 +51,12 @@ public class StreamingSheetWriter extends SheetDataWriter {
 
     @Override
     public File createTempFile() throws IOException {
-        throw new RuntimeException("Not supported with StreamingSheetWriter");
+        throw new IllegalStateException("Not supported with StreamingSheetWriter");
     }
 
     @Override
     public Writer createWriter(File fd) throws IOException {
-        throw new RuntimeException("Not supported with StreamingSheetWriter");
+        throw new IllegalStateException("Not supported with StreamingSheetWriter");
     }
 
     /**
@@ -77,7 +77,7 @@ public class StreamingSheetWriter extends SheetDataWriter {
 
     @Override
     public InputStream getWorksheetXMLInputStream() throws IOException {
-        throw new RuntimeException("Not supported with StreamingSheetWriter");
+        throw new IllegalStateException("Not supported with StreamingSheetWriter");
     }
 
     @Override

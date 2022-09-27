@@ -241,7 +241,7 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
     public OutputStream updateObjectData(final Application application, final ObjectMetaData metaData) {
         final ObjectMetaData md = (application != null) ? application.getMetaData() : metaData;
         if (md == null) {
-            throw new RuntimeException("either application or metaData needs to be set");
+            throw new IllegalStateException("either application or metaData needs to be set");
         }
 
         // can't use UnsynchronizedByteArrayOutputStream here, because it's final

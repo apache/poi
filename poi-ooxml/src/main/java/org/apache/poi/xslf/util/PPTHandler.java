@@ -179,7 +179,7 @@ class PPTHandler extends MFProxy {
                 return IOUtils.toByteArray(is);
             } catch (IOException e) {
                 // TODO: change to custom runtime exception
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         });
         return embed;

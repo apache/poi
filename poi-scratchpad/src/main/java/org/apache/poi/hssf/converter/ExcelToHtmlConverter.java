@@ -104,7 +104,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
      * @return DOM representation of result HTML
      * @throws IOException                  If an error occurs reading or writing files
      * @throws ParserConfigurationException If configuration is incorrect
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public static Document process(File xlsFile) throws IOException, ParserConfigurationException {
@@ -120,7 +120,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
      * @return DOM representation of result HTML
      * @throws IOException                  If an error occurs reading or writing files
      * @throws ParserConfigurationException If configuration is incorrect
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public static Document process(InputStream xlsStream) throws IOException, ParserConfigurationException {
@@ -136,7 +136,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
      * @return DOM representation of result HTML
      * @throws IOException                  If an error occurs reading or writing files
      * @throws ParserConfigurationException If configuration is incorrect
-     * @throws RuntimeException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public static Document process(HSSFWorkbook workbook) throws IOException, ParserConfigurationException {

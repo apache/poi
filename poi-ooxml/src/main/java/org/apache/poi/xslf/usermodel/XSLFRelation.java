@@ -26,12 +26,13 @@ import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.Beta;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Beta
 public final class XSLFRelation extends POIXMLRelation {
-    /* package */ static final String NS_DRAWINGML = "http://schemas.openxmlformats.org/drawingml/2006/main";
+    /* package */ static final String NS_DRAWINGML = XSSFRelation.NS_DRAWINGML;
 
     /**
      * A map to lookup POIXMLRelation by its relation type

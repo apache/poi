@@ -76,33 +76,33 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     static {
         // populate enum maps
         xwpfBorderTypeMap = new EnumMap<>(XWPFBorderType.class);
-        xwpfBorderTypeMap.put(XWPFBorderType.NIL, STBorder.Enum.forInt(STBorder.INT_NIL));
-        xwpfBorderTypeMap.put(XWPFBorderType.NONE, STBorder.Enum.forInt(STBorder.INT_NONE));
-        xwpfBorderTypeMap.put(XWPFBorderType.SINGLE, STBorder.Enum.forInt(STBorder.INT_SINGLE));
-        xwpfBorderTypeMap.put(XWPFBorderType.THICK, STBorder.Enum.forInt(STBorder.INT_THICK));
-        xwpfBorderTypeMap.put(XWPFBorderType.DOUBLE, STBorder.Enum.forInt(STBorder.INT_DOUBLE));
-        xwpfBorderTypeMap.put(XWPFBorderType.DOTTED, STBorder.Enum.forInt(STBorder.INT_DOTTED));
-        xwpfBorderTypeMap.put(XWPFBorderType.DASHED, STBorder.Enum.forInt(STBorder.INT_DASHED));
-        xwpfBorderTypeMap.put(XWPFBorderType.DOT_DASH, STBorder.Enum.forInt(STBorder.INT_DOT_DASH));
-        xwpfBorderTypeMap.put(XWPFBorderType.DOT_DOT_DASH, STBorder.Enum.forInt(STBorder.INT_DOT_DOT_DASH));
-        xwpfBorderTypeMap.put(XWPFBorderType.TRIPLE, STBorder.Enum.forInt(STBorder.INT_TRIPLE));
-        xwpfBorderTypeMap.put(XWPFBorderType.THIN_THICK_SMALL_GAP, STBorder.Enum.forInt(STBorder.INT_THIN_THICK_SMALL_GAP));
-        xwpfBorderTypeMap.put(XWPFBorderType.THICK_THIN_SMALL_GAP, STBorder.Enum.forInt(STBorder.INT_THICK_THIN_SMALL_GAP));
-        xwpfBorderTypeMap.put(XWPFBorderType.THIN_THICK_THIN_SMALL_GAP, STBorder.Enum.forInt(STBorder.INT_THIN_THICK_THIN_SMALL_GAP));
-        xwpfBorderTypeMap.put(XWPFBorderType.THIN_THICK_MEDIUM_GAP, STBorder.Enum.forInt(STBorder.INT_THIN_THICK_MEDIUM_GAP));
-        xwpfBorderTypeMap.put(XWPFBorderType.THICK_THIN_MEDIUM_GAP, STBorder.Enum.forInt(STBorder.INT_THICK_THIN_MEDIUM_GAP));
-        xwpfBorderTypeMap.put(XWPFBorderType.THIN_THICK_THIN_MEDIUM_GAP, STBorder.Enum.forInt(STBorder.INT_THIN_THICK_THIN_MEDIUM_GAP));
-        xwpfBorderTypeMap.put(XWPFBorderType.THIN_THICK_LARGE_GAP, STBorder.Enum.forInt(STBorder.INT_THIN_THICK_LARGE_GAP));
-        xwpfBorderTypeMap.put(XWPFBorderType.THICK_THIN_LARGE_GAP, STBorder.Enum.forInt(STBorder.INT_THICK_THIN_LARGE_GAP));
-        xwpfBorderTypeMap.put(XWPFBorderType.THIN_THICK_THIN_LARGE_GAP, STBorder.Enum.forInt(STBorder.INT_THIN_THICK_THIN_LARGE_GAP));
-        xwpfBorderTypeMap.put(XWPFBorderType.WAVE, STBorder.Enum.forInt(STBorder.INT_WAVE));
-        xwpfBorderTypeMap.put(XWPFBorderType.DOUBLE_WAVE, STBorder.Enum.forInt(STBorder.INT_DOUBLE_WAVE));
-        xwpfBorderTypeMap.put(XWPFBorderType.DASH_SMALL_GAP, STBorder.Enum.forInt(STBorder.INT_DASH_SMALL_GAP));
-        xwpfBorderTypeMap.put(XWPFBorderType.DASH_DOT_STROKED, STBorder.Enum.forInt(STBorder.INT_DASH_DOT_STROKED));
-        xwpfBorderTypeMap.put(XWPFBorderType.THREE_D_EMBOSS, STBorder.Enum.forInt(STBorder.INT_THREE_D_EMBOSS));
-        xwpfBorderTypeMap.put(XWPFBorderType.THREE_D_ENGRAVE, STBorder.Enum.forInt(STBorder.INT_THREE_D_ENGRAVE));
-        xwpfBorderTypeMap.put(XWPFBorderType.OUTSET, STBorder.Enum.forInt(STBorder.INT_OUTSET));
-        xwpfBorderTypeMap.put(XWPFBorderType.INSET, STBorder.Enum.forInt(STBorder.INT_INSET));
+        xwpfBorderTypeMap.put(XWPFBorderType.NIL, STBorder.NIL);
+        xwpfBorderTypeMap.put(XWPFBorderType.NONE, STBorder.NONE);
+        xwpfBorderTypeMap.put(XWPFBorderType.SINGLE, STBorder.SINGLE);
+        xwpfBorderTypeMap.put(XWPFBorderType.THICK, STBorder.THICK);
+        xwpfBorderTypeMap.put(XWPFBorderType.DOUBLE, STBorder.DOUBLE);
+        xwpfBorderTypeMap.put(XWPFBorderType.DOTTED, STBorder.DOTTED);
+        xwpfBorderTypeMap.put(XWPFBorderType.DASHED, STBorder.DASHED);
+        xwpfBorderTypeMap.put(XWPFBorderType.DOT_DASH, STBorder.DOT_DASH);
+        xwpfBorderTypeMap.put(XWPFBorderType.DOT_DOT_DASH, STBorder.DOT_DOT_DASH);
+        xwpfBorderTypeMap.put(XWPFBorderType.TRIPLE, STBorder.TRIPLE);
+        xwpfBorderTypeMap.put(XWPFBorderType.THIN_THICK_SMALL_GAP, STBorder.THIN_THICK_SMALL_GAP);
+        xwpfBorderTypeMap.put(XWPFBorderType.THICK_THIN_SMALL_GAP, STBorder.THICK_THIN_SMALL_GAP);
+        xwpfBorderTypeMap.put(XWPFBorderType.THIN_THICK_THIN_SMALL_GAP, STBorder.THIN_THICK_THIN_SMALL_GAP);
+        xwpfBorderTypeMap.put(XWPFBorderType.THIN_THICK_MEDIUM_GAP, STBorder.THIN_THICK_MEDIUM_GAP);
+        xwpfBorderTypeMap.put(XWPFBorderType.THICK_THIN_MEDIUM_GAP, STBorder.THICK_THIN_MEDIUM_GAP);
+        xwpfBorderTypeMap.put(XWPFBorderType.THIN_THICK_THIN_MEDIUM_GAP, STBorder.THIN_THICK_THIN_MEDIUM_GAP);
+        xwpfBorderTypeMap.put(XWPFBorderType.THIN_THICK_LARGE_GAP, STBorder.THIN_THICK_LARGE_GAP);
+        xwpfBorderTypeMap.put(XWPFBorderType.THICK_THIN_LARGE_GAP, STBorder.THICK_THIN_LARGE_GAP);
+        xwpfBorderTypeMap.put(XWPFBorderType.THIN_THICK_THIN_LARGE_GAP, STBorder.THIN_THICK_THIN_LARGE_GAP);
+        xwpfBorderTypeMap.put(XWPFBorderType.WAVE, STBorder.WAVE);
+        xwpfBorderTypeMap.put(XWPFBorderType.DOUBLE_WAVE, STBorder.DOUBLE_WAVE);
+        xwpfBorderTypeMap.put(XWPFBorderType.DASH_SMALL_GAP, STBorder.DASH_SMALL_GAP);
+        xwpfBorderTypeMap.put(XWPFBorderType.DASH_DOT_STROKED, STBorder.DASH_DOT_STROKED);
+        xwpfBorderTypeMap.put(XWPFBorderType.THREE_D_EMBOSS, STBorder.THREE_D_EMBOSS);
+        xwpfBorderTypeMap.put(XWPFBorderType.THREE_D_ENGRAVE, STBorder.THREE_D_ENGRAVE);
+        xwpfBorderTypeMap.put(XWPFBorderType.OUTSET, STBorder.OUTSET);
+        xwpfBorderTypeMap.put(XWPFBorderType.INSET, STBorder.INSET);
 
         stBorderTypeMap = new HashMap<>();
         stBorderTypeMap.put(STBorder.INT_NIL, XWPFBorderType.NIL);
@@ -1218,7 +1218,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      */
     protected static void setWidthValue(String widthValue, CTTblWidth ctWidth) {
         if (!widthValue.matches(REGEX_WIDTH_VALUE)) {
-            throw new RuntimeException("Table width value \"" + widthValue + "\" "
+            throw new IllegalStateException("Table width value \"" + widthValue + "\" "
                     + "must match regular expression \"" + REGEX_WIDTH_VALUE + "\".");
         }
         if (widthValue.matches("auto")) {
@@ -1250,7 +1250,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         } else if (widthValue.matches("[0-9]+")) {
             ctWidth.setW(new BigInteger(widthValue));
         } else {
-            throw new RuntimeException("setWidthPercentage(): Width value must be a percentage (\"33.3%\" or an integer, was \"" + widthValue + "\"");
+            throw new IllegalStateException("setWidthPercentage(): Width value must be a percentage (\"33.3%\" or an integer, was \"" + widthValue + "\"");
         }
     }
 

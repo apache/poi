@@ -225,7 +225,7 @@ public abstract class MultiOperandNumericFunction implements Function {
             missingArgConsumer.accept((MissingArgEval) ve, temp);
             return;
         }
-        throw new RuntimeException("Invalid ValueEval type passed for conversion: ("
+        throw new IllegalStateException("Invalid ValueEval type passed for conversion: ("
                 + ve.getClass() + ")");
     }
 

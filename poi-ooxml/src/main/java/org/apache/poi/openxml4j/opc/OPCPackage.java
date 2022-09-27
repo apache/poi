@@ -136,8 +136,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     /**
      * Constructor.
      *
-     * @param access
-     *            Package access.
+     * @param access Package access.
+     * @throws OpenXML4JRuntimeException if there are issues creating properties part
      */
     OPCPackage(PackageAccess access) {
         if (getClass() != ZipPackage.class) {
@@ -1413,7 +1413,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         try {
             partMarshallers.remove(new ContentType(contentType));
         } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -1427,7 +1427,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         try {
             partUnmarshallers.remove(new ContentType(contentType));
         } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

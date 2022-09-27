@@ -58,7 +58,7 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
     @NotImplemented
     @Override
     protected SheetDataWriter createSheetDataWriter() throws IOException {
-        throw new RuntimeException("Not supported by DeferredSXSSFWorkbook");
+        throw new IllegalStateException("Not supported by DeferredSXSSFWorkbook");
     }
 
     protected StreamingSheetWriter createSheetDataWriter(OutputStream out) throws IOException {
@@ -79,7 +79,7 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
         try {
             sxSheet = new DeferredSXSSFSheet(this, xSheet);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
+            throw new IllegalStateException(ioe);
         }
         registerSheetMapping(sxSheet, xSheet);
         return sxSheet;

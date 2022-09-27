@@ -190,11 +190,11 @@ public class HSSFColor implements Color {
         Map<Integer,HSSFColor> result = new HashMap<>(eList.size() * 3 / 2);
 
         for (Map.Entry<HSSFColorPredefined,HSSFColor> colorRef : eList.entrySet()) {
-            Integer index1 = (int)colorRef.getKey().getIndex();
+            Integer index1 = Integer.valueOf(colorRef.getKey().getIndex());
             if (!result.containsKey(index1)) {
                 result.put(index1, colorRef.getValue());
             }
-            Integer index2 = (int)colorRef.getKey().getIndex2();
+            Integer index2 = Integer.valueOf(colorRef.getKey().getIndex2());
             if (index2 != -1 && !result.containsKey(index2)) {
                 result.put(index2, colorRef.getValue());
             }

@@ -416,7 +416,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
             }
             raw_pictureData = bos.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException("Can't compress metafile picture data", e);
+            throw new IllegalStateException("Can't compress metafile picture data", e);
         }
 
         setCompressedSize(raw_pictureData.length);

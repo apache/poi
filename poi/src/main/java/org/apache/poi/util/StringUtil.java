@@ -18,6 +18,7 @@
 package org.apache.poi.util;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -128,7 +129,7 @@ public final class StringUtil {
      * @param string byte array to read
      * @param offset offset to read byte array
      * @param len    length to read byte array
-     * @return String generated String instance by reading byte array
+     * @return String generated String instance by reading byte array (ISO-8859-1)
      */
     public static String getFromCompressedUnicode(
             final byte[] string,
@@ -138,6 +139,29 @@ public final class StringUtil {
         return new String(string, offset, len_to_use, ISO_8859_1);
     }
 
+    /**
+     * Read 8 bit data (in UTF-8 codepage) into a (unicode) Java
+     * String and return.
+     * (In Excel terms, read compressed 8 bit unicode as a string)
+     *
+     * @param string byte array to read
+     * @param offset offset to read byte array
+     * @param len    length to read byte array
+     * @return String generated String instance by reading byte array (UTF-8)
+     */
+    public static String getFromCompressedUTF8(
+            final byte[] string,
+            final int offset,
+            final int len) {
+        int len_to_use = Math.min(len, string.length - offset);
+        return new String(string, offset, len_to_use, UTF_8);
+    }
+
+    /**
+     * @param in stream,
+     * @param nChars number pf chars
+     * @return ISO_8859_1 encoded result
+     */
     public static String readCompressedUnicode(LittleEndianInput in, int nChars) {
         byte[] buf = IOUtils.safelyAllocate(nChars, MAX_RECORD_LENGTH);
         in.readFully(buf);

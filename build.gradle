@@ -36,11 +36,12 @@ buildscript {
 plugins {
     id 'base'
     id 'com.dorongold.task-tree' version '2.1.0'
-    id 'org.nosphere.apache.rat' version '0.7.1'
+    id 'org.nosphere.apache.rat' version '0.8.0'
     id 'distribution'
-    id "com.github.spotbugs" version '5.0.10'
+    id "com.github.spotbugs" version '5.0.12'
     id 'de.thetaphi.forbiddenapis' version '3.3'
     id 'com.github.jk1.dependency-license-report' version '2.0'
+    id 'org.cyclonedx.bom' version '1.7.1'
 }
 
 repositories {
@@ -94,7 +95,7 @@ configurations {
 }
 
 dependencies {
-    antLibs("org.junit.jupiter:junit-jupiter:5.9.0")
+    antLibs("org.junit.jupiter:junit-jupiter:5.9.1")
     antLibs("org.apache.ant:ant-junitlauncher:1.10.12")
 }
 
@@ -104,7 +105,7 @@ ant.taskdef(name: "junit",
 
 
 wrapper {
-    gradleVersion = '7.5'
+    gradleVersion = '7.5.1'
 }
 
 task adjustWrapperPropertiesFile {
@@ -118,12 +119,16 @@ task adjustWrapperPropertiesFile {
 }
 wrapper.finalizedBy adjustWrapperPropertiesFile
 
+group = 'org.apache.poi'
+
 /**
  Define properties for all projects, including this one
  */
 allprojects {
 //    apply plugin: 'eclipse'
     apply plugin: 'idea'
+
+    version = '5.2.4-SNAPSHOT'
 }
 
 /**
@@ -138,7 +143,6 @@ subprojects {
     apply plugin: 'de.thetaphi.forbiddenapis'
     apply plugin: 'com.github.spotbugs'
 
-    version = '5.2.3-SNAPSHOT'
     ext {
         bouncyCastleVersion = '1.70'
         commonsCodecVersion = '1.15'
@@ -146,12 +150,12 @@ subprojects {
         commonsIoVersion = '2.11.0'
         commonsMathVersion = '3.6.1'
         junitVersion = '5.9.0'
-        log4jVersion = '2.18.0'
-        mockitoVersion = '4.7.0'
+        log4jVersion = '2.19.0'
+        mockitoVersion = '4.8.0'
         hamcrestVersion = '2.2'
         xmlbeansVersion = '5.1.1'
-        batikVersion = '1.14'
-        graphics2dVersion = '0.38'
+        batikVersion = '1.15'
+        graphics2dVersion = '0.41'
         pdfboxVersion = '2.0.26'
         saxonVersion = '11.4'
         apiGuardianVersion = '1.1.2'
@@ -174,7 +178,7 @@ subprojects {
         all {
             resolutionStrategy {
                 force "commons-io:commons-io:${commonsIoVersion}"
-                force 'org.slf4j:slf4j-api:1.7.36'
+                force 'org.slf4j:slf4j-api:2.0.2'
                 force 'com.fasterxml.woodstox:woodstox-core:6.3.1'
             }
         }
@@ -189,7 +193,7 @@ subprojects {
 
     repositories {
         mavenCentral()
-        maven { url 'https://repository.apache.org/content/repositories/staging' }
+        //maven { url 'https://repository.apache.org/content/repositories/staging' }
     }
 
     dependencies {
@@ -870,3 +874,22 @@ binDistZip.finalizedBy fixDistDir
 binDistTar.finalizedBy fixDistDir
 srcDistZip.finalizedBy fixDistDir
 srcDistTar.finalizedBy fixDistDir
+
+cyclonedxBom {
+    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
+    includeConfigs = ["runtimeClasspath"]
+    // skipConfigs is a list of configuration names to exclude when generating the BOM
+    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
+    // Specified the type of project being built. Defaults to 'library'
+    projectType = "library"
+    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
+    schemaVersion = "1.4"
+    // Boms destination directory (defaults to build/reports)
+    destination = file("build/reports")
+    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
+    outputName = "pom-${project.version}.bom"
+    // The file format generated, can be xml, json or all for generating both
+    outputFormat = "xml"
+    // Exclude BOM Serial Number
+    includeBomSerialNumber = true
+}

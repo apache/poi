@@ -370,7 +370,7 @@ public class POIFSFileSystem extends BlockStore
             stream.close();
         } catch (IOException e) {
             if (success) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
             // else not success? Try block did not complete normally
             // just print stack trace and leave original ex to be thrown

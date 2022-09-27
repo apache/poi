@@ -35,11 +35,9 @@ import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
-import org.apache.poi.util.Units;
+import org.apache.poi.util.*;
 import org.apache.poi.wp.usermodel.CharacterRun;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.xmlbeans.*;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
@@ -63,6 +61,7 @@ import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STHexColorRGB
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STVerticalAlignRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
@@ -108,7 +107,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         pictTextObjs.addAll(Arrays.asList(r.getPictArray()));
         pictTextObjs.addAll(Arrays.asList(r.getDrawingArray()));
         for (XmlObject o : pictTextObjs) {
-            XmlObject[] ts = o.selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' .//w:t");
+            XmlObject[] ts = o.selectPath("declare namespace w='" + XSSFRelation.NS_WORDPROCESSINGML + "' .//w:t");
             for (XmlObject t : ts) {
                 NodeList kids = t.getDomNode().getChildNodes();
                 for (int n = 0; n < kids.getLength(); n++) {
@@ -1351,12 +1350,15 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             while (c.toNextSelection()) {
                 XmlObject o = c.getObject();
                 if (o instanceof CTRubyContent) {
-                    String tagName = o.getDomNode().getNodeName();
-                    if ("w:rt".equals(tagName)) {
-                        inRT = true;
-                    } else if ("w:rubyBase".equals(tagName)) {
-                        inRT = false;
-                        inBase = true;
+                    final Node node = o.getDomNode();
+                    if (XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI())) {
+                        final String tagName = node.getLocalName();
+                        if ("rt".equals(tagName)) {
+                            inRT = true;
+                        } else if ("rubyBase".equals(tagName)) {
+                            inRT = false;
+                            inBase = true;
+                        }
                     }
                 } else {
                     if (extractPhonetic && inRT) {
@@ -1372,12 +1374,18 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     private void _getText(XmlObject o, StringBuilder text) {
 
         if (o instanceof CTText) {
-            String tagName = o.getDomNode().getNodeName();
+            final Node node = o.getDomNode();
             // Field Codes (w:instrText, defined in spec sec. 17.16.23)
             //  come up as instances of CTText, but we don't want them
             //  in the normal text output
-            if (!"w:instrText".equals(tagName)) {
-                text.append(((CTText) o).getStringValue());
+            if (!("instrText".equals(node.getLocalName()) && XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI()))) {
+                String textValue = ((CTText) o).getStringValue();
+                if (textValue != null) {
+                    if (isCapitalized() || isSmallCaps()) {
+                        textValue = textValue.toUpperCase(LocaleUtil.getUserLocale());
+                    }
+                    text.append(textValue);
+                }
             }
         }
 
@@ -1387,7 +1395,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             if (ctfldChar.getFldCharType() == STFldCharType.BEGIN) {
                 if (ctfldChar.getFfData() != null) {
                     for (CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxList()) {
-                        text.append((checkBox.getDefault() != null && POIXMLUnits.parseOnOff(checkBox.getDefault().xgetVal())) ? "|X|" : "|_|");
+                        String textValue = checkBox.getDefault() != null && POIXMLUnits.parseOnOff(checkBox.getDefault().xgetVal()) ?
+                                "|X|" : "|_|";
+                        text.append(textValue);
                     }
                 }
             }
@@ -1405,15 +1415,17 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             //  definitions around line 5642 of the XSDs
             // This bit works around it, and replicates the above
             //  rules for that case
-            String tagName = o.getDomNode().getNodeName();
-            if ("w:tab".equals(tagName) || "tab".equals(tagName)) {
-                text.append('\t');
-            }
-            if ("w:br".equals(tagName) || "br".equals(tagName)) {
-                text.append('\n');
-            }
-            if ("w:cr".equals(tagName) || "cr".equals(tagName)) {
-                text.append('\n');
+            final Node node = o.getDomNode();
+            if (XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI())) {
+                switch (node.getLocalName()) {
+                    case "tab":
+                        text.append('\t');
+                        break;
+                    case "br":
+                    case "cr":
+                        text.append('\n');
+                        break;
+                }
             }
         }
         if (o instanceof CTFtnEdnRef) {

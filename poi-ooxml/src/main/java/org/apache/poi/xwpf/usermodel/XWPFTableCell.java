@@ -54,10 +54,10 @@ public class XWPFTableCell implements IBody, ICell {
     static {
         // populate enum maps
         alignMap = new EnumMap<>(XWPFVertAlign.class);
-        alignMap.put(XWPFVertAlign.TOP, STVerticalJc.Enum.forInt(STVerticalJc.INT_TOP));
-        alignMap.put(XWPFVertAlign.CENTER, STVerticalJc.Enum.forInt(STVerticalJc.INT_CENTER));
-        alignMap.put(XWPFVertAlign.BOTH, STVerticalJc.Enum.forInt(STVerticalJc.INT_BOTH));
-        alignMap.put(XWPFVertAlign.BOTTOM, STVerticalJc.Enum.forInt(STVerticalJc.INT_BOTTOM));
+        alignMap.put(XWPFVertAlign.TOP, STVerticalJc.TOP);
+        alignMap.put(XWPFVertAlign.CENTER, STVerticalJc.CENTER);
+        alignMap.put(XWPFVertAlign.BOTH, STVerticalJc.BOTH);
+        alignMap.put(XWPFVertAlign.BOTTOM, STVerticalJc.BOTTOM);
 
         stVertAlignTypeMap = new HashMap<>();
         stVertAlignTypeMap.put(STVerticalJc.INT_TOP, XWPFVertAlign.TOP);

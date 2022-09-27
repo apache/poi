@@ -85,7 +85,7 @@ final class FunctionMetadataReader {
     private static void readResourceFile(FunctionDataBuilder fdb, String resourceFile) {
         try (InputStream is = FunctionMetadataReader.class.getResourceAsStream(resourceFile)) {
             if (is == null) {
-                throw new RuntimeException("resource '" + resourceFile + "' not found");
+                throw new IllegalStateException("resource '" + resourceFile + "' not found");
             }
 
             try(BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
@@ -106,7 +106,7 @@ final class FunctionMetadataReader {
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -114,7 +114,7 @@ final class FunctionMetadataReader {
 
         String[] parts = TAB_DELIM_PATTERN.split(line, -2);
         if(parts.length != 8) {
-            throw new RuntimeException("Bad line format '" + line + "' - expected 8 data fields delimited by tab, " +
+            throw new IllegalStateException("Bad line format '" + line + "' - expected 8 data fields delimited by tab, " +
                     "but had " + parts.length + ": " + Arrays.toString(parts));
         }
         int functionIndex = parseInt(parts[0]);
@@ -168,7 +168,7 @@ final class FunctionMetadataReader {
 
     private static byte parseOperandTypeCode(String code) {
         if(code.length() != 1) {
-            throw new RuntimeException("Bad operand type code format '" + code  + "' expected single char");
+            throw new IllegalStateException("Bad operand type code format '" + code  + "' expected single char");
         }
         switch(code.charAt(0)) {
             case 'V': return Ptg.CLASS_VALUE;
@@ -197,7 +197,7 @@ final class FunctionMetadataReader {
         if(DIGIT_ENDING_FUNCTION_NAMES_SET.contains(functionName)) {
             return;
         }
-        throw new RuntimeException("Invalid function name '" + functionName
+        throw new IllegalStateException("Invalid function name '" + functionName
                 + "' (is footnote number incorrectly appended)");
     }
 
@@ -205,7 +205,7 @@ final class FunctionMetadataReader {
         try {
             return Integer.parseInt(valStr);
         } catch (NumberFormatException e) {
-            throw new RuntimeException("Value '" + valStr + "' could not be parsed as an integer");
+            throw new IllegalStateException("Value '" + valStr + "' could not be parsed as an integer");
         }
     }
 }

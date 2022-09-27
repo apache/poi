@@ -252,7 +252,7 @@ public final class SlideShowDumper {
 
         // Check for corrupt / lying ones
         if (recordLen != 8 && (recordLen != (atomLen + 8))) {
-            out.printf(Locale.ROOT, ind + "** Atom length of $2d ($3d) doesn't match record length of %4d%n", "", atomLen, atomLen + 8, recordLen);
+            out.printf(Locale.ROOT, ind + "** Atom length of %2d (%3d) doesn't match record length of %4d%n", atomLen, atomLen + 8, recordLen);
         }
 
         // Print the record's details

@@ -98,7 +98,7 @@ final class ForkedEvaluationCell implements EvaluationCell {
 
     private void checkCellType(CellType expectedCellType) {
         if (_cellType != expectedCellType) {
-            throw new RuntimeException("Wrong data type (" + _cellType + ")");
+            throw new IllegalStateException("Wrong data type (" + _cellType + ")");
         }
     }
 

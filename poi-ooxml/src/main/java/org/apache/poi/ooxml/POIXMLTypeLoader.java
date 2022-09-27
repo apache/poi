@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.openxml4j.opc.PackageNamespaces;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.xmlbeans.XmlOptions;
 
 public class POIXMLTypeLoader {
@@ -53,15 +54,15 @@ public class POIXMLTypeLoader {
         // DEFAULT_XML_OPTIONS.setUnsynchronized();
 
         Map<String, String> map = new HashMap<>();
-        map.put("http://schemas.openxmlformats.org/drawingml/2006/main", "a");
+        map.put(XSSFRelation.NS_DRAWINGML, "a");
         map.put("http://schemas.openxmlformats.org/drawingml/2006/chart", "c");
         map.put("http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing", "wp");
         map.put(PackageNamespaces.MARKUP_COMPATIBILITY, "ve");
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/math", "m");
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "r");
         map.put("http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes", "vt");
-        map.put("http://schemas.openxmlformats.org/presentationml/2006/main", "p");
-        map.put("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w");
+        map.put(XSSFRelation.NS_PRESENTATIONML, "p");
+        map.put(XSSFRelation.NS_WORDPROCESSINGML, "w");
         map.put("http://schemas.microsoft.com/office/word/2006/wordml", "wne");
         map.put(MS_OFFICE_URN, "o");
         map.put(MS_EXCEL_URN, "x");

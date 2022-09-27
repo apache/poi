@@ -139,6 +139,7 @@ public class SXSSFCell extends CellBase {
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
      * on the cached value of the formula
+     * @throws IllegalStateException if cell is not a formula cell
      */
     @Override
     public CellType getCachedFormulaResultType() {
@@ -253,7 +254,7 @@ public class SXSSFCell extends CellBase {
                     _value = new ErrorFormulaValue(formula, getErrorCellValue());
                     break;
                 default:
-                    throw new IllegalStateException("Cannot set a formula for a cell of type " + getCellType());
+                    throw new FormulaParseException("Cannot set a formula for a cell of type " + getCellType());
             }
         }
     }

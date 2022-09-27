@@ -58,6 +58,7 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
      *
      * @param ctHyperlink the xml bean containing xml properties
      * @param hyperlinkRel the relationship in the underlying OPC package which stores the actual link's address
+     * @throws IllegalStateException if ctHyperlink Id is null
      */
     protected XSSFHyperlink(CTHyperlink ctHyperlink, PackageRelationship hyperlinkRel) {
         _ctHyperlink = ctHyperlink;

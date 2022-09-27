@@ -725,7 +725,7 @@ public class SXSSFWorkbook implements Workbook {
         try {
             sxSheet = new SXSSFSheet(this,xSheet);
         } catch (IOException ioe) {
-            throw new RuntimeException(ioe);
+            throw new IllegalStateException(ioe);
         }
         registerSheetMapping(sxSheet,xSheet);
         return sxSheet;
@@ -755,7 +755,7 @@ public class SXSSFWorkbook implements Workbook {
     @Override
     @NotImplemented
     public Sheet cloneSheet(int sheetNum) {
-        throw new RuntimeException("Not Implemented");
+        throw new IllegalStateException("Not Implemented");
     }
 
 
@@ -1025,8 +1025,9 @@ public class SXSSFWorkbook implements Workbook {
             //Substitute the template entries with the generated sheet data files
             try (
                     InputStream is = bos.toInputStream();
+                    ZipArchiveInputStream zis = new ZipArchiveInputStream(is);
                     ZipInputStreamZipEntrySource source = new ZipInputStreamZipEntrySource(
-                        new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(is)))
+                        new ZipArchiveThresholdInputStream(zis))
             ) {
                 injectData(source, stream);
             }
@@ -1314,12 +1315,12 @@ public class SXSSFWorkbook implements Workbook {
      * @param name The name the workbook will be referenced as in formulas
      * @param workbook The open workbook to fetch the link required information from
      *
-     * @throws RuntimeException stating that this method is not implemented yet.
+     * @throws IllegalStateException stating that this method is not implemented yet.
      */
     @Override
     @NotImplemented
     public int linkExternalWorkbook(String name, Workbook workbook) {
-        throw new RuntimeException("Not Implemented");
+        throw new IllegalStateException("Not Implemented");
     }
 
     /**

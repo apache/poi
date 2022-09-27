@@ -159,7 +159,7 @@ public final class HSSFPalette {
      *
      * @return  The new custom color.
      *
-     * @throws RuntimeException if there are more more free color indexes.
+     * @throws IllegalStateException if there are more more free color indexes.
      */
     public HSSFColor addColor( byte red, byte green, byte blue )
     {
@@ -173,7 +173,7 @@ public final class HSSFPalette {
                 return getColor(i);
             }
         }
-        throw new RuntimeException("Could not find free color index");
+        throw new IllegalStateException("Could not find free color index");
     }
 
     private static final class CustomColor extends HSSFColor {

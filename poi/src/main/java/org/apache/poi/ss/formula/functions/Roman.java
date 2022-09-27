@@ -148,7 +148,7 @@ public class Roman extends Fixed2ArgFunction {
                 continue;
             }
             String[] repl = REPLACEMENTS[i];
-            for (int j=0; j<repl.length; j+=2) {
+            for (int j = 0; j < (repl.length - 1); j += 2) {
                 result = result.replace(repl[j],repl[j+1]);
             }
         }

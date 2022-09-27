@@ -723,7 +723,7 @@ public final class InternalWorkbook {
     private void checkSheets(int sheetnum) {
         if ((boundsheets.size()) <= sheetnum) {   // if we're short one add another..
             if ((boundsheets.size() + 1) <= sheetnum) {
-                throw new RuntimeException("Sheet number out of bounds!");
+                throw new IllegalStateException("Sheet number out of bounds!");
             }
             BoundSheetRecord bsr = createBoundSheet(sheetnum);
 
@@ -1640,7 +1640,7 @@ public final class InternalWorkbook {
         NameRecord name = new NameRecord(builtInName, sheetNumber);
 
         if(linkTable.nameAlreadyExists(name)) {
-            throw new RuntimeException("Builtin (" + builtInName
+            throw new IllegalStateException("Builtin (" + builtInName
                     + ") already exists for sheet (" + sheetNumber + ")");
         }
         addName(name);
@@ -1813,7 +1813,7 @@ public final class InternalWorkbook {
             if (rec instanceof PaletteRecord) {
                 palette = (PaletteRecord) rec;
             } else {
-                throw new RuntimeException("InternalError: Expected PaletteRecord but got a '"+rec+"'");
+                throw new IllegalStateException("InternalError: Expected PaletteRecord but got a '"+rec+"'");
             }
         } else {
             palette = createPalette();

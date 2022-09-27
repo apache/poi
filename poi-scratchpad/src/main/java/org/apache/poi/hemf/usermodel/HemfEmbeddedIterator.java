@@ -299,7 +299,7 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
             emb.setData(bos.toByteArray());
         } catch (IOException e) {
             // TODO: throw appropriate exception
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

@@ -493,7 +493,7 @@ public class SignatureInfo {
          */
         String signatureId = signatureConfig.getPackageSignatureId();
         if (!signatureId.equals(document.getDocumentElement().getAttribute("Id"))) {
-            throw new RuntimeException("ds:Signature not found for @Id: " + signatureId);
+            throw new IllegalStateException("ds:Signature not found for @Id: " + signatureId);
         }
 
         /*
@@ -501,7 +501,7 @@ public class SignatureInfo {
          */
         final Element signatureNode = getDsigElement(document, "SignatureValue");
         if (signatureNode == null) {
-            throw new RuntimeException("preSign has to be called before postSign");
+            throw new IllegalStateException("preSign has to be called before postSign");
         }
         signatureNode.setTextContent(signatureValue);
 
@@ -675,7 +675,7 @@ public class SignatureInfo {
                 RelationshipTransformService.registerDsigProvider();
                 CryptoFunctions.registerBouncyCastle();
             } catch (Exception e) {
-                throw new RuntimeException("Xml & BouncyCastle-Provider initialization failed", e);
+                throw new IllegalStateException("Xml & BouncyCastle-Provider initialization failed", e);
             }
         }
 
@@ -710,7 +710,7 @@ public class SignatureInfo {
         }
 
         private RuntimeException providerNotFound() {
-            return new RuntimeException("JRE doesn't support default xml signature provider - set jsr105Provider system property!");
+            return new IllegalStateException("JRE doesn't support default xml signature provider - set jsr105Provider system property!");
         }
     }
 

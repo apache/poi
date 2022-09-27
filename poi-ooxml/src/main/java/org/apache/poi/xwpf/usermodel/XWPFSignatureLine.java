@@ -29,18 +29,19 @@ import org.apache.poi.poifs.crypt.dsig.SignatureLine;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPicture;
 
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_WORDPROCESSINGML;
+
 public class XWPFSignatureLine extends SignatureLine {
-    static final String NS_OOXML_WP_MAIN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
     private static final String MS_VML_URN = "urn:schemas-microsoft-com:vml";
 
     private CTSignatureLine line;
 
     public void parse(XWPFDocument doc) throws XmlException {
         line = XPathHelper.selectProperty(doc.getDocument(), CTSignatureLine.class, null,
-            new QName[]{new QName(NS_OOXML_WP_MAIN, "body")},
-            new QName[]{new QName(NS_OOXML_WP_MAIN, "p")},
-            new QName[]{new QName(NS_OOXML_WP_MAIN, "r")},
-            new QName[]{new QName(NS_OOXML_WP_MAIN, "pict")},
+            new QName[]{new QName(NS_WORDPROCESSINGML, "body")},
+            new QName[]{new QName(NS_WORDPROCESSINGML, "p")},
+            new QName[]{new QName(NS_WORDPROCESSINGML, "r")},
+            new QName[]{new QName(NS_WORDPROCESSINGML, "pict")},
             new QName[]{new QName(MS_VML_URN, "shape")},
             new QName[]{QNAME_SIGNATURE_LINE});
         if (line != null) {

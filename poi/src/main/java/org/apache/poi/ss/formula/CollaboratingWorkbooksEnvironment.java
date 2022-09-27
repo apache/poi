@@ -130,7 +130,7 @@ public final class CollaboratingWorkbooksEnvironment {
         for (WorkbookEvaluator evaluator : evaluators) {
             if (evalListener != evaluator.getEvaluationListener()) {
                 // This would be very complex to support
-                throw new RuntimeException("Workbook evaluators must all have the same evaluation listener");
+                throw new IllegalStateException("Workbook evaluators must all have the same evaluation listener");
             }
         }
         EvaluationCache cache = new EvaluationCache(evalListener);

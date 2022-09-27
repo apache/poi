@@ -85,7 +85,7 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg, Ar
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1,
             ValueEval arg2, ValueEval arg3) {
-        throw new RuntimeException("Incomplete code"
+        throw new IllegalStateException("Incomplete code"
                 + " - don't know how to support the 'area_num' parameter yet)");
         // Excel expression might look like this "INDEX( (A1:B4, C3:D6, D2:E5 ), 1, 2, 3)
         // In this example, the 3rd area would be used i.e. D2:E5, and the overall result would be E2
@@ -103,7 +103,7 @@ public final class Index implements Function2Arg, Function3Arg, Function4Arg, Ar
         }
         // else the other variation of this function takes an array as the first argument
         // it seems like interface 'ArrayEval' does not even exist yet
-        throw new RuntimeException("Incomplete code - cannot handle first arg of type ("
+        throw new IllegalStateException("Incomplete code - cannot handle first arg of type ("
                 + arg0.getClass().getName() + ")");
 
     }

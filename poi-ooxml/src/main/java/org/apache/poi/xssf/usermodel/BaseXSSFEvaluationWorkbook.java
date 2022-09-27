@@ -131,7 +131,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
         }
 
         // Not properly referenced
-        throw new RuntimeException("Book not linked for filename " + bookName);
+        throw new IllegalStateException("Book not linked for filename " + bookName);
     }
     /* This is case-sensitive. Is that correct? */
     private int findExternalLinkIndex(String bookName, List<ExternalLinksTable> tables) {
@@ -317,7 +317,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
     @Override
     @NotImplemented
     public int getExternalSheetIndex(String workbookName, String sheetName) {
-        throw new RuntimeException("not implemented yet");
+        throw new IllegalStateException("not implemented yet");
     }
     @Override
     public int getSheetIndex(String sheetName) {

@@ -474,7 +474,7 @@ public class HemfPlusPen {
                 // A 32-bit unsigned integer that specifies the number of elements in the DashedLineData field.
                 int dashesSize = leis.readInt();
                 if (dashesSize < 0 || dashesSize > 1000) {
-                    throw new RuntimeException("Invalid dash data size");
+                    throw new IllegalStateException("Invalid dash data size");
                 }
 
                 // An array of DashedLineDataSize floating-point values that specify the lengths of the dashes and spaces in a dashed line.
@@ -499,7 +499,7 @@ public class HemfPlusPen {
                 // A 32-bit unsigned integer that specifies the number of elements in the CompoundLineData field.
                 int compoundSize = leis.readInt();
                 if (compoundSize < 0 || compoundSize > 1000) {
-                    throw new RuntimeException("Invalid compound line data size");
+                    throw new IllegalStateException("Invalid compound line data size");
                 }
 
                 // An array of CompoundLineDataSize floating-point values that specify the compound line of a pen.

@@ -48,7 +48,7 @@ public class Ole10Native {
 
 
     public static final String OLE10_NATIVE = "\u0001Ole10Native";
-    private static final Charset ISO1 = StandardCharsets.ISO_8859_1;
+    private static final Charset UTF8 = StandardCharsets.UTF_8;
     // arbitrarily selected; may need to increase
     private static final int DEFAULT_MAX_RECORD_LENGTH = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
@@ -276,7 +276,7 @@ public class Ole10Native {
         byte[] buf = new byte[MAX_STRING_LENGTH];
         for (int i=0; i<buf.length; i++) {
             if ((buf[i] = is.readByte()) == 0) {
-                return StringUtil.getFromCompressedUnicode(buf, 0, i);
+                return StringUtil.getFromCompressedUTF8(buf, 0, i);
             }
         }
         throw new Ole10NativeException("AsciiZ string was not null terminated after " + MAX_STRING_LENGTH + " bytes - Exiting.");
@@ -407,14 +407,14 @@ public class Ole10Native {
                     // total size, will be determined later ..
 
                     leos.writeShort(getFlags1());
-                    leos.write(getLabel().getBytes(ISO1));
+                    leos.write(getLabel().getBytes(UTF8));
                     leos.write(0);
-                    leos.write(getFileName().getBytes(ISO1));
+                    leos.write(getFileName().getBytes(UTF8));
                     leos.write(0);
                     leos.writeShort(getFlags2());
                     leos.writeShort(getUnknown1());
                     leos.writeInt(getCommand().length() + 1);
-                    leos.write(getCommand().getBytes(ISO1));
+                    leos.write(getCommand().getBytes(UTF8));
                     leos.write(0);
                     leos.writeInt(getDataSize());
                     leos.write(getDataBuffer());

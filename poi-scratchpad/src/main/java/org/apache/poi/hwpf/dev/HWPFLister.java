@@ -263,7 +263,7 @@ public final class HWPFLister {
             }
         }
         catch ( IOException e ) {
-            throw new RuntimeException( e );
+            throw new IllegalStateException( e );
         }
     }
 

@@ -169,7 +169,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         List<X509Certificate> chain = signatureConfig.getSigningCertificateChain();
         if (chain == null || chain.isEmpty()) {
-            throw new RuntimeException("no signing certificate chain available");
+            throw new IllegalStateException("no signing certificate chain available");
         }
         CertIDListType signingCertificates = signedSignatureProperties.addNewSigningCertificate();
         CertIDType certId = signingCertificates.addNewCert();
@@ -332,7 +332,7 @@ public class XAdESSignatureFacet implements SignatureFacet {
         try {
             encodedCertificate = certificate.getEncoded();
         } catch (CertificateEncodingException e) {
-            throw new RuntimeException("certificate encoding error: "
+            throw new IllegalStateException("certificate encoding error: "
                     + e.getMessage(), e);
         }
         DigestAlgAndValueType certDigest = certId.addNewCertDigest();

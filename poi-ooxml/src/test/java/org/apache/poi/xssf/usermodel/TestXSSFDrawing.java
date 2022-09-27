@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_DRAWINGML;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -165,7 +166,7 @@ class TestXSSFDrawing {
         // Ensure it got the right namespaces
         String xml = ctDrawing.toString();
         assertTrue(xml.contains("xmlns:xdr=\"http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing\""));
-        assertTrue(xml.contains("xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\""));
+        assertTrue(xml.contains("xmlns:a=\"" + NS_DRAWINGML + '\"'));
 
         checkRewrite(wb2);
         wb2.close();

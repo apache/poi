@@ -15,27 +15,20 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.tests.formula.functions;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+package org.apache.poi.ss.formula;
 
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.TextFunction;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.*;
 import org.junit.jupiter.api.Test;
 
-public final class TestProper {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public final class TestProperHSSF {
     private Cell cell11;
     private FormulaEvaluator evaluator;
 
@@ -43,14 +36,6 @@ public final class TestProper {
     void testValidHSSF() {
         HSSFWorkbook wb = new HSSFWorkbook();
         evaluator = new HSSFFormulaEvaluator(wb);
-
-        confirm(wb);
-    }
-
-    @Test
-    void testValidXSSF() {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        evaluator = new XSSFFormulaEvaluator(wb);
 
         confirm(wb);
     }
@@ -69,6 +54,10 @@ public final class TestProper {
         confirm("PROPER(\"/&%\")", "/&%"); //nothing happens with ascii punctuation that is not upper or lower case
         confirm("PROPER(\"Apache POI\")", "Apache Poi"); //acronyms are not special
         confirm("PROPER(\"  hello world\")", "  Hello World"); //leading whitespace is ignored
+        //https://support.microsoft.com/en-us/office/proper-function-52a5a283-e8b2-49be-8506-b2887b889f94
+        confirm("PROPER(\"this is a TITLE\")", "This Is A Title");
+        confirm("PROPER(\"2-way street\")", "2-Way Street");
+        confirm("PROPER(\"76BudGet\")", "76Budget");
 
         final String scharfes = "\u00df"; //German lowercase eszett, scharfes s, sharp s
         confirm("PROPER(\"stra"+scharfes+"e\")", "Stra"+scharfes+"e");

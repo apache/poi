@@ -1040,7 +1040,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
             try {
                 buffer.write(data);
             } catch (IOException e) {
-                throw new RuntimeException("Couldn't get data from drawing/continue records", e);
+                throw new IllegalStateException("Couldn't get data from drawing/continue records", e);
             }
         }
 

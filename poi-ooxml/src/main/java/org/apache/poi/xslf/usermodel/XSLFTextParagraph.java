@@ -44,6 +44,8 @@ import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_PRESENTATIONML;
+
 /**
  * Represents a paragraph of text within the containing text body.
  * The paragraph is the highest level text separation mechanism.
@@ -743,7 +745,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         int level = getIndentLevel();
 
         // wind up and find the root master sheet which must be slide master
-        final String nsPML = "http://schemas.openxmlformats.org/presentationml/2006/main";
+        final String nsPML = NS_PRESENTATIONML;
         XSLFSheet masterSheet = _shape.getSheet();
         for (XSLFSheet m = masterSheet; m != null; m = (XSLFSheet)m.getMasterSheet()) {
             masterSheet = m;

@@ -140,7 +140,7 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
                text = text + "\n";
            }
        } catch(IOException e) {
-           throw new RuntimeException(e);
+           throw new IllegalStateException(e);
        }
 
        return text;

@@ -190,7 +190,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
             }
             return null;
         } catch (IOException e) {
-            throw new RuntimeException("Unexpected exception in readRefPtg", e);
+            throw new IllegalStateException("Unexpected exception in readRefPtg", e);
         }
     }
 

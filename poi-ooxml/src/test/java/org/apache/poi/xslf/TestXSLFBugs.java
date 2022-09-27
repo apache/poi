@@ -25,11 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.Color;
-import java.awt.LinearGradientPaint;
-import java.awt.MultipleGradientPaint;
-import java.awt.Paint;
-import java.awt.RadialGradientPaint;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.FileInputStream;
@@ -1115,97 +1110,14 @@ class TestXSLFBugs {
     }
 
     @Test
-    void identicalGradientStopsBug() throws IOException {
-
-        final ArrayList<LinearGradientPaint> linearGradients = new ArrayList<>();
-        final ArrayList<RadialGradientPaint> radialGradients = new ArrayList<>();
-        final DummyGraphics2d dgfx = new DummyGraphics2d(new NullPrintStream())
-        {
-            public void setPaint(final Paint paint) {
-                if (paint instanceof LinearGradientPaint) {
-                    linearGradients.add((LinearGradientPaint) paint);
-                }
-                if (paint instanceof RadialGradientPaint) {
-                    radialGradients.add((RadialGradientPaint) paint);
+    void tika2605() throws IOException {
+        try (XMLSlideShow slideShowModel = openSampleDocument("tika-2605.pptx")) {
+            for (XSLFSlide slide : slideShowModel.getSlides()) {
+                assertNotNull(slide);
+                for (XSLFShape shape : slide.getShapes()) {
+                    assertNotNull(shape);
                 }
             }
-        };
-
-        final List<LinearGradientPaint> expectedLinearGradients = Arrays.asList(
-            new LinearGradientPaint(new Point2D.Double(30.731732283464567, 138.7317322834646),
-                new Point2D.Double(122.91549846753813, 46.54796609939099),
-                new float[] { 0.0f, 0.99999994f, 1.0f },
-                new Color[] { new Color(81, 124, 252, 255),
-                              new Color(81, 124, 252, 255),
-                              new Color(17,21,27, 204) }),
-            new LinearGradientPaint(new Point2D.Double(174.7317322834646, 138.73173228346457),
-                new Point2D.Double(266.9154984675381, 46.547966099391004),
-                new float[] { 0.0f, 0.00000005f, 1.0f },
-                new Color[] { new Color(17,21,27, 204),
-                    new Color(81, 124, 252, 255),
-                    new Color(81, 124, 252, 255) }),
-            new LinearGradientPaint(new Point2D.Double(318.73173228346457, 138.73173228346462),
-                new Point2D.Double(410.9154984675381, 46.547966099391004),
-                new float[] { 0.0f, 0.5f, 0.50000006f, 1.0f },
-                new Color[] { new Color(17,21,27, 204),
-                    new Color(17,21,27, 204),
-                    new Color(81, 124, 252, 255),
-                    new Color(81, 124, 252, 255) })
-        );
-
-        final List<RadialGradientPaint> expectedRadialGradients = Arrays.asList(
-            new RadialGradientPaint(new Point2D.Double(30.731732283464567, 138.7317322834646),
-                108.0f, new Point2D.Double(122.91549846753813, 46.54796609939099),
-                new float[] { 0.0f, 0.5f, 0.50000006f, 1.0f },
-                new Color[] { new Color(17,21,27, 204),
-                    new Color(17,21,27, 204),
-                    new Color(81, 124, 252, 255),
-                    new Color(81, 124, 252, 255)  },
-                MultipleGradientPaint.CycleMethod.NO_CYCLE),
-            new RadialGradientPaint(new Point2D.Double(228.73173228346457, 226.9755905511811),
-                108.0f, new Point2D.Double(282.73173228346457, 280.9755905511811),
-                new float[] { 0.0f, 0.00000005f, 1.0f },
-                new Color[] { new Color(17,21,27, 204),
-                    new Color(81, 124, 252, 255),
-                    new Color(81, 124, 252, 255)  },
-                MultipleGradientPaint.CycleMethod.NO_CYCLE),
-            new RadialGradientPaint(new Point2D.Double(84.73173228346457, 226.9755905511811),
-                108.0f, new Point2D.Double(138.73173228346457, 280.9755905511811),
-                new float[] { 0.0f, 0.99999994f, 1.0f },
-                new Color[] { new Color(81, 124, 252, 255),
-                    new Color(81, 124, 252, 255),
-                    new Color(17,21,27, 204) },
-                MultipleGradientPaint.CycleMethod.NO_CYCLE)
-        );
-
-        try (XMLSlideShow slideShowModel = openSampleDocument("minimal-gradient-fill-issue.pptx")) {
-            // Render the first (and only) slide.
-            slideShowModel.getSlides().get(0).draw(dgfx);
-
-            // Test that the linear gradients have the expected data (stops modified)
-            assertEquals(3, linearGradients.size());
-            for (int i = 0 ; i < expectedLinearGradients.size() ; i++) {
-                final LinearGradientPaint expected = expectedLinearGradients.get(i);
-                final LinearGradientPaint actual = linearGradients.get(i);
-                assertEquals(expected.getStartPoint(), expected.getStartPoint());
-                assertEquals(expected.getEndPoint(), expected.getEndPoint());
-                assertArrayEquals(expected.getFractions(), actual.getFractions());
-                assertArrayEquals(expected.getColors(), actual.getColors());
-            }
-
-            // Test that the radial gradients have the expected data (stops modified)
-            assertEquals(3, radialGradients.size());
-            for (int i = 0 ; i < expectedRadialGradients.size() ; i++) {
-                final RadialGradientPaint expected = expectedRadialGradients.get(i);
-                final RadialGradientPaint actual = radialGradients.get(i);
-                assertEquals(expected.getCenterPoint(), expected.getCenterPoint());
-                assertEquals(expected.getFocusPoint(), expected.getFocusPoint());
-                assertArrayEquals(expected.getFractions(), actual.getFractions());
-                assertArrayEquals(expected.getColors(), actual.getColors());
-            }
-        }
-        catch (IllegalArgumentException e) {
-            fail("Expected no error when rendering the test gradient pptx.");
         }
     }
 }

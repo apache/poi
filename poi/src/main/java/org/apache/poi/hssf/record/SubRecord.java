@@ -139,7 +139,7 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
         UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(size);
         serialize(new LittleEndianOutputStream(baos));
         if (baos.size() != size) {
-            throw new RuntimeException("write size mismatch");
+            throw new IllegalStateException("write size mismatch");
         }
         return baos.toByteArray();
     }

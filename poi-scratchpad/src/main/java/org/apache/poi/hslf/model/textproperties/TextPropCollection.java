@@ -329,7 +329,7 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
 
     public void setIndentLevel(short indentLevel) {
         if (textPropType == TextPropType.character) {
-            throw new RuntimeException("trying to set an indent on a character collection.");
+            throw new IllegalStateException("trying to set an indent on a character collection.");
         }
         this.indentLevel = indentLevel;
     }

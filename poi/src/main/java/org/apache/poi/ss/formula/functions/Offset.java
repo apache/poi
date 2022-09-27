@@ -56,7 +56,7 @@ public final class Offset implements Function {
         public LinearOffsetRange(int offset, int length) {
             if(length == 0) {
                 // handled that condition much earlier
-                throw new RuntimeException("length may not be zero");
+                throw new IllegalStateException("length may not be zero");
             }
             _offset = offset;
             _length = length;

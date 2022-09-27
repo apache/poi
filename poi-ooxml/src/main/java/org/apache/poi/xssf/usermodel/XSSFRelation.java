@@ -360,6 +360,8 @@ public final class XSSFRelation extends POIXMLRelation {
         "/xl/customProperty#.bin"
     );
 
+    public static final String NS_PRESENTATIONML = "http://schemas.openxmlformats.org/presentationml/2006/main";
+    public static final String NS_WORDPROCESSINGML = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
     public static final String NS_SPREADSHEETML = "http://schemas.openxmlformats.org/spreadsheetml/2006/main";
     public static final String NS_DRAWINGML = "http://schemas.openxmlformats.org/drawingml/2006/main";
     public static final String NS_CHART = "http://schemas.openxmlformats.org/drawingml/2006/chart";

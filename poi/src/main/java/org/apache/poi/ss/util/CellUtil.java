@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -257,7 +258,7 @@ public final class CellUtil {
         }
 
         // Copy CellStyle
-        if (policy.isCopyCellStyle()) {
+        if (policy.isCopyCellStyle() && srcCell != null) {
             if (srcCell.getSheet() != null && destCell.getSheet() != null &&
                     destCell.getSheet().getWorkbook() == srcCell.getSheet().getWorkbook()) {
                 destCell.setCellStyle(srcCell.getCellStyle());
@@ -384,11 +385,22 @@ public final class CellUtil {
      * @since POI 3.14 beta 2
      */
     public static void setCellStyleProperties(Cell cell, Map<String, Object> properties) {
+        setCellStyleProperties(cell, properties, false);
+    }
+
+    private static void setCellStyleProperties(final Cell cell, final Map<String, Object> properties,
+                                               final boolean disableNullColorCheck) {
         Workbook workbook = cell.getSheet().getWorkbook();
         CellStyle originalStyle = cell.getCellStyle();
-        
+
         CellStyle newStyle = null;
         Map<String, Object> values = getFormatProperties(originalStyle);
+        if (properties.containsKey(FILL_FOREGROUND_COLOR_COLOR) && properties.get(FILL_FOREGROUND_COLOR_COLOR) == null) {
+            values.remove(FILL_FOREGROUND_COLOR);
+        }
+        if (properties.containsKey(FILL_BACKGROUND_COLOR_COLOR) && properties.get(FILL_BACKGROUND_COLOR_COLOR) == null) {
+            values.remove(FILL_BACKGROUND_COLOR);
+        }
         putAll(properties, values);
 
         // index seems like what index the cellstyle is in the list of styles for a workbook.
@@ -400,7 +412,7 @@ public final class CellUtil {
             Map<String, Object> wbStyleMap = getFormatProperties(wbStyle);
 
             // the desired style already exists in the workbook. Use the existing style.
-            if (styleMapsMatch(wbStyleMap, values)) {
+            if (styleMapsMatch(wbStyleMap, values, disableNullColorCheck)) {
                 newStyle = wbStyle;
                 break;
             }
@@ -415,16 +427,19 @@ public final class CellUtil {
         cell.setCellStyle(newStyle);
     }
 
-    private static boolean styleMapsMatch(final Map<String, Object> map1, final Map<String, Object> map2) {
-        final Map<String, Object> map1Copy = new HashMap<>(map1);
-        final Map<String, Object> map2Copy = new HashMap<>(map2);
+    private static boolean styleMapsMatch(final Map<String, Object> newProps,
+                                          final Map<String, Object> storedProps, final boolean disableNullColorCheck) {
+        final Map<String, Object> map1Copy = new HashMap<>(newProps);
+        final Map<String, Object> map2Copy = new HashMap<>(storedProps);
         final Object backColor1 = map1Copy.remove(FILL_BACKGROUND_COLOR_COLOR);
         final Object backColor2 = map2Copy.remove(FILL_BACKGROUND_COLOR_COLOR);
         final Object foreColor1 = map1Copy.remove(FILL_FOREGROUND_COLOR_COLOR);
         final Object foreColor2 = map2Copy.remove(FILL_FOREGROUND_COLOR_COLOR);
         if (map1Copy.equals(map2Copy)) {
-            final boolean backColorsMatch = backColor1 == null || backColor2 == null || backColor1.equals(backColor2);
-            final boolean foreColorsMatch = foreColor1 == null || foreColor2 == null || foreColor1.equals(foreColor2);
+            final boolean backColorsMatch = (!disableNullColorCheck && backColor2 == null)
+                    || Objects.equals(backColor1, backColor2);
+            final boolean foreColorsMatch = (!disableNullColorCheck && foreColor2 == null)
+                    || Objects.equals(foreColor1, foreColor2);
             return backColorsMatch && foreColorsMatch;
         }
         return false;
@@ -448,8 +463,22 @@ public final class CellUtil {
      * @param propertyValue The value of the property that is to be changed.
      */
     public static void setCellStyleProperty(Cell cell, String propertyName, Object propertyValue) {
-        Map<String, Object> property = Collections.singletonMap(propertyName, propertyValue);
-        setCellStyleProperties(cell, property);
+        boolean disableNullColorCheck = false;
+        final Map<String, Object> propMap;
+        if (CellUtil.FILL_FOREGROUND_COLOR_COLOR.equals(propertyName) && propertyValue == null) {
+            disableNullColorCheck = true;
+            propMap = new HashMap<>();
+            propMap.put(CellUtil.FILL_FOREGROUND_COLOR_COLOR, null);
+            propMap.put(CellUtil.FILL_FOREGROUND_COLOR, null);
+        } else if (CellUtil.FILL_BACKGROUND_COLOR_COLOR.equals(propertyName) && propertyValue == null) {
+            disableNullColorCheck = true;
+            propMap = new HashMap<>();
+            propMap.put(CellUtil.FILL_BACKGROUND_COLOR_COLOR, null);
+            propMap.put(CellUtil.FILL_BACKGROUND_COLOR, null);
+        } else {
+            propMap = Collections.singletonMap(propertyName, propertyValue);
+        }
+        setCellStyleProperties(cell, propMap, disableNullColorCheck);
     }
 
     /**
@@ -504,7 +533,7 @@ public final class CellUtil {
     private static void putAll(final Map<String, Object> src, Map<String, Object> dest) {
         for (final String key : src.keySet()) {
             if (shortValues.contains(key)) {
-                dest.put(key, getShort(src, key));
+                dest.put(key, nullableShort(src, key));
             } else if (colorValues.contains(key)) {
                 dest.put(key, getColor(src, key));
             } else if (intValues.contains(key)) {
@@ -544,11 +573,18 @@ public final class CellUtil {
         style.setDataFormat(getShort(properties, DATA_FORMAT));
         style.setFillPattern(getFillPattern(properties, FILL_PATTERN));
 
-        style.setFillForegroundColor(getShort(properties, FILL_FOREGROUND_COLOR));
-        style.setFillBackgroundColor(getShort(properties, FILL_BACKGROUND_COLOR));
+        Short fillForeColorShort = nullableShort(properties, FILL_FOREGROUND_COLOR);
+        if (fillForeColorShort != null) {
+            style.setFillForegroundColor(fillForeColorShort);
+        }
+        Short fillBackColorShort = nullableShort(properties, FILL_BACKGROUND_COLOR);
+        if (fillBackColorShort != null) {
+            style.setFillBackgroundColor(fillBackColorShort);
+        }
 
         Color foregroundFillColor = getColor(properties, FILL_FOREGROUND_COLOR_COLOR);
         Color backgroundFillColor = getColor(properties, FILL_BACKGROUND_COLOR_COLOR);
+
         if (foregroundFillColor != null) {
             try {
                 style.setFillForegroundColor(foregroundFillColor);
@@ -591,6 +627,17 @@ public final class CellUtil {
             return ((Number) value).shortValue();
         }
         return 0;
+    }
+
+    private static Short nullableShort(Map<String, Object> properties, String name) {
+        Object value = properties.get(name);
+        if (value instanceof Short) {
+            return (Short) value;
+        }
+        if (value instanceof Number) {
+            return ((Number) value).shortValue();
+        }
+        return null;
     }
     
     /**
@@ -649,7 +696,7 @@ public final class CellUtil {
             border = BorderStyle.NONE;
         }
         else {
-            throw new RuntimeException("Unexpected border style class. Must be BorderStyle or Short (deprecated).");
+            throw new IllegalStateException("Unexpected border style class. Must be BorderStyle or Short (deprecated).");
         }
         return border;
     }
@@ -678,7 +725,7 @@ public final class CellUtil {
             pattern = FillPatternType.NO_FILL;
         }
         else {
-            throw new RuntimeException("Unexpected fill pattern style class. Must be FillPatternType or Short (deprecated).");
+            throw new IllegalStateException("Unexpected fill pattern style class. Must be FillPatternType or Short (deprecated).");
         }
         return pattern;
     }
@@ -707,7 +754,7 @@ public final class CellUtil {
             align = HorizontalAlignment.GENERAL;
         }
         else {
-            throw new RuntimeException("Unexpected horizontal alignment style class. Must be HorizontalAlignment or Short (deprecated).");
+            throw new IllegalStateException("Unexpected horizontal alignment style class. Must be HorizontalAlignment or Short (deprecated).");
         }
         return align;
     }
@@ -736,7 +783,7 @@ public final class CellUtil {
             align = VerticalAlignment.BOTTOM;
         }
         else {
-            throw new RuntimeException("Unexpected vertical alignment style class. Must be VerticalAlignment or Short (deprecated).");
+            throw new IllegalStateException("Unexpected vertical alignment style class. Must be VerticalAlignment or Short (deprecated).");
         }
         return align;
     }

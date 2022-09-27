@@ -78,6 +78,9 @@ public class XSSFReader {
 
     /**
      * Creates a new XSSFReader, for the given package
+     *
+     * @throws OpenXML4JException if the package format is invalid
+     * @throws IOException if there is an I/O issue reading the data
      */
     public XSSFReader(OPCPackage pkg) throws IOException, OpenXML4JException {
         this(pkg, false);
@@ -88,6 +91,8 @@ public class XSSFReader {
      *
      * @param pkg an {@code OPCPackage} representing a spreasheet file
      * @param allowStrictOoxmlFiles whether to try to handle Strict OOXML format files
+     * @throws OpenXML4JException if the package format is invalid
+     * @throws IOException if there is an I/O issue reading the data
      */
     public XSSFReader(OPCPackage pkg, boolean allowStrictOoxmlFiles) throws IOException, OpenXML4JException {
         this.pkg = pkg;
@@ -141,6 +146,10 @@ public class XSSFReader {
      * Opens up the Shared Strings Table, parses it, and
      * returns a handy object for working with
      * shared strings.
+     *
+     * @return {@link SharedStrings}
+     * @throws InvalidFormatException if the shared strings data format is invalid
+     * @throws IOException if there is an I/O issue reading the data
      * @see #setUseReadOnlySharedStringsTable(boolean)
      */
     public SharedStrings getSharedStringsTable() throws IOException, InvalidFormatException {
@@ -157,6 +166,10 @@ public class XSSFReader {
     /**
      * Opens up the Styles Table, parses it, and
      * returns a handy object for working with cell styles
+     *
+     * @return {@link StylesTable}
+     * @throws InvalidFormatException if the styles data format is invalid
+     * @throws IOException if there is an I/O issue reading the data
      */
     public StylesTable getStylesTable() throws IOException, InvalidFormatException {
         ArrayList<PackagePart> parts = pkg.getPartsByContentType(XSSFRelation.STYLES.getContentType());
@@ -175,6 +188,10 @@ public class XSSFReader {
     /**
      * Returns an InputStream to read the contents of the
      * shared strings table.
+     *
+     * @return input stream
+     * @throws InvalidFormatException if the shared string data format is invalid
+     * @throws IOException if there is an I/O issue reading the data
      */
     public InputStream getSharedStringsData() throws IOException, InvalidFormatException {
         return XSSFRelation.SHARED_STRINGS.getContents(workbookPart);
@@ -183,6 +200,10 @@ public class XSSFReader {
     /**
      * Returns an InputStream to read the contents of the
      * styles table.
+     *
+     * @return input stream
+     * @throws InvalidFormatException if the styles data format is invalid
+     * @throws IOException if there is an I/O issue reading the data
      */
     public InputStream getStylesData() throws IOException, InvalidFormatException {
         return XSSFRelation.STYLES.getContents(workbookPart);
@@ -191,6 +212,10 @@ public class XSSFReader {
     /**
      * Returns an InputStream to read the contents of the
      * themes table.
+     *
+     * @return input stream
+     * @throws InvalidFormatException if the themes data format is invalid
+     * @throws IOException if there is an I/O issue reading the data
      */
     public InputStream getThemesData() throws IOException, InvalidFormatException {
         return XSSFRelation.THEME.getContents(workbookPart);
@@ -200,6 +225,10 @@ public class XSSFReader {
      * Returns an InputStream to read the contents of the
      * main Workbook, which contains key overall data for
      * the file, including sheet definitions.
+     *
+     * @return input stream
+     * @throws InvalidFormatException if the sheet data format is invalid
+     * @throws IOException if there is an I/O issue reading the data
      */
     public InputStream getWorkbookData() throws IOException, InvalidFormatException {
         return workbookPart.getInputStream();
@@ -210,6 +239,8 @@ public class XSSFReader {
      * specified Sheet.
      *
      * @param relId The relationId of the sheet, from a r:id on the workbook
+     * @throws InvalidFormatException if the sheet data format is invalid
+     * @throws IOException if there is an I/O issue reading the data
      */
     public InputStream getSheet(String relId) throws IOException, InvalidFormatException {
         PackageRelationship rel = workbookPart.getRelationship(relId);
@@ -231,6 +262,9 @@ public class XSSFReader {
      * Each sheet's InputStream is only opened when fetched
      * from the Iterator. It's up to you to close the
      * InputStreams when done with each one.
+     *
+     * @throws InvalidFormatException if the sheet data format is invalid
+     * @throws IOException if there is an I/O issue reading the data
      */
     public Iterator<InputStream> getSheetsData() throws IOException, InvalidFormatException {
         return new SheetIterator(workbookPart);
@@ -262,30 +296,28 @@ public class XSSFReader {
          * Construct a new SheetIterator
          *
          * @param wb package part holding workbook.xml
+         * @throws InvalidFormatException if the sheet data format is invalid
+         * @throws IOException if there is an I/O issue reading the data
          */
-        protected SheetIterator(PackagePart wb) throws IOException {
+        protected SheetIterator(PackagePart wb) throws IOException, InvalidFormatException {
 
             /*
              * The order of sheets is defined by the order of CTSheet elements in workbook.xml
              */
-            try {
-                //step 1. Map sheet's relationship Id and the corresponding PackagePart
-                sheetMap = new HashMap<>();
-                OPCPackage pkg = wb.getPackage();
-                Set<String> worksheetRels = getSheetRelationships();
-                for (PackageRelationship rel : wb.getRelationships()) {
-                    String relType = rel.getRelationshipType();
-                    if (worksheetRels.contains(relType)) {
-                        PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
-                        sheetMap.put(rel.getId(), pkg.getPart(relName));
-                    }
+            //step 1. Map sheet's relationship Id and the corresponding PackagePart
+            sheetMap = new HashMap<>();
+            OPCPackage pkg = wb.getPackage();
+            Set<String> worksheetRels = getSheetRelationships();
+            for (PackageRelationship rel : wb.getRelationships()) {
+                String relType = rel.getRelationshipType();
+                if (worksheetRels.contains(relType)) {
+                    PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
+                    sheetMap.put(rel.getId(), pkg.getPart(relName));
                 }
-                //step 2. Read array of CTSheet elements, wrap it in a LinkedList
-                //and construct an iterator
-                sheetIterator = createSheetIteratorFromWB(wb);
-            } catch (InvalidFormatException e) {
-                throw new POIXMLException(e);
             }
+            //step 2. Read array of CTSheet elements, wrap it in a LinkedList
+            //and construct an iterator
+            sheetIterator = createSheetIteratorFromWB(wb);
         }
 
         protected Iterator<XSSFSheetRef> createSheetIteratorFromWB(PackagePart wb) throws IOException {
@@ -341,6 +373,7 @@ public class XSSFReader {
          * Returns input stream of the next sheet in the iteration
          *
          * @return input stream of the next sheet in the iteration
+         * @throws POIXMLException if the sheet part is invalid
          */
         @Override
         public InputStream next() {
@@ -349,6 +382,9 @@ public class XSSFReader {
             String sheetId = xssfSheetRef.getId();
             try {
                 PackagePart sheetPkg = sheetMap.get(sheetId);
+                if (sheetPkg == null) {
+                    throw new POIXMLException("Failed to find sheet package for sheetId=" + sheetId);
+                }
                 return sheetPkg.getInputStream();
             } catch (IOException e) {
                 throw new POIXMLException(e);

@@ -27,14 +27,25 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.poi.util.StringUtil;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFSDT;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
+
+import javax.xml.namespace.QName;
 
 /**
  * Tests for HXFWordExtractor
@@ -478,4 +489,60 @@ class TestXWPFWordExtractor {
             assertEquals(expected, actual);
         }
     }
+
+    @Test
+    void testCapitalizedFlag() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("capitalized.docx");
+             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+            String txt = extractor.getText();
+            assertEquals( "The following word is: CAPITALIZED.", txt.trim());
+        }
+    }
+
+    @Test
+    void testTika2163() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ChronologicalResume.dotx");
+             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+            String txt = extractor.getText();
+            assertContains(txt, "but a great-looking résumé doesn’t have to be!");
+        }
+    }
+
+    @Test
+    void testTika3816() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("tika-3816.docx");
+             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+            String txt = extractor.getText();
+            assertContains(txt, "Note\tDetails");
+            List<XWPFSDT> sdts = extractSDTsFromBody(doc);
+            assertEquals(3, sdts.size());
+        }
+    }
+
+    private static List<XWPFSDT> extractSDTsFromBody(XWPFDocument document) {
+        XWPFSDT sdt;
+        XmlCursor xmlcursor = document.getDocument().getBody().newCursor();
+        QName qnameSdt = new QName(XSSFRelation.NS_WORDPROCESSINGML, "sdt");
+        List<XWPFSDT> allsdts = new ArrayList<>();
+        while (xmlcursor.hasNextToken()) {
+            XmlCursor.TokenType tokentype = xmlcursor.toNextToken();
+            if (tokentype.isStart()) {
+                if (qnameSdt.equals(xmlcursor.getName())) {
+                    XmlObject xo = xmlcursor.getObject();
+                    if (xo instanceof CTSdtRun) {
+                        sdt = new XWPFSDT((CTSdtRun) xo, document);
+                        allsdts.add(sdt);
+                    } else if (xo instanceof CTSdtBlock) {
+                        sdt = new XWPFSDT((CTSdtBlock) xo, document);
+                        allsdts.add(sdt);
+                    } else if (xo instanceof CTSdtRow) {
+                        sdt = new XWPFSDT((CTSdtRow) xo, document);
+                        allsdts.add(sdt);
+                    }
+                }
+            }
+        }
+        return allsdts;
+    }
+
 }

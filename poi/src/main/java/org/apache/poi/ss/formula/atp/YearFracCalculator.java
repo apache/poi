@@ -258,7 +258,7 @@ final class YearFracCalculator {
             case 23: // transition from daylight savings adjusted to normal time
                 // Unexpected since we are using UTC_TIME_ZONE
             default:
-                throw new RuntimeException("Unexpected date diff between " + startDateMS + " and " + endDateMS);
+                throw new IllegalStateException("Unexpected date diff between " + startDateMS + " and " + endDateMS);
 
         }
         return (int) (0.5 + ((double)msDiff / MS_PER_DAY));

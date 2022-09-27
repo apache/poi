@@ -37,61 +37,60 @@ import org.junit.jupiter.api.Test;
 class TestXSLFSlideShow {
     @Test
     void testCreateSlide() throws IOException {
-        XMLSlideShow  ppt = new XMLSlideShow();
-        assertEquals(0, ppt.getSlides().size());
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            assertEquals(0, ppt.getSlides().size());
 
-        XSLFSlide slide1 = ppt.createSlide();
-        assertEquals(1, ppt.getSlides().size());
-        assertSame(slide1, ppt.getSlides().get(0));
+            XSLFSlide slide1 = ppt.createSlide();
+            assertEquals(1, ppt.getSlides().size());
+            assertSame(slide1, ppt.getSlides().get(0));
 
-        List<POIXMLDocumentPart> rels =  slide1.getRelations();
-        assertEquals(1, rels.size());
-        assertEquals(slide1.getSlideMaster().getLayout(SlideLayout.BLANK), rels.get(0));
+            List<POIXMLDocumentPart> rels =  slide1.getRelations();
+            assertEquals(1, rels.size());
+            assertEquals(slide1.getSlideMaster().getLayout(SlideLayout.BLANK), rels.get(0));
 
-        XSLFSlide slide2 = ppt.createSlide();
-        assertEquals(2, ppt.getSlides().size());
-        assertSame(slide2, ppt.getSlides().get(1));
+            XSLFSlide slide2 = ppt.createSlide();
+            assertEquals(2, ppt.getSlides().size());
+            assertSame(slide2, ppt.getSlides().get(1));
 
-        ppt.setSlideOrder(slide2, 0);
-        assertSame(slide2, ppt.getSlides().get(0));
-        assertSame(slide1, ppt.getSlides().get(1));
+            ppt.setSlideOrder(slide2, 0);
+            assertSame(slide2, ppt.getSlides().get(0));
+            assertSame(slide1, ppt.getSlides().get(1));
 
-        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        assertEquals(2, ppt2.getSlides().size());
-        rels =  ppt2.getSlides().get(0).getRelations();
-
-        ppt2.close();
-        ppt.close();
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(2, ppt2.getSlides().size());
+                rels = ppt2.getSlides().get(0).getRelations();
+                assertNotNull(rels);
+            }
+        }
     }
 
     @Test
     void testRemoveSlide() throws IOException {
-        XMLSlideShow  ppt = new XMLSlideShow();
-        assertEquals(0, ppt.getSlides().size());
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            assertEquals(0, ppt.getSlides().size());
 
-        XSLFSlide slide1 = ppt.createSlide();
-        XSLFSlide slide2 = ppt.createSlide();
+            XSLFSlide slide1 = ppt.createSlide();
+            XSLFSlide slide2 = ppt.createSlide();
 
-        assertEquals(2, ppt.getSlides().size());
-        assertSame(slide1, ppt.getSlides().get(0));
-        assertSame(slide2, ppt.getSlides().get(1));
+            assertEquals(2, ppt.getSlides().size());
+            assertSame(slide1, ppt.getSlides().get(0));
+            assertSame(slide2, ppt.getSlides().get(1));
 
-        XSLFSlide removedSlide = ppt.removeSlide(0);
-        assertSame(slide1, removedSlide);
+            XSLFSlide removedSlide = ppt.removeSlide(0);
+            assertSame(slide1, removedSlide);
 
-        assertEquals(1, ppt.getSlides().size());
-        assertSame(slide2, ppt.getSlides().get(0));
+            assertEquals(1, ppt.getSlides().size());
+            assertSame(slide2, ppt.getSlides().get(0));
 
-        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        assertEquals(1, ppt2.getSlides().size());
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(1, ppt2.getSlides().size());
 
-        // Check that the slide is actually removed from the package.
-        String slidePartRegEx = "/ppt/slides/slide[0-9]+\\.xml";
-        List<PackagePart> slideParts = ppt2.getPackage().getPartsByName(Pattern.compile(slidePartRegEx));
-        assertEquals(1, slideParts.size());
-
-        ppt2.close();
-        ppt.close();
+                // Check that the slide is actually removed from the package.
+                String slidePartRegEx = "/ppt/slides/slide[0-9]+\\.xml";
+                List<PackagePart> slideParts = ppt2.getPackage().getPartsByName(Pattern.compile(slidePartRegEx));
+                assertEquals(1, slideParts.size());
+            }
+        }
     }
 
 
@@ -104,45 +103,44 @@ class TestXSLFSlideShow {
      */
     @Test
     void testRemoveSlideThatHasNotes() throws IOException {
-        XMLSlideShow  ppt = new XMLSlideShow();
-        assertEquals(0, ppt.getSlides().size());
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            assertEquals(0, ppt.getSlides().size());
 
-        XSLFSlide slide1 = ppt.createSlide();
-        XSLFSlide slide2 = ppt.createSlide();
+            XSLFSlide slide1 = ppt.createSlide();
+            XSLFSlide slide2 = ppt.createSlide();
 
-        XSLFNotes note = ppt.getNotesSlide(slide1);
-        for (XSLFTextShape shape : note.getPlaceholders()) {
-            if (shape.getTextType() == Placeholder.BODY) {
-                shape.setText("Some notes");
-                break;
+            XSLFNotes note = ppt.getNotesSlide(slide1);
+            for (XSLFTextShape shape : note.getPlaceholders()) {
+                if (shape.getTextType() == Placeholder.BODY) {
+                    shape.setText("Some notes");
+                    break;
+                }
+            }
+
+            assertEquals(2, ppt.getSlides().size());
+            assertSame(slide1, ppt.getSlides().get(0));
+            assertSame(slide2, ppt.getSlides().get(1));
+
+            XSLFSlide removedSlide = ppt.removeSlide(0);
+            assertSame(slide1, removedSlide);
+
+            assertEquals(1, ppt.getSlides().size());
+            assertSame(slide2, ppt.getSlides().get(0));
+
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(1, ppt2.getSlides().size());
+
+                // Check that the slide is actually removed from the package.
+                String slidePartRegEx = "/ppt/slides/slide[0-9]+\\.xml";
+                List<PackagePart> slideParts = ppt2.getPackage().getPartsByName(Pattern.compile(slidePartRegEx));
+                assertEquals(1, slideParts.size());
+
+                // Check that there is no note slide part.
+                String notePartRegEx = "/ppt/notesSlides/notesSlide[0-9]+\\.xml";
+                List<PackagePart> noteParts = ppt2.getPackage().getPartsByName(Pattern.compile(notePartRegEx));
+                assertEquals(0, noteParts.size());
             }
         }
-
-        assertEquals(2, ppt.getSlides().size());
-        assertSame(slide1, ppt.getSlides().get(0));
-        assertSame(slide2, ppt.getSlides().get(1));
-
-        XSLFSlide removedSlide = ppt.removeSlide(0);
-        assertSame(slide1, removedSlide);
-
-        assertEquals(1, ppt.getSlides().size());
-        assertSame(slide2, ppt.getSlides().get(0));
-
-        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        assertEquals(1, ppt2.getSlides().size());
-
-        // Check that the slide is actually removed from the package.
-        String slidePartRegEx = "/ppt/slides/slide[0-9]+\\.xml";
-        List<PackagePart> slideParts = ppt2.getPackage().getPartsByName(Pattern.compile(slidePartRegEx));
-        assertEquals(1, slideParts.size());
-
-        // Check that there is no note slide part.
-        String notePartRegEx = "/ppt/notesSlides/notesSlide[0-9]+\\.xml";
-        List<PackagePart> noteParts = ppt2.getPackage().getPartsByName(Pattern.compile(notePartRegEx));
-        assertEquals(0, noteParts.size());
-
-        ppt2.close();
-        ppt.close();
     }
 
 
@@ -155,57 +153,55 @@ class TestXSLFSlideShow {
      */
     @Test
     void testRemoveSlideThatHasNotesAndImages() throws IOException {
-        XMLSlideShow  ppt = new XMLSlideShow();
-        assertEquals(0, ppt.getSlides().size());
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            assertEquals(0, ppt.getSlides().size());
 
-        XSLFSlide slide1 = ppt.createSlide();
-        XSLFSlide slide2 = ppt.createSlide();
+            XSLFSlide slide1 = ppt.createSlide();
+            XSLFSlide slide2 = ppt.createSlide();
 
-        // NOTE: This image is INVALID but this doesnt matter for THIS test.
-        XSLFPictureData pictData = ppt.addPicture(
-            new ByteArrayInputStream(new byte[] { 00, 01, 02 }), PictureData.PictureType.PNG);
-        XSLFPictureShape picShape = slide1.createPicture(pictData);
-        picShape.setAnchor(new Rectangle(10, 10, 200, 100));
+            // NOTE: This image is INVALID but this doesnt matter for THIS test.
+            XSLFPictureData pictData = ppt.addPicture(
+                    new ByteArrayInputStream(new byte[] { 00, 01, 02 }), PictureData.PictureType.PNG);
+            XSLFPictureShape picShape = slide1.createPicture(pictData);
+            picShape.setAnchor(new Rectangle(10, 10, 200, 100));
 
-        XSLFNotes note = ppt.getNotesSlide(slide1);
-        for (XSLFTextShape shape : note.getPlaceholders()) {
-            if (shape.getTextType() == Placeholder.BODY) {
-                shape.setText("Some notes");
-                break;
+            XSLFNotes note = ppt.getNotesSlide(slide1);
+            for (XSLFTextShape shape : note.getPlaceholders()) {
+                if (shape.getTextType() == Placeholder.BODY) {
+                    shape.setText("Some notes");
+                    break;
+                }
+            }
+
+            assertEquals(2, ppt.getSlides().size());
+            assertSame(slide1, ppt.getSlides().get(0));
+            assertSame(slide2, ppt.getSlides().get(1));
+
+            XSLFSlide removedSlide = ppt.removeSlide(0);
+            assertSame(slide1, removedSlide);
+
+            assertEquals(1, ppt.getSlides().size());
+            assertSame(slide2, ppt.getSlides().get(0));
+
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(1, ppt2.getSlides().size());
+
+                // Check that the slide is actually removed from the package.
+                String slidePartRegEx = "/ppt/slides/slide[0-9]+\\.xml";
+                List<PackagePart> slideParts = ppt2.getPackage().getPartsByName(Pattern.compile(slidePartRegEx));
+                assertEquals(1, slideParts.size());
+
+                // Check that there is no note slide part.
+                String notePartRegEx = "/ppt/notesSlides/notesSlide[0-9]+\\.xml";
+                List<PackagePart> noteParts = ppt2.getPackage().getPartsByName(Pattern.compile(notePartRegEx));
+                assertEquals(0, noteParts.size());
+
+                // Check that there is no image slide part.
+                String imagePartRegEx = "/ppt/media/image[0-9]+\\.png";
+                List<PackagePart> imageParts = ppt2.getPackage().getPartsByName(Pattern.compile(imagePartRegEx));
+                assertEquals(0, imageParts.size());
             }
         }
-
-        assertEquals(2, ppt.getSlides().size());
-        assertSame(slide1, ppt.getSlides().get(0));
-        assertSame(slide2, ppt.getSlides().get(1));
-
-        XSLFSlide removedSlide = ppt.removeSlide(0);
-        assertSame(slide1, removedSlide);
-
-        assertEquals(1, ppt.getSlides().size());
-        assertSame(slide2, ppt.getSlides().get(0));
-
-        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        assertEquals(1, ppt2.getSlides().size());
-
-        // Check that the slide is actually removed from the package.
-        String slidePartRegEx = "/ppt/slides/slide[0-9]+\\.xml";
-        List<PackagePart> slideParts = ppt2.getPackage().getPartsByName(Pattern.compile(slidePartRegEx));
-        assertEquals(1, slideParts.size());
-
-        // Check that there is no note slide part.
-        String notePartRegEx = "/ppt/notesSlides/notesSlide[0-9]+\\.xml";
-        List<PackagePart> noteParts = ppt2.getPackage().getPartsByName(Pattern.compile(notePartRegEx));
-        assertEquals(0, noteParts.size());
-
-        // Check that there is no image slide part.
-        String imagePartRegEx = "/ppt/media/image[0-9]+\\.png";
-        List<PackagePart> imageParts = ppt2.getPackage().getPartsByName(Pattern.compile(imagePartRegEx));
-        imageParts.forEach(System.out::println);
-        assertEquals(0, imageParts.size());
-
-        ppt2.close();
-        ppt.close();
     }
 
     /**
@@ -217,119 +213,118 @@ class TestXSLFSlideShow {
      */
     @Test
     void testRemoveSlideThatHasNotesAndImagesInsideAGroup() throws IOException {
-        XMLSlideShow  ppt = new XMLSlideShow();
-        assertEquals(0, ppt.getSlides().size());
+        try (XMLSlideShow  ppt = new XMLSlideShow()) {
+            assertEquals(0, ppt.getSlides().size());
 
-        XSLFSlide slide1 = ppt.createSlide();
-        XSLFSlide slide2 = ppt.createSlide();
+            XSLFSlide slide1 = ppt.createSlide();
+            XSLFSlide slide2 = ppt.createSlide();
 
-        XSLFGroupShape group = slide1.createGroup();
+            XSLFGroupShape group = slide1.createGroup();
 
-        // NOTE: This image is INVALID but this doesnt matter for THIS test.
-        XSLFPictureData pictData = ppt.addPicture(
-            new ByteArrayInputStream(new byte[] { 00, 01, 02 }), PictureData.PictureType.PNG);
-        XSLFPictureShape picShape = group.createPicture(pictData);
-        picShape.setAnchor(new Rectangle(10, 10, 200, 100));
+            // NOTE: This image is INVALID but this doesnt matter for THIS test.
+            XSLFPictureData pictData = ppt.addPicture(
+                    new ByteArrayInputStream(new byte[] { 00, 01, 02 }), PictureData.PictureType.PNG);
+            XSLFPictureShape picShape = group.createPicture(pictData);
+            picShape.setAnchor(new Rectangle(10, 10, 200, 100));
 
-        XSLFNotes note = ppt.getNotesSlide(slide1);
-        for (XSLFTextShape shape : note.getPlaceholders()) {
-            if (shape.getTextType() == Placeholder.BODY) {
-                shape.setText("Some notes");
-                break;
+            XSLFNotes note = ppt.getNotesSlide(slide1);
+            for (XSLFTextShape shape : note.getPlaceholders()) {
+                if (shape.getTextType() == Placeholder.BODY) {
+                    shape.setText("Some notes");
+                    break;
+                }
+            }
+
+            assertEquals(2, ppt.getSlides().size());
+            assertSame(slide1, ppt.getSlides().get(0));
+            assertSame(slide2, ppt.getSlides().get(1));
+
+            XSLFSlide removedSlide = ppt.removeSlide(0);
+            assertSame(slide1, removedSlide);
+
+            assertEquals(1, ppt.getSlides().size());
+            assertSame(slide2, ppt.getSlides().get(0));
+
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
+                assertEquals(1, ppt2.getSlides().size());
+
+                // Check that the slide is actually removed from the package.
+                String slidePartRegEx = "/ppt/slides/slide[0-9]+\\.xml";
+                List<PackagePart> slideParts = ppt2.getPackage().getPartsByName(Pattern.compile(slidePartRegEx));
+                assertEquals(1, slideParts.size());
+
+                // Check that there is no note slide part.
+                String notePartRegEx = "/ppt/notesSlides/notesSlide[0-9]+\\.xml";
+                List<PackagePart> noteParts = ppt2.getPackage().getPartsByName(Pattern.compile(notePartRegEx));
+                assertEquals(0, noteParts.size());
+
+                // Check that there is no image slide part.
+                String imagePartRegEx = "/ppt/media/image[0-9]+\\.png";
+                List<PackagePart> imageParts = ppt2.getPackage().getPartsByName(Pattern.compile(imagePartRegEx));
+                imageParts.forEach(System.out::println);
+                assertEquals(0, imageParts.size());
             }
         }
-
-        assertEquals(2, ppt.getSlides().size());
-        assertSame(slide1, ppt.getSlides().get(0));
-        assertSame(slide2, ppt.getSlides().get(1));
-
-        XSLFSlide removedSlide = ppt.removeSlide(0);
-        assertSame(slide1, removedSlide);
-
-        assertEquals(1, ppt.getSlides().size());
-        assertSame(slide2, ppt.getSlides().get(0));
-
-        XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
-        assertEquals(1, ppt2.getSlides().size());
-
-        // Check that the slide is actually removed from the package.
-        String slidePartRegEx = "/ppt/slides/slide[0-9]+\\.xml";
-        List<PackagePart> slideParts = ppt2.getPackage().getPartsByName(Pattern.compile(slidePartRegEx));
-        assertEquals(1, slideParts.size());
-
-        // Check that there is no note slide part.
-        String notePartRegEx = "/ppt/notesSlides/notesSlide[0-9]+\\.xml";
-        List<PackagePart> noteParts = ppt2.getPackage().getPartsByName(Pattern.compile(notePartRegEx));
-        assertEquals(0, noteParts.size());
-
-        // Check that there is no image slide part.
-        String imagePartRegEx = "/ppt/media/image[0-9]+\\.png";
-        List<PackagePart> imageParts = ppt2.getPackage().getPartsByName(Pattern.compile(imagePartRegEx));
-        imageParts.forEach(System.out::println);
-        assertEquals(0, imageParts.size());
-
-        ppt2.close();
-        ppt.close();
     }
 
     @Test
     void testDimension() throws IOException {
-        XMLSlideShow  ppt = new XMLSlideShow();
-        Dimension sz = ppt.getPageSize();
-        assertEquals(720, sz.width);
-        assertEquals(540, sz.height);
-        ppt.setPageSize(new Dimension(792, 612));
-        sz = ppt.getPageSize();
-        assertEquals(792, sz.width);
-        assertEquals(612, sz.height);
-        ppt.close();
+        try (XMLSlideShow  ppt = new XMLSlideShow()) {
+            Dimension sz = ppt.getPageSize();
+            assertEquals(720, sz.width);
+            assertEquals(540, sz.height);
+            ppt.setPageSize(new Dimension(792, 612));
+            sz = ppt.getPageSize();
+            assertEquals(792, sz.width);
+            assertEquals(612, sz.height);
+        }
     }
 
     @Test
     void testSlideMasters() throws IOException {
-        XMLSlideShow  ppt = new XMLSlideShow();
-        List<XSLFSlideMaster> masters = ppt.getSlideMasters();
-        assertEquals(1, masters.size());
+        try (XMLSlideShow  ppt = new XMLSlideShow()) {
+            List<XSLFSlideMaster> masters = ppt.getSlideMasters();
+            assertEquals(1, masters.size());
 
-        XSLFSlide slide = ppt.createSlide();
-        assertSame(masters.get(0), slide.getSlideMaster());
-        ppt.close();
+            XSLFSlide slide = ppt.createSlide();
+            assertSame(masters.get(0), slide.getSlideMaster());
+        }
     }
 
     @Test
     void testSlideLayout() throws IOException {
-        XMLSlideShow  ppt = new XMLSlideShow();
-        List<XSLFSlideMaster> masters = ppt.getSlideMasters();
-        assertEquals(1, masters.size());
+        try (XMLSlideShow  ppt = new XMLSlideShow()) {
+            List<XSLFSlideMaster> masters = ppt.getSlideMasters();
+            assertEquals(1, masters.size());
 
-        XSLFSlide slide = ppt.createSlide();
-        XSLFSlideLayout layout = slide.getSlideLayout();
-        assertNotNull(layout);
+            XSLFSlide slide = ppt.createSlide();
+            XSLFSlideLayout layout = slide.getSlideLayout();
+            assertNotNull(layout);
 
-        assertSame(masters.get(0), layout.getSlideMaster());
-        ppt.close();
+            assertSame(masters.get(0), layout.getSlideMaster());
+        }
     }
 
     @Test
     void testSlideLayoutNames() throws IOException {
         final String[] names = {
-                "Blank", "Title Only", "Section Header", "Picture with Caption", "Title and Content"
-                , "Title Slide", "Title and Vertical Text", "Vertical Title and Text", "Comparison"
-                , "Two Content", "Content with Caption"
+                "Blank", "Title Only", "Section Header", "Picture with Caption", "Title and Content",
+                "Title Slide", "Title and Vertical Text", "Vertical Title and Text", "Comparison",
+                "Two Content", "Content with Caption"
         };
-        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("layouts.pptx");
-        for (String name : names) {
-            assertNotNull(ppt.findLayout(name));
+        try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("layouts.pptx")) {
+            for (String name : names) {
+                assertNotNull(ppt.findLayout(name));
+            }
+            final SlideLayout[] layTypes = {
+                    SlideLayout.BLANK, SlideLayout.TITLE_ONLY, SlideLayout.SECTION_HEADER,
+                    SlideLayout.PIC_TX, SlideLayout.TITLE_AND_CONTENT, SlideLayout.TITLE,
+                    SlideLayout.VERT_TX, SlideLayout.VERT_TITLE_AND_TX, SlideLayout.TWO_TX_TWO_OBJ,
+                    SlideLayout.TWO_OBJ, SlideLayout.OBJ_TX
+            };
+            for (SlideLayout sl : layTypes){
+                assertNotNull(ppt.getSlideMasters().get(0).getLayout(sl));
+            }
         }
-        final SlideLayout[] layTypes = {
-                SlideLayout.BLANK, SlideLayout.TITLE_ONLY, SlideLayout.SECTION_HEADER
-                , SlideLayout.PIC_TX, SlideLayout.TITLE_AND_CONTENT, SlideLayout.TITLE
-                , SlideLayout.VERT_TX, SlideLayout.VERT_TITLE_AND_TX, SlideLayout.TWO_TX_TWO_OBJ
-                , SlideLayout.TWO_OBJ, SlideLayout.OBJ_TX
-        };
-        for (SlideLayout sl : layTypes){
-            assertNotNull(ppt.getSlideMasters().get(0).getLayout(sl));
-        }
-        ppt.close();
     }
 }

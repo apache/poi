@@ -192,7 +192,7 @@ public final class WorkbookEvaluator {
         if (result == null) {
             int sheetIndex = _workbook.getSheetIndex(sheet);
             if (sheetIndex < 0) {
-                throw new RuntimeException("Specified sheet from a different book");
+                throw new IllegalStateException("Specified sheet from a different book");
             }
             result = sheetIndex;
             _sheetIndexesBySheet.put(sheet, result);
@@ -292,7 +292,7 @@ public final class WorkbookEvaluator {
                             break;
                         case FORMULA:
                         default:
-                            throw new RuntimeException("Unexpected cell type '" + srcCell.getCellType() + "' found!");
+                            throw new IllegalStateException("Unexpected cell type '" + srcCell.getCellType() + "' found!");
                     }
                 } else {
                     throw re;
@@ -362,7 +362,7 @@ public final class WorkbookEvaluator {
             case ERROR:
                 return ErrorEval.valueOf(cell.getErrorCellValue());
             default:
-                throw new RuntimeException("Unexpected cell type (" + cellType + ")");
+                throw new IllegalStateException("Unexpected cell type (" + cellType + ")");
         }
 
     }
@@ -542,7 +542,7 @@ public final class WorkbookEvaluator {
                 opResult = getEvalForPtg(ptg, ec);
             }
             if (opResult == null) {
-                throw new RuntimeException("Evaluation result must not be null");
+                throw new IllegalStateException("Evaluation result must not be null");
             }
 //            logDebug("push " + opResult);
             stack.push(opResult);
@@ -588,11 +588,11 @@ public final class WorkbookEvaluator {
         while (remBytes != 0) {
             index++;
             if (index >= ptgs.length) {
-                throw new RuntimeException("Skip distance too far (ran out of formula tokens).");
+                throw new IllegalStateException("Skip distance too far (ran out of formula tokens).");
             }
             remBytes -= ptgs[index].getSize();
             if (remBytes < 0) {
-                throw new RuntimeException("Bad skip distance (wrong token size calculation).");
+                throw new IllegalStateException("Bad skip distance (wrong token size calculation).");
             }
         }
         return index - startIndex;
@@ -738,15 +738,15 @@ public final class WorkbookEvaluator {
             // POI uses UnknownPtg when the encoded Ptg array seems to be corrupted.
             // This seems to occur in very rare cases (e.g. unused name formulas in bug 44774, attachment 21790)
             // In any case, formulas are re-parsed before execution, so UnknownPtg should not get here
-            throw new RuntimeException("UnknownPtg not allowed");
+            throw new IllegalStateException("UnknownPtg not allowed");
         }
         if (ptg instanceof ExpPtg) {
             // ExpPtg is used for array formulas and shared formulas.
             // it is currently unsupported, and may not even get implemented here
-            throw new RuntimeException("ExpPtg currently not supported");
+            throw new IllegalStateException("ExpPtg currently not supported");
         }
 
-        throw new RuntimeException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
+        throw new IllegalStateException("Unexpected ptg class (" + ptg.getClass().getName() + ")");
     }
 
     private ValueEval processNameEval(ValueEval eval, OperationEvaluationContext ec) {
@@ -765,7 +765,7 @@ public final class WorkbookEvaluator {
             return evaluateNameFormula(nameRecord.getNameDefinition(), ec);
         }
 
-        throw new RuntimeException("Don't know how to evaluate name '" + nameRecord.getNameText() + "'");
+        throw new IllegalStateException("Don't know how to evaluate name '" + nameRecord.getNameText() + "'");
     }
 
     /**

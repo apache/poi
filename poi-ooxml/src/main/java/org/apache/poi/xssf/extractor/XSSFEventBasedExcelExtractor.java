@@ -245,7 +245,7 @@ public class XSSFEventBasedExcelExtractor
             sheetParser.setContentHandler(handler);
             sheetParser.parse(sheetSource);
         } catch (ParserConfigurationException e) {
-            throw new RuntimeException("SAX parser appears to be broken - " + e.getMessage());
+            throw new IllegalStateException("SAX parser appears to be broken - " + e.getMessage());
         }
     }
 

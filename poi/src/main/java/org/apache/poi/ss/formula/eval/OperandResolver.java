@@ -246,7 +246,7 @@ public final class OperandResolver {
      * @return actual, parsed or interpreted double value (respectively).
      * @throws EvaluationException if a StringEval is supplied and cannot be parsed
      * as a double (See {@code parseDouble()} for allowable formats).
-     * @throws RuntimeException if the supplied parameter is not {@link NumberEval},
+     * @throws IllegalStateException if the supplied parameter is not {@link NumberEval},
      * {@link StringEval}, {@link BoolEval} or {@link BlankEval}
      */
     public static double coerceValueToDouble(ValueEval ev) throws EvaluationException {
@@ -267,7 +267,7 @@ public final class OperandResolver {
             }
             return dd;
         }
-        throw new RuntimeException("Unexpected arg eval type (" + ev.getClass().getName() + ")");
+        throw new IllegalStateException("Unexpected arg eval type (" + ev.getClass().getName() + ")");
     }
 
     /**
@@ -368,6 +368,6 @@ public final class OperandResolver {
         if (ve instanceof ErrorEval) {
             throw new EvaluationException((ErrorEval) ve);
         }
-        throw new RuntimeException("Unexpected eval (" + ve.getClass().getName() + ")");
+        throw new IllegalStateException("Unexpected eval (" + ve.getClass().getName() + ")");
     }
 }

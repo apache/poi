@@ -44,11 +44,11 @@ public class DeferredSXSSFSheet extends SXSSFSheet {
     /**
      * Unsupported in DeferredSXSSFSheet
      *
-     * @throws RuntimeException this is unsupported
+     * @throws IllegalStateException this is unsupported
      */
     @Override
     public InputStream getWorksheetXMLInputStream() throws IOException {
-        throw new RuntimeException("Not supported by DeferredSXSSFSheet");
+        throw new IllegalStateException("Not supported by DeferredSXSSFSheet");
     }
 
     /**

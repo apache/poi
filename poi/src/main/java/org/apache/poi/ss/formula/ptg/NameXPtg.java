@@ -84,7 +84,7 @@ public final class NameXPtg extends OperandPtg implements WorkbookDependentFormu
         return book.resolveNameXText(this);
     }
     public String toFormulaString() {
-        throw new RuntimeException("3D references need a workbook to determine formula text");
+        throw new IllegalStateException("3D references need a workbook to determine formula text");
     }
 
     @Override

@@ -24,6 +24,8 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.poi.util.Internal;
 
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_DRAWINGML;
+
 /**
  *  Used internally to navigate the paragraph text style hierarchy within a shape and fetch properties
 */
@@ -54,7 +56,7 @@ public abstract class ParagraphPropertyFetcher<T> {
 
         XmlObject[] o = shape.selectPath(
                 "declare namespace xdr='http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing' " +
-                "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
+                "declare namespace a='" + NS_DRAWINGML + "' " +
                 ".//xdr:txBody/a:lstStyle/a:lvl" + (_level + 1) + "pPr"
         );
         if (o.length == 1) {

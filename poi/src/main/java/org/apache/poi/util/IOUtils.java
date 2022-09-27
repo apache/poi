@@ -136,26 +136,26 @@ public final class IOUtils {
         checkByteSizeLimit(limit);
 
         stream.mark(limit);
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(limit);
-        copy(new BoundedInputStream(stream, limit), bos);
+        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(limit)) {
+            copy(new BoundedInputStream(stream, limit), bos);
 
-        int readBytes = bos.size();
-        if (readBytes == 0) {
-            throw new EmptyFileException();
-        }
+            int readBytes = bos.size();
+            if (readBytes == 0) {
+                throw new EmptyFileException();
+            }
 
-        if (readBytes < limit) {
-            bos.write(new byte[limit-readBytes]);
+            if (readBytes < limit) {
+                bos.write(new byte[limit-readBytes]);
+            }
+            byte[] peekedBytes = bos.toByteArray();
+            if(stream instanceof PushbackInputStream) {
+                PushbackInputStream pin = (PushbackInputStream)stream;
+                pin.unread(peekedBytes, 0, readBytes);
+            } else {
+                stream.reset();
+            }
+            return peekedBytes;
         }
-        byte[] peekedBytes = bos.toByteArray();
-        if(stream instanceof PushbackInputStream) {
-            PushbackInputStream pin = (PushbackInputStream)stream;
-            pin.unread(peekedBytes, 0, readBytes);
-        } else {
-            stream.reset();
-        }
-
-        return peekedBytes;
     }
 
     /**
@@ -429,7 +429,7 @@ public final class IOUtils {
     public static long copy(InputStream srcStream, File destFile) throws IOException {
         File destDirectory = destFile.getParentFile();
         if (!(destDirectory.exists() || destDirectory.mkdirs())) {
-            throw new RuntimeException("Can't create destination directory: "+destDirectory);
+            throw new IllegalStateException("Can't create destination directory: "+destDirectory);
         }
         try (OutputStream destStream = new FileOutputStream(destFile)) {
             return IOUtils.copy(srcStream, destStream);
@@ -522,7 +522,7 @@ public final class IOUtils {
         }
         /*
          * N.B. no need to synchronize this because: - we don't care if the buffer is created multiple times (the data
-         * is ignored) - we always use the same size buffer, so if it it is recreated it will still be OK (if the buffer
+         * is ignored) - we always use the same size buffer, so if it is recreated it will still be OK (if the buffer
          * size were variable, we would need to synch. to ensure some other thread did not create a smaller one)
          */
         if (SKIP_BYTE_BUFFER == null) {

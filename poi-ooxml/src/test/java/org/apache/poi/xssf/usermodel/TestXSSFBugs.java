@@ -96,7 +96,9 @@ import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
@@ -3722,6 +3724,24 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 assertEquals(3,
                         pivotTable.getPivotCacheDefinition().getCTPivotCacheDefinition().getRecordCount());
             }
+        }
+    }
+
+    @Test
+    void testTika3163() throws Exception {
+        File file = XSSFTestDataSamples.getSampleFile("CVLKRA-KYC_Download_File_Structure_V3.1.xlsx");
+        try (
+                FileInputStream fis = new FileInputStream(file);
+                XSSFWorkbook workbook = new XSSFWorkbook(fis)
+        ) {
+            assertNotNull(workbook.getStylesSource());
+            assertEquals(23, workbook.getStylesSource().getFonts().size());
+        }
+        try (OPCPackage pkg = OPCPackage.open(file, PackageAccess.READ)) {
+            XSSFReader reader = new XSSFReader(pkg);
+            StylesTable stylesTable = reader.getStylesTable();
+            assertNotNull(stylesTable);
+            assertEquals(23, stylesTable.getFonts().size());
         }
     }
 }

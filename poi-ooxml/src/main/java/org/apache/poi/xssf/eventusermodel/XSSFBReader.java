@@ -61,19 +61,21 @@ public class XSSFBReader extends XSSFReader {
     private static final Logger LOGGER = LogManager.getLogger(XSSFBReader.class);
     private static final Set<String> WORKSHEET_RELS =
             Collections.unmodifiableSet(new HashSet<>(
-                    Arrays.asList(new String[]{
+                    Arrays.asList(
                             XSSFRelation.WORKSHEET.getRelation(),
                             XSSFRelation.CHARTSHEET.getRelation(),
                             XSSFRelation.MACRO_SHEET_BIN.getRelation(),
                             XSSFRelation.INTL_MACRO_SHEET_BIN.getRelation(),
                             XSSFRelation.DIALOG_SHEET_BIN.getRelation()
-                    })
+                    )
             ));
 
     /**
      * Creates a new XSSFReader, for the given package
      *
      * @param pkg opc package
+     * @throws OpenXML4JException if the package data format is invalid
+     * @throws IOException if there is an I/O issue reading the data
      */
     public XSSFBReader(OPCPackage pkg) throws IOException, OpenXML4JException {
         super(pkg);
@@ -101,6 +103,10 @@ public class XSSFBReader extends XSSFReader {
      * Each sheet's InputStream is only opened when fetched
      *  from the Iterator. It's up to you to close the
      *  InputStreams when done with each one.
+     *
+     * @return iterator of {@link InputStream}s
+     * @throws InvalidFormatException if the sheet data format is invalid
+     * @throws IOException if there is an I/O issue reading the data
      */
     @Override
     public Iterator<InputStream> getSheetsData() throws IOException, InvalidFormatException {
@@ -123,8 +129,10 @@ public class XSSFBReader extends XSSFReader {
          * Construct a new SheetIterator
          *
          * @param wb package part holding workbook.xml
+         * @throws InvalidFormatException if the sheet data format is invalid
+         * @throws IOException if there is an I/O issue reading the data
          */
-        private SheetIterator(PackagePart wb) throws IOException {
+        private SheetIterator(PackagePart wb) throws IOException, InvalidFormatException {
             super(wb);
         }
 
@@ -180,7 +188,7 @@ public class XSSFBReader extends XSSFReader {
 
 
     private static class PathExtractor extends XSSFBParser {
-        private static SparseBitSet RECORDS = new SparseBitSet();
+        private static final SparseBitSet RECORDS = new SparseBitSet();
         static {
             RECORDS.set(XSSFBRecordType.BrtAbsPath15.getId());
         }
@@ -277,10 +285,7 @@ public class XSSFBReader extends XSSFReader {
             if (StringUtil.isNotBlank(relId)) {
                 sheets.add(new XSSFSheetRef(relId, name));
             }
-            if (offset == data.length) {
-                return true;
-            }
-            return false;
+            return offset == data.length;
         }
 
         List<XSSFSheetRef> getSheets() {

@@ -43,7 +43,7 @@ public class SimpleFraction {
      * @param value the double value to convert to a fraction.
      * @param maxDenominator maximum denominator value allowed.
      *
-     * @throws RuntimeException if the continued fraction failed to
+     * @throws IllegalStateException if the continued fraction failed to
      *      converge.
      * @throws IllegalArgumentException if value &gt; Integer.MAX_VALUE
      */
@@ -68,7 +68,7 @@ public class SimpleFraction {
      *        {@code epsilon} of {@code value}, in absolute terms.
      * @param maxDenominator maximum denominator value allowed.
      * @param maxIterations maximum number of convergents
-     * @throws RuntimeException if the continued fraction failed to
+     * @throws IllegalStateException if the continued fraction failed to
      *         converge.
      * @throws IllegalArgumentException if value > Integer.MAX_VALUE
      */
@@ -110,7 +110,7 @@ public class SimpleFraction {
                 return new SimpleFraction((int)p1, (int)q1);
             }
             if ((p2 > overflow) || (q2 > overflow)) {
-                throw new RuntimeException("Overflow trying to convert "+value+" to fraction ("+p2+"/"+q2+")");
+                throw new IllegalStateException("Overflow trying to convert "+value+" to fraction ("+p2+"/"+q2+")");
             }
 
             double convergent = (double)p2 / (double)q2;
@@ -127,7 +127,7 @@ public class SimpleFraction {
         } while (!stop);
 
         if (n >= maxIterations) {
-            throw new RuntimeException("Unable to convert "+value+" to fraction after "+maxIterations+" iterations");
+            throw new IllegalStateException("Unable to convert "+value+" to fraction after "+maxIterations+" iterations");
         }
 
         if (q2 < maxDenominator) {

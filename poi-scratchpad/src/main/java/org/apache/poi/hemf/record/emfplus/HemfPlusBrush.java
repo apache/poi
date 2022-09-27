@@ -27,6 +27,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Collections;
@@ -387,17 +388,27 @@ public class HemfPlusBrush {
             return brushBytes;
         }
 
+        /**
+         * @param continuedObjectData list of object data
+         * @return {@link EmfPlusBrushData}
+         * @throws IllegalStateException if the data cannot be processed
+         */
         public EmfPlusBrushData getBrushData(List<? extends EmfPlusObjectData> continuedObjectData) {
             EmfPlusBrushData brushData = brushType.constructor.get();
             byte[] buf = getRawData(continuedObjectData);
-            try {
-                brushData.init(new LittleEndianInputStream(new UnsynchronizedByteArrayInputStream(buf)), buf.length);
+            try (UnsynchronizedByteArrayInputStream bis = new UnsynchronizedByteArrayInputStream(buf)){
+                brushData.init(new LittleEndianInputStream(bis), buf.length);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
             return brushData;
         }
 
+        /**
+         * @param continuedObjectData list of object data
+         * @return byte array
+         * @throws IllegalStateException if the data cannot be processed
+         */
         public byte[] getRawData(List<? extends EmfPlusObjectData> continuedObjectData) {
             try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
                 bos.write(getBrushBytes());
@@ -408,7 +419,7 @@ public class HemfPlusBrush {
                 }
                 return bos.toByteArray();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException(e);
             }
         }
 
@@ -560,7 +571,7 @@ public class HemfPlusBrush {
             }
 
             if (isPreset() && (isBlendH() || isBlendV())) {
-                throw new RuntimeException("invalid combination of preset colors and blend factors v/h");
+                throw new IOException("invalid combination of preset colors and blend factors v/h");
             }
 
             size += (isPreset()) ? readColors(leis, d -> positions = d, c -> blendColors = c) : 0;
@@ -764,7 +775,7 @@ public class HemfPlusBrush {
             final boolean isPreset = PRESET_COLORS.isSet(dataFlags);
             final boolean blendH = BLEND_FACTORS_H.isSet(dataFlags);
             if (isPreset && blendH) {
-                throw new RuntimeException("invalid combination of preset colors and blend factors h");
+                throw new IOException("invalid combination of preset colors and blend factors h");
             }
 
             size += (isPreset) ? readColors(leis, d -> positions = d, c -> blendColors = c) : 0;
@@ -777,7 +788,7 @@ public class HemfPlusBrush {
                 // A 32-bit unsigned integer that specifies the number of focus scales. This value MUST be 2.
                 int focusScaleCount = leis.readInt();
                 if (focusScaleCount != 2) {
-                    throw new RuntimeException("invalid focus scale count");
+                    throw new IOException("invalid focus scale count");
                 }
                 // A floating-point value that defines the horizontal/vertical focus scale.
                 // The focus scale MUST be a value between 0.0 and 1.0, exclusive.

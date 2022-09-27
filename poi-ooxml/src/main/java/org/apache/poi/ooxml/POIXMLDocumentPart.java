@@ -532,6 +532,7 @@ public class POIXMLDocumentPart {
      * @param descriptor The relationship type to find the part number for
      * @param minIdx     The minimum free index to assign, use -1 for any
      * @return The next free part number, or -1 if none available
+     * @throws POIXMLException if the format is invalid
      */
     @Internal
     public final int getNextPartNumber(POIXMLRelation descriptor, int minIdx) {

@@ -52,6 +52,7 @@ import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -443,6 +444,10 @@ public abstract class AbstractWordConverter {
             String text = characterRun.text();
             if (text.isEmpty()) {
                 continue;
+            }
+
+            if (characterRun.isCapitalized() || characterRun.isSmallCaps()) {
+                text = text.toUpperCase(LocaleUtil.getUserLocale());
             }
 
             if (characterRun.isSpecialCharacter()) {

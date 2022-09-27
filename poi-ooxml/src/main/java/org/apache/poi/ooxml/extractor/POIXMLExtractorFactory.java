@@ -164,11 +164,16 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
             return ex;
         } catch (InvalidFormatException e) {
             throw new IOException(e);
-        } catch (RuntimeException | IOException e) {
+        } catch (IOException e) {
             if (pkg != null) {
                 pkg.revert();
             }
             throw e;
+        } catch (RuntimeException e) {
+            if (pkg != null) {
+                pkg.revert();
+            }
+            throw new IOException(e);
         }
     }
 
@@ -245,7 +250,7 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
             }
 
             return null;
-        } catch (Error | RuntimeException | XmlException | OpenXML4JException e) { // NOSONAR
+        } catch (RuntimeException | XmlException | OpenXML4JException e) { // NOSONAR
             throw new IOException(e);
         }
         // we used to close (revert()) the package here, but this is the callers responsibility
@@ -282,7 +287,7 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
                         fs.close();
                     }
                 }
-            } catch (IOException | RuntimeException e) {
+            } catch (IOException e) {
                 throw e;
             } catch (Exception e) {
                 throw new IOException(e);

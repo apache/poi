@@ -60,6 +60,9 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderType;
 
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_DRAWINGML;
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_PRESENTATIONML;
+
 /**
  * Base super-class class for all shapes in PresentationML
  */
@@ -71,8 +74,8 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         T parse(XMLStreamReader reader) throws XmlException;
     }
 
-    static final String DML_NS = "http://schemas.openxmlformats.org/drawingml/2006/main";
-    static final String PML_NS = "http://schemas.openxmlformats.org/presentationml/2006/main";
+    static final String DML_NS = NS_DRAWINGML;
+    static final String PML_NS = NS_PRESENTATIONML;
 
     private static final QName[] NV_CONTAINER = {
         new QName(PML_NS, "nvSpPr"),

@@ -70,7 +70,7 @@ public class AreaReference {
         String part1 = parts[1];
         if (isPlainColumn(part0)) {
             if (!isPlainColumn(part1)) {
-                throw new RuntimeException("Bad area ref '" + reference + "'");
+                throw new IllegalStateException("Bad area ref '" + reference + "'");
             }
             // Special handling for whole-column references
             // Represented internally as x$1 to x$65536
@@ -301,7 +301,7 @@ public class AreaReference {
             // TODO - are references like "Sheet1!A1:Sheet1:B2" ever valid?
             // FormulaParser has code to handle that.
 
-            throw new RuntimeException("Unexpected " + SHEET_NAME_DELIMITER
+            throw new IllegalStateException("Unexpected " + SHEET_NAME_DELIMITER
                     + " in second cell reference of '" + reference + "'");
         }
 

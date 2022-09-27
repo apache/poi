@@ -358,14 +358,14 @@ public final class LookupUtils {
         private final Class<? extends ValueEval> _targetClass;
         protected LookupValueComparerBase(ValueEval targetValue) {
             if(targetValue == null) {
-                throw new RuntimeException("targetValue cannot be null");
+                throw new IllegalStateException("targetValue cannot be null");
             }
             _targetClass = targetValue.getClass();
         }
         @Override
         public final CompareResult compareTo(ValueEval other) {
             if (other == null) {
-                throw new RuntimeException("compare to value cannot be null");
+                throw new IllegalStateException("compare to value cannot be null");
             }
             if (_targetClass != other.getClass()) {
                 return CompareResult.TYPE_MISMATCH;
@@ -611,7 +611,7 @@ public final class LookupUtils {
             // zero is FALSE, everything else is TRUE
             return 0.0 != nve.getNumberValue();
         }
-        throw new RuntimeException("Unexpected eval type (" + valEval + ")");
+        throw new IllegalStateException("Unexpected eval type (" + valEval + ")");
     }
 
     public static int lookupFirstIndexOfValue(ValueEval lookupValue, ValueVector vector, boolean isRangeLookup) throws EvaluationException {

@@ -110,7 +110,7 @@ public class XMLSlideShow extends POIXMLDocument
     /**
      * @param pkg OPC package
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public XMLSlideShow(OPCPackage pkg) {
@@ -132,7 +132,7 @@ public class XMLSlideShow extends POIXMLDocument
      * @param is InputStream
      * @throws IOException If reading data from the stream fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
     public XMLSlideShow(InputStream is) throws IOException {
@@ -190,7 +190,7 @@ public class XMLSlideShow extends POIXMLDocument
             _masters.clear();
             if (_presentation.isSetSldMasterIdLst()) {
                 _presentation.getSldMasterIdLst().getSldMasterIdList().forEach(
-                   id -> _masters.add(masterMap.get(id.getId2()))
+                        id -> _masters.add(masterMap.get(id.getId2()))
                 );
             }
 
@@ -248,10 +248,10 @@ public class XMLSlideShow extends POIXMLDocument
      */
     public XSLFSlide createSlide(XSLFSlideLayout layout) {
         CTSlideIdList slideList = _presentation.isSetSldIdLst()
-            ? _presentation.getSldIdLst() : _presentation.addNewSldIdLst();
+                ? _presentation.getSldIdLst() : _presentation.addNewSldIdLst();
 
         OptionalLong maxId = Stream.of(slideList.getSldIdArray())
-            .mapToLong(CTSlideIdListEntry::getId).max();
+                .mapToLong(CTSlideIdListEntry::getId).max();
 
         final XSLFRelation relationType = XSLFRelation.SLIDE;
         final int slideNumber = (int)(Math.max(maxId.orElse(0),255)+1);
@@ -279,7 +279,7 @@ public class XMLSlideShow extends POIXMLDocument
         try {
             return getPackage().getUnusedPartIndex(relationType.getDefaultFileName());
         } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -468,12 +468,12 @@ public class XMLSlideShow extends POIXMLDocument
 
     /**
      * Remove a slide from this presentation.
-     * *
+     *
      * @param index The slide number to remove.
      * @return The slide that was removed.
      *
-     * @throws RuntimeException a number of other runtime exceptions can be thrown, especially if there are problems with the
-     * input format*
+     * @throws IllegalStateException a number of runtime exceptions can be thrown, especially if there are problems with the
+     * input format
      */
     public XSLFSlide removeSlide(int index) {
         XSLFSlide slide = _slides.remove(index);
@@ -695,14 +695,14 @@ public class XMLSlideShow extends POIXMLDocument
     String importBlip(String blipId, POIXMLDocumentPart parent, POIXMLDocumentPart target) {
         OPCPackage targetPackage = target.getPackagePart().getPackage();
         if (targetPackage != getPackage()) {
-            throw new RuntimeException("the target document part is not a child of this package");
+            throw new IllegalStateException("the target document part is not a child of this package");
         }
         final POIXMLDocumentPart docPart = parent.getRelationPartById(blipId).getDocumentPart();
         XSLFPictureData parData;
         if (docPart instanceof XSLFPictureData) {
             parData = (XSLFPictureData)docPart;
         } else {
-            throw new RuntimeException("cannot import blip " + blipId + " - its document part is not XSLFPictureData");
+            throw new IllegalStateException("cannot import blip " + blipId + " - its document part is not XSLFPictureData");
         }
         final XSLFPictureData pictureData;
         if (targetPackage == parent.getPackagePart().getPackage()) {

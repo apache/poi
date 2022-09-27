@@ -87,6 +87,26 @@ public class XWPFSDTContent implements ISDTContent {
         }
     }
 
+    public XWPFSDTContent(CTSdtContentRow sdtContentRow, IBody part, IRunBody parent) {
+        if (sdtContentRow == null) {
+            return;
+        }
+        try (final XmlCursor cursor = sdtContentRow.newCursor()) {
+            cursor.selectPath("./*");
+            while (cursor.toNextSelection()) {
+                XmlObject o = cursor.getObject();
+                if (o instanceof CTSdtRow) {
+                    XWPFSDT c = new XWPFSDT(((CTSdtRow) o), part);
+                    bodyElements.add(c);
+                    // contentControls.add(c);
+                } else if (o instanceof CTRow) {
+                    //can only create XWPFTableRow if you have an XWPFTable instance
+                    //XWPFTableRow tableRow = new XWPFTableRow((CTRow) o, parent);
+                }
+            }
+        }
+    }
+
     @Override
     public String getText() {
         StringBuilder text = new StringBuilder();
