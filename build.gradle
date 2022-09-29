@@ -156,7 +156,7 @@ subprojects {
         xmlbeansVersion = '5.1.1'
         batikVersion = '1.15'
         graphics2dVersion = '0.41'
-        pdfboxVersion = '2.0.26'
+        pdfboxVersion = '2.0.27'
         saxonVersion = '11.4'
         apiGuardianVersion = '1.1.2'
 
