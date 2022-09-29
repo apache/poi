@@ -1127,6 +1127,18 @@ class TestXSLFBugs {
     }
 
     @Test
+    void loadPptxWithArtisticEffect() throws IOException {
+        try (XMLSlideShow slideShowModel = openSampleDocument("ArtisticEffectSample.pptx")) {
+            for (XSLFSlide slide : slideShowModel.getSlides()) {
+                assertNotNull(slide);
+                for (XSLFShape shape : slide.getShapes()) {
+                    assertNotNull(shape);
+                }
+            }
+        }
+    }
+
+    @Test
     void identicalGradientStopsBug() throws IOException {
 
         final ArrayList<LinearGradientPaint> linearGradients = new ArrayList<>();
