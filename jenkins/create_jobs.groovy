@@ -146,8 +146,8 @@ def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H29'
 
 def jdkMapping = [
         '1.8': [ jenkinsJdk: 'jdk_1.8_latest', jdkVersion: 8, jdkVendor: 'oracle' ],
-        '1.10': [ jenkinsJdk: 'jdk_10_latest', jdkVersion: 10, jdkVendor: 'oracle' ],
-        '1.11': [ jenkinsJdk: 'jdk_11_latest', jdkVersion: 11, jdkVendor: 'oracle' ],
+        '1.10': [ jenkinsJdk: 'jdk_10_latest', jdkVersion: 10, jdkVendor: '' ],
+        '1.11': [ jenkinsJdk: 'jdk_11_latest', jdkVersion: 11, jdkVendor: '' ],
         '1.12': [ jenkinsJdk: 'jdk_12_latest', jdkVersion: 12, jdkVendor: '' ],
         '1.13': [ jenkinsJdk: 'jdk_13_latest', jdkVersion: 13, jdkVendor: '' ],
         '1.14': [ jenkinsJdk: 'jdk_14_latest', jdkVersion: 14, jdkVendor: '' ],
@@ -656,9 +656,9 @@ Unfortunately we often see builds break because of changes/new machines...''')
     axes {
         jdk(
                 'jdk_1.8_latest',
-                'jdk_10_latest',
                 'jdk_11_latest',
                 /* don't look for JDKs that are out of support
+                'jdk_10_latest',
                 'jdk_12_latest',
                 'jdk_13_latest',
                 'jdk_14_latest',
