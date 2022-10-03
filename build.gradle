@@ -39,7 +39,7 @@ plugins {
     id 'org.nosphere.apache.rat' version '0.8.0'
     id 'distribution'
     id "com.github.spotbugs" version '5.0.12'
-    id 'de.thetaphi.forbiddenapis' version '3.3'
+    id 'de.thetaphi.forbiddenapis' version '3.4'
     id 'com.github.jk1.dependency-license-report' version '2.0'
     id 'org.cyclonedx.bom' version '1.7.1'
 }
