@@ -334,7 +334,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     public void addShape(XSLFShape shape) {
         throw new UnsupportedOperationException(
             "Adding a shape from a different container is not supported -"
-            + " create it from scratch witht XSLFSheet.create* methods");
+            + " create it from scratch with the XSLFSheet.create* methods");
     }
 
     /**
