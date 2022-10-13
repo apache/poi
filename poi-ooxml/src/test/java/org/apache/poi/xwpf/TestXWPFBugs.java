@@ -43,6 +43,9 @@ import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
@@ -181,5 +184,32 @@ class TestXWPFBugs {
                 assertEquals(fn, ole.getFileName2());
             }
         }
+    }
+
+    @Test
+    void insertParagraphDirectlyIntoBody() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug66312.docx"))) {
+            XWPFParagraph paragraph = document.getParagraphArray(0);
+            insertParagraph(paragraph, document);
+            assertEquals("Hello", document.getParagraphArray(0).getText());
+            assertEquals("World", document.getParagraphArray(1).getText());
+        }
+    }
+
+    @Test
+    void insertParagraphIntoTable() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug66312.docx"))) {
+            XWPFTableCell cell = document.getTableArray(0).getRow(0).getCell(0);
+            XWPFParagraph paragraph = cell.getParagraphArray(0);
+            insertParagraph(paragraph, document);
+            //TODO the issue reporter thinks that there should be 2 paragraphs (with 'Hello' and 'World' repectively).
+            assertEquals("World", cell.getParagraphArray(0).getText());
+        }
+    }
+
+    public static void insertParagraph(XWPFParagraph xwpfParagraph, XWPFDocument document) {
+        XmlCursor xmlCursor = xwpfParagraph.getCTP().newCursor();
+        XWPFParagraph xwpfParagraph2 = document.insertNewParagraph(xmlCursor);
+        xwpfParagraph2.createRun().setText("Hello");
     }
 }

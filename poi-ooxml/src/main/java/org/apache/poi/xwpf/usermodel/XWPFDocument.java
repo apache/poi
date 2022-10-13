@@ -96,7 +96,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
  * XML structure come through. You'll therefore almost
  * certainly need to refer to the OOXML specifications
  * from
- * http://www.ecma-international.org/publications/standards/Ecma-376.htm
+ * https://www.ecma-international.org/publications/standards/Ecma-376.htm
  * at some point in your use.
  */
 @SuppressWarnings("unused")
@@ -678,118 +678,102 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param cursor The cursor-position where the new paragraph should be added.
      * @return the {@link XWPFParagraph} object representing the newly inserted
-     * CTP object
+     * CTP object.
      */
     @Override
     public XWPFParagraph insertNewParagraph(XmlCursor cursor) {
-        if (isCursorInBody(cursor)) {
-            String uri = CTP.type.getName().getNamespaceURI();
-            /*
-             * TODO DO not use a coded constant, find the constant in the OOXML
-             * classes instead, as the child of type CT_Paragraph is defined in the
-             * OOXML schema as 'p'
-             */
-            String localPart = "p";
-            // creates a new Paragraph, cursor is positioned inside the new
-            // element
-            cursor.beginElement(localPart, uri);
-            // move the cursor to the START token to the paragraph just created
-            cursor.toParent();
-            CTP p = (CTP) cursor.getObject();
-            XWPFParagraph newP = new XWPFParagraph(p, this);
-            XmlObject o = null;
-            /*
-             * move the cursor to the previous element until a) the next
-             * paragraph is found or b) all elements have been passed
-             */
-            while (!(o instanceof CTP) && (cursor.toPrevSibling())) {
-                o = cursor.getObject();
-            }
-            /*
-             * if the object that has been found is a) not a paragraph or b) is
-             * the paragraph that has just been inserted, as the cursor in the
-             * while loop above was not moved as there were no other siblings,
-             * then the paragraph that was just inserted is the first paragraph
-             * in the body. Otherwise, take the previous paragraph and calculate
-             * the new index for the new paragraph.
-             */
-            if ((!(o instanceof CTP)) || o == p) {
-                paragraphs.add(0, newP);
-            } else {
-                int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;
-                paragraphs.add(pos, newP);
-            }
-
-            /*
-             * create a new cursor, that points to the START token of the just
-             * inserted paragraph
-             */
-            try (XmlCursor newParaPos = p.newCursor()) {
-                /*
-                 * Calculate the paragraphs index in the list of all body
-                 * elements
-                 */
-                int i = 0;
-                cursor.toCursor(newParaPos);
-                while (cursor.toPrevSibling()) {
-                    o = cursor.getObject();
-                    if (o instanceof CTP || o instanceof CTTbl) {
-                        i++;
-                    }
-                }
-                bodyElements.add(i, newP);
-                cursor.toCursor(newParaPos);
-                cursor.toEndToken();
-                return newP;
-            }
+        String uri = CTP.type.getName().getNamespaceURI();
+        /*
+         * TODO DO not use a coded constant, find the constant in the OOXML
+         * classes instead, as the child of type CT_Paragraph is defined in the
+         * OOXML schema as 'p'
+         */
+        String localPart = "p";
+        // creates a new Paragraph, cursor is positioned inside the new
+        // element
+        cursor.beginElement(localPart, uri);
+        // move the cursor to the START token to the paragraph just created
+        cursor.toParent();
+        CTP p = (CTP) cursor.getObject();
+        XWPFParagraph newP = new XWPFParagraph(p, this);
+        XmlObject o = null;
+        /*
+         * move the cursor to the previous element until a) the next
+         * paragraph is found or b) all elements have been passed
+         */
+        while (!(o instanceof CTP) && (cursor.toPrevSibling())) {
+            o = cursor.getObject();
         }
-        return null;
+        /*
+         * if the object that has been found is a) not a paragraph or b) is
+         * the paragraph that has just been inserted, as the cursor in the
+         * while loop above was not moved as there were no other siblings,
+         * then the paragraph that was just inserted is the first paragraph
+         * in the body. Otherwise, take the previous paragraph and calculate
+         * the new index for the new paragraph.
+         */
+        if ((!(o instanceof CTP)) || o == p) {
+            paragraphs.add(0, newP);
+        } else {
+            int pos = paragraphs.indexOf(getParagraph((CTP) o)) + 1;
+            paragraphs.add(pos, newP);
+        }
+
+        /*
+         * create a new cursor, that points to the START token of the just
+         * inserted paragraph
+         */
+        try (XmlCursor newParaPos = p.newCursor()) {
+            /*
+             * Calculate the paragraphs index in the list of all body
+             * elements
+             */
+            int i = 0;
+            cursor.toCursor(newParaPos);
+            while (cursor.toPrevSibling()) {
+                o = cursor.getObject();
+                if (o instanceof CTP || o instanceof CTTbl) {
+                    i++;
+                }
+            }
+            bodyElements.add(i, newP);
+            cursor.toCursor(newParaPos);
+            cursor.toEndToken();
+            return newP;
+        }
     }
 
     @Override
     public XWPFTable insertNewTbl(XmlCursor cursor) {
-        if (isCursorInBody(cursor)) {
-            String uri = CTTbl.type.getName().getNamespaceURI();
-            String localPart = "tbl";
-            cursor.beginElement(localPart, uri);
-            cursor.toParent();
-            CTTbl t = (CTTbl) cursor.getObject();
-            XWPFTable newT = new XWPFTable(t, this);
-            XmlObject o = null;
-            while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {
-                o = cursor.getObject();
-            }
-            if (!(o instanceof CTTbl)) {
-                tables.add(0, newT);
-            } else {
-                int pos = tables.indexOf(getTable((CTTbl) o)) + 1;
-                tables.add(pos, newT);
-            }
-            int i = 0;
-            try (XmlCursor tableCursor = t.newCursor()) {
-                cursor.toCursor(tableCursor);
-                while (cursor.toPrevSibling()) {
-                    o = cursor.getObject();
-                    if (o instanceof CTP || o instanceof CTTbl) {
-                        i++;
-                    }
-                }
-                bodyElements.add(i, newT);
-                cursor.toCursor(tableCursor);
-                cursor.toEndToken();
-                return newT;
-            }
+        String uri = CTTbl.type.getName().getNamespaceURI();
+        String localPart = "tbl";
+        cursor.beginElement(localPart, uri);
+        cursor.toParent();
+        CTTbl t = (CTTbl) cursor.getObject();
+        XWPFTable newT = new XWPFTable(t, this);
+        XmlObject o = null;
+        while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {
+            o = cursor.getObject();
         }
-        return null;
-    }
-
-    /**
-     * verifies that cursor is on the right position
-     */
-    private boolean isCursorInBody(XmlCursor cursor) {
-        try (XmlCursor verify = cursor.newCursor()) {
-            verify.toParent();
-            return (verify.getObject() == this.ctDocument.getBody());
+        if (!(o instanceof CTTbl)) {
+            tables.add(0, newT);
+        } else {
+            int pos = tables.indexOf(getTable((CTTbl) o)) + 1;
+            tables.add(pos, newT);
+        }
+        int i = 0;
+        try (XmlCursor tableCursor = t.newCursor()) {
+            cursor.toCursor(tableCursor);
+            while (cursor.toPrevSibling()) {
+                o = cursor.getObject();
+                if (o instanceof CTP || o instanceof CTTbl) {
+                    i++;
+                }
+            }
+            bodyElements.add(i, newT);
+            cursor.toCursor(tableCursor);
+            cursor.toEndToken();
+            return newT;
         }
     }
 

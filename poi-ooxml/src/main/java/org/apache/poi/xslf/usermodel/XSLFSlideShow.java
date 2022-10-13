@@ -56,7 +56,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
  * If you are using these low level classes, then you
  *  will almost certainly need to refer to the OOXML
  *  specifications from
- *  http://www.ecma-international.org/publications/standards/Ecma-376.htm
+ *  https://www.ecma-international.org/publications/standards/Ecma-376.htm
  *
  * WARNING - APIs expected to change rapidly
  */
