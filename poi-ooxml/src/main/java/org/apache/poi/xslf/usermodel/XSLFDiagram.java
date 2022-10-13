@@ -239,7 +239,7 @@ public class XSLFDiagram extends XSLFGraphicFrame {
      * Diagrams store relationships to media in `drawing#.xml.rels`. These relationships are accessible using
      * {@link #getRelationById(String)}.
      */
-    static class XSLFDiagramGroupShape extends XSLFGroupShape {
+    public static class XSLFDiagramGroupShape extends XSLFGroupShape {
 
         private XSLFDiagramDrawing diagramDrawing;
 
@@ -255,7 +255,7 @@ public class XSLFDiagram extends XSLFGraphicFrame {
             this.diagramDrawing = diagramDrawing;
         }
 
-        POIXMLDocumentPart getRelationById(String id) {
+        public POIXMLDocumentPart getRelationById(String id) {
             return diagramDrawing.getRelationById(id);
         }
     }
