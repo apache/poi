@@ -44,6 +44,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
@@ -58,7 +59,7 @@ class TestXWPFBugs {
         //started failing after uptake of commons-compress 1.21
         assertThrows(IOException.class, () -> {
             try (InputStream fis = samples.openResourceAsStream("truncated62886.docx");
-                OPCPackage opc = OPCPackage.open(fis)) {
+                 OPCPackage opc = OPCPackage.open(fis)) {
                 assertNotNull(opc);
                 //XWPFWordExtractor ext = new XWPFWordExtractor(opc)) {
                 //assertNotNull(ext.getText());
@@ -175,8 +176,8 @@ class TestXWPFBugs {
             PackagePart part = document.getPackage().getPart(partName);
             assertNotNull(part);
             try (
-                    InputStream partStream = part.getInputStream();
-                    POIFSFileSystem poifs = new POIFSFileSystem(partStream)
+                InputStream partStream = part.getInputStream();
+                POIFSFileSystem poifs = new POIFSFileSystem(partStream)
             ) {
                 Ole10Native ole = Ole10Native.createFromEmbeddedOleObject(poifs);
                 String fn = "C:\\Users\\ross\\AppData\\Local\\Microsoft\\Windows\\INetCache\\Content.Word\\約翰的測試文件\uD83D\uDD96.msg";
@@ -197,19 +198,47 @@ class TestXWPFBugs {
     }
 
     @Test
+    void insertTableDirectlyIntoBody() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug66312.docx"))) {
+            XWPFParagraph paragraph = document.getParagraphArray(0);
+            insertTable(paragraph, document);
+            assertEquals("Hello", document.getTableArray(0).getRow(0).getCell(0).getText());
+            assertEquals("World", document.getParagraphArray(0).getText());
+        }
+    }
+
+    @Test
     void insertParagraphIntoTable() throws IOException {
         try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug66312.docx"))) {
             XWPFTableCell cell = document.getTableArray(0).getRow(0).getCell(0);
             XWPFParagraph paragraph = cell.getParagraphArray(0);
             insertParagraph(paragraph, document);
-            //TODO the issue reporter thinks that there should be 2 paragraphs (with 'Hello' and 'World' repectively).
+            assertEquals("Hello", cell.getParagraphArray(0).getText());
+            assertEquals("World", cell.getParagraphArray(1).getText());
+        }
+    }
+
+    @Test
+    void insertTableIntoTable() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug66312.docx"))) {
+            XWPFTableCell cell = document.getTableArray(0).getRow(0).getCell(0);
+            XWPFParagraph paragraph = cell.getParagraphArray(0);
+            insertTable(paragraph, document);
+            assertEquals("Hello", cell.getTableArray(0).getRow(0).getCell(0).getText());
             assertEquals("World", cell.getParagraphArray(0).getText());
         }
     }
+
 
     public static void insertParagraph(XWPFParagraph xwpfParagraph, XWPFDocument document) {
         XmlCursor xmlCursor = xwpfParagraph.getCTP().newCursor();
         XWPFParagraph xwpfParagraph2 = document.insertNewParagraph(xmlCursor);
         xwpfParagraph2.createRun().setText("Hello");
+    }
+
+    public static void insertTable(XWPFParagraph xwpfParagraph, XWPFDocument document) {
+        XmlCursor xmlCursor = xwpfParagraph.getCTP().newCursor();
+        XWPFTable xwpfTable = document.insertNewTbl(xmlCursor);
+        xwpfTable.getRow(0).getCell(0).setText("Hello");
     }
 }
