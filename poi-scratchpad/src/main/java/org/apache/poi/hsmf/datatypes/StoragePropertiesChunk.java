@@ -25,7 +25,7 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * A {@link PropertiesChunk} for a Storage Properties, such as Attachments and
- * Recipients. This only has a 8 byte header
+ * Recipients. This only has an 8 byte header.
  */
 public class StoragePropertiesChunk extends PropertiesChunk {
     public StoragePropertiesChunk(ChunkGroup parentGroup) {
@@ -48,5 +48,19 @@ public class StoragePropertiesChunk extends PropertiesChunk {
 
         // Now properties
         writeProperties(out);
+    }
+
+    /**
+     * Writes out pre-calculated header values which assume any variable length property `data`
+     *  field to already have Size and Reserved
+     * @param out output stream (calling code must close this stream)
+     * @throws IOException
+     */
+    public void writePreCalculatedValue(OutputStream out) throws IOException {
+        // 8 bytes of reserved zeros
+        out.write(new byte[8]);
+
+        // Now properties
+        writePreCalculatedProperties(out);
     }
 }
