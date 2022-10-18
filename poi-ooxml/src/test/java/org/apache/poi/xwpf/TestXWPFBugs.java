@@ -202,8 +202,8 @@ class TestXWPFBugs {
             XWPFTableCell cell = document.getTableArray(0).getRow(0).getCell(0);
             XWPFParagraph paragraph = cell.getParagraphArray(0);
             insertParagraph(paragraph, document);
-            //TODO the issue reporter thinks that there should be 2 paragraphs (with 'Hello' and 'World' repectively).
-            assertEquals("World", cell.getParagraphArray(0).getText());
+            assertEquals("Hello", cell.getParagraphArray(0).getText());
+            assertEquals("World", cell.getParagraphArray(1).getText());
         }
     }
 
