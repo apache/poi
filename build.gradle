@@ -154,7 +154,7 @@ subprojects {
         mockitoVersion = '4.8.0'
         hamcrestVersion = '2.2'
         xmlbeansVersion = '5.1.1'
-        batikVersion = '1.15'
+        batikVersion = '1.16'
         graphics2dVersion = '0.41'
         pdfboxVersion = '2.0.27'
         saxonVersion = '11.4'
