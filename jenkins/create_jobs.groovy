@@ -489,11 +489,13 @@ poijobs.each { poijob ->
                         publishTestStabilityData()
                     }
                 }
-                jacocoCodeCoverage {
-                    classPattern('*/build/classes')
-                    execPattern('*/build/*.exec,*/build/jacoco/*.exec')
-                    sourcePattern('*/src/main/java')
-                    exclusionPattern('com/microsoft/**,org/openxmlformats/**,org/etsi/**,org/w3/**,schemaorg*/**,schemasMicrosoft*/**,org/apache/poi/hdf/model/hdftypes/definitions/*.class,org/apache/poi/hwpf/model/types/*.class,org/apache/poi/hssf/usermodel/DummyGraphics2d.class,org/apache/poi/sl/draw/binding/*.class')
+                if (!poijob.skipSpotbugs) {
+                    jacocoCodeCoverage {
+                        classPattern('*/build/classes')
+                        execPattern('*/build/*.exec,*/build/jacoco/*.exec')
+                        sourcePattern('*/src/main/java')
+                        exclusionPattern('com/microsoft/**,org/openxmlformats/**,org/etsi/**,org/w3/**,schemaorg*/**,schemasMicrosoft*/**,org/apache/poi/hdf/model/hdftypes/definitions/*.class,org/apache/poi/hwpf/model/types/*.class,org/apache/poi/hssf/usermodel/DummyGraphics2d.class,org/apache/poi/sl/draw/binding/*.class')
+                    }
                 }
 
                 if (!poijob.skipcigame) {
