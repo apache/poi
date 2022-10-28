@@ -49,10 +49,11 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true
         ],
-        [ name: 'POI-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true
+        // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
+        [ name: 'POI-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
         ],
-        // Use Ant build for as Gradle 7.5 does not support Java 19 yet (change to gradle: true when we have Gradle support)
-        [ name: 'POI-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true, useAnt: true
+        // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
+        [ name: 'POI-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
         ],
         // Use Ant-build for now as selecting IBM JDK via toolchain does not work (yet)
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, useAnt: true
@@ -468,11 +469,13 @@ poijobs.each { poijob ->
                 }
             }
             publishers {
-                recordIssues {
-                    tools {
-                        spotBugs {
-                            pattern('*/build/reports/spotbugs/*.xml')
-                            reportEncoding('UTF-8')
+                if (!poijob.skipSpotbugs) {
+                    recordIssues {
+                        tools {
+                            spotBugs {
+                                pattern('*/build/reports/spotbugs/*.xml')
+                                reportEncoding('UTF-8')
+                            }
                         }
                     }
                 }
