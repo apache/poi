@@ -29,7 +29,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.4.0.2730'
+        classpath 'org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.4.0.2513'
     }
 }
 
