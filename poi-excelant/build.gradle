@@ -69,7 +69,7 @@ task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava', ':poi-ooxml:jar', ':poi-scratchpad:jar'
 
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(jdkVersion >= 17 ? 17 : 11)
+        languageVersion = JavaLanguageVersion.of(jdkVersion)
         if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
     }
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
