@@ -343,9 +343,9 @@ under the License.
 
     <!-- coverage libs -->
     <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.8" usage="util" packaging="zip"/>
-    <dependency prefix="asm" artifact="org.ow2.asm:asm:9.3" usage="util"/>
-    <dependency prefix="asm-commons" artifact="org.ow2.asm:asm-commons:9.3" usage="util"/>
-    <dependency prefix="asm-tree" artifact="org.ow2.asm:asm-tree:9.3" usage="util"/>
+    <dependency prefix="asm" artifact="org.ow2.asm:asm:9.4" usage="util"/>
+    <dependency prefix="asm-commons" artifact="org.ow2.asm:asm-commons:9.4" usage="util"/>
+    <dependency prefix="asm-tree" artifact="org.ow2.asm:asm-tree:9.4" usage="util"/>
 
     <!-- license and api checks -->
     <dependency prefix="rat" artifact="org.apache.rat:apache-rat:0.15" usage="util"/>
@@ -714,6 +714,7 @@ under the License.
             <fileset dir="${basedir}/lib/util">
                 <include name="asm*7.2.jar"/>
                 <include name="asm*9.0.jar"/>
+                <include name="asm*9.3.jar"/>
                 <include name="org.jacoco.*-0.8.5.*.jar"/>
                 <include name="org.jacoco.*-0.8.6.*.jar"/>
                 <include name="forbiddenapis-3.1.jar"/>
