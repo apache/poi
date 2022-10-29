@@ -218,7 +218,7 @@ subprojects {
 
         doFirst {
             options {
-                addBooleanOption('html5', true)
+                if (jdkVersion > 8) addBooleanOption('html5', true)
                 addBooleanOption('Xdoclint:all,-missing', true)
                 links 'https://poi.apache.org/apidocs/dev/'
                 links 'https://docs.oracle.com/javase/8/docs/api/'
