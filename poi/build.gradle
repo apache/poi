@@ -95,6 +95,7 @@ task compileJava9(type: JavaCompile) {
 
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(jdkVersion)
+        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
     }
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
@@ -103,6 +104,10 @@ task compileJava9(type: JavaCompile) {
         '--patch-module', "${MODULE_NAME}=${sourceSets.main.output.classesDirs.asPath}",
         '--module-path', sourceSets.main.compileClasspath.asPath
     ]
+
+    onlyIf {
+        jdkVersion > 8
+    }
 }
 
 task cacheJava9(type: Copy) {
