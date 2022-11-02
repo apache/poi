@@ -115,8 +115,8 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
     }
 
     /**
-     * Our handling of equals is inconsistent with compareTo.  The trouble is because we don't truely understand
-     * rich text fields yet it's difficult to make a sound comparison.
+     * Our handling of equals is inconsistent with compareTo.  The trouble is because we don't truly understand
+     * rich text fields, yet it's difficult to make a sound comparison.
      *
      * @param o     The object to compare.
      * @return      true if the object is actually equal.

@@ -111,7 +111,7 @@ public final class HMEFContentsExtractor {
         if (body != null) return body;
         
         // See bug #59786 - we'd really like a test file to confirm if this
-        //  is the right properties + if this is truely general or not!
+        //  is the right properties + if this is truly general or not!
         MAPIProperty uncompressedBody = 
                 MAPIProperty.createCustom(0x3fd9, Types.ASCII_STRING, "Uncompressed Body");
         // Return this uncompressed one, or null if that isn't their either
