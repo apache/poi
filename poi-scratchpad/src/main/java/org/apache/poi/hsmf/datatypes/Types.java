@@ -138,6 +138,10 @@ public final class Types {
             return ((length != -1) && (length <= 8)) || (id == Types.CLS_ID.id);
         }
 
+        public boolean isPointer() {
+            return (length == -1) || (length > 8);
+        }
+
         public int getId() {
             return id;
         }
