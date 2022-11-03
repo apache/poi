@@ -122,7 +122,7 @@ public abstract class POIDocument implements Closeable {
      */
     public void createInformationProperties() {
         if (!initialized) {
-            readProperties();
+            readProperties(false);
         }
         if (sInf == null) {
             sInf = PropertySetFactory.newSummaryInformation();
@@ -140,14 +140,26 @@ public abstract class POIDocument implements Closeable {
      */
     @Internal
     public void readProperties() {
+        readProperties(true);
+    }
+
+    /**
+     * Find, and create objects for, the standard Document Information Properties (HPSF).
+     * If a given property set is missing or corrupt, it will remain null.
+     *
+     * @param warnIfNull log a warning if any of the property sets come back as null.
+     *                   The directory is null when creating a new document from scratch
+     */
+    @Internal
+    public void readProperties(boolean warnIfNull) {
         if (initialized) {
             return;
         }
-        DocumentSummaryInformation dsi = readPropertySet(DocumentSummaryInformation.class, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        DocumentSummaryInformation dsi = readPropertySet(DocumentSummaryInformation.class, DocumentSummaryInformation.DEFAULT_STREAM_NAME, warnIfNull);
         if (dsi != null) {
             dsInf = dsi;
         }
-        SummaryInformation si = readPropertySet(SummaryInformation.class, SummaryInformation.DEFAULT_STREAM_NAME);
+        SummaryInformation si = readPropertySet(SummaryInformation.class, SummaryInformation.DEFAULT_STREAM_NAME, warnIfNull);
         if (si != null) {
             sInf = si;
         }
@@ -157,7 +169,7 @@ public abstract class POIDocument implements Closeable {
     }
 
     @SuppressWarnings("unchecked")
-    private <T> T readPropertySet(Class<T> clazz, String name) {
+    private <T> T readPropertySet(Class<T> clazz, String name, boolean warnIfNull) {
         String localName = clazz.getName().substring(clazz.getName().lastIndexOf('.')+1);
         try {
             PropertySet ps = getPropertySet(name);
@@ -166,7 +178,9 @@ public abstract class POIDocument implements Closeable {
             } else if (ps != null) {
                 LOG.atWarn().log("{} property set came back with wrong class - {}", localName, ps.getClass().getName());
             } else {
-                LOG.atWarn().log("{} property set came back as null", localName);
+                if (warnIfNull) {
+                    LOG.atWarn().log("{} property set came back as null", localName);
+                }
             }
         } catch (IOException e) {
             LOG.atError().withThrowable(e).log("can't retrieve property set");
