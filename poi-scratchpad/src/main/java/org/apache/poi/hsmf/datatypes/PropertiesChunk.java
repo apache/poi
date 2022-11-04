@@ -254,7 +254,7 @@ public abstract class PropertiesChunk extends Chunk {
                 // to another chunk which holds the data itself
                 boolean isPointer = false;
                 int length = type.getLength();
-                if (!type.isPointer()) {
+                if (type.isPointer()) {
                     isPointer = true;
                     length = 8;
                 }
