@@ -255,7 +255,7 @@ public abstract class PropertiesChunk extends Chunk {
                 // to another chunk which holds the data itself
                 boolean isPointer = false;
                 int length = type.getLength();
-                if (!type.isFixedLength()) {
+                if (type.isPointer()) {
                     isPointer = true;
                     length = 8;
                 }
@@ -380,7 +380,7 @@ public abstract class PropertiesChunk extends Chunk {
             LittleEndian.putUInt(value.getFlags(), out); // readable + writable
 
             MAPIType type = getTypeMapping(value.getActualType());
-            if (type.isFixedLength()) {
+            if (type.isFixedLength() && !type.isPointer()) {
                 // page 11, point 2.1.2
                 writeFixedLengthValueHeader(out, property, type, value);
             } else {
