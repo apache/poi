@@ -76,17 +76,17 @@ public class Junit5Progress implements TestExecutionListener {
             String summary = String.format("Tests run: %d, Failures: %d, Aborted: %d, Skipped: %d, Time elapsed: %f sec", totalTestsInClass,
                 this.numFailedInTestSet.get(), this.numAbortedInTestSet.get(), this.numSkippedInTestSet.get(), numSeconds);
             println(summary);
-        } else if (testIdentifier.isTest()) {
+        } else {
             switch (testExecutionResult.getStatus()) {
                 case SUCCESSFUL:
                     this.numSucceededInTestSet.incrementAndGet();
                     break;
                 case ABORTED:
-                    println("   Aborted: " + testIdentifier.getDisplayName());
+                    println("   Aborted: " + testIdentifier.getDisplayName() + ": " + testExecutionResult.getThrowable().orElse(null));
                     this.numAbortedInTestSet.incrementAndGet();
                     break;
                 case FAILED:
-                    println("   Failed: " + testIdentifier.getDisplayName());
+                    println("   Failed: " + testIdentifier.getDisplayName() + ": " + testExecutionResult.getThrowable().orElse(null));
                     this.numFailedInTestSet.incrementAndGet();
                     break;
             }
