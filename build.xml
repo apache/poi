@@ -275,9 +275,9 @@ under the License.
     <dependency prefix="main.junit-params" artifact="org.junit.jupiter:junit-jupiter-params:5.9.1" usage="main-tests"/>
     <dependency prefix="main.junit-opentest4j" artifact="org.opentest4j:opentest4j:1.2.0" usage="main-tests"/>
     <dependency prefix="main.junit-apiguardian" artifact="org.apiguardian:apiguardian-api:1.1.0" usage="main-tests"/>
-    <dependency prefix="main.junit-pcommons" artifact="org.junit.platform:junit-platform-commons:1.8.2" usage="main-tests"/>
-    <dependency prefix="main.junit-pengine" artifact="org.junit.platform:junit-platform-engine:1.8.2" usage="main-tests"/>
-    <dependency prefix="main.junit-plauncher" artifact="org.junit.platform:junit-platform-launcher:1.8.2" usage="main-tests"/>
+    <dependency prefix="main.junit-pcommons" artifact="org.junit.platform:junit-platform-commons:1.9.0" usage="main-tests"/>
+    <dependency prefix="main.junit-pengine" artifact="org.junit.platform:junit-platform-engine:1.9.0" usage="main-tests"/>
+    <dependency prefix="main.junit-plauncher" artifact="org.junit.platform:junit-platform-launcher:1.9.0" usage="main-tests"/>
 
 
     <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.35" usage="main-tests"/>
@@ -692,6 +692,7 @@ under the License.
                 <include name="junit-jupiter-*-5.8.*.jar"/>
                 <include name="junit-jupiter-*-5.7.*.jar"/>
                 <include name="junit-platform-*-1.7.*.jar"/>
+                <include name="junit-platform-*-1.8.*.jar"/>
                 <include name="log4j-core-2.14*.jar"/>
                 <include name="log4j-core-2.15*.jar"/>
                 <include name="log4j-core-2.16*.jar"/>
@@ -701,6 +702,7 @@ under the License.
                 <include name="xmlbeans-3*.jar"/>
                 <include name="xmlbeans-4*.jar"/>
                 <include name="xmlbeans-5.0*.jar"/>
+                <include name="xmlbeans-5.1.0.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml-provided">
                 <include name="bc*-1.6*.jar"/>
@@ -722,6 +724,9 @@ under the License.
             <fileset dir="${basedir}/lib/util">
                 <include name="jacoco-0.8.5.zip"/>
                 <include name="jacoco-0.8.6.zip"/>
+            </fileset>
+            <fileset dir="${basedir}/lib">
+                <include name="jacoco-*.zip"/>
             </fileset>
             <fileset dir="${basedir}/lib/excelant">
                 <include name="ant*1.10.1.jar"/>
