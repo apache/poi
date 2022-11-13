@@ -173,7 +173,7 @@ final String OOXML_LITE_REPORT = '../src/resources/ooxml-lite-report'
 final String OOXML_LITE_INCLUDES = "^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"
 
 compileJava {
-    dependsOn 'fixBatik'
+    dependsOn 'fixBatik', 'cleanupBatik'
 }
 
 task compileJava9(type: JavaCompile) {
@@ -275,6 +275,14 @@ task fixBatik(type: Zip) {
     from zipTree(configurations.broken.files.find{ f -> f.name.startsWith("batik-script") })
     filesMatching("**/org.apache.batik.script.InterpreterFactory") {
         it.filter{ it2 -> it2.contains("Rhino") ? "#" + it2 : it2 }
+    }
+}
+
+task cleanupBatik(type: Delete) {
+    // remove older files to avoid build failures because of duplicate modules
+    delete fileTree("${buildDir}/brokenJars/").matching {
+        include "*.jar"
+        exclude "batik*-${batikVersion}.jar"
     }
 }
 
