@@ -36,6 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -3312,7 +3313,9 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 }
             LOG.atInfo().log(between(start, now()));
 
-            assertTrue(between(start, now()).getSeconds() < 25);
+            assertTrue(between(start, now()).getSeconds() < 25,
+                    "Had start: " + start + ", now: " + now() +
+                            ", diff: " + Duration.between(start, now()).getSeconds());
         }
     }
 

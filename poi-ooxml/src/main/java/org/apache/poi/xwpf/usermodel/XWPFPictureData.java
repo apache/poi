@@ -39,7 +39,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
     private static int MAX_IMAGE_SIZE = DEFAULT_MAX_IMAGE_SIZE;
 
     /**
-     * @param length the max image size allowed for XSSF pictures
+     * @param length the max image size allowed for XWPF pictures
      */
     public static void setMaxImageSize(int length) {
         MAX_IMAGE_SIZE = length;

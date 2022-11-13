@@ -101,7 +101,9 @@ final class TestMatrixFormulasFromBinarySpreadsheet {
     @AfterAll
     public static void closeResource() throws Exception {
         LocaleUtil.setUserLocale(userLocale);
-        workbook.close();
+        if (workbook != null) {
+            workbook.close();
+        }
     }
 
     /* generating parameter instances */

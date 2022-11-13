@@ -53,8 +53,12 @@ final class TestRVA {
 
     @AfterAll
     public static void closeResource() throws Exception {
-        workbook.close();
-        poifs.close();
+        if (workbook != null) {
+            workbook.close();
+        }
+        if (poifs != null) {
+            poifs.close();
+        }
     }
 
     public static Stream<Arguments> data() throws Exception {
