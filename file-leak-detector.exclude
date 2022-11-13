@@ -73,6 +73,8 @@ org.apache.logging.log4j.core.config.ConfigurationSource.getConfigurationSource
 sun.launcher.LauncherHelper.validateMainClass
 sun.util.locale.provider.RuleBasedBreakIterator$1.run
 java.util.ServiceLoader$LazyIterator.hasNextService
+java.util.ServiceLoader$LazyClassPathLookupIterator.nextProviderClass
+java.lang.ClassLoader.loadClass
 
 # other third party libs
 net.bytebuddy.dynamic.ClassFileLocator$ForClassLoader.locate
