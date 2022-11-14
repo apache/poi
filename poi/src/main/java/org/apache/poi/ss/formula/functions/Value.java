@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -53,6 +54,9 @@ public final class Value extends Fixed1ArgFunction implements ArrayFunction {
             return e.getErrorEval();
         }
         String strText = OperandResolver.coerceValueToString(veText);
+        if (veText == BlankEval.instance) {
+            return new NumberEval(0.0);
+        }
         if (StringUtil.isBlank(strText)) {
             return ErrorEval.VALUE_INVALID;
         }
