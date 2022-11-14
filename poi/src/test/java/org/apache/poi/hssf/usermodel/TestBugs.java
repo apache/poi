@@ -2609,4 +2609,13 @@ final class TestBugs extends BaseTestBugzillaIssues {
             assertNotNull(wb);
         }
     }
+
+    @Test
+    void test66181() throws IOException {
+        try (Workbook wb = openSampleWorkbook("66181.xls")) {
+            wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            assertEquals(0d, wb.getSheetAt(0).getRow(0).getCell(2).getNumericCellValue());
+            assertEquals(0d, wb.getSheetAt(0).getRow(1).getCell(2).getNumericCellValue());
+        }
+    }
 }
