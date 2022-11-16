@@ -67,6 +67,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocument1;
@@ -116,6 +117,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     protected XWPFEndnotes endnotes;
     protected XWPFNumbering numbering;
     protected XWPFStyles styles;
+    protected XWPFTheme theme;
     protected XWPFFootnotes footnotes;
     private CTDocument1 ctDocument;
     private XWPFSettings settings;
@@ -242,6 +244,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 if (relation.equals(XWPFRelation.STYLES.getRelation())) {
                     this.styles = (XWPFStyles) p;
                     this.styles.onDocumentRead();
+                } else if (relation.equals(XWPFRelation.THEME.getRelation())) {
+                    this.theme = (XWPFTheme) p;
+                    this.theme.onDocumentRead();
                 } else if (relation.equals(XWPFRelation.NUMBERING.getRelation())) {
                     this.numbering = (XWPFNumbering) p;
                     this.numbering.onDocumentRead();
@@ -457,6 +462,14 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             return Collections.emptyList();
         }
         return footnotes.getFootnotesList();
+    }
+
+    /**
+     * @return Theme document (can be null)
+     * @since POI 5.2.4
+     */
+    public XWPFTheme getTheme() {
+        return theme;
     }
 
     public XWPFHyperlink[] getHyperlinks() {
@@ -1016,6 +1029,28 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         }
 
         return styles;
+    }
+
+
+    /**
+     * Creates an empty styles for the document if one does not already exist
+     *
+     * @return styles
+     * @since POI 5.2.4
+     */
+    public XWPFTheme createTheme() {
+        if (theme == null) {
+            ThemeDocument themeDoc = ThemeDocument.Factory.newInstance();
+
+            XWPFRelation relation = XWPFRelation.THEME;
+            int i = getRelationIndex(relation);
+
+            XWPFTheme wrapper = (XWPFTheme) createRelationship(relation, XWPFFactory.getInstance(), i);
+            wrapper.setTheme(themeDoc.addNewTheme());
+            theme = wrapper;
+        }
+
+        return theme;
     }
 
     /**

@@ -70,6 +70,8 @@ public final class TestXWPFDocument {
             assertNotNull(xml1.getDocument());
             assertNotNull(xml1.getDocument().getBody());
             assertNotNull(xml1.getStyle());
+            assertNotNull(xml1.getTheme());
+            assertEquals("Cambria", xml1.getTheme().getMajorFont());
         }
 
         // Complex file
