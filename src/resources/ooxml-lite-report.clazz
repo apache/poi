@@ -2521,3 +2521,5 @@ org/openxmlformats/schemas/wordprocessingml/x2006/main/impl/CTSdtRowImpl
 org/openxmlformats/schemas/wordprocessingml/x2006/main/CTSdtRow
 org/openxmlformats/schemas/wordprocessingml/x2006/main/impl/CTSdtContentRowImpl
 org/openxmlformats/schemas/wordprocessingml/x2006/main/CTSdtContentRow
+org/openxmlformats/schemas/drawingml/x2006/main/CTComplementTransform
+org/openxmlformats/schemas/drawingml/x2006/main/CTPositiveFixedAngle
