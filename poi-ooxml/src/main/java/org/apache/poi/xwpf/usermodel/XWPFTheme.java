@@ -133,7 +133,7 @@ public class XWPFTheme extends POIXMLDocumentPart {
 
     /**
      * @return typeface of the major font to use in a document.
-     * Typically the major font is used for heading areas of a document.
+     * Typically, the major font is used for heading areas of a document.
      *
      */
     @SuppressWarnings("WeakerAccess")
@@ -143,7 +143,7 @@ public class XWPFTheme extends POIXMLDocumentPart {
 
     /**
      * @return typeface of the minor font to use in a document.
-     * Typically the monor font is used for normal text or paragraph areas.
+     * Typically, the minor font is used for normal text or paragraph areas.
      *
      */
     @SuppressWarnings("WeakerAccess")
