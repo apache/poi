@@ -45,32 +45,6 @@ repositories {
     //maven { url 'https://repository.apache.org/content/repositories/staging' }
 }
 
-import com.github.jk1.license.render.*
-import com.github.jk1.license.importer.*
-
-licenseReport {
-
-    // Select projects to examine for dependencies.
-    // Defaults to current project and all its subprojects
-    projects = [project] + project.subprojects
-
-    // Adjust the configurations to fetch dependencies, e.g. for Android projects. Default is 'runtimeClasspath'
-    configurations = ['runtimeClasspath']
-    // Use 'ALL' to dynamically resolve all configurations:
-    // configurations = ALL
-
-    // Don't include artifacts of project's own group into the report
-    excludeOwnGroup = true
-
-    // Don't exclude bom dependencies.
-    // If set to true, then all boms will be excluded from the report
-    excludeBoms = false
-
-    // Set custom report renderer, implementing ReportRenderer.
-    // Yes, you can write your own to support any format necessary.
-    renderers = [new XmlReportRenderer('third-party-libs.xml', 'Back-End Libraries')]
-}
-
 // Only add the plugin for Sonar if enabled
 if (project.hasProperty('enableSonar')) {
     println 'Enabling Sonar support'
