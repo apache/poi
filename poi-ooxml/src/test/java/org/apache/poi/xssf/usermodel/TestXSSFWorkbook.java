@@ -754,6 +754,17 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
+    @Test
+    void bug66365() throws Exception {
+        try (XSSFWorkbook wb = openSampleWorkbook("66365.xlsx")) {
+            XSSFSheet sheet1 = wb.getSheetAt(0);
+            assertEquals(sheet1.getRow(0).getCell(0).getStringCellValue(),
+                  sheet1.getRow(0).getCell(1).getStringCellValue());
+            assertEquals(sheet1.getRow(1).getCell(0).getStringCellValue(),
+                  sheet1.getRow(1).getCell(1).getStringCellValue());
+        }
+    }
+
     private static final int INDEX_NOT_FOUND = -1;
 
     private static boolean isEmpty(CharSequence cs) {

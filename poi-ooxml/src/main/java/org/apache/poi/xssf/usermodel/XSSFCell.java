@@ -297,45 +297,51 @@ public final class XSSFCell extends CellBase {
                 rt = new XSSFRichTextString("");
                 break;
             case STRING:
-                STCellType.Enum xmlbeanCellType = _cell.getT();
-                if (xmlbeanCellType == STCellType.INLINE_STR) {
-                    if(_cell.isSetIs()) {
-                        //string is expressed directly in the cell definition instead of implementing the shared string table.
-                        rt = new XSSFRichTextString(_cell.getIs());
-                    } else if (_cell.isSetV()) {
-                        //cached result of a formula
-                        rt = new XSSFRichTextString(_cell.getV());
-                    } else {
-                        rt = new XSSFRichTextString("");
-                    }
-                } else if (xmlbeanCellType == STCellType.STR) {
-                    //cached formula value
-                    rt = new XSSFRichTextString(_cell.isSetV() ? _cell.getV() : "");
-                } else {
-                    if (_cell.isSetV()) {
-                        try {
-                            int idx = Integer.parseInt(_cell.getV());
-                            rt = (XSSFRichTextString)_sharedStringSource.getItemAt(idx);
-                        } catch(Throwable t) {
-                            rt = new XSSFRichTextString("");
-                        }
-                    } else {
-                        rt = new XSSFRichTextString("");
-                    }
-                }
+                rt = findStringValue();
                 break;
             case FORMULA: {
                 CellType cachedValueType = getBaseCellType(false);
                 if (cachedValueType != CellType.STRING) {
                     throw typeMismatch(CellType.STRING, cachedValueType, true);
                 }
-                rt = new XSSFRichTextString(_cell.isSetV() ? _cell.getV() : "");
+                rt = findStringValue();
                 break;
             }
             default:
                 throw typeMismatch(CellType.STRING, cellType, false);
         }
         rt.setStylesTableReference(_stylesSource);
+        return rt;
+    }
+
+    private XSSFRichTextString findStringValue() {
+        XSSFRichTextString rt;
+        STCellType.Enum xmlbeanCellType = _cell.getT();
+        if (xmlbeanCellType == STCellType.INLINE_STR) {
+            if(_cell.isSetIs()) {
+                //string is expressed directly in the cell definition instead of implementing the shared string table.
+                rt = new XSSFRichTextString(_cell.getIs());
+            } else if (_cell.isSetV()) {
+                //cached result of a formula
+                rt = new XSSFRichTextString(_cell.getV());
+            } else {
+                rt = new XSSFRichTextString("");
+            }
+        } else if (xmlbeanCellType == STCellType.STR) {
+            //cached formula value
+            rt = new XSSFRichTextString(_cell.isSetV() ? _cell.getV() : "");
+        } else {
+            if (_cell.isSetV()) {
+                try {
+                    int idx = Integer.parseInt(_cell.getV());
+                    rt = (XSSFRichTextString)_sharedStringSource.getItemAt(idx);
+                } catch(Throwable t) {
+                    rt = new XSSFRichTextString("");
+                }
+            } else {
+                rt = new XSSFRichTextString("");
+            }
+        }
         return rt;
     }
 
