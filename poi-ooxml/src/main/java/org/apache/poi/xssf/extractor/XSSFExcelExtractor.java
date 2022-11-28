@@ -224,6 +224,10 @@ public class XSSFExcelExtractor
         CellType type = cell.getCellType();
         if (type == CellType.FORMULA) {
             type = cell.getCachedFormulaResultType();
+            if (type == CellType.STRING) {
+                handleStringCell(text, cell);
+                return;
+            }
         }
 
         if (type == CellType.NUMERIC) {
