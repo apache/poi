@@ -202,15 +202,6 @@ class TestExtractorFactory {
         assertTrue(ex.getMessage().contains("Invalid header signature; read 0x3D20726F68747541, expected 0xE11AB1A1E011CFD0"));
     }
 
-    private void testExtractor(final POITextExtractor ext, final String testcase, final String extrClass, final Integer minLength) {
-        assertEquals(extrClass, ext.getClass().getSimpleName(), "invalid extractor for " + testcase);
-        final String actual = ext.getText();
-        if (minLength == -1) {
-            assertContains(actual.toLowerCase(Locale.ROOT), "test");
-        } else {
-            assertTrue(actual.length() > minLength, "extracted content too short for " + testcase);
-        }
-    }
     @Test
     void testPackageInvalid() {
         // Text
@@ -440,6 +431,15 @@ class TestExtractorFactory {
         assertThrows(IllegalStateException.class, () -> ExtractorFactory.getEmbeddedDocsTextExtractors(null));
     }
 
+    @Test
+    void test66365() throws Exception {
+        try (POITextExtractor extractor = ex("66365.xlsx")) {
+            String text = extractor.getText();
+            assertContains(text, "Alice\tAlice");
+            assertContains(text, "Bob\tBob");
+        }
+    }
+
     // This bug is currently open. This test will fail with "expected error not thrown" when the bug has been fixed.
     // When this happens, change this from @Test(expected=...) to @Test
     // bug 45565: text within TextBoxes is extracted by ExcelExtractor and WordExtractor
@@ -451,6 +451,16 @@ class TestExtractorFactory {
                 assertContains(text, "testdoc");
                 assertContains(text, "test phrase");
             });
+        }
+    }
+
+    private void testExtractor(final POITextExtractor ext, final String testcase, final String extrClass, final Integer minLength) {
+        assertEquals(extrClass, ext.getClass().getSimpleName(), "invalid extractor for " + testcase);
+        final String actual = ext.getText();
+        if (minLength == -1) {
+            assertContains(actual.toLowerCase(Locale.ROOT), "test");
+        } else {
+            assertTrue(actual.length() > minLength, "extracted content too short for " + testcase);
         }
     }
 
