@@ -351,4 +351,15 @@ class TestXSSFEventBasedExcelExtractor {
         ex.close();
 
     }
+
+    @Test
+    void test66365() throws Exception {
+        try (XSSFEventBasedExcelExtractor ex =
+                new XSSFEventBasedExcelExtractor(
+                        XSSFTestDataSamples.openSamplePackage("66365.xlsx"))) {
+            String text = ex.getText();
+            assertContains(text, "Alice\tAlice");
+            assertContains(text, "Bob\tBob");
+        }
+    }
 }
