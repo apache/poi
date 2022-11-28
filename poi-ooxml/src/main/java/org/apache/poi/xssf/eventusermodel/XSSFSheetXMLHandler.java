@@ -215,9 +215,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
           formula.setLength(0);
 
           // Mark us as being a formula if not already
-          if(nextDataType == xssfDataType.NUMBER) {
-             nextDataType = xssfDataType.FORMULA;
-          }
+          nextDataType = xssfDataType.FORMULA;
 
           // Decide where to get the formula string from
           String type = attributes.getValue("t");
