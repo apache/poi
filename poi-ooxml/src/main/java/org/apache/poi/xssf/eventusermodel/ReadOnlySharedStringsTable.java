@@ -90,6 +90,12 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
     protected int count;
 
     /**
+     * A boolean representing if the count is 0 because the attribute in the xml was malformed.
+     * If the count is 0 and this is false it means there were no shared strings.
+     */
+    protected boolean malformedCount;
+
+    /**
      * An integer representing the total count of unique strings in the Shared String Table.
      * A string is unique even if it is a copy of another string, but has different formatting applied
      * at the character level.
@@ -212,6 +218,17 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
     }
 
     /**
+     * Returns a boolean representing if the count is 0 because the attribute in the xml was malformed.
+     * If the count is 0 and this is false it means there were no shared strings.
+     *
+     * @return if the count attribute was malformed when parsed
+     */
+    public boolean isMalformedCount() {
+        return malformedCount;
+    }
+
+
+    /**
      * Returns an integer representing the total count of unique strings in the Shared String Table.
      * A string is unique even if it is a copy of another string, but has different formatting applied
      * at the character level.
@@ -241,7 +258,15 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
 
         if ("sst".equals(localName)) {
             String count = attributes.getValue("count");
-            if(count != null) this.count = Integer.parseInt(count);
+            if (count != null) {
+                //it's not really interesting
+                try {
+                    this.count = Integer.parseInt(count);
+
+                } catch (NumberFormatException e) {
+                    this.malformedCount = true;
+                }
+            }
             String uniqueCount = attributes.getValue("uniqueCount");
             if(uniqueCount != null) this.uniqueCount = Integer.parseInt(uniqueCount);
 
