@@ -75,7 +75,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
                     if (r instanceof CTTextLineBreak) {
                         _runs.add(new XSLFLineBreak((CTTextLineBreak)r, this));
                     } else if (r instanceof CTRegularTextRun || r instanceof CTTextField) {
-                        _runs.add(new XSLFTextRun(r, this));
+                        _runs.add(this.newTextRun(r));
                     }
                 } while (c.toNextSibling());
             }
