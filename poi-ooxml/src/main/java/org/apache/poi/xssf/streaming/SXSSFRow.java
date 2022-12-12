@@ -113,7 +113,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
      * either through calling {@code setCellValue} or {@code setCellType}.
      *
-     * @param column - the column number this cell represents
+     * @param column - the column number this cell represents (zero-based)
      * @return Cell a high level representation of the created cell.
      * @throws IllegalArgumentException if columnIndex &lt; 0 or greater than the maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
@@ -130,16 +130,16 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      * The cell that is returned is a {@link CellType#BLANK}. The type can be changed
      * either through calling setCellValue or setCellType.
      *
-     * @param column - the column number this cell represents
+     * @param column - the column number this cell represents (zero-based)
      * @return Cell a high level representation of the created cell.
      * @throws IllegalArgumentException if columnIndex &lt; 0 or greater than a maximum number of supported columns
      * (255 for *.xls, 1048576 for *.xlsx)
      */
     @Override
-    public SXSSFCell createCell(int column, CellType type)
+    public SXSSFCell createCell(final int column, final CellType type)
     {
         checkBounds(column);
-        SXSSFCell cell = new SXSSFCell(this, type);
+        SXSSFCell cell = new SXSSFCell(this, type, column);
         _cells.put(column, cell);
         _sheet.trackNewCell(cell);
         return cell;

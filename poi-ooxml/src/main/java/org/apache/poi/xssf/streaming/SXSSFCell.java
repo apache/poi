@@ -52,11 +52,25 @@ public class SXSSFCell extends CellBase {
     private CellStyle _style;
     private Property _firstProperty;
 
-    public SXSSFCell(SXSSFRow row, CellType cellType)
+    private int _columnIndex = -1;
+
+    public SXSSFCell(final SXSSFRow row, final CellType cellType)
     {
-        _row=row;
+        _row = row;
         _value = new BlankValue();
         setType(cellType);
+    }
+
+    /**
+     * @param row the {@link SXSSFRow}
+     * @param cellType the {@link CellType}
+     * @param columnIndex the column index (zero based)
+     * @since POI 5.2.4
+     */
+    public SXSSFCell(final SXSSFRow row, final CellType cellType, final int columnIndex)
+    {
+        this(row, cellType);
+        _columnIndex = columnIndex;
     }
 
     /**
@@ -75,6 +89,9 @@ public class SXSSFCell extends CellBase {
     @Override
     public int getColumnIndex()
     {
+        if (_columnIndex >= 0) {
+            return _columnIndex;
+        }
         return _row.getCellIndex(this);
     }
 
