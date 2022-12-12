@@ -23,7 +23,7 @@ import java.util.Iterator;
 public class CodepointsUtil {
     public static Iterator<String> iteratorFor(String text) {
         return text.codePoints()
-                .mapToObj(codePoint -> new StringBuilder().appendCodePoint(codePoint).toString())
+                .mapToObj(codePoint -> new String(Character.toChars(codePoint)))
                 .iterator();
     }
 }
