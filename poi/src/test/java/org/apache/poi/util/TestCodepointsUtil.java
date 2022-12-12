@@ -35,7 +35,6 @@ class TestCodepointsUtil {
     void testIterator() {
         final String unicodeSurrogates = "\uD835\uDF4A\uD835\uDF4B\uD835\uDF4C\uD835\uDF4D\uD835\uDF4E"
                 + "abcdef123456";
-        Iterator<String> sci = CodepointsUtil.iteratorFor(unicodeSurrogates);
         List<String> codePoints = new ArrayList<>();
         CodepointsUtil.iteratorFor(unicodeSurrogates).forEachRemaining(codePoints::add);
         assertEquals(17, codePoints.size());
