@@ -570,7 +570,7 @@ public class SXSSFCell extends CellBase {
     /**
      * Return the cell's style.
      *
-     * @return the cell's style. Always not-null. Default cell style has zero index and can be obtained as
+     * @return the cell's style. Never null. Default cell style has zero index and can be obtained as
      * <code>workbook.getCellStyleAt(0)</code>
      * @see org.apache.poi.ss.usermodel.Workbook#getCellStyleAt(int)
      */
@@ -583,10 +583,9 @@ public class SXSSFCell extends CellBase {
                 SXSSFWorkbook wb = getSheet().getWorkbook();
                 style = wb.getCellStyleAt(0);
             }
-            return style;
-        } else {
-            return _style;
+            _style = style;
         }
+        return _style;
     }
 
     private CellStyle getDefaultCellStyleFromColumn() {
