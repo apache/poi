@@ -735,27 +735,44 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         public PaintStyle getFontColor() {
             CTTableStyleTextStyle txStyle = getTextStyle();
             if (txStyle == null) {
+                // No table styling, so just use the text run output
                 return super.getFontColor();
-            }
+            } else {
+                final CTTextCharacterProperties props = this.getRPr(false);
+                final XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(props);
+                if (fp != null && (fp.isSetSolidFill() || fp.isSetGradFill() || fp.isSetPattFill())) {
+                    // If this run has style set locally, then it overrides table cell style.
+                    return super.getFontColor();
+                } else {
+                    // Otherwise just use the properties from the table cell style.
+                    CTSchemeColor phClr = null;
+                    CTFontReference fontRef = txStyle.getFontRef();
+                    if (fontRef != null) {
+                        phClr = fontRef.getSchemeClr();
+                    }
 
-            CTSchemeColor phClr = null;
-            CTFontReference fontRef = txStyle.getFontRef();
-            if (fontRef != null) {
-                phClr = fontRef.getSchemeClr();
+                    XSLFTheme theme = getSheet().getTheme();
+                    final XSLFColor c = new XSLFColor(txStyle, theme, phClr, getSheet());
+                    return DrawPaint.createSolidPaint(c.getColorStyle());
+                }
             }
-
-            XSLFTheme theme = getSheet().getTheme();
-            final XSLFColor c = new XSLFColor(txStyle, theme, phClr, getSheet());
-            return DrawPaint.createSolidPaint(c.getColorStyle());
         }
 
         @Override
         public boolean isBold() {
             CTTableStyleTextStyle txStyle = getTextStyle();
             if (txStyle == null) {
+                // No table styling, so just use the text run output
                 return super.isBold();
             } else {
-                return txStyle.isSetB() && txStyle.getB().intValue() == STOnOffStyleType.INT_ON;
+                final CTTextCharacterProperties rPr = super.getRPr(false);
+                if (rPr.isSetB()) {
+                    // If this run has bold set locally, then it overrides table cell style.
+                    return rPr.getB();
+                } else {
+                    // Otherwise just use the properties from the table cell style.
+                    return txStyle.isSetB() && txStyle.getB().intValue() == STOnOffStyleType.INT_ON;
+                }
             }
         }
 
@@ -763,9 +780,17 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         public boolean isItalic() {
             CTTableStyleTextStyle txStyle = getTextStyle();
             if (txStyle == null) {
+                // No table styling, so just use the text run output
                 return super.isItalic();
             } else {
-                return txStyle.isSetI() && txStyle.getI().intValue() == STOnOffStyleType.INT_ON;
+                final CTTextCharacterProperties rPr = super.getRPr(false);
+                if (rPr.isSetI()) {
+                    // If this run has italic set locally, then it overrides table cell style.
+                    return rPr.getI();
+                } else {
+                    // Otherwise just use the properties from the table cell style.
+                    return txStyle.isSetI() && txStyle.getI().intValue() == STOnOffStyleType.INT_ON;
+                }
             }
         }
 
