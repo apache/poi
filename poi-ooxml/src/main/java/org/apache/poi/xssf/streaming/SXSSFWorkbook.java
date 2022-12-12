@@ -138,6 +138,8 @@ public class SXSSFWorkbook implements Workbook {
 
     private boolean shouldCalculateSheetDimensions = true;
 
+    private final boolean _ignoreCellStyle;
+
     /**
      * Construct a new workbook with default row window size
      */
@@ -258,8 +260,37 @@ public class SXSSFWorkbook implements Workbook {
      * @param useSharedStringsTable whether to use a shared strings table
      */
     public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles, boolean useSharedStringsTable) {
+        this(workbook, rowAccessWindowSize, compressTmpFiles, useSharedStringsTable, false);
+    }
+
+    /**
+     * Constructs an workbook from an existing workbook.
+     * <p>
+     * When a new node is created via {@link SXSSFSheet#createRow} and the total number
+     * of unflushed records would exceed the specified value, then the
+     * row with the lowest index value is flushed and cannot be accessed
+     * via {@link SXSSFSheet#getRow} anymore.
+     * </p>
+     * <p>
+     * A value of <code>-1</code> indicates unlimited access. In this case all
+     * records that have not been flushed by a call to <code>flush()</code> are available
+     * for random access.
+     * </p>
+     * <p>
+     * A value of <code>0</code> is not allowed because it would flush any newly created row
+     * without having a chance to specify any cells.
+     * </p>
+     *
+     * @param workbook              the template workbook
+     * @param rowAccessWindowSize   the number of rows that are kept in memory until flushed out, see above.
+     * @param compressTmpFiles      whether to use gzip compression for temporary files
+     * @param useSharedStringsTable whether to use a shared strings table
+     * @param ignoreCellStyle       whether to use cell style
+     */
+    public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles, boolean useSharedStringsTable, boolean ignoreCellStyle) {
         setRandomAccessWindowSize(rowAccessWindowSize);
         setCompressTempFiles(compressTmpFiles);
+        _ignoreCellStyle = ignoreCellStyle;
         if (workbook == null) {
             _wb = new XSSFWorkbook();
             _sharedStringSource = useSharedStringsTable ? _wb.getSharedStringSource() : null;
@@ -294,6 +325,51 @@ public class SXSSFWorkbook implements Workbook {
      */
     public SXSSFWorkbook(int rowAccessWindowSize){
         this(null /*workbook*/, rowAccessWindowSize);
+    }
+
+    public static SXSSFWorkbookBuilder builder() {
+        return new SXSSFWorkbookBuilder();
+    }
+
+    public static class SXSSFWorkbookBuilder {
+        private XSSFWorkbook _workbook;
+        private int _rowAccessWindowSize = DEFAULT_WINDOW_SIZE;
+        private boolean _compressTmpFiles;
+        private boolean _useSharedStringsTable;
+        private boolean _ignoreCellStyle;
+
+        private SXSSFWorkbookBuilder() {
+        }
+
+        public SXSSFWorkbookBuilder withWorkbook(XSSFWorkbook workbook) {
+            this._workbook = workbook;
+            return this;
+        }
+
+        public SXSSFWorkbookBuilder withRowAccessWindowSize(int _rowAccessWindowSize) {
+            this._rowAccessWindowSize = _rowAccessWindowSize;
+            return this;
+        }
+
+        public SXSSFWorkbookBuilder compressTmpFiles() {
+            this._compressTmpFiles = true;
+            return this;
+        }
+
+        public SXSSFWorkbookBuilder useSharedStringsTable() {
+            this._useSharedStringsTable = true;
+            return this;
+        }
+
+        public SXSSFWorkbookBuilder ignoreCellStyle() {
+            this._ignoreCellStyle = true;
+            return this;
+        }
+
+        public SXSSFWorkbook build() {
+            return new SXSSFWorkbook(_workbook, _rowAccessWindowSize, _compressTmpFiles,
+                    _useSharedStringsTable, _ignoreCellStyle);
+        }
     }
 
     /**
@@ -378,10 +454,10 @@ public class SXSSFWorkbook implements Workbook {
 
     protected SheetDataWriter createSheetDataWriter() throws IOException {
         if(_compressTmpFiles) {
-            return new GZIPSheetDataWriter(_sharedStringSource);
+            return new GZIPSheetDataWriter(_sharedStringSource, _ignoreCellStyle);
         }
 
-        return new SheetDataWriter(_sharedStringSource);
+        return new SheetDataWriter(_sharedStringSource, _ignoreCellStyle);
     }
 
     XSSFSheet getXSSFSheet(SXSSFSheet sheet)

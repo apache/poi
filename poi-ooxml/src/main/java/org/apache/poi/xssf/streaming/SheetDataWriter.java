@@ -62,6 +62,7 @@ public class SheetDataWriter implements Closeable {
     private int _lowestIndexOfFlushedRows; // meaningful only of _numberOfFlushedRows>0
     private int _numberOfCellsOfLastFlushedRow; // meaningful only of _numberOfFlushedRows>0
     private int _numberLastFlushedRow = -1; // meaningful only of _numberOfFlushedRows>0
+    private boolean _ignoreCellStyle;
 
     /**
      * Table of strings shared across this workbook.
@@ -82,6 +83,15 @@ public class SheetDataWriter implements Closeable {
     public SheetDataWriter(SharedStringsTable sharedStringsTable) throws IOException {
         this();
         this._sharedStringSource = sharedStringsTable;
+    }
+
+    /**
+     * @param sharedStringsTable the shared strings table, or null if inline text is used
+     * @param ignoreCellStyle whether to use cell style
+     */
+    public SheetDataWriter(SharedStringsTable sharedStringsTable, boolean ignoreCellStyle) throws IOException {
+        this(sharedStringsTable);
+        this._ignoreCellStyle = ignoreCellStyle;
     }
 
     /**
@@ -256,12 +266,14 @@ public class SheetDataWriter implements Closeable {
         String ref = new CellReference(_rownum, columnIndex).formatAsString();
         _out.write("<c");
         writeAttribute("r", ref);
-        CellStyle cellStyle = cell.getCellStyle();
-        if (cellStyle.getIndex() != 0) {
-            // need to convert the short to unsigned short as the indexes can be up to 64k
-            // ideally we would use int for this index, but that would need changes to some more
-            // APIs
-            writeAttribute("s", Integer.toString(cellStyle.getIndex() & 0xffff));
+        if (!_ignoreCellStyle) {
+            CellStyle cellStyle = cell.getCellStyle();
+            if (cellStyle.getIndex() != 0) {
+                // need to convert the short to unsigned short as the indexes can be up to 64k
+                // ideally we would use int for this index, but that would need changes to some more
+                // APIs
+                writeAttribute("s", Integer.toString(cellStyle.getIndex() & 0xffff));
+            }
         }
         CellType cellType = cell.getCellType();
         switch (cellType) {

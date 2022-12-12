@@ -49,6 +49,14 @@ public class GZIPSheetDataWriter extends SheetDataWriter {
     }
 
     /**
+     * @param sharedStringsTable the shared strings table, or null if inline text is used
+     * @param ignoreCellStyle whether to use cell style
+     */
+    public GZIPSheetDataWriter(SharedStringsTable sharedStringsTable, boolean ignoreCellStyle) throws IOException {
+        super(sharedStringsTable, ignoreCellStyle);
+    }
+
+    /**
      * @return temp file to write sheet data
      * @deprecated no need for this be public, will be made private or protected in an upcoming release
      */
