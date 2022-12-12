@@ -69,11 +69,35 @@ public final class TestReadOnlySharedStringsTable {
         }
     }
 
+    @Test
+    void testParseMalformedCountFile() throws Exception {
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("MalformedSSTCount.xlsx"))) {
+            List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
+            assertEquals(1, parts.size());
+
+            SharedStringsTable stbl = new SharedStringsTable(parts.get(0));
+            ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0));
+            ReadOnlySharedStringsTable rtbl2;
+            try (InputStream stream = parts.get(0).getInputStream()) {
+                rtbl2 = new ReadOnlySharedStringsTable(stream);
+            }
+
+            assertEquals(stbl.getCount(), rtbl.getCount());
+            assertEquals(stbl.getUniqueCount(), rtbl.getUniqueCount());
+            assertEquals(stbl.getUniqueCount(), rtbl2.getUniqueCount());
+            for (int i = 0; i < stbl.getUniqueCount(); i++) {
+                RichTextString i1 = stbl.getItemAt(i);
+                assertEquals(i1.getString(), rtbl.getItemAt(i).getString());
+                assertEquals(i1.getString(), rtbl2.getItemAt(i).getString());
+            }
+        }
+    }
+
     //51519
     @Test
     void testPhoneticRuns() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("51519.xlsx"))) {
-            List < PackagePart > parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
+            List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
             assertEquals(1, parts.size());
 
             ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0), true);
@@ -83,7 +107,7 @@ public final class TestReadOnlySharedStringsTable {
             assertEquals("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB \u30CB\u30DB\u30F3", rtbl.getItemAt(3).getString());
 
             //now do not include phonetic runs
-            rtbl = new ReadOnlySharedStringsTable(parts.get(0),false);
+            rtbl = new ReadOnlySharedStringsTable(parts.get(0), false);
             assertEquals(49, rtbl.getUniqueCount());
 
             assertEquals("\u30B3\u30E1\u30F3\u30C8", rtbl.getItemAt(0).getString());
