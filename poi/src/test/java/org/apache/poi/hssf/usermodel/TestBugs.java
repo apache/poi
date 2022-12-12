@@ -2609,4 +2609,38 @@ final class TestBugs extends BaseTestBugzillaIssues {
             assertNotNull(wb);
         }
     }
+
+    @Test
+    void test66319() throws IOException {
+        try (
+                HSSFWorkbook workbook = openSampleWorkbook("bug66319.xls");
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            for (Sheet sheet : workbook) {
+                for (Row row : sheet) {
+                    for (Cell cell : row) {
+                        cell.getCellComment();
+                    }
+                }
+            }
+            workbook.write(bos);
+        }
+    }
+
+    @Test
+    void test66319WithRemove() throws IOException {
+        try (
+                HSSFWorkbook workbook = openSampleWorkbook("bug66319.xls");
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            for (Sheet sheet : workbook) {
+                for (Row row : sheet) {
+                    for (Cell cell : row) {
+                        cell.removeCellComment();
+                    }
+                }
+            }
+            workbook.write(bos);
+        }
+    }
 }
