@@ -1094,7 +1094,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet s = wb.createSheet();
 
-            CellStyle defaultStyle = wb.getCellStyleAt((short) 0);
+            CellStyle defaultStyle = wb.getCellStyleAt(0);
             assertEquals(0, defaultStyle.getIndex());
 
             CellStyle blueStyle = wb.createCellStyle();

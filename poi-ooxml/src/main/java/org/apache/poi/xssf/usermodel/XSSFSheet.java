@@ -989,7 +989,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     @Override
     public CellStyle getColumnStyle(int column) {
         int idx = columnHelper.getColDefaultStyle(column);
-        return getWorkbook().getCellStyleAt((short)(idx == -1 ? 0 : idx));
+        return getWorkbook().getCellStyleAt(idx == -1 ? 0 : idx);
     }
 
     /**

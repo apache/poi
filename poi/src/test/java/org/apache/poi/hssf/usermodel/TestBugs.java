@@ -1541,9 +1541,9 @@ final class TestBugs extends BaseTestBugzillaIssues {
             // Write out and read back
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
                 // Re-check
-                assertEquals("Testing", wb2.getCellStyleAt((short) 21).getUserStyleName());
-                assertEquals("Testing 2", wb2.getCellStyleAt((short) 22).getUserStyleName());
-                assertEquals("Testing 3", wb2.getCellStyleAt((short) 23).getUserStyleName());
+                assertEquals("Testing", wb2.getCellStyleAt(21).getUserStyleName());
+                assertEquals("Testing 2", wb2.getCellStyleAt(22).getUserStyleName());
+                assertEquals("Testing 3", wb2.getCellStyleAt(23).getUserStyleName());
             }
         }
     }

@@ -597,7 +597,7 @@ class TestXSSFCellStyle {
         assertEquals(1, wb.getNumCellStyles());
         assertEquals(2, styles.getFills().size());
 
-        XSSFCellStyle defaultStyle = wb.getCellStyleAt((short)0);
+        XSSFCellStyle defaultStyle = wb.getCellStyleAt(0);
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), defaultStyle.getFillForegroundColor());
         assertNull(defaultStyle.getFillForegroundXSSFColor());
         assertEquals(FillPatternType.NO_FILL, defaultStyle.getFillPattern());
