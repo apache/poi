@@ -148,7 +148,7 @@ subprojects {
         all {
             resolutionStrategy {
                 force "commons-io:commons-io:${commonsIoVersion}"
-                force 'org.slf4j:slf4j-api:2.0.5'
+                force 'org.slf4j:slf4j-api:2.0.6'
                 force 'com.fasterxml.woodstox:woodstox-core:6.4.0'
             }
         }
