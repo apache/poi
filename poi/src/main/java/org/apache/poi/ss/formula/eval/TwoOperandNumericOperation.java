@@ -89,19 +89,17 @@ public abstract class TwoOperandNumericOperation extends Fixed2ArgFunction imple
             if (d1 == 0.0) {
                 throw new EvaluationException(ErrorEval.DIV_ZERO);
             }
-            BigDecimal bd0 = new BigDecimal(d0);
-            BigDecimal bd1 = new BigDecimal(d1);
-            BigDecimal result = bd0.divide(bd1, MathContext.DECIMAL128);
-            return Double.parseDouble(NumberToTextConverter.toText(result.doubleValue()));
+            BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
+            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
+            return bd0.divide(bd1, MathContext.DECIMAL128).doubleValue();
         }
     };
     public static final Function MultiplyEval = new TwoOperandNumericOperation() {
         @Override
         protected double evaluate(double d0, double d1) {
-            BigDecimal bd0 = new BigDecimal(d0);
-            BigDecimal bd1 = new BigDecimal(d1);
-            BigDecimal result = bd0.multiply(bd1);
-            return Double.parseDouble(NumberToTextConverter.toText(result.doubleValue()));
+            BigDecimal bd0 = new BigDecimal(NumberToTextConverter.toText(d0));
+            BigDecimal bd1 = new BigDecimal(NumberToTextConverter.toText(d1));
+            return bd0.multiply(bd1).doubleValue();
         }
     };
     public static final Function PowerEval = new TwoOperandNumericOperation() {

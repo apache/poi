@@ -50,7 +50,7 @@ final class TestNumericFunction {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-            assertDouble(fe, cell, "1.2*SQRT(5.678)", 2.85942651592937, 0);
+            assertDouble(fe, cell, "1.2*SQRT(5.678)", 2.85942651592938, 0);
         }
     }
 
