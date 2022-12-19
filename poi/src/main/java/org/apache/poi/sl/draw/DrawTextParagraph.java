@@ -65,6 +65,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
+import org.w3c.dom.Text;
 
 public class DrawTextParagraph implements Drawable {
     private static final Logger LOG = LogManager.getLogger(DrawTextParagraph.class);
@@ -609,6 +610,12 @@ public class DrawTextParagraph implements Drawable {
             Paint fgPaint = dp.getPaint(graphics, fgPaintStyle);
 
             att.put(TextAttribute.FOREGROUND, fgPaint);
+
+            final PaintStyle highlightPaintStyle = run.getHighlightColor();
+            if (highlightPaintStyle != null) {
+                final Paint bgPaint = dp.getPaint(graphics, highlightPaintStyle);
+                att.put(TextAttribute.BACKGROUND, bgPaint);
+            }
 
             Double fontSz = run.getFontSize();
             if (fontSz == null) {

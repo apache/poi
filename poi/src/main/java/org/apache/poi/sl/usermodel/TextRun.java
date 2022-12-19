@@ -29,6 +29,7 @@ import org.apache.poi.util.Internal;
  */
 @SuppressWarnings({"unused","java:S1452"})
 public interface TextRun {
+
     /**
      * Type of text capitals
      */
@@ -77,6 +78,34 @@ public interface TextRun {
      * @see org.apache.poi.sl.draw.DrawPaint#createSolidPaint(Color)
      */
     void setFontColor(PaintStyle color);
+
+
+    /**
+     * Returns the font highlight color.
+     * This usually returns a {@link SolidPaint}, but also other classes are possible
+     *
+     * @return the font highlight color
+     *
+     * @see org.apache.poi.sl.draw.DrawPaint#getPaint(java.awt.Graphics2D, PaintStyle)
+     * @see SolidPaint#getSolidColor()
+     */
+    PaintStyle getHighlightColor();
+
+    /**
+     * Sets the font highlight color
+     *
+     * @param color the color
+     *
+     * @see org.apache.poi.sl.draw.DrawPaint#createSolidPaint(Color)
+     */
+    void setHighlightColor(final PaintStyle color);
+
+    /**
+     * Sets the (solid) font highlight color - convenience function
+     *
+     * @param color the highlight color
+     */
+    void setHighlightColor(final Color color);
 
 
     /**

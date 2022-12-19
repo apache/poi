@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.DateTimeMCAtom;
 import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
+import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.BaseTestSlideShow;
 import org.apache.poi.sl.usermodel.PlaceholderDetails;
 import org.apache.poi.util.LocaleUtil;
@@ -542,6 +544,35 @@ public final class TestTextRun {
             //noinspection ConstantConditions
             int[] act = runs.stream().map(HSLFTextRun::getFontSize).mapToInt(Double::intValue).toArray();
             assertArrayEquals(exp, act);
+        }
+    }
+
+    @Test
+    void testHighlight() throws IOException {
+        try (HSLFSlideShow ppt = new HSLFSlideShow()) {
+            HSLFSlide s = ppt.createSlide();
+            HSLFTextBox tb = s.createTextBox();
+            HSLFTextRun tr = tb.appendText("This is a test", false);
+
+            assertNull(tr.getHighlightColor());
+            try {
+                // Not supported.
+                tr.setHighlightColor(Color.yellow);
+                fail("Should throw here.");
+            }
+            catch (IllegalArgumentException iae)
+            {
+                // Expected.
+            }
+            try {
+                // Not supported.
+                tr.setHighlightColor(DrawPaint.createSolidPaint(Color.blue));
+                fail("Should throw here.");
+            }
+            catch (IllegalArgumentException iae)
+            {
+                // Expected.
+            }
         }
     }
 

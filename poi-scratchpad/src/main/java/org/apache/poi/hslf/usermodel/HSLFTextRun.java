@@ -440,6 +440,23 @@ public final class HSLFTextRun implements TextRun {
         setFontColor(rgb);
     }
 
+
+    @Override
+    public PaintStyle getHighlightColor() {
+        return null;
+    }
+
+    @Override
+    public void setHighlightColor(final Color color) {
+        throw new IllegalArgumentException("This operation is not supported by PPT files.");
+    }
+
+    @Override
+    public void setHighlightColor(final PaintStyle color) {
+        throw new IllegalArgumentException("This operation is not supported by PPT files.");
+    }
+
+
     private void setFlag(int index, boolean value) {
         BitMaskTextProp prop = characterStyle.addWithName(CharFlagsTextProp.NAME);
         prop.setSubValue(value, index);

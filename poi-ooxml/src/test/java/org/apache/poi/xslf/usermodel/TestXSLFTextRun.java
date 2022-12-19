@@ -23,13 +23,17 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.DrawTextParagraph;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
@@ -59,6 +63,13 @@ class TestXSLFTextRun {
         assertEquals(Color.black, getColor(r.getFontColor()));
         r.setFontColor(Color.red);
         assertEquals(Color.red, getColor(r.getFontColor()));
+
+        // We start off with no highlight (null response).
+        assertNull(r.getHighlightColor());
+        r.setHighlightColor(Color.green);
+        assertEquals(Color.green, getColor(r.getHighlightColor()));
+        r.setHighlightColor(DrawPaint.createSolidPaint(Color.blue));
+        assertEquals(Color.blue, getColor(r.getHighlightColor()));
 
         assertEquals("Calibri", r.getFontFamily());
         r.setFontFamily("Arial");
@@ -140,6 +151,30 @@ class TestXSLFTextRun {
                     assertNotEquals(defaultRun.getFontColor(), explicitRun.getFontColor());
                 }
             }
+        }
+    }
+
+    @Test
+    void testHighlightedTextRunsAreLoaded() throws IOException {
+        POIDataSamples pds = POIDataSamples.getSlideShowInstance();
+        try (InputStream is = pds.openResourceAsStream("highlight-test-case.pptx");
+            final XMLSlideShow ppt = new XMLSlideShow(is)) {
+            final XSLFSlide slide = ppt.getSlides().get(0);
+
+            assertEquals(3, slide.getShapes().size());
+            final XSLFTextShape shape = (XSLFTextShape)slide.getShapes().get(1);
+            final XSLFTextParagraph para = shape.getTextParagraphs().get(0);
+            final List<XSLFTextRun> runs = para.getTextRuns();
+
+            assertEquals(5, runs.size());
+            assertNull(runs.get(0).getHighlightColor());
+            assertNotNull(runs.get(1).getHighlightColor());
+            assertNull(runs.get(2).getHighlightColor());
+            assertNotNull(runs.get(3).getHighlightColor());
+            assertNull(runs.get(4).getHighlightColor());
+
+            assertEquals(DrawPaint.createSolidPaint(Color.green), runs.get(1).getHighlightColor());
+            assertEquals(DrawPaint.createSolidPaint(Color.yellow), runs.get(3).getHighlightColor());
         }
     }
 

@@ -40,10 +40,12 @@ import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher.CharPropFetcher;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTFontCollection;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTFontScheme;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
@@ -55,6 +57,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
+import org.openxmlformats.schemas.drawingml.x2006.main.impl.CTSRgbColorImpl;
 
 /**
  * Represents a run of text within the containing text body. The run element is the
@@ -157,6 +160,52 @@ public class XSLFTextRun implements TextRun {
         }
     }
 
+    @Override
+    public PaintStyle getHighlightColor() {
+        XSLFShape shape = getParagraph().getParentShape();
+        final boolean hasPlaceholder = shape.getPlaceholder() != null;
+        return fetchCharacterProperty((props, val) -> fetchHighlightColor(props, val, shape, hasPlaceholder));
+    }
+
+
+    private static void fetchHighlightColor(CTTextCharacterProperties props, Consumer<PaintStyle> val, XSLFShape shape, boolean hasPlaceholder) {
+        if (props == null) {
+            return;
+        }
+
+        final CTColor col = props.getHighlight();
+        if (col == null) {
+            return;
+        }
+
+        final CTSRgbColor rgbCol = col.getSrgbClr();
+        final byte[] cols = rgbCol.getVal();
+        final SolidPaint paint = DrawPaint.createSolidPaint(new Color(0xFF & cols[0], 0xFF & cols[1], 0xFF & cols[2]));
+        val.accept(paint);
+    }
+
+    @Override
+    public void setHighlightColor(final Color color) {
+        setHighlightColor(DrawPaint.createSolidPaint(color));
+    }
+
+    @Override
+    public void setHighlightColor(final PaintStyle color) {
+        if (!(color instanceof SolidPaint)) {
+            LOG.atWarn().log("Currently only SolidPaint is supported!");
+            return;
+        }
+        final SolidPaint sp = (SolidPaint)color;
+        final Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
+
+        final CTTextCharacterProperties rPr = getRPr(true);
+        final CTColor highlight = rPr.isSetHighlight() ? rPr.getHighlight() : rPr.addNewHighlight();
+
+        final CTSRgbColor col = CTSRgbColor.Factory.newInstance();
+        col.setVal(new byte[] {(byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue()});
+
+        highlight.setSrgbClr(col);
+    }
 
 
     @Override
