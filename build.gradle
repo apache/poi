@@ -36,8 +36,8 @@ plugins {
     id 'distribution'
     id "com.github.spotbugs" version '5.0.13'
     id 'de.thetaphi.forbiddenapis' version '3.4'
+    id 'org.sonarqube' version '3.5.0.2730'
     id 'org.cyclonedx.bom' version '1.7.3'
-    id 'org.sonarqube' version "3.5.0.2730"
 }
 
 repositories {
@@ -75,7 +75,7 @@ ant.taskdef(name: "junit",
 
 
 wrapper {
-    gradleVersion = '7.5.1'
+    gradleVersion = '7.6'
 }
 
 task adjustWrapperPropertiesFile {
@@ -112,6 +112,7 @@ subprojects {
     apply plugin: 'signing'
     apply plugin: 'de.thetaphi.forbiddenapis'
     apply plugin: 'com.github.spotbugs'
+    apply plugin: 'org.cyclonedx.bom'
 
     ext {
         bouncyCastleVersion = '1.70'
@@ -844,22 +845,3 @@ binDistZip.finalizedBy fixDistDir
 binDistTar.finalizedBy fixDistDir
 srcDistZip.finalizedBy fixDistDir
 srcDistTar.finalizedBy fixDistDir
-
-cyclonedxBom {
-    // includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration)
-    includeConfigs = ["runtimeClasspath"]
-    // skipConfigs is a list of configuration names to exclude when generating the BOM
-    //skipConfigs = ["compileClasspath", "testCompileClasspath"]
-    // Specified the type of project being built. Defaults to 'library'
-    projectType = "library"
-    // Specified the version of the CycloneDX specification to use. Defaults to 1.4.
-    schemaVersion = "1.4"
-    // Boms destination directory (defaults to build/reports)
-    destination = file("build/reports")
-    // The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
-    outputName = "pom-${project.version}.bom"
-    // The file format generated, can be xml, json or all for generating both
-    outputFormat = "xml"
-    // Exclude BOM Serial Number
-    includeBomSerialNumber = true
-}
