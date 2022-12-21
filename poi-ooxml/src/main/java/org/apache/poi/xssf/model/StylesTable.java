@@ -467,10 +467,12 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     public int putStyle(XSSFCellStyle style) {
         CTXf mainXF = style.getCoreXf();
 
-        if(! xfs.contains(mainXF)) {
+        int ret = xfs.indexOf(mainXF);
+        if(ret == -1) {
             xfs.add(mainXF);
+            ret = xfs.size() - 1;
         }
-        return xfs.indexOf(mainXF);
+        return ret;
     }
 
     @Override
