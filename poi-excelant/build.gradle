@@ -121,7 +121,7 @@ task cacheTest9(type: Copy) {
 }
 
 jar {
-    dependsOn cacheJava9
+    dependsOn cacheJava9, cyclonedxBom
 
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
 
