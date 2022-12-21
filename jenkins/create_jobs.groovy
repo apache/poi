@@ -609,7 +609,7 @@ xmlbeansjobs.each { xjob ->
             }
         }
         publishers {
-            archiveArtifacts('build/libs/xmlbeans*.jar,build/distributions/*,build/hs_err*.log')
+            archiveArtifacts('build/libs/xmlbeans*.jar,build/distributions/*,build/reports/*.bom.*,build/hs_err*.log')
 
             warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                 resolveRelativePaths()
