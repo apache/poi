@@ -716,6 +716,10 @@ distributions {
             from(poiDep) { include "**/*.jar" }
             from(ooxmlImp) { include "**/*.jar" }
 
+            from('.') {
+                include '*/build/reports/*.bom.*'
+            }
+
             includeEmptyDirs = false
             duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
@@ -782,7 +786,13 @@ distributions {
                 // exclude intermediate files
                 exclude '**/*-saved.xls'
             }
+            from('.') {
+                include '*/build/reports/*.bom.*'
+            }
             from('legal') { exclude 'HEADER' }
+
+            includeEmptyDirs = false
+            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         }
     }
 }
