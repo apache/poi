@@ -461,7 +461,7 @@ poijobs.each { poijob ->
                 } else {
                     ant {
                         targets(['clean', 'jenkins'] + (poijob.properties ?: []))
-                        prop('coverage.enabled', true)
+                        prop('coverage.enabled', !poijob.skipSpotbugs)
                         // Properties did not work, so I had to use targets instead
                         //properties(poijob.properties ?: '')
                         antInstallation(antRT)
