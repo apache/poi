@@ -786,9 +786,6 @@ distributions {
                 // exclude intermediate files
                 exclude '**/*-saved.xls'
             }
-            from('.') {
-                include '*/build/reports/*.bom.*'
-            }
             from('legal') { exclude 'HEADER' }
 
             includeEmptyDirs = false
