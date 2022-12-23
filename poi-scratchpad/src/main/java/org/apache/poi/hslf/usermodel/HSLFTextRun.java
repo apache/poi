@@ -441,16 +441,40 @@ public final class HSLFTextRun implements TextRun {
     }
 
 
+    /**
+     * Returns the font highlight (background) color for this text run.
+     * PLEASE NOTE: This feature is not supported in PPT files, so will ALWAYS return null.
+     *
+     * @return null always.
+     *
+     * @since POI 5.2.4
+     */
     @Override
     public PaintStyle getHighlightColor() {
         return null;
     }
 
+    /**
+     * Sets the font highlight (background) color for this text run - convenience function.
+     * PLEASE NOTE: This feature is not supported in PPT files,
+     * so will ALWAYS throw an <code>IllegalArgumentException</code>.
+     *
+     * @param color The highlight (background) color to set.
+     * @since POI 5.2.4
+     */
     @Override
     public void setHighlightColor(final Color color) {
         throw new IllegalArgumentException("This operation is not supported by PPT files.");
     }
 
+    /**
+     * Sets the font highlight (background) color for this text run.
+     * PLEASE NOTE: This feature is not supported in PPT files,
+     * so will ALWAYS throw an <code>IllegalArgumentException</code>.
+     *
+     * @param color The highlight (background) color to set.
+     * @since POI 5.2.4
+     */
     @Override
     public void setHighlightColor(final PaintStyle color) {
         throw new IllegalArgumentException("This operation is not supported by PPT files.");

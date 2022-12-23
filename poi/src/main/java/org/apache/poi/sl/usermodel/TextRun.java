@@ -81,29 +81,32 @@ public interface TextRun {
 
 
     /**
-     * Returns the font highlight color.
-     * This usually returns a {@link SolidPaint}, but also other classes are possible
+     * Returns the font highlight (background) color for this text run.
+     * This returns a {@link SolidPaint}, or null if no highlight is set.
      *
-     * @return the font highlight color
+     * @return The font highlight (background) colour associated with the run, null if no highlight.
      *
      * @see org.apache.poi.sl.draw.DrawPaint#getPaint(java.awt.Graphics2D, PaintStyle)
      * @see SolidPaint#getSolidColor()
+     * @since POI 5.2.4
      */
     PaintStyle getHighlightColor();
 
     /**
-     * Sets the font highlight color
+     * Set the highlight (background) color for this text run.
      *
-     * @param color the color
+     * @param color The highlight (background) color to set.
      *
      * @see org.apache.poi.sl.draw.DrawPaint#createSolidPaint(Color)
+     * @since POI 5.2.4
      */
     void setHighlightColor(final PaintStyle color);
 
     /**
-     * Sets the (solid) font highlight color - convenience function
+     * Sets the font highlight (background) color for this text run - convenience function
      *
-     * @param color the highlight color
+     * @param color The highlight (background) color to set.
+     * @since POI 5.2.4
      */
     void setHighlightColor(final Color color);
 

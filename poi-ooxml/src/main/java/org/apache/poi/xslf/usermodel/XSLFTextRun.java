@@ -160,6 +160,17 @@ public class XSLFTextRun implements TextRun {
         }
     }
 
+
+    /**
+     * Returns the font highlight (background) color for this text run.
+     * This returns a {@link SolidPaint}, or null if no highlight is set.
+     *
+     * @return The font highlight (background) colour associated with the run, null if no highlight.
+     *
+     * @see org.apache.poi.sl.draw.DrawPaint#getPaint(java.awt.Graphics2D, PaintStyle)
+     * @see SolidPaint#getSolidColor()
+     * @since POI 5.2.4
+     */
     @Override
     public PaintStyle getHighlightColor() {
         XSLFShape shape = getParagraph().getParentShape();
@@ -184,16 +195,31 @@ public class XSLFTextRun implements TextRun {
         val.accept(paint);
     }
 
+    /**
+     * Sets the font highlight (background) color for this text run - convenience function
+     *
+     * @param color The highlight (background) color to set.
+     * @since POI 5.2.4
+     */
     @Override
     public void setHighlightColor(final Color color) {
         setHighlightColor(DrawPaint.createSolidPaint(color));
     }
 
+    /**
+     * Set the highlight (background) color for this text run.
+     *
+     * @param color The highlight (background) color to set.
+     *
+     * @see org.apache.poi.sl.draw.DrawPaint#createSolidPaint(Color)
+     * @since POI 5.2.4
+     */
     @Override
     public void setHighlightColor(final PaintStyle color) {
         if (!(color instanceof SolidPaint)) {
             LOG.atWarn().log("Currently only SolidPaint is supported!");
             return;
+
         }
         final SolidPaint sp = (SolidPaint)color;
         final Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
