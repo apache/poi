@@ -55,6 +55,9 @@ def poijobs = [
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
         [ name: 'POI-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
         ],
+        // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
+        [ name: 'POI-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true, useAnt: true
+        ],
         // Use Ant-build for now as selecting IBM JDK via toolchain does not work (yet)
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, useAnt: true
         ],
@@ -129,6 +132,8 @@ def xmlbeansjobs = [
         ],
         [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true,
         ],
+        [ name: 'POI-XMLBeans-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true,
+        ],
         [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
           sonar: true
         ]
@@ -158,6 +163,7 @@ def jdkMapping = [
         '1.17': [ jenkinsJdk: 'jdk_17_latest', jdkVersion: 17, jdkVendor: '' ],
         '1.18': [ jenkinsJdk: 'jdk_18_latest', jdkVersion: 18, jdkVendor: '' ],
         '1.19': [ jenkinsJdk: 'jdk_19_latest', jdkVersion: 19, jdkVendor: '' ],
+        '1.20': [ jenkinsJdk: 'jdk_20_latest', jdkVersion: 20, jdkVendor: '' ],
         'OpenJDK 1.8': [ jenkinsJdk: 'adoptopenjdk_hotspot_8u282', jdkVersion: 8, jdkVendor: 'adoptopenjdk' ],
         'IBMJDK': [ jenkinsJdk: 'ibmjdk_1.8.0_261', jdkVersion: 8, jdkVendor: 'ibm' ]
 ]
@@ -455,7 +461,7 @@ poijobs.each { poijob ->
                 } else {
                     ant {
                         targets(['clean', 'jenkins'] + (poijob.properties ?: []))
-                        prop('coverage.enabled', true)
+                        prop('coverage.enabled', !poijob.skipSpotbugs)
                         // Properties did not work, so I had to use targets instead
                         //properties(poijob.properties ?: '')
                         antInstallation(antRT)
@@ -481,7 +487,7 @@ poijobs.each { poijob ->
                     }
                 }
                 // in archive, junit and jacoco publishers, matches beneath build/*/build/... are for Gradle-build results
-                archiveArtifacts('build/dist/*.zip,build/dist/*.tgz,build/dist/maven/*/*.jar,build/coverage/**,build/hs_err*.log')
+                archiveArtifacts('build/dist/*.zip,build/dist/*.tgz,build/dist/maven/*/*.jar,build/coverage/**,*/build/reports/*.bom.*,build/hs_err*.log')
                 warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                     resolveRelativePaths()
                 }
@@ -544,7 +550,8 @@ xmlbeansjobs.each { xjob ->
                 // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
                 // on JDK 11 and newer there is no such module any more, so do not add it here
                 env('ANT_OPTS', '--add-modules=java.xml.bind --add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
-            } else if (jdkKey == '1.11' || jdkKey == '1.12' || jdkKey == '1.13' || jdkKey == '1.14' || jdkKey == '1.15' || jdkKey == '1.16' || jdkKey == '1.17' || jdkKey == '1.18' || jdkKey == '1.19') {
+            } else if (jdkKey == '1.11' || jdkKey == '1.12' || jdkKey == '1.13' || jdkKey == '1.14' || jdkKey == '1.15' || jdkKey == '1.16' || jdkKey == '1.17'
+                    || jdkKey == '1.18' || jdkKey == '1.19' || jdkKey == '1.20') {
                 env('ANT_OPTS', '--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
             }
             // will be needed for forbidden-apis-check: env('ANT_HOME', xjob.windows ? 'f:\\jenkins\\tools\\ant\\latest' : '/usr/share/ant')
@@ -609,7 +616,7 @@ xmlbeansjobs.each { xjob ->
             }
         }
         publishers {
-            archiveArtifacts('build/libs/xmlbeans*.jar,build/distributions/*,build/hs_err*.log')
+            archiveArtifacts('build/libs/xmlbeans*.jar,build/distributions/*,build/reports/*.bom.*,build/hs_err*.log')
 
             warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                 resolveRelativePaths()

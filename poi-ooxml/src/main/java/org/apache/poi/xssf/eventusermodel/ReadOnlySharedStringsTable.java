@@ -241,9 +241,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
 
         if ("sst".equals(localName)) {
             String count = attributes.getValue("count");
-            if(count != null) this.count = Integer.parseInt(count);
+            if(count != null) this.count = (int) Long.parseLong(count);
             String uniqueCount = attributes.getValue("uniqueCount");
-            if(uniqueCount != null) this.uniqueCount = Integer.parseInt(uniqueCount);
+            if(uniqueCount != null) this.uniqueCount = (int) Long.parseLong(uniqueCount);
 
             this.strings = new ArrayList<>(this.uniqueCount);
             characters = new StringBuilder(64);

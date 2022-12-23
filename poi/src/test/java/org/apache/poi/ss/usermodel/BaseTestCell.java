@@ -844,7 +844,7 @@ public abstract class BaseTestCell {
             Cell cell = row.createCell(0);
 
             // different default style indexes for HSSF and XSSF/SXSSF
-            CellStyle defaultStyle = wb.getCellStyleAt(wb instanceof HSSFWorkbook ? (short) 15 : (short) 0);
+            CellStyle defaultStyle = wb.getCellStyleAt(wb instanceof HSSFWorkbook ? 15 : 0);
 
             // Starts out with the default style
             assertEquals(defaultStyle, cell.getCellStyle());

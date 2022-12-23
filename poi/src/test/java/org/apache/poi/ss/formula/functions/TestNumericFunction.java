@@ -23,6 +23,7 @@ import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.Locale;
 
 import static org.apache.poi.ss.util.Utils.assertDouble;
@@ -42,6 +43,15 @@ final class TestNumericFunction {
         assertDouble(fe, cell, "880000000*0.00849", 7471200.0, 0);
         assertDouble(fe, cell, "880000000*0.00849/3", 2490400.0, 0);
         assertDouble(fe, cell, "INT(880000000*0.00849/3)", 2490400.0, 0);
+    }
+
+    @Test
+    void testMultiply() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            assertDouble(fe, cell, "1.2*SQRT(5.678)", 2.85942651592938, 0);
+        }
     }
 
     @Test

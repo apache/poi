@@ -2527,10 +2527,7 @@ public final class HSSFSheet implements Sheet {
 
     protected HSSFComment findCellComment(int row, int column) {
         HSSFPatriarch patriarch = getDrawingPatriarch();
-        if (null == patriarch) {
-            patriarch = createDrawingPatriarch();
-        }
-        return lookForComment(patriarch, row, column);
+        return patriarch == null ? null : lookForComment(patriarch, row, column);
     }
 
     private HSSFComment lookForComment(HSSFShapeContainer container, int row, int column) {

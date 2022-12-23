@@ -320,7 +320,7 @@ public final class ToHtml {
 
     private String styleName(CellStyle style) {
         if (style == null) {
-            style = wb.getCellStyleAt((short) 0);
+            style = wb.getCellStyleAt(0);
         }
         StringBuilder sb = new StringBuilder();
         try (Formatter fmt = new Formatter(sb, Locale.ROOT)) {

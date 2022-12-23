@@ -1541,9 +1541,9 @@ final class TestBugs extends BaseTestBugzillaIssues {
             // Write out and read back
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
                 // Re-check
-                assertEquals("Testing", wb2.getCellStyleAt((short) 21).getUserStyleName());
-                assertEquals("Testing 2", wb2.getCellStyleAt((short) 22).getUserStyleName());
-                assertEquals("Testing 3", wb2.getCellStyleAt((short) 23).getUserStyleName());
+                assertEquals("Testing", wb2.getCellStyleAt(21).getUserStyleName());
+                assertEquals("Testing 2", wb2.getCellStyleAt(22).getUserStyleName());
+                assertEquals("Testing 3", wb2.getCellStyleAt(23).getUserStyleName());
             }
         }
     }
@@ -2607,6 +2607,40 @@ final class TestBugs extends BaseTestBugzillaIssues {
     void test52447() throws IOException {
         try (Workbook wb = openSampleWorkbook("52447.xls")) {
             assertNotNull(wb);
+        }
+    }
+
+    @Test
+    void test66319() throws IOException {
+        try (
+                HSSFWorkbook workbook = openSampleWorkbook("bug66319.xls");
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            for (Sheet sheet : workbook) {
+                for (Row row : sheet) {
+                    for (Cell cell : row) {
+                        cell.getCellComment();
+                    }
+                }
+            }
+            workbook.write(bos);
+        }
+    }
+
+    @Test
+    void test66319WithRemove() throws IOException {
+        try (
+                HSSFWorkbook workbook = openSampleWorkbook("bug66319.xls");
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            for (Sheet sheet : workbook) {
+                for (Row row : sheet) {
+                    for (Cell cell : row) {
+                        cell.removeCellComment();
+                    }
+                }
+            }
+            workbook.write(bos);
         }
     }
 }

@@ -23,6 +23,11 @@ import org.apache.poi.ss.tests.usermodel.BaseTestXRow;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests for XSSFRow
@@ -51,5 +56,14 @@ public final class TestSXSSFRow extends BaseTestXRow {
         // Remove when SXSSFRow.shiftCellsLeft() is implemented.
     }
 
+    @Test
+    void testCellColumn() throws IOException {
+        try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
+            SXSSFSheet sheet = wb.createSheet();
+            SXSSFRow row = sheet.createRow(0);
+            SXSSFCell cell5 = row.createCell(5);
+            assertEquals(5, cell5.getColumnIndex());
+        }
+    }
 
 }
