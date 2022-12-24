@@ -101,9 +101,11 @@ sourcesJar.dependsOn 'compileOoxmlLite'
 
 task compileJava9(type: JavaCompile, dependsOn: 'compileJava') {
     javaCompiler = javaToolchains.compilerFor {
-        languageVersion = JavaLanguageVersion.of(jdkVersion)
+        languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
         if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
     }
+    sourceCompatibility = 1.9
+    targetCompatibility = 1.9
     destinationDirectory = file(JAVA9_OUT + VERSIONS9)
     source = file(JAVA9_SRC)
     classpath = files()
@@ -112,10 +114,6 @@ task compileJava9(type: JavaCompile, dependsOn: 'compileJava') {
             '--patch-module', "${MODULE_NAME}=${project(':poi-ooxml-full').sourceSets.main.output.asPath}",
             '--module-path', files(MAIN_MODULE_PATH).asPath
         ]
-    }
-
-    onlyIf {
-        jdkVersion > 8
     }
 }
 
