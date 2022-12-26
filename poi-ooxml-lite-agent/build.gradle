@@ -43,7 +43,6 @@ task compileJava9(type: JavaCompile) {
 
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
-        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
     }
     sourceCompatibility = 1.9
     targetCompatibility = 1.9
