@@ -141,7 +141,7 @@ task sourceJar(type: Jar) {
 }
 
 jar {
-    dependsOn 'sourceJar', cyclonedxBom
+    dependsOn 'sourceJar'
 
     if (jdkVersion == 8) {
         into('META-INF/versions/9') {

@@ -123,7 +123,6 @@ task cacheJava9(type: Copy, dependsOn: 'compileJava9') {
 }
 
 jar {
-    dependsOn cyclonedxBom
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
 
     doFirst {

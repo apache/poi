@@ -794,8 +794,8 @@ distributions {
     }
 }
 
-binDistZip.dependsOn 'zipJavadocs', ':poi-ooxml-lite:jar'
-binDistTar.dependsOn 'zipJavadocs', ':poi-ooxml-lite:jar'
+binDistZip.dependsOn 'zipJavadocs', ':poi-ooxml-lite:jar', cyclonedxBom
+binDistTar.dependsOn 'zipJavadocs', ':poi-ooxml-lite:jar', cyclonedxBom
 
 task soLinkCheck() {
     doLast {

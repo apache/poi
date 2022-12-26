@@ -113,7 +113,6 @@ task cacheTest9(type: Copy) {
 }
 
 jar {
-    dependsOn cyclonedxBom
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
 
     if (jdkVersion == 8) {
