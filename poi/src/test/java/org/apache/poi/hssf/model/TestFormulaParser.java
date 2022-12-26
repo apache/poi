@@ -645,7 +645,7 @@ final class TestFormulaParser {
         assertEquals(expectedClasses.length, ptgs.length);
         for (int i = 0; i < expectedClasses.length; i++) {
             assertSame(expectedClasses[i], ptgs[i].getClass(),
-                "difference at token[" + i + "]: expected ("
+                "difference at token[" + i + "] for Ptg " + ptgs[i] + ": expected ("
                 + expectedClasses[i].getName() + ") but got ("
                 + ptgs[i].getClass().getName() + ")");
         }
@@ -1356,6 +1356,17 @@ final class TestFormulaParser {
                 Area3DPtg.class,
                 UnionPtg.class
         );
+
+        wb.createSheet("Sh't1");
+        ptgs = parse("'Sh''t1'!$A:$A,'Sh''t1'!$1:$4", wb);
+        confirmTokenClasses(ptgs,
+                MemFuncPtg.class,
+                Area3DPtg.class,
+                Area3DPtg.class,
+                UnionPtg.class
+        );
+        assertEquals(1, ((Area3DPtg)ptgs[1]).getExternSheetIndex());
+        assertEquals(1, ((Area3DPtg)ptgs[2]).getExternSheetIndex());
 
         wb.close();
     }

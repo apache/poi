@@ -1182,6 +1182,7 @@ public final class FormulaParser {
                         if (look == '\''){
                             // Any single quotes which were already present in the sheet name will be converted to double single quotes ('')
                             // so switch back to single quote
+                            sb.appendCodePoint(look);
                             nextChar();
                             break;
                         }
