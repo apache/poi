@@ -20,16 +20,12 @@ import java.util.regex.Pattern
 configurations {
     runtimeClasspath {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
 
     compileClasspath {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
 
     broken
@@ -87,21 +83,15 @@ dependencies {
     renderImplementation "org.apache.xmlgraphics:batik-svggen:${batikVersion}"
     renderImplementation("org.apache.xmlgraphics:batik-svgrasterizer:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
     renderImplementation("org.apache.xmlgraphics:batik-codec:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
     renderImplementation("org.apache.xmlgraphics:batik-bridge:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
 
     rendersignImplementation "org.apache.pdfbox:pdfbox:${pdfboxVersion}"
@@ -109,21 +99,15 @@ dependencies {
     rendersignImplementation "org.apache.xmlgraphics:batik-svggen:${batikVersion}"
     rendersignImplementation("org.apache.xmlgraphics:batik-svgrasterizer:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
     rendersignImplementation("org.apache.xmlgraphics:batik-codec:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
     rendersignImplementation("org.apache.xmlgraphics:batik-bridge:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
 
 
@@ -153,9 +137,7 @@ dependencies {
 
     broken("org.apache.xmlgraphics:batik-script:${batikVersion}"){
         exclude group: 'xalan', module: 'xalan'
-        if (jdkVersion > 8) {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
+        exclude group: 'xml-apis', module: 'xml-apis'
     }
 
     javadocs project(':poi')
