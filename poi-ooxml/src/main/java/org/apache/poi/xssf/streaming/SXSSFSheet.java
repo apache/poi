@@ -62,7 +62,11 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         _sh = xSheet;
         calculateLeftAndRightMostColumns(xSheet);
         setRandomAccessWindowSize(randomAccessWindowSize);
-        _autoSizeColumnTracker = new AutoSizeColumnTracker(this);
+        try {
+            _autoSizeColumnTracker = new AutoSizeColumnTracker(this);
+        } catch (InternalError e) {
+            LOG.atWarn().log("Failed to create AutoSizeColumnTracker, possibly due to fonts not being installed in your OS", e);
+        }
     }
 
     private void calculateLeftAndRightMostColumns(XSSFSheet xssfSheet) {
@@ -93,7 +97,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         setRandomAccessWindowSize(_workbook.getRandomAccessWindowSize());
         try {
             _autoSizeColumnTracker = new AutoSizeColumnTracker(this);
-        } catch (Exception e) {
+        } catch (InternalError e) {
             LOG.atWarn().log("Failed to create AutoSizeColumnTracker, possibly due to fonts not being installed in your OS", e);
         }
     }
