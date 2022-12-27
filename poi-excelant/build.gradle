@@ -23,14 +23,10 @@ configurations {
 
 sourceSets {
     main {
-        if (jdkVersion > 8) {
-            output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
-        }
+        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
     }
     test {
-        if (jdkVersion > 8) {
-            output.dir(TEST9_OUT, builtBy: 'cacheTest9')
-        }
+        output.dir(TEST9_OUT, builtBy: 'compileTest9')
     }
 }
 
@@ -82,13 +78,6 @@ task compileJava9(type: JavaCompile) {
     ]
 }
 
-task cacheJava9(type: Copy) {
-    dependsOn 'compileJava9'
-
-    from(file(JAVA9_OUT + VERSIONS9))
-    into(JAVA9_SRC)
-}
-
 task compileTest9(type: JavaCompile) {
     dependsOn 'compileTestJava', ':poi-ooxml:jar', ':poi-scratchpad:jar'
 
@@ -107,23 +96,10 @@ task compileTest9(type: JavaCompile) {
 }
 
 
-task cacheTest9(type: Copy) {
-    dependsOn 'compileTest9'
-
-    from(file(TEST9_OUT + VERSIONS9))
-    into(TEST9_SRC)
-}
-
 jar {
-    dependsOn cacheJava9
+    dependsOn compileJava9
 
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
-
-    if (jdkVersion == 8) {
-        into('META-INF/versions/9') {
-            from JAVA9_SRC include '*.class'
-        }
-    }
 
     manifest {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
@@ -146,18 +122,12 @@ sourcesJar {
 
 // Create a separate jar for test-code to depend on it in other projects
 // See http://stackoverflow.com/questions/5144325/gradle-test-dependency
-task testJar(type: Jar, dependsOn: [ testClasses, cacheTest9 ] ) {
+task testJar(type: Jar, dependsOn: [ testClasses, compileTest9 ] ) {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-tests")
 
     classifier 'tests'
     // ignore second module-info.class from main
     duplicatesStrategy = 'exclude'
-
-    if (jdkVersion == 8) {
-        into('META-INF/versions/9') {
-            from TEST9_SRC include '*.class'
-        }
-    }
 
     from sourceSets.test.output + sourceSets.main.output
 

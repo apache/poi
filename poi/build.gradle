@@ -24,18 +24,14 @@ configurations {
 
 sourceSets {
     main {
-        if (jdkVersion > 8) {
-            output.dir(JAVA9_OUT, builtBy: 'cacheJava9')
-        }
+        output.dir(JAVA9_OUT, builtBy: 'compileJava9')
         java {
             // also include the generated Version.java
             srcDirs += 'build/generated-sources'
         }
     }
     test {
-        if (jdkVersion > 8) {
-            output.dir(TEST9_OUT, builtBy: 'cacheTest9')
-        }
+        output.dir(TEST9_OUT, builtBy: 'compileTest9')
     }
 }
 
@@ -46,7 +42,6 @@ dependencies {
     api "commons-io:commons-io:${commonsIoVersion}"
     api 'com.zaxxer:SparseBitSet:1.2'
     api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
-    // implementation 'javax.activation:activation:1.1.1'
 
     testImplementation 'org.reflections:reflections:0.10.2'
     testImplementation 'org.apache.ant:ant:1.10.12'
@@ -107,13 +102,6 @@ task compileJava9(type: JavaCompile) {
     ]
 }
 
-task cacheJava9(type: Copy) {
-    dependsOn 'compileJava9'
-
-    from(file(JAVA9_OUT + VERSIONS9))
-    into(JAVA9_SRC)
-}
-
 task compileTest9(type: JavaCompile) {
     dependsOn 'compileTestJava'
 
@@ -131,22 +119,8 @@ task compileTest9(type: JavaCompile) {
     classpath = files()
 }
 
-
-task cacheTest9(type: Copy) {
-    dependsOn 'compileTest9'
-
-    from(file(TEST9_OUT + VERSIONS9))
-    into(TEST9_SRC)
-}
-
 jar {
-    dependsOn cacheJava9
-
-    if (jdkVersion == 8) {
-        into('META-INF/versions/9') {
-            from JAVA9_SRC include '*.class'
-        }
-    }
+    dependsOn compileJava9
 
     manifest {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
@@ -155,18 +129,12 @@ jar {
 
 // Create a separate jar for test-code to depend on it in other projects
 // See http://stackoverflow.com/questions/5144325/gradle-test-dependency
-task testJar(type: Jar, dependsOn: [ testClasses, cacheTest9 ]) {
+task testJar(type: Jar, dependsOn: [ testClasses, compileTest9 ]) {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-tests")
 
     classifier 'tests'
     // ignore second module-info.class from main
     duplicatesStrategy = 'exclude'
-
-    if (jdkVersion == 8) {
-        into('META-INF/versions/9') {
-            from TEST9_SRC include '*.class'
-        }
-    }
 
     from sourceSets.test.output + sourceSets.main.output
 
