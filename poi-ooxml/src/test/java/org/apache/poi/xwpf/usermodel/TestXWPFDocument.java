@@ -465,6 +465,22 @@ public final class TestXWPFDocument {
     }
 
     @Test
+    void testInsertNewParagraphWithSdt() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            doc.createTOC();
+            doc.createParagraph();
+            try (XWPFDocument docx = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
+                XWPFParagraph paragraph = docx.getParagraphArray(0);
+                XmlCursor xmlCursor = paragraph.getCTP().newCursor();
+                XWPFParagraph insertNewParagraph = docx.insertNewParagraph(xmlCursor);
+
+                assertEquals(insertNewParagraph, docx.getParagraphs().get(0));
+                assertEquals(insertNewParagraph, docx.getBodyElements().get(1));
+            }
+        }
+    }
+
+    @Test
     @Disabled("XWPF should be able to write to a new Stream when opened Read-Only")
     void testWriteFromReadOnlyOPC() throws Exception {
         try (OPCPackage opc = OPCPackage.open(
