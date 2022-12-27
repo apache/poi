@@ -79,38 +79,6 @@ public interface TextRun {
      */
     void setFontColor(PaintStyle color);
 
-
-    /**
-     * Returns the font highlight (background) color for this text run.
-     * This returns a {@link SolidPaint}, or null if no highlight is set.
-     *
-     * @return The font highlight (background) colour associated with the run, null if no highlight.
-     *
-     * @see org.apache.poi.sl.draw.DrawPaint#getPaint(java.awt.Graphics2D, PaintStyle)
-     * @see SolidPaint#getSolidColor()
-     * @since POI 5.2.4
-     */
-    PaintStyle getHighlightColor();
-
-    /**
-     * Set the highlight (background) color for this text run.
-     *
-     * @param color The highlight (background) color to set.
-     *
-     * @see org.apache.poi.sl.draw.DrawPaint#createSolidPaint(Color)
-     * @since POI 5.2.4
-     */
-    void setHighlightColor(final PaintStyle color);
-
-    /**
-     * Sets the font highlight (background) color for this text run - convenience function
-     *
-     * @param color The highlight (background) color to set.
-     * @since POI 5.2.4
-     */
-    void setHighlightColor(final Color color);
-
-
     /**
      * Returns the font size which is either set directly on this text run or
      * given from the slide layout

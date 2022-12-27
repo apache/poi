@@ -30,6 +30,7 @@ import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.HighlightColorSupport;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextRun;
@@ -64,7 +65,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.impl.CTSRgbColorImpl;
  * lowest level text separation mechanism within a text body.
  */
 @Beta
-public class XSLFTextRun implements TextRun {
+public class XSLFTextRun implements TextRun, HighlightColorSupport {
     private static final Logger LOG = LogManager.getLogger(XSLFTextRun.class);
 
     private final XmlObject _r;

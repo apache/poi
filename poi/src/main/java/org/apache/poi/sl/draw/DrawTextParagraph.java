@@ -47,6 +47,7 @@ import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.common.usermodel.fonts.FontGroup.FontGroupRange;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
+import org.apache.poi.sl.usermodel.HighlightColorSupport;
 import org.apache.poi.sl.usermodel.Hyperlink;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
@@ -611,10 +612,13 @@ public class DrawTextParagraph implements Drawable {
 
             att.put(TextAttribute.FOREGROUND, fgPaint);
 
-            final PaintStyle highlightPaintStyle = run.getHighlightColor();
-            if (highlightPaintStyle != null) {
-                final Paint bgPaint = dp.getPaint(graphics, highlightPaintStyle);
-                att.put(TextAttribute.BACKGROUND, bgPaint);
+            if (run instanceof HighlightColorSupport) {
+                // Highlight color is only supported in XSLF (PPTX) text runs.
+                final PaintStyle highlightPaintStyle = ((HighlightColorSupport)run).getHighlightColor();
+                if (highlightPaintStyle != null) {
+                    final Paint bgPaint = dp.getPaint(graphics, highlightPaintStyle);
+                    att.put(TextAttribute.BACKGROUND, bgPaint);
+                }
             }
 
             Double fontSz = run.getFontSize();
