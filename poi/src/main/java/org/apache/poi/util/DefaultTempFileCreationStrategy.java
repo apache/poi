@@ -23,7 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Default implementation of the {@link TempFileCreationStrategy} used by {@link TempFile}:
@@ -38,13 +41,17 @@ import java.nio.file.attribute.FileAttribute;
  * processes or limited temporary storage.
  */
 public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy {
+    /** Name of POI files directory in temporary directory. */
     public static final String POIFILES = "poifiles";
 
     /** To use files.deleteOnExit after clean JVM exit, set the <code>-Dpoi.delete.tmp.files.on.exit</code> JVM property */
     public static final String DELETE_FILES_ON_EXIT = "poi.delete.tmp.files.on.exit";
 
     /** The directory where the temporary files will be created (<code>null</code> to use the default directory). */
-    private File dir;
+    private volatile File dir;
+
+    /** The lock to make dir initialized only once. */
+    private final Lock dirLock = new ReentrantLock();
 
     /**
      * Creates the strategy so that it creates the temporary files in the default directory.
@@ -67,36 +74,22 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     }
 
     private void createPOIFilesDirectory() throws IOException {
-        // Identify and create our temp dir, if needed
+        // Create our temp dir only once by double-checked locking
         // The directory is not deleted, even if it was created by this TempFileCreationStrategy
         if (dir == null) {
-            String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
-            if (tmpDir == null) {
-                throw new IOException("Systems temporary directory not defined - set the -D"+JAVA_IO_TMPDIR+" jvm property!");
+            dirLock.lock();
+            try {
+                if (dir == null) {
+                    String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
+                    if (tmpDir == null) {
+                        throw new IOException("System's temporary directory not defined - set the -D" + JAVA_IO_TMPDIR + " jvm property!");
+                    }
+                    Path dirPath = Paths.get(tmpDir, POIFILES);
+                    dir = Files.createDirectories(dirPath).toFile();
+                }
+            } finally {
+                dirLock.unlock();
             }
-            dir = new File(tmpDir, POIFILES);
-        }
-
-        createTempDirectory(dir);
-    }
-
-    /**
-     * Attempt to create a directory, including any necessary parent directories.
-     * Does nothing if directory already exists.
-     * The method is synchronized to ensure that multiple threads don't try to create the directory at the same time.
-     *
-     * @param directory  the directory to create
-     * @throws IOException if unable to create temporary directory or it is not a directory
-     */
-    private synchronized void createTempDirectory(File directory) throws IOException {
-        // create directory if it doesn't exist
-        final boolean dirExists = (directory.exists() || directory.mkdirs());
-
-        if (!dirExists) {
-            throw new IOException("Could not create temporary directory '" + directory + "'");
-        }
-        else if (!directory.isDirectory()) {
-            throw new IOException("Could not create temporary directory. '" + directory + "' exists but is not a directory.");
         }
     }
 
@@ -124,10 +117,7 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
         createPOIFilesDirectory();
 
         // Generate a unique new filename
-        // FIXME: Java 7+: use java.nio.file.Files#createTempDirectory
-        final long n = RandomSingleton.getInstance().nextLong();
-        File newDirectory = new File(dir, prefix + Long.toString(n));
-        createTempDirectory(newDirectory);
+        File newDirectory = Files.createTempDirectory(dir.toPath(), prefix).toFile();
 
         //this method appears to be only used in tests, so it is probably ok to use deleteOnExit
         newDirectory.deleteOnExit();

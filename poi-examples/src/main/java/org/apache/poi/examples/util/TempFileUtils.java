@@ -19,9 +19,11 @@
 
 package org.apache.poi.examples.util;
 
-import java.io.File;
-
+import org.apache.poi.util.DefaultTempFileCreationStrategy;
 import org.apache.poi.util.TempFile;
+
+import java.io.File;
+import java.nio.file.Paths;
 
 public final class TempFileUtils {
     private TempFileUtils() {
@@ -29,8 +31,7 @@ public final class TempFileUtils {
 
     @SuppressWarnings("java:S106")
     public static void checkTempFiles() {
-        String tmpDir = System.getProperty(TempFile.JAVA_IO_TMPDIR) + "/poifiles";
-        File tempDir = new File(tmpDir);
+        File tempDir = Paths.get(System.getProperty(TempFile.JAVA_IO_TMPDIR), DefaultTempFileCreationStrategy.POIFILES).toFile();
         if(tempDir.exists()) {
             String[] tempFiles = tempDir.list();
             if(tempFiles != null && tempFiles.length > 0) {

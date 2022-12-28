@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -76,10 +77,11 @@ class TestTempFileThreaded {
     public static void setUpClass() throws IOException {
         String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
         if (tmpDir == null) {
-            throw new IOException("Systems temporary directory not defined - set the -D" + JAVA_IO_TMPDIR + " jvm property!");
+            throw new IOException("System's temporary directory not defined - set the -D" + JAVA_IO_TMPDIR + " jvm property!");
         }
 
-        TempFile.setTempFileCreationStrategy(createTempFileCreationStrategy(new File(new File(tmpDir, POIFILES), "TestTempFileThreaded")));
+        TempFile.setTempFileCreationStrategy(createTempFileCreationStrategy(
+                Paths.get(tmpDir, POIFILES, "TestTempFileThreaded").toFile()));
     }
 
     @BeforeEach

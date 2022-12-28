@@ -49,9 +49,10 @@ public final class TempFile {
     }
     
     /**
-     * Creates a new and empty temporary file. By default, files are collected into one directory and are
-     * deleted on exit from the VM, although they can be kept by defining the system property
-     * <code>poi.keep.tmp.files</code> (see {@link DefaultTempFileCreationStrategy}).
+     * Creates a new and empty temporary file. By default, files are collected into one directory and are not
+     * deleted on exit from the VM, although they can be deleted by defining the system property
+     * <code>poi.delete.tmp.files.on.exit</code> (see {@link DefaultTempFileCreationStrategy}), which may
+     * cause {@link OutOfMemoryError} problem due to the frequent usage of {@link File#deleteOnExit()}
      * <p>
      * Don't forget to close all files or it might not be possible to delete them.
      *
