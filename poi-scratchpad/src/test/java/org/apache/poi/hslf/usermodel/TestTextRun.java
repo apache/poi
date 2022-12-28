@@ -545,6 +545,7 @@ public final class TestTextRun {
         }
     }
 
+
     @Test
     void testAppendEmpty() throws IOException {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {

@@ -29,6 +29,7 @@ import org.apache.poi.util.Internal;
  */
 @SuppressWarnings({"unused","java:S1452"})
 public interface TextRun {
+
     /**
      * Type of text capitals
      */
@@ -77,7 +78,6 @@ public interface TextRun {
      * @see org.apache.poi.sl.draw.DrawPaint#createSolidPaint(Color)
      */
     void setFontColor(PaintStyle color);
-
 
     /**
      * Returns the font size which is either set directly on this text run or

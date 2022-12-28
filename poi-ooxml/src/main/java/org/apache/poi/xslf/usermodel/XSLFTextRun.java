@@ -30,6 +30,7 @@ import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.DrawPaint;
+import org.apache.poi.sl.usermodel.HighlightColorSupport;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.TextRun;
@@ -40,10 +41,12 @@ import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher.CharPropFetcher;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTFontCollection;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTFontScheme;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
@@ -55,13 +58,14 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
+import org.openxmlformats.schemas.drawingml.x2006.main.impl.CTSRgbColorImpl;
 
 /**
  * Represents a run of text within the containing text body. The run element is the
  * lowest level text separation mechanism within a text body.
  */
 @Beta
-public class XSLFTextRun implements TextRun {
+public class XSLFTextRun implements TextRun, HighlightColorSupport {
     private static final Logger LOG = LogManager.getLogger(XSLFTextRun.class);
 
     private final XmlObject _r;
@@ -157,6 +161,86 @@ public class XSLFTextRun implements TextRun {
         }
     }
 
+
+    /**
+     * Returns the font highlight (background) color for this text run.
+     * This returns a {@link SolidPaint}, or null if no highlight is set.
+     *
+     * @return The font highlight (background) colour associated with the run, null if no highlight.
+     *
+     * @see org.apache.poi.sl.draw.DrawPaint#getPaint(java.awt.Graphics2D, PaintStyle)
+     * @see SolidPaint#getSolidColor()
+     * @since POI 5.2.4
+     */
+    @Override
+    public PaintStyle getHighlightColor() {
+        XSLFShape shape = getParagraph().getParentShape();
+        final boolean hasPlaceholder = shape.getPlaceholder() != null;
+        return fetchCharacterProperty((props, highlightColor) -> fetchHighlightColor(props, highlightColor, shape, hasPlaceholder));
+    }
+
+
+    private static void fetchHighlightColor(CTTextCharacterProperties props, Consumer<PaintStyle> highlightColor, XSLFShape shape, boolean hasPlaceholder) {
+        if (props == null) {
+            return;
+        }
+
+        final CTColor col = props.getHighlight();
+        if (col == null) {
+            return;
+        }
+
+        final CTSRgbColor rgbCol = col.getSrgbClr();
+        final byte[] cols = rgbCol.getVal();
+        final SolidPaint paint = DrawPaint.createSolidPaint(new Color(0xFF & cols[0], 0xFF & cols[1], 0xFF & cols[2]));
+        highlightColor.accept(paint);
+    }
+
+    /**
+     * Sets the font highlight (background) color for this text run - convenience function
+     *
+     * @param color The highlight (background) color to set.
+     * @since POI 5.2.4
+     */
+    @Override
+    public void setHighlightColor(final Color color) {
+        setHighlightColor(DrawPaint.createSolidPaint(color));
+    }
+
+    /**
+     * Set the highlight (background) color for this text run.
+     *
+     * @param color The highlight (background) color to set.
+     * @throws IllegalArgumentException If the supplied paint style is not null or a SolidPaint.
+     *
+     * @see org.apache.poi.sl.draw.DrawPaint#createSolidPaint(Color)
+     * @since POI 5.2.4
+     */
+    @Override
+    public void setHighlightColor(final PaintStyle color) {
+        if (color == null) {
+            final CTTextCharacterProperties rPr = getRPr(true);
+            if (rPr.isSetHighlight()) {
+                rPr.unsetHighlight();
+            }
+            return;
+        }
+
+        if (!(color instanceof SolidPaint)) {
+            throw new IllegalArgumentException("Currently only SolidPaint is supported!");
+        }
+
+        final SolidPaint sp = (SolidPaint)color;
+        final Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
+
+        final CTTextCharacterProperties rPr = getRPr(true);
+        final CTColor highlight = rPr.isSetHighlight() ? rPr.getHighlight() : rPr.addNewHighlight();
+
+        final CTSRgbColor col = CTSRgbColor.Factory.newInstance();
+        col.setVal(new byte[] {(byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue()});
+
+        highlight.setSrgbClr(col);
+    }
 
 
     @Override
