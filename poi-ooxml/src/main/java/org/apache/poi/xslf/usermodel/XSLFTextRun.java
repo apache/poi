@@ -176,11 +176,11 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
     public PaintStyle getHighlightColor() {
         XSLFShape shape = getParagraph().getParentShape();
         final boolean hasPlaceholder = shape.getPlaceholder() != null;
-        return fetchCharacterProperty((props, val) -> fetchHighlightColor(props, val, shape, hasPlaceholder));
+        return fetchCharacterProperty((props, highlightColor) -> fetchHighlightColor(props, highlightColor, shape, hasPlaceholder));
     }
 
 
-    private static void fetchHighlightColor(CTTextCharacterProperties props, Consumer<PaintStyle> val, XSLFShape shape, boolean hasPlaceholder) {
+    private static void fetchHighlightColor(CTTextCharacterProperties props, Consumer<PaintStyle> highlightColor, XSLFShape shape, boolean hasPlaceholder) {
         if (props == null) {
             return;
         }
@@ -193,7 +193,7 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
         final CTSRgbColor rgbCol = col.getSrgbClr();
         final byte[] cols = rgbCol.getVal();
         final SolidPaint paint = DrawPaint.createSolidPaint(new Color(0xFF & cols[0], 0xFF & cols[1], 0xFF & cols[2]));
-        val.accept(paint);
+        highlightColor.accept(paint);
     }
 
     /**
@@ -211,17 +211,25 @@ public class XSLFTextRun implements TextRun, HighlightColorSupport {
      * Set the highlight (background) color for this text run.
      *
      * @param color The highlight (background) color to set.
+     * @throws IllegalArgumentException If the supplied paint style is not null or a SolidPaint.
      *
      * @see org.apache.poi.sl.draw.DrawPaint#createSolidPaint(Color)
      * @since POI 5.2.4
      */
     @Override
     public void setHighlightColor(final PaintStyle color) {
-        if (!(color instanceof SolidPaint)) {
-            LOG.atWarn().log("Currently only SolidPaint is supported!");
+        if (color == null) {
+            final CTTextCharacterProperties rPr = getRPr(true);
+            if (rPr.isSetHighlight()) {
+                rPr.unsetHighlight();
+            }
             return;
-
         }
+
+        if (!(color instanceof SolidPaint)) {
+            throw new IllegalArgumentException("Currently only SolidPaint is supported!");
+        }
+
         final SolidPaint sp = (SolidPaint)color;
         final Color c = DrawPaint.applyColorTransform(sp.getSolidColor());
 
