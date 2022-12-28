@@ -547,34 +547,6 @@ public final class TestTextRun {
         }
     }
 
-    @Test
-    void testHighlight() throws IOException {
-        try (HSLFSlideShow ppt = new HSLFSlideShow()) {
-            HSLFSlide s = ppt.createSlide();
-            HSLFTextBox tb = s.createTextBox();
-            HSLFTextRun tr = tb.appendText("This is a test", false);
-
-            assertNull(tr.getHighlightColor());
-            try {
-                // Not supported.
-                tr.setHighlightColor(Color.yellow);
-                fail("Should throw here.");
-            }
-            catch (IllegalArgumentException iae)
-            {
-                // Expected.
-            }
-            try {
-                // Not supported.
-                tr.setHighlightColor(DrawPaint.createSolidPaint(Color.blue));
-                fail("Should throw here.");
-            }
-            catch (IllegalArgumentException iae)
-            {
-                // Expected.
-            }
-        }
-    }
 
     @Test
     void testAppendEmpty() throws IOException {
