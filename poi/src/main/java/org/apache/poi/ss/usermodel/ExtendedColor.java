@@ -21,7 +21,7 @@ import java.util.Locale;
 /**
  * Represents a XSSF-style color (based on either a
  *  {@link org.apache.poi.xssf.usermodel.XSSFColor} or a
- *  {@link org.apache.poi.hssf.record.common.ExtendedColor} 
+ *  {@link org.apache.poi.hssf.record.common.ExtendedColor}
  */
 public abstract class ExtendedColor implements Color {
 
@@ -47,17 +47,17 @@ public abstract class ExtendedColor implements Color {
      * @return true if the color is RGB / ARGB
      */
     public abstract boolean isRGB();
-    
+
     /**
      * @return true if the color is from a Theme
      */
     public abstract boolean isThemed();
-    
+
     /**
      * @return Indexed Color index value, if {@link #isIndexed()} is true
      */
     public abstract short getIndex();
-    
+
     /**
      * @return Index of Theme color, if {@link #isThemed()} is true
      */
@@ -77,8 +77,8 @@ public abstract class ExtendedColor implements Color {
     /**
      * @return RGB or ARGB bytes or null
      */
-    protected abstract byte[] getStoredRBG();
-    
+    protected abstract byte[] getStoredRGB();
+
     /**
      * Sets the Red Green Blue or Alpha Red Green Blue
      * @param rgb bytes
@@ -97,9 +97,9 @@ public abstract class ExtendedColor implements Color {
         }
 
         // Grab the colour
-        return getStoredRBG();
+        return getStoredRGB();
     }
-    
+
     /**
      * @return index color RGB bytes, if {@link #isIndexed()} == true, null if not indexed or index is invalid
      */
@@ -110,7 +110,7 @@ public abstract class ExtendedColor implements Color {
      * Alpha values are ignored.
      */
     public byte[] getRGBWithTint() {
-        byte[] rgb = getStoredRBG();
+        byte[] rgb = getStoredRGB();
         if (rgb != null) {
             if(rgb.length == 4) {
                byte[] tmp = new byte[3];
@@ -146,7 +146,7 @@ public abstract class ExtendedColor implements Color {
        }
        return sb.toString().toUpperCase(Locale.ROOT);
     }
-    
+
     /**
      * Sets the ARGB value from hex format, eg FF0077FF.
      * Only works for regular (non-indexed) colours

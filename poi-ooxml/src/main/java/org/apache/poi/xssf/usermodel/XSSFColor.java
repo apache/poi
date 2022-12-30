@@ -217,7 +217,7 @@ public class XSSFColor extends ExtendedColor {
    }
 
    @Override
-   protected byte[] getStoredRBG() {
+   protected byte[] getStoredRGB() {
        return ctColor.getRgb();
    }
 
