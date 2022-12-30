@@ -2098,6 +2098,16 @@ under the License.
             value="https://www.google.com/search"
             summary="true"
             includes="**/*.html"/>
+        <replace dir="${build.site}"
+            token="http://validator.w3.org"
+            value="https://validator.w3.org"
+            summary="true"
+            includes="**/*.html"/>
+        <replace dir="${build.site}"
+            token="http://jigsaw.w3.org"
+            value="https://jigsaw.w3.org"
+            summary="true"
+            includes="**/*.html"/>
 
         <fixcrlf srcdir="${build.site}" includes="**/*.html,**/*.css" eol="unix" eof="remove" />
 
