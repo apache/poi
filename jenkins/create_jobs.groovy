@@ -56,7 +56,9 @@ def poijobs = [
         [ name: 'POI-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
-        [ name: 'POI-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true, useAnt: true
+        [ name: 'POI-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true, 
+          // these two can be removed again when gradle supports JDK 20
+          useAnt: true, skipSourceBuild: true
         ],
         // Use Ant-build for now as selecting IBM JDK via toolchain does not work (yet)
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, useAnt: true
@@ -466,12 +468,14 @@ poijobs.each { poijob ->
                         //properties(poijob.properties ?: '')
                         antInstallation(antRT)
                     }
-                    ant {
-                        targets(['run'] + (poijob.properties ?: []))
-                        buildFile('poi-integration/build.xml')
-                        // Properties did not work, so I had to use targets instead
-                        //properties(poijob.properties ?: '')
-                        antInstallation(antRT)
+                    if(!poijob.skipSourceBuild) {
+                        ant {
+                            targets(['run'] + (poijob.properties ?: []))
+                            buildFile('poi-integration/build.xml')
+                            // Properties did not work, so I had to use targets instead
+                            //properties(poijob.properties ?: '')
+                            antInstallation(antRT)
+                        }
                     }
                 }
             }
