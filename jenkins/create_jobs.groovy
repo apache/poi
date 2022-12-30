@@ -254,6 +254,8 @@ def shellCmdsWin =
 svn status
 :: make sure no changed module-class-files are lingering on
 svn revert poi*\\src\\*\\java9\\module-info.*
+:: also revert some files directly as the wildcard-based revert seems to fail sometimes
+svn revert poi\\src\\main\\java9\\module-info.class poi\\src\\test\\java9\\module-info.class poi-examples\\src\\main\\java9\\module-info.class poi-excelant\\src\\main\\java9\\module-info.class poi-excelant\\src\\test\\java9\\module-info.class poi-integration\\src\\test\\java9\\module-info.class poi-ooxml\\src\\main\\java9\\module-info.class poi-ooxml\\src\\test\\java9\\module-info.class poi-ooxml-full\\src\\main\\java9\\module-info.class poi-ooxml-lite\\src\\main\\java9\\module-info.class poi-ooxml-lite\\src\\main\\java9\\module-info.java poi-ooxml-lite-agent\\src\\main\\java9\\module-info.class poi-scratchpad\\src\\main\\java9\\module-info.class poi-scratchpad\\src\\test\\java9\\module-info.class src\\resources\\ooxml-lite-report.clazz src\\resources\\ooxml-lite-report.xsb
 
 :: print out information about which exact version of java we are using
 echo Java-Home: %JAVA_HOME%
