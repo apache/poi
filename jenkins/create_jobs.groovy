@@ -204,9 +204,9 @@ def apicheckDesc = '''
 
 def sonarDesc = '''
 <p>
-<b><a href="lastSuccessfulBuild/findbugsResult/" target="_blank">Findbugs report of latest build</a></b> -
+<b><a href="/lastSuccessfulBuild/spotbugs/" target="_blank">Findbugs report of latest build</a></b> -
 <b><a href="https://sonarcloud.io/dashboard?id=poi-parent" target="_blank">Sonar reports</a></b> -
-<b><a href="lastSuccessfulBuild/artifact/build/coverage/index.html" target="_blank">Coverage of latest build</a></b>
+<b><a href="lastSuccessfulBuild/jacoco/" target="_blank">Coverage of latest build</a></b>
 </p>
 '''
 
@@ -494,9 +494,10 @@ poijobs.each { poijob ->
                 }
                 // in archive, junit and jacoco publishers, matches beneath build/*/build/... are for Gradle-build results
                 archiveArtifacts('build/dist/*.zip,build/dist/*.tgz,build/dist/maven/*/*.jar,build/coverage/**,*/build/reports/*.bom.*,build/hs_err*.log')
+                /* this plugin is currently missing on the Apache Jenkins instance
                 warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                     resolveRelativePaths()
-                }
+                } */
                 archiveJunit('*/build/test-results/**/TEST-*.xml') {
                     testDataPublishers {
                         publishTestStabilityData()
@@ -624,9 +625,10 @@ xmlbeansjobs.each { xjob ->
         publishers {
             archiveArtifacts('build/libs/xmlbeans*.jar,build/distributions/*,build/reports/*.bom.*,build/hs_err*.log')
 
+            /* this plugin is currently missing on the Apache Jenkins instance
             warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                 resolveRelativePaths()
-            }
+            } */
             archiveJunit('build/test-results/test/TEST-*.xml') {
                 testDataPublishers {
                     publishTestStabilityData()
