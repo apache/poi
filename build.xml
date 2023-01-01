@@ -1507,9 +1507,11 @@ under the License.
                 <pathelement path="build/dist/maven/poi-tests"/>
                 <pathelement path="build/dist/maven/poi-scratchpad-tests"/>
                 <pathelement path="build/dist/maven/poi-ooxml-tests"/>
+                <pathelement path="build/dist/maven/poi-ooxml-full"/>
                 <pathelement path="lib/main"/>
                 <pathelement path="lib/main-tests"/>
                 <pathelement path="lib/excelant"/>
+                <pathelement path="lib/ooxml"/>
             </lib>
             <resources>
                 <fileset dir="${excelant.resource.main}"/>
