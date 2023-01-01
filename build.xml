@@ -508,7 +508,7 @@ under the License.
         <pathelement location="${svg.batik-transcoder.jar}"/>
         <pathelement location="${svg.batik-util.jar}"/>
         <pathelement location="${svg.batik-xml.jar}"/>
-        <pathelement location="${svg.xml-apis-ext.jar}"/>
+        <!-- causes module conflicts with JDK 11+: pathelement location="${svg.xml-apis-ext.jar}"/-->
         <pathelement location="${svg.xmlgraphics-commons.jar}"/>
     </path>
 
