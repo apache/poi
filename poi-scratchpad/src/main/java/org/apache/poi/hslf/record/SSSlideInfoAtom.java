@@ -192,7 +192,11 @@ public class SSSlideInfoAtom extends RecordAtom {
 
         // Sanity Checking
         if(len != 24) len = 24;
-        assert(source.length >= offset+len);
+
+        if (source.length < offset+len) {
+            throw new IllegalArgumentException("Need at least " + (offset + len) +
+                    " bytes with offset " + offset + ", length " + len + " and array-size " + source.length);
+        }
 
         // Get the header
         _header = Arrays.copyOfRange(source, ofs, ofs+8);
@@ -226,7 +230,7 @@ public class SSSlideInfoAtom extends RecordAtom {
         ofs += LittleEndianConsts.SHORT_SIZE;
         _speed = LittleEndian.getUByte(source, ofs);
         ofs += LittleEndianConsts.BYTE_SIZE;
-        _unused = Arrays.copyOfRange(source,ofs,ofs+3);
+        _unused = Arrays.copyOfRange(source, ofs,ofs+3);
     }
 
     /**
