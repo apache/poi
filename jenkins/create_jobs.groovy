@@ -56,7 +56,7 @@ def poijobs = [
         [ name: 'POI-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
-        [ name: 'POI-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true, 
+        [ name: 'POI-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
           // these two can be removed again when gradle supports JDK 20
           useAnt: true, skipSourceBuild: true
         ],
@@ -204,7 +204,7 @@ def apicheckDesc = '''
 
 def sonarDesc = '''
 <p>
-<b><a href="/lastSuccessfulBuild/spotbugs/" target="_blank">Findbugs report of latest build</a></b> -
+<b><a href="lastSuccessfulBuild/spotbugs/" target="_blank">Spotbugs report of latest build</a></b> -
 <b><a href="https://sonarcloud.io/dashboard?id=poi-parent" target="_blank">Sonar reports</a></b> -
 <b><a href="lastSuccessfulBuild/jacoco/" target="_blank">Coverage of latest build</a></b>
 </p>
