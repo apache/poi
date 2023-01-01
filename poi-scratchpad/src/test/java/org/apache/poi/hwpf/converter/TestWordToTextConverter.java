@@ -20,10 +20,29 @@ import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FilenameFilter;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.stream.Stream;
+
+import org.apache.commons.io.filefilter.SuffixFileFilter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.OldWordFileFormatException;
+import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 public class TestWordToTextConverter {
+    private static final Logger LOG = LogManager.getLogger(WordToTextConverter.class);
 
     /**
      * [FAILING] Bug 47731 - Word Extractor considers text copied from some
@@ -59,5 +78,39 @@ public class TestWordToTextConverter {
         try (HWPFDocument doc = openSampleFile( "Bug53380_3.doc" )) {
             assertNotNull(WordToTextConverter.getText(doc));
         }
+    }
+
+    @ParameterizedTest
+    @MethodSource("files")
+    void testAllFiles(File file) throws Exception {
+        LOG.info("Testing " + file);
+        try (FileInputStream stream = new FileInputStream(file)) {
+            InputStream is = FileMagic.prepareToCheckMagic(stream);
+            FileMagic fm = FileMagic.valueOf(is);
+
+            if (fm != FileMagic.OLE2) {
+                LOG.info("Skip non-doc file " + file);
+
+                return;
+            }
+
+            try (HWPFDocument doc = new HWPFDocument(is)) {
+                String foundText = WordToTextConverter.getText(doc);
+                assertNotNull(foundText);
+            } catch (OldWordFileFormatException | EncryptedDocumentException | RecordFormatException e) {
+                // ignored here
+            }
+        }
+    }
+
+    public static Stream<Arguments> files() {
+        String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY,
+                new File("test-data").exists() ? "test-data" : "../test-data");
+
+        File[] documents = new File(dataDirName, "document").listFiles(
+                (FilenameFilter) new SuffixFileFilter(".doc"));
+        assertNotNull(documents);
+
+        return Arrays.stream(documents).map(Arguments::of);
     }
 }

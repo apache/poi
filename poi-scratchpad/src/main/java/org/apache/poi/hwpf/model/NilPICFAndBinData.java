@@ -20,34 +20,37 @@ import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 
 import static java.lang.Integer.toHexString;
 import static org.apache.logging.log4j.util.Unbox.box;
 
-public class NilPICFAndBinData
-{
-
+public class NilPICFAndBinData {
     private static final Logger LOGGER = LogManager.getLogger(NilPICFAndBinData.class);
+
+    // limit the default maximum length of the allocated fields
+    private static final int MAX_SIZE = 100_000;
 
     private byte[] _binData;
 
-    public NilPICFAndBinData( byte[] data, int offset )
-    {
+    public NilPICFAndBinData( byte[] data, int offset ) {
         fillFields( data, offset );
     }
 
-    public void fillFields( byte[] data, int offset )
-    {
+    public void fillFields( byte[] data, int offset ) {
         int lcb = LittleEndian.getInt( data, offset );
         int cbHeader = LittleEndian.getUShort( data, offset
                 + LittleEndianConsts.INT_SIZE );
 
-        if ( cbHeader != 0x44 )
-        {
+        if ( cbHeader != 0x44 ) {
             LOGGER.atWarn().log("NilPICFAndBinData at offset {} cbHeader 0x{} != 0x44", box(offset), toHexString(cbHeader));
         }
+
+        // make sure these do not cause OOM if passed as invalid or extremely large values
+        IOUtils.safelyAllocateCheck(lcb, MAX_SIZE);
+        IOUtils.safelyAllocateCheck(cbHeader, MAX_SIZE);
 
         // skip the 62 ignored bytes
         int binaryLength = lcb - cbHeader;
@@ -55,21 +58,18 @@ public class NilPICFAndBinData
                 offset + cbHeader + binaryLength);
     }
 
-    public byte[] getBinData()
-    {
+    public byte[] getBinData() {
         return _binData;
     }
 
-    public byte[] serialize()
-    {
+    public byte[] serialize() {
         byte[] bs = new byte[_binData.length + 0x44];
         LittleEndian.putInt( bs, 0, _binData.length + 0x44 );
         System.arraycopy( _binData, 0, bs, 0x44, _binData.length );
         return bs;
     }
 
-    public int serialize( byte[] data, int offset )
-    {
+    public int serialize( byte[] data, int offset ) {
         LittleEndian.putInt( data, offset, _binData.length + 0x44 );
         System.arraycopy( _binData, 0, data, offset + 0x44, _binData.length );
         return 0x44 + _binData.length;
