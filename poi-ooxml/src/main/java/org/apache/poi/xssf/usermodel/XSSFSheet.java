@@ -3751,6 +3751,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     protected void write(OutputStream out) throws IOException {
+        if (worksheet == null) {
+            throw new POIXMLException("Cannot write invalid sheet, internal data is missing");
+        }
+
         boolean setToNull = false;
         if(worksheet.sizeOfColsArray() == 1) {
             CTCols col = worksheet.getColsArray(0);

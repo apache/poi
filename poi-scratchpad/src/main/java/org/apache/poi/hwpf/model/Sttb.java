@@ -142,7 +142,7 @@ public class Sttb
                 // cchData
                 size += LittleEndianConsts.SHORT_SIZE;
                 // data
-                size += 2 * data.length();
+                size += 2 * (data == null ? 0 : data.length());
             }
         }
         else
@@ -152,7 +152,7 @@ public class Sttb
                 // cchData
                 size += LittleEndianConsts.BYTE_SIZE;
                 // data
-                size += data.length();
+                size += (data == null ? 0 : data.length());
             }
         }
 

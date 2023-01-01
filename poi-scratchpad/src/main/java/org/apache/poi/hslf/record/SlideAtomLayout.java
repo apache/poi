@@ -128,7 +128,7 @@ public class SlideAtomLayout implements GenericRecord {
     public void writeOut(OutputStream out) throws IOException {
         // Write the geometry
         byte[] buf = new byte[4];
-        LittleEndian.putInt(buf, 0, geometry.getNativeId());
+        LittleEndian.putInt(buf, 0, geometry == null ? 0 : geometry.getNativeId());
         out.write(buf);
         // Write the placeholder IDs
         out.write(placeholderIDs);

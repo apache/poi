@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 
@@ -127,7 +128,7 @@ public class OutlookTextExtractor implements POIOLE2TextExtractor {
             // First try via the proper chunk
             SimpleDateFormat f = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z", Locale.ROOT);
             f.setTimeZone(LocaleUtil.getUserTimeZone());
-            s.append("Date: ").append(f.format(msg.getMessageDate().getTime())).append("\n");
+            s.append("Date: ").append(f.format(msg.getMessageDate() == null ? new Date(0) : msg.getMessageDate().getTime())).append("\n");
         } catch (ChunkNotFoundException e) {
             try {
                 // Failing that try via the raw headers

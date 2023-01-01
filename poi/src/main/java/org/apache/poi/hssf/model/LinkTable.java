@@ -81,7 +81,12 @@ final class LinkTable {
             int nCRNs = _countRecord.getNumberOfCRNs();
             CRNRecord[] crns = new CRNRecord[nCRNs];
             for (int i = 0; i < crns.length; i++) {
-                crns[i] = (CRNRecord) rs.getNext();
+                Record record = rs.getNext();
+                if (!(record instanceof CRNRecord)) {
+                    throw new IllegalStateException("Record is not a CRNRecord: " +
+                            (record == null ? "<null>" : record.getClass() + ": " + record) );
+                }
+                crns[i] = (CRNRecord) record;
             }
             _crns = crns;
         }

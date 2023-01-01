@@ -371,6 +371,10 @@ public class DataFormatter {
     }
 
     private Format getFormat(double cellValue, int formatIndex, String formatStrIn, boolean use1904Windowing) {
+        if (formatStrIn == null) {
+            throw new IllegalArgumentException("Missing input format for value " + cellValue + " and index " + formatIndex);
+        }
+
         checkForLocaleChange();
 
         // Might be better to separate out the n p and z formats, falling back to p when n and z are not set.

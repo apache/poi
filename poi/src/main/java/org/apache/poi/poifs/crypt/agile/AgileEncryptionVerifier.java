@@ -44,7 +44,7 @@ public class AgileEncryptionVerifier extends EncryptionVerifier {
             }
         }
 
-        if (keyData == null) {
+        if (keyData == null || keyData.getHashSize() == null) {
             throw new IllegalArgumentException("encryptedKey not set");
         }
 

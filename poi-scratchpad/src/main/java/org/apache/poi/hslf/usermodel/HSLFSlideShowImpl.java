@@ -318,10 +318,14 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             recordMap.put(usrOffset, usr);
 
             int psrOffset = usr.getPersistPointersOffset();
-            PersistPtrHolder ptr = (PersistPtrHolder) Record.buildRecordAtOffset(docstream, psrOffset);
-            if (ptr == null) {
+            Record record = Record.buildRecordAtOffset(docstream, psrOffset);
+            if (record == null) {
                 throw new CorruptPowerPointFileException("Powerpoint document is missing a PersistPtrHolder at " + psrOffset);
             }
+            if (!(record instanceof PersistPtrHolder)) {
+                throw new CorruptPowerPointFileException("Record is not a PersistPtrHolder: " + record + " at " + psrOffset);
+            }
+            PersistPtrHolder ptr = (PersistPtrHolder) record;
             recordMap.put(psrOffset, ptr);
 
             for (Map.Entry<Integer, Integer> entry : ptr.getSlideLocationsLookup().entrySet()) {
@@ -609,6 +613,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         CountingOS cos = new CountingOS();
         for (Record record : _records) {
             // all top level records are position dependent
+            if (!(record instanceof PositionDependentRecord)) {
+                throw new CorruptPowerPointFileException("Record is not a position dependent record: " + record);
+            }
             PositionDependentRecord pdr = (PositionDependentRecord) record;
             int oldPos = pdr.getLastOnDiskOffset();
             int newPos = cos.size();
@@ -985,6 +992,10 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         if (documentRecord == null) {
             throw new CorruptPowerPointFileException("Document record is missing");
+        }
+
+        if (documentRecord.getPPDrawingGroup() == null) {
+            throw new CorruptPowerPointFileException("Drawing group is missing");
         }
 
         EscherContainerRecord blipStore;

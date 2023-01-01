@@ -224,6 +224,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
 
     @Override
     public RichTextString getItemAt(int idx) {
+        if (strings == null || idx >= strings.size()) {
+            throw new IllegalStateException("Cannot get item at " + idx + " with strings: " + strings);
+        }
         return new XSSFRichTextString(strings.get(idx));
     }
 
