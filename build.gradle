@@ -31,7 +31,7 @@ buildscript {
 
 plugins {
     id 'base'
-    id 'com.dorongold.task-tree' version '2.1.0'
+    id 'com.dorongold.task-tree' version '2.1.1'
     id 'org.nosphere.apache.rat' version '0.8.0'
     id 'distribution'
     id "com.github.spotbugs" version '5.0.13'
