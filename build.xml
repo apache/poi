@@ -2569,6 +2569,7 @@ under the License.
             <fileset dir="lib/main" includes="*.jar"/>
             <fileset dir="lib/main-tests" includes="*.jar"/>
             <fileset dir="lib/ooxml" includes="*.jar"/>
+            <fileset dir="lib/ooxml-batik" includes="xml-apis-ext*.jar"/>
             <fileset dir="lib/ooxml-tests" includes="*.jar"/>
             <fileset dir="lib/ooxml-provided" includes="*.jar"/>
             <fileset dir="lib/excelant" includes="*.jar"/>
