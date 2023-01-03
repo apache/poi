@@ -285,6 +285,9 @@ public final class TableSprmUncompressor extends SprmUncompressor {
 
         for (int c = itcFirst; c < itcLim; c++) {
           TableCellDescriptor tableCellDescriptor = newTAP.getRgtc()[c];
+          if (tableCellDescriptor == null) {
+            throw new IllegalStateException("Cannot unCompress TAP, empty table cell descriptor, had : " + newTAP.getRgtc().length + " Rgtc");
+          }
 
           if ((grfbrc & 0x01) != 0) {
             tableCellDescriptor.setFtsCellPaddingTop(ftsWidth);

@@ -310,10 +310,11 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     private void initRecordOffsets(byte[] docstream, int usrOffset, NavigableMap<Integer, Record> recordMap, Map<Integer, Integer> offset2id) {
         while (usrOffset != 0) {
-            UserEditAtom usr = (UserEditAtom) Record.buildRecordAtOffset(docstream, usrOffset);
-            if (usr == null) {
-                throw new CorruptPowerPointFileException("Powerpoint document contains no user edit atom");
+            Record builtRecord = Record.buildRecordAtOffset(docstream, usrOffset);
+            if (!(builtRecord instanceof UserEditAtom)) {
+                throw new CorruptPowerPointFileException("Did not have a user edit atom: " + builtRecord);
             }
+            UserEditAtom usr = (UserEditAtom) builtRecord;
 
             recordMap.put(usrOffset, usr);
 
@@ -500,6 +501,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         //  records share an offset.
         Map<Integer, List<EscherBSERecord>> unmatchedRecords = new HashMap<>();
         for (EscherRecord child : blipStore) {
+            if (!(child instanceof EscherBSERecord)) {
+                throw new CorruptPowerPointFileException("Did not have a EscherBSERecord: " + child);
+            }
             EscherBSERecord record = (EscherBSERecord) child;
             unmatchedRecords.computeIfAbsent(record.getOffset(), k -> new ArrayList<>()).add(record);
         }
@@ -984,7 +988,13 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private EscherContainerRecord getBlipStore() {
         Document documentRecord = null;
         for (Record record : _records) {
+            if (record == null) {
+                throw new CorruptPowerPointFileException("Did not have a valid record: " + record);
+            }
             if (record.getRecordType() == RecordTypes.Document.typeID) {
+                if (!(record instanceof Document)) {
+                    throw new CorruptPowerPointFileException("Did not have a Document: " + record);
+                }
                 documentRecord = (Document) record;
                 break;
             }

@@ -63,7 +63,11 @@ public final class HSLFShapeFactory {
 
     public static HSLFGroupShape createShapeGroup(EscherContainerRecord spContainer, ShapeContainer<HSLFShape,HSLFTextParagraph> parent){
         boolean isTable = false;
-        EscherContainerRecord ecr = (EscherContainerRecord)spContainer.getChild(0);
+        EscherRecord child = spContainer.getChild(0);
+        if (!(child instanceof EscherContainerRecord)) {
+            throw new RecordFormatException("Did not have a EscherContainerRecord: " + child);
+        }
+        EscherContainerRecord ecr = (EscherContainerRecord) child;
         EscherRecord opt = HSLFShape.getEscherChild(ecr, EscherRecordTypes.USER_DEFINED);
 
         if (opt != null) {

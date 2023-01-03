@@ -830,7 +830,11 @@ public final class InternalWorkbook {
 
         xfptr += index;
 
-        return ( ExtendedFormatRecord ) records.get(xfptr);
+        Record record = records.get(xfptr);
+        if (!(record instanceof ExtendedFormatRecord)) {
+            throw new IllegalStateException("Did not have a ExtendedFormatRecord: " + record);
+        }
+        return (ExtendedFormatRecord) record;
     }
 
     /**

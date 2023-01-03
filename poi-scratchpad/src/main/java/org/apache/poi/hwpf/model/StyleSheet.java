@@ -62,7 +62,7 @@ public final class StyleSheet {
     /**
      * General information about a stylesheet
      */
-    private Stshif _stshif;
+    private final Stshif _stshif;
 
     StyleDescription[] _styleDescriptions;
 
@@ -205,6 +205,10 @@ public final class StyleSheet {
     @Deprecated
     private void createPap(int istd) {
         StyleDescription sd = _styleDescriptions[istd];
+        if (sd == null) {
+            throw new IllegalStateException("Cannot create Pap, empty styleDescription, had : " + _styleDescriptions.length + " descriptions");
+        }
+
         ParagraphProperties pap = sd.getPAP();
         byte[] papx = sd.getPAPX();
         int baseIndex = sd.getBaseStyle();
@@ -212,7 +216,11 @@ public final class StyleSheet {
             ParagraphProperties parentPAP = new ParagraphProperties();
             if (baseIndex != NIL_STYLE) {
 
-                parentPAP = _styleDescriptions[baseIndex].getPAP();
+                StyleDescription styleDescription = _styleDescriptions[baseIndex];
+                if (styleDescription == null) {
+                    throw new IllegalStateException("Cannot create Pap, empty styleDescription, had : " + _styleDescriptions.length + " descriptions");
+                }
+                parentPAP = styleDescription.getPAP();
                 if (parentPAP == null) {
                     if (baseIndex == istd) {
                         // Oh dear, style claims that it is its own parent
@@ -220,7 +228,7 @@ public final class StyleSheet {
                     }
                     // Create the parent style
                     createPap(baseIndex);
-                    parentPAP = _styleDescriptions[baseIndex].getPAP();
+                    parentPAP = styleDescription.getPAP();
                 }
 
             }
@@ -247,6 +255,10 @@ public final class StyleSheet {
     @Deprecated
     private void createChp(int istd) {
         StyleDescription sd = _styleDescriptions[istd];
+        if (sd == null) {
+            throw new IllegalStateException("Cannot create Chp, empty styleDescription, had : " + _styleDescriptions.length + " descriptions");
+        }
+
         CharacterProperties chp = sd.getCHP();
         byte[] chpx = sd.getCHPX();
         int baseIndex = sd.getBaseStyle();
@@ -263,10 +275,15 @@ public final class StyleSheet {
         if (chp == null && chpx != null) {
             CharacterProperties parentCHP = new CharacterProperties();
             if (baseIndex != NIL_STYLE) {
-                parentCHP = _styleDescriptions[baseIndex].getCHP();
+                StyleDescription styleDescription = _styleDescriptions[baseIndex];
+                if (styleDescription == null) {
+                    throw new IllegalStateException("Cannot create Chp, empty styleDescription, had : " + _styleDescriptions.length + " descriptions");
+                }
+
+                parentCHP = styleDescription.getCHP();
                 if (parentCHP == null) {
                     createChp(baseIndex);
-                    parentCHP = _styleDescriptions[baseIndex].getCHP();
+                    parentCHP = styleDescription.getCHP();
                 }
                 if (parentCHP == null) {
                     parentCHP = new CharacterProperties();

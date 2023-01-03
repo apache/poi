@@ -122,11 +122,13 @@ public class XmlVisioDocument extends POIXMLDocument {
      * @return pages ordered by page number
      */
     public Collection<XDGFPage> getPages() {
+        if (_pages == null) {
+            throw new IllegalStateException("No page-information available");
+        }
         return _pages.getPageList();
     }
 
     public XDGFStyleSheet getStyleById(long id) {
         return _document.getStyleById(id);
     }
-
 }

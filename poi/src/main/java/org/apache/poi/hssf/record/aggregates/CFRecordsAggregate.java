@@ -125,7 +125,11 @@ public final class CFRecordsAggregate extends RecordAggregate implements Generic
 
         CFRuleBase[] rules = new CFRuleBase[nRules];
         for (int i = 0; i < rules.length; i++) {
-            rules[i] = (CFRuleBase) rs.getNext();
+            Record record = rs.getNext();
+            if (!(record instanceof CFRuleBase)) {
+                throw new IllegalArgumentException("Did not have a CFRuleBase: " + record);
+            }
+            rules[i] = (CFRuleBase) record;
         }
 
         return new CFRecordsAggregate(header, rules);

@@ -69,12 +69,22 @@ public class HSSFShapeFactory {
 
             for (EscherRecord record : container) {
                 switch (EscherRecordTypes.forTypeID(record.getRecordId())) {
-                    case CLIENT_DATA:
-                        objRecord = (ObjRecord) shapeToObj.get(record);
+                    case CLIENT_DATA: {
+                        Record subRecord = shapeToObj.get(record);
+                        if (!(subRecord instanceof ObjRecord)) {
+                            throw new RecordFormatException("Did not have a ObjRecord: " + subRecord);
+                        }
+                        objRecord = (ObjRecord) subRecord;
                         break;
-                    case CLIENT_TEXTBOX:
-                        txtRecord = (TextObjectRecord) shapeToObj.get(record);
+                    }
+                    case CLIENT_TEXTBOX: {
+                        Record subRecord = shapeToObj.get(record);
+                        if (!(subRecord instanceof TextObjectRecord)) {
+                            throw new RecordFormatException("Did not have a TextObjRecord: " + subRecord);
+                        }
+                        txtRecord = (TextObjectRecord) subRecord;
                         break;
+                    }
                     default:
                         break;
                 }

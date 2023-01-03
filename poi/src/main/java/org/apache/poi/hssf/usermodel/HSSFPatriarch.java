@@ -32,6 +32,7 @@ import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.hssf.model.DrawingManager2;
@@ -80,9 +81,24 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
     HSSFPatriarch(HSSFSheet sheet, EscherAggregate boundAggregate) {
         _sheet = sheet;
         _boundAggregate = boundAggregate;
+
+        if (_boundAggregate == null || _boundAggregate.getEscherContainer() == null) {
+            throw new IllegalArgumentException("Could not read mainSpgrContainer from " + _boundAggregate);
+        }
+
         _mainSpgrContainer = _boundAggregate.getEscherContainer().getChildContainers().get(0);
-        EscherContainerRecord spContainer = (EscherContainerRecord) _boundAggregate.getEscherContainer()
-                .getChildContainers().get(0).getChild(0);
+
+        if (_mainSpgrContainer == null) {
+            throw new IllegalArgumentException("Could not read mainSpgrContainer from " + _boundAggregate);
+        }
+
+        EscherRecord child = _mainSpgrContainer.getChild(0);
+
+        if (!(child instanceof EscherContainerRecord)) {
+            throw new IllegalArgumentException("Did not have a EscherContainerRecord: " + child);
+        }
+
+        EscherContainerRecord spContainer = (EscherContainerRecord) child;
         _spgrRecord = spContainer.getChildById(EscherSpgrRecord.RECORD_ID);
         buildShapeTree();
     }
@@ -171,10 +187,10 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
     /**
      * Creates a simple shape.  This includes such shapes as lines, rectangles,
      * and ovals.
-     * 
-     * Note: Microsoft Excel seems to sometimes disallow 
-     * higher y1 than y2 or higher x1 than x2 in the anchor, you might need to 
-     * reverse them and draw shapes vertically or horizontally flipped! 
+     *
+     * Note: Microsoft Excel seems to sometimes disallow
+     * higher y1 than y2 or higher x1 than x2 in the anchor, you might need to
+     * reverse them and draw shapes vertically or horizontally flipped!
      *
      * @param anchor the client anchor describes how this group is attached
      *               to the sheet.
@@ -234,14 +250,14 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
         ftCmo.setReserved2(0);
         ftCmo.setReserved3(0);
         obj.addSubRecord(ftCmo);
-        
-        // FtCf (pictFormat) 
+
+        // FtCf (pictFormat)
         FtCfSubRecord ftCf = new FtCfSubRecord();
         HSSFPictureData pictData = getSheet().getWorkbook().getAllPictures().get(pictureIndex-1);
         switch (pictData.getFormat()) {
             case Workbook.PICTURE_TYPE_WMF:
             case Workbook.PICTURE_TYPE_EMF:
-                // this needs patch #49658 to be applied to actually work 
+                // this needs patch #49658 to be applied to actually work
                 ftCf.setFlags(FtCfSubRecord.METAFILE_BIT);
                 break;
             case Workbook.PICTURE_TYPE_DIB:
@@ -258,12 +274,12 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
         FtPioGrbitSubRecord ftPioGrbit = new FtPioGrbitSubRecord();
         ftPioGrbit.setFlagByBit(FtPioGrbitSubRecord.AUTO_PICT_BIT, true);
         obj.addSubRecord(ftPioGrbit);
-        
+
         EmbeddedObjectRefSubRecord ftPictFmla = new EmbeddedObjectRefSubRecord();
         ftPictFmla.setUnknownFormulaData(new byte[]{2, 0, 0, 0, 0});
         ftPictFmla.setOleClassname("Paket");
         ftPictFmla.setStorageId(storageId);
-        
+
         obj.addSubRecord(ftPictFmla);
         obj.addSubRecord(new EndSubRecord());
 
@@ -278,22 +294,22 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
         } catch (FileNotFoundException e) {
             throw new IllegalStateException("trying to add ole shape without actually adding data first - use HSSFWorkbook.addOlePackage first", e);
         }
-        
+
         // create picture shape, which need to be minimal modified for oleshapes
         HSSFPicture shape = new HSSFPicture(null, (HSSFClientAnchor)anchor);
         shape.setPictureIndex(pictureIndex);
         EscherContainerRecord spContainer = shape.getEscherContainer();
         EscherSpRecord spRecord = spContainer.getChildById(EscherSpRecord.RECORD_ID);
         spRecord.setFlags(spRecord.getFlags() |  EscherSpRecord.FLAG_OLESHAPE);
-        
-        HSSFObjectData oleShape = new HSSFObjectData(spContainer, obj, oleRoot); 
+
+        HSSFObjectData oleShape = new HSSFObjectData(spContainer, obj, oleRoot);
         addShape(oleShape);
         onCreate(oleShape);
-        
-        
+
+
         return oleShape;
     }
-    
+
     /**
      * Creates a polygon
      *

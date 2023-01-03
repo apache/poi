@@ -172,6 +172,9 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
                 continue;
             }
 
+            if (!(r instanceof EscherContainerRecord)) {
+                throw new IllegalArgumentException("Did not have a EscherContainerRecord: " + r);
+            }
             EscherContainerRecord sp = (EscherContainerRecord)r;
             HSLFShape sh = HSLFShapeFactory.createShape(sp, null);
             sh.setSheet(this);

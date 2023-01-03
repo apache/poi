@@ -117,7 +117,8 @@ public class ExObjList extends RecordContainer {
         for (Record child : _children) {
             if (child instanceof ExHyperlink) {
                 ExHyperlink rec = (ExHyperlink) child;
-                if (rec.getExHyperlinkAtom().getNumber() == id) {
+                if (rec.getExHyperlinkAtom() != null &&
+                        rec.getExHyperlinkAtom().getNumber() == id) {
                     return rec;
                 }
             }
