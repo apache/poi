@@ -51,7 +51,9 @@ dependencies {
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
 
     if (SAXON_TEST) {
-        testRuntimeOnly "net.sf.saxon:Saxon-HE:${saxonVersion}"
+        testRuntimeOnly("net.sf.saxon:Saxon-HE:${saxonVersion}") {
+            exclude group: 'xml-apis', module: 'xml-apis'
+        }
     }
 
     // needed for locating the external references
