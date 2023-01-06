@@ -172,6 +172,12 @@ subprojects {
         testImplementation "org.mockito:mockito-core:${mockitoVersion}"
         testImplementation "org.hamcrest:hamcrest:${hamcrestVersion}"
         testImplementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
+
+        if (SAXON_TEST) {
+            testRuntimeOnly("net.sf.saxon:Saxon-HE:${saxonVersion}") {
+                exclude group: 'xml-apis', module: 'xml-apis'
+            }
+        }
     }
 
     java {

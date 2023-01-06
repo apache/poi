@@ -127,10 +127,6 @@ dependencies {
     testImplementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
     testImplementation 'org.slf4j:slf4j-simple:2.0.6'
 
-    if (SAXON_TEST) {
-        testRuntimeOnly "net.sf.saxon:Saxon-HE:${saxonVersion}"
-    }
-
     broken("org.apache.xmlgraphics:batik-script:${batikVersion}"){
         exclude group: 'xalan', module: 'xalan'
         exclude group: 'xml-apis', module: 'xml-apis'

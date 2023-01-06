@@ -78,10 +78,6 @@ dependencies {
     testImplementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
     testImplementation 'org.slf4j:slf4j-simple:2.0.6'
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
-
-    if (SAXON_TEST) {
-        testRuntimeOnly "net.sf.saxon:Saxon-HE:${saxonVersion}"
-    }
 }
 
 final String MODULE_NAME = 'org.apache.poi.stress'

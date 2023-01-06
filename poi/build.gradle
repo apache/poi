@@ -50,12 +50,6 @@ dependencies {
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
 
-    if (SAXON_TEST) {
-        testRuntimeOnly("net.sf.saxon:Saxon-HE:${saxonVersion}") {
-            exclude group: 'xml-apis', module: 'xml-apis'
-        }
-    }
-
     // needed for locating the external references
     javadocs project(':poi-ooxml')
     javadocs project(':poi-scratchpad')
