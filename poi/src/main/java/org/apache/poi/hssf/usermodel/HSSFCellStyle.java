@@ -649,8 +649,8 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void setFillBackgroundColor(org.apache.poi.ss.usermodel.Color color)
     {
         if (color instanceof HSSFColor) {
-            short index2 = ((HSSFColor)color).getIndex2();
-            if (index2 != -1) setFillBackgroundColor(index2);
+            final short index = ((HSSFColor)color).getIndex();
+            if (index != -1) setFillBackgroundColor(index);
         } else if (color != null) {
             throw new IllegalArgumentException("HSSFCellStyle only accepts HSSFColor instances");
         }
@@ -708,8 +708,8 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void setFillForegroundColor(org.apache.poi.ss.usermodel.Color color)
     {
         if (color instanceof HSSFColor) {
-            short index2 = ((HSSFColor)color).getIndex2();
-            if (index2 != -1) setFillForegroundColor(index2);
+            final short index = ((HSSFColor)color).getIndex();
+            if (index != -1) setFillForegroundColor(index);
         } else if (color != null) {
             throw new IllegalArgumentException("HSSFCellStyle only accepts HSSFColor instances");
         }

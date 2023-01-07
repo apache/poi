@@ -398,8 +398,14 @@ public final class CellUtil {
         if (properties.containsKey(FILL_FOREGROUND_COLOR_COLOR) && properties.get(FILL_FOREGROUND_COLOR_COLOR) == null) {
             values.remove(FILL_FOREGROUND_COLOR);
         }
+        if (properties.containsKey(FILL_FOREGROUND_COLOR) && !properties.containsKey(FILL_FOREGROUND_COLOR_COLOR)) {
+            values.remove(FILL_FOREGROUND_COLOR_COLOR);
+        }
         if (properties.containsKey(FILL_BACKGROUND_COLOR_COLOR) && properties.get(FILL_BACKGROUND_COLOR_COLOR) == null) {
             values.remove(FILL_BACKGROUND_COLOR);
+        }
+        if (properties.containsKey(FILL_BACKGROUND_COLOR) && !properties.containsKey(FILL_BACKGROUND_COLOR_COLOR)) {
+            values.remove(FILL_BACKGROUND_COLOR_COLOR);
         }
         putAll(properties, values);
 
