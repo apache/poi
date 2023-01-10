@@ -30,12 +30,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.StringRecord;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.BaseTestCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -413,6 +415,30 @@ final class TestHSSFCell extends BaseTestCell {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             Cell cell = wb.createSheet().createRow(0).createCell(0);
             assertThrows(IllegalStateException.class, cell::getErrorCellValue);
+        }
+    }
+
+    @Test
+    void setFillForegroundColor() throws IOException {
+        try (
+                HSSFWorkbook wb = new HSSFWorkbook();
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            Cell cell = wb.createSheet().createRow(0).createCell(0);
+            HSSFCellStyle cellStyle = wb.createCellStyle();
+            HSSFPalette palette = wb.getCustomPalette();
+            palette.setColorAtIndex((short) 1, (byte) 60, (byte) 120, (byte) 216);
+            HSSFColor color = palette.findSimilarColor(60, 120, 216);
+            cellStyle.setFillForegroundColor(color);
+            cell.setCellStyle(cellStyle);
+            assertEquals(color, cellStyle.getFillForegroundColorColor());
+            wb.write(bos);
+
+            try (HSSFWorkbook wb2 = new HSSFWorkbook(bos.toInputStream())) {
+                HSSFSheet sheet = wb2.getSheetAt(0);
+                HSSFCellStyle savedStyle = sheet.getRow(0).getCell(0).getCellStyle();
+                assertEquals(color, savedStyle.getFillForegroundColorColor());
+            }
         }
     }
 }
