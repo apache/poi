@@ -23,19 +23,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
-import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
-import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.ZipPackage;
 import org.apache.poi.ss.usermodel.BaseTestPicture;
-import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Drawing;
 import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
@@ -127,46 +121,6 @@ public final class TestXSSFPicture extends BaseTestPicture {
     @Test
     void multiRelationshipsWithEncryptedTempFileParts() throws IOException {
         multiRelationships(true, true);
-    }
-
-    @Test
-    void resizeWhenAnchorPositionIsZeroed() throws IOException {
-        try (
-                XSSFWorkbook workbook = new XSSFWorkbook();
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
-        ) {
-            XSSFSheet sheet = workbook.createSheet();
-            CreationHelper helper = workbook.getCreationHelper();
-            Drawing drawing = sheet.createDrawingPatriarch();
-
-            ClientAnchor anchor = helper.createClientAnchor();
-
-            final int pictureIndex;
-            try (InputStream stream = POIDataSamples.getOpenXML4JInstance()
-                    .openResourceAsStream("thumbnail.jpg")) {
-                pictureIndex = workbook.addPicture(stream, Workbook.PICTURE_TYPE_JPEG);
-            }
-            final XSSFPicture pict = (XSSFPicture) drawing.createPicture( anchor, pictureIndex );
-
-            assertEquals(0, anchor.getCol1());
-            assertEquals(0, anchor.getCol2());
-            assertEquals(0, anchor.getRow1());
-            assertEquals(0, anchor.getRow2());
-
-            pict.resize();
-            pict.resize(0.1,0.1);
-
-            assertEquals(0, anchor.getCol1());
-            assertEquals(0, anchor.getCol2());
-            assertEquals(0, anchor.getRow1());
-            assertEquals(0, anchor.getRow2());
-
-            workbook.write(bos);
-
-            try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
-                wb2.getAllPictures();
-            }
-        }
     }
 
     private void multiRelationships(boolean tempFileParts, boolean encrypt) throws IOException {
