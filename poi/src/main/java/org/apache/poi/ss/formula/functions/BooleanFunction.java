@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.TwoDEval;
+import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -91,7 +92,7 @@ public abstract class BooleanFunction implements Function,ArrayFunction {
                 continue;
             }
 
-            if (arg == MissingArgEval.instance) {
+            if (arg == MissingArgEval.instance || arg == BlankEval.instance) {
                 tempVe = false;     // missing parameters are treated as FALSE
             } else {
                 tempVe = OperandResolver.coerceValueToBoolean(arg, false);
