@@ -158,8 +158,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             throw new POIXMLException(e);
         }
 
-        initRows(worksheet);
         columnHelper = new ColumnHelper(worksheet);
+        initRows(worksheet);
         // Look for bits we're interested in
         for(RelationPart rp : getRelationParts()){
             POIXMLDocumentPart p = rp.getDocumentPart();
