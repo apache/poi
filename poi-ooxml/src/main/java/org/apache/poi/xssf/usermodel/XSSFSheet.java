@@ -1706,9 +1706,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             index = Math.toIntExact(col.getMax());
         }
         worksheet.setColsArray(0, ctCols);
-        if (maxLevelCol > getSheetFormatPrOutlineLevelCol()) {
-            increaseSheetFormatPrOutlineLevelColIfNecessary((short) maxLevelCol);
-        }
+        increaseSheetFormatPrOutlineLevelColIfNecessary((short) Math.min(Short.MAX_VALUE, maxLevelCol));
     }
 
     /**
@@ -1743,9 +1741,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             maxOutlineLevel = Math.max(maxOutlineLevel, newOutlineLevel);
             ctrow.setOutlineLevel((short) newOutlineLevel);
         }
-        if (maxOutlineLevel >= 0) {
-            increaseSheetFormatPrOutlineLevelRowIfNecessary((short) maxOutlineLevel);
-        }
+        increaseSheetFormatPrOutlineLevelRowIfNecessary((short) Math.min(Short.MAX_VALUE, maxOutlineLevel));
     }
 
     private short getMaxOutlineLevelRows(){
