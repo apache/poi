@@ -1245,7 +1245,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     }
 
     /**
-     * Ungroup a range of columns that were previously groupped
+     * Ungroup a range of columns that were previously grouped
      *
      * @param fromColumn   start column (0-based)
      * @param toColumn     end column (0-based)
@@ -1340,7 +1340,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     }
 
     /**
-     * Ungroup a range of rows that were previously groupped
+     * Ungroup a range of rows that were previously grouped
      *
      * @param fromRow   start row (0-based)
      * @param toRow     end row (0-based)
@@ -1355,7 +1355,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      *
      * <i>Not implemented for expanding (i.e. collapse == false)</i>
      *
-     * @param row   start row of a groupped range of rows (0-based)
+     * @param row   start row of a grouped range of rows (0-based)
      * @param collapse whether to expand/collapse the detail rows
      * @throws IllegalStateException if collapse is false as this is not implemented for SXSSF.
      */

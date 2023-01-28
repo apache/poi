@@ -1695,15 +1695,20 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             this.columnHelper.setColumnAttributes(fixCol_before, fixCol_after);
         }
 
-        for(int index=fromColumn;index<=toColumn;index++){
-            CTCol col=columnHelper.getColumn1Based(index, false);
+        int maxLevelCol = -1;
+        for(int index = fromColumn; index <= toColumn; index++){
+            CTCol col = columnHelper.getColumn1Based(index, false);
             //col must exist
-            short outlineLevel=col.getOutlineLevel();
-            col.setOutlineLevel((short)(outlineLevel+1));
+            final short outlineLevel = col.getOutlineLevel();
+            final int newOutlineLevel = outlineLevel + 1;
+            col.setOutlineLevel((short) newOutlineLevel);
+            maxLevelCol = Math.max(maxLevelCol, newOutlineLevel);
             index = Math.toIntExact(col.getMax());
         }
-        worksheet.setColsArray(0,ctCols);
-        setSheetFormatPrOutlineLevelCol();
+        worksheet.setColsArray(0, ctCols);
+        if (maxLevelCol > getSheetFormatPrOutlineLevelCol()) {
+            increaseSheetFormatPrOutlineLevelColIfNecessary((short) maxLevelCol);
+        }
     }
 
     /**
@@ -1726,16 +1731,21 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      */
     @Override
     public void groupRow(int fromRow, int toRow) {
+        int maxOutlineLevel = -1;
         for (int i = fromRow; i <= toRow; i++) {
             XSSFRow xrow = getRow(i);
             if (xrow == null) {
                 xrow = createRow(i);
             }
             CTRow ctrow = xrow.getCTRow();
-            short outlineLevel = ctrow.getOutlineLevel();
-            ctrow.setOutlineLevel((short) (outlineLevel + 1));
+            final short outlineLevel = ctrow.getOutlineLevel();
+            final int newOutlineLevel = outlineLevel + 1;
+            maxOutlineLevel = Math.max(maxOutlineLevel, newOutlineLevel);
+            ctrow.setOutlineLevel((short) newOutlineLevel);
         }
-        setSheetFormatPrOutlineLevelRow();
+        if (maxOutlineLevel >= 0) {
+            increaseSheetFormatPrOutlineLevelRowIfNecessary((short) maxOutlineLevel);
+        }
     }
 
     private short getMaxOutlineLevelRows(){
@@ -3391,10 +3401,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     @Override
     public void ungroupColumn(int fromColumn, int toColumn) {
         CTCols cols = worksheet.getColsArray(0);
+        int maxLevelCol = -1;
         for (int index = fromColumn; index <= toColumn; index++) {
             CTCol col = columnHelper.getColumn(index, false);
             if (col != null) {
-                short outlineLevel = col.getOutlineLevel();
+                final short outlineLevel = col.getOutlineLevel();
+                maxLevelCol = Math.max(maxLevelCol, outlineLevel);
                 col.setOutlineLevel((short) (outlineLevel - 1));
                 index = Math.toIntExact(col.getMax());
 
@@ -3405,39 +3417,65 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             }
         }
         worksheet.setColsArray(0, cols);
-        setSheetFormatPrOutlineLevelCol();
+        if (maxLevelCol >= getSheetFormatPrOutlineLevelCol()) {
+            setSheetFormatPrOutlineLevelCol();
+        }
     }
 
     /**
-     * Ungroup a range of rows that were previously groupped
+     * Ungroup a range of rows that were previously grouped
      *
      * @param fromRow   start row (0-based)
      * @param toRow     end row (0-based)
      */
     @Override
     public void ungroupRow(int fromRow, int toRow) {
+        int maxOutlineLevel = -1;
         for (int i = fromRow; i <= toRow; i++) {
             XSSFRow xrow = getRow(i);
             if (xrow != null) {
                 CTRow ctRow = xrow.getCTRow();
-                int outlineLevel = ctRow.getOutlineLevel();
+                final short outlineLevel = ctRow.getOutlineLevel();
                 ctRow.setOutlineLevel((short) (outlineLevel - 1));
+                maxOutlineLevel = Math.max(maxOutlineLevel, outlineLevel);
                 //remove a row only if the row has no cell and if the outline level is 0
                 if (outlineLevel == 1 && xrow.getFirstCellNum() == -1) {
                     removeRow(xrow);
                 }
             }
         }
-        setSheetFormatPrOutlineLevelRow();
+        if (maxOutlineLevel >= getSheetFormatPrOutlineLevelRow()) {
+            setSheetFormatPrOutlineLevelRow();
+        }
     }
 
-    private void setSheetFormatPrOutlineLevelRow(){
-        short maxLevelRow=getMaxOutlineLevelRows();
+    private void increaseSheetFormatPrOutlineLevelRowIfNecessary(final short levelRow) {
+        if (levelRow > getSheetFormatPrOutlineLevelRow()) {
+            getSheetTypeSheetFormatPr().setOutlineLevelRow(levelRow);
+        }
+    }
+
+    private void increaseSheetFormatPrOutlineLevelColIfNecessary(final short levelCol) {
+        if (levelCol > getSheetFormatPrOutlineLevelCol()) {
+            getSheetTypeSheetFormatPr().setOutlineLevelCol(levelCol);
+        }
+    }
+
+    private void setSheetFormatPrOutlineLevelRow() {
+        final short maxLevelRow = getMaxOutlineLevelRows();
         getSheetTypeSheetFormatPr().setOutlineLevelRow(maxLevelRow);
     }
 
-    private void setSheetFormatPrOutlineLevelCol(){
-        short maxLevelCol=getMaxOutlineLevelCols();
+    private short getSheetFormatPrOutlineLevelRow() {
+        return getSheetTypeSheetFormatPr().getOutlineLevelRow();
+    }
+
+    private short getSheetFormatPrOutlineLevelCol() {
+        return getSheetTypeSheetFormatPr().getOutlineLevelCol();
+    }
+
+    private void setSheetFormatPrOutlineLevelCol() {
+        final short maxLevelCol = getMaxOutlineLevelCols();
         getSheetTypeSheetFormatPr().setOutlineLevelCol(maxLevelCol);
     }
 
