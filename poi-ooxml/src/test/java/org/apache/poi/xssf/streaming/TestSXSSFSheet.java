@@ -20,6 +20,7 @@
 package org.apache.poi.xssf.streaming;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
 
 public final class TestSXSSFSheet extends BaseTestXSheet {
@@ -176,5 +178,68 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
                 assertEquals(row1, row, "Sheet row iteration order should be ascending"));
 
         wb.close();
+    }
+
+    @Test
+    void groupRow() throws IOException {
+        try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
+            SXSSFSheet sheet = workbook.createSheet();
+
+            // XSSF code can group rows even if there are no XSSFRows yet, SXSSFWorkbook needs the rows to exist first
+            for (int i = 0; i < 20; i++) {
+                sheet.createRow(i);
+            }
+
+            //one level
+            sheet.groupRow(9, 10);
+
+            try(UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+                workbook.write(bos);
+                try(XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+                    CTRow ctrow = xssfSheet.getRow(9).getCTRow();
+
+                    assertNotNull(ctrow);
+                    assertEquals(10, ctrow.getR());
+                    assertEquals(1, ctrow.getOutlineLevel());
+                    assertEquals(1, xssfSheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelRow());
+                }
+            }
+        }
+    }
+
+    @Test
+    void groupRow2Levels() throws IOException {
+        try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
+            SXSSFSheet sheet = workbook.createSheet();
+
+            // XSSF code can group rows even if there are no XSSFRows yet, SXSSFWorkbook needs the rows to exist first
+            for (int i = 0; i < 20; i++) {
+                sheet.createRow(i);
+            }
+
+            //one level
+            sheet.groupRow(9, 10);
+            //two level
+            sheet.groupRow(10, 13);
+
+            try(UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+                workbook.write(bos);
+                try(XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+                    CTRow ctrow = xssfSheet.getRow(9).getCTRow();
+
+                    assertNotNull(ctrow);
+                    assertEquals(10, ctrow.getR());
+                    assertEquals(1, ctrow.getOutlineLevel());
+
+                    ctrow = xssfSheet.getRow(10).getCTRow();
+                    assertNotNull(ctrow);
+                    assertEquals(11, ctrow.getR());
+                    assertEquals(2, ctrow.getOutlineLevel());
+                    assertEquals(2, xssfSheet.getCTWorksheet().getSheetFormatPr().getOutlineLevelRow());
+                }
+            }
+        }
     }
 }

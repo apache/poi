@@ -51,7 +51,6 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     protected SheetDataWriter _writer;
     private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
     protected AutoSizeColumnTracker _autoSizeColumnTracker;
-    private int outlineLevelRow;
     private int lastFlushedRowNumber = -1;
     private boolean allFlushed;
     private int leftMostColumn = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
@@ -1241,7 +1240,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      */
     @Override
     public void groupColumn(int fromColumn, int toColumn) {
-        _sh.groupColumn(fromColumn,toColumn);
+        _sh.groupColumn(fromColumn, toColumn);
     }
 
     /**
@@ -1294,16 +1293,14 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      */
     @Override
     public void groupRow(int fromRow, int toRow) {
+        int maxLevelRow = -1;
         for(SXSSFRow row : _rows.subMap(fromRow, toRow + 1).values()){
-            int level = row.getOutlineLevel() + 1;
+            final int level = row.getOutlineLevel() + 1;
             row.setOutlineLevel(level);
-
-            if(level > outlineLevelRow) {
-                outlineLevelRow = level;
-            }
+            maxLevelRow = Math.max(maxLevelRow, level);
         }
 
-        setWorksheetOutlineLevelRow();
+        setWorksheetOutlineLevelRowIfNecessary((short) Math.min(Short.MAX_VALUE, maxLevelRow));
     }
 
     /**
@@ -1323,19 +1320,16 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     public void setRowOutlineLevel(int rownum, int level) {
         SXSSFRow row = _rows.get(rownum);
         row.setOutlineLevel(level);
-        if(level > 0 && level > outlineLevelRow) {
-            outlineLevelRow = level;
-            setWorksheetOutlineLevelRow();
-        }
+        setWorksheetOutlineLevelRowIfNecessary((short) Math.min(Short.MAX_VALUE, level));
     }
 
-    private void setWorksheetOutlineLevelRow() {
+    private void setWorksheetOutlineLevelRowIfNecessary(final short levelRow) {
         CTWorksheet ct = _sh.getCTWorksheet();
         CTSheetFormatPr pr = ct.isSetSheetFormatPr() ?
                 ct.getSheetFormatPr() :
                 ct.addNewSheetFormatPr();
-        if(outlineLevelRow > 0) {
-            pr.setOutlineLevelRow((short)outlineLevelRow);
+        if(levelRow > _sh.getSheetFormatPrOutlineLevelRow()) {
+            pr.setOutlineLevelRow(levelRow);
         }
     }
 

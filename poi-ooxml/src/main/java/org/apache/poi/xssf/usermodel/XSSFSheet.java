@@ -3462,11 +3462,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         getSheetTypeSheetFormatPr().setOutlineLevelRow(maxLevelRow);
     }
 
-    private short getSheetFormatPrOutlineLevelRow() {
+    public short getSheetFormatPrOutlineLevelRow() {
         return getSheetTypeSheetFormatPr().getOutlineLevelRow();
     }
 
-    private short getSheetFormatPrOutlineLevelCol() {
+    public short getSheetFormatPrOutlineLevelCol() {
         return getSheetTypeSheetFormatPr().getOutlineLevelCol();
     }
 
