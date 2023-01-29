@@ -975,10 +975,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         return (float)(pr == null ? 0 : pr.getDefaultRowHeight());
     }
 
-    private CTSheetFormatPr getSheetTypeSheetFormatPr() {
-        return worksheet.isSetSheetFormatPr() ?
-                worksheet.getSheetFormatPr() :
-                worksheet.addNewSheetFormatPr();
+    private CTSheetFormatPr getSheetTypeSheetFormatPr(final boolean createIfNotExists) {
+        if (worksheet.isSetSheetFormatPr()) {
+            return worksheet.getSheetFormatPr();
+        }
+        return createIfNotExists ? worksheet.addNewSheetFormatPr() : null;
     }
 
     /**
@@ -2612,7 +2613,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      */
     @Override
     public void setDefaultColumnWidth(int width) {
-        getSheetTypeSheetFormatPr().setBaseColWidth(width);
+        getSheetTypeSheetFormatPr(true).setBaseColWidth(width);
     }
 
     /**
@@ -2633,7 +2634,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      */
     @Override
     public void setDefaultRowHeightInPoints(float height) {
-        CTSheetFormatPr pr = getSheetTypeSheetFormatPr();
+        CTSheetFormatPr pr = getSheetTypeSheetFormatPr(true);
         pr.setDefaultRowHeight(height);
         pr.setCustomHeight(true);
     }
@@ -3447,32 +3448,36 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
     private void increaseSheetFormatPrOutlineLevelRowIfNecessary(final short levelRow) {
         if (levelRow > getSheetFormatPrOutlineLevelRow()) {
-            getSheetTypeSheetFormatPr().setOutlineLevelRow(levelRow);
+            getSheetTypeSheetFormatPr(true).setOutlineLevelRow(levelRow);
         }
     }
 
     private void increaseSheetFormatPrOutlineLevelColIfNecessary(final short levelCol) {
         if (levelCol > getSheetFormatPrOutlineLevelCol()) {
-            getSheetTypeSheetFormatPr().setOutlineLevelCol(levelCol);
+            getSheetTypeSheetFormatPr(true).setOutlineLevelCol(levelCol);
         }
     }
 
     private void setSheetFormatPrOutlineLevelRow() {
         final short maxLevelRow = getMaxOutlineLevelRows();
-        getSheetTypeSheetFormatPr().setOutlineLevelRow(maxLevelRow);
+        getSheetTypeSheetFormatPr(true).setOutlineLevelRow(maxLevelRow);
     }
 
+    @Internal // used by SXSSFSHeet
     public short getSheetFormatPrOutlineLevelRow() {
-        return getSheetTypeSheetFormatPr().getOutlineLevelRow();
+        final CTSheetFormatPr pr = getSheetTypeSheetFormatPr(false);
+        return pr == null ? 0 : pr.getOutlineLevelRow();
     }
 
+    @Internal // used by SXSSFSHeet
     public short getSheetFormatPrOutlineLevelCol() {
-        return getSheetTypeSheetFormatPr().getOutlineLevelCol();
+        final CTSheetFormatPr pr = getSheetTypeSheetFormatPr(false);
+        return pr == null ? 0 : pr.getOutlineLevelCol();
     }
 
     private void setSheetFormatPrOutlineLevelCol() {
         final short maxLevelCol = getMaxOutlineLevelCols();
-        getSheetTypeSheetFormatPr().setOutlineLevelCol(maxLevelCol);
+        getSheetTypeSheetFormatPr(true).setOutlineLevelCol(maxLevelCol);
     }
 
     protected CTSheetViews getSheetTypeSheetViews(final boolean create) {
