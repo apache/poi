@@ -275,9 +275,9 @@ under the License.
     <dependency prefix="main.junit-params" artifact="org.junit.jupiter:junit-jupiter-params:5.9.2" usage="main-tests"/>
     <dependency prefix="main.junit-opentest4j" artifact="org.opentest4j:opentest4j:1.2.0" usage="main-tests"/>
     <dependency prefix="main.junit-apiguardian" artifact="org.apiguardian:apiguardian-api:1.1.0" usage="main-tests"/>
-    <dependency prefix="main.junit-pcommons" artifact="org.junit.platform:junit-platform-commons:1.9.1" usage="main-tests"/>
-    <dependency prefix="main.junit-pengine" artifact="org.junit.platform:junit-platform-engine:1.9.1" usage="main-tests"/>
-    <dependency prefix="main.junit-plauncher" artifact="org.junit.platform:junit-platform-launcher:1.9.1" usage="main-tests"/>
+    <dependency prefix="main.junit-pcommons" artifact="org.junit.platform:junit-platform-commons:1.9.2" usage="main-tests"/>
+    <dependency prefix="main.junit-pengine" artifact="org.junit.platform:junit-platform-engine:1.9.2" usage="main-tests"/>
+    <dependency prefix="main.junit-plauncher" artifact="org.junit.platform:junit-platform-launcher:1.9.2" usage="main-tests"/>
 
 
     <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.35" usage="main-tests"/>
