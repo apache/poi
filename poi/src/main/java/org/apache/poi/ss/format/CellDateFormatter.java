@@ -44,7 +44,7 @@ public class CellDateFormatter extends CellFormatter {
 
     private static final int NUM_MILLISECONDS_IN_DAY = 1000 * 60 * 60 * 24;
 
-    private static CellDateFormatter SIMPLE_DATE_FORMATTER;
+    private static volatile CellDateFormatter SIMPLE_DATE_FORMATTER;
 
     class DatePartHandler implements CellFormatPart.PartHandler {
         private int mStart = -1;
