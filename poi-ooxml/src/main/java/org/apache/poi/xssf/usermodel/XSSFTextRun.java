@@ -81,7 +81,11 @@ public class XSSFTextRun {
             if(fill.isSetSrgbClr()){
                 CTSRgbColor clr = fill.getSrgbClr();
                 byte[] rgb = clr.getVal();
-                return new Color(0xFF & rgb[0], 0xFF & rgb[1], 0xFF & rgb[2]);
+                if (rgb.length == 3) {
+                    return new Color(0xFF & rgb[0], 0xFF & rgb[1], 0xFF & rgb[2]);
+                } else {
+                    return new Color(0xFF & rgb[1], 0xFF & rgb[2], 0xFF & rgb[3], 0xFF & rgb[0]);
+                }
             }
         }
 

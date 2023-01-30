@@ -30,7 +30,7 @@ public abstract class ExtendedColor implements Color {
      * @param clr awt Color to set
      */
     protected void setColor(java.awt.Color clr) {
-        setRGB(new byte[]{(byte)clr.getRed(), (byte)clr.getGreen(), (byte)clr.getBlue()});
+        setRGB(new byte[]{(byte)clr.getAlpha(), (byte)clr.getRed(), (byte)clr.getGreen(), (byte)clr.getBlue()});
     }
 
     /**

@@ -255,7 +255,7 @@ class TestXSSFDrawing {
         assertTrue(rPr.getI());
         assertEquals(STTextUnderlineType.SNG, rPr.getU());
         assertArrayEquals(
-                new byte[]{0, (byte)128, (byte)128} ,
+                new byte[]{-1, 0, (byte)128, (byte)128} ,
                 rPr.getSolidFill().getSrgbClr().getVal());
 
         checkRewrite(wb);
@@ -325,7 +325,7 @@ class TestXSSFDrawing {
         CTTextCharacterProperties rPr = pr.getRArray(0).getRPr();
         assertEquals("Arial", rPr.getLatin().getTypeface());
         assertArrayEquals(
-                new byte[]{0, (byte)128, (byte)128} ,
+                new byte[]{-1, 0, (byte)128, (byte)128} ,
                 rPr.getSolidFill().getSrgbClr().getVal());
         checkRewrite(wb);
         wb.close();

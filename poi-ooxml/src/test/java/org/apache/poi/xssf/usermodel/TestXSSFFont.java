@@ -20,8 +20,8 @@ package org.apache.poi.xssf.usermodel;
 import static org.apache.poi.ss.usermodel.FontCharset.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.awt.Color;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.apache.poi.common.usermodel.fonts.FontCharset;
@@ -520,6 +520,32 @@ public final class TestXSSFFont extends BaseTestFont {
             font.setColor(new XSSFColor(new byte[] {
                     0x7f, 0x33, (byte)0xCC, 0x66
             }));
+
+            XSSFCellStyle style = wb.createCellStyle();
+            style.setFont(font);
+
+            cell.setCellStyle(style);
+            cell.setCellValue("testtext");
+
+            // make sure the alpha-value was stored properly
+            checkFontColor(wb);
+
+            /*try (OutputStream out = new FileOutputStream("/tmp/testout.xlsx")) {
+                wb.write(out);
+            }*/
+        }
+    }
+
+    @Test
+    public void testBug62272b() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("test");
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+
+            // create a font with alpha
+            XSSFFont font = wb.createFont();
+            font.setColor(new XSSFColor(new Color(0x33, 0xCC, 0x66, 0x7f), null));
 
             XSSFCellStyle style = wb.createCellStyle();
             style.setFont(font);
