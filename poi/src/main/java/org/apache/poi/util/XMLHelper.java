@@ -47,6 +47,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.validation.SchemaFactory;
 
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xml.sax.ErrorHandler;
@@ -139,7 +140,7 @@ public final class XMLHelper {
         try {
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
             documentBuilder.setEntityResolver(XMLHelper::ignoreEntity);
-            documentBuilder.setErrorHandler(new DocHelperErrorHandler());
+            documentBuilder.setErrorHandler(new DocHelperErrorHandler(true));
             return documentBuilder;
         } catch (ParserConfigurationException e) {
             throw new IllegalStateException("cannot create a DocumentBuilder", e);
@@ -176,6 +177,7 @@ public final class XMLHelper {
     public static XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
         XMLReader xmlReader = saxFactory.newSAXParser().getXMLReader();
         xmlReader.setEntityResolver(XMLHelper::ignoreEntity);
+        xmlReader.setErrorHandler(new DocHelperErrorHandler(false));
         trySet(xmlReader::setFeature, FEATURE_SECURE_PROCESSING, true);
         trySet(xmlReader::setFeature, FEATURE_EXTERNAL_ENTITIES, false);
         Object manager = getXercesSecurityManager();
@@ -309,6 +311,11 @@ public final class XMLHelper {
     }
 
     private static class DocHelperErrorHandler implements ErrorHandler {
+        private final boolean logException;
+
+        public DocHelperErrorHandler(boolean logException) {
+            this.logException = logException;
+        }
 
         public void warning(SAXParseException exception) {
             printError(Level.WARN, exception);
@@ -339,7 +346,13 @@ public final class XMLHelper {
                     ':' + ex.getColumnNumber() +
                     ':' + ex.getMessage();
 
-            LOG.atLevel(type).withThrowable(ex).log(message);
+            LogBuilder builder = LOG.atLevel(type);
+
+            if (logException) {
+                builder = builder.withThrowable(ex);
+            }
+
+            builder.log(message);
         }
     }
 
