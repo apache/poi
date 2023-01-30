@@ -1453,6 +1453,8 @@ under the License.
                         <modulepath refid="@{modulepath-ref}" unless:true="${isJava8}"/>
 
                         <!--jvmarg line="-verbose:module"/-->
+                        <jvmarg line="--add-opens java.base/java.lang=net.bytebuddy" unless:true="${isJava8}"/>
+
                         <jvmarg line="--add-modules org.junit.platform.launcher" unless:true="${isJava8}"/>
                         <jvmarg line="--add-modules org.junit.jupiter.params" unless:true="${isJava8}"/>
                         <jvmarg line="--add-modules org.apache.poi.@{module1}" if:set="use_module1"/>
