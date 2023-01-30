@@ -597,17 +597,17 @@ public final class IOUtils {
 
     private static void throwRFE(long length, int maxLength) {
         throw new RecordFormatException(String.format(Locale.ROOT, "Tried to allocate an array of length %,d" +
-                        ", but the maximum length for this record type is %,d.\n" +
-                        "If the file is not corrupt and not large, please open an issue on bugzilla to request \n" +
-                        "increasing the maximum allowable size for this record type.\n"+
+                        ", but the maximum length for this record type is %,d.%n" +
+                        "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
+                        "increasing the maximum allowable size for this record type.%n"+
                         "You can set a higher override value with IOUtils.setByteArrayMaxOverride()", length, maxLength));
     }
 
     private static void throwRecordTruncationException(final int maxLength) {
         throw new RecordFormatException(String.format(Locale.ROOT, "Tried to read data but the maximum length " +
-                "for this record type is %,d.\n" +
-                "If the file is not corrupt and not large, please open an issue on bugzilla to request \n" +
-                "increasing the maximum allowable size for this record type.\n"+
+                "for this record type is %,d.%n" +
+                "If the file is not corrupt and not large, please open an issue on bugzilla to request %n" +
+                "increasing the maximum allowable size for this record type.%n"+
                 "You can set a higher override value with IOUtils.setByteArrayMaxOverride()", maxLength));
     }
 }
