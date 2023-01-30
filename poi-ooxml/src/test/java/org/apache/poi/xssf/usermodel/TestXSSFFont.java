@@ -21,16 +21,20 @@ import static org.apache.poi.ss.usermodel.FontCharset.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ss.usermodel.BaseTestFont;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
 import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.LocaleUtil;
@@ -494,5 +498,53 @@ public final class TestXSSFFont extends BaseTestFont {
         notequ.setItalic(false);
         notequ.setThemeColor((short)123);
         assertNotEquals(font, notequ);
+    }
+
+    @Test
+    public void testBug62272() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("62272.xlsx")) {
+            // make sure we read the font-color with alpha
+            checkFontColor(wb);
+        }
+    }
+
+    @Test
+    public void testBug62272a() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("test");
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+
+            // create a font with alpha
+            XSSFFont font = wb.createFont();
+            font.setColor(new XSSFColor(new byte[] {
+                    0x7f, 0x33, (byte)0xCC, 0x66
+            }));
+
+            XSSFCellStyle style = wb.createCellStyle();
+            style.setFont(font);
+
+            cell.setCellStyle(style);
+            cell.setCellValue("testtext");
+
+            // make sure the alpha-value was stored properly
+            checkFontColor(wb);
+
+            /*try (OutputStream out = new FileOutputStream("/tmp/testout.xlsx")) {
+                wb.write(out);
+            }*/
+        }
+    }
+
+    private static void checkFontColor(Workbook wb) {
+        int fontIdx = wb.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFontIndex();
+        Font font = wb.getFontAt(fontIdx);
+        //System.out.println(font.getColor());
+
+        CTColor[] colorArray = ((XSSFFont) font).getCTFont().getColorArray();
+        //System.out.println(Arrays.toString(colorArray));
+        assertArrayEquals(new byte[] {
+                0x7f, 0x33, (byte)0xCC, 0x66
+        }, colorArray[0].getRgb());
     }
 }
