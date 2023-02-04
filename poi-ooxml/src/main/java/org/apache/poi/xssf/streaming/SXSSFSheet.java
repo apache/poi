@@ -63,7 +63,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         setRandomAccessWindowSize(randomAccessWindowSize);
         try {
             _autoSizeColumnTracker = new AutoSizeColumnTracker(this);
-        } catch (InternalError e) {
+        } catch (Throwable t) {
             LOG.atWarn().log("Failed to create AutoSizeColumnTracker, possibly due to fonts not being installed in your OS", e);
         }
     }
@@ -96,7 +96,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         setRandomAccessWindowSize(_workbook.getRandomAccessWindowSize());
         try {
             _autoSizeColumnTracker = new AutoSizeColumnTracker(this);
-        } catch (InternalError e) {
+        } catch (Throwable e) {
             LOG.atWarn().log("Failed to create AutoSizeColumnTracker, possibly due to fonts not being installed in your OS", e);
         }
     }

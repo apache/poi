@@ -300,12 +300,12 @@ public class SheetUtil {
         try {
             TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
             return (int) layout.getAdvance();
-        } catch (UnsatisfiedLinkError | NoClassDefFoundError | InternalError e) {
+        } catch (Throwable t) {
             if (ignoreMissingFontSystem) {
                 return DEFAULT_CHAR_WIDTH;
             }
 
-            throw e;
+            throw t;
         }
     }
 
