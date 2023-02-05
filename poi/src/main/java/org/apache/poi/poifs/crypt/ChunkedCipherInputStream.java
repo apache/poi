@@ -196,6 +196,17 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
             throw new EOFException("buffer underrun");
         }
 
+        // encrypted data is processed in chunks of 16 bytes,
+        // so try to read some more data if the current data is not a
+        // multiple of 16 bytes
+        if (totalBytes % 16 != 0) {
+            int toRead = 16 - totalBytes % 16;
+            int read = super.read(plain, totalBytes, toRead);
+            if (read > 0) {
+                totalBytes += read;
+            }
+        }
+
         System.arraycopy(plain, 0, chunk, 0, totalBytes);
 
         invokeCipher(totalBytes, totalBytes == chunkSize);

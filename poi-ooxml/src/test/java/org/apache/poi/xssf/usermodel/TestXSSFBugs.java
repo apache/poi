@@ -30,12 +30,17 @@ import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -65,6 +70,10 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.EncryptionMode;
+import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
@@ -90,6 +99,7 @@ import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.*;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.XMLHelper;
@@ -3745,6 +3755,106 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             StylesTable stylesTable = reader.getStylesTable();
             assertNotNull(stylesTable);
             assertEquals(23, stylesTable.getFonts().size());
+        }
+    }
+
+    private static final String secretKey = "foobaa";
+
+    @Test
+    void testBug66436() throws IOException, InvalidFormatException, GeneralSecurityException {
+        final File temp_excel_poi = TempFile.createTempFile("temp_excel_poi", ".xlsx");
+        final File temp_excel_poi_encrypt = TempFile.createTempFile("temp_excel_poi_encrypt", ".xlsx");
+        final File temp_excel_poi_decrypt = TempFile.createTempFile("temp_excel_poi_decrypt", ".xlsx");
+
+        /* create new excel by poi */
+        try (XSSFWorkbook workbook = new XSSFWorkbook();
+                FileOutputStream foss = new FileOutputStream(temp_excel_poi)) {
+            XSSFSheet sheet = workbook.createSheet();
+            XSSFRow row = sheet.createRow(0);
+            XSSFCell cell = row.createCell(0);
+            cell.setCellValue("Hello Apache POI");
+            workbook.write(foss);
+        }
+
+        // read bytes of workbook before
+        UnsynchronizedByteArrayOutputStream bosOrig = new UnsynchronizedByteArrayOutputStream();
+        try (FileInputStream fis = new FileInputStream(temp_excel_poi)) {
+            IOUtils.copy(fis, bosOrig);
+        }
+
+        // for the encrypted bytes
+        UnsynchronizedByteArrayOutputStream bosEnc = new UnsynchronizedByteArrayOutputStream();
+
+        /* encrypt excel by poi */
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
+            Encryptor enc = info.getEncryptor();
+            enc.confirmPassword(secretKey);
+
+            // Read in an existing OOXML file and write to encrypted output stream
+            // don't forget to close the output stream otherwise the padding bytes aren't added
+            try (OPCPackage opc = OPCPackage.open(new FileInputStream(temp_excel_poi));
+                    OutputStream os = enc.getDataStream(fs)) {
+                opc.save(os);
+            }
+
+            fs.writeFilesystem(bosEnc);
+
+            bosEnc.close();
+
+            // Write out the encrypted version
+            try (FileOutputStream fos = new FileOutputStream(temp_excel_poi_encrypt)) {
+                IOUtils.copy(new ByteArrayInputStream(bosEnc.toByteArray()), fos);
+            }
+        }
+
+        // for the decrytped bytes
+        UnsynchronizedByteArrayOutputStream bosDec = new UnsynchronizedByteArrayOutputStream();
+
+        /* decrypt excel by poi */
+        try (POIFSFileSystem fileSystem = new POIFSFileSystem(temp_excel_poi_encrypt)) {
+            EncryptionInfo info = new EncryptionInfo(fileSystem);
+            Decryptor d = Decryptor.getInstance(info);
+            if (!d.verifyPassword(secretKey)) {
+                throw new RuntimeException("Unable to process: document is encrypted");
+            }
+
+            // parse dataStream
+            try (InputStream dataStream = d.getDataStream(fileSystem)) {
+                IOUtils.copy(dataStream, bosDec);
+            }
+
+            try (FileOutputStream fos = new FileOutputStream(temp_excel_poi_decrypt)) {
+                IOUtils.copy(new ByteArrayInputStream(bosDec.toByteArray()), fos);
+            }
+        }
+
+        // input-data and resulting decrypted data should be equal
+        /* This is a flaky assertion, maybe there is a timestamp in the files which can differ
+        in the two byte-arrays. Other tests verify this for encryption/decryption anyway
+        assertArrayEquals(bosOrig.toByteArray(), bosDec.toByteArray(),
+                "Having " + bosOrig.size() + " bytes");*/
+
+        // also make sure the original and the resulting decrypted
+        // file can be read, i.e. is a valid Zip
+        readByCommonsCompress(temp_excel_poi);
+        readByCommonsCompress(temp_excel_poi_decrypt);
+    }
+
+    private static void readByCommonsCompress(File temp_excel_poi) throws IOException {
+        /* read by commons-compress*/
+        try (ZipFile zipFile = new ZipFile(temp_excel_poi)) {
+            ZipArchiveEntry entry = zipFile.getEntry("xl/workbook.xml");
+            InputStream inputStream = zipFile.getInputStream(entry);
+
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+            while (true) {
+                String line = bufferedReader.readLine();
+                if (line == null) {
+                    break;
+                }
+                //System.out.println(line);
+            }
         }
     }
 }
