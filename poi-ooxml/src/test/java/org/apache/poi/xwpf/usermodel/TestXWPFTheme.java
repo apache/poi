@@ -31,13 +31,14 @@ public final class TestXWPFTheme {
 
     @Test
     void testRead() throws IOException {
-        XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("sample.docx");
-        XWPFTheme theme = docx.getTheme();
-        assertEquals("Office Theme", theme.getName());
-        assertEquals("Cambria", theme.getMajorFont());
-        assertEquals("Calibri", theme.getMinorFont());
-        CTColor accent1 = theme.getCTColor("accent1");
-        XSLFColor color = new XSLFColor(accent1, null, null, null);
-        assertEquals(new Color(79, 129, 189), color.getColor());
+        try (XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
+            XWPFTheme theme = docx.getTheme();
+            assertEquals("Office Theme", theme.getName());
+            assertEquals("Cambria", theme.getMajorFont());
+            assertEquals("Calibri", theme.getMinorFont());
+            CTColor accent1 = theme.getCTColor("accent1");
+            XSLFColor color = new XSLFColor(accent1, null, null, null);
+            assertEquals(new Color(79, 129, 189), color.getColor());
+        }
     }
 }
