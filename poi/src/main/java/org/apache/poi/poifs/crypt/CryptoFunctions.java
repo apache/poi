@@ -538,7 +538,11 @@ public final class CryptoFunctions {
         // The MS-OFFCRYPTO misses some infos about the various rotation sizes
         byte[] obfuscationArray = new byte[16];
         System.arraycopy(passBytes, 0, obfuscationArray, 0, passBytes.length);
-        System.arraycopy(PAD_ARRAY, 0, obfuscationArray, passBytes.length, PAD_ARRAY.length-passBytes.length+1);
+        if (passBytes.length == 0) {
+            System.arraycopy(PAD_ARRAY, 0, obfuscationArray, passBytes.length, PAD_ARRAY.length);
+        } else {
+            System.arraycopy(PAD_ARRAY, 0, obfuscationArray, passBytes.length, PAD_ARRAY.length - passBytes.length + 1);
+        }
 
         int xorKey = createXorKey1(password);
 
