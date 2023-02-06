@@ -154,7 +154,7 @@ def defaultMaven = 'maven_3_latest'
 def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H29'
 
 def jdkMapping = [
-        '1.8': [ jenkinsJdk: 'jdk_1.8_latest', jdkVersion: 8, jdkVendor: 'oracle' ],
+        '1.8': [ jenkinsJdk: 'jdk_1.8_latest', jdkVersion: 8, jdkVendor: '' ],
         '1.10': [ jenkinsJdk: 'jdk_10_latest', jdkVersion: 10, jdkVendor: '' ],
         '1.11': [ jenkinsJdk: 'jdk_11_latest', jdkVersion: 11, jdkVendor: '' ],
         '1.12': [ jenkinsJdk: 'jdk_12_latest', jdkVersion: 12, jdkVendor: '' ],
