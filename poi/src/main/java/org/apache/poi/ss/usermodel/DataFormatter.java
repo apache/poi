@@ -99,7 +99,7 @@ import org.apache.poi.util.StringUtil;
  *  The trailing underscore and space ("_ ") in the format adds a space to the end and Excel formats this cell as {@code "12.34 "},
  *  but {@code DataFormatter} trims the formatted value and returns {@code "12.34"}.
  * </p>
- * You can enable spaces by passing the {@code emulateCSV=true} flag in the {@code DateFormatter} cosntructor.
+ * You can enable spaces by passing the {@code emulateCSV=true} flag in the {@code DateFormatter} constructor.
  * If set to true, then the output tries to conform to what you get when you take an xls or xlsx in Excel and Save As CSV file:
  * <ul>
  *  <li>returned values are not trimmed</li>
@@ -496,7 +496,11 @@ public class DataFormatter {
            return generalNumberFormat;
         }
 
-        if(DateUtil.isADateFormat(formatIndex,formatStr) &&
+        if (formatStr == null) {
+            return null;
+        }
+
+        if(DateUtil.isADateFormat(formatIndex, formatStr) &&
                 DateUtil.isValidExcelDate(cellValue)) {
             return createDateFormat(formatStr, cellValue);
         }
