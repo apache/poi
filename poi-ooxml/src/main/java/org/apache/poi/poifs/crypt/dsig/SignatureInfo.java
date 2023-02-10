@@ -153,9 +153,9 @@ import org.w3c.dom.events.MutationEvent;
  * <p>To use SignatureInfo and its sibling classes, you'll need to have the following libs
  * in the classpath:</p>
  * <ul>
- * <li>BouncyCastle bcpkix and bcprov (tested against 1.70)</li>
- * <li>Apache Santuario "xmlsec" (tested against 2.3.0)</li>
- * <li>and log4j-api (tested against 2.17.x)</li>
+ * <li>BouncyCastle bcpkix and bcprov (tested against 1.72)</li>
+ * <li>Apache Santuario "xmlsec" (tested against 3.0.1)</li>
+ * <li>and log4j-api (tested against 2.19.x)</li>
  * </ul>
  */
 public class SignatureInfo {

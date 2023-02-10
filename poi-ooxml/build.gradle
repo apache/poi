@@ -67,12 +67,12 @@ dependencies {
     api 'org.apache.commons:commons-collections4:4.4'
 
     signingImplementation 'org.apache.santuario:xmlsec:3.0.1'
-    signingImplementation "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
-    signingImplementation "org.bouncycastle:bcutil-jdk15on:${bouncyCastleVersion}"
+    signingImplementation "org.bouncycastle:bcpkix-jdk18on:${bouncyCastleVersion}"
+    signingImplementation "org.bouncycastle:bcutil-jdk18on:${bouncyCastleVersion}"
 
     rendersignImplementation 'org.apache.santuario:xmlsec:3.0.1'
-    rendersignImplementation "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
-    rendersignImplementation "org.bouncycastle:bcutil-jdk15on:${bouncyCastleVersion}"
+    rendersignImplementation "org.bouncycastle:bcpkix-jdk18on:${bouncyCastleVersion}"
+    rendersignImplementation "org.bouncycastle:bcutil-jdk18on:${bouncyCastleVersion}"
 
     renderImplementation "org.apache.pdfbox:pdfbox:${pdfboxVersion}"
     renderImplementation "de.rototor.pdfbox:graphics2d:${graphics2dVersion}"

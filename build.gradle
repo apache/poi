@@ -115,7 +115,7 @@ subprojects {
     apply plugin: 'org.cyclonedx.bom'
 
     ext {
-        bouncyCastleVersion = '1.70'
+        bouncyCastleVersion = '1.72'
         commonsCodecVersion = '1.15'
         commonsCompressVersion = '1.22'
         commonsIoVersion = '2.11.0'
