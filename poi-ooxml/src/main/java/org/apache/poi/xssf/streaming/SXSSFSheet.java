@@ -2154,9 +2154,9 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         throw new UnsupportedOperationException("Not Implemented");
     }
 
-    void trackNewCell(SXSSFCell cell) {
-        leftMostColumn = Math.min(cell.getColumnIndex(), leftMostColumn);
-        rightMostColumn = Math.max(cell.getColumnIndex(), rightMostColumn);
+    void trackNewCell(int column) {
+        leftMostColumn = Math.min(column, leftMostColumn);
+        rightMostColumn = Math.max(column, rightMostColumn);
     }
 
     void deriveDimension() {
