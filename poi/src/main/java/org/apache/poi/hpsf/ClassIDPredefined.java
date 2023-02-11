@@ -112,7 +112,7 @@ public enum ClassIDPredefined {
     }
 
     private final String externalForm;
-    private volatile ClassID classId;
+    private ClassID classId;
     private final String fileExtension;
     private final String contentType;
 
