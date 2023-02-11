@@ -626,32 +626,17 @@ public class SignatureInfo {
      */
     @SuppressWarnings("deprecation")
     protected void initXmlProvider() {
-        if (opcPackage == null) {
-            opcPackage = signatureConfig.getOpcPackage();
-        }
         if (provider == null) {
-            provider = signatureConfig.getProvider();
-            if (provider == null) {
-                provider = XmlProviderInitSingleton.getInstance().findProvider();
-            }
+            provider = XmlProviderInitSingleton.getInstance().findProvider();
         }
         if (signatureFactory == null) {
-            signatureFactory = signatureConfig.getSignatureFactory();
-            if (signatureFactory == null) {
-                signatureFactory = XMLSignatureFactory.getInstance("DOM", provider);
-            }
+            signatureFactory = XMLSignatureFactory.getInstance("DOM", provider);
         }
         if (keyInfoFactory == null) {
-            keyInfoFactory = signatureConfig.getKeyInfoFactory();
-            if (keyInfoFactory == null) {
-                keyInfoFactory = KeyInfoFactory.getInstance("DOM", provider);
-            }
+            keyInfoFactory = KeyInfoFactory.getInstance("DOM", provider);
         }
         if (uriDereferencer == null) {
-            uriDereferencer = signatureConfig.getUriDereferencer();
-            if (uriDereferencer == null) {
-                uriDereferencer = new OOXMLURIDereferencer();
-            }
+            uriDereferencer = new OOXMLURIDereferencer();
         }
         if (uriDereferencer instanceof OOXMLURIDereferencer) {
             ((OOXMLURIDereferencer)uriDereferencer).setSignatureInfo(this);

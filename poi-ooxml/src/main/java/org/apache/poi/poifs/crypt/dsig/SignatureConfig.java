@@ -125,12 +125,6 @@ public class SignatureConfig {
         Office2010SignatureFacet::new
     );
 
-
-    private final ThreadLocal<OPCPackage> opcPackage = new ThreadLocal<>();
-    private final ThreadLocal<XMLSignatureFactory> signatureFactory = new ThreadLocal<>();
-    private final ThreadLocal<KeyInfoFactory> keyInfoFactory = new ThreadLocal<>();
-    private final ThreadLocal<Provider> provider = new ThreadLocal<>();
-
     private List<SignatureFacet> signatureFacets = new ArrayList<>();
     private HashAlgorithm digestAlgo = HashAlgorithm.sha256;
     private Date executionTime = new Date();
@@ -322,28 +316,6 @@ public class SignatureConfig {
      */
     public void setDigestAlgo(HashAlgorithm digestAlgo) {
         this.digestAlgo = digestAlgo;
-    }
-
-    /**
-     * @return the opc package to be used by this thread, stored as thread-local
-     *
-     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#setOpcPackage(OPCPackage)} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public OPCPackage getOpcPackage() {
-        return opcPackage.get();
-    }
-
-    /**
-     * @param opcPackage the opc package to be handled by this thread, stored as thread-local
-     *
-     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#setOpcPackage(OPCPackage)} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public void setOpcPackage(OPCPackage opcPackage) {
-        this.opcPackage.set(opcPackage);
     }
 
     /**
@@ -1009,74 +981,6 @@ public class SignatureConfig {
             default: throw new EncryptedDocumentException("Hash algorithm "
                     +signatureMethodUri+" not supported.");
         }
-    }
-
-
-    /**
-     * @param signatureFactory the xml signature factory, saved as thread-local
-     *
-     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#setSignatureFactory(XMLSignatureFactory)}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public void setSignatureFactory(XMLSignatureFactory signatureFactory) {
-        this.signatureFactory.set(signatureFactory);
-    }
-
-    /**
-     * @return the xml signature factory (thread-local)
-     *
-     * @deprecated in POI 5.0.0 - will be handled by SignatureInfo internally
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public XMLSignatureFactory getSignatureFactory() {
-        return signatureFactory.get();
-    }
-
-    /**
-     * @param keyInfoFactory the key factory, saved as thread-local
-     *
-     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#setKeyInfoFactory(KeyInfoFactory)}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public void setKeyInfoFactory(KeyInfoFactory keyInfoFactory) {
-        this.keyInfoFactory.set(keyInfoFactory);
-    }
-
-    /**
-     * @return the key factory (thread-local)
-     *
-     * @deprecated in POI 5.0.0 - will be handled by SignatureInfo internally
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public KeyInfoFactory getKeyInfoFactory() {
-        return keyInfoFactory.get();
-    }
-
-    /**
-     * Helper method to set provider
-     * @param provider the provider
-     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#setProvider(Provider)}
-     */
-    @Internal
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public void setProvider(Provider provider) {
-        this.provider.set(provider);
-    }
-
-    /**
-     * @return the cached provider or null if not set before
-     *
-     * @deprecated in POI 5.0.0 - will be handled by SignatureInfo internally
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public Provider getProvider() {
-        return provider.get();
     }
 
     /**
