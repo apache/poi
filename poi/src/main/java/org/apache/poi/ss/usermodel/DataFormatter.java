@@ -47,7 +47,6 @@ import org.apache.poi.ss.format.CellFormatResult;
 import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
 import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.ss.util.NumberToTextConverter;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
 
@@ -408,9 +407,6 @@ public class DataFormatter {
                 // Wrap and return (non-cacheable - CellFormat does that)
                 return new CellFormatResultWrapper( cfmt.apply(cellValueO) );
             } catch (Exception e) {
-                if (ExceptionUtil.isFatal(e)) {
-                    ExceptionUtil.rethrow(e);
-                }
                 LOG.atWarn().withThrowable(e).log("Formatting failed for format {}, falling back", formatStr);
             }
         }
@@ -1123,9 +1119,6 @@ public class DataFormatter {
                     try {
                         cellType = cell.getCachedFormulaResultType();
                     } catch (Exception e) {
-                        if (ExceptionUtil.isFatal(e)) {
-                            ExceptionUtil.rethrow(e);
-                        }
                         return cell.getCellFormula();
                     }
                 } else {

@@ -20,7 +20,6 @@ package org.apache.poi.hwpf.sprm;
 import java.util.Arrays;
 
 import org.apache.poi.common.Duplicatable;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -209,9 +208,6 @@ public final class SprmBuffer implements Duplicatable {
             try {
                 stringBuilder.append(iterator.next());
             } catch (Exception exc) {
-                if (ExceptionUtil.isFatal(exc)) {
-                    ExceptionUtil.rethrow(exc);
-                }
                 stringBuilder.append("error");
             }
             stringBuilder.append("; ");

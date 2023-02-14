@@ -32,7 +32,6 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.StringValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.util.NumberComparer;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 
@@ -137,9 +136,6 @@ public final class DStarRunner implements Function3Arg {
                 return e.getErrorEval();
             }
         } catch (Exception e) {
-            if (ExceptionUtil.isFatal(e)) {
-                ExceptionUtil.rethrow(e);
-            }
             if (!algorithm.allowEmptyMatchField()) {
                 return ErrorEval.VALUE_INVALID;
             }

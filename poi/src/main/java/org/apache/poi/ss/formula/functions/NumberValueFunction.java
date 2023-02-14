@@ -25,7 +25,6 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.OperandResolver;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.LocaleUtil;
 
 /**
@@ -112,9 +111,6 @@ public final class NumberValueFunction implements FreeRefFunction {
         } catch (EvaluationException e) {
             return e.getErrorEval();
         } catch (Exception e) {
-            if (ExceptionUtil.isFatal(e)) {
-                ExceptionUtil.rethrow(e);
-            }
             return ErrorEval.VALUE_INVALID; //If any of the arguments are not valid, NUMBERVALUE returns the #VALUE! error value.
         }
 

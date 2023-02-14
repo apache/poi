@@ -32,7 +32,6 @@ import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
 import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -77,10 +76,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
         //read available styles
         try {
             init();
-        } catch (Exception e) {
-            if (ExceptionUtil.isFatal(e)) {
-                ExceptionUtil.rethrow(e);
-            }
+        } catch (Exception e){
             LOG.atWarn().withThrowable(e).log("Exception when reading available styles");
         }
     }

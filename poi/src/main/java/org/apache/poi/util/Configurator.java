@@ -34,9 +34,6 @@ public class Configurator {
         try {
             return Integer.parseInt(property);
         } catch (Exception e) {
-            if (ExceptionUtil.isFatal(e)) {
-                ExceptionUtil.rethrow(e);
-            }
             LOG.atError().log("System property -D{} does not contains a valid integer: {}", systemProperty, property);
             return defaultValue;
         }

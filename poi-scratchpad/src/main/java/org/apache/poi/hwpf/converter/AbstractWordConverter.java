@@ -51,7 +51,6 @@ import org.apache.poi.hwpf.usermodel.TableCell;
 import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
@@ -628,9 +627,6 @@ public abstract class AbstractWordConverter {
                 processDocumentInformation(summaryInformation);
             }
         } catch (Exception exc) {
-            if (ExceptionUtil.isFatal(exc)) {
-                ExceptionUtil.rethrow(exc);
-            }
             LOG.atWarn().withThrowable(exc).log("Unable to process document summary information");
         }
 
@@ -896,9 +892,6 @@ public abstract class AbstractWordConverter {
         try {
             return processOle2(doc, block, entry);
         } catch (Exception exc) {
-            if (ExceptionUtil.isFatal(exc)) {
-                ExceptionUtil.rethrow(exc);
-            }
             LOG.atWarn().withThrowable(exc).log("Unable to convert internal OLE2 object '{}'", box(characterRun.getPicOffset()));
             return false;
         }
@@ -954,9 +947,6 @@ public abstract class AbstractWordConverter {
                     processParagraph(wordDocument, flow, currentTableLevel, paragraph, label);
                     processed = true;
                 } catch (Exception exc) {
-                    if (ExceptionUtil.isFatal(exc)) {
-                        ExceptionUtil.rethrow(exc);
-                    }
                     LOG.atWarn().withThrowable(exc).log("Can't process paragraph as list entry, will be processed without list information");
                 }
             }

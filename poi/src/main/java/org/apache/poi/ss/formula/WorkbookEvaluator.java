@@ -40,7 +40,6 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellRangeAddressBase;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.Internal;
 
 import static org.apache.logging.log4j.util.Unbox.box;
@@ -333,9 +332,6 @@ public final class WorkbookEvaluator {
             String msg = "Error evaluating cell " + cr.formatAsString();
             return new NotImplementedException(msg, inner);
         } catch (Exception e) {
-            if (ExceptionUtil.isFatal(e)) {
-                ExceptionUtil.rethrow(e);
-            }
             // avoid bombing out during exception handling
             LOG.atError().withThrowable(e).log("Can't add exception info");
             return inner; // preserve original exception

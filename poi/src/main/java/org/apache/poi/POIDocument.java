@@ -45,7 +45,6 @@ import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 
@@ -246,9 +245,6 @@ public abstract class POIDocument implements Closeable {
         } catch (IOException e) {
             throw e;
         } catch (Exception e) {
-            if (ExceptionUtil.isFatal(e)) {
-                ExceptionUtil.rethrow(e);
-            }
             throw new IOException("Error "+step+" property set with name " + setName, e);
         } finally {
             IOUtils.closeQuietly(encPoifs);

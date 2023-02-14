@@ -22,7 +22,6 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.util.ExceptionUtil;
 
 import java.util.List;
 
@@ -58,9 +57,6 @@ public class Covar extends Fixed2ArgFunction implements FreeRefFunction {
         } catch (EvaluationException e) {
             return e.getErrorEval();
         } catch (Exception e) {
-            if (ExceptionUtil.isFatal(e)) {
-                ExceptionUtil.rethrow(e);
-            }
             return ErrorEval.NA;
         }
     }

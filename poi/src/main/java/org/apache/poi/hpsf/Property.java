@@ -35,7 +35,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.util.CodePageUtil;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -404,9 +403,6 @@ public class Property {
             try {
                 write(bos, codepage);
             } catch (Exception e) {
-                if (ExceptionUtil.isFatal(e)) {
-                    ExceptionUtil.rethrow(e);
-                }
                 LOG.atWarn().withThrowable(e).log("can't serialize string");
             }
 
@@ -479,9 +475,6 @@ public class Property {
                     return LocaleUtil.getLocaleFromLCID(((Number)value).intValue());
             }
         } catch (Exception e) {
-            if (ExceptionUtil.isFatal(e)) {
-                ExceptionUtil.rethrow(e);
-            }
             LOG.atWarn().log("Can't decode id {}", box(getID()));
         }
         return null;

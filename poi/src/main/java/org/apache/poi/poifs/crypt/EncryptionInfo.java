@@ -35,7 +35,6 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.LittleEndianInput;
 
 /**
@@ -142,9 +141,6 @@ public class EncryptionInfo implements GenericRecord {
         try {
             eib = getBuilder(encryptionMode);
         } catch (Exception e) {
-            if (ExceptionUtil.isFatal(e)) {
-                ExceptionUtil.rethrow(e);
-            }
             throw new IOException(e);
         }
 
@@ -191,9 +187,6 @@ public class EncryptionInfo implements GenericRecord {
         try {
             eib = getBuilder(encryptionMode);
         } catch (Exception e) {
-            if (ExceptionUtil.isFatal(e)) {
-                ExceptionUtil.rethrow(e);
-            }
             throw new EncryptedDocumentException(e);
         }
 

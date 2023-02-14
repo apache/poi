@@ -35,7 +35,6 @@ import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.image.ImageHeaderPICT;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
@@ -105,9 +104,6 @@ public final class PICT extends Metafile {
                         Arrays.fill(chunk, (byte) 0);
                     }
                 } catch (Exception e) {
-                    if (ExceptionUtil.isFatal(e)) {
-                        ExceptionUtil.rethrow(e);
-                    }
                     int lastLen = chunk.length - 1;
                     while (lastLen >= 0 && chunk[lastLen] == 0) {
                         lastLen--;

@@ -42,7 +42,6 @@ import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.ptg.Ref3DPxg;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.LocaleUtil;
 
 /**
@@ -258,9 +257,6 @@ public final class OperationEvaluationContext {
                             }
                             return new LazyAreaEval(0, absoluteC, ssVersion.getLastRowIndex(), absoluteC, sre);
                         } catch (Exception e) {
-                            if (ExceptionUtil.isFatal(e)) {
-                                ExceptionUtil.rethrow(e);
-                            }
                             return ErrorEval.REF_INVALID;
                         }
                     }
@@ -283,9 +279,6 @@ public final class OperationEvaluationContext {
                             }
                             return new LazyAreaEval(absoluteR, 0, absoluteR, ssVersion.getLastColumnIndex(), sre);
                         } catch (Exception e) {
-                            if (ExceptionUtil.isFatal(e)) {
-                                ExceptionUtil.rethrow(e);
-                            }
                             return ErrorEval.REF_INVALID;
                         }
                     }

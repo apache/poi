@@ -24,7 +24,6 @@ import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.util.ExceptionUtil;
 
 import static org.apache.poi.ss.formula.eval.RelationalOperationEval.EqualEval;
 
@@ -54,9 +53,6 @@ public final class Switch implements FreeRefFunction {
         try {
             expression = OperandResolver.getSingleValue(args[0], ec.getRowIndex(), ec.getColumnIndex());
         } catch (Exception e) {
-            if (ExceptionUtil.isFatal(e)) {
-                ExceptionUtil.rethrow(e);
-            }
             return ErrorEval.NA;
         }
 

@@ -51,7 +51,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
 
@@ -510,9 +509,6 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
                 // see TextFunction.TRIM for implementation
                 return StringUtil.isBlank(v);
             } catch (Exception e) {
-                if (ExceptionUtil.isFatal(e)) {
-                    ExceptionUtil.rethrow(e);
-                }
                 // not a valid string value, and not a blank cell (that's checked earlier)
                 return false;
             }
@@ -522,9 +518,6 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
                 // see TextFunction.TRIM for implementation
                 return StringUtil.isNotBlank(v);
             } catch (Exception e) {
-                if (ExceptionUtil.isFatal(e)) {
-                    ExceptionUtil.rethrow(e);
-                }
                 // not a valid string value, but not blank
                 return true;
             }

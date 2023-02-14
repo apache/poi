@@ -45,7 +45,6 @@ import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
@@ -443,10 +442,7 @@ public class HemfPlusImage {
                     default:
                         break;
                 }
-            } catch (Exception e) {
-                if (ExceptionUtil.isFatal(e)) {
-                    ExceptionUtil.rethrow(e);
-                }
+            } catch (Exception ignored) {
             }
             return new Rectangle2D.Double(1,1,1,1);
         }

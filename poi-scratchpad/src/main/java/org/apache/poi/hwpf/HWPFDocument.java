@@ -71,7 +71,6 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
@@ -299,9 +298,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         try {
             preserveBinTables = Boolean.parseBoolean(System.getProperty(PROPERTY_PRESERVE_BIN_TABLES));
         } catch (Exception exc) {
-            if (ExceptionUtil.isFatal(exc)) {
-                ExceptionUtil.rethrow(exc);
-            }
+            // ignore;
         }
 
         if (!preserveBinTables) {
@@ -317,9 +314,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         try {
             preserveTextTable = Boolean.parseBoolean(System.getProperty(PROPERTY_PRESERVE_TEXT_TABLE));
         } catch (Exception exc) {
-            if (ExceptionUtil.isFatal(exc)) {
-                ExceptionUtil.rethrow(exc);
-            }
+            // ignore;
         }
         if (!preserveTextTable) {
             _cft = new ComplexFileTable();

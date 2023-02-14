@@ -33,7 +33,6 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.util.ExceptionUtil;
 
 /**
  * Implementation for Excel WeekNum() function.
@@ -70,9 +69,6 @@ public class WeekNum extends Fixed2ArgFunction implements FreeRefFunction {
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
         } catch (Exception e) {
-            if (ExceptionUtil.isFatal(e)) {
-                ExceptionUtil.rethrow(e);
-            }
             return ErrorEval.NUM_ERROR;
         }
         int returnType;

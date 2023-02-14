@@ -25,7 +25,6 @@ import org.apache.poi.hdgf.chunks.Chunk;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.chunks.ChunkHeader;
 import org.apache.poi.hdgf.pointers.Pointer;
-import org.apache.poi.util.ExceptionUtil;
 
 import static org.apache.logging.log4j.util.Unbox.box;
 
@@ -73,10 +72,9 @@ public final class ChunkStream extends Stream {
                     pos = contents.length;
                 }
             }
-        } catch (Exception e) {
-            if (ExceptionUtil.isFatal(e)) {
-                ExceptionUtil.rethrow(e);
-            }
+        }
+        catch (Exception e)
+        {
             LOG.atError().withThrowable(e).log("Failed to create chunk at {}, ignoring rest of data.", box(pos));
         }
 
