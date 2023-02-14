@@ -29,6 +29,7 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.Section;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
+import org.apache.poi.util.ExceptionUtil;
 
 /**
  * <p>Sample application showing how to read a document's custom property set.
@@ -66,6 +67,9 @@ public final class ReadCustomPropertySets {
             out("No property set stream: \"" + streamName + "\"");
             return;
         } catch (Exception ex) {
+            if (ExceptionUtil.isFatal(ex)) {
+                ExceptionUtil.rethrow(ex);
+            }
             throw new HPSFRuntimeException("Property set stream \"" + streamName + "\": " + ex);
         }
 

@@ -50,6 +50,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.model.CalculationChain;
@@ -1164,6 +1165,9 @@ public final class XSSFCell extends CellBase {
                     RichTextString rt = _sharedStringSource.getItemAt(sstIndex);
                     return rt.getString();
                 } catch (Throwable t) {
+                    if (ExceptionUtil.isFatal(t)) {
+                        ExceptionUtil.rethrow(t);
+                    }
                     return "";
                 }
             case NUMERIC:

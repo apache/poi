@@ -163,9 +163,15 @@ public final class XMLHelper {
             // this also catches NoClassDefFoundError, which may be due to a local class path issue
             // This may occur if the code is run inside a web container or a restricted JVM
             // See bug 61170: https://bz.apache.org/bugzilla/show_bug.cgi?id=61170
+            if (ExceptionUtil.isFatal(re)) {
+                ExceptionUtil.rethrow(re);
+            }
             logThrowable(re, "Failed to create SAXParserFactory", "-");
             throw re;
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             logThrowable(e, "Failed to create SAXParserFactory", "-");
             throw new IllegalStateException("Failed to create SAXParserFactory", e);
         }
@@ -260,6 +266,9 @@ public final class XMLHelper {
             } catch (ClassNotFoundException ignored) {
                 // continue without log, this is expected in some setups
             } catch (Throwable e) {     // NOSONAR - also catch things like NoClassDefError here
+                if (ExceptionUtil.isFatal(e)) {
+                    ExceptionUtil.rethrow(e);
+                }
                 logThrowable(e, "SAX Feature unsupported", securityManagerClassName);
             }
         }
@@ -273,9 +282,15 @@ public final class XMLHelper {
             feature.accept(name, value);
             return true;
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             logThrowable(e, "SAX Feature unsupported", name);
-        } catch (Error ame) {
-            logThrowable(ame, "Cannot set SAX feature because outdated XML parser in classpath", name);
+        } catch (Error e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
+            logThrowable(e, "Cannot set SAX feature because outdated XML parser in classpath", name);
         }
         return false;
     }
@@ -285,10 +300,16 @@ public final class XMLHelper {
             property.accept(name, value);
             return true;
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             logThrowable(e, "SAX Feature unsupported", name);
-        } catch (Error ame) {
+        } catch (Error e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             // ignore all top error object - GraalVM in native mode is not coping with java.xml error message resources
-            logThrowable(ame, "Cannot set SAX feature because outdated XML parser in classpath", name);
+            logThrowable(e, "Cannot set SAX feature because outdated XML parser in classpath", name);
         }
         return false;
     }
@@ -298,7 +319,9 @@ public final class XMLHelper {
             property.accept(name, value);
             return true;
         } catch (Exception|Error e) {
-            // ok to ignore
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
         }
         return false;
     }

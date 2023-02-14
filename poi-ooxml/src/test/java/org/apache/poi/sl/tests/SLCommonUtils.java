@@ -25,6 +25,7 @@ import java.io.InputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.util.ExceptionUtil;
 
 public class SLCommonUtils {
     private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
@@ -34,7 +35,8 @@ public class SLCommonUtils {
         try (InputStream is = _slTests.openResourceAsStream(sampleName)) {
             return SlideShowFactory.create(is);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            ExceptionUtil.rethrow(e);
+            return null; //keeps compiler happy, the ExceptionUtil.rethrow(e) will throw an exception
         }
     }
 
@@ -48,7 +50,10 @@ public class SLCommonUtils {
         try {
             Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow");
             return false;
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             return true;
         }
     }

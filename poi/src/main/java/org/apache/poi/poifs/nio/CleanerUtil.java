@@ -17,6 +17,7 @@
 
 package org.apache.poi.poifs.nio;
 
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.SuppressForbidden;
 
 import java.io.IOException;
@@ -181,7 +182,9 @@ public final class CleanerUtil {
                             unmapper.invokeExact(buffer);
                             return null;
                         } catch (Throwable t) {
-                            return t;
+                            if (ExceptionUtil.isFatal(t)) {
+                                ExceptionUtil.rethrow(t);
+                            }
                         }
                     });
             if (error != null) {
