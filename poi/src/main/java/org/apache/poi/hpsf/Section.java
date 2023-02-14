@@ -35,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -547,6 +548,9 @@ public class Section {
         } catch (HPSFRuntimeException ex) {
             throw ex;
         } catch (Exception ex) {
+            if (ExceptionUtil.isFatal(ex)) {
+                ExceptionUtil.rethrow(ex);
+            }
             throw new HPSFRuntimeException(ex);
         }
     }

@@ -25,6 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -61,6 +62,9 @@ public final class Biff8DecryptingStream implements BiffHeaderInput, LittleEndia
                 ccis.readFully(initialBuf);
             }
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new RecordFormatException(e);
         }
     }

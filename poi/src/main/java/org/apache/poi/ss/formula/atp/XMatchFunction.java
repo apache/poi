@@ -22,6 +22,7 @@ import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.functions.LookupUtils;
+import org.apache.poi.util.ExceptionUtil;
 
 /**
  * Implementation of Excel function XMATCH()
@@ -64,6 +65,9 @@ final class XMatchFunction implements FreeRefFunction {
             } catch (EvaluationException e) {
                 return e.getErrorEval();
             } catch (Exception e) {
+                if (ExceptionUtil.isFatal(e)) {
+                    ExceptionUtil.rethrow(e);
+                }
                 return ErrorEval.VALUE_INVALID;
             }
         }
@@ -76,6 +80,9 @@ final class XMatchFunction implements FreeRefFunction {
             } catch (EvaluationException e) {
                 return e.getErrorEval();
             } catch (Exception e) {
+                if (ExceptionUtil.isFatal(e)) {
+                    ExceptionUtil.rethrow(e);
+                }
                 return ErrorEval.VALUE_INVALID;
             }
         }

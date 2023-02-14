@@ -42,6 +42,7 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -212,6 +213,8 @@ public class CryptoAPIDecryptor extends Decryptor {
                 throw (GeneralSecurityException)e;
             } else if (e instanceof IOException) {
                 throw (IOException)e;
+            } else if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
             } else {
                 throw new IOException("summary entries can't be read", e);
             }

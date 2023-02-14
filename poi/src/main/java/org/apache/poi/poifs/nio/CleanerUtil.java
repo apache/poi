@@ -180,14 +180,17 @@ public final class CleanerUtil {
                     (PrivilegedAction<Throwable>) () -> {
                         try {
                             unmapper.invokeExact(buffer);
-                            return null;
                         } catch (Throwable t) {
                             if (ExceptionUtil.isFatal(t)) {
                                 ExceptionUtil.rethrow(t);
                             }
                         }
+                        return null;
                     });
             if (error != null) {
+                if (ExceptionUtil.isFatal(error)) {
+                    ExceptionUtil.rethrow(error);
+                }
                 throw new IOException("Unable to unmap the mapped buffer", error);
             }
         };

@@ -34,6 +34,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.RC2ParameterSpec;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -346,6 +347,9 @@ public final class CryptoFunctions {
             Class<Provider> clazz = (Class<Provider>)cl.loadClass(bcProviderName);
             Security.addProvider(clazz.getDeclaredConstructor().newInstance());
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new EncryptedDocumentException("Only the BouncyCastle provider supports your encryption settings - please add it to the classpath.", e);
         }
     }

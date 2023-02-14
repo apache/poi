@@ -28,6 +28,7 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.DateParser;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.LocaleUtil;
 
 /**
@@ -82,6 +83,9 @@ public class Days implements FreeRefFunction {
             double d0 = NumericFunction.singleOperandEvaluate(ve, srcRowIndex, srcColumnIndex);
             return getDate(d0);
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             String strText1 = OperandResolver.coerceValueToString(ve);
             return DateParser.parseLocalDate(strText1);
         }

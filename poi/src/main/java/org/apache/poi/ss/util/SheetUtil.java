@@ -38,6 +38,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.Internal;
 
 
@@ -192,6 +193,9 @@ public class SheetUtil {
                 try {
                     sval = formatter.formatCellValue(cell, dummyEvaluator);
                 } catch (Exception e) {
+                    if (ExceptionUtil.isFatal(e)) {
+                        ExceptionUtil.rethrow(e);
+                    }
                     sval = String.valueOf(cell.getNumericCellValue());
                 }
             } else if (cellType == CellType.BOOLEAN) {

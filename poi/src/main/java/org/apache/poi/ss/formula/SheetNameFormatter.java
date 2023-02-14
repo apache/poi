@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.util.ExceptionUtil;
 
 /**
  * Formats sheet names for use in formula expressions.
@@ -68,6 +69,9 @@ public final class SheetNameFormatter {
                 appendAndEscape(out, rawSheetName);
             }
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new IllegalStateException(e);
         }
     }
@@ -96,6 +100,9 @@ public final class SheetNameFormatter {
                 appendOrREF(out, rawSheetName);
             }
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new IllegalStateException(e);
         }
     }
@@ -125,6 +132,9 @@ public final class SheetNameFormatter {
                 sb.append(ch);
             }
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new IllegalStateException(e);
         }
     }

@@ -24,6 +24,7 @@ import javax.crypto.Cipher;
 import org.apache.commons.io.input.BoundedInputStream;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.Internal;
 
 /**
@@ -59,6 +60,9 @@ import org.apache.poi.util.Internal;
             cipher.update(oneByte, 0, 1, oneByte, 0);
             super.write(oneByte);
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new EncryptedDocumentException(e);
         }
     }
@@ -69,6 +73,9 @@ import org.apache.poi.util.Internal;
             cipher.update(b, off, len, b, off);
             super.write(b, off, len);
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new EncryptedDocumentException(e);
         }
     }

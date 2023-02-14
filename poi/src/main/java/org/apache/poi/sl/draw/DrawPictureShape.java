@@ -35,6 +35,7 @@ import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.RectAlign;
+import org.apache.poi.util.ExceptionUtil;
 
 
 public class DrawPictureShape extends DrawSimpleShape {
@@ -103,7 +104,10 @@ public class DrawPictureShape extends DrawSimpleShape {
                 }
             } catch (NoSuchElementException ignored) {
                 break;
-            } catch (Exception | ServiceConfigurationError ignored) {
+            } catch (Exception | ServiceConfigurationError e) {
+                if (ExceptionUtil.isFatal(e)) {
+                    ExceptionUtil.rethrow(e);
+                }
             }
         }
 

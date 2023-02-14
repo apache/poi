@@ -24,6 +24,7 @@ import org.apache.poi.poifs.crypt.ChainingMode;
 import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.EncryptionHeader;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.GenericRecordUtil;
 
 public class AgileEncryptionHeader extends EncryptionHeader {
@@ -48,6 +49,9 @@ public class AgileEncryptionHeader extends EncryptionHeader {
                 throw new NullPointerException("keyData not set");
             }
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new EncryptedDocumentException("Unable to parse keyData");
         }
 

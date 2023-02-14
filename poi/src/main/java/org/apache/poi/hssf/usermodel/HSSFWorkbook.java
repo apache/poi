@@ -105,6 +105,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Configurator;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
@@ -1584,6 +1585,9 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             }
             os.close();
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new EncryptedDocumentException(e);
         }
     }

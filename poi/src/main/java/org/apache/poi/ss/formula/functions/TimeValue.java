@@ -22,6 +22,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.DateParser;
+import org.apache.poi.util.ExceptionUtil;
 
 import java.time.DateTimeException;
 import java.time.LocalDate;
@@ -60,11 +61,17 @@ public class TimeValue extends Fixed1ArgFunction {
             try {
                 return parseTimeFromDateTime(dateTimeText);
             } catch (Exception e) {
+                if (ExceptionUtil.isFatal(e)) {
+                    ExceptionUtil.rethrow(e);
+                }
                 try {
                     //this could be a time (with no date part) - prepend a dummy date because
                     //parseTimeFromDateTime needs it
                     return parseTimeFromDateTime("1/01/2000 " + dateTimeText);
                 } catch (Exception e2) {
+                    if (ExceptionUtil.isFatal(e2)) {
+                        ExceptionUtil.rethrow(e2);
+                    }
                     LocalDate ld = DateParser.parseLocalDate(dateTimeText);
                     //return 0 as this is a pure date with no time element
                     return new NumberEval(0);

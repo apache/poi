@@ -47,6 +47,7 @@ import org.apache.poi.ss.usermodel.ShapeContainer;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 
@@ -132,6 +133,9 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
                         data = new EmbeddedData(od.getFileName(), od.getObjectData(), od.getContentType());
                     }
                 } catch (Exception e) {
+                    if (ExceptionUtil.isFatal(e)) {
+                        ExceptionUtil.rethrow(e);
+                    }
                     LOG.atWarn().withThrowable(e).log("Entry not found / readable - ignoring OLE embedding");
                 }
             } else if (shape instanceof Picture) {

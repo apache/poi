@@ -31,6 +31,7 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.ptg.Area3DPxg;
 import org.apache.poi.ss.usermodel.Table;
+import org.apache.poi.util.ExceptionUtil;
 
 /**
  * Implementation for Excel function INDIRECT<p>
@@ -142,6 +143,9 @@ public final class Indirect implements FreeRefFunction {
             try {
                 return ec.getDynamicReference(workbookName, sheetName, refStrPart1, refStrPart2, isA1style);
             } catch (Exception e) {
+                if (ExceptionUtil.isFatal(e)) {
+                    ExceptionUtil.rethrow(e);
+                }
                 LOGGER.atWarn().log("Indirect function: failed to parse reference {}", text, e);
                 return ErrorEval.REF_INVALID;
             }
