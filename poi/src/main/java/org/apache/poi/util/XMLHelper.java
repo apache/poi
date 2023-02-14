@@ -318,7 +318,7 @@ public final class XMLHelper {
         try {
             property.accept(name, value);
             return true;
-        } catch (Exception|Error e) {
+        } catch (Throwable e) {
             if (ExceptionUtil.isFatal(e)) {
                 ExceptionUtil.rethrow(e);
             }
