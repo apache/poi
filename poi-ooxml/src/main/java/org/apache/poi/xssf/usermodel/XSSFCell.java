@@ -336,7 +336,10 @@ public final class XSSFCell extends CellBase {
                 try {
                     int idx = Integer.parseInt(_cell.getV());
                     rt = (XSSFRichTextString)_sharedStringSource.getItemAt(idx);
-                } catch(Throwable t) {
+                } catch (Throwable t) {
+                    if (ExceptionUtil.isFatal(t)) {
+                        ExceptionUtil.rethrow(t);
+                    }
                     rt = new XSSFRichTextString("");
                 }
             } else {
