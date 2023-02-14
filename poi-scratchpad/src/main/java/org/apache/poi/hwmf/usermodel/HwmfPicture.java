@@ -47,6 +47,7 @@ import org.apache.poi.hwmf.record.HwmfRecordType;
 import org.apache.poi.hwmf.record.HwmfWindowing.WmfSetWindowExt;
 import org.apache.poi.hwmf.record.HwmfWindowing.WmfSetWindowOrg;
 import org.apache.poi.util.Dimension2DDouble;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
@@ -106,6 +107,9 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
                     recordSize = (int)recordSizeLong;
                     recordFunction = leis.readShort();
                 } catch (Exception e) {
+                    if (ExceptionUtil.isFatal(e)) {
+                        ExceptionUtil.rethrow(e);
+                    }
                     LOG.atError().log("unexpected eof - wmf file was truncated");
                     break;
                 }

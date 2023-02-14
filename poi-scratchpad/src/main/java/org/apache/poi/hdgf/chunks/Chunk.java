@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hdgf.chunks.ChunkFactory.CommandDefinition;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.LittleEndian;
 
 import static org.apache.logging.log4j.util.Unbox.box;
@@ -245,6 +246,9 @@ public final class Chunk {
                 }
             }
             catch (Exception e) {
+                if (ExceptionUtil.isFatal(e)) {
+                    ExceptionUtil.rethrow(e);
+                }
                 LOG.atError().withThrowable(e).log("Unexpected error processing command, ignoring and continuing. Command: {}", command);
             }
 

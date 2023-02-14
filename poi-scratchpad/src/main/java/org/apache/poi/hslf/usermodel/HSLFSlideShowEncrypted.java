@@ -42,6 +42,7 @@ import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -170,6 +171,9 @@ public class HSLFSlideShowEncrypted implements Closeable {
             }
             cyos.initCipherForBlock(persistId, false);
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new EncryptedPowerPointFileException(e);
         }
         return cyos;
@@ -199,6 +203,9 @@ public class HSLFSlideShowEncrypted implements Closeable {
             readFully(ccis, docstream, offset+8, rlen);
 
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new EncryptedPowerPointFileException(e);
         }
     }
@@ -283,6 +290,9 @@ public class HSLFSlideShowEncrypted implements Closeable {
             int blipLen = endOffset - offset;
             decryptPicBytes(pictstream, offset, blipLen);
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new CorruptPowerPointFileException(e);
         }
     }
@@ -362,6 +372,9 @@ public class HSLFSlideShowEncrypted implements Closeable {
             ccos.write(pictstream, offset, blipLen);
             ccos.flush();
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new EncryptedPowerPointFileException(e);
         } finally {
             IOUtils.closeQuietly(ccos);

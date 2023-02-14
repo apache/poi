@@ -35,6 +35,7 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -179,6 +180,9 @@ public final class PicturesTable {
                             pictures.add(new Picture(blip));
                         }
                     } catch (Exception exc) {
+                        if (ExceptionUtil.isFatal(exc)) {
+                            ExceptionUtil.rethrow(exc);
+                        }
                         LOG.atWarn().withThrowable(exc).log("Unable to load picture from BLIP record at offset #{}", box(bse.getOffset()));
                     }
                 }

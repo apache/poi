@@ -51,6 +51,7 @@ import org.apache.poi.hwmf.record.HwmfColorRef;
 import org.apache.poi.hwmf.record.HwmfMisc;
 import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.Internal;
 
 public class HemfGraphics extends HwmfGraphics {
@@ -145,6 +146,9 @@ public class HemfGraphics extends HwmfGraphics {
         try {
             pathConsumer.accept(path);
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             // workaround if a path has been started and no MoveTo command
             // has been specified before the first lineTo/splineTo
             final Point2D loc = prop.getLocation();

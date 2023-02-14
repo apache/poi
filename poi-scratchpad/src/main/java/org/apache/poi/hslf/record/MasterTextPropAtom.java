@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.poi.hslf.model.textproperties.IndentProp;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -97,7 +98,10 @@ public final class MasterTextPropAtom extends RecordAtom {
 
         try {
             read();
-        } catch (Exception e){
+        } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             LOG.atError().withThrowable(e).log("Failed to parse MasterTextPropAtom");
         }
     }

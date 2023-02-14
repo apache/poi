@@ -26,6 +26,7 @@ import org.apache.poi.hwpf.converter.WordToTextConverter;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.ExceptionUtil;
 
 /**
  * Class to extract the text from old (Word 6 / Word 95) Word Documents.
@@ -90,6 +91,9 @@ public final class Word6Extractor implements POIOLE2TextExtractor {
 
             ret = WordExtractor.getParagraphText(r);
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             // Something's up with turning the text pieces into paragraphs
             // Fall back to ripping out the text pieces
             ret = new String[doc.getTextTable().getTextPieces().size()];
