@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtil;
 import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtilFactory;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
@@ -104,6 +105,9 @@ public class ExcelAntTask extends Task {
                 try {
                     workbookUtil.addFunction(eaUdf.getFunctionAlias(), eaUdf.getClassName());
                 } catch (Exception e) {
+                    if (ExceptionUtil.isFatal(e)) {
+                        ExceptionUtil.rethrow(e);
+                    }
                     throw new BuildException(e.getMessage(), e);
                 }
             }
@@ -144,6 +148,9 @@ public class ExcelAntTask extends Task {
             Class.forName("org.apache.poi.hssf.usermodel.HSSFWorkbook");
             Class.forName("org.apache.poi.ss.usermodel.WorkbookFactory");
         } catch (Exception e) {
+            if (ExceptionUtil.isFatal(e)) {
+                ExceptionUtil.rethrow(e);
+            }
             throw new BuildException(
                     "The <classpath> for <excelant> must include poi.jar and poi-ooxml.jar " +
                     "if not in Ant's own classpath. Processing .xlsx spreadsheets requires " +
