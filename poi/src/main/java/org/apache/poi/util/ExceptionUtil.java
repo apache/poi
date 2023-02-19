@@ -43,10 +43,12 @@ public class ExceptionUtil {
     /**
      * Designed to be used in conjunction with {@link #isFatal(Throwable)}.
      * This method should be used with care.
+     * <p>
+     *     The input throwable is thrown if it is an <code>Error</code> or <code>RuntimeException</code>.
+     *     Otherwise, the method wraps the throwable in a RuntimeException and rethrows that.
+     * </p>
      *
      * @param throwable to check
-     * @throws Throwable the input throwable if it is an <code>Error</code> or <code>RuntimeException</code>.
-     * Otherwise wraps the throwable in a RuntimeException.
      */
     public static void rethrow(Throwable throwable) {
         if (throwable instanceof Error) {
