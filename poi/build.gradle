@@ -175,7 +175,7 @@ test {
 
     doFirst {
         if (jdkVersion > 8) {
-            jvmArgs << [
+            jvmArgs += [
                 '--add-modules', MODULE_NAME,
                 '--module-path', '../build/dist/maven/poi-tests' + File.pathSeparator + files(MODULE_PATH).asPath,
             ]

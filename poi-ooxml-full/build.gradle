@@ -51,7 +51,7 @@ final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path 
 compileJava {
     dependsOn 'generate_beans'
     options.fork = true
-    options.forkOptions.jvmArgs << '-Xmx2G'
+    options.forkOptions.jvmArgs += '-Xmx2G'
 }
 
 task compileJava9(type: JavaCompile) {

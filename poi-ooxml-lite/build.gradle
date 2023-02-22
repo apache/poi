@@ -83,7 +83,7 @@ task compileOoxmlLite(type: Copy) {
 compileJava {
     dependsOn 'compileOoxmlLite'
     options.fork = true
-    options.forkOptions.jvmArgs << '-Xmx2G'
+    options.forkOptions.jvmArgs += '-Xmx2G'
 }
 
 processResources.dependsOn 'compileOoxmlLite'
