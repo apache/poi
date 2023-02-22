@@ -92,8 +92,8 @@ final String OOXML_LITE_INCLUDES = "^(com/microsoft/schemas|org/(etsi|openxmlfor
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(jdkVersion))
-        if (jdkVendor != '') vendor.set(JvmVendorSpec.matching(jdkVendor))
+        languageVersion = JavaLanguageVersion.of(jdkVersion)
+        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
     }
 }
 

@@ -182,8 +182,8 @@ subprojects {
 
     java {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(jdkVersion))
-            if (jdkVendor != '') vendor.set(JvmVendorSpec.matching(jdkVendor))
+            languageVersion = JavaLanguageVersion.of(jdkVersion)
+            if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
         }
         withJavadocJar()
         withSourcesJar()
@@ -268,8 +268,8 @@ subprojects {
         }
 
         javaLauncher = javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(jdkVersion))
-            if (jdkVendor != '') vendor.set(JvmVendorSpec.matching(jdkVendor))
+            languageVersion = JavaLanguageVersion.of(jdkVersion)
+            if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
         }
 
         // Exclude some tests that are not actually tests or do not run cleanly on purpose

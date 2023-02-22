@@ -83,8 +83,8 @@ task compileOoxmlLite(type: Copy) {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(jdkVersion))
-        if (jdkVendor != '') vendor.set(JvmVendorSpec.matching(jdkVendor))
+        languageVersion = JavaLanguageVersion.of(jdkVersion)
+        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
     }
 }
 
