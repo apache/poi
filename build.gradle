@@ -288,7 +288,7 @@ subprojects {
 
 
         // Specifying the local via system properties did not work, so we set them this way
-        jvmArgs << [
+        jvmArgs += [
             '-Djava.awt.headless=true',
             '-Djavax.xml.stream.XMLInputFactory=com.sun.xml.internal.stream.XMLInputFactoryImpl',
             "-Dversion.id=${project.version}",

@@ -121,7 +121,7 @@ sourcesJar {
 task testJar(type: Jar, dependsOn: [ testClasses, compileTest9 ] ) {
     destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}-tests")
 
-    classifier 'tests'
+    setArchiveClassifier 'tests'
     // ignore second module-info.class from main
     duplicatesStrategy = 'exclude'
 

@@ -126,7 +126,7 @@ task generate_beans(dependsOn: copy_xsds) {
 }
 
 task sourceJar(type: Jar) {
-    classifier 'sources'
+    setArchiveClassifier 'sources'
     from sourceSets.main.allJava
 }
 
