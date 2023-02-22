@@ -90,13 +90,6 @@ final String OOXML_LITE_AGENT = "../build/dist/maven/poi-ooxml-lite-agent/poi-oo
 final String OOXML_LITE_REPORT = '../src/resources/ooxml-lite-report'
 final String OOXML_LITE_INCLUDES = "^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(jdkVersion)
-        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
-    }
-}
-
 task compileTest9(type: JavaCompile) {
     dependsOn 'compileTestJava', ':poi-ooxml:testJar', ':poi-scratchpad:testJar', ':poi-examples:jar'
 

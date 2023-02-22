@@ -80,14 +80,6 @@ task compileOoxmlLite(type: Copy) {
     into(buildDir)
 }
 
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(jdkVersion)
-        if (jdkVendor != '') vendor = JvmVendorSpec.matching(jdkVendor)
-    }
-}
-
 compileJava {
     dependsOn 'compileOoxmlLite'
     options.fork = true
