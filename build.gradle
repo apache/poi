@@ -800,10 +800,12 @@ distributions {
     }
 }
 
-binDistZip.dependsOn 'zipJavadocs', ':poi-ooxml-lite:jar', ':poi-ooxml-full:cyclonedxBom',
-        ':poi-ooxml:cyclonedxBom', 'poi-ooxml-lite:cyclonedxBom',
-        ':poi-scratchpad:cyclonedxBom', ':poi-excelant:jar', ':poi-excelant:cyclonedxBom',
-        ':poi:cyclonedxBom', ':poi-examples:cyclonedxBom'
+binDistZip.dependsOn 'zipJavadocs', ':poi-ooxml-full:jar', ':poi-ooxml-full:cyclonedxBom',
+        ':poi-ooxml:jar', ':poi-ooxml:cyclonedxBom',
+        ':poi-ooxml-lite:jar', ':poi-ooxml-lite:cyclonedxBom',
+        ':poi-scratchpad:jar', ':poi-scratchpad:cyclonedxBom',
+        ':poi-excelant:jar', ':poi-excelant:cyclonedxBom',
+        ':poi:jar', ':poi:cyclonedxBom', ':poi-examples:jar', ':poi-examples:cyclonedxBom'
 binDistTar.dependsOn 'binDistZip'
 
 task soLinkCheck() {
