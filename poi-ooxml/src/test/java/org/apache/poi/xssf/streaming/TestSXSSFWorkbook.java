@@ -667,10 +667,6 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
             cell.setCellStyle(cellStyle);
             workbook.write(bos);
 
-            try (java.io.FileOutputStream fos = new java.io.FileOutputStream("/Users/pj.fanning/test.xlsx")) {
-                workbook.write(fos);
-            }
-
             try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
                 XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
                 DataFormatter dataFormatter = new DataFormatter();
