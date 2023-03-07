@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -43,7 +44,9 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -645,6 +648,31 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         try (SXSSFWorkbook workbook = new SXSSFWorkbook()) {
             assertNotNull(workbook.getXSSFWorkbook().getStylesSource(), "style source available");
             assertNotNull(workbook.getXSSFWorkbook().getStylesSource().getIndexedColors(), "indexed colors available");
+        }
+    }
+
+    @Test
+    void dateStyle() throws IOException {
+        try (
+                SXSSFWorkbook workbook = new SXSSFWorkbook();
+                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+        ) {
+            SXSSFSheet sheet = workbook.createSheet();
+            SXSSFRow row = sheet.createRow(0);
+            SXSSFCreationHelper createHelper = (SXSSFCreationHelper) workbook.getCreationHelper();
+            CellStyle cellStyle = workbook.createCellStyle();
+            cellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd.MM.yyyy"));
+            SXSSFCell cell = row.createCell(0);
+            cell.setCellValue(LocalDate.parse("2023-03-07"));
+            cell.setCellStyle(cellStyle);
+            workbook.write(bos);
+
+            try (XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
+                XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+                DataFormatter dataFormatter = new DataFormatter();
+                final String result = dataFormatter.formatCellValue(xssfSheet.getRow(0).getCell(0));
+                assertEquals("07.03.2023", result);
+            }
         }
     }
 
