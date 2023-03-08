@@ -119,7 +119,7 @@ class AbstractExcelUtils {
             }
             stringBuilder.append(hex);
         }
-        String result = color.getHexString();
+        String result = stringBuilder.toString();
 
         if (result.equals("#ffffff")) {
             return "white";
