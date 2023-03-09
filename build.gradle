@@ -593,7 +593,7 @@ task allJavaDoc(type: Javadoc) {
 }
 
 
-task jenkins(dependsOn: ['replaceVersion', subprojects.build, 'binDistZip','binDistTar','srcDistZip','srcDistTar']) {}
+task jenkins(dependsOn: ['replaceVersion', subprojects.build, 'srcDistZip','srcDistTar']) {}
 
 clean {
     delete "${rootDir}/build/dist"
@@ -708,44 +708,6 @@ distributions {
     var poiDep = project(':poi').configurations.getAt('compileClasspath')
     var ooxmlImp = project(':poi-ooxml').configurations.getAt('compileClasspath')
 
-    bin {
-        distributionBaseName = "poi-bin-${version}-${date}"
-        contents {
-            from('build/dist/maven') {
-                include "**/*${version}.jar"
-                exclude "**/*lite-agent*.jar"
-                exclude "**/*integration*.jar"
-            }
-
-            from('build/dist') { include 'poi-javadoc*.jar'}
-            from('legal') { exclude 'HEADER' }
-            from(poiDep) { include "**/*.jar" }
-            from(ooxmlImp) { include "**/*.jar" }
-
-            from('.') {
-                include '*/build/reports/*.bom.*'
-            }
-
-            includeEmptyDirs = false
-            duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-            eachFile {
-                String root = "poi-bin-${version}/"
-                if (name.startsWith('poi')) {
-                    path = root + name
-                } else if (poiDep.contains(file)) {
-                    path = root + 'lib/' + name
-                } else if (name =~ /^(batik|bc|fontbox|graphics|pdfbox|xml-apis|xmlgraphics|xmlsec)/) {
-                    path = root + 'auxiliary/' + name
-                } else if (ooxmlImp.contains(file)) {
-                    path = root + 'ooxml-lib/' + name
-                } else {
-                    path = root + name
-                }
-            }
-        }
-    }
-
     src {
         distributionBaseName = "poi-src-${version}-${date}"
         contents {
@@ -800,14 +762,6 @@ distributions {
     }
 }
 
-binDistZip.dependsOn 'zipJavadocs', ':poi-ooxml-full:jar', ':poi-ooxml-full:cyclonedxBom',
-        ':poi-ooxml:jar', ':poi-ooxml:cyclonedxBom',
-        ':poi-ooxml-lite:jar', ':poi-ooxml-lite:cyclonedxBom',
-        ':poi-scratchpad:jar', ':poi-scratchpad:cyclonedxBom',
-        ':poi-excelant:jar', ':poi-excelant:cyclonedxBom',
-        ':poi:jar', ':poi:cyclonedxBom', ':poi-examples:jar', ':poi-examples:cyclonedxBom'
-binDistTar.dependsOn 'binDistZip'
-
 task soLinkCheck() {
     doLast {
         def path = ant.path {
@@ -859,7 +813,5 @@ task fixDistDir {
     }
 }
 
-binDistZip.finalizedBy fixDistDir
-binDistTar.finalizedBy fixDistDir
 srcDistZip.finalizedBy fixDistDir
 srcDistTar.finalizedBy fixDistDir

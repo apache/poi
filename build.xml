@@ -2385,45 +2385,6 @@ under the License.
             <globmapper from="*" to="${zipdir}/*"/>
         </mappedresources>
 
-        <!-- jars to include in binary assemblies -->
-        <union id="bin-files" cache="true">
-            <mappedresources refid="legal-files"/>
-            <mappedresources cache="true">
-                <fileset dir="${main.lib}">
-                    <include name="commons-codec-*.jar"/>
-                    <include name="commons-collections4-*.jar"/>
-                    <include name="commons-math3-*.jar"/>
-                    <include name="commons-io-*.jar"/>
-                    <include name="log4j-api-*.jar"/>
-                    <include name="SparseBitSet-*.jar"/>
-                </fileset>
-                <globmapper from="*" to="${zipdir}/lib/*"/>
-            </mappedresources>
-            <mappedresources cache="true">
-                <fileset dir="${ooxml.lib}"/>
-                <regexpmapper from="^(.*\.jar)$$" to="${zipdir}/ooxml-lib/\1"/>
-            </mappedresources>
-            <mappedresources cache="true">
-                <fileset dir="${ooxml-provided.lib}"/>
-                <regexpmapper from="^(.*\.jar)$$" to="${zipdir}/auxiliary/\1"/>
-            </mappedresources>
-            <mappedresources cache="true">
-                <fileset dir="${ooxml-batik.lib}"/>
-                <regexpmapper from="^(.*\.jar)$$" to="${zipdir}/auxiliary/\1"/>
-            </mappedresources>
-            <mappedresources cache="true">
-                <fileset dir="${dist.dir}/maven" includes="**/*.jar" excludes="**/*-javadoc.jar,**/*-sources.jar,**/*-tests.jar"/>
-                <chainedmapper>
-                    <flattenmapper/>
-                    <globmapper from="*" to="${zipdir}/*"/>
-                </chainedmapper>
-            </mappedresources>
-            <mappedresources cache="true">
-                <fileset dir="${build.site}"/>
-                <globmapper from="*" to="${zipdir}/docs/*"/>
-            </mappedresources>
-        </union>
-
         <!-- patterns to exclude from source assemblies -->
         <union id="src-files" cache="true">
             <mappedresources refid="legal-files"/>
@@ -2459,14 +2420,6 @@ under the License.
                 <globmapper from="*" to="${zipdir}/*"/>
             </mappedresources>
         </union>
-
-        <zip destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.zip">
-            <union refid="bin-files"/>
-        </zip>
-
-        <tar destfile="${dist.dir}/${jar.name}-bin-${version.id}-${DSTAMP}.tar.gz" longfile="gnu" compression="gzip">
-            <union refid="bin-files"/>
-        </tar>
 
         <zip destfile="${dist.dir}/${jar.name}-src-${version.id}-${DSTAMP}.zip">
             <union refid="src-files"/>
