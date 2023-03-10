@@ -566,6 +566,7 @@ under the License.
         <path refid="test.jar.classpath"/>
         <pathelement location="${main.log4j-api.jar}"/>
         <path path="${env.CLASSPATH}"/>
+        <path path="${svg.xml-apis-ext.jar}"/>
     </path>
 
     <patternset id="exclude-scratchpad-test">
