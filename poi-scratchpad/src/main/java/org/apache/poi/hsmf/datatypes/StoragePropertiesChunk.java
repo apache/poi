@@ -54,7 +54,7 @@ public class StoragePropertiesChunk extends PropertiesChunk {
      * Writes out pre-calculated header values which assume any variable length property `data`
      *  field to already have Size and Reserved
      * @param out output stream (calling code must close this stream)
-     * @throws IOException
+     * @throws IOException If writing to the stream fails
      */
     public void writePreCalculatedValue(OutputStream out) throws IOException {
         // 8 bytes of reserved zeros

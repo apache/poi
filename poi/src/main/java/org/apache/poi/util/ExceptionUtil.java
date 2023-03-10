@@ -49,8 +49,11 @@ public class ExceptionUtil {
      * </p>
      *
      * @param throwable to check
+     * @throws Error the input throwable if it is an <code>Error</code>.
+     * @throws RuntimeException the input throwable if it is an <code>RuntimeException</code>
+     * Otherwise wraps the throwable in a RuntimeException.
      */
-    public static void rethrow(Throwable throwable) {
+    public static void rethrow(Throwable throwable) throws Error, RuntimeException {
         if (throwable instanceof Error) {
             throw (Error) throwable;
         }
