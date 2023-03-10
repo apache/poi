@@ -322,7 +322,8 @@ final class TestIOUtils {
             len = IOUtils.toByteArray(is, 90, 100).length;
             assertEquals(90, len);
             len = IOUtils.toByteArray(is, Integer.MAX_VALUE, Integer.MAX_VALUE).length;
-            assertTrue(len > 300-2*90);
+            assertTrue(len >= 300-2*90,
+                    "Had: " + len + " when reading file " + TMP + " with size " + TMP.length());
         }
     }
 
