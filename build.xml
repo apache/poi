@@ -709,6 +709,7 @@ under the License.
             </fileset>
             <fileset dir="${basedir}/lib/ooxml-provided">
                 <include name="bc*-1.6*.jar"/>
+                <include name="bc*-1.70.jar"/>
                 <include name="bc*-jdk15on*.jar"/>
                 <include name="batik*.jar"/>
                 <include name="slf4j*-1.*.jar"/>
