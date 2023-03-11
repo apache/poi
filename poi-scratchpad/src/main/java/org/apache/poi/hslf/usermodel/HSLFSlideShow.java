@@ -66,6 +66,7 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.ThreadLocalUtil;
 import org.apache.poi.util.Units;
 
 /**
@@ -92,6 +93,10 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         INIT, LOADED
     }
     private static final ThreadLocal<LoadSavePhase> loadSavePhase = new ThreadLocal<>();
+    static {
+        // allow to clear all thread-locals via ThreadLocalUtil
+        ThreadLocalUtil.registerCleaner(loadSavePhase::remove);
+    }
 
     // What we're based on
     private final HSLFSlideShowImpl _hslfSlideShow;

@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.ThreadLocalUtil;
 
 /**
  * High level representation of the style of a cell in a sheet of a workbook.
@@ -123,6 +124,14 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     private static final ThreadLocal<Short> lastDateFormat = ThreadLocal.withInitial(() -> Short.MIN_VALUE);
     private static final ThreadLocal<List<FormatRecord>> lastFormats = new ThreadLocal<>();
     private static final ThreadLocal<String> getDataFormatStringCache = new ThreadLocal<>();
+    static {
+        // allow to clear all thread-locals via ThreadLocalUtil
+        ThreadLocalUtil.registerCleaner(() -> {
+            lastDateFormat.remove();
+            lastFormats.remove();
+            getDataFormatStringCache.remove();
+        });
+    }
 
     /**
      * Get the contents of the format string, by looking up
@@ -637,7 +646,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
         _format.setFillBackground(bg);
         checkDefaultBackgroundFills();
     }
-    
+
     /**
      * Set the background fill color represented as a {@link org.apache.poi.ss.usermodel.Color} value.
      * <br>
@@ -696,7 +705,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
         _format.setFillForeground(bg);
         checkDefaultBackgroundFills();
     }
-    
+
     /**
      * Set the foreground fill color represented as a {@link org.apache.poi.ss.usermodel.Color} value.
      * <br>

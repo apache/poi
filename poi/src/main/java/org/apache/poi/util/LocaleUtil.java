@@ -57,6 +57,13 @@ public final class LocaleUtil {
 
     private static final ThreadLocal<TimeZone> userTimeZone = new ThreadLocal<>();
     private static final ThreadLocal<Locale> userLocale = new ThreadLocal<>();
+    static {
+        // allow to clear all thread-locals via ThreadLocalUtil
+        ThreadLocalUtil.registerCleaner(() -> {
+            userTimeZone.remove();
+            userLocale.remove();
+        });
+    }
 
     /**
      * As time zone information is not stored in any format, it can be

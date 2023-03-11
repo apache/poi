@@ -38,6 +38,7 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.ThreadLocalUtil;
 
 /**
  * Figures out the correct POIOLE2TextExtractor for your supplied
@@ -64,6 +65,10 @@ public final class ExtractorFactory {
 
     /** Should this thread prefer event based over usermodel based extractors? */
     private static final ThreadLocal<Boolean> threadPreferEventExtractors = ThreadLocal.withInitial(() -> Boolean.FALSE);
+    static {
+        // allow to clear all thread-locals via ThreadLocalUtil
+        ThreadLocalUtil.registerCleaner(threadPreferEventExtractors::remove);
+    }
 
     /** Should all threads prefer event based over usermodel based extractors? */
     private static Boolean allPreferEventExtractors;
