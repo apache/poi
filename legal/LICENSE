@@ -290,6 +290,7 @@ Log4j 2 library (log4j-api-*.jar)
     Apache License Version 2.0
 
 
+org.apache.poi.util.ReplacingInputStream is based on code from
 inbot-utils (https://github.com/Inbot/inbot-utils)
 
 	The MIT License (MIT)
