@@ -17,7 +17,7 @@
 package org.apache.poi.util;
 
 /**
- * Utilitity methods for dealing with exceptions/throwables
+ * Utility methods for dealing with exceptions/throwables
  *
  * @since POI 5.2.4
  */
@@ -44,7 +44,7 @@ public class ExceptionUtil {
      * Designed to be used in conjunction with {@link #isFatal(Throwable)}.
      * This method should be used with care.
      * <p>
-     *     The input throwable is thrown if it is an <code>Error</code> or <code>RuntimeException</code>.
+     *     The input throwable is thrown if it is an <code>Error</code> or a <code>RuntimeException</code>.
      *     Otherwise, the method wraps the throwable in a RuntimeException and rethrows that.
      * </p>
      *
