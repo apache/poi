@@ -233,50 +233,48 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
     @Override
     public BorderStyle getBorderBottom() {
-        if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
-
-        int idx = Math.toIntExact(_cellXf.getBorderId());
-        CTBorder ct = _stylesSource.getBorderAt(idx).getCTBorder();
-        STBorderStyle.Enum ptrn = ct.isSetBottom() ? ct.getBottom().getStyle() : null;
-        if (ptrn == null) {
-            return BorderStyle.NONE;
-        }
-        return BorderStyle.valueOf((short)(ptrn.intValue() - 1));
+        return getBorder(BorderSide.BOTTOM);
     }
 
     @Override
     public BorderStyle getBorderLeft() {
-        if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
-
-        int idx = Math.toIntExact(_cellXf.getBorderId());
-        CTBorder ct = _stylesSource.getBorderAt(idx).getCTBorder();
-        STBorderStyle.Enum ptrn = ct.isSetLeft() ? ct.getLeft().getStyle() : null;
-        if (ptrn == null) {
-            return BorderStyle.NONE;
-        }
-        return BorderStyle.valueOf((short)(ptrn.intValue() - 1));
+        return getBorder(BorderSide.LEFT);
     }
 
     @Override
     public BorderStyle getBorderRight() {
-        if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
-
-        int idx = Math.toIntExact(_cellXf.getBorderId());
-        CTBorder ct = _stylesSource.getBorderAt(idx).getCTBorder();
-        STBorderStyle.Enum ptrn = ct.isSetRight() ? ct.getRight().getStyle() : null;
-        if (ptrn == null) {
-            return BorderStyle.NONE;
-        }
-        return BorderStyle.valueOf((short)(ptrn.intValue() - 1));
+        return getBorder(BorderSide.RIGHT);
     }
 
     @Override
     public BorderStyle getBorderTop() {
+        return getBorder(BorderSide.TOP);
+    }
+
+    /**
+     * get the border style for the specified border side
+     * @param side the border side
+     */
+    private BorderStyle getBorder(BorderSide side) {
         if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
 
         int idx = Math.toIntExact(_cellXf.getBorderId());
         CTBorder ct = _stylesSource.getBorderAt(idx).getCTBorder();
-        STBorderStyle.Enum ptrn = ct.isSetTop() ? ct.getTop().getStyle() : null;
+        STBorderStyle.Enum ptrn = null;
+        switch (side) {
+            case BOTTOM:
+                ptrn = ct.isSetBottom() ? ct.getBottom().getStyle() : null;
+                break;
+            case LEFT:
+                ptrn = ct.isSetLeft() ? ct.getLeft().getStyle() : null;
+                break;
+            case RIGHT:
+                ptrn = ct.isSetRight() ? ct.getRight().getStyle() : null;
+                break;
+            case TOP:
+                ptrn = ct.isSetTop() ? ct.getTop().getStyle() : null;
+                break;
+        }
         if (ptrn == null) {
             return BorderStyle.NONE;
         }
