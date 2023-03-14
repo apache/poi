@@ -24,3 +24,13 @@ This product contains parts of the eID Applet project
 Copyright (c) 2009-2018
 FedICT (federal ICT department of Belgium), e-Contract.be BVBA (https://www.e-contract.be),
 Bart Hanssens from FedICT
+
+ExceptionUtils is derived from `scala.util.control.NonFatal` in scala-library
+which was released under the Apache 2.0 license.
+
+Copyright (c) 2002-2023 EPFL
+Copyright (c) 2011-2023 Lightbend, Inc.
+
+Scala includes software developed at
+LAMP/EPFL (https://lamp.epfl.ch/) and
+Lightbend, Inc. (https://www.lightbend.com/).

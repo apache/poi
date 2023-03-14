@@ -256,6 +256,11 @@ inbot-utils (https://github.com/Inbot/inbot-utils)
 	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 	SOFTWARE.
 
+ExceptionUtils is derived from `scala.util.control.NonFatal` in scala-library
+which was released under the Apache 2.0 license.
+Copyright (c) 2002-2023 EPFL
+Copyright (c) 2011-2023 Lightbend, Inc.
+
 The POI Source Release bundles the Gradle Wrapper. (https://docs.gradle.org/current/userguide/gradle_wrapper.html)
 This is released under the Apache License, v2.0.
 Copyright © 2015-2021 the original authors.
