@@ -26,7 +26,7 @@ public class CodepointsUtil {
     /**
      * @param text to iterate over
      * @return iterator with Strings representing the codepoints
-     * @see #primitiveIterator(String) a more performnt iterator
+     * @see #primitiveIterator(String) a more performant iterator
      */
     public static Iterator<String> iteratorFor(String text) {
         return text.codePoints()
