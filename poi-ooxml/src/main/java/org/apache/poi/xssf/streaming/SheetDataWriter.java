@@ -31,6 +31,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.PrimitiveIterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -397,33 +398,34 @@ public class SheetDataWriter implements Closeable {
             return;
         }
 
-        for (int i = 0; i < s.length(); i++) {
-            final int codepoint = s.codePointAt(i);
+        final PrimitiveIterator.OfInt iter = s.codePoints().iterator();
+        while(iter.hasNext()) {
+            final int codepoint = iter.nextInt();
 
             switch (codepoint) {
-                case 60: // <
+                case '<':
                     _out.write("&lt;");
                     break;
-                case 62: // >
+                case '>':
                     _out.write("&gt;");
                     break;
-                case 38: // &
+                case '&':
                     _out.write("&amp;");
                     break;
-                case 34: // "
+                case '"':
                     _out.write("&quot;");
                     break;
                 // Special characters
-                case 10: // \n
+                case '\n':
                     _out.write("&#xa;");
                     break;
-                case 13: // \r
+                case '\r':
                     _out.write("&#xd;");
                     break;
-                case 9:  // \t
+                case '\t':
                     _out.write("&#x9;");
                     break;
-                case 160: // NO-BREAK SPACE
+                case '\u00A0': // NO-BREAK SPACE
                     _out.write("&#xa0;");
                     break;
                 default:
@@ -438,7 +440,6 @@ public class SheetDataWriter implements Closeable {
                             _out.write(c);
                         }
                     } else if (chars.length == 2){
-                        i++;
                         _out.write(chars);
                     } else {
                         throw new IllegalArgumentException("Not a valid code point: " + codepoint);
