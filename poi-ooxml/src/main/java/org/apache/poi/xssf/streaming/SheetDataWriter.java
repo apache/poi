@@ -31,6 +31,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.PrimitiveIterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -397,37 +398,39 @@ public class SheetDataWriter implements Closeable {
             return;
         }
 
-        for (Iterator<String> iter = CodepointsUtil.iteratorFor(s); iter.hasNext(); ) {
-            String codepoint = iter.next();
+        int codepoint;
+        for (PrimitiveIterator.OfInt iter = CodepointsUtil.primitiveIterator(s); iter.hasNext(); ) {
+            codepoint = iter.nextInt();
             switch (codepoint) {
-                case "<":
+                case '<':
                     _out.write("&lt;");
                     break;
-                case ">":
+                case '>':
                     _out.write("&gt;");
                     break;
-                case "&":
+                case '&':
                     _out.write("&amp;");
                     break;
-                case "\"":
+                case '\"':
                     _out.write("&quot;");
                     break;
                 // Special characters
-                case "\n":
+                case '\n':
                     _out.write("&#xa;");
                     break;
-                case "\r":
+                case '\r':
                     _out.write("&#xd;");
                     break;
-                case "\t":
+                case '\t':
                     _out.write("&#x9;");
                     break;
-                case "\u00A0": // NO-BREAK SPACE
+                case '\u00A0': // NO-BREAK SPACE
                     _out.write("&#xa0;");
                     break;
                 default:
-                    if (codepoint.length() == 1) {
-                        char c = codepoint.charAt(0);
+                    final char[] chars = Character.toChars(codepoint);
+                    if (chars.length == 1) {
+                        char c = chars[0];
                         // YK: XmlBeans silently replaces all ISO control characters ( < 32) with question marks.
                         // the same rule applies to "not a character" symbols.
                         if (replaceWithQuestionMark(c)) {
@@ -436,7 +439,7 @@ public class SheetDataWriter implements Closeable {
                             _out.write(c);
                         }
                     } else {
-                        _out.write(codepoint);
+                        _out.write(chars);
                     }
                     break;
             }
