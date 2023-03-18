@@ -181,7 +181,7 @@ public class CellElapsedFormatter extends CellFormatter {
             return Math.pow(10, len);
         default:
             throw new IllegalArgumentException(
-                    "Uknown elapsed time spec: " + type);
+                    "Unknown elapsed time spec: " + type);
         }
     }
 
