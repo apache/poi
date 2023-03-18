@@ -342,9 +342,6 @@ public class CellFormatPart {
             Iterator<String> codePoints = CodepointsUtil.iteratorFor(repl);
             if (codePoints.hasNext()) {
                 String c1 = codePoints.next();
-                String c2 = null;
-                if (codePoints.hasNext())
-                    c2 = codePoints.next().toLowerCase(Locale.ROOT);
 
                 switch (c1) {
                 case "@":
@@ -368,6 +365,9 @@ public class CellFormatPart {
                     seenZero = true;
                     break;
                 case "[":
+                    String c2 = null;
+                    if (codePoints.hasNext())
+                        c2 = codePoints.next().toLowerCase(Locale.ROOT);
                     if ("h".equals(c2) || "m".equals(c2) || "s".equals(c2)) {
                         return CellFormatType.ELAPSED;
                     }
@@ -407,19 +407,21 @@ public class CellFormatPart {
      */
     static String quoteSpecial(String repl, CellFormatType type) {
         StringBuilder sb = new StringBuilder();
-        Iterator<String> codePoints = CodepointsUtil.iteratorFor(repl);
+        PrimitiveIterator.OfInt codePoints = CodepointsUtil.primitiveIterator(repl);
 
+        int codepoint;
         while (codePoints.hasNext()) {
-            String ch = codePoints.next();
-            if ("'".equals(ch) && type.isSpecial('\'')) {
+            codepoint = codePoints.nextInt();
+            if (codepoint == '\'' && type.isSpecial('\'')) {
                 sb.append('\u0000');
                 continue;
             }
 
-            boolean special = type.isSpecial(ch.charAt(0));
+            char[] chars = Character.toChars(codepoint);
+            boolean special = type.isSpecial(chars[0]);
             if (special)
                 sb.append('\'');
-            sb.append(ch);
+            sb.append(chars);
             if (special)
                 sb.append('\'');
         }
