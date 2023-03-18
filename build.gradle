@@ -544,6 +544,8 @@ subprojects {
     spotbugs {
         ignoreFailures = true
         showStackTraces = false
+        showProgress = true
+        maxHeapSize = '1g'
     }
 
     build {

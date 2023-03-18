@@ -178,6 +178,15 @@ public final class BoundSheetRecord extends StandardRecord {
     }
 
     /**
+     * Is the sheet very hidden? Different from (normal) hidden
+     *
+     * @param veryHidden {@code true} if very hidden
+     */
+    public void setVeryHidden(boolean veryHidden) {
+        field_2_option_flags = veryHiddenFlag.setBoolean(field_2_option_flags, veryHidden);
+    }
+
+    /**
      * Converts a List of {@link BoundSheetRecord}s to an array and sorts by the position of their
      * BOFs.
      *
