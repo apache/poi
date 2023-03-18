@@ -39,7 +39,6 @@ public final class BoundSheetRecord extends StandardRecord {
     public static final short sid = 0x0085;
     private static final BitField hiddenFlag = BitFieldFactory.getInstance(0x01);
     private static final BitField veryHiddenFlag = BitFieldFactory.getInstance(0x02);
-    private static final BitField xl4Flag = BitFieldFactory.getInstance(0x100);
 
     private int field_1_position_of_BOF;
     private int field_2_option_flags;
@@ -176,33 +175,6 @@ public final class BoundSheetRecord extends StandardRecord {
      */
     public boolean isVeryHidden() {
         return veryHiddenFlag.isSet(field_2_option_flags);
-    }
-
-    /**
-     * Is the sheet very hidden? Different from (normal) hidden
-     *
-     * @param veryHidden {@code true} if very hidden
-     */
-    public void setVeryHidden(boolean veryHidden) {
-        field_2_option_flags = veryHiddenFlag.setBoolean(field_2_option_flags, veryHidden);
-    }
-
-    /**
-     * Is the sheet an Excel 4 macro sheet?
-     *
-     * @return {@code true} if very hidden
-     */
-    public boolean isExcel4Macro() {
-        return xl4Flag.isSet(field_2_option_flags);
-    }
-
-    /**
-     * Is the sheet an Excel 4 macro sheet?
-     *
-     * @param xl4flag {@code true} if an excel 4 macro sheet
-     */
-    public void setExcel4Macro(boolean xl4flag) {
-        field_2_option_flags = xl4Flag.setBoolean(field_2_option_flags, xl4flag);
     }
 
     /**
