@@ -22,7 +22,7 @@ public interface CellWalkContext {
     /**
      * Returns ordinal number of cell in range.  Numeration starts
      * from top left cell and ends at bottom right cell. Here is a
-     * brief example (number in cell is it's ordinal number):
+     * brief example (number in cell is its ordinal number):
      *
      * <table>
      *   <caption>ordinal number example</caption>

@@ -135,7 +135,7 @@ import java.util.Locale;
  * <p>
  * Note that the final four method calls all pass the same value and seem to
  * indicate that the images top left hand corner is aligned with the top left
- * hand corner of cell A1 and that it's bottom right hand corner is also
+ * hand corner of cell A1 and that its bottom right hand corner is also
  * aligned with the top left hand corner of cell A1. Yet, running this code
  * would see the image fully occupying cell A1. That is the result of the
  * values passed to parameters three and four; these I have referred to as
@@ -406,7 +406,7 @@ public class AddDimensionedImage {
      * the image, adjusts the columns width if necessary and creates then
      * returns a ClientAnchorDetail object that facilitates construction of
      * an ClientAnchor that will fix the image on the sheet and establish
-     * it's size.
+     * its size.
      *
      * @param sheet           A reference to the sheet that will 'contain' the image.
      * @param colNumber       A primitive int that contains the index number of a
@@ -483,7 +483,7 @@ public class AddDimensionedImage {
                 // Mow many co-ordinate positions are there per millimetre?
                 colCoordinatesPerMM = ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS /
                         colWidthMM;
-                // Given the width of the image, what should be it's co-ordinate?
+                // Given the width of the image, what should be its co-ordinate?
                 pictureWidthCoordinates = (int) (reqImageWidthMM * colCoordinatesPerMM);
             } else {
                 pictureWidthCoordinates = (int) reqImageWidthMM *
@@ -500,7 +500,7 @@ public class AddDimensionedImage {
      * the image, adjusts the rows height if necessary and creates then
      * returns a ClientAnchorDetail object that facilitates construction of
      * a ClientAnchor that will fix the image on the sheet and establish
-     * it's size.
+     * its size.
      *
      * @param sheet            A reference to the sheet that will 'contain' the image.
      * @param rowNumber        A primitive int that contains the index number of a
@@ -528,7 +528,7 @@ public class AddDimensionedImage {
         int pictureHeightCoordinates;
         ClientAnchorDetail rowClientAnchorDetail = null;
 
-        // Get the row and it's height
+        // Get the row and its height
         row = sheet.getRow(rowNumber);
         if (row == null) {
             // Create row if it does not exist.
@@ -624,7 +624,7 @@ public class AddDimensionedImage {
             colWidthMM = ConvertImageUnits.widthUnits2Millimetres(
                     (short) (sheet.getColumnWidth(toColumn)));
             // Note use of the cell border width constant. Testing with an image
-            // declared to fit exactly into one column demonstrated that it's
+            // declared to fit exactly into one column demonstrated that its
             // width was greater than the width of the column the POI returned.
             // Further, this difference was a constant value that I am assuming
             // related to the cell's borders. Either way, that difference needs

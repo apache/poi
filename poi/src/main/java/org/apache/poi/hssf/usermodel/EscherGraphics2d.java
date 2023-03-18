@@ -49,7 +49,7 @@ import java.util.Map;
  * One important concept worth considering is that of font size.  One of the
  * difficulties in converting Graphics calls into escher drawing calls is that
  * Excel does not have the concept of absolute pixel positions.  It measures
- * it's cell widths in 'characters' and the cell heights in points.
+ * its cell widths in 'characters' and the cell heights in points.
  * Unfortunately it's not defined exactly what a type of character it's
  * measuring.  Presumably this is due to the fact that the Excel will be
  * using different fonts on different platforms or even within the same

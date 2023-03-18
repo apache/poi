@@ -225,7 +225,7 @@ public class SheetUtil {
         final Rectangle2D bounds;
         if(style.getRotation() != 0){
             /*
-             * Transform the text using a scale so that it's height is increased by a multiple of the leading,
+             * Transform the text using a scale so that its height is increased by a multiple of the leading,
              * and then rotate the text before computing the bounds. The scale results in some whitespace around
              * the unrotated top and bottom of the text that normally wouldn't be present if unscaled, but
              * is added by the standard Excel autosize.

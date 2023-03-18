@@ -691,7 +691,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'adoptopenjdk_hotspot_8u282',
                 'ibmjdk_1.8.0_261'
         )
-        // Note H50 is reserved according to it's node-descripion
+        // Note H50 is reserved according to its node-description
         label('Nodes','H22','H23','H24','H25','H26','H27','H28','H29','H30','H31','H32','H33','H34','H35','H36','H37','H38','H39','H40','H41','H42','H43','H44','H48','lucene1','lucene2','master')
     }
     steps {

@@ -509,7 +509,7 @@ public class XMLSlideShow extends POIXMLDocument
             if (shape instanceof XSLFGroupShape) {
                 removePictureRelations(slide, (XSLFGroupShape)shape, picture);
             }
-            // ... or the picture shape with this picture data and remove it's relation to the picture data.
+            // ... or the picture shape with this picture data and remove its relation to the picture data.
             if (shape instanceof XSLFPictureShape) {
                 XSLFPictureShape pic = (XSLFPictureShape) shape;
                 if (pic.getPictureData() == picture) {

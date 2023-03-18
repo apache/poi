@@ -37,7 +37,7 @@ import org.apache.poi.util.StringUtil;
  *
  * Ole10Native objects come in different shapes:
  * <ul>
- *     <li>unparsed: we can't identify it's structure</li>
+ *     <li>unparsed: we can't identify its structure</li>
  *     <li>compact: same as unparsed but with a leading flag</li>
  *     <li>parsed - Ole-Class "Package": data + ASCII label,command,filename</li>
  *     <li>parsed - Ole-Class "Package2": as above plus UTF16 label,command,filename</li>

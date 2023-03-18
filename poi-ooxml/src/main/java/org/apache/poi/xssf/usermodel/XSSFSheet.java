@@ -4646,7 +4646,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         pivotTable.setPivotCacheDefinition(pivotCacheDefinition);
 
-        //Create pivotCache and sets up it's relationship with the workbook
+        //Create pivotCache and sets up its relationship with the workbook
         pivotTable.setPivotCache(new XSSFPivotCache(workbook.addPivotCache(rId)));
 
         //Create relationship between pivotcacherecord and pivotcachedefinition

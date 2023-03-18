@@ -18,7 +18,7 @@
 package org.apache.poi.sl.usermodel;
 
 /**
- * This interface is the counterpart to {@link StrokeStyle} - it's specifies the filling of a shape
+ * This interface is the counterpart to {@link StrokeStyle} - it specifies the filling of a shape
  */
 public interface FillStyle {
     PaintStyle getPaint();

@@ -67,7 +67,7 @@ public class XSSFHyperlink implements Hyperlink, Duplicatable {
         // Figure out the Hyperlink type and destination
 
         if (_externalRel == null) {
-            // If it has a location, it's internal
+            // If it has a location, its internal
             if (ctHyperlink.getLocation() != null) {
                 _type = HyperlinkType.DOCUMENT;
                 _location = ctHyperlink.getLocation();

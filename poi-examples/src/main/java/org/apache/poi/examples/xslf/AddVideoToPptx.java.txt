@@ -236,7 +236,7 @@ public class AddVideoToPptx {
             if (mLastPtsWrite == Global.NO_PTS)
                 mLastPtsWrite = Math.max(0, evtTS - MICRO_SECONDS_BETWEEN_FRAMES);
 
-            // if it's time to write the next frame
+            // if its time to write the next frame
             if (evtTS - mLastPtsWrite >= MICRO_SECONDS_BETWEEN_FRAMES) {
                 if (!hasFired) {
                     image = event.getImage();

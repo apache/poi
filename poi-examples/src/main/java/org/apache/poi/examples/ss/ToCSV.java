@@ -327,7 +327,7 @@ public class ToCSV {
         }
 
         // Step through each of the files in the source folder and for each
-        // open the workbook, convert it's contents to CSV format and then
+        // open the workbook, convert its contents to CSV format and then
         // save the resulting file away into the folder specified by the
         // contents of the destination variable. Note that the name of the
         // csv file will be created by taking the name of the Excel file,
@@ -342,7 +342,7 @@ public class ToCSV {
                 // Open the workbook
                 this.openWorkbook(excelFile);
 
-                // Convert it's contents into a CSV file
+                // Convert its contents into a CSV file
                 this.convertToCSV();
 
                 // Build the name of the csv folder from that of the Excel workbook.
@@ -451,7 +451,7 @@ public class ToCSV {
                 // from this 'row' ArrayList one at a time and to write the Strings
                 // away to a StringBuilder thus assembling a single line for inclusion
                 // in the CSV file. If a row was empty or if it was short, then
-                // the ArrayList that contains it's data will also be shorter than
+                // the ArrayList that contains its data will also be shorter than
                 // some of the others. Therefore, it is necessary to check within
                 // the for loop to ensure that the ArrayList contains data to be
                 // processed. If it does, then an element will be recovered and

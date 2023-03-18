@@ -106,7 +106,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
      */
     public final XmlObject getXmlObject() {
         // it's final because the xslf inheritance hierarchy is not necessary the same as
-        // the (not existing) xmlbeans hierarchy and subclasses shouldn't narrow it's return value
+        // the (not existing) xmlbeans hierarchy and subclasses shouldn't narrow its return value
         return _shape;
     }
 
