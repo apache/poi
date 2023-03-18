@@ -786,7 +786,7 @@ public class HSSFCell extends CellBase {
     }
 
     /**
-     * set a error value for the cell
+     * set an error value for the cell
      *
      * @param errorCode the error value to set this cell to.  For formulas, we'll set the
      *        precalculated value , for errors we'll set
@@ -802,7 +802,7 @@ public class HSSFCell extends CellBase {
         setCellErrorValue(error);
     }
     /**
-     * set a error value for the cell
+     * set an error value for the cell
      *
      * @param error the error value to set this cell to.  For formulas, we'll set the
      *        precalculated value , for errors we'll set

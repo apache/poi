@@ -40,7 +40,7 @@ import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Represents a escher picture.  Eg. A GIF, JPEG etc...
+ * Represents an escher picture.  Eg. A GIF, JPEG etc...
  */
 public class HSSFPicture extends HSSFSimpleShape implements Picture {
 

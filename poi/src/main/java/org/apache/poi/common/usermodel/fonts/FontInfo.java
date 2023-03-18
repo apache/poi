@@ -29,7 +29,7 @@ import org.apache.poi.util.Beta;
  * If an implementation doesn't provide a property, the getter will return {@code null} -
  * if the value is unset, a default value will be returned.<p>
  *
- * Setting a unsupported property results in an {@link UnsupportedOperationException}.
+ * Setting an unsupported property results in an {@link UnsupportedOperationException}.
  *
  * @since POI 3.17-beta2
  *

@@ -190,7 +190,7 @@ public class InCellLists {
         String formatString = InCellLists.BULLET_CHARACTER + " @";
         int formatIndex = format.getFormat(formatString);
 
-        // Construct an HSSFCellStyle and set it's data formt to use the
+        // Construct an HSSFCellStyle and set its data format to use the
         // object created above.
         HSSFCellStyle bulletStyle = workbook.createCellStyle();
         bulletStyle.setDataFormat((short)formatIndex);
@@ -248,8 +248,8 @@ public class InCellLists {
                                    int increment) {
         StringBuilder buffer = new StringBuilder();
         int itemNumber = startingValue;
-        // Note that again, an HSSFCellStye object is required and that
-        // it's wrap text property should be set to 'true'
+        // Note that again, an HSSFCellStyle object is required and that
+        // its wrap text property should be set to 'true'
         HSSFCellStyle wrapStyle = workbook.createCellStyle();
         wrapStyle.setWrapText(true);
         // Note that the basic method is identical to the listInCell() method
@@ -282,7 +282,7 @@ public class InCellLists {
                                    HSSFCell cell) {
         StringBuilder buffer = new StringBuilder();
         // Note that again, an HSSFCellStye object is required and that
-        // it's wrap text property should be set to 'true'
+        // its wrap text property should be set to 'true'
         HSSFCellStyle wrapStyle = workbook.createCellStyle();
         wrapStyle.setWrapText(true);
         // Note that the basic method is identical to the listInCell() method
@@ -318,7 +318,7 @@ public class InCellLists {
                                      HSSFCell cell) {
         StringBuilder buffer = new StringBuilder();
         // Note that again, an HSSFCellStye object is required and that
-        // it's wrap text property should be set to 'true'
+        // its wrap text property should be set to 'true'
         HSSFCellStyle wrapStyle = workbook.createCellStyle();
         wrapStyle.setWrapText(true);
         // Step through the ArrayList of MultilLevelListItem instances.
@@ -381,7 +381,7 @@ public class InCellLists {
         StringBuilder buffer = new StringBuilder();
         int highLevelItemNumber = highLevelStartingValue;
         // Note that again, an HSSFCellStye object is required and that
-        // it's wrap text property should be set to 'true'
+        // its wrap text property should be set to 'true'
         HSSFCellStyle wrapStyle = workbook.createCellStyle();
         wrapStyle.setWrapText(true);
         // Step through the ArrayList of MultilLevelListItem instances.
@@ -436,7 +436,7 @@ public class InCellLists {
                                              HSSFCell cell) {
         StringBuilder buffer = new StringBuilder();
         // Note that again, an HSSFCellStye object is required and that
-        // it's wrap text property should be set to 'true'
+        // its wrap text property should be set to 'true'
         HSSFCellStyle wrapStyle = workbook.createCellStyle();
         wrapStyle.setWrapText(true);
         // Step through the ArrayList of MultilLevelListItem instances.

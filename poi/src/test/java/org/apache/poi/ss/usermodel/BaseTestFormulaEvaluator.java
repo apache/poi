@@ -303,7 +303,7 @@ public abstract class BaseTestFormulaEvaluator {
             try {
                 fe.evaluateInCell(cellB1);
             } catch (IllegalStateException e) {
-                if (e.getMessage().equalsIgnoreCase("Cannot get a numeric value from a error formula cell")) {
+                if (e.getMessage().equalsIgnoreCase("Cannot get a numeric value from an error formula cell")) {
                     fail("Identified bug 46479a");
                 }
             }

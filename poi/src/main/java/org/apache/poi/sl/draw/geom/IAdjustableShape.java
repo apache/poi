@@ -28,7 +28,7 @@ package org.apache.poi.sl.draw.geom;
 public interface IAdjustableShape {
     /**
      *
-     * @param  name name of a adjust value, e.g. adj1
+     * @param  name name of an adjust value, e.g. adj1
      * @return adjust guide defined in the shape or null
      */
     GuideIf getAdjustValue(String name);

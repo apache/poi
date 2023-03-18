@@ -1823,7 +1823,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     /**
-     * Return a object representing a collection of shared objects used for styling content,
+     * Return an object representing a collection of shared objects used for styling content,
      * e.g. fonts, cell styles, colors, etc.
      */
     public StylesTable getStylesSource() {

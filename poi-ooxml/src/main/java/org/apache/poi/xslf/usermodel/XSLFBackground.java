@@ -47,7 +47,7 @@ public class XSLFBackground extends XSLFSimpleShape
     }
 
     /**
-     * background does not have a associated transform, therefore we return null
+     * background does not have an associated transform, therefore we return null
      *
      * @param create ignored
      *

@@ -49,12 +49,12 @@ import org.opentest4j.AssertionFailedError;
  *  to reveal problems which are introduced, but not covered (yet) by unit tests.
  *
  *  This test looks for any file under the test-data directory and tries to do some useful
- *  processing with it based on it's type.
+ *  processing with it based on its type.
  *
  *  The test is implemented as a junit {@link ParameterizedTest} test, which leads
  *  to one test-method call for each file (currently around 950 files are handled).
  *
- *  There is a a mapping of extension to implementations of the interface
+ *  There is a mapping of extension to implementations of the interface
  *  {@link FileHandler} which defines how the file is loaded and which actions are
  *  tried with the file.
  *

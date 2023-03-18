@@ -131,7 +131,7 @@ public class Section {
          */
         int offFix = (int)LittleEndian.getUInt(src, offset + ClassID.LENGTH);
 
-        // some input files have a invalid (padded?) offset, which need to be fixed
+        // some input files have an invalid (padded?) offset, which need to be fixed
         // search for beginning of size field
         if (src[offFix] == 0) {
             for (int i=0; i<3 && src[offFix] == 0; i++,offFix++);

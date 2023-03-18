@@ -104,7 +104,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
     private DocumentProperties _dop;
 
     /**
-     * Contains text of the document wrapped in a obfuscated Word data
+     * Contains text of the document wrapped in an obfuscated Word data
      * structure
      */
     private ComplexFileTable _cft;
@@ -688,7 +688,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
 
         /*
          * clx (encoding of the sprm lists for a complex file and piece table
-         * for a any file) Written immediately after the end of the previously
+         * for an any file) Written immediately after the end of the previously
          * recorded structure. This is recorded in all Word documents
          *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)

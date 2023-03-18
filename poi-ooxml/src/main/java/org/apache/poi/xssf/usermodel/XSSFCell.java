@@ -817,7 +817,7 @@ public final class XSSFCell extends CellBase {
     }
 
     /**
-     * Set a error value for the cell
+     * Set an error value for the cell
      *
      * @param errorCode the error value to set this cell to.  For formulas, we'll set the
      *        precalculated value , for errors we'll set
@@ -832,7 +832,7 @@ public final class XSSFCell extends CellBase {
     }
 
     /**
-     * Set a error value for the cell
+     * Set an error value for the cell
      *
      * @param error the error value to set this cell to.  For formulas, we'll set the
      *        precalculated value , for errors we'll set

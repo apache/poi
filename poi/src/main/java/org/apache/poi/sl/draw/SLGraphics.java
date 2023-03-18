@@ -925,9 +925,9 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      * <p>
      * The area inside the polygon is defined using an
      * even-odd fill rule, also known as the alternating rule.
-     * @param        xPoints   a an array of <code>x</code> coordinates.
-     * @param        yPoints   a an array of <code>y</code> coordinates.
-     * @param        nPoints   a the total number of points.
+     * @param        xPoints   an array of <code>x</code> coordinates.
+     * @param        yPoints   an array of <code>y</code> coordinates.
+     * @param        nPoints   the total number of points.
      * @see          Graphics#drawPolygon(int[], int[], int)
      */
     public void fillPolygon(int[] xPoints, int[] yPoints,
@@ -994,9 +994,9 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      * 1&nbsp;&le;&nbsp;<i>i</i>&nbsp;&le;&nbsp;<code>nPoints</code>.
      * The figure is automatically closed by drawing a line connecting
      * the final point to the first point, if those points are different.
-     * @param        xPoints   a an array of <code>x</code> coordinates.
-     * @param        yPoints   a an array of <code>y</code> coordinates.
-     * @param        nPoints   a the total number of points.
+     * @param        xPoints   an array of <code>x</code> coordinates.
+     * @param        yPoints   an array of <code>y</code> coordinates.
+     * @param        nPoints   the total number of points.
      * @see          Graphics#fillPolygon(int[],int[],int)
      * @see          Graphics#drawPolyline
      */

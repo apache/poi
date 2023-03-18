@@ -370,7 +370,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
     }
 
     /**
-     * Returns a unmodifiable list of all shapes contained by the patriarch.
+     * Returns an unmodifiable list of all shapes contained by the patriarch.
      */
     @Override
     public List<HSSFShape> getChildren() {

@@ -28,7 +28,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * This record is used whenever a escher record is encountered that
+ * This record is used whenever an escher record is encountered that
  * we do not explicitly support.
  */
 public final class UnknownEscherRecord extends EscherRecord {

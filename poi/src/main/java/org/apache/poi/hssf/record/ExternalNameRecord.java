@@ -127,7 +127,7 @@ public final class ExternalNameRecord extends StandardRecord {
     /**
      * For OLE and DDE, links can be either 'automatic' or 'manual'
      *
-     * @return {@code true} if this is a automatic link
+     * @return {@code true} if this is an automatic link
      */
     public boolean isAutomaticLink() {
         return (field_1_option_flag & OPT_AUTOMATIC_LINK) != 0;

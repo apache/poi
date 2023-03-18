@@ -67,7 +67,7 @@ public final class XSSFCellFill {
     }
 
     /**
-     * Set the background fill color represented as a indexed color value.
+     * Set the background fill color represented as an indexed color value.
      *
      * @param index - the color to use
      */
@@ -105,7 +105,7 @@ public final class XSSFCellFill {
     }
 
     /**
-     * Set the foreground fill color as a indexed color value
+     * Set the foreground fill color as an indexed color value
      *
      * @param index - the color to use
      */

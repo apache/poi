@@ -76,7 +76,7 @@ public class GenericRecordJsonWriter implements Closeable {
          * @param name the name of the property
          * @param object the value of the property
          * @return {@code true}, if the element was handled and output produced,
-         *   The provided methods can be overridden and a implementation can return {@code false},
+         *   The provided methods can be overridden and an implementation can return {@code false},
          *   if the element hasn't been written to the stream
          */
         boolean print(GenericRecordJsonWriter record, String name, Object object);

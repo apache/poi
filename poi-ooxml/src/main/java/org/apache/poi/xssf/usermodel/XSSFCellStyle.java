@@ -846,7 +846,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     }
     
     /**
-     * Set the background fill color represented as a indexed color value.
+     * Set the background fill color represented as an indexed color value.
      * <p>
      * For example:
      * <pre>
@@ -916,7 +916,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     }
 
     /**
-     * Set the foreground fill color as a indexed color value
+     * Set the foreground fill color as an indexed color value
      * <br>
      * <i>Note: Ensure Foreground color is set prior to background color.</i>
      * @param fg the color to use
@@ -1044,7 +1044,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     }
 
     /**
-     * Set the color to use for the left border as a indexed color value
+     * Set the color to use for the left border as an indexed color value
      *
      * @param color the index of the color definition
      * @see org.apache.poi.ss.usermodel.IndexedColors

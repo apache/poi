@@ -36,10 +36,10 @@ import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
 
-final class TestOLE2Embeding {
+final class TestOLE2Embedding {
 
     @Test
-    void testEmbeding() throws Exception {
+    void testEmbedding() throws Exception {
         // This used to break, until bug #43116 was fixed
         try (HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("ole2-embedding.xls")) {
             // Check we can get at the Escher layer still
@@ -138,7 +138,7 @@ final class TestOLE2Embeding {
         UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
-            sheet.createRow(5).createCell(2).setCellValue("yo dawg i herd you like embeddet objekts, so we put a ole in your ole so you can save a file while you save a file");
+            sheet.createRow(5).createCell(2).setCellValue("yo dawg i herd you like embeddet objekts, so we put an ole in your ole so you can save a file while you save a file");
 
             wb.write(bos);
         }

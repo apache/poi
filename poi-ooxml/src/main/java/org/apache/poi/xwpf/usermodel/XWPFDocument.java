@@ -1123,7 +1123,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * copies content of a paragraph to a existing paragraph in the list paragraphs at position pos
+     * copies content of a paragraph to an existing paragraph in the list paragraphs at position pos
      */
     public void setParagraph(XWPFParagraph paragraph, int pos) {
         paragraphs.set(pos, paragraph);

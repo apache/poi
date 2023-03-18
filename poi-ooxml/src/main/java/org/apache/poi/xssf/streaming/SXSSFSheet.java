@@ -142,7 +142,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
                             "in the range [0," + _writer.getLastFlushedRow() + "] that is already written to disk.");
         }
 
-        // attempt to overwrite a existing row in the input template
+        // attempt to overwrite an existing row in the input template
         if(_sh.getPhysicalNumberOfRows() > 0 && rownum <= _sh.getLastRowNum() ) {
             throw new IllegalArgumentException(
                     "Attempting to write a row["+rownum+"] " +

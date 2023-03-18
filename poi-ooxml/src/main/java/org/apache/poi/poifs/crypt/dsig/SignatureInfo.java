@@ -93,7 +93,7 @@ import org.w3c.dom.events.MutationEvent;
 
 /**
  * <p>This class is the default entry point for XML signatures and can be used for
- * validating an existing signed office document and signing a office document.</p>
+ * validating an existing signed office document and signing an office document.</p>
  *
  * <p><b>Validating a signed office document</b></p>
  *

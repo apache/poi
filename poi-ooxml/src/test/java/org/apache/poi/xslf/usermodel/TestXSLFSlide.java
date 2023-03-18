@@ -142,7 +142,7 @@ class TestXSLFSlide {
 
         XSLFTextShape sh2 = (XSLFTextShape)shapes1.get(1);
         assertEquals(
-                "Text in a autoshape is white\n" +
+                "Text in an autoshape is white\n" +
                 "Fill: RGB(148, 198,0)", sh2.getText());
         XSLFTextRun r2 = sh2.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals("Century Gothic", r2.getFontFamily());

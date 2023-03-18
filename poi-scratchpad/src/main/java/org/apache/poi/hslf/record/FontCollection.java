@@ -89,7 +89,7 @@ public final class FontCollection extends RecordContainer {
      * uniquely contains fonts based on their typeface, i.e. calling the method with FontInfo
      * objects having the same name results in the same HSLFFontInfo reference.
      *
-     * @param fontInfo the FontInfo configuration, can be a instance of {@link HSLFFontInfo},
+     * @param fontInfo the FontInfo configuration, can be an instance of {@link HSLFFontInfo},
      *      {@link HSLFFontInfoPredefined} or a custom implementation
      * @return the register HSLFFontInfo object
      */

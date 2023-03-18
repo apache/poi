@@ -124,7 +124,7 @@ public class CellElapsedFormatter extends CellFormatter {
     }
 
     /**
-     * Creates a elapsed time formatter.
+     * Creates an elapsed time formatter.
      *
      * @param pattern The pattern to parse.
      */

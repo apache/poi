@@ -1034,7 +1034,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
     }
 
     /**
-     * Add a embedded object to this presentation
+     * Add an embedded object to this presentation
      *
      * @return 0-based index of the embedded object
      */

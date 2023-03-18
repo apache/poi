@@ -75,7 +75,7 @@ public class EventExample implements HSSFListener {
                 System.out.println("Cell found with value " + numrec.getValue()
                         + " at row " + numrec.getRow() + " and column " + numrec.getColumn());
                 break;
-                // SSTRecords store a array of unique strings used in Excel.
+                // SSTRecords store an array of unique strings used in Excel.
             case SSTRecord.sid:
                 sstrec = (SSTRecord) record;
                 for (int k = 0; k < sstrec.getNumUniqueStrings(); k++)

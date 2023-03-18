@@ -413,7 +413,7 @@ public final class HSLFTextRun implements TextRun {
     }
 
     /**
-     * Sets color of the text, as a int bgr.
+     * Sets color of the text, as an int bgr.
      * (PowerPoint stores as BlueGreenRed, not the more
      *  usual RedGreenBlue)
      * @see Color

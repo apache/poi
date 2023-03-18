@@ -330,7 +330,7 @@ public interface Cell {
      void setCellValue(boolean value);
 
     /**
-     * Set a error value for the cell
+     * Set an error value for the cell
      *
      * @param value the error value to set this cell to.  For formulas, we'll set the
      *        precalculated value , for errors we'll set

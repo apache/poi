@@ -177,7 +177,7 @@ import java.io.OutputStream;
             if (dataI > -1) {
                 // copy the last read byte into the dictionary.
                 // the example data compressor used self references, so we don't wait for filling the dictionary
-                // until we know if it's a un-/compressed token.
+                // until we know if it's an un-/compressed token.
                 dict[(posInp++) & DICT_MASK] = (byte)dataI;
             }
             // This is an unsigned byte read from the stream

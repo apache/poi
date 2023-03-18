@@ -447,7 +447,7 @@ public final class RecordInputStream implements LittleEndianInput {
      *
      * @return all byte data for the current record
      *
-     * @deprecated POI 2.0 Best to write a input stream that wraps this one
+     * @deprecated POI 2.0 Best to write an input stream that wraps this one
      *             where there is special sub record that may overlap continue
      *             records.
      */
