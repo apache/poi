@@ -152,6 +152,7 @@ compileJava {
 
 task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava', ':poi:jar'
+    onlyIf {jdkVersion > 8}
 
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
@@ -169,6 +170,7 @@ task compileJava9(type: JavaCompile) {
 
 task compileTest9(type: JavaCompile) {
     dependsOn 'compileTestJava', ':poi:testJar'
+    onlyIf {jdkVersion > 8}
 
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))

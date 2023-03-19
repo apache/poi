@@ -59,6 +59,7 @@ final String OOXML_LITE_INCLUDES = "^(com/microsoft/schemas|org/(etsi|openxmlfor
 
 task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava', ':poi-ooxml:jar', ':poi-scratchpad:jar'
+    onlyIf {jdkVersion > 8}
 
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
@@ -76,6 +77,7 @@ task compileJava9(type: JavaCompile) {
 
 task compileTest9(type: JavaCompile) {
     dependsOn 'compileTestJava', ':poi-ooxml:jar', ':poi-scratchpad:jar'
+    onlyIf {jdkVersion > 8}
 
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))

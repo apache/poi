@@ -97,6 +97,7 @@ task compileJava9(type: JavaCompile) {
         '--module-path', sourceSets.main.compileClasspath.asPath
     ]
 }
+compileJava9.onlyIf {jdkVersion > 8}
 
 task compileTest9(type: JavaCompile) {
     dependsOn 'compileTestJava'
@@ -114,6 +115,7 @@ task compileTest9(type: JavaCompile) {
     ]
     classpath = files()
 }
+compileTest9.onlyIf {jdkVersion > 8}
 
 jar {
     dependsOn compileJava9
