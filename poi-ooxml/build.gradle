@@ -266,6 +266,8 @@ artifacts {
 }
 
 test {
+    onlyIf { jdkVersion > 8 } // unfortunately, Java 8 builds on https://ci-builds.apache.org/ are hanging
+
     // for some reason catching the OOM does not work when run from Gradle
     exclude '**/MemoryUsage.class'
 
