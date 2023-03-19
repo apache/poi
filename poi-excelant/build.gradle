@@ -140,6 +140,7 @@ artifacts {
 
 test {
     dependsOn { testJar }
+    onlyIf { jdkVersion > 8 } // unfortunately, Java 8 builds on https://ci-builds.apache.org/ are hanging
 
     doFirst {
         jvmArgs += [
