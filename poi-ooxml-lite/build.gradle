@@ -90,7 +90,6 @@ processResources.dependsOn 'compileOoxmlLite'
 sourcesJar.dependsOn 'compileOoxmlLite'
 
 task compileJava9(type: JavaCompile, dependsOn: 'compileJava') {
-    onlyIf {jdkVersion > 8}
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
     }

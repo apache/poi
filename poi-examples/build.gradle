@@ -51,7 +51,6 @@ final List MODULE_COMPILE_PATH = sourceSets.main.compileClasspath.findAll{ it.pa
 
 task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava', ':poi-ooxml:jar', ':poi-scratchpad:jar'
-    onlyIf {jdkVersion > 8}
 
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))

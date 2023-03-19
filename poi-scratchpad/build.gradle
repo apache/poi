@@ -55,7 +55,6 @@ final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path 
 
 task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava', ':poi:jar'
-    onlyIf {jdkVersion > 8}
 
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
@@ -73,7 +72,6 @@ task compileJava9(type: JavaCompile) {
 
 task compileTest9(type: JavaCompile) {
     dependsOn 'compileTestJava', ':poi:jar'
-    onlyIf {jdkVersion > 8}
 
     javaCompiler = javaToolchains.compilerFor {
         languageVersion = JavaLanguageVersion.of(Math.max(11, jdkVersion))
