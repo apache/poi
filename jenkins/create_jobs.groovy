@@ -14,31 +14,16 @@ def xercesUrl = 'https://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesIm
 def xercesLib = './xercesImpl-2.6.1.jar'
 
 def poijobs = [
-        [ name: 'POI-DSL-1.8', trigger: 'H */12 * * *'
+        [ name: 'POI-DSL-1.8', trigger: 'H */12 * * *', jenkinsLite: true
         ],
         [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK 1.8', trigger: 'H */12 * * *',
           // only a limited set of nodes still have OpenJDK 8 (on Ubuntu) installed
           slaves: 'ubuntu',
-          skipcigame: true
+          skipcigame: true,
+          jenkinsLite: true
         ],
-//        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true,
-//          // let's save some CPU cycles here, 10 had EOL in September 2018
-//          disabled: true
-//        ],
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
         ],
-//        [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
-//          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA as of 17 September 2019
-//          disabled: true
-//        ],
-//        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true,
-//          // let's save some CPU cycles here, 13 is not a LTS and JDK 14 is GA as of 17 March 2020
-//          disabled: true
-//        ],
-//        [ name: 'POI-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true,
-//          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
-//          disabled: true
-//        ],
         [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true,
           // let's save some CPU cycles here, 15 is not a LTS and JDK 16 is GA
           disabled: true
@@ -91,16 +76,8 @@ def poijobs = [
 //        ],
         [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.11', trigger: 'H 7 * * *', sonar: true, skipcigame: true
         ],
-        [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
+        [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', jenkinsLite: true
         ],
-//        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-//          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
-//          disabled: true
-//        ],
-//        [ name: 'POI-DSL-Windows-1.14', jdk: '1.14', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-//		  // let's only verify the latest two JDKs
-//		  disabled: true
-//        ],
         [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
           // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
           disabled: true
@@ -448,7 +425,11 @@ poijobs.each { poijob ->
                     }
 
                     gradle {
-                        tasks('clean jenkins')
+                        if (poijob.jenkinsLite) {
+                            tasks('clean jenkinsLite')
+                        } else {
+                            tasks('clean jenkins')
+                        }
                         useWrapper(true)
                         if (poijob.noScratchpad) {
                             switches('-Pscratchpad.ignore=true')

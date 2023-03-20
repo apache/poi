@@ -440,6 +440,12 @@ subprojects {
     jenkins.dependsOn rat
     jenkins.dependsOn getDeps
 
+    task jenkinsLite
+    jenkins.dependsOn build
+    jenkins.dependsOn check
+    jenkins.dependsOn javadoc
+    jenkins.dependsOn rat
+
     publishing {
         publications {
             POI(MavenPublication) {
@@ -595,7 +601,9 @@ task allJavaDoc(type: Javadoc) {
 }
 
 
-task jenkins(dependsOn: ['replaceVersion', subprojects.build, 'srcDistZip','srcDistTar']) {}
+task jenkins(dependsOn: ['replaceVersion', subprojects.build, 'srcDistZip', 'srcDistTar']) {}
+
+task jenkinsLite(dependsOn: ['replaceVersion', subprojects.build]) {}
 
 clean {
     delete "${rootDir}/build/dist"
