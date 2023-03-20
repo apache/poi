@@ -354,13 +354,13 @@ poijobs.each { poijob ->
             }
             triggers {
                 pullRequestBuildTrigger()
-                /*githubPullRequest {
+                githubPullRequest {
                     admins(['centic9', 'poi-benchmark', 'tballison', 'gagravarr', 'onealj', 'pjfanning', 'Alain-Bearez'])
                     userWhitelist(['centic9', 'poi-benchmark', 'tballison', 'gagravarr', 'onealj', 'pjfanning', 'Alain-Bearez'])
                     orgWhitelist(['apache'])
                     cron('H/5 * * * *')
                     triggerPhrase('OK to test')
-                }*/
+                }
             }
         } else {
             triggers {
