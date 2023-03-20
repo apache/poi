@@ -14,31 +14,16 @@ def xercesUrl = 'https://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesIm
 def xercesLib = './xercesImpl-2.6.1.jar'
 
 def poijobs = [
-        [ name: 'POI-DSL-1.8', trigger: 'H */12 * * *'
+        [ name: 'POI-DSL-1.8', trigger: 'H */12 * * *', jenkinsLite: true
         ],
         [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK 1.8', trigger: 'H */12 * * *',
           // only a limited set of nodes still have OpenJDK 8 (on Ubuntu) installed
           slaves: 'ubuntu',
-          skipcigame: true
+          skipcigame: true,
+          jenkinsLite: true
         ],
-//        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true,
-//          // let's save some CPU cycles here, 10 had EOL in September 2018
-//          disabled: true
-//        ],
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
         ],
-//        [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
-//          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA as of 17 September 2019
-//          disabled: true
-//        ],
-//        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true,
-//          // let's save some CPU cycles here, 13 is not a LTS and JDK 14 is GA as of 17 March 2020
-//          disabled: true
-//        ],
-//        [ name: 'POI-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true,
-//          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
-//          disabled: true
-//        ],
         [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true,
           // let's save some CPU cycles here, 15 is not a LTS and JDK 16 is GA
           disabled: true
@@ -91,16 +76,11 @@ def poijobs = [
 //        ],
         [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.11', trigger: 'H 7 * * *', sonar: true, skipcigame: true
         ],
-        [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
+        [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', jenkinsLite: true
         ],
-//        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-//          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
-//          disabled: true
-//        ],
-//        [ name: 'POI-DSL-Windows-1.14', jdk: '1.14', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-//		  // let's only verify the latest two JDKs
-//		  disabled: true
-//        ],
+        [ name: 'POI-DSL-Windows-1.11', jdk: '1.11', trigger: triggerSundays, windows: true, slaves: 'Windows',
+          jenkinsLite: true
+        ],
         [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
           // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
           disabled: true
@@ -151,7 +131,7 @@ def defaultMaven = 'maven_3_latest'
 def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H29'
 
 def jdkMapping = [
-        '1.8': [ jenkinsJdk: 'jdk_1.8_latest', jdkVersion: 8, jdkVendor: 'oracle' ],
+        '1.8': [ jenkinsJdk: 'jdk_1.8_latest', jdkVersion: 8, jdkVendor: '' ],
         '1.10': [ jenkinsJdk: 'jdk_10_latest', jdkVersion: 10, jdkVendor: '' ],
         '1.11': [ jenkinsJdk: 'jdk_11_latest', jdkVersion: 11, jdkVendor: '' ],
         '1.12': [ jenkinsJdk: 'jdk_12_latest', jdkVersion: 12, jdkVendor: '' ],
@@ -410,7 +390,11 @@ poijobs.each { poijob ->
                     }
 
                     gradle {
-                        tasks('clean jenkins')
+                        if (poijob.jenkinsLite) {
+                            tasks('clean jenkinsLite')
+                        } else {
+                            tasks('clean jenkins')
+                        }
                         useWrapper(true)
                         if (poijob.noScratchpad) {
                             switches('-Pscratchpad.ignore=true')
@@ -644,7 +628,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'adoptopenjdk_hotspot_8u282',
                 'ibmjdk_1.8.0_261'
         )
-        // Note H50 is reserved according to it's node-descripion
+        // Note H50 is reserved according to its node-descripion
         label('Nodes','H22','H23','H24','H25','H26','H27','H28','H29','H30','H31','H32','H33','H34','H35','H36','H37','H38','H39','H40','H41','H42','H43','H44','H48','lucene1','lucene2','master')
     }
     steps {
