@@ -114,10 +114,7 @@ def poijobs = [
         [ name: 'POI-DSL-Windows-1.18', jdk: '1.18', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
           skipSpotbugs: true
         ],
-        [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
-          // ensure the file which is needed from the separate documentation module does exist
-          // as we are checking out from git, we do not have the reference checked out here
-          addShell: 'mkdir -p src/documentation\ntouch src/documentation/RELEASE-NOTES.txt'
+        [ name: 'POI-DSL-Github-PullRequests', trigger: '', skipcigame: true, disabled: true
         ],
 ]
 
@@ -322,50 +319,15 @@ poijobs.each { poijob ->
         }
         jdk(jdkMapping.get(jdkKey).jenkinsJdk)
         scm {
-            if (poijob.githubpr) {
-                git {
-                    remote {
-                        github('apache/poi')
-                        refspec('+refs/pull/*:refs/remotes/origin/pr/*')
-                    }
-                    branch('${sha1}')
-                }
-            } else {
-                svn(svnBase) { svnNode ->
-                    svnNode / browser(class: 'hudson.scm.browsers.ViewSVN') /
-                            url << 'https://svn.apache.org/viewcvs.cgi/?root=Apache-SVN'
-                }
+            svn(svnBase) { svnNode ->
+                svnNode / browser(class: 'hudson.scm.browsers.ViewSVN') /
+                        url << 'https://svn.apache.org/viewcvs.cgi/?root=Apache-SVN'
             }
         }
         checkoutRetryCount(3)
 
-        if (poijob.githubpr) {
-            throttleConcurrentBuilds {
-                maxPerNode(1)
-                maxTotal(1)
-            }
-            parameters {
-                /* plugin not available:
-                gitParam('sha1') {
-                    description('Pull request')
-                    type('BRANCH')
-                }*/
-                stringParam('sha1', 'origin/pr/9/head', 'Provide a branch-spec, e.g. origin/pr/9/head')
-            }
-            triggers {
-                pullRequestBuildTrigger()
-                githubPullRequest {
-                    admins(['centic9', 'poi-benchmark', 'tballison', 'gagravarr', 'onealj', 'pjfanning', 'Alain-Bearez'])
-                    userWhitelist(['centic9', 'poi-benchmark', 'tballison', 'gagravarr', 'onealj', 'pjfanning', 'Alain-Bearez'])
-                    orgWhitelist(['apache'])
-                    cron('H/5 * * * *')
-                    triggerPhrase('OK to test')
-                }
-            }
-        } else {
-            triggers {
-                scm(trigger)
-            }
+        triggers {
+            scm(trigger)
         }
 
         def shellcmds = (poijob.windows ? shellCmdsWin : shellCmdsUnix).replace('POIJOBSHELL', poijob.shell ?: '')
@@ -521,15 +483,6 @@ poijobs.each { poijob ->
             }
         }
 
-
-        if (poijob.githubpr) {
-            configure {
-                it / 'properties' << 'com.cloudbees.jenkins.plugins.git.vmerge.JobPropertyImpl'(plugin: 'git-validated-merge') {
-                    credentialsId('ASF_Cloudbees_Jenkins_ci-builds')
-                    postBuildPushFailureHandler(class: 'com.cloudbees.jenkins.plugins.git.vmerge.pbph.PushFailureIsFailure')
-                }
-            }
-        }
     }
 }
 
