@@ -23,7 +23,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
-        java-version: '11'
+        java-version: '8'
         cache: 'gradle'
 
     - name: Verify Gradle wrapper
@@ -33,4 +33,4 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build with Gradle
-      run: ./gradlew check -PjdkVersion=11 --no-daemon --refresh-dependencies
+      run: ./gradlew check -PjdkVersion=8 --no-daemon --refresh-dependencies
