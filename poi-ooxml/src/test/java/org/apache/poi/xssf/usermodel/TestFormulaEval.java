@@ -17,22 +17,29 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 class TestFormulaEval {
     @Test
     void testCircularRef() throws IOException {
-        try (XSSFWorkbook wb = new XSSFWorkbook()) {
-            XSSFSheet sheet = wb.createSheet();
-            XSSFRow row = sheet.createRow(0);
-            XSSFCell cell = row.createCell(0);
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
             cell.setCellFormula("A1");
-            XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
             // the following assert should probably be NUMERIC not ERROR (from testing in Excel itself)
             assertEquals(CellType.ERROR, formulaEvaluator.evaluateFormulaCell(cell));
 
@@ -45,14 +52,14 @@ class TestFormulaEval {
 
     @Test
     void testCircularRef2() throws IOException {
-        try (XSSFWorkbook wb = new XSSFWorkbook()) {
-            XSSFSheet sheet = wb.createSheet();
-            XSSFRow row = sheet.createRow(0);
-            XSSFCell cell0 = row.createCell(0);
-            XSSFCell cell1 = row.createCell(1);
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            Cell cell0 = row.createCell(0);
+            Cell cell1 = row.createCell(1);
             cell0.setCellFormula("B1");
             cell1.setCellFormula("A1");
-            XSSFFormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
             formulaEvaluator.evaluateAll();
 
             cell0.setCellFormula(null);
@@ -62,6 +69,58 @@ class TestFormulaEval {
             //the following asserts should probably be BLANK not ERROR
             assertEquals(CellType.ERROR, cell0.getCellType());
             assertEquals(CellType.ERROR, cell1.getCellType());
+        }
+    }
+
+    @Test
+    void testExceptionForWrongFormula1() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("test-sheet");
+            Row row = sheet.createRow(0);
+            Cell cell0 = row.createCell(0);
+            Cell cell1 = row.createCell(1);
+            cell0.setCellValue(1);
+            cell1.setCellFormula("'Sheet123'!R6C13");
+
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            try {
+                formulaEvaluator.evaluateAll();
+                fail("Should catch exception here");
+            } catch (IllegalStateException e) {
+                assertTrue(e.getMessage().contains("test-sheet"),
+                        "Had: " + e.getMessage());
+                assertTrue(e.getMessage().contains("Sheet123"),
+                        "Had: " + e.getMessage());
+                assertTrue(e.getMessage().contains("R6C13"),
+                        "Had: " + e.getMessage());
+            }
+        }
+    }
+
+    @Test
+    void testExceptionForWrongFormula2() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("test-sheet");
+            Row row = sheet.createRow(0);
+            Cell cell0 = row.createCell(0);
+            Cell cell1 = row.createCell(1);
+            cell0.setCellValue(1);
+            cell1.setCellFormula("SUM('asldkjasldk ajd Sheet123'!R6C13)");
+
+            FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
+            try {
+                formulaEvaluator.evaluateAll();
+                fail("Should catch exception here");
+            } catch (IllegalStateException e) {
+                assertTrue(e.getMessage().contains("test-sheet"),
+                        "Had: " + e.getMessage());
+                assertTrue(e.getMessage().contains("Sheet123"),
+                        "Had: " + e.getMessage());
+                assertTrue(e.getMessage().contains("R6C13"),
+                        "Had: " + e.getMessage());
+                assertTrue(e.getMessage().contains("SUM"),
+                        "Had: " + e.getMessage());
+            }
         }
     }
 }

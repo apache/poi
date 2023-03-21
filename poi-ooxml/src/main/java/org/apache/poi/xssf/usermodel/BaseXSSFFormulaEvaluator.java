@@ -57,9 +57,27 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
      */
     @Override
     protected CellValue evaluateFormulaCellValue(Cell cell) {
-        EvaluationCell evalCell = toEvaluationCell(cell);
-        ValueEval eval = _bookEvaluator.evaluate(evalCell);
-        cacheExternalWorkbookCells(evalCell);
+        final ValueEval eval;
+        try {
+            EvaluationCell evalCell = toEvaluationCell(cell);
+            eval = _bookEvaluator.evaluate(evalCell);
+            cacheExternalWorkbookCells(evalCell);
+        } catch (IllegalStateException e) {
+            // enhance IllegalStateException which can be
+            // thrown somewhere deep down the evaluation
+            // and thus is often missing information necessary
+            // for troubleshooting
+            // do not enhance others to keep the exception-sub-classes
+            // in place
+            if (e.getClass() == IllegalStateException.class) {
+                throw new IllegalStateException("Failed to evaluate cell: " +
+                        new CellReference(cell.getSheet().getSheetName(), cell.getRowIndex(), cell.getColumnIndex(),
+                                false, false).formatAsString(true) + ", value: " + cell, e);
+            } else {
+                throw e;
+            }
+        }
+
         if (eval instanceof NumberEval) {
             NumberEval ne = (NumberEval) eval;
             return new CellValue(ne.getNumberValue());
@@ -75,7 +93,9 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
         if (eval instanceof ErrorEval) {
             return CellValue.getError(((ErrorEval)eval).getErrorCode());
         }
-        throw new IllegalStateException("Unexpected eval class (" + eval.getClass().getName() + ")");
+        throw new IllegalStateException("Unexpected eval class (" + eval.getClass().getName() + "): " + eval + ", cell: " +
+                new CellReference(cell.getSheet().getSheetName(), cell.getRowIndex(), cell.getColumnIndex(),
+                        false, false).formatAsString(true) + ", value: " + cell);
     }
 
     /**
