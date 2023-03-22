@@ -38,6 +38,7 @@ plugins {
     id 'de.thetaphi.forbiddenapis' version '3.4'
     id 'org.sonarqube' version '4.0.0.2929'
     id 'org.cyclonedx.bom' version '1.7.4'
+    id 'com.adarshr.test-logger' version '3.2.0'
 }
 
 repositories {
@@ -113,6 +114,7 @@ subprojects {
     apply plugin: 'de.thetaphi.forbiddenapis'
     apply plugin: 'com.github.spotbugs'
     apply plugin: 'org.cyclonedx.bom'
+    apply plugin: 'com.adarshr.test-logger'
 
     ext {
         bouncyCastleVersion = '1.72'
@@ -304,11 +306,11 @@ subprojects {
 
             jvmArgs += [
                 // Strictly serial
-                // '-Djunit.jupiter.execution.parallel.enabled=false',
+                '-Djunit.jupiter.execution.parallel.enabled=false',
 
                 // OR parallel on 2 threads
-                '-Djunit.jupiter.execution.parallel.config.strategy=fixed',
-                '-Djunit.jupiter.execution.parallel.config.fixed.parallelism=2'
+                //'-Djunit.jupiter.execution.parallel.config.strategy=fixed',
+                //'-Djunit.jupiter.execution.parallel.config.fixed.parallelism=2'
             ]
             maxParallelForks = Runtime.runtime.availableProcessors().intdiv(2) ?: 1
         } else {
@@ -548,7 +550,6 @@ subprojects {
     spotbugs {
         ignoreFailures = true
         showStackTraces = false
-        showProgress = true
         maxHeapSize = '1g'
     }
 
