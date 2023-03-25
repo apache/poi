@@ -46,7 +46,6 @@ public final class IOUtils {
      * The default buffer size to use for the skip() methods.
      */
     private static final int SKIP_BUFFER_SIZE = 2048;
-    private static byte[] SKIP_BYTE_BUFFER;
 
     /**
      * The current set global allocation limit override,
@@ -520,18 +519,12 @@ public final class IOUtils {
         if (toSkip == 0) {
             return 0L;
         }
-        /*
-         * N.B. no need to synchronize this because: - we don't care if the buffer is created multiple times (the data
-         * is ignored) - we always use the same size buffer, so if it is recreated it will still be OK (if the buffer
-         * size were variable, we would need to synch. to ensure some other thread did not create a smaller one)
-         */
-        if (SKIP_BYTE_BUFFER == null) {
-            SKIP_BYTE_BUFFER = new byte[SKIP_BUFFER_SIZE];
-        }
+        // use dedicated buffer to avoid having other threads possibly access the bytes in a shared byte array
+        final byte[] skipBuffer = new byte[SKIP_BUFFER_SIZE];
         long remain = toSkip;
         while (remain > 0) {
             // See https://issues.apache.org/jira/browse/IO-203 for why we use read() rather than delegating to skip()
-            final long n = input.read(SKIP_BYTE_BUFFER, 0, (int) Math.min(remain, SKIP_BUFFER_SIZE));
+            final long n = input.read(skipBuffer, 0, (int) Math.min(remain, SKIP_BUFFER_SIZE));
             if (n < 0) { // EOF
                 break;
             }
