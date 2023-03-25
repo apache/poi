@@ -124,6 +124,12 @@ public final class IOUtils {
         }
     }
 
+    private static void checkByteSizeLimit(long length) {
+        if(BYTE_ARRAY_MAX_OVERRIDE != -1 && length > BYTE_ARRAY_MAX_OVERRIDE) {
+            throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
+        }
+    }
+
     /**
      * Peeks at the first N bytes of the stream. Returns those bytes, but
      *  with the stream unaffected. Requires a stream that supports mark/reset,
@@ -539,7 +545,7 @@ public final class IOUtils {
     public static byte[] safelyAllocate(long length, int maxLength) {
         safelyAllocateCheck(length, maxLength);
 
-        checkByteSizeLimit((int)length);
+        checkByteSizeLimit(length);
 
         return new byte[(int)length];
     }
@@ -568,8 +574,6 @@ public final class IOUtils {
         safelyAllocateCheck(realLength, maxLength);
         return Arrays.copyOfRange(src, offset, offset+realLength);
     }
-
-
 
 
     /**
