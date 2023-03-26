@@ -286,7 +286,7 @@ subprojects {
 
         // set heap size for the test JVM(s)
         minHeapSize = "128m"
-        maxHeapSize = "1G"
+        maxHeapSize = "2g"
 
 
         // Specifying the local via system properties did not work, so we set them this way
@@ -550,7 +550,7 @@ subprojects {
     spotbugs {
         ignoreFailures = true
         showStackTraces = false
-        maxHeapSize = '1g'
+        maxHeapSize = '2g'
     }
 
     build {
