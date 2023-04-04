@@ -349,7 +349,7 @@ under the License.
 
     <!-- license and api checks -->
     <dependency prefix="rat" artifact="org.apache.rat:apache-rat:0.15" usage="util"/>
-    <dependency prefix="forbidden" artifact="de.thetaphi:forbiddenapis:3.4" usage="util"/>
+    <dependency prefix="forbidden" artifact="de.thetaphi:forbiddenapis:3.5.1" usage="util"/>
 
     <!-- See https://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
@@ -725,6 +725,7 @@ under the License.
                 <include name="org.jacoco.*-0.8.5.*.jar"/>
                 <include name="org.jacoco.*-0.8.6.*.jar"/>
                 <include name="forbiddenapis-3.1.jar"/>
+                <include name="forbiddenapis-3.4.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/util">
                 <include name="jacoco-0.8.5.zip"/>
