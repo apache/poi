@@ -296,11 +296,11 @@ under the License.
 
     <!-- xml signature libs - not part of the distribution -->
     <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:3.0.2" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk18on:1.72" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk18on:1.72" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk18on:1.72" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk18on:1.73" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk18on:1.73" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk18on:1.73" usage="ooxml-provided"/>
     <!-- only used for signing the release - not used with the ooxml signatures -->
-    <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk18on:1.72.2" usage="util"/>
+    <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk18on:1.73" usage="util"/>
     <dependency prefix="ooxml.test.stax2" artifact="org.codehaus.woodstox:stax2-api:4.2.1" usage="ooxml-provided"/>
 
     <!-- svg/batik/pdf libs - not part of the distribution - move batik to its own directory because of JPMS module-path issues -->
