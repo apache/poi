@@ -28,12 +28,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -51,6 +48,7 @@ import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlTokenSource;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -498,18 +496,65 @@ public final class TestXWPFDocument {
         XWPFDocument document = new XWPFDocument(docxContents);
 
         IntStream.rangeClosed(1, numberOfPictures).forEach(
-                i -> addImage(document.createParagraph()));
+                i -> addImage(document.createParagraph(), "/bugfixing/" + i + ".png"));
 
         assertEquals(numberOfPictures,
                 document.getAllPictures().stream().map(XWPFPictureData::getFileName).count());
     }
 
-    private void addImage(XWPFParagraph paragraph) {
+    @Test
+    void test_2_0() throws Exception {
+        String pathToDocument = String.format("/bugfixing/document with shapes %d.docx", 0);
+
+        InputStream docxContents = getClass().getResourceAsStream(pathToDocument);
+        XWPFDocument document = new XWPFDocument(docxContents);
+
+        IntStream.rangeClosed(1, 2).forEach(
+                i -> addImage(document.createParagraph(), "/bugfixing/" + i + ".png"));
+
+        document.getParagraphs().stream()
+                .map(XWPFParagraph::getCTP)
+                .map(XmlTokenSource::newCursor)
+                .forEach(cursor1 -> {
+                    cursor1.selectPath("//docPr");
+                    if(cursor1.hasNextSelection()) {
+                        cursor1.toNextSelection();
+                        cursor1.toFirstAttribute();
+
+                        System.out.println(cursor1.getTextValue());
+                    }
+                });
+
+
+        XmlCursor cursor = document.getParagraphs().get(1).getCTP().newCursor();
+        String path = "";
+
+        cursor.toChild(0);
+        path += "/" + cursor.getName().getLocalPart();
+
+        cursor.toChild(0);
+        path += "/" + cursor.getName().getLocalPart();
+
+        cursor.toChild(0);
+        path += "/" + cursor.getName().getLocalPart();
+
+        cursor.toChild(1);
+        path += "/" + cursor.getName().getLocalPart();
+
+        cursor.toFirstAttribute();
+        path += "/" + cursor.getName().getLocalPart();
+
+        path += " = " + cursor.getTextValue();
+
+        System.out.println(path);
+    }
+
+    private void addImage(XWPFParagraph paragraph, String path) {
         XWPFRun run = paragraph.getRuns().stream().findFirst().orElse(paragraph.createRun());
 
         try {
             run.addPicture(
-                    getClass().getResourceAsStream("/bugfixing/some image.png"),
+                    getClass().getResourceAsStream(path),
                     Document.PICTURE_TYPE_PNG,
                     "some image.png",
                     10 * Units.EMU_PER_PIXEL,
