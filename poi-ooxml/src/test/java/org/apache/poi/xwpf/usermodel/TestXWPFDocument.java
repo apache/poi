@@ -498,55 +498,16 @@ public final class TestXWPFDocument {
         IntStream.rangeClosed(1, numberOfPictures).forEach(
                 i -> addImage(document.createParagraph(), "/bugfixing/" + i + ".png"));
 
-        assertEquals(numberOfPictures,
-                document.getAllPictures().stream().map(XWPFPictureData::getFileName).count());
-    }
-
-    @Test
-    void test_2_0() throws Exception {
-        String pathToDocument = String.format("/bugfixing/document with shapes %d.docx", 0);
-
-        InputStream docxContents = getClass().getResourceAsStream(pathToDocument);
-        XWPFDocument document = new XWPFDocument(docxContents);
-
-        IntStream.rangeClosed(1, 2).forEach(
-                i -> addImage(document.createParagraph(), "/bugfixing/" + i + ".png"));
-
-        document.getParagraphs().stream()
-                .map(XWPFParagraph::getCTP)
-                .map(XmlTokenSource::newCursor)
-                .forEach(cursor1 -> {
-                    cursor1.selectPath("//docPr");
-                    if(cursor1.hasNextSelection()) {
-                        cursor1.toNextSelection();
-                        cursor1.toFirstAttribute();
-
-                        System.out.println(cursor1.getTextValue());
-                    }
-                });
-
-
-        XmlCursor cursor = document.getParagraphs().get(1).getCTP().newCursor();
-        String path = "";
-
-        cursor.toChild(0);
-        path += "/" + cursor.getName().getLocalPart();
-
-        cursor.toChild(0);
-        path += "/" + cursor.getName().getLocalPart();
-
-        cursor.toChild(0);
-        path += "/" + cursor.getName().getLocalPart();
-
-        cursor.toChild(1);
-        path += "/" + cursor.getName().getLocalPart();
-
-        cursor.toFirstAttribute();
-        path += "/" + cursor.getName().getLocalPart();
-
-        path += " = " + cursor.getTextValue();
-
-        System.out.println(path);
+        Set<String> docPrIds = new HashSet<>();
+        XWPFParagraph p = document.getParagraphs().get(0);
+        XmlCursor cursor = p.getCTP().newCursor();
+        cursor.selectPath("//*:docPr");
+        while (cursor.hasNextSelection()) {
+            cursor.toNextSelection();
+            cursor.toFirstAttribute();
+            boolean newItem = docPrIds.add(cursor.getTextValue());
+            assertTrue(newItem);
+        }
     }
 
     private void addImage(XWPFParagraph paragraph, String path) {
