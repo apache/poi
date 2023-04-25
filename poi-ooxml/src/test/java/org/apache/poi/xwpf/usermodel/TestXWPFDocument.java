@@ -525,10 +525,10 @@ public final class TestXWPFDocument {
                 for (XWPFRun run : paragraph.getRuns()) {
                     XmlCursor cursor = run.getCTR().newCursor();
                     cursor.selectPath(
-                            "declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' "
-                            + "declare namespace mc='http://schemas.openxmlformats.org/markup-compatibility/2006' "
-                            + "declare namespace wp='http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing' "
-                            + ".//mc:AlternateContent/mc:Choice/w:drawing/wp:anchor/wp:docPr");
+                            "declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' " +
+                            "declare namespace mc='http://schemas.openxmlformats.org/markup-compatibility/2006' " +
+                            "declare namespace wp='http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing' " +
+                            ".//wp:docPr");
 
                     while (cursor.hasNextSelection()) {
                         cursor.toNextSelection();
@@ -551,7 +551,7 @@ public final class TestXWPFDocument {
         }
     }
 
-    private List<XWPFParagraph> bodyAndFooterParagraphs(XWPFDocument document)  {
+    private List<XWPFParagraph> bodyAndFooterParagraphs(XWPFDocument document) {
 
         List<XWPFParagraph> footerParagraphs = document.getFooterList().stream()
                 .flatMap(f -> f.getParagraphs().stream())
