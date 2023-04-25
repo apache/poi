@@ -503,9 +503,11 @@ public final class TestXWPFDocument {
         IntStream.rangeClosed(1, numberOfPictures).forEach(
                 i -> addImage(document.createParagraph(), "/bugfixing/" + i + ".png"));
 
+/*
         document.write(Files.newOutputStream(new File(
                 System.getProperty("user.home"),
                 String.format("/Desktop/out/%d_%d-out.docx", numberOfPictures, numberOfShapes)).toPath()));
+*/
 
         Set<String> docPrIds = new HashSet<>();
         XWPFParagraph p = document.getParagraphs().get(0);
