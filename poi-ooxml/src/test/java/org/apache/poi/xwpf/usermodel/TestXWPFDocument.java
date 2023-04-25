@@ -498,15 +498,14 @@ public final class TestXWPFDocument {
 
         InputStream docxContents = getClass().getResourceAsStream(pathToDocument);
         XWPFDocument document = new XWPFDocument(docxContents);
+        workaround(document);
 
         IntStream.rangeClosed(1, numberOfPictures).forEach(
                 i -> addImage(document.createParagraph(), "/bugfixing/" + i + ".png"));
 
-/*
         document.write(Files.newOutputStream(new File(
                 System.getProperty("user.home"),
                 String.format("/Desktop/out/%d_%d-out.docx", numberOfPictures, numberOfShapes)).toPath()));
-*/
 
         Set<String> docPrIds = new HashSet<>();
         XWPFParagraph p = document.getParagraphs().get(0);
@@ -518,8 +517,6 @@ public final class TestXWPFDocument {
             boolean newItem = docPrIds.add(paragraphCursor.getTextValue());
             assertTrue(newItem);
         }
-
-        workaround(document);
     }
 
     private XWPFDocument workaround(XWPFDocument document) {
@@ -527,7 +524,8 @@ public final class TestXWPFDocument {
             for (XWPFParagraph paragraph : bodyAndFooterParagraphs(document)) {
                 for (XWPFRun run : paragraph.getRuns()) {
                     XmlCursor cursor = run.getCTR().newCursor();
-                    cursor.selectPath("declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' "
+                    cursor.selectPath(
+                            "declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' "
                             + "declare namespace mc='http://schemas.openxmlformats.org/markup-compatibility/2006' "
                             + "declare namespace wp='http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing' "
                             + ".//mc:AlternateContent/mc:Choice/w:drawing/wp:anchor/wp:docPr");
