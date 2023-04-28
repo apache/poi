@@ -46,7 +46,7 @@ public final class ZipHelper {
     private static final String FORWARD_SLASH = "/";
 
     /**
-     * Prevent this class to be instancied.
+     * Prevent this class to be instantiated.
      */
     private ZipHelper() {
         // Do nothing
