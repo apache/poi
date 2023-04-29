@@ -89,17 +89,14 @@ public final class SprmUtils {
                 sprm[2] = (byte)param;
                 break;
             case 2:
+            case 4:
+            case 5:
                 sprm = new byte[4];
                 LittleEndian.putShort(sprm, 2, (short)param);
                 break;
             case 3:
                 sprm = new byte[6];
                 LittleEndian.putInt(sprm, 2, param);
-                break;
-            case 4:
-            case 5:
-                sprm = new byte[4];
-                LittleEndian.putShort(sprm, 2, (short)param);
                 break;
             case 6:
                 assert(varParam != null);

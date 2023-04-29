@@ -75,8 +75,6 @@ public final class SectionSprmUncompressor extends SprmUncompressor {
         newSEP.setOlstAnm (buf);
         break;
       case 0x3:
-        //not quite sure
-        break;
       case 0x4:
         //not quite sure
         break;
@@ -187,10 +185,8 @@ public final class SectionSprmUncompressor extends SprmUncompressor {
         newSEP.setFPropMark (getFlag (sprm.getOperand()));
         break;
       case 0x28:
-        break;
-      case 0x29:
-        break;
       case 0x2a:
+      case 0x29:
         break;
       case 0x2b:
         newSEP.setBrcTop(new BorderCode(sprm.getGrpprl(), sprm.getGrpprlOffset()));

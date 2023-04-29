@@ -536,10 +536,6 @@ public final class Picture {
         if (escherRecord instanceof EscherBSERecord) {
             EscherBSERecord bseRecord = (EscherBSERecord) escherRecord;
             switch ( bseRecord.getBlipTypeWin32() ) {
-                case 0x00:
-                    return PictureType.UNKNOWN;
-                case 0x01:
-                    return PictureType.UNKNOWN;
                 case 0x02:
                     return PictureType.EMF;
                 case 0x03:
@@ -547,6 +543,7 @@ public final class Picture {
                 case 0x04:
                     return PictureType.PICT;
                 case 0x05:
+                case 0x12:
                     return PictureType.JPEG;
                 case 0x06:
                     return PictureType.PNG;
@@ -554,8 +551,8 @@ public final class Picture {
                     return PictureType.BMP;
                 case 0x11:
                     return PictureType.TIFF;
-                case 0x12:
-                    return PictureType.JPEG;
+                case 0x00:
+                case 0x01:
                 default:
                     return PictureType.UNKNOWN;
             }

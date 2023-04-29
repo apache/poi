@@ -103,9 +103,6 @@ public class HSSFShapeFactory {
                 case CommonObjectDataSubRecord.OBJECT_TYPE_PICTURE:
                     shape = new HSSFPicture(container, objRecord);
                     break;
-                case CommonObjectDataSubRecord.OBJECT_TYPE_RECTANGLE:
-                    shape = new HSSFSimpleShape(container, objRecord, txtRecord);
-                    break;
                 case CommonObjectDataSubRecord.OBJECT_TYPE_LINE:
                     shape = new HSSFSimpleShape(container, objRecord);
                     break;
@@ -131,6 +128,7 @@ public class HSSFShapeFactory {
                 case CommonObjectDataSubRecord.OBJECT_TYPE_COMMENT:
                     shape = new HSSFComment(container, objRecord, txtRecord, agg.getNoteRecordByObj(objRecord));
                     break;
+                case CommonObjectDataSubRecord.OBJECT_TYPE_RECTANGLE:
                 default:
                     shape = new HSSFSimpleShape(container, objRecord, txtRecord);
             }

@@ -373,12 +373,6 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
             return;
         }
         switch (ei) {
-            case EXTENSION:
-                break;
-            case ANGLE_ELLIPSE_TO:
-                break;
-            case ANGLE_ELLIPSE:
-                break;
             case ARC_TO: {
                 // The first two POINT values specify the bounding rectangle of the ellipse.
                 // The second two POINT values specify the radial vectors for the ellipse.
@@ -415,44 +409,28 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
 
                 break;
             }
-            case ARC:
-                break;
-            case CLOCKWISE_ARC_TO:
-                break;
-            case CLOCKWISE_ARC:
-                break;
-            case ELLIPTICAL_QUADRANT_X:
-                break;
-            case ELLIPTICAL_QUADRANT_Y:
-                break;
-            case QUADRATIC_BEZIER:
-                break;
-            case NO_FILL:
-                break;
-            case NO_LINE:
-                break;
-            case AUTO_LINE:
-                break;
-            case AUTO_CURVE:
-                break;
-            case CORNER_LINE:
-                break;
-            case CORNER_CURVE:
-                break;
-            case SMOOTH_LINE:
-                break;
-            case SMOOTH_CURVE:
-                break;
-            case SYMMETRIC_LINE:
-                break;
-            case SYMMETRIC_CURVE:
-                break;
-            case FREEFORM:
-                break;
-            case FILL_COLOR:
-                break;
+            case EXTENSION:
             case LINE_COLOR:
-                break;
+            case FILL_COLOR:
+            case FREEFORM:
+            case SYMMETRIC_CURVE:
+            case SYMMETRIC_LINE:
+            case SMOOTH_CURVE:
+            case SMOOTH_LINE:
+            case CORNER_CURVE:
+            case CORNER_LINE:
+            case AUTO_CURVE:
+            case AUTO_LINE:
+            case NO_LINE:
+            case NO_FILL:
+            case QUADRATIC_BEZIER:
+            case ELLIPTICAL_QUADRANT_Y:
+            case ELLIPTICAL_QUADRANT_X:
+            case CLOCKWISE_ARC:
+            case CLOCKWISE_ARC_TO:
+            case ARC:
+            case ANGLE_ELLIPSE:
+            case ANGLE_ELLIPSE_TO:
             default:
                 break;
         }
