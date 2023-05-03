@@ -219,6 +219,9 @@ public final class PropertyTable implements BATManaged {
        if(getStartBlock() != stream.getStartBlock()) {
           setStartBlock(stream.getStartBlock());
        }
+
+       // Update the number of property blocks in the header
+       _header_block.setPropertyCount(countBlocks());
     }
 
     private void populatePropertyTree(DirectoryProperty root) throws IOException {
