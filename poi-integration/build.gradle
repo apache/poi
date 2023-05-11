@@ -139,10 +139,16 @@ artifacts {
 test {
     // exclude these from the normal test-run
     exclude '**/*FileHandler.class'
+    if (jdkVersion == 8)  {
+        exclude '**/*.class'
+    }
 
     dependsOn { testJar }
 
     systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
+    if (jdkVersion == 8)  {
+        systemProperties['sun.java2d.renderer'] = 'sun.java2d.marlin.MarlinRenderingEngine'
+    }
 
     doFirst {
         jvmArgs += [
