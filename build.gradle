@@ -163,6 +163,12 @@ subprojects {
         options.deprecation = true
         options.incremental = true
     }
+    tasks.withType(Test) {
+        systemProperty "file.encoding", "UTF-8"
+    }
+    tasks.withType(Javadoc) {
+        options.encoding = 'UTF-8'
+    }
 
     repositories {
         mavenCentral()
