@@ -39,17 +39,15 @@ public class IdentifierManager {
     public IdentifierManager(long lowerbound, long upperbound) {
         if (lowerbound > upperbound) {
             throw new IllegalArgumentException("lowerbound must not be greater than upperbound, had " + lowerbound + " and " + upperbound);
-        }
-        else if (lowerbound < MIN_ID) {
-            String message = "lowerbound must be greater than or equal to " + Long.toString(MIN_ID);
+        } else if (lowerbound < MIN_ID) {
+            String message = "lowerbound must be greater than or equal to " + MIN_ID;
             throw new IllegalArgumentException(message);
-        }
-        else if (upperbound > MAX_ID) {
+        } else if (upperbound > MAX_ID) {
             /*
              * while MAX_ID is Long.MAX_VALUE, this check is pointless. But if
              * someone subclasses / tweaks the limits, this check is fine.
              */
-            throw new IllegalArgumentException("upperbound must be less than or equal to " + Long.toString(MAX_ID) + " but had " + upperbound);
+            throw new IllegalArgumentException("upperbound must be less than or equal to " + MAX_ID + " but had " + upperbound);
         }
         this.lowerbound = lowerbound;
         this.upperbound = upperbound;
@@ -92,25 +90,21 @@ public class IdentifierManager {
             Segment segment = iter.next();
             if (segment.end < id) {
                 continue;
-            }
-            else if (segment.start > id) {
+            } else if (segment.start > id) {
                 break;
-            }
-            else if (segment.start == id) {
+            } else if (segment.start == id) {
                 segment.start = id + 1;
                 if (segment.end < segment.start) {
                     iter.remove();
                 }
                 return id;
-            }
-            else if (segment.end == id) {
+            } else if (segment.end == id) {
                 segment.end = id - 1;
                 if (segment.start > segment.end) {
                     iter.remove();
                 }
                 return id;
-            }
-            else {
+            } else {
                 iter.add(new Segment(id + 1, segment.end));
                 segment.end = id - 1;
                 return id;
@@ -159,6 +153,13 @@ public class IdentifierManager {
             }
         }
 
+        // if there are no segments then all are reserved currently
+        // and so we need to mark this id as released now
+        if (segments.isEmpty()) {
+            segments.add(new Segment(id, id));
+            return true;
+        }
+
         if (id == lowerbound) {
             Segment firstSegment = segments.getFirst();
             if (firstSegment.start == lowerbound + 1) {
@@ -189,8 +190,7 @@ public class IdentifierManager {
             if (segment.start == higher) {
                 segment.start = id;
                 return true;
-            }
-            else if (segment.end == lower) {
+            } else if (segment.end == lower) {
                 segment.end = id;
                 /* check if releasing this elements glues two segments into one */
                 if (iter.hasNext()) {
@@ -201,8 +201,7 @@ public class IdentifierManager {
                     }
                 }
                 return true;
-            }
-            else {
+            } else {
                 /* id was not reserved, return false */
                 break;
             }
@@ -224,7 +223,8 @@ public class IdentifierManager {
      */
     private void verifyIdentifiersLeft() {
         if (segments.isEmpty()) {
-            throw new IllegalStateException("No identifiers left");
+            throw new IllegalStateException("No identifiers left for range "
+                    + "[" + lowerbound + "," + upperbound + "]");
         }
     }
 
