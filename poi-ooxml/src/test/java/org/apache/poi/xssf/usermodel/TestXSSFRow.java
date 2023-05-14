@@ -21,12 +21,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.tests.usermodel.BaseTestXRow;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellCopyContext;
+import org.apache.poi.ss.usermodel.CellCopyPolicy;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Hyperlink;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
@@ -425,5 +435,45 @@ public final class TestXSSFRow extends BaseTestXRow {
 
         XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
         assertEquals(CellType.BLANK, wb3.getSheet("Sheet1").getRow(0).getCell(1).getCellType(), "Cell should be blank");
+    }
+
+    @Test
+    void createHeaderOnce() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        fillData(1, wb.createSheet("sheet123"));
+        writeToFile(wb);
+    }
+
+    @Test
+    void createHeaderTwice() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        fillData(0, wb.createSheet("sheet123"));
+        writeToFile(wb);
+    }
+
+    @Test
+    void createHeaderThreeTimes() throws IOException {
+        Workbook wb = new XSSFWorkbook();
+        Sheet sheet = wb.createSheet("sheet123");
+        fillData(1, sheet);
+        fillData(0, sheet);
+        fillData(0, sheet);
+        writeToFile(wb);
+    }
+
+    private void fillData(int startAtRow, Sheet sheet) {
+        Row header = sheet.createRow(0);
+        for (int rownum = startAtRow; rownum < 2; rownum++) {
+            header.createCell(0).setCellValue("a");
+
+            Row row = sheet.createRow(rownum);
+            row.createCell(0).setCellValue("a");
+        }
+    }
+
+    private void writeToFile(Workbook wb) throws IOException {
+        try (OutputStream fileOut = new ByteArrayOutputStream()) {
+            wb.write(fileOut);
+        }
     }
 }

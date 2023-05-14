@@ -608,7 +608,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
         }
 
         // remove any remaining illegal references in _rows.cArray
-        while(cArrayOrig.length > _cells.size()) {
+        while(_row.getCArray().length > _cells.size()) {
             _row.removeC(_cells.size());
         }
     }
