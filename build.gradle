@@ -120,7 +120,7 @@ subprojects {
         bouncyCastleVersion = '1.73'
         commonsCodecVersion = '1.15'
         commonsCompressVersion = '1.23.0'
-        commonsIoVersion = '2.11.0'
+        commonsIoVersion = '2.12.0'
         commonsMathVersion = '3.6.1'
         junitVersion = '5.9.3'
         log4jVersion = '2.20.0'
