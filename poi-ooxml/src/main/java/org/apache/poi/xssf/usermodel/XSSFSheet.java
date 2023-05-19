@@ -4171,8 +4171,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     /* package */ boolean isCellInArrayFormulaContext(XSSFCell cell) {
+        if (arrayFormulas.isEmpty()) {
+            return false;
+        }
+
+        int rowIndex = cell.getRowIndex();
+        int columnIndex = cell.getColumnIndex();
         for (CellRangeAddress range : arrayFormulas) {
-            if (range.isInRange(cell.getRowIndex(), cell.getColumnIndex())) {
+            if (range.isInRange(rowIndex, columnIndex)) {
                 return true;
             }
         }
