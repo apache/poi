@@ -4171,8 +4171,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     /* package */ boolean isCellInArrayFormulaContext(XSSFCell cell) {
+        final int rowIndex = cell.getRowIndex();
+        final int columnIndex = cell.getColumnIndex();
         for (CellRangeAddress range : arrayFormulas) {
-            if (range.isInRange(cell.getRowIndex(), cell.getColumnIndex())) {
+            if (range.isInRange(rowIndex, columnIndex)) {
                 return true;
             }
         }
@@ -4180,8 +4182,10 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     /* package */ XSSFCell getFirstCellInArrayFormula(XSSFCell cell) {
+        final int rowIndex = cell.getRowIndex();
+        final int columnIndex = cell.getColumnIndex();
         for (CellRangeAddress range : arrayFormulas) {
-            if (range.isInRange(cell.getRowIndex(), cell.getColumnIndex())) {
+            if (range.isInRange(rowIndex, columnIndex)) {
                 return getRow(range.getFirstRow()).getCell(range.getFirstColumn());
             }
         }
@@ -4868,18 +4872,19 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * @param cell The cell that is removed
      * @param evalWb BaseXSSFEvaluationWorkbook in use, if one exists
      */
-    protected void onDeleteFormula(XSSFCell cell, BaseXSSFEvaluationWorkbook evalWb){
-
+    protected void onDeleteFormula(final XSSFCell cell, final BaseXSSFEvaluationWorkbook evalWb) {
+        final int rowIndex = cell.getRowIndex();
+        final int columnIndex = cell.getColumnIndex();
         CTCellFormula f = cell.getCTCell().getF();
         if (f != null && f.getT() == STCellFormulaType.SHARED && f.isSetRef() && f.getStringValue() != null) {
 
             CellRangeAddress ref = CellRangeAddress.valueOf(f.getRef());
             if(ref.getNumberOfCells() > 1){
                 DONE:
-                for(int i = cell.getRowIndex(); i <= ref.getLastRow(); i++){
+                for(int i = rowIndex; i <= ref.getLastRow(); i++){
                     XSSFRow row = getRow(i);
                     if(row != null) {
-                        for(int j = cell.getColumnIndex(); j <= ref.getLastColumn(); j++){
+                        for(int j = columnIndex; j <= ref.getLastColumn(); j++){
                             XSSFCell nextCell = row.getCell(j);
                             if(nextCell != null && nextCell != cell && nextCell.getCellType() == CellType.FORMULA) {
                                 CTCellFormula nextF = nextCell.getCTCell().getF();

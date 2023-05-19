@@ -113,7 +113,8 @@ public class XSSFImportFromXML {
                 String textContent = result.getTextContent();
                 LOG.atDebug().log("Extracting with xpath {} : value is '{}'", xpathString, textContent);
                 XSSFCell cell = singleXmlCell.getReferencedCell();
-                LOG.atDebug().log("Setting '{}' to cell {}-{} in sheet {}", textContent, box(cell.getColumnIndex()),box(cell.getRowIndex()),cell.getSheet().getSheetName());
+                LOG.atDebug().log("Setting '{}' to cell {}-{} in sheet {}", textContent,
+                        box(cell.getColumnIndex()), box(cell.getRowIndex()), cell.getSheet().getSheetName());
                 setCellValue(textContent, cell, xmlDataType);
             }
         }
@@ -158,7 +159,8 @@ public class XSSFImportFromXML {
                     if (cell == null) {
                         cell = row.createCell(columnId);
                     }
-                    LOG.atDebug().log("Setting '{}' to cell {}-{} in sheet {}", value, box(cell.getColumnIndex()),box(cell.getRowIndex()),table.getXSSFSheet().getSheetName());
+                    LOG.atDebug().log("Setting '{}' to cell {}-{} in sheet {}", value,
+                            box(cell.getColumnIndex()), box(cell.getRowIndex()), table.getXSSFSheet().getSheetName());
                     setCellValue(value, cell, xmlColumnPr.getXmlDataType());
                 }
             }
