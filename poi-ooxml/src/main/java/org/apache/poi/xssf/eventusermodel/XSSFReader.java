@@ -68,7 +68,7 @@ public class XSSFReader {
             Collections.unmodifiableSet(new HashSet<>(
                     Arrays.asList(XSSFRelation.WORKSHEET.getRelation(),
                             XSSFRelation.CHARTSHEET.getRelation(),
-                            XSSFRelation.MACRO_SHEET_BIN.getRelation())
+                            XSSFRelation.MACRO_SHEET_XML.getRelation())
             ));
     private static final Logger LOGGER = LogManager.getLogger(XSSFReader.class);
 

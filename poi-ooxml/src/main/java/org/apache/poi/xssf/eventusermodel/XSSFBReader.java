@@ -64,8 +64,8 @@ public class XSSFBReader extends XSSFReader {
                     Arrays.asList(
                             XSSFRelation.WORKSHEET.getRelation(),
                             XSSFRelation.CHARTSHEET.getRelation(),
-                            XSSFRelation.MACRO_SHEET_BIN.getRelation(),
-                            XSSFRelation.INTL_MACRO_SHEET_BIN.getRelation(),
+                            XSSFRelation.MACRO_SHEET_XML.getRelation(),
+                            XSSFRelation.INTL_MACRO_SHEET_XML.getRelation(),
                             XSSFRelation.DIALOG_SHEET_BIN.getRelation()
                     )
             ));
