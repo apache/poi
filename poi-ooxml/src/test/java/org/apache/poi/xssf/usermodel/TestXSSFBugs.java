@@ -68,6 +68,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.crypt.Decryptor;
@@ -3839,6 +3840,18 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         // file can be read, i.e. is a valid Zip
         readByCommonsCompress(temp_excel_poi);
         readByCommonsCompress(temp_excel_poi_decrypt);
+    }
+
+    @Test
+    void getMacrosheet() throws IOException, InvalidFormatException {
+        try (XSSFWorkbook wb = openSampleWorkbook("xlmmacro.xlsm")) {
+            PackageRelationshipCollection prc = wb.getPackagePart().getRelationships();
+            assertNotNull(prc);
+            assertEquals(6, prc.size());
+            PackageRelationshipCollection prc2 = prc.getRelationships(XSSFRelation.MACRO_SHEET_XML.getRelation());
+            assertNotNull(prc2);
+            assertEquals(1, prc2.size());
+        }
     }
 
     private static void readByCommonsCompress(File temp_excel_poi) throws IOException {
