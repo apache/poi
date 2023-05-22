@@ -345,6 +345,14 @@ public final class TestXSSFReader {
     }
 
     @Test
+    void test66612() throws Exception {
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("xlmmacro.xlsm"))) {
+            XSSFReader reader = new XSSFReader(pkg);
+            assertEquals("OCHSA0XBnVkZrG5OECromBJH43QoLIEZLit3eDix+rs=", hash(reader));
+        }
+    }
+
+    @Test
     void testStrictOoxmlNotAllowed() throws Exception {
         assertThrows(POIXMLException.class, () -> {
             try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("sample.strict.xlsx"))) {
