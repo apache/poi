@@ -286,13 +286,13 @@ public final class XSSFRelation extends POIXMLRelation {
     );
 
     public static final XSSFRelation MACRO_SHEET_BIN = new XSSFRelation(
-        null,//TODO: figure out what this should be?
+        "application/vnd.ms-excel.macrosheet+xml",
         "http://schemas.microsoft.com/office/2006/relationships/xlMacrosheet",
         "/xl/macroSheets/sheet#.bin"
     );
 
     public static final XSSFRelation INTL_MACRO_SHEET_BIN = new XSSFRelation(
-        null,//TODO: figure out what this should be?
+        "application/vnd.ms-excel.intlmacrosheet+xml",
         "http://schemas.microsoft.com/office/2006/relationships/xlIntlMacrosheet",
         "/xl/macroSheets/sheet#.bin"
     );
