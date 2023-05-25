@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -39,10 +40,6 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * <b>width</b> (default same width as base reference) is the column count for the returned area reference.<br>
  */
 public final class Offset implements Function {
-    // These values are specific to BIFF8
-    private static final int LAST_VALID_ROW_INDEX = 0xFFFF;
-    private static final int LAST_VALID_COLUMN_INDEX = 0xFF;
-
 
     /**
      * A one dimensional base + offset.  Represents either a row range or a column range.
@@ -199,10 +196,10 @@ public final class Offset implements Function {
         LinearOffsetRange absRows = orRow.normaliseAndTranslate(baseRef.getFirstRowIndex());
         LinearOffsetRange absCols = orCol.normaliseAndTranslate(baseRef.getFirstColumnIndex());
 
-        if(absRows.isOutOfBounds(0, LAST_VALID_ROW_INDEX)) {
+        if(absRows.isOutOfBounds(0, SpreadsheetVersion.EXCEL2007.getLastRowIndex())) {
             throw new EvaluationException(ErrorEval.REF_INVALID);
         }
-        if(absCols.isOutOfBounds(0, LAST_VALID_COLUMN_INDEX)) {
+        if(absCols.isOutOfBounds(0, SpreadsheetVersion.EXCEL2007.getLastColumnIndex())) {
             throw new EvaluationException(ErrorEval.REF_INVALID);
         }
         return baseRef.offset(orRow.getFirstIndex(), orRow.getLastIndex(), orCol.getFirstIndex(), orCol.getLastIndex());

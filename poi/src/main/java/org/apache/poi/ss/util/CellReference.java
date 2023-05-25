@@ -93,10 +93,6 @@ public class CellReference implements GenericRecord {
      * digits or dot.  (They can even end in dot).
      */
     private static final Pattern NAMED_RANGE_NAME_PATTERN = Pattern.compile("[_A-Z][_.A-Z0-9]*", Pattern.CASE_INSENSITIVE);
-    //private static final String BIFF8_LAST_COLUMN = SpreadsheetVersion.EXCEL97.getLastColumnName();
-    //private static final int BIFF8_LAST_COLUMN_TEXT_LEN = BIFF8_LAST_COLUMN.length();
-    //private static final String BIFF8_LAST_ROW = String.valueOf(SpreadsheetVersion.EXCEL97.getMaxRows());
-    //private static final int BIFF8_LAST_ROW_TEXT_LEN = BIFF8_LAST_ROW.length();
 
     // FIXME: _sheetName may be null, depending on the entry point.
     // Perhaps it would be better to declare _sheetName is never null, using an empty string to represent a 2D reference.
