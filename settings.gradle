@@ -1,3 +1,35 @@
+plugins {
+    id 'com.gradle.enterprise' version '3.13.3'
+    id 'com.gradle.common-custom-user-data-gradle-plugin' version '1.10'
+}
+
+def isCI = System.getenv('GITHUB_ACTIONS') != null
+
+gradleEnterprise {
+    server = "https://ge.apache.org"
+    buildScan {
+        capture { taskInputFiles = true }
+        uploadInBackground = !isCI
+        publishAlways()
+        publishIfAuthenticated()
+        obfuscation {
+            // This obfuscates the IP addresses of the build machine in the build scan.
+            // Alternatively, the build scan will provide the hostname for troubleshooting host-specific issues.
+            ipAddresses { addresses -> addresses.collect { address -> "0.0.0.0"} }
+        }
+    }
+}
+
+buildCache {
+    local {
+        enabled = !isCI
+    }
+
+    remote(gradleEnterprise.buildCache) {
+        enabled = false
+    }
+}
+
 rootProject.name = 'poi'
 
 include 'poi', 'poi-ooxml-full', 'poi-ooxml-lite-agent', 'poi-scratchpad',
