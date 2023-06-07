@@ -173,6 +173,9 @@ public class OOXMLSignatureFacet implements SignatureFacet {
                 try {
                     PackagePartName relName = PackagingURIHelper.createPartName(partName);
                     PackagePart pp2 = opcPackage.getPart(relName);
+                    if (pp2 == null) {
+                        throw new XMLSignatureException("Failed to find part " + relName);
+                    }
                     contentType = pp2.getContentType();
                 } catch (InvalidFormatException e) {
                     throw new XMLSignatureException(e);
