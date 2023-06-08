@@ -48,7 +48,7 @@ public class OSGiSpreadsheetIT extends BaseOSGiTestCase {
         s.createRow(0).createCell(0).setCellValue("With OSGi");
         s.createRow(1).createCell(0).setCellFormula("SUM(A1:B3)");
 
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             wb.write(baos);
             try (InputStream bais = baos.toInputStream()) {
                 wb = WorkbookFactory.create(bais);

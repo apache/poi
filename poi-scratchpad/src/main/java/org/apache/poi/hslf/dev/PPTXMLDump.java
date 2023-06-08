@@ -65,7 +65,7 @@ public final class PPTXMLDump {
             return null;
         }
         try (InputStream is = dn.createDocumentInputStream(entry);
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             IOUtils.copy(is, bos);
             return bos.toByteArray();
         }

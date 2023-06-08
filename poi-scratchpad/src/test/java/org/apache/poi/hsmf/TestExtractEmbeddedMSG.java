@@ -81,7 +81,7 @@ public class TestExtractEmbeddedMSG {
             testFixedAndVariableLengthPropertiesOfAttachedMSG(attachedMsg);
             // rebuild top level message from embedded message
             try (POIFSFileSystem extractedAttachedMsg = rebuildFromAttached(attachedMsg)) {
-                try (UnsynchronizedByteArrayOutputStream extractedAttachedMsgOut = new UnsynchronizedByteArrayOutputStream()) {
+                try (UnsynchronizedByteArrayOutputStream extractedAttachedMsgOut = UnsynchronizedByteArrayOutputStream.builder().get()) {
                     extractedAttachedMsg.writeFilesystem(extractedAttachedMsgOut);
                     MAPIMessage extractedMsgTopLevel = new MAPIMessage(extractedAttachedMsgOut.toInputStream());
                     // test properties of rebuilt embedded message
@@ -171,7 +171,7 @@ public class TestExtractEmbeddedMSG {
                 MAPIType type = Types.getById(iType);
                 if (type != null && type != Types.UNKNOWN) {
                     MAPIProperty mprop = MAPIProperty.createCustom(chunk.getChunkId(), type, chunk.getEntryName());
-                    UnsynchronizedByteArrayOutputStream data = new UnsynchronizedByteArrayOutputStream();
+                    UnsynchronizedByteArrayOutputStream data = UnsynchronizedByteArrayOutputStream.builder().get();
                     chunk.writeValue(data);
                     PropertyValue pval = new PropertyValue(mprop, MessagePropertiesChunk.PROPERTIES_FLAG_READABLE
                             | MessagePropertiesChunk.PROPERTIES_FLAG_WRITEABLE, data.toByteArray(), type);

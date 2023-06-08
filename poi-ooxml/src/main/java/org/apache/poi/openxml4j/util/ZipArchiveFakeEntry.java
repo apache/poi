@@ -104,7 +104,7 @@ import org.apache.poi.util.TempFile;
                 throw new IOException("temp file " + tempFile.getAbsolutePath() + " is missing");
             }
         } else if (data != null) {
-            return new UnsynchronizedByteArrayInputStream(data);
+            return UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get();
         } else {
             throw new IOException("Cannot retrieve data from Zip Entry, probably because the Zip Entry was closed before the data was requested.");
         }

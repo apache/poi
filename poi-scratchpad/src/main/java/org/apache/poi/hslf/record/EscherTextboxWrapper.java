@@ -89,7 +89,7 @@ public final class EscherTextboxWrapper extends RecordContainer {
         // Write out our children, and stuff them into the Escher layer
 
         // Grab the children's data
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             for (org.apache.poi.hslf.record.Record r : _children) {
                 r.writeOut(baos);
             }

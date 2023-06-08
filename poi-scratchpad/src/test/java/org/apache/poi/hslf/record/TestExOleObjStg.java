@@ -70,7 +70,7 @@ public final class TestExOleObjStg {
     @Test
     void testWrite() throws Exception {
         ExOleObjStg record = new ExOleObjStg(data, 0, data.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 
@@ -88,7 +88,7 @@ public final class TestExOleObjStg {
 
         assertEquals(src.getDataLength(), tgt.getDataLength());
 
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         tgt.writeOut(out);
         byte[] b = out.toByteArray();
 

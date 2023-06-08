@@ -69,7 +69,7 @@ public final class TestEvilUnclosedBRFixingInputStream {
         //  overflow or only part in the buffer
         for(int i=5; i<orig.length; i++) {
             try (EvilUnclosedBRFixingInputStream inp = new EvilUnclosedBRFixingInputStream(orig);
-                 UnsynchronizedByteArrayOutputStream bout = new UnsynchronizedByteArrayOutputStream()) {
+                 UnsynchronizedByteArrayOutputStream bout = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 for (;;) {
                     byte[] b = new byte[i];
                     int r = inp.read(b);

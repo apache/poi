@@ -379,7 +379,7 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
         out.append("  bytes that would be written: \n");
 
         try {
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
             writeOut(baos);
             byte[] b = baos.toByteArray();
             out.append(HexDump.dump(b, 0, 0));

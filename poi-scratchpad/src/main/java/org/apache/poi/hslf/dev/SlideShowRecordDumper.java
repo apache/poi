@@ -146,7 +146,7 @@ public final class SlideShowRecordDumper {
     public int getDiskLen(org.apache.poi.hslf.record.Record r) throws IOException {
         int diskLen = 0;
         if (r != null) {
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
             r.writeOut(baos);
             diskLen = baos.size();
         }
@@ -158,7 +158,7 @@ public final class SlideShowRecordDumper {
             return "<<null>>";
         }
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         r.writeOut(baos);
         byte[] b = baos.toByteArray();
         return HexDump.dump(b, 0, 0);
@@ -258,7 +258,7 @@ public final class SlideShowRecordDumper {
             if (optEscher && cname.equals("PPDrawing")) {
                 DefaultEscherRecordFactory factory = new HSLFEscherRecordFactory();
 
-                UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
                 r.writeOut(baos);
                 byte[] b = baos.toByteArray();
 

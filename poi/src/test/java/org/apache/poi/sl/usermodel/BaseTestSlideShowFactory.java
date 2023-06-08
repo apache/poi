@@ -133,7 +133,7 @@ public abstract class BaseTestSlideShowFactory {
     }
 
     private static byte[] readExternalFile(String path) {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
 
         try (InputStream fis = new FileInputStream(path)) {
             byte[] buf = new byte[512];

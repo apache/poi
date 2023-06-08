@@ -227,7 +227,7 @@ public abstract class RecordContainer extends Record
      */
     public void writeOut(byte headerA, byte headerB, long type, Record[] children, OutputStream out) throws IOException {
         // Create a UnsynchronizedByteArrayOutputStream to hold everything in
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
 
             // Write out our header, less the size
             baos.write(new byte[]{headerA, headerB});

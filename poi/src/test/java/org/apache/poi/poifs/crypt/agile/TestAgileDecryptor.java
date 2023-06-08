@@ -69,7 +69,7 @@ class TestAgileDecryptor {
                 os.write(testData);
             }
 
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             fsEnc.writeFilesystem(bos);
 
             bos.close();

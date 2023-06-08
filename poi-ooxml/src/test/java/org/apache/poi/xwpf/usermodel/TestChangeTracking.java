@@ -58,7 +58,7 @@ class TestChangeTracking {
             r1.setText("Lorem ipsum dolor sit amet.");
             doc.setTrackRevisions(true);
 
-            try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 doc.write(out);
 
                 try (InputStream inputStream = out.toInputStream()) {

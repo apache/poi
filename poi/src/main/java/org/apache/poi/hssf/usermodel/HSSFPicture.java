@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.awt.Dimension;
+import java.io.IOException;
 
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
@@ -191,7 +192,12 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
         EscherBSERecord bse = iwb.getBSERecord(getPictureIndex());
         byte[] data = bse.getBlipRecord().getPicturedata();
         int type = bse.getBlipTypeWin32();
-        return ImageUtils.getImageDimension(new UnsynchronizedByteArrayInputStream(data), type);
+        try {
+            return ImageUtils.getImageDimension(UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get(), type);
+        } catch (IOException e) {
+            // not possible with ByteArray but still declared in the API
+            throw new IllegalStateException(e);
+        }
     }
 
     /**

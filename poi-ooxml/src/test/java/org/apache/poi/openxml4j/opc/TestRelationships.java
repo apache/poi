@@ -198,7 +198,7 @@ class TestRelationships {
 
 
         // Write out and re-load
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         pkg.save(baos);
 
         // use revert to not re-write the input file
@@ -226,7 +226,7 @@ class TestRelationships {
 
     @Test
     void testCreateRelationsFromScratch() throws Exception {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         OPCPackage pkg = OPCPackage.create(baos);
 
         PackagePart partA =
@@ -298,7 +298,7 @@ class TestRelationships {
         OPCPackage pkg = OPCPackage.open(filepath);
         assert_50154(pkg);
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         pkg.save(baos);
 
         // use revert to not re-write the input file
@@ -353,7 +353,7 @@ class TestRelationships {
 
    @Test
    void testSelfRelations_bug51187() throws Exception {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         PackageRelationship rel1;
         try (OPCPackage pkg = OPCPackage.create(baos)) {
 
@@ -399,7 +399,7 @@ class TestRelationships {
             assertEquals("mailto:nobody@nowhere.uk%C2%A0", targetUri.toASCIIString());
             assertEquals("nobody@nowhere.uk\u00A0", targetUri.getSchemeSpecificPart());
 
-            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
             pkg1.save(out);
 
             try (OPCPackage pkg2 = OPCPackage.open(out.toInputStream())) {

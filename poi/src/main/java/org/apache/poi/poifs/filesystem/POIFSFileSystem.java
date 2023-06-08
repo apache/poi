@@ -780,9 +780,9 @@ public class POIFSFileSystem extends BlockStore
         // _header.setPropertyStart has been updated on write ...
 
         // HeaderBlock
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(
                 _header.getBigBlockSize().getBigBlockSize()
-        );
+        ).get();
         _header.writeData(baos);
         getBlockAt(-1).put(baos.toByteArray());
 

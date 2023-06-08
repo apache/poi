@@ -121,7 +121,7 @@ final class TestHPSFBugs {
 
 
            // Write out and read back, should still be valid
-           UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+           UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
            try (POIDocument doc = new HPSFPropertiesOnlyDocument(fs)) {
                doc.write(baos);
            }

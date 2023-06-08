@@ -50,7 +50,7 @@ public final class TestExOleObjAtom {
     @Test
     void testWrite() throws Exception {
         ExOleObjAtom record = new ExOleObjAtom(data, 0, data.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         assertArrayEquals(data, baos.toByteArray());
     }
@@ -65,7 +65,7 @@ public final class TestExOleObjAtom {
         record.setObjStgDataRef(2);
         record.setOptions(1283584);
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         assertArrayEquals(data, baos.toByteArray());
     }

@@ -20,7 +20,6 @@
 package org.apache.poi.xssf.streaming;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -32,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -58,7 +58,7 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
     // write an unencrypted workbook to disk, but any temporary files are encrypted
     @Test
     void customZipEntrySource() throws IOException {
-        UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream(8192);
+        UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(8192).get();
         try (SXSSFWorkbookWithCustomZipEntrySource workbook = new SXSSFWorkbookWithCustomZipEntrySource()) {
             SXSSFSheet sheet1 = workbook.createSheet(sheetName);
             SXSSFRow row1 = sheet1.createRow(1);
@@ -113,7 +113,7 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         SXSSFRow row1 = sheet1.createRow(1);
         SXSSFCell cell1 = row1.createCell(1);
         cell1.setCellValue(cellValue);
-        workbook.write(NULL_OUTPUT_STREAM);
+        workbook.write(NullOutputStream.INSTANCE);
         workbook.close();
         List<File> tempFiles = workbook.getTempFiles();
         assertEquals(1, tempFiles.size());

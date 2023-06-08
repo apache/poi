@@ -1353,7 +1353,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         DocumentNode workbookNode = (DocumentNode) dir.getEntry(
                 getWorkbookDirEntryName(dir));
         POIFSDocument workbookDoc = new POIFSDocument(workbookNode);
-        workbookDoc.replaceContents(new UnsynchronizedByteArrayInputStream(getBytes()));
+        workbookDoc.replaceContents(UnsynchronizedByteArrayInputStream.builder().setByteArray(getBytes()).get());
 
         // Update the properties streams in the file
         writeProperties();
@@ -1415,7 +1415,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         List<String> excepts = new ArrayList<>(1);
 
         // Write out the Workbook stream
-        fs.createDocument(new UnsynchronizedByteArrayInputStream(getBytes()), "Workbook");
+        fs.createDocument(UnsynchronizedByteArrayInputStream.builder().setByteArray(getBytes()).get(), "Workbook");
 
         // Write out our HPFS properties, if we have them
         writeProperties(fs, excepts);
@@ -2110,7 +2110,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             }
         }
 
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             poiData.writeFilesystem(bos);
             return addOlePackage(bos.toByteArray(), label, fileName, command);
         }
@@ -2138,7 +2138,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         Ole10Native.createOleMarkerEntry(oleDir);
 
         Ole10Native oleNative = new Ole10Native(label, fileName, command, oleData);
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             oleNative.writeOut(bos);
             oleDir.createDocument(Ole10Native.OLE10_NATIVE, bos.toInputStream());
         }

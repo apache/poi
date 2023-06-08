@@ -67,7 +67,7 @@ public final class TestExVideoContainer {
     @Test
     void testWrite() throws Exception {
         ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         assertArrayEquals(data, baos.toByteArray());
     }
@@ -78,7 +78,7 @@ public final class TestExVideoContainer {
         record.getExMediaAtom().setObjectId(1);
         record.getPathAtom().setText("D:\\projects\\SchulerAG\\mcom_v_1_0_4\\view\\data\\tests\\images\\cards.mpg");
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         assertArrayEquals(data, baos.toByteArray());
     }

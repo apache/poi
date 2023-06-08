@@ -116,7 +116,7 @@ public class XSSFTestDataSamples {
      * @throws IOException If writing the file fails
      */
     public static <R extends Workbook> UnsynchronizedByteArrayOutputStream writeOut(R wb) throws IOException {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(8192);
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(8192).get();
         wb.write(out);
         return out;
     }

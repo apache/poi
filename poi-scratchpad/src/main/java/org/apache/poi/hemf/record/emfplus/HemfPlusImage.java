@@ -419,13 +419,13 @@ public class HemfPlusImage {
                         if (getBitmapType() == EmfPlusBitmapDataType.PIXEL) {
                             return new Rectangle2D.Double(0, 0, bitmapWidth, bitmapHeight);
                         } else {
-                            try(UnsynchronizedByteArrayInputStream is = new UnsynchronizedByteArrayInputStream(getRawData(continuedObjectData))) {
+                            try(UnsynchronizedByteArrayInputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(getRawData(continuedObjectData)).get()) {
                                 BufferedImage bi = ImageIO.read(is);
                                 return new Rectangle2D.Double(bi.getMinX(), bi.getMinY(), bi.getWidth(), bi.getHeight());
                             }
                         }
                     case METAFILE:
-                        try(UnsynchronizedByteArrayInputStream bis = new UnsynchronizedByteArrayInputStream(getRawData(continuedObjectData))) {
+                        try(UnsynchronizedByteArrayInputStream bis = UnsynchronizedByteArrayInputStream.builder().setByteArray(getRawData(continuedObjectData)).get()) {
                             switch (getMetafileType()) {
                                 case Wmf:
                                 case WmfPlaceable:
@@ -453,7 +453,7 @@ public class HemfPlusImage {
          * @throws IllegalStateException if the data cannot be read
          */
         public byte[] getRawData(List<? extends EmfPlusObjectData> continuedObjectData) {
-            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 bos.write(getImageData());
                 if (continuedObjectData != null) {
                     for (EmfPlusObjectData od : continuedObjectData) {

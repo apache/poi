@@ -18,7 +18,6 @@
 package org.apache.poi.hslf;
 
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.output.CountingOutputStream;
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.record.CurrentUserAtom;
@@ -64,7 +64,7 @@ public final class TestReWriteSanity {
     @Test
     void testUserEditAtomsRight() throws Exception {
         // Write out to a byte array
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         ss.write(baos);
 
         // Create a new one from that
@@ -78,7 +78,7 @@ public final class TestReWriteSanity {
             ue.put(0, 0); // Will show 0 if first
             int lastUEPos = -1;
 
-            CountingOutputStream cos = new CountingOutputStream(NULL_OUTPUT_STREAM);
+            CountingOutputStream cos = new CountingOutputStream(NullOutputStream.INSTANCE);
             for (final Record rec : r) {
                 int pos = cos.getCount();
                 if (rec instanceof PersistPtrHolder) {

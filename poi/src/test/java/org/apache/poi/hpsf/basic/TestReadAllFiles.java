@@ -101,7 +101,7 @@ class TestReadAllFiles {
 
         /* Create a new POI filesystem containing the origin file's
          * property set streams: */
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (POIFSFileSystem poiFs = new POIFSFileSystem()) {
             for (POIFile poifile : Util.readPropertySets(file)) {
                 final InputStream in = new ByteArrayInputStream(poifile.getBytes());

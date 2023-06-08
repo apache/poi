@@ -64,7 +64,7 @@ class TestEscherDump {
         "eJr+iZEHAAA=";
 
     private final EscherDump dumper = new EscherDump();
-    private final UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+    private final UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
     private PrintStream stream;
 
     @BeforeEach

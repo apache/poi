@@ -82,7 +82,7 @@ final class TestEmptyDocument {
             DirectoryEntry dir = fs.getRoot();
             emptyDoc.handle(dir);
 
-            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
             fs.writeFilesystem(out);
             assertDoesNotThrow(() -> new POIFSFileSystem(out.toInputStream()));
         }
@@ -92,7 +92,7 @@ final class TestEmptyDocument {
     void testEmptyDocumentBug11744() throws Exception {
         byte[] testData = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
             fs.createDocument(new ByteArrayInputStream(new byte[0]), "Empty");
             fs.createDocument(new ByteArrayInputStream(testData), "NotEmpty");

@@ -1034,7 +1034,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
 
     private static class ShapeCollector extends DefaultEscherRecordFactory {
         final List<EscherRecord> objShapes = new ArrayList<>();
-        final UnsynchronizedByteArrayOutputStream buffer = new UnsynchronizedByteArrayOutputStream();
+        final UnsynchronizedByteArrayOutputStream buffer = UnsynchronizedByteArrayOutputStream.builder().get();
 
         void addBytes(byte[] data) {
             try {

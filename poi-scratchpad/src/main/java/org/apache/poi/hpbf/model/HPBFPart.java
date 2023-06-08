@@ -83,7 +83,7 @@ public abstract class HPBFPart {
         generateData();
 
         // Write out
-        try (UnsynchronizedByteArrayInputStream bais = new UnsynchronizedByteArrayInputStream(data)) {
+        try (UnsynchronizedByteArrayInputStream bais = UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get()) {
             dir.createDocument(path[path.length-1], bais);
         }
     }

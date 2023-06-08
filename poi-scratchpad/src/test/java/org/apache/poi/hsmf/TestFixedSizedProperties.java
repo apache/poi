@@ -168,7 +168,7 @@ public final class TestFixedSizedProperties {
    @Test
    void testReadMessageDateSucceedsWithHSMFDump() {
        HSMFDump dump = new HSMFDump(fsMessageSucceeds);
-       assertDoesNotThrow(() -> dump.dump(new NullPrintStream()));
+       assertDoesNotThrow(() -> dump.dump(NullPrintStream.INSTANCE));
    }
 
    /**
@@ -177,7 +177,7 @@ public final class TestFixedSizedProperties {
    @Test
    void testReadMessageDateFailsWithHSMFDump() {
        HSMFDump dump = new HSMFDump(fsMessageFails);
-       assertDoesNotThrow(() -> dump.dump(new NullPrintStream()));
+       assertDoesNotThrow(() -> dump.dump(NullPrintStream.INSTANCE));
    }
 
    /**

@@ -209,7 +209,7 @@ class TestSignatureInfo {
         SignatureInfo si = new SignatureInfo();
         si.setSignatureConfig(signatureConfig);
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(100000);
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(100000).get();
         try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
             wb1.createSheet().createRow(1).createCell(1).setCellValue("Test");
             wb1.write(bos);
@@ -426,7 +426,7 @@ class TestSignatureInfo {
     void testSignEnvelopingDocument() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
         File sigCopy = testdata.getFile(testFile);
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(50000);
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(50000).get();
 
         final String execTimestr;
 
@@ -698,7 +698,7 @@ class TestSignatureInfo {
         DummyKeystore ks = new DummyKeystore(STORE_PASS);
         KeyCertPair certPair = ks.createDummyKey();
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFHyperlinkRun r = doc.createParagraph().createHyperlinkRun("http://poi.apache.org");
             r.setText("Hyperlink");
@@ -743,7 +743,7 @@ class TestSignatureInfo {
         try (SXSSFWorkbook wb1 = new SXSSFWorkbook((XSSFWorkbook)WorkbookFactory.create(tpl), 10)) {
             wb1.setCompressTempFiles(true);
             wb1.removeSheetAt(0);
-            UnsynchronizedByteArrayOutputStream os = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get();
             wb1.write(os);
 
             try (OPCPackage pkg = OPCPackage.open(os.toInputStream())) {
@@ -888,7 +888,7 @@ class TestSignatureInfo {
             throw e;
         }
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             wb.createSheet().createRow(0).createCell(0).setCellValue("Test");
             wb.write(bos);
@@ -1075,7 +1075,7 @@ class TestSignatureInfo {
             throw e;
         }
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             wb.createSheet().createRow(0).createCell(0).setCellValue("test");
             wb.write(bos);

@@ -33,7 +33,7 @@ public final class MemoryPackagePartOutputStream extends OutputStream {
 
     public MemoryPackagePartOutputStream(MemoryPackagePart part) {
         this._part = part;
-        _buff = new UnsynchronizedByteArrayOutputStream();
+        _buff = UnsynchronizedByteArrayOutputStream.builder().get();
     }
 
     @Override

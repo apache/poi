@@ -43,7 +43,7 @@ public class XSLFTestDataSamples {
     }
 
     public static XMLSlideShow writeOutAndReadBack(XMLSlideShow doc) throws IOException {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(4096)) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(4096).get()) {
             doc.write(baos);
             try (InputStream bais = baos.toInputStream()) {
                 return new XMLSlideShow(bais);

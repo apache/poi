@@ -40,7 +40,7 @@ class TestXSLFSlideCopy {
         try (
                 InputStream stream = slTests.openResourceAsStream("copy-slide-demo.pptx");
                 XMLSlideShow slideShow = new XMLSlideShow(stream);
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             XSLFSlide defaultSlide = getSlideByShapeName(slideShow, shapeName);
             int slideIndex = defaultSlide.getSlideNumber() - 1;

@@ -57,7 +57,7 @@ public class POIFSFileHandler extends AbstractFileHandler {
     }
 
     protected void handlePOIDocument(POIDocument doc) throws Exception {
-        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
             doc.write(out);
 
             try (InputStream in = out.toInputStream();

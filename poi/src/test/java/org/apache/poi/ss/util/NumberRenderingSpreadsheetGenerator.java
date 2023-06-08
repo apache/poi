@@ -150,7 +150,7 @@ public class NumberRenderingSpreadsheetGenerator {
 
         File outputFile = new File("ExcelNumberRendering.xls");
 
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
              FileOutputStream os = new FileOutputStream(outputFile)) {
             wb.write(baos);
 
@@ -212,7 +212,7 @@ public class NumberRenderingSpreadsheetGenerator {
     }
 
     private static String interpretLong(byte[] fileContent, int offset) {
-        try (InputStream is = new UnsynchronizedByteArrayInputStream(fileContent, offset, 8)) {
+        try (InputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(fileContent).setOffset(offset).setLength(8).get()) {
             long l = new DataInputStream(is).readLong();
             return "0x" + Long.toHexString(l).toUpperCase(Locale.ROOT);
         } catch (IOException e) {

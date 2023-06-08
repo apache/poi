@@ -142,7 +142,7 @@ class TestDecryptor {
             Decryptor d = Decryptor.getInstance(info);
             d.verifyPassword("pwd123");
 
-            final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(10000);
+            final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(10000).get();
             try (final ZipArchiveInputStream zis = new ZipArchiveInputStream(d.getDataStream(fs))) {
                 int[] sizes = { 3711, 1155, 445, 9376, 450, 588, 1337, 2593, 304, 7910 };
                 for (int size : sizes) {

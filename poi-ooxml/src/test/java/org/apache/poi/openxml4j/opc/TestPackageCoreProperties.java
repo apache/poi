@@ -216,7 +216,7 @@ public final class TestPackageCoreProperties {
 
     @Test
     void testGetPropertiesLO() throws Exception {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         // Open the package
         try (OPCPackage pkg1 = OPCPackage.open(openSampleStream("51444.xlsx"))) {
             PackageProperties props1 = pkg1.getPackageProperties();
@@ -284,7 +284,7 @@ public final class TestPackageCoreProperties {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ROOT);
         df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (InputStream is = openSampleStream("OPCCompliance_CoreProperties_AlternateTimezones.docx");
             OPCPackage pkg1 = OPCPackage.open(is)) {
             PackagePropertiesPart props1 = (PackagePropertiesPart) pkg1.getPackageProperties();

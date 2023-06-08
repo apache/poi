@@ -55,7 +55,7 @@ public final class HSSFTestDataSamples {
      * Useful for verifying that the serialisation round trip
      */
     public static HSSFWorkbook writeOutAndReadBack(HSSFWorkbook original) {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             original.write(baos);
             try (InputStream is = baos.toInputStream()) {
                 return new HSSFWorkbook(is);

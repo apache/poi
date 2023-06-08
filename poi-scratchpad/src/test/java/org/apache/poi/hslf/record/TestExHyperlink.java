@@ -53,7 +53,7 @@ public final class TestExHyperlink {
         assertEquals(expURL, exHyperlink._getDetailsA());
         assertEquals(expURL, exHyperlink._getDetailsB());
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         exHyperlink.writeOut(baos);
         assertArrayEquals(exHyperlinkBytes, baos.toByteArray());
     }

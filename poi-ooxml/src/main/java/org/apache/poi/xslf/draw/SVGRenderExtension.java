@@ -310,7 +310,7 @@ public class SVGRenderExtension extends DefaultExtensionHandler {
         }
         if (imgData == null) {
             BufferedImage bi = imgRdr.getImage();
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             try {
                 ImageIO.write(bi, "PNG", bos);
             } catch (IOException e) {

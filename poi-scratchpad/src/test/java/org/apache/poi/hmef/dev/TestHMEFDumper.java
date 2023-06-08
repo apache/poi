@@ -52,7 +52,7 @@ public class TestHMEFDumper {
     private static void doMain(String... args) throws Exception {
         PrintStream ps = System.out;
         try {
-            System.setOut(new NullPrintStream());
+            System.setOut(NullPrintStream.INSTANCE);
             HMEFDumper.main(args);
         } finally {
             System.setOut(ps);

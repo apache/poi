@@ -52,7 +52,7 @@ public final class TestSlidePersistAtom {
     @Test
     void testWrite() throws Exception {
         SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         spa.writeOut(baos);
         assertArrayEquals(data_a, baos.toByteArray());
     }

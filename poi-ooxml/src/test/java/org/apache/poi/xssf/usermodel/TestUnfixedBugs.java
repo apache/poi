@@ -278,7 +278,7 @@ public final class TestUnfixedBugs {
         checkRow57423(testSheet, 17, "17");
         checkRow57423(testSheet, 18, "18");
 
-        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream stream = UnsynchronizedByteArrayOutputStream.builder().get();
         ((XSSFSheet)testSheet).write(stream);
 
         // verify that the resulting XML has the rows in correct order as required by Excel

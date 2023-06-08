@@ -174,7 +174,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     protected static OPCPackage newPackage() {
         OPCPackage pkg = null;
         try {
-            pkg = OPCPackage.create(new UnsynchronizedByteArrayOutputStream());    // NOSONAR - we do not want to close this here
+            pkg = OPCPackage.create(UnsynchronizedByteArrayOutputStream.builder().get());    // NOSONAR - we do not want to close this here
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XWPFRelation.DOCUMENT.getDefaultFileName());
             // Create main part relationship

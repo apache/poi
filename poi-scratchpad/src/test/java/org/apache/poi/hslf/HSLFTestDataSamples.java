@@ -54,7 +54,7 @@ public class HSLFTestDataSamples {
      * Useful for verifying that the serialisation round trip
      */
     public static HSLFSlideShowImpl writeOutAndReadBack(HSLFSlideShowImpl original) {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             original.write(baos);
             try (InputStream is = baos.toInputStream()) {
                 return new HSLFSlideShowImpl(is);
@@ -70,7 +70,7 @@ public class HSLFTestDataSamples {
      * Useful for verifying that the serialisation round trip
      */
     public static HSLFSlideShow writeOutAndReadBack(HSLFSlideShow original) {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(4096)) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(4096).get()) {
             original.write(baos);
             return new HSLFSlideShow(baos.toInputStream());
         } catch (IOException e) {

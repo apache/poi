@@ -44,7 +44,7 @@ public class XSLFMetroShape implements MetroShapeProvider {
     /** parses the metro bytes to a XSLF shape */
     @Override
     public XSLFShape parseShape(byte[] metroBytes) throws IOException {
-        try (OPCPackage pkg = OPCPackage.open(new UnsynchronizedByteArrayInputStream(metroBytes))) {
+        try (OPCPackage pkg = OPCPackage.open(UnsynchronizedByteArrayInputStream.builder().setByteArray(metroBytes).get())) {
             PackagePartName shapePN = PackagingURIHelper.createPartName("/drs/shapexml.xml");
             PackagePart shapePart = pkg.getPart(shapePN);
             if (shapePart == null) {

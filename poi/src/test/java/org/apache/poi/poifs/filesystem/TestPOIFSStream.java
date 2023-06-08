@@ -1190,7 +1190,7 @@ final class TestPOIFSStream {
     }
 
     private static HeaderBlock writeOutAndReadHeader(POIFSFileSystem fs) throws IOException {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         fs.writeFilesystem(baos);
         return new HeaderBlock(baos.toInputStream());
     }

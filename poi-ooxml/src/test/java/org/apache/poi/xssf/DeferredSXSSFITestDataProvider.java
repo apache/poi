@@ -68,7 +68,7 @@ public final class DeferredSXSSFITestDataProvider implements ITestDataProvider {
             throw new IllegalArgumentException("Expected an instance of XSSFWorkbook");
         }
 
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             wb.write(baos);
             try (InputStream is = baos.toInputStream()) {
                 return new XSSFWorkbook(is);
@@ -82,7 +82,7 @@ public final class DeferredSXSSFITestDataProvider implements ITestDataProvider {
      * Returns an XSSFWorkbook since SXSSFWorkbook is write-only
      */
     public XSSFWorkbook inMemoryWriteOutAndReadBack(SXSSFWorkbook wb) {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             wb.writeAvoidingTempFiles(baos);
             try (InputStream is = baos.toInputStream()) {
                 return new XSSFWorkbook(is);

@@ -97,7 +97,7 @@ final class TestDocumentOutputStream {
             root.createDocument("foo", expected.length, l);
 
             try (DocumentInputStream is = root.createDocumentInputStream("foo")) {
-                final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(expected.length);
+                final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(expected.length).get();
                 IOUtils.copy(is, bos);
                 assertArrayEquals(expected, bos.toByteArray());
             }

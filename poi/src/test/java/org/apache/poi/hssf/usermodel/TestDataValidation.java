@@ -61,7 +61,7 @@ final class TestDataValidation extends BaseTestDataValidation {
     void assertDataValidation(Workbook wb) {
 
         byte[] generatedContent;
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(22000)) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(22000).get()) {
             wb.write(baos);
             generatedContent = baos.toByteArray();
         } catch (IOException e) {
@@ -133,7 +133,7 @@ final class TestDataValidation extends BaseTestDataValidation {
 
             sheet.addValidationData(dv);
 
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
             wb.write(baos);
 
             byte[] wbData = baos.toByteArray();

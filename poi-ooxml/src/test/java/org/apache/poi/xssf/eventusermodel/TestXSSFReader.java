@@ -376,7 +376,7 @@ public final class TestXSSFReader {
 
     @Test
     void testBug65676() throws Exception {
-        try (UnsynchronizedByteArrayOutputStream output = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream output = UnsynchronizedByteArrayOutputStream.builder().get()) {
             try(Workbook wb = new SXSSFWorkbook()) {
                 Row r = wb.createSheet("Sheet").createRow(0);
                 r.createCell(0).setCellValue(1.2); /* A1: Number 1.2 */

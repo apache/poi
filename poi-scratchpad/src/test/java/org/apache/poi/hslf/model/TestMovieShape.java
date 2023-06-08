@@ -57,7 +57,7 @@ public final class TestMovieShape {
         shape.setAutoPlay(false);
         assertFalse(shape.isAutoPlay());
 
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         ppt.write(out);
 
         ppt = new HSLFSlideShow(out.toInputStream());

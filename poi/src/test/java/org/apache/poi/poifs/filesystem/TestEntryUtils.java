@@ -125,7 +125,7 @@ class TestEntryUtils {
 
 
           // Can work with POIFS
-          try (UnsynchronizedByteArrayOutputStream tmpO = new UnsynchronizedByteArrayOutputStream()) {
+          try (UnsynchronizedByteArrayOutputStream tmpO = UnsynchronizedByteArrayOutputStream.builder().get()) {
              fs.writeFilesystem(tmpO);
 
              try (InputStream tmpI = tmpO.toInputStream();

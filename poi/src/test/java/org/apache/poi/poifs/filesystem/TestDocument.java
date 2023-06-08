@@ -68,7 +68,7 @@ class TestDocument {
             // verify that output is correct
             POIFSDocument document = checkDocument(poifs, LARGER_BIG_BLOCK_SIZE + 1);
             DocumentProperty property = document.getDocumentProperty();
-            UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream stream = UnsynchronizedByteArrayOutputStream.builder().get();
 
             property.writeData(stream);
             byte[] output = stream.toByteArray();
@@ -135,7 +135,7 @@ class TestDocument {
 
         assertEquals(blockCountExp, blockCountAct);
 
-        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream stream = UnsynchronizedByteArrayOutputStream.builder().get();
         try (DocumentInputStream dis = document.getFileSystem().createDocumentInputStream(
                 document.getDocumentProperty().getName())) {
             IOUtils.copy(dis, stream);

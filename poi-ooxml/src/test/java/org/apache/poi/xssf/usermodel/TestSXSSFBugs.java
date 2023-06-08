@@ -253,7 +253,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
 
     @Test
     void test65619() throws Exception {
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             try (SXSSFWorkbook workbook = new SXSSFWorkbook(100)) {
                 SXSSFSheet sheet = workbook.createSheet("Test Sheet 1");
                 Font font = workbook.createFont();
@@ -308,7 +308,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals(value, cell.getStringCellValue());
             // so far so good
 
-            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 wb.write(bos);
 
                 try (XSSFWorkbook testWb = new XSSFWorkbook(bos.toInputStream())) {
@@ -356,7 +356,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals(blueStyle.getIndex(), r3.getCell(4).getCellStyle().getIndex());
             assertEquals(pinkStyle.getIndex(), r3.getCell(6).getCellStyle().getIndex());
 
-            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 wb.write(bos);
                 try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
                     XSSFSheet wb2Sheet = wb2.getSheetAt(0);

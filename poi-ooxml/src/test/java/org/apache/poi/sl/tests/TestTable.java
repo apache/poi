@@ -125,7 +125,7 @@ class TestTable {
             }
         }
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         ppt1.write(bos);
 
         try (SlideShow<?,?> ppt2 = SlideShowFactory.create(bos.toInputStream())) {

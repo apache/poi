@@ -209,7 +209,7 @@ class TestDConRefRecord {
     private void testReadWrite(byte[] data, String message) throws IOException {
         RecordInputStream is = TestcaseRecordInputStream.create(81, data);
         DConRefRecord d = new DConRefRecord(is);
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(data.length);
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(data.length).get();
         LittleEndianOutputStream o = new LittleEndianOutputStream(bos);
         d.serialize(o);
         o.flush();

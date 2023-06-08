@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt.tests;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.poifs.crypt.CryptoFunctions.getMessageDigest;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -38,6 +37,7 @@ import java.util.Random;
 
 import javax.crypto.Cipher;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.ContentTypes;
@@ -76,7 +76,7 @@ class TestEncryptor {
             payloadExpected = IOUtils.toByteArray(is);
         }
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
             EncryptionInfo ei = new EncryptionInfo(EncryptionMode.binaryRC4);
             Encryptor enc = ei.getEncryptor();
@@ -113,7 +113,7 @@ class TestEncryptor {
             payloadExpected = IOUtils.toByteArray(is);
         }
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (POIFSFileSystem fs = new TempFilePOIFSFileSystem()) {
             EncryptionInfo ei = new EncryptionInfo(EncryptionMode.agile);
             Encryptor enc = ei.getEncryptor();
@@ -200,7 +200,7 @@ class TestEncryptor {
         Encryptor e = Encryptor.getInstance(infoActual);
         e.confirmPassword(pass, keySpec, keySalt, verifierExpected, verifierSaltExpected, integritySalt);
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
             try (OutputStream os = e.getDataStream(fs)) {
                 os.write(payloadExpected);
@@ -287,7 +287,7 @@ class TestEncryptor {
         // now we use a newly generated salt/verifier and check
         // if the file content is still the same
 
-        final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(50000);
+        final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(50000).get();
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
 
             final EncryptionInfo infoActual2 = new EncryptionInfo(
@@ -331,7 +331,7 @@ class TestEncryptor {
     @Test
     void encryptPackageWithoutCoreProperties() throws Exception {
         // Open our file without core properties
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (InputStream is = POIDataSamples.getOpenXML4JInstance().openResourceAsStream("OPCCompliance_NoCoreProperties.xlsx");
             OPCPackage pkg = OPCPackage.open(is)) {
 
@@ -530,7 +530,7 @@ class TestEncryptor {
                 os.write(zipInput);
             }
 
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             fsNew.writeFilesystem(bos);
 
             try (POIFSFileSystem fsReload = new POIFSFileSystem(bos.toInputStream())) {
@@ -624,7 +624,7 @@ class TestEncryptor {
 
             try (InputStream is = dec.getDataStream(poifs);
                  DigestInputStream dis = new DigestInputStream(is, md)) {
-                IOUtils.copy(dis, NULL_OUTPUT_STREAM);
+                IOUtils.copy(dis, NullOutputStream.INSTANCE);
             }
         }
 

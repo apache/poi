@@ -93,7 +93,7 @@ class TestAgileEncryptionParameters {
         }
 
         // create a small sample workbook for encrypting
-        UnsynchronizedByteArrayOutputStream bosOrig = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bosOrig = UnsynchronizedByteArrayOutputStream.builder().get();
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet = workbook.createSheet();
             XSSFRow row = sheet.createRow(0);
@@ -136,7 +136,7 @@ class TestAgileEncryptionParameters {
                 os.write(testData);
             }
 
-            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 fsEnc.writeFilesystem(bos);
 
                 bos.close();

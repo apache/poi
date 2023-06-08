@@ -811,7 +811,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             // Write out the Property Streams
             writeProperties(outFS, writtenEntries);
 
-            try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
 
                 // For position dependent records, hold where they were and now are
                 // As we go along, update, and hand over, to any Position Dependent
@@ -852,7 +852,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     }
 
     private static InputStream encryptOnePicture(HSLFSlideShowEncrypted encryptedSS, HSLFPictureData data) {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             data.write(baos);
             byte[] pictBytes = baos.toByteArray();
             encryptedSS.encryptPicture(pictBytes, 0);

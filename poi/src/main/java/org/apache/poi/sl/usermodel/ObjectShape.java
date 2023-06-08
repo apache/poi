@@ -96,7 +96,7 @@ public interface ObjectShape<
 
         final Application app = Application.lookup(progId);
 
-        try (final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        try (final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
              final InputStream is = FileMagic.prepareToCheckMagic(readObjectDataRaw())) {
 
             final FileMagic fm = FileMagic.valueOf(is);

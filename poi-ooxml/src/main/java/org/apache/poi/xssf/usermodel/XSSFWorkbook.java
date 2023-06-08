@@ -511,7 +511,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     protected static OPCPackage newPackage(XSSFWorkbookType workbookType) {
         OPCPackage pkg = null;
         try {
-            pkg = OPCPackage.create(new UnsynchronizedByteArrayOutputStream());    // NOSONAR - we do not want to close this here
+            pkg = OPCPackage.create(UnsynchronizedByteArrayOutputStream.builder().get());    // NOSONAR - we do not want to close this here
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XSSFRelation.WORKBOOK.getDefaultFileName());
             // Create main part relationship
@@ -665,7 +665,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         }
 
 
-        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
             srcSheet.write(out);
             try (InputStream bis = out.toInputStream()) {
                 clonedSheet.read(bis);
@@ -2466,7 +2466,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
         Ole10Native ole10 = new Ole10Native(label, fileName, command, oleData);
 
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(oleData.length+500)) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(oleData.length+500).get()) {
             ole10.writeOut(bos);
 
             try (POIFSFileSystem poifs = new POIFSFileSystem()) {

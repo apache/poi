@@ -19,7 +19,6 @@ package org.apache.poi.xssf.usermodel;
 
 import static java.time.Duration.between;
 import static java.time.Instant.now;
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.logging.log4j.util.Unbox.box;
 import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
 import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
@@ -48,6 +47,7 @@ import java.util.*;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1537,7 +1537,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 Thread.sleep(10);
             }
 
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(8096);
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(8096).get();
             wb.write(bos);
             byte[] firstSave = bos.toByteArray();
             bos.reset();
@@ -2982,7 +2982,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
             // we currently only populate the dimension during writing out
             // to avoid having to iterate all rows/cells in each add/remove of a row or cell
-            wb.write(NULL_OUTPUT_STREAM);
+            wb.write(NullOutputStream.INSTANCE);
 
             assertEquals("B2:H5", ((XSSFSheet) sheet).getCTWorksheet().getDimension().getRef());
         }
@@ -3003,7 +3003,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
             // we currently only populate the dimension during writing out
             // to avoid having to iterate all rows/cells in each add/remove of a row or cell
-            wb.write(NULL_OUTPUT_STREAM);
+            wb.write(NullOutputStream.INSTANCE);
 
             assertEquals("B2:XFD5", ((XSSFSheet) sheet).getCTWorksheet().getDimension().getRef());
         }
@@ -3691,7 +3691,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals(blueStyle.getIndex(), r3.getCell(4).getCellStyle().getIndex());
             assertEquals(pinkStyle.getIndex(), r3.getCell(6).getCellStyle().getIndex());
 
-            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 wb.write(bos);
                 try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
                     XSSFSheet wb2Sheet = wb2.getSheetAt(0);
@@ -3778,13 +3778,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
 
         // read bytes of workbook before
-        UnsynchronizedByteArrayOutputStream bosOrig = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bosOrig = UnsynchronizedByteArrayOutputStream.builder().get();
         try (FileInputStream fis = new FileInputStream(temp_excel_poi)) {
             IOUtils.copy(fis, bosOrig);
         }
 
         // for the encrypted bytes
-        UnsynchronizedByteArrayOutputStream bosEnc = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bosEnc = UnsynchronizedByteArrayOutputStream.builder().get();
 
         /* encrypt excel by poi */
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
@@ -3810,7 +3810,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
 
         // for the decrytped bytes
-        UnsynchronizedByteArrayOutputStream bosDec = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bosDec = UnsynchronizedByteArrayOutputStream.builder().get();
 
         /* decrypt excel by poi */
         try (POIFSFileSystem fileSystem = new POIFSFileSystem(temp_excel_poi_encrypt)) {

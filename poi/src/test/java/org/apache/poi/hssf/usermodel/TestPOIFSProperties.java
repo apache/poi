@@ -42,7 +42,7 @@ class TestPOIFSProperties {
 
     @Test
     void testFail() throws IOException, NoPropertySetStreamException, WritingNotSupportedException {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         // read the workbook, adjust the SummaryInformation and write the data to a byte array
         try (POIFSFileSystem fs = openFileSystem();
              HSSFWorkbook wb = new HSSFWorkbook(fs)) {
@@ -61,7 +61,7 @@ class TestPOIFSProperties {
 
     @Test
     void testOK() throws Exception {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         // read the workbook, adjust the SummaryInformation and write the data to a byte array
         try (POIFSFileSystem fs = openFileSystem()) {
 

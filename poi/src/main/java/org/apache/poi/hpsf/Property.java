@@ -272,7 +272,7 @@ public class Property {
 
         /* Variable length: */
         if (type == Variant.VT_LPSTR || type == Variant.VT_LPWSTR) {
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             try {
                 length = write(bos, property) - 2*LittleEndianConsts.INT_SIZE;
                 /* Pad to multiples of 4. */
@@ -399,7 +399,7 @@ public class Property {
         if (value instanceof String) {
             b.append((String)value);
             b.append("\n");
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             try {
                 write(bos, codepage);
             } catch (Exception e) {

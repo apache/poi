@@ -22,7 +22,6 @@ package org.apache.poi.ss.util;
 import static java.text.DateFormat.getDateInstance;
 import static java.text.DateFormat.getDateTimeInstance;
 import static java.text.DateFormat.getTimeInstance;
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.ss.util.DateFormatConverter.getPrefixForLocale;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,6 +42,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -122,7 +122,7 @@ final class TestDateFormatConverter {
                 cell[6].setCellValue(excelFormatPattern);
             }
 
-            assertDoesNotThrow(() -> workbook.write(NULL_OUTPUT_STREAM));
+            assertDoesNotThrow(() -> workbook.write(NullOutputStream.INSTANCE));
         }
     }
 

@@ -53,7 +53,7 @@ public final class TestTextHeaderAtom {
     @Test
     void testWrite() throws Exception {
         TextHeaderAtom tha = new TextHeaderAtom(notes_data,0,12);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         tha.writeOut(baos);
         assertArrayEquals(notes_data, baos.toByteArray());
     }

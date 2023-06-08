@@ -39,7 +39,7 @@ import org.junit.jupiter.api.Test;
 class TestEscherRecordFactory {
 
     private static byte[] toByteArray(List<RecordBase> records) {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         for (RecordBase rb : records) {
             Record r = (org.apache.poi.hssf.record.Record) rb;
             try {

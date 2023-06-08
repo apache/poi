@@ -1815,8 +1815,8 @@ public abstract class BaseTestBugzillaIssues {
             cell.setCellValue("Ernie & Bert are cool!");
             cell.setCellFormula("A1 & \" are cool!\"");
 
-            try (UnsynchronizedByteArrayOutputStream out1 = new UnsynchronizedByteArrayOutputStream();
-                 UnsynchronizedByteArrayOutputStream out2 = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream out1 = UnsynchronizedByteArrayOutputStream.builder().get();
+                 UnsynchronizedByteArrayOutputStream out2 = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 wb.write(out1);
                 wb.write(out2);
 

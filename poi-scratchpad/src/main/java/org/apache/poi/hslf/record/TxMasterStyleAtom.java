@@ -187,7 +187,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
         int type = getTextType();
 
         try {
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
             int levels = paragraphStyles.size();
             leos.writeShort(levels);

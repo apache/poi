@@ -123,7 +123,7 @@ class TestEmbedOLEPackage {
 
             try (POIFSFileSystem scratchFS = new POIFSFileSystem();
                 POIFSFileSystem ole1FS = new POIFSFileSystem(new ByteArrayInputStream(oleShapes.get(0).getObjectData()))) {
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
                 scratch.writeOut(bos);
                 scratchFS.createDocument(bos.toInputStream(), Ole10Native.OLE10_NATIVE);
                 scratchFS.getRoot().setStorageClsid(ClassIDPredefined.OLE_V1_PACKAGE.getClassID());
@@ -222,7 +222,7 @@ class TestEmbedOLEPackage {
         sh1.setAnchor(new java.awt.Rectangle(50, 50, 100, 200));
         sh1.setFillColor(java.awt.Color.red);
 
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         ppt.write(bos);
         ppt.close();
 

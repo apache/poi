@@ -55,7 +55,7 @@ public final class TestReWrite {
              HSLFSlideShowImpl hss = new HSLFSlideShowImpl(pfs)) {
 
             // Write out to a byte array, and to a temp file
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
             hss.write(baos);
 
             final File file = TempFile.createTempFile("TestHSLF", ".ppt");
@@ -95,7 +95,7 @@ public final class TestReWrite {
             assertNotNull(pfsC.getRoot().getEntry("Macros"));
 
             // Write out normally, will loose the macro stream
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
             hssC.write(baos);
             try (POIFSFileSystem pfsNew = new POIFSFileSystem(baos.toInputStream())) {
                 assertFalse(pfsNew.getRoot().hasEntry("Macros"));
@@ -134,7 +134,7 @@ public final class TestReWrite {
         assertDoesNotThrow(ss::getNotes);
 
         // Now write out to a byte array
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         hss.write(baos);
 
         // Use POIFS to query that lot

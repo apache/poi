@@ -64,7 +64,7 @@ public class Section {
      * established when the section's size is calculated and can be reused
      * later. If the array is empty, the section was modified and the bytes need to be regenerated.
      */
-    private final UnsynchronizedByteArrayOutputStream sectionBytes = new UnsynchronizedByteArrayOutputStream();
+    private final UnsynchronizedByteArrayOutputStream sectionBytes = UnsynchronizedByteArrayOutputStream.builder().get();
 
     /**
      * The offset of the section in the stream.
@@ -733,7 +733,7 @@ public class Section {
         }
 
         final int[][] offsets = new int[properties.size()][2];
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             LittleEndianOutputStream leos = new LittleEndianOutputStream(bos)) {
 
             /* Write the section's length - dummy value, fixed later */

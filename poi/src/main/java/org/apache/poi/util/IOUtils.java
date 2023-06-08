@@ -141,7 +141,7 @@ public final class IOUtils {
         checkByteSizeLimit(limit);
 
         stream.mark(limit);
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(limit)) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(limit).get()) {
             copy(new BoundedInputStream(stream, limit), bos);
 
             int readBytes = bos.size();
@@ -238,7 +238,7 @@ public final class IOUtils {
         final int derivedLen = isLengthKnown ? Math.min(length, derivedMaxLength) : derivedMaxLength;
         final int byteArrayInitLen = calculateByteArrayInitLength(isLengthKnown, length, derivedMaxLength);
         final int internalBufferLen = DEFAULT_BUFFER_SIZE;
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(byteArrayInitLen)) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(byteArrayInitLen).get()) {
             byte[] buffer = new byte[internalBufferLen];
             int totalBytes = 0, readBytes;
             do {

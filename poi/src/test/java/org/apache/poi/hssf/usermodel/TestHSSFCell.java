@@ -422,7 +422,7 @@ final class TestHSSFCell extends BaseTestCell {
     void setFillForegroundColor() throws IOException {
         try (
                 HSSFWorkbook wb = new HSSFWorkbook();
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             Cell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFCellStyle cellStyle = wb.createCellStyle();

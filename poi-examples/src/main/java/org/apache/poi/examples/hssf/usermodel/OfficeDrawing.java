@@ -192,7 +192,7 @@ public final class OfficeDrawing {
     private static int loadPicture( String path, HSSFWorkbook wb ) throws IOException {
         int pictureIndex;
         try (FileInputStream fis = new FileInputStream(path);
-             UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+             UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             IOUtils.copy(fis, bos);
             pictureIndex = wb.addPicture(bos.toByteArray(), Workbook.PICTURE_TYPE_PNG);
         }

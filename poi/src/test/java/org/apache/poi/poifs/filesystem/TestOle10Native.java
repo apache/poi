@@ -67,14 +67,14 @@ class TestOle10Native {
                 findOle10(entries, fs.getRoot(), "/");
 
                 for (Entry e : entries) {
-                    UnsynchronizedByteArrayOutputStream bosExp = new UnsynchronizedByteArrayOutputStream();
+                    UnsynchronizedByteArrayOutputStream bosExp = UnsynchronizedByteArrayOutputStream.builder().get();
                     try (InputStream is = ((DirectoryNode) e.getParent()).createDocumentInputStream(e)) {
                         IOUtils.copy(is, bosExp);
                     }
 
                     Ole10Native ole = Ole10Native.createFromEmbeddedOleObject((DirectoryNode) e.getParent());
 
-                    UnsynchronizedByteArrayOutputStream bosAct = new UnsynchronizedByteArrayOutputStream();
+                    UnsynchronizedByteArrayOutputStream bosAct = UnsynchronizedByteArrayOutputStream.builder().get();
                     ole.writeOut(bosAct);
 
                     assertThat(bosExp.toByteArray(), equalTo(bosAct.toByteArray()));

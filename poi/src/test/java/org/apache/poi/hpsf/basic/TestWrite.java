@@ -110,7 +110,7 @@ class TestWrite {
         /* Write it to a POIFS and the latter to disk: */
         try (OutputStream out = new FileOutputStream(filename);
              POIFSFileSystem poiFs = new POIFSFileSystem();
-             UnsynchronizedByteArrayOutputStream psStream = new UnsynchronizedByteArrayOutputStream()) {
+             UnsynchronizedByteArrayOutputStream psStream = UnsynchronizedByteArrayOutputStream.builder().get()) {
             assertThrows(NoFormatIDException.class, () -> ps.write(psStream));
             poiFs.createDocument(psStream.toInputStream(), SummaryInformation.DEFAULT_STREAM_NAME);
             poiFs.writeFilesystem(out);
@@ -132,7 +132,7 @@ class TestWrite {
         /* Create a mutable property set and write it to a POIFS: */
         try (OutputStream out = new FileOutputStream(filename);
             POIFSFileSystem poiFs = new POIFSFileSystem();
-             UnsynchronizedByteArrayOutputStream psStream = new UnsynchronizedByteArrayOutputStream()) {
+             UnsynchronizedByteArrayOutputStream psStream = UnsynchronizedByteArrayOutputStream.builder().get()) {
             final PropertySet ps = new PropertySet();
             final Section s = ps.getSections().get(0);
             s.setFormatID(SummaryInformation.FORMAT_ID);
@@ -343,7 +343,7 @@ class TestWrite {
         p.setValue(TITLE);
         ms.setProperty(p);
 
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         mps.write(out);
         byte[] bytes = out.toByteArray();
 
@@ -373,7 +373,7 @@ class TestWrite {
     private void check(final long variantType, final Object value, final int codepage)
     throws UnsupportedVariantTypeException, IOException
     {
-        final UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        final UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         VariantSupport.write(out, variantType, value, codepage);
         final byte[] b = out.toByteArray();
         final Object objRead =
@@ -526,9 +526,9 @@ class TestWrite {
             doufStream.close();
 
             // And also write to some bytes for checking
-            UnsynchronizedByteArrayOutputStream sinfBytes = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream sinfBytes = UnsynchronizedByteArrayOutputStream.builder().get();
             sinf.write(sinfBytes);
-            UnsynchronizedByteArrayOutputStream dinfBytes = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream dinfBytes = UnsynchronizedByteArrayOutputStream.builder().get();
             dinf.write(dinfBytes);
 
 

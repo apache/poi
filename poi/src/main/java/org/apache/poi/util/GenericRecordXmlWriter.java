@@ -19,8 +19,6 @@
 
 package org.apache.poi.util;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
-
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
@@ -50,6 +48,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.GenericRecordJsonWriter.AppendableWriter;
 
@@ -109,7 +108,7 @@ public class GenericRecordXmlWriter implements Closeable {
     private boolean attributePhase = true;
 
     public GenericRecordXmlWriter(File fileName) throws IOException {
-        OutputStream os = ("null".equals(fileName.getName())) ? NULL_OUTPUT_STREAM : new FileOutputStream(fileName);
+        OutputStream os = ("null".equals(fileName.getName())) ? NullOutputStream.INSTANCE : new FileOutputStream(fileName);
         fw = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
     }
 

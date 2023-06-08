@@ -93,7 +93,7 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
 
     @Override
     public byte[] getRemainingData() {
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             for (org.apache.poi.hslf.record.Record r : _childRecords) {
                 r.writeOut(bos);
             }

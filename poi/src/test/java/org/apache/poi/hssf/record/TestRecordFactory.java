@@ -185,7 +185,7 @@ final class TestRecordFactory {
         assertTrue(records.get(4) instanceof ObjRecord);
 
         //serialize and verify that the serialized data is the same as the original
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         for(org.apache.poi.hssf.record.Record rec : records){
             out.write(rec.serialize());
         }
@@ -204,7 +204,7 @@ final class TestRecordFactory {
             BOFRecord.createSheetBOF(),
             EOFRecord.instance,
         };
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         for (org.apache.poi.hssf.record.Record rec : recs) {
             try {
                 baos.write(rec.serialize());

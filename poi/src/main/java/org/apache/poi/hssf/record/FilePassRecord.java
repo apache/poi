@@ -122,7 +122,7 @@ public final class FilePassRecord extends StandardRecord {
 
     @Override
     protected int getDataSize() {
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
         serialize(leos);
         return bos.size();

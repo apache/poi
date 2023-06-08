@@ -62,7 +62,7 @@ public class TestHMEFContentsExtractor {
         POIDataSamples samples = POIDataSamples.getHMEFInstance();
         File winmailTNEFFile = samples.getFile("quick-winmail.dat");
         HMEFContentsExtractor extractor = new HMEFContentsExtractor(winmailTNEFFile);
-        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
             extractor.extractMessageBody(out);
             assertTrue(out.size() > 0);
             byte[] expectedMagic = new byte[]{'{', '\\', 'r', 't', 'f'};

@@ -1019,7 +1019,7 @@ public class SXSSFWorkbook implements Workbook {
         flushSheets();
 
         //Save the template
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             _wb.write(bos);
 
             //Substitute the template entries with the generated sheet data files

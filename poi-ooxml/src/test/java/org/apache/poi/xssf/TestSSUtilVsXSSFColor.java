@@ -35,7 +35,7 @@ class TestSSUtilVsXSSFColor {
 
         try (
                 XSSFWorkbook workbook = new XSSFWorkbook();
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             XSSFCellStyle cellStyle = workbook.createCellStyle();
             final String rgbS = "ffff00";

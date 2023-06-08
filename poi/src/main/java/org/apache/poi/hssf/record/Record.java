@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.IOException;
+
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
@@ -75,7 +77,13 @@ public abstract class Record extends RecordBase implements Duplicatable, Generic
         // Do it via a re-serialization
         // It's a cheat, but it works...
         byte[] b = serialize();
-        RecordInputStream rinp = new RecordInputStream(new UnsynchronizedByteArrayInputStream(b));
+        RecordInputStream rinp = null;
+        try {
+            rinp = new RecordInputStream(UnsynchronizedByteArrayInputStream.builder().setByteArray(b).get());
+        } catch (IOException e) {
+            // not possible with ByteArray but still declared in the API
+            throw new IllegalStateException(e);
+        }
         rinp.nextRecord();
 
         Record[] r = RecordFactory.createRecord(rinp);

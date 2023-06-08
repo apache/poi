@@ -17,7 +17,6 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.hslf.HSLFTestDataSamples.getSlideShow;
 import static org.apache.poi.hslf.HSLFTestDataSamples.writeOutAndReadBack;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
@@ -38,6 +37,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.io.output.CountingOutputStream;
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -315,7 +315,7 @@ public final class TestPictures {
             assertEquals(PictureType.WMF, pdata.getType());
 
             //add a new picture, it should be correctly appended to the Pictures stream
-            CountingOutputStream out = new CountingOutputStream(NULL_OUTPUT_STREAM);
+            CountingOutputStream out = new CountingOutputStream(NullOutputStream.INSTANCE);
             for (HSLFPictureData p : pictures) p.write(out);
 
             int streamSize = out.getCount();

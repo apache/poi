@@ -192,8 +192,8 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
      * @return the inflated picture data.
      */
     private static byte[] inflatePictureData(byte[] data) {
-        try (InflaterInputStream in = new InflaterInputStream(new UnsynchronizedByteArrayInputStream(data));
-             UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+        try (InflaterInputStream in = new InflaterInputStream(UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get());
+             UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
             IOUtils.copy(in, out);
             return out.toByteArray();
         } catch (IOException e) {
@@ -410,7 +410,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         // "... LZ compression algorithm in the format used by GNU Zip deflate/inflate with a 32k window ..."
         // not sure what to do, when lookup tables exceed 32k ...
 
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             try (DeflaterOutputStream dos = new DeflaterOutputStream(bos)) {
                 dos.write(pictureData);
             }

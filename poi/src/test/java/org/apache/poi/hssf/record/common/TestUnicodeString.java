@@ -185,7 +185,7 @@ final class TestUnicodeString {
        assertEquals(4, fr.getCharacterPos());
        assertEquals(0x15c, fr.getFontIndex());
 
-       UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+       UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
        LittleEndianOutputStream out = new LittleEndianOutputStream(baos);
 
        fr.serialize(out);
@@ -216,7 +216,7 @@ final class TestUnicodeString {
        assertEquals(0, ext.getPhRuns().length);
        assertEquals(10, ext.getDataSize()); // Excludes 4 byte header
 
-       UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+       UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
        LittleEndianOutputStream out = new LittleEndianOutputStream(baos);
        ContinuableRecordOutput cout = new ContinuableRecordOutput(out, 0xffff);
 

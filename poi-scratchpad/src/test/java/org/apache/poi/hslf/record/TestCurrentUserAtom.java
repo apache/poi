@@ -89,7 +89,7 @@ public final class TestCurrentUserAtom {
         cu.setCurrentEditOffset(0x2942);
 
         // Check it matches
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         cu.writeOut(baos);
         byte[] out = baos.toByteArray();
 

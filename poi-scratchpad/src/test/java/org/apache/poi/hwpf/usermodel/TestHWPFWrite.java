@@ -47,7 +47,7 @@ public final class TestHWPFWrite extends HWPFTestCase {
      */
     @Test
     void testWriteStream() throws IOException {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("SampleDoc.doc")) {
             Range r = doc.getRange();
             assertEquals("I am a test document\r", r.getParagraph(0).text());

@@ -114,7 +114,7 @@ class TestDrawingAggregate {
          * @return the raw data being aggregated
          */
         byte[] getRawBytes(){
-            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
             for (RecordBase rb : aggRecords) {
                 Record r = (org.apache.poi.hssf.record.Record) rb;
                 try {
@@ -222,7 +222,7 @@ class TestDrawingAggregate {
         assertEquals(dgBytes.length, pos, "data was not fully read");
 
         // serialize to byte array
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         for(EscherRecord r : records) {
             out.write(r.serialize());
         }
@@ -248,7 +248,7 @@ class TestDrawingAggregate {
     }
 
     private static byte[] toByteArray(List<RecordBase> records) {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         for (RecordBase rb : records) {
             Record r = (org.apache.poi.hssf.record.Record) rb;
             try {

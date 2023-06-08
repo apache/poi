@@ -1080,7 +1080,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         ExOleObjStg exOleObjStg = new ExOleObjStg();
         try {
             Ole10Native.createOleMarkerEntry(poiData);
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             poiData.writeFilesystem(bos);
             exOleObjStg.setData(bos.toByteArray());
         } catch (IOException e) {

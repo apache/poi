@@ -124,7 +124,7 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
      * @param data the embedded data.
      */
      public void setData(byte[] data) throws IOException {
-        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
              DeflaterOutputStream def = new DeflaterOutputStream(out)) {
             //first four bytes is the length of the raw data
             byte[] b = new byte[4];

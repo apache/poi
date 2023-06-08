@@ -466,7 +466,7 @@ public final class TestStyleTextPropAtom {
         tpc.setValue(0xFE0033FF);
 
         // Should now be the same as data_a
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         stpa.writeOut(baos);
         assertArrayEquals(data_a, baos.toByteArray());
     }
@@ -615,8 +615,8 @@ public final class TestStyleTextPropAtom {
                     assertEquals(tpa.getValue(), tpb.getValue());
                 }
 
-                UnsynchronizedByteArrayOutputStream ba = new UnsynchronizedByteArrayOutputStream();
-                UnsynchronizedByteArrayOutputStream bb = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream ba = UnsynchronizedByteArrayOutputStream.builder().get();
+                UnsynchronizedByteArrayOutputStream bb = UnsynchronizedByteArrayOutputStream.builder().get();
 
                 ca.writeOut(ba);
                 cb.writeOut(bb);
@@ -626,7 +626,7 @@ public final class TestStyleTextPropAtom {
         }
 
         // Check byte level with b
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         stpa.writeOut(baos);
         assertArrayEquals(data_b, baos.toByteArray());
     }
@@ -674,7 +674,7 @@ public final class TestStyleTextPropAtom {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data, 0,data.length);
         if(textlen != -1) stpb.setParentTextSize(textlen);
 
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         stpb.writeOut(out);
         assertArrayEquals(expected, out.toByteArray());
     }

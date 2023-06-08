@@ -277,8 +277,8 @@ public class RLEDecompressingInputStream extends InputStream {
     }
 
     public static byte[] decompress(byte[] compressed, int offset, int length) throws IOException {
-        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
-             InputStream instream = new UnsynchronizedByteArrayInputStream(compressed, offset, length);
+        try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
+             InputStream instream = UnsynchronizedByteArrayInputStream.builder().setByteArray(compressed).setOffset(offset).setLength(length).get();
              InputStream stream = new RLEDecompressingInputStream(instream)) {
 
             IOUtils.copy(stream, out);

@@ -103,7 +103,7 @@ class TestXSSFVMLDrawing {
         assertEquals("[True]", cldata.getVisibleList().toString());
 
         //serialize and read again
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         vml.write(out);
 
         XSSFVMLDrawing vml2 = new XSSFVMLDrawing();

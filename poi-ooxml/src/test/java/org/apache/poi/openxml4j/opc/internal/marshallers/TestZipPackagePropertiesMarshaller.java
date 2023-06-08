@@ -17,7 +17,6 @@
 
 package org.apache.poi.openxml4j.opc.internal.marshallers;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.openxml4j.opc.PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_URI;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,6 +26,7 @@ import java.io.OutputStream;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePartName;
@@ -39,7 +39,7 @@ class TestZipPackagePropertiesMarshaller {
     private final PartMarshaller marshaller = new ZipPackagePropertiesMarshaller();
 
     private boolean marshall() throws OpenXML4JException {
-        return marshall(new ZipArchiveOutputStream(new UnsynchronizedByteArrayOutputStream()));
+        return marshall(new ZipArchiveOutputStream(UnsynchronizedByteArrayOutputStream.builder().get()));
     }
 
     private boolean marshall(OutputStream zos) throws OpenXML4JException {
@@ -51,7 +51,7 @@ class TestZipPackagePropertiesMarshaller {
 
     @Test
     void nonZipOutputStream() {
-        assertThrows(IllegalArgumentException.class, () -> marshall(NULL_OUTPUT_STREAM));
+        assertThrows(IllegalArgumentException.class, () -> marshall(NullOutputStream.INSTANCE));
     }
 
     @Test
@@ -61,7 +61,7 @@ class TestZipPackagePropertiesMarshaller {
 
     @Test
     void ioException() {
-        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(new UnsynchronizedByteArrayOutputStream()) {
+        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(UnsynchronizedByteArrayOutputStream.builder().get()) {
             @Override
             public void putArchiveEntry(final ArchiveEntry archiveEntry) throws IOException {
                 throw new IOException("TestException");

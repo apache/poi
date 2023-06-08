@@ -105,7 +105,7 @@ class TestHxxFEncryption {
         File f = sampleDir.getFile(file);
         Biff8EncryptionKey.setCurrentUserPassword(password);
         try (POITextExtractor te1 = ExtractorFactory.createExtractor(f);
-             UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+             UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             Biff8EncryptionKey.setCurrentUserPassword(newPass);
             try (POIDocument doc = (POIDocument) te1.getDocument()) {
                 doc.write(bos);
@@ -126,7 +126,7 @@ class TestHxxFEncryption {
         File f = sampleDir.getFile(file);
         Biff8EncryptionKey.setCurrentUserPassword(password);
         try (POITextExtractor te1 = ExtractorFactory.createExtractor(f);
-             UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+             UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             // first remove encryption
             Biff8EncryptionKey.setCurrentUserPassword(null);
             try (POIDocument doc = (POIDocument) te1.getDocument()) {
@@ -174,7 +174,7 @@ class TestHxxFEncryption {
 
     @Test
     public void changeEncryptionMode() throws IOException {
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(10_000);
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(10_000).get();
 
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             wb.createSheet().createRow(1).createCell(1).setCellValue("Test");

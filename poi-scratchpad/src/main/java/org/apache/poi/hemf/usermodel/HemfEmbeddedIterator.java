@@ -293,7 +293,7 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
     private void compressGDIBitmap(EmfPlusImage img, HwmfEmbedded emb, HwmfEmbeddedType et) {
         BufferedImage bi = img.readGDIImage(emb.getRawData());
         try {
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             // use HwmfEmbeddedType literal for conversion
             ImageIO.write(bi, et.toString(), bos);
             emb.setData(bos.toByteArray());
@@ -318,7 +318,7 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
             : epo.getTotalObjectSize();
         IOUtils.safelyAllocateCheck(totalSize, MAX_RECORD_LENGTH);
 
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(totalSize)) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(totalSize).get()) {
             boolean hasNext = false;
             do {
                 EmfPlusImage img = epo.getObjectData();

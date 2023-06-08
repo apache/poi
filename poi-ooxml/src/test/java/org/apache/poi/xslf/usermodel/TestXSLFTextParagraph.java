@@ -452,7 +452,7 @@ class TestXSLFTextParagraph {
 
             assertEquals("This is a highlight test", sh.getText());
 
-            DummyGraphics2d dgfx = new DummyGraphics2d(new NullPrintStream()) {
+            DummyGraphics2d dgfx = new DummyGraphics2d(NullPrintStream.INSTANCE) {
                 @Override
                 public void drawString(AttributedCharacterIterator iterator, float x, float y) {
                     // For the test file, common sl draws textruns one by one and not mixed

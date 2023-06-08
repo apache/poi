@@ -336,7 +336,7 @@ public abstract class POIDocument implements Closeable {
      *      {@link POIFSFileSystem} occurs
      */
     private void writePropertySet(String name, PropertySet set, POIFSFileSystem outFS) throws IOException {
-        try (UnsynchronizedByteArrayOutputStream bOut = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bOut = UnsynchronizedByteArrayOutputStream.builder().get()) {
             PropertySet mSet = new PropertySet(set);
             mSet.write(bOut);
 

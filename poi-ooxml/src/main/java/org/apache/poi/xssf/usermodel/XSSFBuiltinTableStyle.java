@@ -409,8 +409,8 @@ public enum XSSFBuiltinTableStyle {
                 // hack because I can't figure out how to get XMLBeans to parse a sub-element in a standalone manner
                 // - build a fake styles.xml file with just this built-in
                 StylesTable styles = new StylesTable();
-                try (UnsynchronizedByteArrayInputStream bis = new UnsynchronizedByteArrayInputStream(
-                        styleXML(dxfsNode, tableStyleNode).getBytes(StandardCharsets.UTF_8))) {
+                try (UnsynchronizedByteArrayInputStream bis = UnsynchronizedByteArrayInputStream.builder().setByteArray(
+                        styleXML(dxfsNode, tableStyleNode).getBytes(StandardCharsets.UTF_8)).get()) {
                     styles.readFrom(bis);
                 }
                 styleMap.put(builtIn, new XSSFBuiltinTypeStyleStyle(builtIn, styles.getExplicitTableStyle(styleName)));

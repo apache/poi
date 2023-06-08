@@ -82,8 +82,8 @@ public final class PPDrawingGroup extends RecordAtom {
     public void writeOut(OutputStream out) throws IOException {
         byte[] bstorehead = new byte[8];
         byte[] recordBytes = new byte[36 + 8];
-        try (UnsynchronizedByteArrayOutputStream bout = new UnsynchronizedByteArrayOutputStream();
-             UnsynchronizedByteArrayOutputStream recordBuf = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bout = UnsynchronizedByteArrayOutputStream.builder().get();
+             UnsynchronizedByteArrayOutputStream recordBuf = UnsynchronizedByteArrayOutputStream.builder().get()) {
             for (EscherRecord r : dggContainer) {
                 if (r.getRecordId() == EscherContainerRecord.BSTORE_CONTAINER) {
                     EscherContainerRecord bstore = (EscherContainerRecord) r;

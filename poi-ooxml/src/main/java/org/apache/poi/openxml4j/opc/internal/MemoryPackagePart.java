@@ -88,7 +88,12 @@ public final class MemoryPackagePart extends PackagePart {
         if (data == null) {
             data = new byte[0];
         }
-        return new UnsynchronizedByteArrayInputStream(data);
+        try {
+            return UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get();
+        } catch (IOException e) {
+            // not possible with ByteArray but still declared in the API
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
@@ -113,7 +118,7 @@ public final class MemoryPackagePart extends PackagePart {
 
     @Override
     public boolean load(InputStream is) throws InvalidFormatException {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             // Grab the data
             IOUtils.copy(is, baos);
             // Save it

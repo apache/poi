@@ -256,7 +256,7 @@ public final class HWPFLister {
 
     private static HWPFDocumentCore writeOutAndReadBack(
             HWPFDocumentCore original ) {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             original.write( baos );
             try (InputStream is = baos.toInputStream()) {
                 return loadDoc(is);

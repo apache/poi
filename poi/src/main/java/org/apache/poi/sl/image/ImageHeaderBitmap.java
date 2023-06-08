@@ -38,7 +38,7 @@ public class ImageHeaderBitmap {
     public ImageHeaderBitmap(byte[] data, int offset) {
         BufferedImage img = null;
         try {
-            img = ImageIO.read(new UnsynchronizedByteArrayInputStream(data, offset, data.length-offset));
+            img = ImageIO.read(UnsynchronizedByteArrayInputStream.builder().setByteArray(data).setOffset(offset).setLength(data.length-offset).get());
         } catch (IOException e) {
             LOG.atWarn().withThrowable(e).log("Can't determine image dimensions");
         }

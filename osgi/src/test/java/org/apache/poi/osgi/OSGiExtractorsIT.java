@@ -57,7 +57,7 @@ public class OSGiExtractorsIT extends BaseOSGiTestCase {
         box.setText("Hello, World!");
         box.setAnchor(new Rectangle(36, 15, 648, 65));
 
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         ppt.write(out);
         return out.toByteArray();
     }
@@ -66,7 +66,7 @@ public class OSGiExtractorsIT extends BaseOSGiTestCase {
         Sheet s = wb.createSheet("OSGi");
         s.createRow(0).createCell(0).setCellValue("Hello, World!");
 
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         wb.write(out);
         return out.toByteArray();
 

@@ -233,7 +233,11 @@ public class VBAMacroReader implements Closeable {
         } else {
             // Decompress a previously found module and store the decompressed result into module.buf
             InputStream stream = new RLEDecompressingInputStream(
-                    new UnsynchronizedByteArrayInputStream(module.buf, moduleOffset, module.buf.length - moduleOffset)
+                    UnsynchronizedByteArrayInputStream.builder().
+                            setByteArray(module.buf).
+                            setOffset(moduleOffset).
+                            setLength(module.buf.length - moduleOffset).
+                            get()
             );
             module.read(stream);
             stream.close();
@@ -275,7 +279,7 @@ public class VBAMacroReader implements Closeable {
             }
 
             if (decompressedBytes != null) {
-                module.read(new UnsynchronizedByteArrayInputStream(decompressedBytes));
+                module.read(UnsynchronizedByteArrayInputStream.builder().setByteArray(decompressedBytes).get());
             }
         }
 
@@ -668,7 +672,7 @@ public class VBAMacroReader implements Closeable {
 
     private static String readUnicode(InputStream is) throws IOException {
         //reads null-terminated unicode string
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             int b0 = IOUtils.readByte(is);
             int b1 = IOUtils.readByte(is);
 
@@ -688,7 +692,7 @@ public class VBAMacroReader implements Closeable {
     }
 
     private static String readMBCS(int firstByte, InputStream is, Charset charset) throws IOException {
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             int len = 0;
             int b = firstByte;
             while (b > 0 && len < MAX_STRING_LENGTH) {
@@ -802,7 +806,11 @@ public class VBAMacroReader implements Closeable {
                 if (w <= 0 || (w & 0x7000) != 0x3000) {
                     continue;
                 }
-                decompressed = tryToDecompress(new UnsynchronizedByteArrayInputStream(compressed, i, compressed.length - i));
+                decompressed = tryToDecompress(UnsynchronizedByteArrayInputStream.builder().
+                        setByteArray(compressed).
+                        setOffset(i).
+                        setLength(compressed.length - i).
+                        get());
                 if (decompressed != null) {
                     if (decompressed.length > 9) {
                         //this is a complete hack.  The challenge is that there

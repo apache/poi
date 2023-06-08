@@ -91,7 +91,7 @@ public abstract class Bitmap extends HSLFPictureData {
 
     @Override
     public Dimension getImageDimension() {
-        try (InputStream is = new UnsynchronizedByteArrayInputStream(getData())){
+        try (InputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(getData()).get()){
             BufferedImage bi = ImageIO.read(is);
             return new Dimension(
                 (int)Units.pixelToPoints(bi.getWidth()),

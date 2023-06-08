@@ -17,7 +17,6 @@
 
 package org.apache.poi.ooxml;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -38,6 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.ooxml.util.PackageHelper;
@@ -141,7 +141,7 @@ public final class TestPOIXMLDocument {
 
                 // Should not be able to write a document that has been closed
                 doc.close();
-                IOException e2 = assertThrows(IOException.class, () -> doc.write(NULL_OUTPUT_STREAM),
+                IOException e2 = assertThrows(IOException.class, () -> doc.write(NullOutputStream.INSTANCE),
                     "Should not be able to write a document that has been closed.");
                 assertEquals("Cannot write data, document seems to have been closed already", e2.getMessage());
 

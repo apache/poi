@@ -264,7 +264,7 @@ public class CurrentUserAtom {
      */
     public void writeToFS(POIFSFileSystem fs) throws IOException {
         // Grab contents
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             writeOut(baos);
             try (InputStream is = baos.toInputStream()) {
                 // Write out

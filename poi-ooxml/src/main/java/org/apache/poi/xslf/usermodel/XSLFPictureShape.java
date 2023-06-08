@@ -372,7 +372,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
         }
 
         BufferedImage thmBI = renderer.getImage(dim);
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(100000)) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(100000).get()) {
             // use extension instead of enum name, because of "jpeg"
             ImageIO.write(thmBI, pt.extension.substring(1), bos);
 

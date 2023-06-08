@@ -264,7 +264,7 @@ public final class POIDataSamples {
      */
     public byte[] readFile(String fileName) {
         try (InputStream fis = openResourceAsStream(fileName);
-             UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+             UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             IOUtils.copy(fis, bos);
             return bos.toByteArray();
         } catch (IOException e) {
@@ -273,7 +273,7 @@ public final class POIDataSamples {
     }
 
     public static POIFSFileSystem writeOutAndReadBack(POIFSFileSystem original) throws IOException {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             original.writeFilesystem(baos);
             return new POIFSFileSystem(baos.toInputStream());
         }

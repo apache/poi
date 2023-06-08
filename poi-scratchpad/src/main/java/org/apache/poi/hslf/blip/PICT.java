@@ -72,7 +72,7 @@ public final class PICT extends Metafile {
     @Override
     public byte[] getData(){
         byte[] rawdata = getRawData();
-        try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
             byte[] macheader = new byte[512];
             out.write(macheader);
             int pos = CHECKSUM_SIZE*getUIDInstanceCount();
@@ -88,13 +88,13 @@ public final class PICT extends Metafile {
         Header header = new Header();
         header.read(data, pos);
         long bs_exp = (long)pos + header.getSize();
-        try (InputStream bis = new UnsynchronizedByteArrayInputStream(data)) {
+        try (InputStream bis = UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get()) {
             long bs_act = IOUtils.skipFully(bis, bs_exp);
             if (bs_exp != bs_act) {
                 throw new EOFException();
             }
             byte[] chunk = new byte[4096];
-            try (UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(header.getWmfSize())) {
+            try (UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(header.getWmfSize()).get()) {
                 try (InflaterInputStream inflater = new InflaterInputStream(bis)) {
                     int count;
                     while ((count = inflater.read(chunk)) >= 0) {

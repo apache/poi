@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Test;
 
 public class TestXLSX2CSV {
     private PrintStream err;
-    private final UnsynchronizedByteArrayOutputStream errorBytes = new UnsynchronizedByteArrayOutputStream();
+    private final UnsynchronizedByteArrayOutputStream errorBytes = UnsynchronizedByteArrayOutputStream.builder().get();
 
     @BeforeEach
     public void setUp() throws UnsupportedEncodingException {
@@ -77,7 +77,7 @@ public class TestXLSX2CSV {
 
     @Test
     public void testSampleFile() throws Exception {
-        final UnsynchronizedByteArrayOutputStream outputBytes = new UnsynchronizedByteArrayOutputStream();
+        final UnsynchronizedByteArrayOutputStream outputBytes = UnsynchronizedByteArrayOutputStream.builder().get();
         PrintStream out = new PrintStream(outputBytes, true, StandardCharsets.UTF_8.name());
 
         // The package open is instantaneous, as it should be.
@@ -96,7 +96,7 @@ public class TestXLSX2CSV {
 
     @Test
     public void testMinColumns() throws Exception {
-        final UnsynchronizedByteArrayOutputStream outputBytes = new UnsynchronizedByteArrayOutputStream();
+        final UnsynchronizedByteArrayOutputStream outputBytes = UnsynchronizedByteArrayOutputStream.builder().get();
         PrintStream out = new PrintStream(outputBytes, true, StandardCharsets.UTF_8.name());
 
         // The package open is instantaneous, as it should be.

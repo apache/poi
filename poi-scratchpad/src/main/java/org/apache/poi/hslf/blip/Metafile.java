@@ -91,7 +91,7 @@ public abstract class Metafile extends HSLFPictureData {
         public void read(byte[] data, int offset) {
             try (
                     LittleEndianInputStream leis = new LittleEndianInputStream(
-                            new UnsynchronizedByteArrayInputStream(data, offset, RECORD_LENGTH))
+                            UnsynchronizedByteArrayInputStream.builder().setByteArray(data).setOffset(offset).setLength(RECORD_LENGTH).get())
             ) {
                 wmfsize = leis.readInt();
 
@@ -204,7 +204,7 @@ public abstract class Metafile extends HSLFPictureData {
     }
 
     protected static byte[] compress(byte[] bytes, int offset, int length) {
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         try (DeflaterOutputStream deflater = new DeflaterOutputStream(out)) {
             deflater.write(bytes, offset, length);
         } catch (IOException ignored) {

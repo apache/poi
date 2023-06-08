@@ -154,7 +154,7 @@ public final class ColorSchemeAtom extends RecordAtom {
         byte[] ret = new byte[3];
 
         // Serialise to bytes, then grab the right ones out
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         try {
             writeLittleEndian(rgb,baos);
         } catch(IOException ie) {

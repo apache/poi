@@ -223,9 +223,12 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 X509CRL crl;
                 try {
                     crl = (X509CRL) this.certificateFactory
-                        .generateCRL(new UnsynchronizedByteArrayInputStream(encodedCrl));
+                        .generateCRL(UnsynchronizedByteArrayInputStream.builder().setByteArray(encodedCrl).get());
                 } catch (CRLException e) {
                     throw new IllegalStateException("CRL parse error: " + e.getMessage(), e);
+                } catch (IOException e) {
+                    // not possible with ByteArray but still declared in the API
+                    throw new IllegalStateException(e);
                 }
 
                 CRLIdentifierType crlIdentifier = crlRef.addNewCRLIdentifier();
@@ -299,7 +302,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
     }
 
     private static byte[] getC14nValue(List<Node> nodeList, String c14nAlgoId) {
-        try (UnsynchronizedByteArrayOutputStream c14nValue = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream c14nValue = UnsynchronizedByteArrayOutputStream.builder().get()) {
             for (Node node : nodeList) {
                 /*
                  * Re-initialize the c14n else the namespaces will get cached

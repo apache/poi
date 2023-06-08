@@ -75,7 +75,7 @@ public class OSGiSlideShowIT extends BaseOSGiTestCase {
         }
         box2.setAnchor(new Rectangle(36, 80, 648, 400));
 
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             ppt.write(baos);
             try (InputStream bais = baos.toInputStream()) {
                 ppt = SlideShowFactory.create(bais);

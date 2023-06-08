@@ -143,6 +143,7 @@ public final class ImageUtils {
      * @param scaleY the amount by which image height is multiplied relative to the original height.
      * @return the new Dimensions of the scaled picture in EMUs
      * @throws IllegalArgumentException if scale values lead to negative or infinite results
+     * @throws IllegalStateException if the picture data is corrupt
      */
     public static Dimension setPreferredSize(Picture picture, double scaleX, double scaleY) {
         ClientAnchor anchor = picture.getClientAnchor();
@@ -151,9 +152,15 @@ public final class ImageUtils {
         Sheet sheet = picture.getSheet();
 
         // in pixel
-        final Dimension imgSize = (scaleX == Double.MAX_VALUE || scaleY == Double.MAX_VALUE)
-            ? getImageDimension(new UnsynchronizedByteArrayInputStream(data.getData()), data.getPictureType())
-            : new Dimension();
+        final Dimension imgSize;
+        try {
+            imgSize = (scaleX == Double.MAX_VALUE || scaleY == Double.MAX_VALUE)
+                ? getImageDimension(UnsynchronizedByteArrayInputStream.builder().setByteArray(data.getData()).get(), data.getPictureType())
+                : new Dimension();
+        } catch (IOException e) {
+            // is actually impossible with ByteArray, but still declared in the interface
+            throw new IllegalStateException(e);
+        }
 
         // in emus
         final Dimension anchorSize = (scaleX != Double.MAX_VALUE || scaleY != Double.MAX_VALUE)
@@ -192,7 +199,12 @@ public final class ImageUtils {
         Dimension imgSize = null;
         if (anchor.getCol2() < anchor.getCol1() || anchor.getRow2() < anchor.getRow1()) {
             PictureData data = picture.getPictureData();
-            imgSize = getImageDimension(new UnsynchronizedByteArrayInputStream(data.getData()), data.getPictureType());
+            try {
+                imgSize = getImageDimension(UnsynchronizedByteArrayInputStream.builder().setByteArray(data.getData()).get(), data.getPictureType());
+            } catch (IOException e) {
+                // not possible with ByteArray but still declared in the API
+                throw new IllegalStateException(e);
+            }
         }
 
         int w = getDimFromCell(imgSize == null ? 0 : imgSize.getWidth(), anchor.getCol1(), anchor.getDx1(), anchor.getCol2(), anchor.getDx2(),

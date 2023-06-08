@@ -142,7 +142,7 @@ final class TestPOIFSFileSystem {
         try (POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream(file))) {
 
             // Write it into a temp output array
-            UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
             fs.writeFilesystem(baos);
 
             // Check sizes
@@ -181,7 +181,7 @@ final class TestPOIFSFileSystem {
              "BIG", new ByteArrayInputStream(hugeStream)
        );
 
-       UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+       UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
        fs.writeFilesystem(baos);
        byte[] fsData = baos.toByteArray();
 

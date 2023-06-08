@@ -33,7 +33,7 @@ public class TestVSDDumper {
     @Test
     void main() {
         PrintStream oldStdOut = System.out;
-        System.setOut(new NullPrintStream());
+        System.setOut(NullPrintStream.INSTANCE);
         try {
             File file = POIDataSamples.getDiagramInstance().getFile("Test_Visio-Some_Random_Text.vsd");
             String[] args = { file.getAbsolutePath() };

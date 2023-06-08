@@ -90,7 +90,7 @@ public class OOXMLURIDereferencer implements URIDereferencer {
             if (part.getPartName().toString().endsWith(".rels")) {
                 // although xmlsec has an option to ignore line breaks, currently this
                 // only affects .rels files, so we only modify these
-                try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+                try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                     for (int ch; (ch = dataStream.read()) != -1; ) {
                         if (ch == 10 || ch == 13) continue;
                         bos.write(ch);

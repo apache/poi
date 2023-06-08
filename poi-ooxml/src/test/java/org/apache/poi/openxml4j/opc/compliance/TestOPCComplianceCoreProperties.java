@@ -216,7 +216,7 @@ public final class TestOPCComplianceCoreProperties {
     @Test
     void testNoCoreProperties_saveNew() throws Exception {
         String sampleFileName = "OPCCompliance_NoCoreProperties.xlsx";
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
 
         try (OPCPackage pkg = OPCPackage.open(getSampleFile(sampleFileName).getPath())) {
             // Verify it has empty properties

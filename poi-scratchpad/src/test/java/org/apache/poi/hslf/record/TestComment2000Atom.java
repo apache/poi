@@ -106,7 +106,7 @@ public final class TestComment2000Atom {
     @Test
     void testWrite() throws Exception {
         Comment2000Atom ca = new Comment2000Atom(data_a, 0, data_a.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         ca.writeOut(baos);
         byte[] b = baos.toByteArray();
         assertArrayEquals(data_a, b);
@@ -127,7 +127,7 @@ public final class TestComment2000Atom {
         a.setDate(date_a);
 
         // Check it's now the same as a
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         a.writeOut(baos);
         byte[] b = baos.toByteArray();
         assertArrayEquals(data_a, b);
@@ -150,7 +150,7 @@ public final class TestComment2000Atom {
         ca.setYOffset(0x0E);
 
         // Check bytes are now the same
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         ca.writeOut(baos);
         byte[] b = baos.toByteArray();
         assertArrayEquals(data_b, b);

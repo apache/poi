@@ -42,7 +42,7 @@ public class TestHWPFLister {
         String fileArgs = SAMPLES.getFile("SampleDoc.doc").getAbsolutePath() + args;
 
         PrintStream oldStdOut = System.out;
-        System.setOut(new NullPrintStream());
+        System.setOut(NullPrintStream.INSTANCE);
         try {
 
             assertDoesNotThrow(() -> HWPFLister.main(fileArgs.split(" ")));

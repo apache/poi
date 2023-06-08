@@ -79,7 +79,7 @@ public abstract class BaseTestPPTIterating {
         IOUtils.setByteArrayMaxOverride(5*1024*1024);
 
         // redirect standard out during the test to avoid spamming the console with output
-        System.setOut(new NullPrintStream());
+        System.setOut(NullPrintStream.INSTANCE);
     }
 
     @AfterEach

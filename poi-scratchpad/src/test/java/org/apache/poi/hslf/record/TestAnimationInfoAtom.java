@@ -65,7 +65,7 @@ public final class TestAnimationInfoAtom {
     @Test
     void testWrite() throws Exception {
         AnimationInfoAtom record = new AnimationInfoAtom(data, 0, data.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 
@@ -81,7 +81,7 @@ public final class TestAnimationInfoAtom {
         record.setFlag(AnimationInfoAtom.Play, true);
         record.setFlag(AnimationInfoAtom.Synchronous, true);
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         byte[] b = baos.toByteArray();
 

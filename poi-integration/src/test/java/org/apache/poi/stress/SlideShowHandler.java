@@ -49,7 +49,7 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
         readPictures(ss);
 
         // write out the file
-        UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         ss.write(out);
 
         readContent(ss);

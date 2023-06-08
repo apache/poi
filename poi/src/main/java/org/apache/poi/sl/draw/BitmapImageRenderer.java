@@ -85,7 +85,7 @@ public class BitmapImageRenderer implements ImageRenderer {
     public void loadImage(InputStream data, String contentType) throws IOException {
         InputStream in = data;
         if (doCache) {
-            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 IOUtils.copy(data, bos);
                 cachedImage = bos.toByteArray();
                 cachedContentType = contentType;
@@ -104,7 +104,7 @@ public class BitmapImageRenderer implements ImageRenderer {
             cachedImage = data.clone();
             cachedContentType = contentType;
         }
-        img = readImage(new UnsynchronizedByteArrayInputStream(data), contentType);
+        img = readImage(UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get(), contentType);
     }
 
     /**

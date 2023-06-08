@@ -386,7 +386,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     void saveGroupColumns() throws IOException {
         try (
                 XSSFWorkbook workbook = new XSSFWorkbook();
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             XSSFSheet sheet = workbook.createSheet();
             XSSFRow row0 = sheet.createRow(0);
@@ -2268,7 +2268,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
     void testBug64536() throws IOException {
         try (
                 XSSFWorkbook xssfWorkbook = (XSSFWorkbook) _testDataProvider.openSampleWorkbook("1_NoIden.xlsx");
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             XSSFSheet fileSheet = xssfWorkbook.getSheetAt(0);
             assertEquals(CellRangeAddress.valueOf("B1:D9"), fileSheet.getDimension());

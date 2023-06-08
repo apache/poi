@@ -53,7 +53,7 @@ public class HDGFLZW extends LZWDecompresser {
     * @throws IOException when the InputStream can't be read
     */
    public byte[] compress(InputStream src) throws IOException {
-      UnsynchronizedByteArrayOutputStream res = new UnsynchronizedByteArrayOutputStream();
+      UnsynchronizedByteArrayOutputStream res = UnsynchronizedByteArrayOutputStream.builder().get();
       compress(src,res);
       return res.toByteArray();
    }

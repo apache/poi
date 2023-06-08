@@ -56,7 +56,7 @@ public final class TestUserEditAtom {
     @Test
     void testWrite() throws Exception {
         UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         uea.writeOut(baos);
         assertArrayEquals(data_a, baos.toByteArray());
     }

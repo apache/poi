@@ -87,7 +87,7 @@ public class TestDocumentEncryption {
             EncryptionInfo ei = documentEncryptionAtom.getEncryptionInfo();
             ei.getHeader().setKeySize(0x78);
 
-            UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
             hss.write(bos);
 
             try (POIFSFileSystem fs2 = new POIFSFileSystem(bos.toInputStream());
@@ -108,9 +108,9 @@ public class TestDocumentEncryption {
     void cryptoAPIEncryption() throws Exception {
         /* documents with multiple edits need to be normalized for encryption */
         String pptFile = "57272_corrupted_usereditatom.ppt";
-        UnsynchronizedByteArrayOutputStream encrypted = new UnsynchronizedByteArrayOutputStream();
-        UnsynchronizedByteArrayOutputStream expected = new UnsynchronizedByteArrayOutputStream();
-        UnsynchronizedByteArrayOutputStream actual = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream encrypted = UnsynchronizedByteArrayOutputStream.builder().get();
+        UnsynchronizedByteArrayOutputStream expected = UnsynchronizedByteArrayOutputStream.builder().get();
+        UnsynchronizedByteArrayOutputStream actual = UnsynchronizedByteArrayOutputStream.builder().get();
         try {
             try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile(pptFile), true);
                  HSLFSlideShowImpl hss = new HSLFSlideShowImpl(fs)) {

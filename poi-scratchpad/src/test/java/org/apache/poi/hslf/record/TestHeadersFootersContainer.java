@@ -75,7 +75,7 @@ public final class TestHeadersFootersContainer {
     @Test
     void testWriteSlideHeadersFootersContainer() throws Exception {
         HeadersFootersContainer record = new HeadersFootersContainer(slideData, 0, slideData.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         assertArrayEquals(slideData, baos.toByteArray());
     }
@@ -99,7 +99,7 @@ public final class TestHeadersFootersContainer {
         assertEquals(HeadersFootersContainer.FOOTERATOM, csFooter.getOptions() >> 4);
         csFooter.setText("My Footer - 1");
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         assertArrayEquals(slideData, baos.toByteArray());
     }
@@ -128,7 +128,7 @@ public final class TestHeadersFootersContainer {
     @Test
     void testWriteNotesHeadersFootersContainer() throws Exception {
         HeadersFootersContainer record = new HeadersFootersContainer(notesData, 0, notesData.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         assertArrayEquals(notesData, baos.toByteArray());
     }
@@ -160,7 +160,7 @@ public final class TestHeadersFootersContainer {
         assertEquals(HeadersFootersContainer.FOOTERATOM, csFooter.getOptions() >> 4);
         csFooter.setText("Note Footer");
 
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         record.writeOut(baos);
         assertArrayEquals(notesData, baos.toByteArray());
     }

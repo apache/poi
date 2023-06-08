@@ -254,7 +254,7 @@ public class Ole10Native {
      */
     public static void createOleMarkerEntry(final DirectoryEntry parent) throws IOException {
         if (!parent.hasEntry(OLE_MARKER_NAME)) {
-            parent.createDocument(OLE_MARKER_NAME, new UnsynchronizedByteArrayInputStream(OLE_MARKER_BYTES));
+            parent.createDocument(OLE_MARKER_NAME, UnsynchronizedByteArrayInputStream.builder().setByteArray(OLE_MARKER_BYTES).get());
         }
     }
 
@@ -402,7 +402,7 @@ public class Ole10Native {
 
         switch (mode) {
             case parsed: {
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
                 try (LittleEndianOutputStream leos = new LittleEndianOutputStream(bos)) {
                     // total size, will be determined later ..
 

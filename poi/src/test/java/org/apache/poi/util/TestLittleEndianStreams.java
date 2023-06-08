@@ -35,7 +35,7 @@ final class TestLittleEndianStreams {
 
     @Test
     void testRead() throws IOException {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (LittleEndianOutputStream leo = new LittleEndianOutputStream(baos)) {
             leo.writeInt(12345678);
             leo.writeShort(12345);

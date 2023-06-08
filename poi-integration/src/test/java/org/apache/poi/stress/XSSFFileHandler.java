@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.xssf.XSSFTestDataSamples.getSampleFile;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -36,6 +35,7 @@ import java.util.Set;
 
 import javax.xml.transform.TransformerException;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.examples.ss.ExcelComparator;
@@ -72,7 +72,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         // make sure the potentially large byte-array is freed up quickly again
         {
 
-            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
             IOUtils.copy(stream, out);
 
             if (pass != null) {
@@ -156,7 +156,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
             TransformerException {
         for (XSSFMap map : wb.getCustomXMLMappings()) {
             XSSFExportToXml exporter = new XSSFExportToXml(map);
-            exporter.exportToXML(NULL_OUTPUT_STREAM, true);
+            exporter.exportToXML(NullOutputStream.INSTANCE, true);
         }
     }
 

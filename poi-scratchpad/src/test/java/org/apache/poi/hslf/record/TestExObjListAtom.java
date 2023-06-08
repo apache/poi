@@ -56,7 +56,7 @@ public class TestExObjListAtom {
     @Test
     void testWrite() throws Exception {
         ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         eoa.writeOut(baos);
         assertArrayEquals(data_a, baos.toByteArray());
     }
@@ -70,7 +70,7 @@ public class TestExObjListAtom {
         eoa.setObjectIDSeed(1);
 
         // Check it's now the same as a
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         eoa.writeOut(baos);
         assertArrayEquals(data_a, baos.toByteArray());
     }
@@ -84,7 +84,7 @@ public class TestExObjListAtom {
         eoa.setObjectIDSeed(4);
 
         // Check bytes are now the same
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         eoa.writeOut(baos);
         assertArrayEquals(data_b, baos.toByteArray());
     }

@@ -113,7 +113,7 @@ class TestOleShape {
     @ParameterizedTest
     @MethodSource("data")
     void embedData(Api api, ObjectMetaData.Application app) throws IOException, ReflectiveOperationException {
-        final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(50000);
+        final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(50000).get();
         try (SlideShow<?,?> ppt = createSlideShow(api)) {
             final PictureData picData = ppt.addPicture(pictureFile,  PictureType.EMF);
             final Slide<?,?> slide = ppt.createSlide();

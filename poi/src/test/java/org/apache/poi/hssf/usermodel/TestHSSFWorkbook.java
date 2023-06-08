@@ -559,7 +559,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
              HSSFWorkbook wb = new HSSFWorkbook(fs1)) {
             ClassID clsid1 = fs1.getRoot().getStorageClsid();
 
-            UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream(4096);
+            UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(4096).get();
             wb.write(out);
             try (POIFSFileSystem fs2 = new POIFSFileSystem(out.toInputStream())) {
                 ClassID clsid2 = fs2.getRoot().getStorageClsid();
@@ -974,7 +974,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertNotNull(name);
         assertEquals("ASheet!A1", name.getRefersToFormula());
 
-        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream stream = UnsynchronizedByteArrayOutputStream.builder().get();
         wb.write(stream);
 
         assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3", "ASheet");
@@ -985,7 +985,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
         assertEquals("ASheet!A1", name.getRefersToFormula());
 
-        UnsynchronizedByteArrayOutputStream stream2 = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream stream2 = UnsynchronizedByteArrayOutputStream.builder().get();
         wb.write(stream2);
 
         assertSheetOrder(wb, "Sheet1", "Sheet3", "ASheet");
@@ -1074,7 +1074,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     private void writeAndCloseWorkbook(Workbook workbook, File file)
     throws IOException {
-        final UnsynchronizedByteArrayOutputStream bytesOut = new UnsynchronizedByteArrayOutputStream();
+        final UnsynchronizedByteArrayOutputStream bytesOut = UnsynchronizedByteArrayOutputStream.builder().get();
         workbook.write(bytesOut);
         workbook.close();
 
@@ -1182,7 +1182,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     @Test
     void checkExistingFileForR1C1Refs() throws IOException {
         try (
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
                 HSSFWorkbook wb = openSampleWorkbook("49423.xls")
         ) {
             assertEquals(CellReferenceType.A1, wb.getCellReferenceType());
@@ -1198,7 +1198,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     @Test
     void checkNewFileForR1C1Refs() throws IOException {
         try (
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
                 HSSFWorkbook wb = new HSSFWorkbook()
         ) {
             assertEquals(CellReferenceType.UNKNOWN, wb.getCellReferenceType());

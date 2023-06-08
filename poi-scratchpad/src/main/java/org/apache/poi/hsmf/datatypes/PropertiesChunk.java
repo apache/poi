@@ -319,7 +319,7 @@ public abstract class PropertiesChunk extends Chunk {
      *         If an I/O error occurs.
      */
     public void writeProperties(DirectoryEntry directory) throws IOException {
-        try (UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             List<PropertyValue> values = writeProperties(baos);
 
             // write the header data with the properties declaration

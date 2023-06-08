@@ -185,7 +185,12 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
             for (AttachmentChunks attachment : msg.getAttachmentFiles()) {
                 if (attachment.getAttachData() != null) {
                     byte[] data = attachment.getAttachData().getValue();
-                    nonPOIFS.add( new UnsynchronizedByteArrayInputStream(data) );
+                    try {
+                        nonPOIFS.add(UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get() );
+                    } catch (IOException e) {
+                        // is actually impossible with ByteArray, but still declared in the interface
+                        throw new IllegalStateException(e);
+                    }
                 } else if (attachment.getAttachmentDirectory() != null) {
                     dirs.add(attachment.getAttachmentDirectory().getDirectory());
                 }

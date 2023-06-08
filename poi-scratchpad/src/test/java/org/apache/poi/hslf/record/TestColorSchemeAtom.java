@@ -81,7 +81,7 @@ public final class TestColorSchemeAtom {
     @Test
     void testWrite() throws Exception {
         ColorSchemeAtom csa = new ColorSchemeAtom(data_a,0,data_a.length);
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         csa.writeOut(baos);
         byte[] b = baos.toByteArray();
 

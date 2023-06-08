@@ -396,7 +396,7 @@ public class HemfPlusBrush {
         public EmfPlusBrushData getBrushData(List<? extends EmfPlusObjectData> continuedObjectData) {
             EmfPlusBrushData brushData = brushType.constructor.get();
             byte[] buf = getRawData(continuedObjectData);
-            try (UnsynchronizedByteArrayInputStream bis = new UnsynchronizedByteArrayInputStream(buf)){
+            try (UnsynchronizedByteArrayInputStream bis = UnsynchronizedByteArrayInputStream.builder().setByteArray(buf).get()){
                 brushData.init(new LittleEndianInputStream(bis), buf.length);
             } catch (IOException e) {
                 throw new IllegalStateException(e);
@@ -410,7 +410,7 @@ public class HemfPlusBrush {
          * @throws IllegalStateException if the data cannot be processed
          */
         public byte[] getRawData(List<? extends EmfPlusObjectData> continuedObjectData) {
-            try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 bos.write(getBrushBytes());
                 if (continuedObjectData != null) {
                     for (EmfPlusObjectData od : continuedObjectData) {

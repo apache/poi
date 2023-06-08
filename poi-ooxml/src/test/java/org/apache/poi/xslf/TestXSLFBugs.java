@@ -964,7 +964,7 @@ class TestXSLFBugs {
 
             final List<Object> strings = new ArrayList<>();
 
-            DummyGraphics2d dgfx = new DummyGraphics2d(new NullPrintStream()) {
+            DummyGraphics2d dgfx = new DummyGraphics2d(NullPrintStream.INSTANCE) {
                 @Override
                 public void drawString(AttributedCharacterIterator iterator, float x, float y) {
                     // For the test file, common sl draws textruns one by one and not mixed
@@ -1009,7 +1009,7 @@ class TestXSLFBugs {
                 { 79.58198774450841, 53.20887318960063, 109.13118501448272, 9.40935058567127 },
         };
 
-        DummyGraphics2d dgfx = new DummyGraphics2d(new NullPrintStream()) {
+        DummyGraphics2d dgfx = new DummyGraphics2d(NullPrintStream.INSTANCE) {
             int idx = 0;
             @Override
             public void clip(java.awt.Shape s) {
@@ -1065,7 +1065,7 @@ class TestXSLFBugs {
             assertNotNull(targetSlide);
             assertEquals(2, targetPresentation.getPictureData().size());
 
-            targetPresentation.write(NullOutputStream.NULL_OUTPUT_STREAM);
+            targetPresentation.write(NullOutputStream.INSTANCE);
         }
     }
 
@@ -1143,7 +1143,7 @@ class TestXSLFBugs {
 
         final ArrayList<LinearGradientPaint> linearGradients = new ArrayList<>();
         final ArrayList<RadialGradientPaint> radialGradients = new ArrayList<>();
-        final DummyGraphics2d dgfx = new DummyGraphics2d(new NullPrintStream())
+        final DummyGraphics2d dgfx = new DummyGraphics2d(NullPrintStream.INSTANCE)
         {
             public void setPaint(final Paint paint) {
                 if (paint instanceof LinearGradientPaint) {

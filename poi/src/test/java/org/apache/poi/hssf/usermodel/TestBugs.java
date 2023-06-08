@@ -1175,9 +1175,9 @@ final class TestBugs extends BaseTestBugzillaIssues {
     @Test
     void bug32191() throws IOException {
         try (HSSFWorkbook wb = openSampleWorkbook("27394.xls");
-             UnsynchronizedByteArrayOutputStream out1 = new UnsynchronizedByteArrayOutputStream();
-             UnsynchronizedByteArrayOutputStream out2 = new UnsynchronizedByteArrayOutputStream();
-             UnsynchronizedByteArrayOutputStream out3 = new UnsynchronizedByteArrayOutputStream()) {
+             UnsynchronizedByteArrayOutputStream out1 = UnsynchronizedByteArrayOutputStream.builder().get();
+             UnsynchronizedByteArrayOutputStream out2 = UnsynchronizedByteArrayOutputStream.builder().get();
+             UnsynchronizedByteArrayOutputStream out3 = UnsynchronizedByteArrayOutputStream.builder().get()) {
             wb.write(out1);
             wb.write(out2);
             wb.write(out3);
@@ -2331,7 +2331,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
             }
 
             // Convert BufferedImage to byte[]
-            UnsynchronizedByteArrayOutputStream imageBAOS = new UnsynchronizedByteArrayOutputStream();
+            UnsynchronizedByteArrayOutputStream imageBAOS = UnsynchronizedByteArrayOutputStream.builder().get();
             ImageIO.write(bimage, "jpeg", imageBAOS);
             imageBAOS.flush();
             byte[] imageBytes = imageBAOS.toByteArray();
@@ -2614,7 +2614,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
     void test66319() throws IOException {
         try (
                 HSSFWorkbook workbook = openSampleWorkbook("bug66319.xls");
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             for (Sheet sheet : workbook) {
                 for (Row row : sheet) {
@@ -2631,7 +2631,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
     void test66319WithRemove() throws IOException {
         try (
                 HSSFWorkbook workbook = openSampleWorkbook("bug66319.xls");
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
         ) {
             for (Sheet sheet : workbook) {
                 for (Row row : sheet) {

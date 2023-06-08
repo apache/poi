@@ -135,7 +135,7 @@ final class TestEventRecordFactory {
      */
     @Test
      void testContinuedUnknownRecord() throws IOException {
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         for (byte[] b : CONTINUE_DATA) {
             bos.write(b);
         }

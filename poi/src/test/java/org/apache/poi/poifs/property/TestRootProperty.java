@@ -42,7 +42,7 @@ final class TestRootProperty {
     void testConstructor() throws IOException {
         createBasicRootProperty();
 
-        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(512);
+        UnsynchronizedByteArrayOutputStream stream = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(512).get();
         _property.writeData(stream);
         assertArrayEquals(_testblock, stream.toByteArray());
 
@@ -105,7 +105,7 @@ final class TestRootProperty {
         int offset = 0;
 
         RootProperty property = new RootProperty(index, input, offset);
-        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream(128);
+        UnsynchronizedByteArrayOutputStream stream = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(128).get();
         byte[] expected = Arrays.copyOfRange(input, offset, offset+128);
         property.writeData(stream);
         byte[] output = stream.toByteArray();

@@ -43,7 +43,7 @@ public final class DocumentOutputStream extends OutputStream {
 
     /** our buffer, when null we're into normal blocks */
     private UnsynchronizedByteArrayOutputStream _buffer =
-            new UnsynchronizedByteArrayOutputStream(POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE);
+            UnsynchronizedByteArrayOutputStream.builder().setBufferSize(POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE).get();
 
     /** our main block stream, when we're into normal blocks */
     private POIFSStream _stream;
@@ -105,7 +105,7 @@ public final class DocumentOutputStream extends OutputStream {
         }
 
         // Have an empty one created for now
-        return parent.createDocument(name, new UnsynchronizedByteArrayInputStream(new byte[0]));
+        return parent.createDocument(name, UnsynchronizedByteArrayInputStream.builder().setByteArray(new byte[0]).get());
     }
 
     private void checkBufferSize() throws IOException {

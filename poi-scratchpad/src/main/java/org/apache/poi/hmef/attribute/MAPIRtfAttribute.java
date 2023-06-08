@@ -46,7 +46,7 @@ public final class MAPIRtfAttribute extends MAPIAttribute {
       // Decompress it, removing any trailing padding as needed
       CompressedRTF rtf = new CompressedRTF();
       byte[] tmp;
-      try (InputStream is = new UnsynchronizedByteArrayInputStream(data)) {
+      try (InputStream is = UnsynchronizedByteArrayInputStream.builder().setByteArray(data).get()) {
          tmp = rtf.decompress(is);
       }
 

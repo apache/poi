@@ -409,7 +409,7 @@ public final class TestRichTextRun {
 
         // Now write out the slideshow
         byte[] raw_ss;
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         s.write(baos);
         try (POIFSFileSystem fs = new POIFSFileSystem(baos.toInputStream());
             InputStream is = fs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT)) {
@@ -424,7 +424,7 @@ public final class TestRichTextRun {
     }
 
     private byte[] writeRecord( org.apache.poi.hslf.record.Record r) throws IOException {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         r.writeOut(baos);
         return baos.toByteArray();
     }

@@ -140,9 +140,10 @@ public final class Picture {
          */
         if ( matchSignature( rawContent, COMPRESSED1, 32 )
                 || matchSignature( rawContent, COMPRESSED2, 32 ) ) {
-            try (UnsynchronizedByteArrayInputStream bis = new UnsynchronizedByteArrayInputStream( rawContent, 33, rawContent.length - 33 );
+            try (UnsynchronizedByteArrayInputStream bis = UnsynchronizedByteArrayInputStream.builder().setByteArray(rawContent).
+                    setOffset(33).setLength(rawContent.length - 33).get();
                  InflaterInputStream in = new InflaterInputStream(bis);
-                 UnsynchronizedByteArrayOutputStream out = new UnsynchronizedByteArrayOutputStream()) {
+                 UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get()) {
 
                 IOUtils.copy(in, out);
                 content = out.toByteArray();

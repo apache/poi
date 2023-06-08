@@ -119,7 +119,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
 
     @Test
     void flushBufferedDaat() throws IOException {
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             try (SXSSFWorkbook wb = new SXSSFWorkbook(1)) {
                 SXSSFSheet sheet = wb.createSheet("my-sheet");
 
@@ -193,7 +193,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
             //one level
             sheet.groupRow(9, 10);
 
-            try(UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try(UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 workbook.write(bos);
                 try(XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
                     XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
@@ -223,7 +223,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
             //two level
             sheet.groupRow(10, 13);
 
-            try(UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+            try(UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 workbook.write(bos);
                 try(XSSFWorkbook xssfWorkbook = new XSSFWorkbook(bos.toInputStream())) {
                     XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);

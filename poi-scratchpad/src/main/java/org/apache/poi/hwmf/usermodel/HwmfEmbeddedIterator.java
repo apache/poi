@@ -114,7 +114,7 @@ public class HwmfEmbeddedIterator implements Iterator<HwmfEmbedded> {
         final HwmfEmbedded emb = new HwmfEmbedded();
         emb.setEmbeddedType(HwmfEmbeddedType.EMF);
 
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             WmfEscapeEMF img;
             do {
                 final HwmfEscape esc = (HwmfEscape)current;

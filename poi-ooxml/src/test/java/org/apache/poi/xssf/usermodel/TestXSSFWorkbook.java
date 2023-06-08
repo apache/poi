@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -80,7 +81,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.zip.CRC32;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOut;
@@ -573,7 +573,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             sheet.groupColumn((short) 4, (short) 5);
 
             accessWorkbook(workbook);
-            workbook.write(NULL_OUTPUT_STREAM);
+            workbook.write(NullOutputStream.INSTANCE);
             accessWorkbook(workbook);
         }
     }
@@ -1240,7 +1240,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     void testNewWorkbookWithTempFilePackageParts() throws Exception {
-        try(UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try(UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             assertFalse(ZipPackage.useTempFilePackageParts(), "useTempFilePackageParts defaults to false?");
             assertFalse(ZipPackage.encryptTempFilePackageParts(), "encryptTempFilePackageParts defaults to false?");
             ZipPackage.setUseTempFilePackageParts(true);
@@ -1264,7 +1264,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     void testNewWorkbookWithEncryptedTempFilePackageParts() throws Exception {
-        try(UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try(UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             assertFalse(ZipPackage.useTempFilePackageParts(), "useTempFilePackageParts defaults to false?");
             assertFalse(ZipPackage.encryptTempFilePackageParts(), "encryptTempFilePackageParts defaults to false?");
             ZipPackage.setUseTempFilePackageParts(true);
@@ -1293,8 +1293,8 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         String nameA = "link-external-workbook-a.xlsx";
 
         try (
-                UnsynchronizedByteArrayOutputStream bosA = new UnsynchronizedByteArrayOutputStream();
-                UnsynchronizedByteArrayOutputStream bosB = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bosA = UnsynchronizedByteArrayOutputStream.builder().get();
+                UnsynchronizedByteArrayOutputStream bosB = UnsynchronizedByteArrayOutputStream.builder().get();
                 XSSFWorkbook workbookA = new XSSFWorkbook();
                 XSSFWorkbook workbookB = new XSSFWorkbook()
         ) {
@@ -1343,8 +1343,8 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         String nameA = "cache-external-workbook-a.xlsx";
 
         try (
-                UnsynchronizedByteArrayOutputStream bosA = new UnsynchronizedByteArrayOutputStream();
-                UnsynchronizedByteArrayOutputStream bosB = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bosA = UnsynchronizedByteArrayOutputStream.builder().get();
+                UnsynchronizedByteArrayOutputStream bosB = UnsynchronizedByteArrayOutputStream.builder().get();
                 XSSFWorkbook workbookA = new XSSFWorkbook();
                 XSSFWorkbook workbookB = new XSSFWorkbook()
         ) {
@@ -1381,7 +1381,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     @Test
     void checkExistingFileForR1C1Refs() throws IOException {
         try (
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
                 XSSFWorkbook wb = openSampleWorkbook("WithTable.xlsx")
         ) {
             assertEquals(CellReferenceType.A1, wb.getCellReferenceType());
@@ -1397,7 +1397,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     @Test
     void checkNewFileForR1C1Refs() throws IOException {
         try (
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
                 XSSFWorkbook wb = new XSSFWorkbook()
         ) {
             assertEquals(CellReferenceType.UNKNOWN, wb.getCellReferenceType());

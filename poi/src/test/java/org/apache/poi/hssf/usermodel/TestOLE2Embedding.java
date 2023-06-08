@@ -105,7 +105,7 @@ final class TestOLE2Embedding {
             circle.setNoFill(true);
 
             try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
-                UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
                 HSSFObjectData od = wb2.getAllEmbeddedObjects().get(0);
                 Ole10Native ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode) od.getDirectory());
                 bos.reset();
@@ -135,7 +135,7 @@ final class TestOLE2Embedding {
     }
 
     static POIFSFileSystem getSampleXLS() throws IOException {
-        UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get();
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             sheet.createRow(5).createCell(2).setCellValue("yo dawg i herd you like embeddet objekts, so we put an ole in your ole so you can save a file while you save a file");

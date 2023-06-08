@@ -32,7 +32,7 @@ public class XWPFTestDataSamples {
     }
 
     public static XWPFDocument writeOutAndReadBack(XWPFDocument doc) throws IOException {
-        UnsynchronizedByteArrayOutputStream baos = new UnsynchronizedByteArrayOutputStream(4096);
+        UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(4096).get();
         doc.write(baos);
         return new XWPFDocument(baos.toInputStream());
     }

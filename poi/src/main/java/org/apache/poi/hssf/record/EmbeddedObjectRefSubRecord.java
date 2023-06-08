@@ -180,7 +180,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 
     private static Ptg readRefPtg(byte[] formulaRawBytes) {
         try (LittleEndianInputStream in = new LittleEndianInputStream(
-                new UnsynchronizedByteArrayInputStream(formulaRawBytes))) {
+                UnsynchronizedByteArrayInputStream.builder().setByteArray(formulaRawBytes).get())) {
             byte ptgSid = in.readByte();
             switch(ptgSid) {
                 case AreaPtg.sid:   return new AreaPtg(in);

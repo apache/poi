@@ -792,7 +792,7 @@ public final class HemfFill {
             return (long)undefinedSpace1 + bitmap.init(leis, dibSize);
         }
 
-        final UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream(cbBmi+cbBits);
+        final UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(cbBmi+cbBits).get();
         final long cbBmiSrcAct = IOUtils.copy(leis, bos, cbBmi);
         assert (cbBmiSrcAct == cbBmi);
         leis.skipFully(undefinedSpace2);

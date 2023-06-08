@@ -61,7 +61,7 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
     }
 
     private UnsynchronizedByteArrayOutputStream writeToArray(Workbook wb) throws IOException {
-        UnsynchronizedByteArrayOutputStream stream = new UnsynchronizedByteArrayOutputStream();
+        UnsynchronizedByteArrayOutputStream stream = UnsynchronizedByteArrayOutputStream.builder().get();
         wb.write(stream);
         return stream;
     }
