@@ -299,7 +299,7 @@ public class SheetUtil {
         copyAttributes(defaultFont, str, 0, 1);
         try {
             TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
-            return (int) layout.getAdvance();
+            return Math.round(layout.getAdvance());
         } catch (UnsatisfiedLinkError | NoClassDefFoundError | InternalError e) {
             if (ignoreMissingFontSystem) {
                 return DEFAULT_CHAR_WIDTH;
