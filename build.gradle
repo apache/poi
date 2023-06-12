@@ -76,7 +76,7 @@ ant.taskdef(name: "junit",
 
 
 wrapper {
-    gradleVersion = '8.0.1'
+    gradleVersion = '8.1.1'
 }
 
 task adjustWrapperPropertiesFile {
@@ -168,6 +168,10 @@ subprojects {
     }
     tasks.withType(Javadoc) {
         options.encoding = 'UTF-8'
+    }
+    tasks.withType(AbstractArchiveTask).configureEach {
+        preserveFileTimestamps = false
+        reproducibleFileOrder = true
     }
 
     repositories {
