@@ -118,7 +118,7 @@ dependencies {
     testImplementation 'org.reflections:reflections:0.10.2'
     testImplementation 'org.openjdk.jmh:jmh-core:1.36'
     testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.36'
-    testImplementation 'com.google.guava:guava:32.0.0-jre'
+    testImplementation 'com.google.guava:guava:32.0.1-jre'
     testImplementation 'org.tukaani:xz:1.9'
     testImplementation 'com.github.rzymek:opczip:1.2.0'
 
