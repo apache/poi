@@ -32,6 +32,7 @@ import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.RandomSingleton;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STAlgClass;
@@ -66,6 +67,14 @@ public class XWPFSettings extends POIXMLDocumentPart {
         try (InputStream stream = getPackagePart().getInputStream()) {
             readFrom(stream);
         }
+    }
+
+    /**
+     * @return ctSettings object
+     */
+    @Internal
+    public CTSettings getCTSettings() {
+        return ctSettings;
     }
 
     /**
