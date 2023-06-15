@@ -75,7 +75,8 @@ task copy_xsds(type: Copy) {
     from ('src/main/xmlschema/org/apache/poi/xdgf')
     from ('src/main/xmlschema/org/apache/poi/schemas') {
         include 'XAdES*.xsd', '*.xsdconfig', 'xmldsig*.xsd', 'ooxmlSchemas.xsdconfig', 'markup-compatibility.xsd',
-                'vmlDrawing.xsd', 'word12.xsd', 'xlThreaded*.xsd', 'dml-drawing.xsd', 'drawing-chart2012.xsd'
+                'vmlDrawing.xsd', 'word12.xsd', 'xlThreaded*.xsd', 'dml-drawing.xsd', 'drawing-chart2012.xsd',
+                'chartEx.xsd'
         exclude '*.zip'
     }
     from ('src/main/xmlschema/org/apache/poi/poifs/crypt') {
