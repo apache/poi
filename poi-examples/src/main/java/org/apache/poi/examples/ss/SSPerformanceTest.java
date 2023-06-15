@@ -70,20 +70,24 @@ public final class SSPerformanceTest {
 
         if(warmup) {
             System.out.println("Performing a warmup run first");
-            runWithArgs(type, rows, cols, saveFile);
+            runWithArgs(type, rows, cols, saveFile, System.currentTimeMillis());
         }
 
+        System.out.println("Performing test-run");
         long timeStarted = System.currentTimeMillis();
-        runWithArgs(type, rows, cols, saveFile);
+        runWithArgs(type, rows, cols, saveFile, timeStarted);
         long timeFinished = System.currentTimeMillis();
 
         System.out.printf(Locale.ROOT, "Elapsed %.2f seconds for arguments %s%n", ((double)timeFinished - timeStarted) / 1000, Arrays.toString(args));
     }
 
-    private static void runWithArgs(String type, int rows, int cols, boolean saveFile) throws IOException {
+    private static void runWithArgs(String type, int rows, int cols, boolean saveFile, long timeStarted) throws IOException {
         try (Workbook workBook = createWorkbook(type)) {
             boolean isHType = workBook instanceof HSSFWorkbook;
             addContent(workBook, isHType, rows, cols);
+
+            long timeFinished = System.currentTimeMillis();
+            System.out.printf(Locale.ROOT, "Elapsed %.2f seconds before save%n", ((double)timeFinished - timeStarted) / 1000);
 
             if (saveFile) {
                 String fileName = type + "_" + rows + "_" + cols + "." + getFileSuffix(type);
