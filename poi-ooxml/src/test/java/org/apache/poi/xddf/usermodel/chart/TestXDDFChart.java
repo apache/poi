@@ -48,6 +48,36 @@ class TestXDDFChart {
     }
 
     @Test
+    void testSetMajorUnit() {
+        // minimal test to cause ooxml-lite to include all the classes in poi-ooxml-lite
+        XDDFChart xddfChart = newXDDFChart();
+
+        XDDFValueAxis xAxis = xddfChart.createValueAxis(AxisPosition.BOTTOM);
+        XDDFValueAxis yAxis = xddfChart.createValueAxis(AxisPosition.LEFT);
+        assertNotNull(xAxis);
+        assertNotNull(yAxis);
+
+        xAxis.setTitle("Seconds Into Run");
+        final double xAxisMajorUnits = 300.0;
+        xAxis.setMajorUnit(xAxisMajorUnits);
+        assertEquals(xAxisMajorUnits, xAxis.getMajorUnit());
+        final double yAxisMajorUnits = 100.0;
+        yAxis.setMinorUnit(yAxisMajorUnits);
+        assertEquals(yAxisMajorUnits, yAxis.getMinorUnit());
+
+        xAxis.setOrientation(AxisOrientation.MAX_MIN);
+        assertEquals(AxisOrientation.MAX_MIN, xAxis.getOrientation());
+        yAxis.setOrientation(AxisOrientation.MIN_MAX);
+        assertEquals(AxisOrientation.MIN_MAX, yAxis.getOrientation());
+
+        xAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+        assertEquals(AxisCrosses.AUTO_ZERO, xAxis.getCrosses());
+
+        yAxis.setCrossBetween(AxisCrossBetween.BETWEEN);
+        assertEquals(AxisCrossBetween.BETWEEN, yAxis.getCrosses());
+    }
+
+    @Test
     void testSetExternalId() {
         XDDFChart xddfChart = newXDDFChart();
         CTChartSpace ctChartSpace = xddfChart.getCTChartSpace();
