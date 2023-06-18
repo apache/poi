@@ -74,7 +74,7 @@ class TestXDDFChart {
         assertEquals(AxisCrosses.AUTO_ZERO, xAxis.getCrosses());
 
         yAxis.setCrossBetween(AxisCrossBetween.BETWEEN);
-        assertEquals(AxisCrossBetween.BETWEEN, yAxis.getCrosses());
+        assertEquals(AxisCrossBetween.BETWEEN, yAxis.getCrossBetween());
     }
 
     @Test
