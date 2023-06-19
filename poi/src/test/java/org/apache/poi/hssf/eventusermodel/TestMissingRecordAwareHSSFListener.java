@@ -98,7 +98,7 @@ final class TestMissingRecordAwareHSSFListener {
     @Test
     void testNoExtraNewLines() throws IOException {
         // Load a different file
-        // This file has has something in lines 1-33
+        // This file has something in lines 1-33
         readRecords("MRExtraLines.xls");
 
         int rowCount=0;
