@@ -144,11 +144,11 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
      *      equal to the row number of the argument {@code XSSFRow}
      *      </li>
      *      <li>
-     *      a value less than {@code 0} if the row number of this this {@code XSSFRow} is
+     *      a value less than {@code 0} if the row number of this {@code XSSFRow} is
      *      numerically less than the row number of the argument {@code XSSFRow}
      *      </li>
      *      <li>
-     *      a value greater than {@code 0} if the row number of this this {@code XSSFRow} is
+     *      a value greater than {@code 0} if the row number of this {@code XSSFRow} is
      *      numerically greater than the row number of the argument {@code XSSFRow}
      *      </li>
      *      </ul>

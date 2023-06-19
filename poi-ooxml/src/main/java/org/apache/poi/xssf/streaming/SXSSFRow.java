@@ -535,11 +535,11 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      *      equal to the row number of the argument <code>SXSSFRow</code>
      *      </li>
      *      <li>
-     *      a value less than <code>0</code> if the row number of this this <code>SXSSFRow</code> is
+     *      a value less than <code>0</code> if the row number of this <code>SXSSFRow</code> is
      *      numerically less than the row number of the argument <code>SXSSFRow</code>
      *      </li>
      *      <li>
-     *      a value greater than <code>0</code> if the row number of this this <code>SXSSFRow</code> is
+     *      a value greater than <code>0</code> if the row number of this <code>SXSSFRow</code> is
      *      numerically greater than the row number of the argument <code>SXSSFRow</code>
      *      </li>
      *      </ul>

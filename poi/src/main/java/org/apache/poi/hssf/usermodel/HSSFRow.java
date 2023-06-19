@@ -688,11 +688,11 @@ public final class HSSFRow implements Row, Comparable<HSSFRow> {
      *      equal to the row number of the argument <code>HSSFRow</code>
      *      </li>
      *      <li>
-     *      a value less than <code>0</code> if the row number of this this <code>HSSFRow</code> is
+     *      a value less than <code>0</code> if the row number of this <code>HSSFRow</code> is
      *      numerically less than the row number of the argument <code>HSSFRow</code>
      *      </li>
      *      <li>
-     *      a value greater than <code>0</code> if the row number of this this <code>HSSFRow</code> is
+     *      a value greater than <code>0</code> if the row number of this <code>HSSFRow</code> is
      *      numerically greater than the row number of the argument <code>HSSFRow</code>
      *      </li>
      *      </ul>
