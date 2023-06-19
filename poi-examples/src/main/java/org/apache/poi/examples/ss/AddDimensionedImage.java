@@ -91,7 +91,7 @@ import java.util.Locale;
  * Taken together, the first four methods define the locations of the top left
  * and bottom right hand corners of the image if you imagine that the image is
  * represented by a simple rectangle. The setDx1() and setDy1() methods locate
- * the top left hand corner of the image while setDx2() and and Dy2() locate the
+ * the top left hand corner of the image while setDx2() and Dy2() locate the
  * bottom right hand corner of the image. An individual image can be inserted
  * into a single cell or is can lie across many cells and the latter four methods
  * are used to define just where the image should be positioned. They do this by
