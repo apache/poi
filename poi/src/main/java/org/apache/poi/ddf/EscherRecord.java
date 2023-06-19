@@ -131,7 +131,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
     }
 
     /**
-     * Set the options this this record. Container records should have the
+     * Set the options for this record. Container records should have the
      * last nibble set to 0xF.<p>
      *
      * Note that {@code options} is an internal field.
