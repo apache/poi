@@ -2560,7 +2560,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * using the default font (first font in the workbook).
      * <br>
      * Unless you are using a very special font, the default character is '0' (zero),
-     * this is true for Arial (default font font in HSSF) and Calibri (default font in XSSF)
+     * this is true for Arial (default font in HSSF) and Calibri (default font in XSSF)
      * </p>
      *
      * <p>
