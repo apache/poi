@@ -213,7 +213,7 @@ public class Range {
 
 
     /**
-     * Ensures that the start and end were were given are actually valid, to
+     * Ensures that the start and end were given are actually valid, to
      * avoid issues later on if they're not
      */
     private void sanityCheckStartEnd() {
