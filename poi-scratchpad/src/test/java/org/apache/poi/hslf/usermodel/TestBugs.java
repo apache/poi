@@ -531,7 +531,7 @@ public final class TestBugs {
         "41246-1.ppt, 36",
         "41246-2.ppt, 16",
         // Bug 44770: java.lang.RuntimeException: Couldn't instantiate the class for
-        // type with id 1036 on class class org.apache.poi.hslf.record.PPDrawing
+        // type with id 1036 on class org.apache.poi.hslf.record.PPDrawing
         "44770.ppt, 19",
         // Bug 42486:  Failure parsing a seemingly valid PPT
         "42486.ppt, 33"
