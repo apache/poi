@@ -159,7 +159,7 @@ public final class HSSFPalette {
      *
      * @return  The new custom color.
      *
-     * @throws IllegalStateException if there are more more free color indexes.
+     * @throws IllegalStateException if there are more free color indexes.
      */
     public HSSFColor addColor( byte red, byte green, byte blue )
     {
