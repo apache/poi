@@ -142,7 +142,7 @@ class TestIdentifierManager {
         // now the manager is exhausted
         assertThrows(IllegalStateException.class,
                 () -> manager.reserve(10),
-                "No more ids left any more");
+                "No more ids left anymore");
 
         assertThrows(IllegalArgumentException.class,
                 () -> manager.release(9),

@@ -3357,7 +3357,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 cellBack.setCellValue("123");
                 assertEquals("123", cellBack.getStringCellValue(),
                     "String value should be set now");
-                assertNull(((XSSFCell) cellBack).getCTCell().getF(), "No formula should be set any more");
+                assertNull(((XSSFCell) cellBack).getCTCell().getF(), "No formula should be set anymore");
             }
         }
     }

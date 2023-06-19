@@ -54,7 +54,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 /**
  * Demonstrates a workaround you can use to generate large workbooks and avoid OutOfMemory exception.
  * <p>
- * Note - You probably <em>don't want to use this approach any more</em>! POI
+ * Note - You probably <em>don't want to use this approach anymore</em>! POI
  *  now includes the SXSSF which handles all of this for you, you should
  *  be using that instead! This code remains mostly for historical interest.
  * <p>

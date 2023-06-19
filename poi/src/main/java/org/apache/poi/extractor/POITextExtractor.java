@@ -67,7 +67,7 @@ public interface POITextExtractor extends Closeable {
 
     /**
      * Allows to free resources of the Extractor as soon as
-     * it is not needed any more. This may include closing
+     * it is not needed anymore. This may include closing
      * open file handles and freeing memory.
      *
      * The Extractor cannot be used after close has been called.
