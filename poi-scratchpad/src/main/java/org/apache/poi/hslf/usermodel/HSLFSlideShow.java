@@ -795,7 +795,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         slide.setSlideShow(this);
         slide.onCreate();
 
-        // Add in to the list of Slides
+        // Add into the list of Slides
         _slides.add(slide);
         LOG.atInfo().log("Added slide {} with ref {} and identifier {}", box(_slides.size()),box(sp.getRefID()),box(sp.getSlideIdentifier()));
 
