@@ -458,7 +458,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
 
     /**
      * Set the area reference for the cells which this table covers. The area
-     * includes includes header rows and totals rows. Automatically synchronizes
+     * includes header rows and totals rows. Automatically synchronizes
      * any changes by calling {@link #updateHeaders()}.
      *
      * Note: The area's width should be identical to the amount of columns in
