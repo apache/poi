@@ -67,7 +67,7 @@ class TestXDDFChartRemoveSeries {
         final XDDFValueAxis bottomAxis = chart.createValueAxis(AxisPosition.BOTTOM);
         final XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
 
-        // Initialize data data sources
+        // Initialize data sources
 
         final Double dX[] = new Double[5];
         final Double dY1[] = new Double[5];
