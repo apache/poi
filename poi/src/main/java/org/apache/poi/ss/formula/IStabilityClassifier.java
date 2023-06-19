@@ -33,7 +33,7 @@ package org.apache.poi.ss.formula;
  * <li>a formula cell can be marked as 'final' if its formula will not be changed after the first
  * call to {@link WorkbookEvaluator#evaluate(EvaluationCell)}.  This remains true even if changes
  * in dependent values may cause the evaluated value to change.</li>
- * <li>plain value cells should be marked as 'not final' if their plain value value may change.
+ * <li>plain value cells should be marked as 'not final' if their plain value may change.
  * </li>
  * <li>formula cells should be marked as 'not final' if their formula definition may change.</li>
  * <li>cells which may switch between plain value and formula should also be marked as 'not final'.
