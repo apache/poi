@@ -307,7 +307,7 @@ final class TestPOIFSMiniStore {
         }
         assertEquals(24, count);
 
-        // The mini block block counts now run to 191
+        // The mini block counts now run to 191
         for (int i = 0; i <= 191; i++) {
             ministore.getBlockAt(i);
         }
