@@ -53,7 +53,7 @@ final class TestHSSFTextbox {
      * When inserting text make sure that if font is not set we must set the default one.
      */
     @Test
-    void testSetDeafultTextFormat() throws IOException {
+    void testSetDefaultTextFormat() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             HSSFPatriarch patriarch = sheet.createDrawingPatriarch();

@@ -274,13 +274,13 @@ public abstract class BaseTestSheetAutosizeColumn {
         Cell cell0 = row.createCell(0);
         cell0.setCellValue("Apache Software Foundation");
 
-        int defaulWidth = sheet.getColumnWidth(0);
+        int defaultWidth = sheet.getColumnWidth(0);
         sheet.autoSizeColumn(0);
         // column is unchanged if merged regions are ignored (Excel like behavior)
-        assertEquals(defaulWidth, sheet.getColumnWidth(0));
+        assertEquals(defaultWidth, sheet.getColumnWidth(0));
 
         sheet.autoSizeColumn(0, true);
-        assertTrue(sheet.getColumnWidth(0) > defaulWidth);
+        assertTrue(sheet.getColumnWidth(0) > defaultWidth);
 
         workbook.close();
     }
