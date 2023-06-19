@@ -82,7 +82,7 @@ final class TestUnknownEscherRecord {
         assertEquals( 1, r.getChildRecords().size() );
         assertEquals( (short) 0xFFFF, r.getChild( 0 ).getRecordId() );
 
-        //Add by Zhang Zhang test error situation when remaining bytes > available bytes
+        //Add by Zhang test error situation when remaining bytes > available bytes
         testData =
             "00 02 " + // options
             "11 F1 " + // record id
