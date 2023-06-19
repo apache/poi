@@ -62,8 +62,8 @@ class TestExcelAntWorkbookUtil {
 
     @Test
     void testLoadNotExistingFile() {
-        BuildException e = assertThrows(BuildException.class, () -> new ExcelAntWorkbookUtilTestHelper("notexistingFile"));
-        assertTrue(e.getMessage().contains("notexistingFile"));
+        BuildException e = assertThrows(BuildException.class, () -> new ExcelAntWorkbookUtilTestHelper("nonexistentFile"));
+        assertTrue(e.getMessage().contains("nonexistentFile"));
     }
 
     @Test
@@ -295,11 +295,11 @@ class TestExcelAntWorkbookUtil {
 
     @Test
     void testSetNotExistingSheet() {
-        String cell = "'NotexistingSheet'!C14" ;
+        String cell = "'NonexistentSheet'!C14" ;
 
         fixture = new ExcelAntWorkbookUtilTestHelper(mortgageCalculatorFileName);
         BuildException e = assertThrows(BuildException.class, () -> fixture.setStringValue(cell, "some"));
-        assertTrue(e.getMessage().contains("NotexistingSheet"));
+        assertTrue(e.getMessage().contains("NonexistentSheet"));
     }
 
     @Test

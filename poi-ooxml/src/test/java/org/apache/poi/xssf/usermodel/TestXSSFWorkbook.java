@@ -1119,7 +1119,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
         // If workbook does not contain any data tables matching the provided name, getTable should return null
         assertNull(wb.getTable(null), "Null table name should not throw NPE");
-        assertNull(wb.getTable("Foglio1"), "Should not be able to find non-existent table");
+        assertNull(wb.getTable("Foglio1"), "Should not be able to find nonexistent table");
 
         // If a table is added after getTable is called it should still be reachable by XSSFWorkbook.getTable
         // This test makes sure that if any caching is done that getTable never uses a stale cache

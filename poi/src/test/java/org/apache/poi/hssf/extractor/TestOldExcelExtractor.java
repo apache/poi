@@ -252,7 +252,7 @@ final class TestOldExcelExtractor {
     @Test
     void testOpenNonExistingFile() {
         // a file that exists, but is a different format
-        assertThrows(EmptyFileException.class, () -> new OldExcelExtractor(new File("notexistingfile.xls")).close());
+        assertThrows(EmptyFileException.class, () -> new OldExcelExtractor(new File("nonexistentfile.xls")).close());
     }
 
     @Test
