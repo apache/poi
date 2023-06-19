@@ -1689,7 +1689,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     /**
      * Formulas which reference named ranges, either in other
      * sheets, or workbook scoped but in other workbooks.
-     * Used to fail with with errors like
+     * Used to fail with errors like
      * org.apache.poi.ss.formula.FormulaParseException: Cell reference expected after sheet name at index 9
      * org.apache.poi.ss.formula.FormulaParseException: Parse error near char 0 '[' in specified formula '[0]!NR_Global_B2'. Expected number, string, or defined name
      */
