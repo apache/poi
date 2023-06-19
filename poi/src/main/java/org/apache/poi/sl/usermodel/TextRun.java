@@ -53,7 +53,7 @@ public interface TextRun {
 
     /**
      * Returns the font color.
-     * This usually returns a {@link SolidPaint}, but but also other classes are possible
+     * This usually returns a {@link SolidPaint}, but also other classes are possible
      *
      * @return the font color/paint
      *
