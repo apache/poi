@@ -1411,7 +1411,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    void testGithub321() throws Exception {
+    void testGitHub321() throws Exception {
         try (XSSFWorkbook wb = openSampleWorkbook("github-321.xlsx")) {
             XSSFSheet xssfSheet = wb.getSheetAt(0);
             DataFormatter dataFormatter = new DataFormatter();

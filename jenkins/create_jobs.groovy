@@ -92,7 +92,7 @@ def poijobs = [
         [ name: 'POI-DSL-Windows-1.18', jdk: '1.18', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
           skipSpotbugs: true
         ],
-        [ name: 'POI-DSL-Github-PullRequests', trigger: '', skipcigame: true, disabled: true
+        [ name: 'POI-DSL-GitHub-PullRequests', trigger: '', skipcigame: true, disabled: true
         ],
 ]
 
