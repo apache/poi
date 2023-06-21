@@ -309,6 +309,12 @@ public class DirectoryNode
         return _entries.size();
     }
 
+    /**
+     * Checks for a specific entry in a case-insensitive way.
+     *
+     * @param name
+     * @return whether or not an entry exists for that name (case-insensitive)
+     */
     @Override
     public boolean hasEntry( String name )
     {
@@ -316,7 +322,7 @@ public class DirectoryNode
     }
 
     /**
-     * get a specified Entry by name
+     * get a specified Entry by name, case-insensitive
      *
      * @param name the name of the Entry to obtain.
      *
@@ -332,7 +338,6 @@ public class DirectoryNode
         Entry rval = null;
 
         if (name != null) {
-            //rval = _byname.get(name);
             rval = _byUCName.get(name.toUpperCase(Locale.ROOT));
         }
         if (rval == null) {
