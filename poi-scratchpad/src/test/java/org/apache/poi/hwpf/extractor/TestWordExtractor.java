@@ -403,6 +403,18 @@ public final class TestWordExtractor {
     }
 
     @Test
+    public void testCaseInsensitiveOLENames() throws Exception {
+        //test files are from Ross Johnson on TIKA-4091
+        for (String n : new String[]{"normal", "lower", "upper"}) {
+            try (InputStream is = docTests.openResourceAsStream("47950_" + n + ".doc");
+                 POIFSFileSystem fs = new POIFSFileSystem(is);
+                 WordExtractor wExt = new WordExtractor(fs)) {
+                assertContains(wExt.getText(), "This is a sample Word document");
+            }
+        }
+    }
+
+    @Test
     void testCapitalized() throws Exception {
         try (WordExtractor wExt = openExtractor("capitalized.doc")) {
             String text = wExt.getText().trim();

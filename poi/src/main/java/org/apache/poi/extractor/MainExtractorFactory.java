@@ -17,6 +17,7 @@
 
 package org.apache.poi.extractor;
 
+import static org.apache.poi.hssf.model.InternalWorkbook.BOOK;
 import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 
 import java.io.File;
@@ -28,6 +29,7 @@ import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.extractor.OldExcelExtractor;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -65,9 +67,12 @@ public class MainExtractorFactory implements ExtractorProvider {
                     return ExtractorFactory.getPreferEventExtractor() ? new EventBasedExcelExtractor(poifsDir) : new ExcelExtractor(poifsDir);
                 }
             }
-
-            if (poifsDir.hasEntry(InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME)) {
+            if (poifsDir.getEntryNames().contains(InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME)) {
                 return new OldExcelExtractor(poifsDir);
+            }
+            //crystal
+            if (poifsDir.hasEntry(BOOK)) {
+                return ExtractorFactory.getPreferEventExtractor() ? new EventBasedExcelExtractor(poifsDir) : new ExcelExtractor(poifsDir);
             }
         } finally {
             Biff8EncryptionKey.setCurrentUserPassword(oldPW);

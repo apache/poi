@@ -24,6 +24,8 @@ import java.util.Set;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
+import static org.apache.poi.hssf.model.InternalWorkbook.BOOK;
 import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 
 /**
@@ -71,6 +73,11 @@ public class HSSFEventFactory {
                 break;
             }
         }
+        //this tests case for case insensitive book -- do we need to test for old excel format 'Book' case sensitive?
+        if (name == null && dir.hasEntry(BOOK)) {
+            name = BOOK;
+        }
+
         // If in doubt, go for the default
         if (name == null) {
             name = WORKBOOK_DIR_ENTRY_NAMES.get(0);

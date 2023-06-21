@@ -53,7 +53,7 @@ final class TestNonStandardWorkbookStreamNames {
         assertTrue(root.hasEntry(SummaryInformation.DEFAULT_STREAM_NAME));
 
         // But not a Workbook one
-        assertFalse(root.hasEntry("Workbook"));
+        assertFalse(root.getEntryNames().contains("Workbook"));
 
         wb.close();
     }
@@ -98,8 +98,8 @@ final class TestNonStandardWorkbookStreamNames {
 
            // Check that we have the new entries
            assertTrue(root.hasEntry("Workbook"));
-           assertFalse(root.hasEntry("BOOK"));
-           assertFalse(root.hasEntry("WORKBOOK"));
+           assertFalse(root.getEntryNames().contains("BOOK"));
+           assertFalse(root.getEntryNames().contains("WORKBOOK"));
 
            wb2.close();
        }
@@ -121,11 +121,10 @@ final class TestNonStandardWorkbookStreamNames {
         wb.close();
 
         DirectoryNode root = wb2.getDirectory();
-
         // Check that we have the new entries
-        assertTrue(root.hasEntry("Workbook"));
-        assertFalse(root.hasEntry("BOOK"));
-        assertFalse(root.hasEntry("WORKBOOK"));
+        assertTrue(root.getEntryNames().contains("Workbook"));
+        assertFalse(root.getEntryNames().contains("BOOK"));
+        assertFalse(root.getEntryNames().contains("WORKBOOK"));
 
         // As we preserved, should also have a few other streams
         assertTrue(root.hasEntry(SummaryInformation.DEFAULT_STREAM_NAME));
