@@ -322,6 +322,17 @@ public class DirectoryNode
     }
 
     /**
+     * Checks for a specific entry in a case-sensitive way.
+     *
+     * @param name
+     * @return whether or not an entry exists for that name (case-sensitive)
+     */
+    public boolean hasCaseSensitiveEntry(String name )
+    {
+        return name != null && _byname.contains(name);
+    }
+
+    /**
      * get a specified Entry by name, case-insensitive
      *
      * @param name the name of the Entry to obtain.

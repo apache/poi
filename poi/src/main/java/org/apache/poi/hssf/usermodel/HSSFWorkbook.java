@@ -299,11 +299,12 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
         }
 
         // check case-sensitive for previous version of file format
-        if (directory.getEntryNames().contains(OLD_WORKBOOK_DIR_ENTRY_NAME)) {
+        if (directory.hasCaseSensitiveEntry(OLD_WORKBOOK_DIR_ENTRY_NAME)) {
             throw new OldExcelFormatException("The supplied spreadsheet seems to be Excel 5.0/7.0 (BIFF5) format. "
                     + "POI only supports BIFF8 format (from Excel versions 97/2000/XP/2003)");
         }
-        //check for non-case-senstive book (e.g. crystal) after ruling out case-sensitive OldExcelFormatException
+        //check for non-case-sensitive book (e.g. crystal) after ruling out case-sensitive
+        // OldExcelFormatException
         if (directory.hasEntry(BOOK)) {
             return BOOK;
         }
