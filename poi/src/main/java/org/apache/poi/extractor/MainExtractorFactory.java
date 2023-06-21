@@ -67,7 +67,7 @@ public class MainExtractorFactory implements ExtractorProvider {
                     return ExtractorFactory.getPreferEventExtractor() ? new EventBasedExcelExtractor(poifsDir) : new ExcelExtractor(poifsDir);
                 }
             }
-            if (poifsDir.getEntryNames().contains(InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME)) {
+            if (poifsDir.hasCaseSensitiveEntry(InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME)) {
                 return new OldExcelExtractor(poifsDir);
             }
             //crystal
