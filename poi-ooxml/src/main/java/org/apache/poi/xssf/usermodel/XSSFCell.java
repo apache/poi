@@ -504,7 +504,7 @@ public final class XSSFCell extends CellBase {
                 }
             }
             if (!hasError) {
-                formula = FormulaRenderer.toFormulaString(fpb, ptgs);
+                //formula = FormulaRenderer.toFormulaString(fpb, ptgs);
             }
         }
 
