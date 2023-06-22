@@ -263,7 +263,7 @@ under the License.
 
 
     <!-- jars in the /lib directory, see the fetch-jars target-->
-    <dependency prefix="main.commons-codec" artifact="commons-codec:commons-codec:1.15" usage="main"/>
+    <dependency prefix="main.commons-codec" artifact="commons-codec:commons-codec:1.16.0" usage="main"/>
     <dependency prefix="main.commons-collections4" artifact="org.apache.commons:commons-collections4:4.4" usage="main"/>
     <dependency prefix="main.commons-math3" artifact="org.apache.commons:commons-math3:3.6.1" usage="main"/>
     <dependency prefix="main.commons-io" artifact="commons-io:commons-io:2.13.0" usage="main"/>
