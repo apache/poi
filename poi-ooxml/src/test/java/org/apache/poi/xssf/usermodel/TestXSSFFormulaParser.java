@@ -400,10 +400,10 @@ public final class TestXSSFFormulaParser {
     }
 
     @Test
-    void testQuotedSheetNamesReference() {
+    void testQuotedSheetNamesReference() throws IOException {
         // quoted sheet names bug fix
-        Workbook[] wbs = new Workbook[]{new HSSFWorkbook(), new XSSFWorkbook()};
-        for (Workbook wb : wbs) {
+        // see TestHSSFFormulaEvaluator equivalent which behaves a little differently
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             Sheet sheet1 = wb.createSheet("Sheet1");
             Sheet sheet2 = wb.createSheet("Sheet2");
             Sheet sheet3 = wb.createSheet("Sheet 3");
@@ -438,7 +438,7 @@ public final class TestXSSFFormulaParser {
             formula = "SUM('Sheet1:Sheet2'!A1:B1)";
             cell.setCellFormula(formula);
             cellFormula = cell.getCellFormula();
-            assertEquals("SUM(Sheet1:Sheet2!A1:B1)", cellFormula);
+            assertEquals("SUM('Sheet1:Sheet2'!A1:B1)", cellFormula);
 
             // quoted sheet names with space
             cell = tempRow.createCell(4);
