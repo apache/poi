@@ -121,7 +121,7 @@ public class CurrentUserAtom {
     public CurrentUserAtom(DirectoryNode dir) throws IOException {
         // Decide how big it is
         DocumentEntry docProps =
-            (DocumentEntry)dir.getEntry("Current User");
+            (DocumentEntry)dir.getEntryCaseInsensitive("Current User");
 
         // If it's clearly junk, bail out
         if(docProps.getSize() > 131072) {
@@ -136,7 +136,7 @@ public class CurrentUserAtom {
         // See how long it is. If it's under 28 bytes long, we can't
         //  read it
         if(_contents.length < 28) {
-            boolean isPP95 = dir.hasEntry(PP95_DOCUMENT);
+            boolean isPP95 = dir.hasEntryCaseInsensitive(PP95_DOCUMENT);
             // PPT95 has 4 byte size, then data
             if (!isPP95 && _contents.length >= 4) {
                 int size = LittleEndian.getInt(_contents);

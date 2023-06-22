@@ -381,22 +381,22 @@ final class TestDocumentInputStream {
             // Check inside
             DirectoryNode root = poifs.getRoot();
             // Top Level
-            Entry top = root.getEntry("Contents");
+            Entry top = root.getEntryCaseInsensitive("Contents");
             assertTrue(top.isDocumentEntry());
             stream = root.createDocumentInputStream(top);
             assertNotEquals(-1, stream.read());
 
             // One Level Down
-            DirectoryNode escher = (DirectoryNode) root.getEntry("Escher");
-            Entry one = escher.getEntry("EscherStm");
+            DirectoryNode escher = (DirectoryNode) root.getEntryCaseInsensitive("Escher");
+            Entry one = escher.getEntryCaseInsensitive("EscherStm");
             assertTrue(one.isDocumentEntry());
             stream = escher.createDocumentInputStream(one);
             assertNotEquals(-1, stream.read());
 
             // Two Levels Down
-            DirectoryNode quill = (DirectoryNode) root.getEntry("Quill");
-            DirectoryNode quillSub = (DirectoryNode) quill.getEntry("QuillSub");
-            Entry two = quillSub.getEntry("CONTENTS");
+            DirectoryNode quill = (DirectoryNode) root.getEntryCaseInsensitive("Quill");
+            DirectoryNode quillSub = (DirectoryNode) quill.getEntryCaseInsensitive("QuillSub");
+            Entry two = quillSub.getEntryCaseInsensitive("CONTENTS");
             assertTrue(two.isDocumentEntry());
             stream = quillSub.createDocumentInputStream(two);
             assertNotEquals(-1, stream.read());

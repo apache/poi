@@ -86,13 +86,15 @@ public final class InternalWorkbook {
 
     /**
      * Normally, the Workbook will be in a POIFS Stream called
-     *  "Workbook". However, some weird XLS generators use "WORKBOOK",
-     *  "BOOK" (typically Crystal Reports) or "WorkBook"
+     *  "Workbook". However, some weird XLS generators use "WORKBOOK"
+     *  or "BOOK". This includes common case sensitive variations.
      */
     public static final List<String> WORKBOOK_DIR_ENTRY_NAMES = Collections.unmodifiableList(
             Arrays.asList(
-                    "Workbook", // default, as per BIFF8 spec
-                    "WORKBOOK" // Typically from third party programs
+                    "Workbook", // as per BIFF8 spec
+                    "WORKBOOK", // Typically from third party programs
+                    "BOOK",     // Typically odd Crystal Reports exports
+                    "WorkBook"  // Another third party program special
             )
     );
 
@@ -101,6 +103,13 @@ public final class InternalWorkbook {
      *     needs to be distinguished case sensitively from {@link #OLD_WORKBOOK_DIR_ENTRY_NAME}.
      */
     public static final String BOOK = "BOOK";
+
+    public static final String WORKBOOK = "WORKBOOK";
+
+    public static final List<String> WORKBOOK_DIR_ENTRY_NAMES_CASE_INSENSITIVE =
+            Collections.unmodifiableList(
+                    Arrays.asList(WORKBOOK, BOOK)
+    );
 
     /**
      * Name of older (pre-Excel 97) Workbook streams, which

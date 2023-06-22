@@ -61,8 +61,8 @@ public class DataSpaceMapUtils {
     public static DocumentEntry createEncryptionEntry(DirectoryEntry dir, String path, EncryptionRecord out) throws IOException {
         String[] parts = path.split("/");
         for (int i=0; i<parts.length-1; i++) {
-            dir = dir.hasEntry(parts[i])
-                ? (DirectoryEntry)dir.getEntry(parts[i])
+            dir = dir.hasEntryCaseInsensitive(parts[i])
+                ? (DirectoryEntry)dir.getEntryCaseInsensitive(parts[i])
                 : dir.createDirectory(parts[i]);
         }
 
@@ -72,8 +72,8 @@ public class DataSpaceMapUtils {
         
         String fileName = parts[parts.length-1];
         
-        if (dir.hasEntry(fileName)) {
-            dir.getEntry(fileName).delete();
+        if (dir.hasEntryCaseInsensitive(fileName)) {
+            dir.getEntryCaseInsensitive(fileName).delete();
         }
         
         return dir.createDocument(fileName, bos.getWriteIndex(), event -> {

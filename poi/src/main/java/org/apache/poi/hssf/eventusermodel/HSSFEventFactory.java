@@ -26,6 +26,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 import static org.apache.poi.hssf.model.InternalWorkbook.BOOK;
+import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK;
 import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 
 /**
@@ -66,15 +67,9 @@ public class HSSFEventFactory {
     public void processWorkbookEvents(HSSFRequest req, DirectoryNode dir) throws IOException {
         // some old documents have "WORKBOOK" or "BOOK"
         String name = null;
-        Set<String> entryNames = dir.getEntryNames();
-        for (String potentialName : WORKBOOK_DIR_ENTRY_NAMES) {
-            if (entryNames.contains(potentialName)) {
-                name = potentialName;
-                break;
-            }
-        }
-        //this tests case for case insensitive book -- do we need to test for old excel format 'Book' case sensitive?
-        if (name == null && dir.hasEntry(BOOK)) {
+        if (dir.hasEntry(WORKBOOK)) {
+            name = WORKBOOK;
+        } else if (dir.hasEntry(BOOK)) {
             name = BOOK;
         }
 

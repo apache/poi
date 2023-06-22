@@ -89,7 +89,7 @@ class TestPOIFSProperties {
 
         summary1.setTitle(title);
         //write the modified property back to POIFS
-        fs.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME).delete();
+        fs.getRoot().getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME).delete();
         fs.createDocument(summary1.toInputStream(), SummaryInformation.DEFAULT_STREAM_NAME);
 
         // check that the information was added successfully to the filesystem object

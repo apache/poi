@@ -171,7 +171,7 @@ class TestEncryptor {
             assertEquals(decPackLenExpected, payloadExpected.length);
 
             final DirectoryNode root = nfs.getRoot();
-            final DocumentEntry entry = (DocumentEntry)root.getEntry(Decryptor.DEFAULT_POIFS_ENTRY);
+            final DocumentEntry entry = (DocumentEntry)root.getEntryCaseInsensitive(Decryptor.DEFAULT_POIFS_ENTRY);
             try (InputStream is = root.createDocumentInputStream(entry)) {
                 // ignore padding block
                 encPackExpected = IOUtils.toByteArray(is, entry.getSize()-16);
@@ -225,7 +225,7 @@ class TestEncryptor {
             decPackLenActual = decActual.getLength();
 
             final DirectoryNode root = nfs.getRoot();
-            final DocumentEntry entry = (DocumentEntry)root.getEntry(Decryptor.DEFAULT_POIFS_ENTRY);
+            final DocumentEntry entry = (DocumentEntry)root.getEntryCaseInsensitive(Decryptor.DEFAULT_POIFS_ENTRY);
             try (InputStream is = root.createDocumentInputStream(entry)) {
                 // ignore padding block
                 encPackActual = IOUtils.toByteArray(is, entry.getSize()-16);

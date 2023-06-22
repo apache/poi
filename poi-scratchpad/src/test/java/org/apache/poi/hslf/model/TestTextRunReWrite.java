@@ -79,8 +79,8 @@ public final class TestTextRunReWrite {
                 // Check that the "PowerPoint Document" sections have the same size
                 DirectoryNode oDir = ppt1.getSlideShowImpl().getDirectory();
 
-                DocumentEntry oProps = (DocumentEntry) oDir.getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
-                DocumentEntry nProps = (DocumentEntry) npfs.getRoot().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
+                DocumentEntry oProps = (DocumentEntry) oDir.getEntryCaseInsensitive(HSLFSlideShow.POWERPOINT_DOCUMENT);
+                DocumentEntry nProps = (DocumentEntry) npfs.getRoot().getEntryCaseInsensitive(HSLFSlideShow.POWERPOINT_DOCUMENT);
                 assertEquals(oProps.getSize(), nProps.getSize());
 
                 // Check that they contain the same data
@@ -130,8 +130,8 @@ public final class TestTextRunReWrite {
                 // Check that the "PowerPoint Document" sections have the same size
                 DirectoryNode oDir = ppt1.getSlideShowImpl().getDirectory();
 
-                DocumentEntry oProps = (DocumentEntry) oDir.getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
-                DocumentEntry nProps = (DocumentEntry) npfs.getRoot().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
+                DocumentEntry oProps = (DocumentEntry) oDir.getEntryCaseInsensitive(HSLFSlideShow.POWERPOINT_DOCUMENT);
+                DocumentEntry nProps = (DocumentEntry) npfs.getRoot().getEntryCaseInsensitive(HSLFSlideShow.POWERPOINT_DOCUMENT);
                 assertEquals(oProps.getSize(), nProps.getSize());
 
                 // Check that they contain the same data

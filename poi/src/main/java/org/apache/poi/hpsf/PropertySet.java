@@ -575,8 +575,8 @@ public class PropertySet {
     public void write(final DirectoryEntry dir, final String name)
     throws WritingNotSupportedException, IOException {
         /* If there is already an entry with the same name, remove it. */
-        if (dir.hasEntry(name)) {
-            final Entry e = dir.getEntry(name);
+        if (dir.hasEntryCaseInsensitive(name)) {
+            final Entry e = dir.getEntryCaseInsensitive(name);
             e.delete();
         }
 

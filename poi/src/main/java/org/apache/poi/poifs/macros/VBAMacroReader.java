@@ -325,7 +325,7 @@ public class VBAMacroReader implements Closeable {
         //process the dirstream first -- "dir" is case insensitive
         for (String entryName : macroDir.getEntryNames()) {
             if ("dir".equalsIgnoreCase(entryName)) {
-                processDirStream(macroDir.getEntry(entryName), modules);
+                processDirStream(macroDir.getEntryCaseInsensitive(entryName), modules);
                 break;
             }
         }

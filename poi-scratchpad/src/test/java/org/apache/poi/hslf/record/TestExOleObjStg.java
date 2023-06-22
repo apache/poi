@@ -62,7 +62,7 @@ public final class TestExOleObjStg {
         assertEquals(len, oledata.length);
 
         try (POIFSFileSystem fs = new POIFSFileSystem(record.getData())) {
-            DocumentEntry doc = (DocumentEntry) fs.getRoot().getEntry("Contents");
+            DocumentEntry doc = (DocumentEntry) fs.getRoot().getEntryCaseInsensitive("Contents");
             assertNotNull(doc);
         }
     }

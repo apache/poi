@@ -195,10 +195,10 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     private static DirectoryNode handleDualStorage(DirectoryNode dir) throws IOException {
         // when there's a dual storage entry, use it, as the outer document can't be read quite probably ...
-        if (!dir.hasEntry(PP97_DOCUMENT)) {
+        if (!dir.hasEntryCaseInsensitive(PP97_DOCUMENT)) {
             return dir;
         }
-        return (DirectoryNode) dir.getEntry(PP97_DOCUMENT);
+        return (DirectoryNode) dir.getEntryCaseInsensitive(PP97_DOCUMENT);
     }
 
     /**
@@ -224,12 +224,12 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private void readPowerPointStream() throws IOException {
         final DirectoryNode dir = getDirectory();
 
-        if (!dir.hasEntry(POWERPOINT_DOCUMENT) && dir.hasEntry(PP95_DOCUMENT)) {
+        if (!dir.hasEntryCaseInsensitive(POWERPOINT_DOCUMENT) && dir.hasEntryCaseInsensitive(PP95_DOCUMENT)) {
             throw new OldPowerPointFormatException("You seem to have supplied a PowerPoint95 file, which isn't supported");
         }
 
         // Get the main document stream
-        DocumentEntry docProps = (DocumentEntry)dir.getEntry(POWERPOINT_DOCUMENT);
+        DocumentEntry docProps = (DocumentEntry)dir.getEntryCaseInsensitive(POWERPOINT_DOCUMENT);
 
         // Grab the document stream
         int len = docProps.getSize();
@@ -393,12 +393,12 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private void readPictures() throws IOException {
 
         // if the presentation doesn't contain pictures, will use an empty collection instead
-        if (!getDirectory().hasEntry("Pictures")) {
+        if (!getDirectory().hasEntryCaseInsensitive("Pictures")) {
             _pictures = new ArrayList<>();
             return;
         }
 
-        DocumentEntry entry = (DocumentEntry) getDirectory().getEntry("Pictures");
+        DocumentEntry entry = (DocumentEntry) getDirectory().getEntryCaseInsensitive("Pictures");
         EscherContainerRecord blipStore = getBlipStore();
         byte[] pictstream;
         try (DocumentInputStream is = getDirectory().createDocumentInputStream(entry)) {

@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.extractor;
 
 import static org.apache.poi.hssf.model.InternalWorkbook.OLD_WORKBOOK_DIR_ENTRY_NAME;
+import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK;
 import static org.apache.poi.hssf.model.InternalWorkbook.WORKBOOK_DIR_ENTRY_NAMES;
 
 import java.io.BufferedInputStream;
@@ -150,14 +151,14 @@ public class OldExcelExtractor implements POITextExtractor {
     private void open(DirectoryNode directory) throws IOException {
         DocumentNode book;
         try {
-            Entry entry = directory.getEntry(OLD_WORKBOOK_DIR_ENTRY_NAME);
+            Entry entry = directory.getEntryCaseInsensitive(OLD_WORKBOOK_DIR_ENTRY_NAME);
             if (!(entry instanceof DocumentNode)) {
                 throw new IllegalArgumentException("Did not have an Excel 5/95 Book stream: " + entry);
             }
             book = (DocumentNode) entry;
         } catch (FileNotFoundException | IllegalArgumentException e) {
             // some files have "Workbook" instead
-            Entry entry = directory.getEntry(WORKBOOK_DIR_ENTRY_NAMES.get(0));
+            Entry entry = directory.getEntryCaseInsensitive(WORKBOOK);
             if (!(entry instanceof DocumentNode)) {
                 throw new IllegalArgumentException("Did not have an Excel 5/95 Book stream: " + entry);
             }

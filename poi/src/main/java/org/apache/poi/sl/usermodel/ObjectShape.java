@@ -113,7 +113,7 @@ public interface ObjectShape<
                     final DirectoryNode root = poifs.getRoot();
                     String entryName = null;
                     for (String n : names) {
-                        if (root.hasEntry(n)) {
+                        if (root.hasEntryCaseInsensitive(n)) {
                             entryName = n;
                             break;
                         }

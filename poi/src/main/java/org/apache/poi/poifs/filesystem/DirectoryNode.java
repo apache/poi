@@ -48,7 +48,7 @@ public class DirectoryNode
 {
 
     // Map of Entry instances, keyed by their literal names as stored
-    private final Set<String> _byname = new HashSet<>();
+    private final Map<String,Entry> _byname = new HashMap<>();
 
     // Map of Entry instances, keyed by their Uppercased names
     private final Map<String,Entry> _byUCName = new HashMap<>();
@@ -105,7 +105,7 @@ public class DirectoryNode
                 childNode = new DocumentNode((DocumentProperty) child, this);
             }
             _entries.add(childNode);
-            _byname.add(childNode.getName());
+            _byname.put(childNode.getName(), childNode);
             _byUCName.put(childNode.getName().toUpperCase(Locale.ROOT), childNode);
         }
     }
@@ -141,7 +141,7 @@ public class DirectoryNode
             final String documentName)
             throws IOException
     {
-        return createDocumentInputStream(getEntry(documentName));
+        return createDocumentInputStream(getEntryCaseInsensitive(documentName));
     }
 
     /**
@@ -186,7 +186,7 @@ public class DirectoryNode
         _filesystem.addDocument(document);
 
         _entries.add(rval);
-        _byname.add(property.getName());
+        _byname.put(property.getName(), rval);
         _byUCName.put(property.getName().toUpperCase(Locale.ROOT), rval);
         return rval;
     }
@@ -211,7 +211,7 @@ public class DirectoryNode
             if (rval)
             {
                 _byname.remove(oldName);
-                _byname.add(child.getProperty().getName());
+                _byname.put(child.getProperty().getName(), child);
                 _byUCName.remove(oldName.toUpperCase(Locale.ROOT));
                 _byUCName.put(child.getProperty().getName().toUpperCase(Locale.ROOT), child);
             }
@@ -280,7 +280,7 @@ public class DirectoryNode
     @Override
     public Set<String> getEntryNames()
     {
-        return Collections.unmodifiableSet(_byname);
+        return _byname.keySet();
     }
 
     /**
@@ -310,26 +310,62 @@ public class DirectoryNode
     }
 
     /**
+     * Checks for a specific entry in a case-sensitive way.
+     *
+     * @param name
+     * @return whether or not an entry exists for that name (case-sensitive)
+     */
+    @Override
+    public boolean hasEntry(String name )
+    {
+        return name != null && _byname.containsKey(name);
+    }
+
+    /**
      * Checks for a specific entry in a case-insensitive way.
      *
      * @param name
      * @return whether or not an entry exists for that name (case-insensitive)
      */
     @Override
-    public boolean hasEntry( String name )
+    public boolean hasEntryCaseInsensitive(String name )
     {
         return name != null && _byUCName.containsKey(name.toUpperCase(Locale.ROOT));
     }
 
     /**
-     * Checks for a specific entry in a case-sensitive way.
+     * get a specified Entry by name, case sensitive
      *
-     * @param name
-     * @return whether or not an entry exists for that name (case-sensitive)
+     * @param name the name of the Entry to obtain.
+     *
+     * @return the specified Entry, if it is directly contained in
+     *         this DirectoryEntry
+     *
+     * @throws FileNotFoundException if no Entry with the specified
+     *            name exists in this DirectoryEntry
      */
-    public boolean hasCaseSensitiveEntry(String name )
-    {
-        return name != null && _byname.contains(name);
+    @Override
+    public Entry getEntry(final String name) throws FileNotFoundException {
+        Entry rval = null;
+
+        if (name != null) {
+            rval = _byname.get(name.toUpperCase(Locale.ROOT));
+        }
+        if (rval == null) {
+            // throw more useful exceptions for known wrong file-extensions
+            if(_byname.containsKey("Workbook")) {
+                throw new IllegalArgumentException("The document is really a XLS file");
+            } else if(_byname.containsKey("PowerPoint Document")) {
+                throw new IllegalArgumentException("The document is really a PPT file");
+            } else if(_byname.containsKey("VisioDocument")) {
+                throw new IllegalArgumentException("The document is really a VSD file");
+            }
+
+            // either a null name was given, or there is no such name
+            throw new FileNotFoundException("no such entry: \"" + name
+                    + "\", had: " + _byname.keySet());
+        }
+        return rval;
     }
 
     /**
@@ -343,9 +379,8 @@ public class DirectoryNode
      * @throws FileNotFoundException if no Entry with the specified
      *            name exists in this DirectoryEntry
      */
-
     @Override
-    public Entry getEntry(final String name) throws FileNotFoundException {
+    public Entry getEntryCaseInsensitive(final String name) throws FileNotFoundException {
         Entry rval = null;
 
         if (name != null) {
@@ -353,11 +388,11 @@ public class DirectoryNode
         }
         if (rval == null) {
             // throw more useful exceptions for known wrong file-extensions
-            if(_byname.contains("Workbook")) {
+            if(_byname.containsKey("Workbook")) {
                 throw new IllegalArgumentException("The document is really a XLS file");
-            } else if(_byname.contains("PowerPoint Document")) {
+            } else if(_byname.containsKey("PowerPoint Document")) {
                 throw new IllegalArgumentException("The document is really a PPT file");
-            } else if(_byname.contains("VisioDocument")) {
+            } else if(_byname.containsKey("VisioDocument")) {
                 throw new IllegalArgumentException("The document is really a VSD file");
             }
 
@@ -429,7 +464,7 @@ public class DirectoryNode
 
         (( DirectoryProperty ) getProperty()).addChild(property);
         _entries.add(rval);
-        _byname.add(name);
+        _byname.put(name, rval);
         _byUCName.put(name.toUpperCase(Locale.ROOT), rval);
         return rval;
     }
@@ -450,10 +485,10 @@ public class DirectoryNode
                                                 final InputStream stream)
             throws IOException
     {
-        if (! hasEntry(name)) {
+        if (! hasEntryCaseInsensitive(name)) {
             return createDocument(name, stream);
         } else {
-            DocumentNode existing = (DocumentNode)getEntry(name);
+            DocumentNode existing = (DocumentNode) getEntryCaseInsensitive(name);
             POIFSDocument nDoc = new POIFSDocument(existing);
             nDoc.replaceContents(stream);
             return existing;

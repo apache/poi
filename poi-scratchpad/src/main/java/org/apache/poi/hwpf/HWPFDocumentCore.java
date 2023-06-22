@@ -185,8 +185,8 @@ public abstract class HWPFDocumentCore extends POIDocument {
         _fib = new FileInformationBlock(_mainStream);
 
         DirectoryEntry objectPoolEntry = null;
-        if (directory.hasEntry(STREAM_OBJECT_POOL)) {
-            objectPoolEntry = (DirectoryEntry) directory.getEntry(STREAM_OBJECT_POOL);
+        if (directory.hasEntryCaseInsensitive(STREAM_OBJECT_POOL)) {
+            objectPoolEntry = (DirectoryEntry) directory.getEntryCaseInsensitive(STREAM_OBJECT_POOL);
         }
         _objectPool = new ObjectPoolImpl(objectPoolEntry);
     }
@@ -337,7 +337,7 @@ public abstract class HWPFDocumentCore extends POIDocument {
      */
     protected byte[] getDocumentEntryBytes(String name, int encryptionOffset, final int len) throws IOException {
         DirectoryNode dir = getDirectory();
-        DocumentEntry documentProps = (DocumentEntry)dir.getEntry(name);
+        DocumentEntry documentProps = (DocumentEntry)dir.getEntryCaseInsensitive(name);
         int streamSize = documentProps.getSize();
         boolean isEncrypted = (encryptionOffset > -1 && getEncryptionInfo() != null);
 

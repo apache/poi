@@ -330,7 +330,7 @@ public class WordToTextConverter extends AbstractWordConverter
          * even if there is no ExtractorFactory in classpath, still support
          * included Word's objects
          */
-        if ( directoryNode.hasEntry( "WordDocument" ) )
+        if ( directoryNode.hasEntryCaseInsensitive( "WordDocument" ) )
         {
             String text = WordToTextConverter.getText( (DirectoryNode) entry );
             block.appendChild( textDocumentFacade

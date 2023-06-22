@@ -149,7 +149,7 @@ class TestReadAllFiles {
              * If there is a document summry information stream, read it from
              * the POI filesystem.
              */
-            if (dir.hasEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)) {
+            if (dir.hasEntryCaseInsensitive(DocumentSummaryInformation.DEFAULT_STREAM_NAME)) {
                 final DocumentSummaryInformation dsi = TestWriteWellKnown.getDocumentSummaryInformation(poifs);
                 assertNotNull(dsi);
 

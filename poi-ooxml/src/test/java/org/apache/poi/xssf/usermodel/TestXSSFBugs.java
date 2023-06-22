@@ -3459,13 +3459,13 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
             // Will be OOXML wrapped in OLE2, not directly SpreadSheet
             POIFSFileSystem fs = new POIFSFileSystem(data.getInputStream());
-            assertTrue(fs.getRoot().hasEntry(OOXML_PACKAGE));
-            assertFalse(fs.getRoot().hasEntry("Workbook"));
+            assertTrue(fs.getRoot().hasEntryCaseInsensitive(OOXML_PACKAGE));
+            assertFalse(fs.getRoot().hasEntryCaseInsensitive("Workbook"));
 
 
             // Can fetch Package to get OOXML
             DirectoryNode root = fs.getRoot();
-            DocumentEntry docEntry = (DocumentEntry) root.getEntry(OOXML_PACKAGE);
+            DocumentEntry docEntry = (DocumentEntry) root.getEntryCaseInsensitive(OOXML_PACKAGE);
             try (DocumentInputStream dis = new DocumentInputStream(docEntry);
                  OPCPackage pkg = OPCPackage.open(dis);
                  XSSFWorkbook wb = new XSSFWorkbook(pkg)) {

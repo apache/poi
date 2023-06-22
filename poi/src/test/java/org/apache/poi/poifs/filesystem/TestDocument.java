@@ -101,8 +101,8 @@ class TestDocument {
         POIFSFileSystem poifs = document.getFileSystem();
         String name = "test" + input.length;
         DirectoryNode root = poifs.getRoot();
-        if (root.hasEntry(name)) {
-            root.deleteEntry((EntryNode)root.getEntry(name));
+        if (root.hasEntryCaseInsensitive(name)) {
+            root.deleteEntry((EntryNode)root.getEntryCaseInsensitive(name));
         }
         return ((DocumentNode)root
             .createDocument(name, new ByteArrayInputStream(input)))

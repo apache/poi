@@ -170,9 +170,9 @@ public class CryptoAPIDecryptor extends Decryptor {
     throws IOException, GeneralSecurityException {
         POIFSFileSystem fsOut = null;
         try (
-            DocumentInputStream dis = root.createDocumentInputStream(root.getEntry(encryptedStream));
-            CryptoAPIDocumentInputStream sbis = new CryptoAPIDocumentInputStream(this, IOUtils.toByteArray(dis));
-            LittleEndianInputStream leis = new LittleEndianInputStream(sbis)
+                DocumentInputStream dis = root.createDocumentInputStream(root.getEntryCaseInsensitive(encryptedStream));
+                CryptoAPIDocumentInputStream sbis = new CryptoAPIDocumentInputStream(this, IOUtils.toByteArray(dis));
+                LittleEndianInputStream leis = new LittleEndianInputStream(sbis)
         ) {
             int streamDescriptorArrayOffset = (int) leis.readUInt();
             /* int streamDescriptorArraySize = (int) */ leis.readUInt();

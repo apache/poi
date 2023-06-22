@@ -1047,7 +1047,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
             Map<String,ClassID> olemap = getOleMap();
             ClassID classID = null;
             for (Map.Entry<String,ClassID> entry : olemap.entrySet()) {
-                if (root.hasEntry(entry.getKey())) {
+                if (root.hasEntryCaseInsensitive(entry.getKey())) {
                     classID = entry.getValue();
                     break;
                 }

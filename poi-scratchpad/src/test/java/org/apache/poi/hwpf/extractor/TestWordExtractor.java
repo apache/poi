@@ -142,15 +142,15 @@ public final class TestWordExtractor {
         POIFSFileSystem fs = new POIFSFileSystem(is);
         is.close();
 
-        DirectoryNode dirA = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B7");
-        DirectoryNode dirB = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B2");
+        DirectoryNode dirA = (DirectoryNode) fs.getRoot().getEntryCaseInsensitive("MBD0000A3B7");
+        DirectoryNode dirB = (DirectoryNode) fs.getRoot().getEntryCaseInsensitive("MBD0000A3B2");
 
         // Should have WordDocument and 1Table
-        assertNotNull(dirA.getEntry("1Table"));
-        assertNotNull(dirA.getEntry("WordDocument"));
+        assertNotNull(dirA.getEntryCaseInsensitive("1Table"));
+        assertNotNull(dirA.getEntryCaseInsensitive("WordDocument"));
 
-        assertNotNull(dirB.getEntry("1Table"));
-        assertNotNull(dirB.getEntry("WordDocument"));
+        assertNotNull(dirB.getEntryCaseInsensitive("1Table"));
+        assertNotNull(dirB.getEntryCaseInsensitive("WordDocument"));
 
         // Check each in turn
         HWPFDocument docA = new HWPFDocument(dirA);

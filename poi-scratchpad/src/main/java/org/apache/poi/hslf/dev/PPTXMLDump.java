@@ -61,7 +61,7 @@ public final class PPTXMLDump {
     private static byte[] readEntry(POIFSFileSystem fs, String entry)
     throws IOException {
         DirectoryNode dn = fs.getRoot();
-        if (!dn.hasEntry(entry)) {
+        if (!dn.hasEntryCaseInsensitive(entry)) {
             return null;
         }
         try (InputStream is = dn.createDocumentInputStream(entry);

@@ -53,18 +53,18 @@ class TestEntryUtils {
        EntryUtils.copyNodeRecursively(entryR, fsD.getRoot());
 
        assertEquals(1, fsD.getRoot().getEntryCount());
-       assertNotNull(fsD.getRoot().getEntry("EntryRoot"));
+       assertNotNull(fsD.getRoot().getEntryCaseInsensitive("EntryRoot"));
 
        EntryUtils.copyNodeRecursively(entryA1, fsD.getRoot());
        assertEquals(2, fsD.getRoot().getEntryCount());
-       assertNotNull(fsD.getRoot().getEntry("EntryRoot"));
-       assertNotNull(fsD.getRoot().getEntry("EntryA1"));
+       assertNotNull(fsD.getRoot().getEntryCaseInsensitive("EntryRoot"));
+       assertNotNull(fsD.getRoot().getEntryCaseInsensitive("EntryA1"));
 
        EntryUtils.copyNodeRecursively(entryA2, fsD.getRoot());
        assertEquals(3, fsD.getRoot().getEntryCount());
-       assertNotNull(fsD.getRoot().getEntry("EntryRoot"));
-       assertNotNull(fsD.getRoot().getEntry("EntryA1"));
-       assertNotNull(fsD.getRoot().getEntry("EntryA2"));
+       assertNotNull(fsD.getRoot().getEntryCaseInsensitive("EntryRoot"));
+       assertNotNull(fsD.getRoot().getEntryCaseInsensitive("EntryA1"));
+       assertNotNull(fsD.getRoot().getEntryCaseInsensitive("EntryA2"));
 
        fsD.close();
 
@@ -74,15 +74,15 @@ class TestEntryUtils {
 
        EntryUtils.copyNodeRecursively(dirB, fsD.getRoot());
        assertEquals(1, fsD.getRoot().getEntryCount());
-       assertNotNull(fsD.getRoot().getEntry("DirB"));
-       assertEquals(0, ((DirectoryEntry)fsD.getRoot().getEntry("DirB")).getEntryCount());
+       assertNotNull(fsD.getRoot().getEntryCaseInsensitive("DirB"));
+       assertEquals(0, ((DirectoryEntry)fsD.getRoot().getEntryCaseInsensitive("DirB")).getEntryCount());
 
        EntryUtils.copyNodeRecursively(dirA, fsD.getRoot());
        assertEquals(2, fsD.getRoot().getEntryCount());
-       assertNotNull(fsD.getRoot().getEntry("DirB"));
-       assertEquals(0, ((DirectoryEntry)fsD.getRoot().getEntry("DirB")).getEntryCount());
-       assertNotNull(fsD.getRoot().getEntry("DirA"));
-       assertEquals(2, ((DirectoryEntry)fsD.getRoot().getEntry("DirA")).getEntryCount());
+       assertNotNull(fsD.getRoot().getEntryCaseInsensitive("DirB"));
+       assertEquals(0, ((DirectoryEntry)fsD.getRoot().getEntryCaseInsensitive("DirB")).getEntryCount());
+       assertNotNull(fsD.getRoot().getEntryCaseInsensitive("DirA"));
+       assertEquals(2, ((DirectoryEntry)fsD.getRoot().getEntryCaseInsensitive("DirA")).getEntryCount());
        fsD.close();
 
        // Copy the whole lot
@@ -91,11 +91,11 @@ class TestEntryUtils {
 
        EntryUtils.copyNodes(fs, fsD, new ArrayList<>());
        assertEquals(3, fsD.getRoot().getEntryCount());
-       assertNotNull(fsD.getRoot().getEntry(dirA.getName()));
-       assertNotNull(fsD.getRoot().getEntry(dirB.getName()));
-       assertNotNull(fsD.getRoot().getEntry(entryR.getName()));
-       assertEquals(0, ((DirectoryEntry)fsD.getRoot().getEntry("DirB")).getEntryCount());
-       assertEquals(2, ((DirectoryEntry)fsD.getRoot().getEntry("DirA")).getEntryCount());
+       assertNotNull(fsD.getRoot().getEntryCaseInsensitive(dirA.getName()));
+       assertNotNull(fsD.getRoot().getEntryCaseInsensitive(dirB.getName()));
+       assertNotNull(fsD.getRoot().getEntryCaseInsensitive(entryR.getName()));
+       assertEquals(0, ((DirectoryEntry)fsD.getRoot().getEntryCaseInsensitive("DirB")).getEntryCount());
+       assertEquals(2, ((DirectoryEntry)fsD.getRoot().getEntryCaseInsensitive("DirA")).getEntryCount());
        fsD.close();
        fs.close();
     }
@@ -131,11 +131,11 @@ class TestEntryUtils {
              try (InputStream tmpI = tmpO.toInputStream();
                   POIFSFileSystem nfs = new POIFSFileSystem(tmpI)) {
 
-                DirectoryEntry dN1 = (DirectoryEntry) nfs.getRoot().getEntry("DirA");
-                DirectoryEntry dN2 = (DirectoryEntry) nfs.getRoot().getEntry("DirB");
-                DocumentEntry eNA1 = (DocumentEntry) dN1.getEntry(entryA1.getName());
-                DocumentEntry eNA2 = (DocumentEntry) dN1.getEntry(entryA2.getName());
-                DocumentEntry eNB1 = (DocumentEntry) dN2.getEntry(entryB1.getName());
+                DirectoryEntry dN1 = (DirectoryEntry) nfs.getRoot().getEntryCaseInsensitive("DirA");
+                DirectoryEntry dN2 = (DirectoryEntry) nfs.getRoot().getEntryCaseInsensitive("DirB");
+                DocumentEntry eNA1 = (DocumentEntry) dN1.getEntryCaseInsensitive(entryA1.getName());
+                DocumentEntry eNA2 = (DocumentEntry) dN1.getEntryCaseInsensitive(entryA2.getName());
+                DocumentEntry eNB1 = (DocumentEntry) dN2.getEntryCaseInsensitive(entryB1.getName());
 
                 assertFalse(EntryUtils.areDocumentsIdentical(eNA1, eNA2));
                 assertTrue(EntryUtils.areDocumentsIdentical(eNA1, eNB1));

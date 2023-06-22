@@ -261,7 +261,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         String name = (_fib.getFibBase().isFWhichTblStm()) ? STREAM_TABLE_1 : STREAM_TABLE_0;
 
         // Grab the table stream.
-        if (!directory.hasEntry(name)) {
+        if (!directory.hasEntryCaseInsensitive(name)) {
             throw new IllegalStateException("Table Stream '" + name + "' wasn't found - Either the document is corrupt, or is Word95 (or earlier)");
         }
 
@@ -271,7 +271,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         _fib.fillVariableFields(_mainStream, _tableStream);
 
         // read in the data stream.
-        _dataStream = directory.hasEntry(STREAM_DATA) ? getDocumentEntryBytes(STREAM_DATA, 0, Integer.MAX_VALUE) : new byte[0];
+        _dataStream = directory.hasEntryCaseInsensitive(STREAM_DATA) ? getDocumentEntryBytes(STREAM_DATA, 0, Integer.MAX_VALUE) : new byte[0];
 
         // Get the cp of the start of text in the main stream
         // The latest spec doc says this is always zero!

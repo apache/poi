@@ -222,7 +222,7 @@ public abstract class POIDocument implements Closeable {
             if (encryptionInfo != null && encryptionInfo.isDocPropsEncrypted()) {
                 step = "getting encrypted";
                 String encryptedStream = getEncryptedPropertyStreamName();
-                if (!dirNode.hasEntry(encryptedStream)) {
+                if (!dirNode.hasEntryCaseInsensitive(encryptedStream)) {
                     throw new EncryptedDocumentException("can't find encrypted property stream '"+encryptedStream+"'");
                 }
                 CryptoAPIDecryptor dec = (CryptoAPIDecryptor)encryptionInfo.getDecryptor();
@@ -231,13 +231,13 @@ public abstract class POIDocument implements Closeable {
             }
 
             //directory can be null when creating new documents
-            if (dirNode == null || !dirNode.hasEntry(setName)) {
+            if (dirNode == null || !dirNode.hasEntryCaseInsensitive(setName)) {
                 return null;
             }
 
             // Find the entry, and get an input stream for it
             step = "getting";
-            try (DocumentInputStream dis = dirNode.createDocumentInputStream(dirNode.getEntry(setName))) {
+            try (DocumentInputStream dis = dirNode.createDocumentInputStream(dirNode.getEntryCaseInsensitive(setName))) {
                 // Create the Property Set
                 step = "creating";
                 return PropertySetFactory.create(dis);
@@ -302,8 +302,8 @@ public abstract class POIDocument implements Closeable {
             writePropertySet(DocumentSummaryInformation.DEFAULT_STREAM_NAME, newDocumentSummaryInformation(), outFS);
 
             // remove summary, if previously available
-            if (outFS.getRoot().hasEntry(SummaryInformation.DEFAULT_STREAM_NAME)) {
-                outFS.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME).delete();
+            if (outFS.getRoot().hasEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME)) {
+                outFS.getRoot().getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME).delete();
             }
             CryptoAPIEncryptor enc = (CryptoAPIEncryptor) encGen;
             try {

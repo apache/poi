@@ -252,9 +252,9 @@ final class TestExcelExtractor {
         try {
             fs = new POIFSFileSystem(POIDataSamples.getDocumentInstance().getFile("word_with_embeded.doc"));
 
-            DirectoryNode objPool = (DirectoryNode) fs.getRoot().getEntry("ObjectPool");
-            DirectoryNode dirA = (DirectoryNode) objPool.getEntry("_1269427460");
-            DirectoryNode dirB = (DirectoryNode) objPool.getEntry("_1269427461");
+            DirectoryNode objPool = (DirectoryNode) fs.getRoot().getEntryCaseInsensitive("ObjectPool");
+            DirectoryNode dirA = (DirectoryNode) objPool.getEntryCaseInsensitive("_1269427460");
+            DirectoryNode dirB = (DirectoryNode) objPool.getEntryCaseInsensitive("_1269427461");
 
             wbA = new HSSFWorkbook(dirA, fs, true);
             exA = new ExcelExtractor(wbA);
@@ -287,8 +287,8 @@ final class TestExcelExtractor {
         try {
             fs = new POIFSFileSystem(ssSamples.getFile("excel_with_embeded.xls"));
 
-            DirectoryNode dirA = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B5");
-            DirectoryNode dirB = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B4");
+            DirectoryNode dirA = (DirectoryNode) fs.getRoot().getEntryCaseInsensitive("MBD0000A3B5");
+            DirectoryNode dirB = (DirectoryNode) fs.getRoot().getEntryCaseInsensitive("MBD0000A3B4");
 
             wbA = new HSSFWorkbook(dirA, fs, true);
             wbB = new HSSFWorkbook(dirB, fs, true);
