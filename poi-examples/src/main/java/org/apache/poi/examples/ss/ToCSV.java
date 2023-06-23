@@ -374,7 +374,7 @@ public class ToCSV {
 
             // Open the workbook and then create the FormulaEvaluator and
             // DataFormatter instances that will be needed to, respectively,
-            // force evaluation of forumlae found in cells and create a
+            // force evaluation of formulae found in cells and create a
             // formatted String encapsulating the cells contents.
             this.workbook = WorkbookFactory.create(fis);
             this.evaluator = this.workbook.getCreationHelper().createFormulaEvaluator();
