@@ -44,7 +44,7 @@ public final class TableDemo {
         {"Total PO History Spend", "$10,172,038"}
     };
 
-    //test data for the second taable
+    //test data for the second table
     static final String[][] txt2 = {
         {"Data Source"},
         {"CAS Internal Metrics - Item Master Summary\r" +
