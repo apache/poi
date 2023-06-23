@@ -88,7 +88,7 @@ public class ConditionalFormattingEvaluator {
     }
 
     /**
-     * Call this whenever cell values change in the workbook, so condional formats are re-evaluated
+     * Call this whenever cell values change in the workbook, so conditional formats are re-evaluated
      * for all cells.
      * <p>
      * TODO: eventually this should work like {@link EvaluationCache#notifyUpdateCell(int, int, EvaluationCell)}
