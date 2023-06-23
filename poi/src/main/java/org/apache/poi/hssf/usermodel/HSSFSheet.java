@@ -143,7 +143,7 @@ public final class HSSFSheet implements Sheet {
 
     /**
      * Creates an HSSFSheet representing the given Sheet object.  Should only be
-     * called by HSSFWorkbook when reading in an exisiting file.
+     * called by HSSFWorkbook when reading in an existing file.
      *
      * @param workbook - The HSSF Workbook object associated with the sheet.
      * @param sheet    - lowlevel Sheet object this sheet will represent

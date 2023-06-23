@@ -86,9 +86,9 @@ public class HtmlDocumentFacade
     public void addStyleClass( Element element, String classNamePrefix,
             String style )
     {
-        String exising = element.getAttribute( "class" );
+        String existing = element.getAttribute( "class" );
         String addition = getOrCreateCssClass( classNamePrefix, style );
-        String newClassValue = AbstractWordUtils.isEmpty( exising ) ? addition : ( exising + " " + addition );
+        String newClassValue = AbstractWordUtils.isEmpty( existing ) ? addition : ( existing + " " + addition );
         element.setAttribute( "class", newClassValue );
     }
 

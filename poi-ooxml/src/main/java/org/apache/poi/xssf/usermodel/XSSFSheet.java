@@ -140,7 +140,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
     }
 
     /**
-     * Initialize worksheet data when reading in an exisiting file.
+     * Initialize worksheet data when reading in an existing file.
      */
     @Override
     protected void onDocumentRead() {
