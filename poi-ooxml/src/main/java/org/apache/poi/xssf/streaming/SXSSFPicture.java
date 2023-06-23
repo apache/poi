@@ -201,7 +201,7 @@ public final class SXSSFPicture implements Picture {
 
     private float getRowHeightInPixels(int rowIndex) {
         // THE FOLLOWING THREE LINES ARE THE MAIN CHANGE compared to the non-streaming version: use the SXSSF sheet,
-        // not the XSSF sheet (which never contais rows when using SXSSF)
+        // not the XSSF sheet (which never contains rows when using SXSSF)
         XSSFSheet xssfSheet = getSheet();
         SXSSFSheet sxSheet = _wb.getSXSSFSheet(xssfSheet);
         Sheet sheet = sxSheet == null ? xssfSheet : sxSheet;
