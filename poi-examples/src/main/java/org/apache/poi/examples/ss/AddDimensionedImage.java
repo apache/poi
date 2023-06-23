@@ -927,7 +927,7 @@ public class AddDimensionedImage {
         // constants are defined below.
         public static final int TOTAL_COLUMN_COORDINATE_POSITIONS = 1023;
         public static final int TOTAL_ROW_COORDINATE_POSITIONS = 255;
-        // The resoultion of an image can be expressed as a specific number
+        // The resolution of an image can be expressed as a specific number
         // of pixels per inch. Displays and printers differ but 96 pixels per
         // inch is an acceptable standard to begin with.
         public static final int PIXELS_PER_INCH = 96;
