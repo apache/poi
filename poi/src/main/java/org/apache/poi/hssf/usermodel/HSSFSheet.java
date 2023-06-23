@@ -2122,7 +2122,7 @@ public final class HSSFSheet implements Sheet {
     }
 
     /**
-     * Returns the agregate escher records for this sheet,
+     * Returns the aggregate escher records for this sheet,
      * it there is one.
      */
     public EscherAggregate getDrawingEscherAggregate() {

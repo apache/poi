@@ -84,7 +84,7 @@ import org.apache.poi.util.Removal;
  * <p>
  * ObjRecord contains information about shape. Thus each ObjRecord corresponds EscherContainerRecord(SPGR)
  * <p>
- * EscherAggrefate contains also NoteRecords
+ * EscherAggregate contains also NoteRecords
  * NoteRecords must be serial
  */
 
