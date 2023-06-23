@@ -234,7 +234,7 @@ final class TestMetaDataIPI {
 
 
     /**
-     * Tests with strange characters in keys and data (Umlaute etc.)
+     * Tests with strange characters in keys and data (Umlaut etc.)
      */
     @Test
     void testThree() throws Exception {
@@ -581,7 +581,7 @@ final class TestMetaDataIPI {
 
     private static StringBuilder strangizeInit(String s) {
         StringBuilder sb = new StringBuilder();
-        String[] umlaute = { "\u00e4", "\u00fc", "\u00f6", "\u00dc", "$", "\u00d6", "\u00dc",
+        String[] umlaut = { "\u00e4", "\u00fc", "\u00f6", "\u00dc", "$", "\u00d6", "\u00dc",
                 "\u00c9", "\u00d6", "@", "\u00e7", "&" };
         for (int i = 0; i < 5; i++) {
             sb.append(s);
@@ -595,7 +595,7 @@ final class TestMetaDataIPI {
             sb.append('=');
 
             // TODO - no Random - tests should be completely deterministic
-            sb.append(umlaute[RandomSingleton.getInstance().nextInt(umlaute.length)]);
+            sb.append(umlaut[RandomSingleton.getInstance().nextInt(umlaut.length)]);
             sb.append('<');
         }
         return sb;

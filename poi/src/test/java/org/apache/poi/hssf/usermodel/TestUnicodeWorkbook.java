@@ -29,11 +29,11 @@ final class TestUnicodeWorkbook {
 
     /**
      *  Tests Bug38230
-     *  That an Umlat is written  and then read back.
+     *  That an Umlaut is written  and then read back.
      *  It should have been written as a compressed unicode.
      */
     @Test
-    void testUmlatReadWrite() throws IOException {
+    void testUmlautReadWrite() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
 
             //Create a unicode sheet name (euro symbol)
