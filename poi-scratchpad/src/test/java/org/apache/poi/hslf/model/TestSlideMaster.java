@@ -252,7 +252,7 @@ public final class TestSlideMaster {
     }
 
     /**
-     * Varify we can read attributes for different indentation levels.
+     * Verify we can read attributes for different indentation levels.
      * (typical for the "bulleted body" placeholder)
      */
     @Test
