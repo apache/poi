@@ -97,7 +97,7 @@ public final class OEPlaceholderAtom extends RecordAtom{
      * Returns the placement Id.<p>
      *
      * The placement Id is a number assigned to the placeholder. It goes from -1 to the number of placeholders.
-     * It SHOULD be unique among all PlacholderAtom records contained in the corresponding slide.
+     * It SHOULD be unique among all PlaceholderAtom records contained in the corresponding slide.
      * The value 0xFFFFFFFF specifies that the corresponding shape is not a placeholder shape.
      *
      * @return the placement Id.
@@ -110,7 +110,7 @@ public final class OEPlaceholderAtom extends RecordAtom{
      * Sets the placement Id.<p>
      *
      * The placement Id is a number assigned to the placeholder. It goes from -1 to the number of placeholders.
-     * It SHOULD be unique among all PlacholderAtom records contained in the corresponding slide.
+     * It SHOULD be unique among all PlaceholderAtom records contained in the corresponding slide.
      * The value 0xFFFFFFFF specifies that the corresponding shape is not a placeholder shape.
      *
      * @param id the placement Id.
