@@ -49,7 +49,7 @@ public final class RawDataUtil {
     }
 
     /**
-     * Decompress previously gziped/base64ed data
+     * Decompress previously gzipped/base64ed data
      *
      * @param data the gzipped/base64ed data
      * @return the raw bytes
