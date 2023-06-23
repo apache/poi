@@ -592,7 +592,7 @@ public final class Picture {
      * @param out
      *            a stream to write to
      * @throws IOException
-     *             if some exception is occured while writing to specified out
+     *             if some exception is occurred while writing to specified out
      */
     public void writeImageContent( OutputStream out ) throws IOException
     {
