@@ -426,7 +426,7 @@ public class ToCSV {
      * @param file An instance of the File class that encapsulates a handle
      *             referring to the CSV file.
      * @throws java.io.IOException Thrown to indicate and error occurred in the
-     *                             underylying file system.
+     *                             underlying file system.
      */
     private void saveCSVFile(File file) throws IOException {
         ArrayList<String> line;
