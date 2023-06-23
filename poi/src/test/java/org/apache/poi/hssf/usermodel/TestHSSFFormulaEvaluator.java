@@ -145,7 +145,7 @@ final class TestHSSFFormulaEvaluator extends BaseTestFormulaEvaluator {
             ValueEval ve = evaluator.evaluate(HSSFEvaluationTestHelper.wrapCell(cellA1));
             int evalCount = evalListener.getEvalCount();
             // Without short-circuit-if evaluation, evaluating cell 'A1' takes 3 extra evaluations (for D1,E1,F1)
-            assertNotEquals(6, evalCount, "Identifed bug 48195 - Formula evaluator should short-circuit IF() calculations.");
+            assertNotEquals(6, evalCount, "Identified bug 48195 - Formula evaluator should short-circuit IF() calculations.");
             assertEquals(3, evalCount);
             assertEquals(2.0, ((NumberEval) ve).getNumberValue(), 0D);
         }

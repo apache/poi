@@ -180,7 +180,7 @@ final class TestBiff8DecryptingStream {
         Biff8DecryptingStream bds = st.getBDS();
         int hval = bds.readDataSize();   // unencrypted
         int nextInt = bds.readInt();
-        assertNotEquals(0x8F534029, nextInt, "Indentified bug in key alignment after call to readHeaderUShort()");
+        assertNotEquals(0x8F534029, nextInt, "Identified bug in key alignment after call to readHeaderUShort()");
         assertEquals(0x16885243, nextInt);
         assertNotEquals(0x283E, hval, "readHeaderUShort() incorrectly decrypted result");
         assertEquals(0x504F, hval);
