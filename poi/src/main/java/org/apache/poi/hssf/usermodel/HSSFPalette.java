@@ -89,7 +89,7 @@ public final class HSSFPalette {
     /**
      * Finds the closest matching color in the custom palette.  The
      * method for finding the distance between the colors is fairly
-     * primative.
+     * primitive.
      *
      * @param red   The red component of the color to match.
      * @param green The green component of the color to match.
@@ -103,7 +103,7 @@ public final class HSSFPalette {
     /**
      * Finds the closest matching color in the custom palette.  The
      * method for finding the distance between the colors is fairly
-     * primative.
+     * primitive.
      *
      * @param red   The red component of the color to match.
      * @param green The green component of the color to match.

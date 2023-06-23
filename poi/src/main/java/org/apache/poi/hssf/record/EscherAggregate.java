@@ -116,7 +116,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     /** @deprecated use {@link ShapeType#NOT_PRIMITIVE} */
     @Deprecated
     @Removal(version = "5.3")
-    public static final short ST_NOT_PRIMATIVE = (short) 0;
+    public static final short ST_NOT_PRIMITIVE = (short) 0;
     /** @deprecated use {@link ShapeType#RECT} */
     @Deprecated
     @Removal(version = "5.3")
