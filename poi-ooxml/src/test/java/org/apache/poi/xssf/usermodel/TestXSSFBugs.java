@@ -3809,7 +3809,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             }
         }
 
-        // for the decrytped bytes
+        // for the decrypted bytes
         UnsynchronizedByteArrayOutputStream bosDec = UnsynchronizedByteArrayOutputStream.builder().get();
 
         /* decrypt excel by poi */
