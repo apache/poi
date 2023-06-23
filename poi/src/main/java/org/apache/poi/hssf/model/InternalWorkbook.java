@@ -2080,7 +2080,7 @@ public final class InternalWorkbook {
      *
      * @param name the  name of an external function, typically a name of a UDF
      * @param sheetRefIndex the sheet ref index, or -1 if not known
-     * @param udf  locator of user-defiend functions to resolve names of VBA and Add-In functions
+     * @param udf  locator of user-defined functions to resolve names of VBA and Add-In functions
      * @return the external name or null
      */
     public NameXPtg getNameXPtg(String name, int sheetRefIndex, UDFFinder udf) {
