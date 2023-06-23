@@ -48,7 +48,7 @@ import org.apache.poi.util.Removal;
 
 /**
  * This class is used to aggregate the MSODRAWING and OBJ record
- * combinations.  This is necessary due to the bizare way in which
+ * combinations.  This is necessary due to the bizarre way in which
  * these records are serialized.  What happens is that you get a
  * combination of MSODRAWING -&gt; OBJ -&gt; MSODRAWING -&gt; OBJ records
  * but the escher records are serialized _across_ the MSODRAWING
