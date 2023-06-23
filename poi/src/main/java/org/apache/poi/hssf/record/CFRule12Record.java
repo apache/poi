@@ -47,7 +47,7 @@ import static org.apache.poi.hssf.usermodel.HSSFWorkbook.getMaxRecordLength;
 /**
  * Conditional Formatting v12 Rule Record (0x087A).
  *
- * <p>This is for newer-style Excel conditional formattings,
+ * <p>This is for newer-style Excel conditional formatting,
  *  from Excel 2007 onwards.
  *
  * <p>{@link CFRuleRecord} is used where the condition type is
