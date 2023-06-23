@@ -167,7 +167,7 @@ public class HwmfPalette {
         public Map<String, Supplier<?>> getGenericProperties() {
             return GenericRecordUtil.getGenericProperties(
                 "paletteStart", this::getPaletteStart,
-                "pallete", this::getPaletteCopy
+                "palette", this::getPaletteCopy
             );
         }
     }
