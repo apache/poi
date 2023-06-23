@@ -217,7 +217,7 @@ final class TestLinkTable {
         assertNull(tbl.getNameXPtg("ISODD", -1));
         assertEquals(5, wrl.getRecords().size()); //still have five records
 
-        NameXPtg namex1 = tbl.addNameXPtg("ISODD");  // adds two new rercords
+        NameXPtg namex1 = tbl.addNameXPtg("ISODD");  // adds two new records
         assertEquals(0, namex1.getSheetRefIndex());
         assertEquals(0, namex1.getNameIndex());
         NameXPtg act = tbl.getNameXPtg("ISODD", -1);
@@ -255,7 +255,7 @@ final class TestLinkTable {
         assertEquals("ISODD", tbl.resolveNameXText(namex1.getSheetRefIndex(), namex1.getNameIndex(), null));
 
         assertNull(tbl.getNameXPtg("ISEVEN", -1));
-        NameXPtg namex2 = tbl.addNameXPtg("ISEVEN");  // adds two new rercords
+        NameXPtg namex2 = tbl.addNameXPtg("ISEVEN");  // adds two new records
         assertEquals(0, namex2.getSheetRefIndex());
         assertEquals(1, namex2.getNameIndex());  // name index increased by one
         act = tbl.getNameXPtg("ISEVEN", -1);
