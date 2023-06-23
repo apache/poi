@@ -1060,7 +1060,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
         }
 
         ExEmbed exEmbed = new ExEmbed();
-        // remove unneccessary infos, so we don't need to specify the type
+        // remove unnecessary infos, so we don't need to specify the type
         // of the ole object multiple times
         Record[] children = exEmbed.getChildRecords();
         exEmbed.removeChild(children[2]);
