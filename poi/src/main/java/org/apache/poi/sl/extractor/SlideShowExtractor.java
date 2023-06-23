@@ -354,7 +354,7 @@ public class SlideShowExtractor<
         final TextShape<?,?> sh = (tp != null) ? tp.getParentShape() : null;
         final Placeholder ph = (sh != null) ? sh.getPlaceholder() : null;
 
-        // 0xB acts like cariage return in page titles and like blank in the others
+        // 0xB acts like carriage return in page titles and like blank in the others
         final char sep = (
             ph == Placeholder.TITLE ||
             ph == Placeholder.CENTERED_TITLE ||
