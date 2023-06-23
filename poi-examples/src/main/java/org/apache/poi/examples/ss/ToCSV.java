@@ -629,7 +629,7 @@ public class ToCSV {
         // files should be written, - optionally - the separator character
         // that should be used to separate individual items (fields) on the
         // lines (records) of the CSV file and - again optionally - an integer
-        // that idicates whether the CSV file ought to obey Excel's or UNIX
+        // that indicates whether the CSV file ought to obey Excel's or UNIX
         // conventions with regard to formatting fields that contain embedded
         // separator, Speech mark or EOL character(s).
         //
