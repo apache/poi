@@ -632,7 +632,7 @@ public class AddDimensionedImage {
             totalWidthMM += (colWidthMM + ConvertImageUnits.CELL_BORDER_WIDTH_MILLIMETRES);
             toColumn++;
         }
-        // De-crement by one the last column value.
+        // Decrement by one the last column value.
         toColumn--;
         // Highly unlikely that this will be true but, if the width of a series
         // of columns is exactly equal to the required width of the image, then
