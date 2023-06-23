@@ -320,7 +320,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         // Test idea: iterate over cells in the reference worksheet, they all have the R attribute set.
         // For each cell from the reference sheet find the corresponding cell in the problematic file (with missing R)
         // and assert that POI reads them equally:
-        DataFormatter formater = new DataFormatter();
+        DataFormatter formatter = new DataFormatter();
         for(Row r : sheetRef){
             XSSFRow rowRef = (XSSFRow)r;
             XSSFRow row = sheet.getRow(rowRef.getRowNum());
@@ -338,8 +338,8 @@ public final class TestXSSFCell extends BaseTestXCell {
                 if(!cell.getCTCell().isSetR()){
                     assertTrue(cellRef.getCTCell().isSetR(), "R must e set in cellRef");
 
-                    String valRef = formater.formatCellValue(cellRef);
-                    String val = formater.formatCellValue(cell);
+                    String valRef = formatter.formatCellValue(cellRef);
+                    String val = formatter.formatCellValue(cell);
                     assertEquals(valRef, val);
                 }
 
