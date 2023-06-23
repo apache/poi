@@ -441,10 +441,10 @@ public final class HWPFDocument extends HWPFDocumentCore {
 
     private Range getRange(SubdocumentType subdocument) {
         int startCp = 0;
-        for (SubdocumentType previos : SubdocumentType.ORDERED) {
+        for (SubdocumentType previous : SubdocumentType.ORDERED) {
             int length = getFileInformationBlock()
-                    .getSubdocumentTextStreamLength(previos);
-            if (subdocument == previos) {
+                    .getSubdocumentTextStreamLength(previous);
+            if (subdocument == previous) {
                 return new Range(startCp, startCp + length, this);
             }
             startCp += length;
