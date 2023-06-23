@@ -434,7 +434,7 @@ public class AddDimensionedImage {
         int pictureWidthCoordinates;
         ClientAnchorDetail colClientAnchorDetail = null;
 
-        // Get the colum's width in millimetres
+        // Get the column's width in millimetres
         colWidthMM = ConvertImageUnits.widthUnits2Millimetres(
                 (short) sheet.getColumnWidth(colNumber));
 
