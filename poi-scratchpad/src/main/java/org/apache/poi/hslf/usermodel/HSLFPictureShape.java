@@ -181,7 +181,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
     }
 
     /**
-     * By default set the orininal image size
+     * By default set the original image size
      */
     @Override
     protected void afterInsert(HSLFSheet sh){
