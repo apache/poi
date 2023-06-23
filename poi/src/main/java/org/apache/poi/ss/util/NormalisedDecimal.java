@@ -189,7 +189,7 @@ final class NormalisedDecimal {
         return Long.toString(_wholePart);
     }
     /**
-     * Rounds the first whole digit position (considers only units digit, not frational part).
+     * Rounds the first whole digit position (considers only units digit, not fractional part).
      * Caller should check total digit count of result to see whether the rounding operation caused
      * a carry out of the most significant digit
      */
