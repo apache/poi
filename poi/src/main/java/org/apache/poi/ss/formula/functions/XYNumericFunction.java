@@ -129,7 +129,7 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
         // error handling is as if the x is fully evaluated before y
         ErrorEval firstXerr = null;
         ErrorEval firstYerr = null;
-        boolean accumlatedSome = false;
+        boolean accumulatedSome = false;
         double result = 0.0;
 
         for (int i = 0; i < size; i++) {
@@ -149,7 +149,7 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
             }
             // only count pairs if both elements are numbers
             if (vx instanceof NumberEval && vy instanceof NumberEval) {
-                accumlatedSome = true;
+                accumulatedSome = true;
                 NumberEval nx = (NumberEval) vx;
                 NumberEval ny = (NumberEval) vy;
                 result += acc.accumulate(nx.getNumberValue(), ny.getNumberValue());
@@ -163,7 +163,7 @@ public abstract class XYNumericFunction extends Fixed2ArgFunction {
         if (firstYerr != null) {
             throw new EvaluationException(firstYerr);
         }
-        if (!accumlatedSome) {
+        if (!accumulatedSome) {
             throw new EvaluationException(ErrorEval.DIV_ZERO);
         }
         return result;

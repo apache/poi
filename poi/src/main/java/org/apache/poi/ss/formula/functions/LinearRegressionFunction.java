@@ -136,7 +136,7 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
 
         // error handling is as if the x is fully evaluated before y
         ErrorEval firstYerr = null;
-        boolean accumlatedSome = false;
+        boolean accumulatedSome = false;
         // first pass: read in data, compute xbar and ybar
         double sumx = 0.0, sumy = 0.0;
 
@@ -155,7 +155,7 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
             // only count pairs if both elements are numbers
             // all other combinations of value types are silently ignored
             if (vx instanceof NumberEval && vy instanceof NumberEval) {
-                accumlatedSome = true;
+                accumulatedSome = true;
                 NumberEval nx = (NumberEval) vx;
                 NumberEval ny = (NumberEval) vy;
                 sumx  += nx.getNumberValue();
@@ -167,7 +167,7 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
             throw new EvaluationException(firstYerr);
         }
 
-        if (!accumlatedSome) {
+        if (!accumulatedSome) {
             throw new EvaluationException(ErrorEval.DIV_ZERO);
         }
 
