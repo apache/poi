@@ -169,7 +169,7 @@ final class TestFormulaShifter {
         // all these operations are on an area ref spanning rows 10 to 20
         final AreaPtg aptg  = createAreaPtgRow(10, 20, false, false);
 
-        //AbsFirstRow AbsLastRow references should't change when copied to a different row
+        //AbsFirstRow AbsLastRow references shouldn't change when copied to a different row
         confirmAreaRowCopy(aptg,  0, 30, 20, 10, 20, false);
         confirmAreaRowCopy(aptg,  15, 25, -15, 10, 20, false);
     }
@@ -222,7 +222,7 @@ final class TestFormulaShifter {
         // all these operations are on an area ref spanning columns 10 to 20
         final AreaPtg aptg  = createAreaPtgColumn(10, 20, false, false);
 
-        //AbsFirstColumn AbsLastColumn references should't change when copied to a different column
+        //AbsFirstColumn AbsLastColumn references shouldn't change when copied to a different column
         confirmAreaColumnCopy(aptg,  0, 30, 20, 10, 20, false);
         confirmAreaColumnCopy(aptg,  15, 25, -15, 10, 20, false);
     }

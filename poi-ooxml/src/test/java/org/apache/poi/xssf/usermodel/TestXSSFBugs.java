@@ -2049,7 +2049,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             // Try to write-out and read again, should only work
             //  in read-write mode, not read-only mode
             try (XSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
-                assertNotEquals(PackageAccess.READ, access, "Shouln't be able to write from read-only mode");
+                assertNotEquals(PackageAccess.READ, access, "Shouldn't be able to write from read-only mode");
 
                 // Check again
                 s = wb2.getSheetAt(0);
