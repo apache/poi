@@ -1076,7 +1076,7 @@ public final class HSSFSheet implements Sheet {
                 (WSBoolRecord) _sheet.findFirstRecordBySid(WSBoolRecord.sid);
 
         record.setRowSumsBelow(b);
-        //setAlternateExpression must be set in conjuction with setRowSumsBelow
+        //setAlternateExpression must be set in conjunction with setRowSumsBelow
         record.setAlternateExpression(b);
     }
 
