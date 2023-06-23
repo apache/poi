@@ -252,7 +252,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         // If it has a length, depending on its type it may have children or data
         // If it has children, these will follow straight away
         //      <xx xx yy yy zz zz zz zz <xx xx yy yy zz zz zz zz>>
-        // If it has data, this will come straigh after, and run for the length
+        // If it has data, this will come straight after, and run for the length
         //      <xx xx yy yy zz zz zz zz dd dd dd dd dd dd dd>
         // All lengths given exclude the 8 byte record header
         // (Data records are known as Atoms)
