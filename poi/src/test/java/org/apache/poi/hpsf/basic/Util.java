@@ -46,7 +46,7 @@ final class Util {
      * <p>Reads a set of files from a POI filesystem and returns them
      * as an array of {@link POIFile} instances. This method loads all
      * files into memory and thus does not cope well with large POI
-     * filessystems.</p>
+     * filesystems.</p>
      *
      * @param poiFs The name of the POI filesystem as seen by the
      * operating system. (This is the "filename".)
