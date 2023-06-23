@@ -1231,7 +1231,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    void testSetCellRangeAddresswithSingleRange() throws IOException {
+    void testSetCellRangeAddressWithSingleRange() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             final Sheet sheet = wb.createSheet("S1");
             final SheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();
