@@ -104,7 +104,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
     // Pointers to the most recent versions of the core records
     // (Document, Notes, Slide etc)
     private Record[] _mostRecentCoreRecords;
-    // Lookup between the PersitPtr "sheet" IDs, and the position
+    // Lookup between the PersistPtr "sheet" IDs, and the position
     // in the mostRecentCoreRecords array
     private Map<Integer,Integer> _sheetIdToCoreRecordsLookup;
 
