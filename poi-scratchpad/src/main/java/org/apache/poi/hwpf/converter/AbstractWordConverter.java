@@ -603,7 +603,7 @@ public abstract class AbstractWordConverter {
         }
         LOG.atWarn().log(debug);
 
-        Range deadFieldValueSubrage = new Range(range.getCharacterRun(
+        Range deadFieldValueSubrange = new Range(range.getCharacterRun(
             separatorMark).getStartOffset() + 1, range.getCharacterRun(
             endMark).getStartOffset(), range) {
             @Override
@@ -615,7 +615,7 @@ public abstract class AbstractWordConverter {
         // just output field value
         if (separatorMark + 1 < endMark) {
             processCharacters(wordDocument, currentTableLevel,
-                deadFieldValueSubrage, currentBlock);
+                deadFieldValueSubrange, currentBlock);
         }
     }
 
