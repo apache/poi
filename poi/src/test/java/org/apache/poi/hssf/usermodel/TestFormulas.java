@@ -84,7 +84,7 @@ final class TestFormulas {
      * Multiply various integers
      */
     @Test
-    void testMultplyIntegers() throws IOException {
+    void testMultiplyIntegers() throws IOException {
         binomialOperator("*");
     }
 
