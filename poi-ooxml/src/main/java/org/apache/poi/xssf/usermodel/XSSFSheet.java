@@ -4639,7 +4639,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         pivotTables.add(pivotTable);
         XSSFWorkbook workbook = getWorkbook();
 
-        //Create relationship between the pivot cache defintion and the workbook
+        //Create relationship between the pivot cache definition and the workbook
         XSSFPivotCacheDefinition pivotCacheDefinition = (XSSFPivotCacheDefinition) workbook.
                 createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, getWorkbook().getXssfFactory(), tableId);
         String rId = workbook.getRelationId(pivotCacheDefinition);
