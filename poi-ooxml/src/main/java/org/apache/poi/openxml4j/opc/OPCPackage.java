@@ -1432,7 +1432,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     }
 
 
-    /* Accesseurs */
+    /* Accessors */
 
     /**
      * Get the package access mode.
