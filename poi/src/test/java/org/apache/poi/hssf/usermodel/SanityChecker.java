@@ -87,7 +87,7 @@ public class SanityChecker {
         }
 
         private int matchRequired(int firstRecord, List<? extends RecordBase> records, int recordIdx) {
-            assertNotEquals(-1, firstRecord, "Manditory record missing or out of order: " + record);
+            assertNotEquals(-1, firstRecord, "Mandatory record missing or out of order: " + record);
 
             return matchOneOrMany(records, firstRecord);
         }
