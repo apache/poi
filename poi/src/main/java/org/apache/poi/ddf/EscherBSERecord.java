@@ -335,7 +335,7 @@ public final class EscherBSERecord extends EscherRecord {
     /**
      * Defines the way this blip is used.
      *
-     * @param usage the blip usae
+     * @param usage the blip usage
      */
     public void setUsage(byte usage) {
         field_8_usage = usage;
