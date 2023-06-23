@@ -52,7 +52,7 @@ public final class POIDataSamples {
     private File _resolvedDataDir;
     /** {@code true} if standard system property is not set,
      * but the data is available on the test runtime classpath */
-    private boolean _sampleDataIsAvaliableOnClassPath;
+    private boolean _sampleDataIsAvailableOnClassPath;
     private final String _moduleDir;
 
     /**
@@ -132,7 +132,7 @@ public final class POIDataSamples {
      */
     public InputStream openResourceAsStream(String sampleFileName) {
 
-        if (_sampleDataIsAvaliableOnClassPath) {
+        if (_sampleDataIsAvailableOnClassPath) {
             InputStream result = sampleFileName == null ? null :
                     openClasspathResource(sampleFileName);
             if(result == null) {
@@ -196,7 +196,7 @@ public final class POIDataSamples {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-                _sampleDataIsAvaliableOnClassPath = true;
+                _sampleDataIsAvailableOnClassPath = true;
                 return;
             }
 
