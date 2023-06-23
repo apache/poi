@@ -598,7 +598,7 @@ public final class CryptoFunctions {
          */
         short intermediate1 = (short)(((verifier & 0x4000) == 0) ? 0 : 1);
         /*
-         *  SET Intermediate2 TO Verifier MULTIPLED BY 2
+         *  SET Intermediate2 TO Verifier MULTIPLIED BY 2
          *  SET most significant bit of Intermediate2 TO 0
          */
         short intermediate2 = (short)((verifier<<1) & 0x7FFF);
