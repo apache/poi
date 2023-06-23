@@ -74,7 +74,7 @@ final class TestFontRecord {
 //      .fontheight      = c8
 //      .attributes      = 0
 //           .italic     = false
-//           .strikout   = false
+//           .strikeout   = false
 //           .macoutlined= false
 //           .macshadowed= false
 //      .colorpalette    = 7fff
