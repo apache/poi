@@ -663,7 +663,7 @@ public class AddDimensionedImage {
         // necessary to calculate just how much - this will become the inset
         // for the ClientAnchorDetail object.
         else {
-            // Firstly, claculate how much of the image should overlap into
+            // Firstly, calculate how much of the image should overlap into
             // the next column.
             overlapMM = reqImageWidthMM - (totalWidthMM - colWidthMM);
 
