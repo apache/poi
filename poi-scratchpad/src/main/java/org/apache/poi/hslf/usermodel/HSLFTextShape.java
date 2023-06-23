@@ -280,11 +280,11 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         StyleTextPropAtom sta = (StyleTextPropAtom)_txtbox.findFirstOfType(StyleTextPropAtom._type);
         TextPropCollection paraStyle = null, charStyle = null;
         if (sta == null) {
-            int parSiz = text.length();
-            sta = new StyleTextPropAtom(parSiz+1);
+            int parSize = text.length();
+            sta = new StyleTextPropAtom(parSize+1);
             if (_paragraphs.isEmpty()) {
-                paraStyle = sta.addParagraphTextPropCollection(parSiz+1);
-                charStyle = sta.addCharacterTextPropCollection(parSiz+1);
+                paraStyle = sta.addParagraphTextPropCollection(parSize+1);
+                charStyle = sta.addCharacterTextPropCollection(parSize+1);
             } else {
                 for (HSLFTextParagraph htp : _paragraphs) {
                     int runsLen = 0;
