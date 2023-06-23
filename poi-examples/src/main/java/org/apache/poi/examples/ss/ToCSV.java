@@ -578,7 +578,7 @@ public class ToCSV {
         if(this.formattingConvention == ToCSV.EXCEL_STYLE_ESCAPING) {
 
             // Firstly, check if there are any speech marks (") in the field;
-            // each occurrence must be escaped with another set of spech marks
+            // each occurrence must be escaped with another set of speech marks
             // and then the entire field should be enclosed within another
             // set of speech marks. Thus, "Yes" he said would become
             // """Yes"" he said"
