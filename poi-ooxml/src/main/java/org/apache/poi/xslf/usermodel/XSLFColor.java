@@ -268,7 +268,7 @@ public class XSLFColor {
     }
 
     /**
-     * Read a perecentage value from the supplied xml bean.
+     * Read a percentage value from the supplied xml bean.
      * Example:
      *   <a:tint val="45000"/>
      *
