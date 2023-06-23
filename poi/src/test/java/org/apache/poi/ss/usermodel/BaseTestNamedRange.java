@@ -556,7 +556,7 @@ public abstract class BaseTestNamedRange {
         // contrived example to expose bug:
         n.setRefersToFormula("if(A1,\"#REF!\", \"\")");
 
-        assertFalse(n.isDeleted(), "Identified bug in recoginising formulas referring to deleted cells");
+        assertFalse(n.isDeleted(), "Identified bug in recognising formulas referring to deleted cells");
 
         wb.close();
     }
