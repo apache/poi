@@ -1224,7 +1224,7 @@ public class HSSFCell extends CellBase {
      * Applying a user-defined style (UDS) is special. Excel does not directly reference user-defined styles, but
      * instead create a 'proxy' ExtendedFormatRecord referencing the UDS as parent.
      *
-     * The proceudre to apply a UDS is as follows:
+     * The procedure to apply a UDS is as follows:
      *
      * 1. search for a ExtendedFormatRecord with parentIndex == style.getIndex()
      *    and xfType ==  ExtendedFormatRecord.XF_CELL.
