@@ -211,7 +211,7 @@ public class AddDimensionedImage {
     // increased to accommodate the image if it is not already larger. The image
     // will be layed across one or many rows.
     // Passing EXPAND_ROW_AND_COLUMN will result in the height of the row
-    // bing increased along with the width of the column to accomdate the
+    // bing increased along with the width of the column to accommodate the
     // image if either is not already larger.
     // Passing OVERLAY_ROW_AND_COLUMN will result in the image being layed
     // over one or more rows and columns. No row or column will be resized,
