@@ -105,7 +105,7 @@ public interface TextRun {
     /**
      * Get the font family - convenience method for {@link #getFontInfo(FontGroup)}
      *
-     * @param fontGroup the font group, i.e. the range of glpyhs to be covered.
+     * @param fontGroup the font group, i.e. the range of glyphs to be covered.
      *    if {@code null}, the font group matching the first character will be returned
      *
      * @return  font family or null if not set
@@ -127,7 +127,7 @@ public interface TextRun {
      *
      * @param typeface  the font to apply to this text run.
      *      The value of {@code null} removes the run specific font setting, so the default setting is activated again.
-     * @param fontGroup the font group, i.e. the range of glpyhs to be covered.
+     * @param fontGroup the font group, i.e. the range of glyphs to be covered.
      *    if {@code null}, the font group matching the first character will be returned
      */
     void setFontFamily(String typeface, FontGroup fontGroup);
@@ -135,7 +135,7 @@ public interface TextRun {
     /**
      * Get the font info for the given font group
      *
-     * @param fontGroup the font group, i.e. the range of glpyhs to be covered.
+     * @param fontGroup the font group, i.e. the range of glyphs to be covered.
      *    if {@code null}, the font group matching the first character will be returned
      * @return  font info or {@code null} if not set
      *
@@ -148,7 +148,7 @@ public interface TextRun {
      *
      * @param fontInfo the font to apply to this text run.
      *      The value of {@code null} removes the run specific font setting, so the default setting is activated again.
-     * @param fontGroup the font group, i.e. the range of glpyhs to be covered. defaults to latin, if {@code null}.
+     * @param fontGroup the font group, i.e. the range of glyphs to be covered. defaults to latin, if {@code null}.
      *
      * @since POI 3.17-beta2
      */
