@@ -45,7 +45,7 @@ import org.apache.poi.util.LittleEndian;
  * <p>
  * Word stores images as is within so called "Data stream" - the stream within a Word docfile containing various data
  * that hang off of characters in the main stream. For example, binary data describing in-line pictures and/or
- * formfields an also embedded objects-native data. Word picture structures are concatenated one after the other in
+ * form fields an also embedded objects-native data. Word picture structures are concatenated one after the other in
  * the data stream if the document contains pictures.
  * Data stream is easily reachable via HWPFDocument._dataStream property.
  * A picture is represented in the document text stream as a special character, an Unicode \u0001 whose
