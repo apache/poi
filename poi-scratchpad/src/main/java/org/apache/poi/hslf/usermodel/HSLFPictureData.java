@@ -349,13 +349,13 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
     }
 
     /**
-     * Return 24 byte header which preceeds the actual picture data.
+     * Return 24 byte header which precedes the actual picture data.
      * <p>
      * The header consists of 2-byte signature, 2-byte type,
      * 4-byte image size and 16-byte checksum of the image data.
      * </p>
      *
-     * @return the 24 byte header which preceeds the actual picture data.
+     * @return the 24 byte header which precedes the actual picture data.
      */
     public byte[] getHeader() {
         byte[] header = new byte[CHECKSUM_SIZE + PREAMBLE_SIZE];
