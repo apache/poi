@@ -939,7 +939,7 @@ public class AddDimensionedImage {
         // positioned to exactly cover one cell are different by almost exactly
         // 2mm - give or take rounding errors. This constant allows that
         // additional amount to be accounted for when calculating how many
-        // celles the image ought to overlie.
+        // cells the image ought to overlie.
         public static final double CELL_BORDER_WIDTH_MILLIMETRES = 2.0D;
         public static final short EXCEL_COLUMN_WIDTH_FACTOR = 256;
         public static final int UNIT_OFFSET_LENGTH = 7;
