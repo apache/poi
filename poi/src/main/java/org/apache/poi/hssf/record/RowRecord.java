@@ -301,8 +301,8 @@ public final class RowRecord extends StandardRecord {
     }
 
     /**
-     * get whether or not to colapse this row
-     * @return c - colapse or not
+     * get whether or not to collapse this row
+     * @return c - collapse or not
      * @see #getOptionFlags()
      */
     public boolean getColapsed() {
