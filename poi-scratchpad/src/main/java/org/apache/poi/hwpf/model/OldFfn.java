@@ -78,7 +78,7 @@ public final class OldFfn {
         charset = charset == null ? StringUtil.WIN_1252 : charset;
         offset += LittleEndianConsts.BYTE_SIZE;
         //if this byte here == 7, it _may_ signify existence of
-        //an altername font name
+        //an alternate font name
 
         //not sure what the byte after the _chs does
         offset += LittleEndianConsts.BYTE_SIZE;
