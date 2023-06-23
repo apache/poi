@@ -146,7 +146,7 @@ class TestReadAllFiles {
         try (POIFSFileSystem poifs = new POIFSFileSystem(file, true)) {
             final DirectoryEntry dir = poifs.getRoot();
             /*
-             * If there is a document summry information stream, read it from
+             * If there is a document summary information stream, read it from
              * the POI filesystem.
              */
             if (dir.hasEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)) {
@@ -188,7 +188,7 @@ class TestReadAllFiles {
         /* Read a test document <em>doc</em> into a POI filesystem. */
         try (POIFSFileSystem poifs = new POIFSFileSystem(file)) {
             /*
-             * If there is a document summry information stream, read it from
+             * If there is a document summary information stream, read it from
              * the POI filesystem, else create a new one.
              */
             DocumentSummaryInformation dsi = TestWriteWellKnown.getDocumentSummaryInformation(poifs);
