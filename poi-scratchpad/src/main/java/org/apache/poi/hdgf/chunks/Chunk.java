@@ -282,7 +282,7 @@ public final class Chunk {
         public Object getValue() { return value; }
     }
     /*
-     * A special kind of command that is an artificat of how we
+     * A special kind of command that is an artifact of how we
      *  process CommandDefinitions, and so doesn't actually exist
      *  in the chunk
      */
