@@ -415,7 +415,7 @@ public final class WindowTwoRecord extends StandardRecord {
     }
 
     /**
-     * zoom magification in page break view
+     * zoom magnification in page break view
      * @return zoom
      */
     public short getPageBreakZoom()
