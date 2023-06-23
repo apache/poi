@@ -1104,7 +1104,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         spEndingOffsets.add(0, 0);
 
         // Split escher records into separate MSODRAWING and OBJ, TXO records.  (We don't break on
-        // the first one because it's the patriach).
+        // the first one because it's the patriarch).
         pos = offset;
         int writtenEscherBytes = 0;
         boolean isFirst = true;
