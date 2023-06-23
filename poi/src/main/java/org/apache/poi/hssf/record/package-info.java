@@ -16,7 +16,7 @@
 ==================================================================== */
 
 /**
- * Record package contains class representations for XLS binary strutures. Its very low level.
+ * Record package contains class representations for XLS binary structures. Its very low level.
  *
  * @see org.apache.poi.hssf.eventmodel
  * @see org.apache.poi.hssf.record.RecordFactory
