@@ -254,7 +254,7 @@ public final class TextObjectRecord extends ContinuableRecord {
     /**
      * Sets the Vertical text alignment field value.
      *
-     * @param value The vertical alignment, use one of the VERTIUCAL_TEST_ALIGNMENT_... constants in this class
+     * @param value The vertical alignment, use one of the VERTICAL_TEST_ALIGNMENT_... constants in this class
      */
     public void setVerticalTextAlignment(int value) {
         field_1_options = VerticalTextAlignment.setValue(field_1_options, value);
