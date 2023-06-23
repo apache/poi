@@ -68,7 +68,7 @@ public enum BreakClear {
      * </ul>
      * <li> If this line is not broken into multiple regions, then treat this
      * break as a text wrapping break of type none. </li>
-     * <li> If the parent paragraph is right to left, then these beha viors are
+     * <li> If the parent paragraph is right to left, then these behaviors are
      * also reversed. </li>
      * </ul>
      */
