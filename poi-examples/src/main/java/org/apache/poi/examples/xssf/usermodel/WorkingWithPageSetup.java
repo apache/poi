@@ -37,7 +37,7 @@ public class WorkingWithPageSetup {
          *
          * This function Contains 5 parameters:
          * The first parameter is the index to the sheet (0 = first sheet).
-         * The second and third parameters specify the range for the columns to repreat.
+         * The second and third parameters specify the range for the columns to repeat.
          * To stop the columns from repeating pass in -1 as the start and end column.
          * The fourth and fifth parameters specify the range for the rows to repeat.
          * To stop the columns from repeating pass in -1 as the start and end rows.
