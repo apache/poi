@@ -548,7 +548,7 @@ public final class HyperlinkRecord extends StandardRecord {
     /**
      * Based on the link options, is this a document?
      *
-     * @return true, if this is a docment link
+     * @return true, if this is a document link
      */
     public boolean isDocumentLink() {
        return (_linkOpts & HLINK_PLACE) > 0;

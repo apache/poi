@@ -61,7 +61,7 @@ public class XWPFComments extends POIXMLDocumentPart {
         super(parent, part);
 
         if (!(getParent() instanceof XWPFDocument)) {
-            throw new IllegalStateException("Parent is not a XWPFDocuemnt: " + getParent());
+            throw new IllegalStateException("Parent is not a XWPFDocument: " + getParent());
         }
         this.document = (XWPFDocument) getParent();
 
