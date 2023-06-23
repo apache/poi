@@ -820,7 +820,7 @@ public final class HSSFSheet implements Sheet {
      * recommended solution, but this may be used for certain cases where
      * evaluation in POI is not possible.<p>
      *
-     * It is recommended to force recalcuation of formulas on workbook level using
+     * It is recommended to force recalculation of formulas on workbook level using
      * {@link Workbook#setForceFormulaRecalculation(boolean)}
      * to ensure that all cross-worksheet formulas and external dependencies are updated.
      *
