@@ -69,7 +69,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     private static final Logger LOG = LogManager.getLogger(HSLFShape.class);
 
     /**
-     * Either EscherSpContainer or EscheSpgrContainer record
+     * Either EscherSpContainer or EscherSpgrContainer record
      * which holds information about this shape.
      */
     private EscherContainerRecord _escherContainer;

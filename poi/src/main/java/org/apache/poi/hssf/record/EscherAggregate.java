@@ -1244,7 +1244,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     }
 
     /**
-     * Remove echerRecord and associated to it Obj or TextObj record
+     * Remove escherRecord and associated to it Obj or TextObj record
      * @param rec - clientData or textbox record to be removed
      */
     public void removeShapeToObjRecord(EscherRecord rec) {
