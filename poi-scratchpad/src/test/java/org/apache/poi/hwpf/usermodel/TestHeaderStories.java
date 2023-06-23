@@ -69,7 +69,7 @@ public final class TestHeaderStories {
 
         // Should have the usual 6 separators
         // Then all 6 of the different header/footer kinds
-        // Finally a terminater
+        // Finally a terminator
         assertEquals(13, hs.getPlcfHdd().length());
 
         assertEquals(215, hs.getRange().getStartOffset());
