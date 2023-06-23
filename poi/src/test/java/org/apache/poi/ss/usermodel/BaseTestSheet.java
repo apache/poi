@@ -96,20 +96,20 @@ public abstract class BaseTestSheet {
             assertEquals(3, sheet.getPhysicalNumberOfRows());
 
             // Test overwriting an existing row
-            Row row2_ovrewritten = sheet.createRow(1);
-            Cell cell = row2_ovrewritten.createCell(0);
+            Row row2_overwritten = sheet.createRow(1);
+            Cell cell = row2_overwritten.createCell(0);
             cell.setCellValue(100);
             Iterator<Row> it2 = sheet.rowIterator();
             assertTrue(it2.hasNext());
             assertSame(row1, it2.next());
             assertTrue(it2.hasNext());
-            Row row2_ovrewritten_ref = it2.next();
-            assertSame(row2_ovrewritten, row2_ovrewritten_ref);
-            assertEquals(100.0, row2_ovrewritten_ref.getCell(0).getNumericCellValue(), 0.0);
+            Row row2_overwritten_ref = it2.next();
+            assertSame(row2_overwritten, row2_overwritten_ref);
+            assertEquals(100.0, row2_overwritten_ref.getCell(0).getNumericCellValue(), 0.0);
             Spliterator<Row> split2 = sheet.spliterator();
             assertTrue(split2.tryAdvance(row -> assertSame(row1, row)));
             assertTrue(split2.tryAdvance(row -> {
-                assertSame(row2_ovrewritten, row);
+                assertSame(row2_overwritten, row);
                 assertEquals(100.0, row.getCell(0).getNumericCellValue(), 0.0);
             }));
         }
