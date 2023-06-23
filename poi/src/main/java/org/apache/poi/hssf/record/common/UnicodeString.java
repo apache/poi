@@ -296,7 +296,7 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
 
     /** Adds a font run to the formatted string.
      *
-     *  If a font run exists at the current charcter location, then it is
+     *  If a font run exists at the current character location, then it is
      *  replaced with the font run to be added.
      */
     public void addFormatRun(FormatRun r) {
