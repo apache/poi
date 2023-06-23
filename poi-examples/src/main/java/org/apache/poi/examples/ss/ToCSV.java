@@ -573,7 +573,7 @@ public class ToCSV {
     private String escapeEmbeddedCharacters(String field) {
         StringBuilder buffer;
 
-        // If the fields contents should be formatted to confrom with Excel's
+        // If the fields contents should be formatted to conform with Excel's
         // convention....
         if(this.formattingConvention == ToCSV.EXCEL_STYLE_ESCAPING) {
 
