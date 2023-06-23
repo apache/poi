@@ -409,7 +409,7 @@ public class ToCSV {
                 // from the very first row - number 1 - even if it is missing.
                 // Recover a reference to the row and then call another method
                 // which will strip the data from the cells and build lines
-                // for inclusion in the resylting CSV file.
+                // for inclusion in the resulting CSV file.
                 lastRowNum = sheet.getLastRowNum();
                 for(int j = 0; j <= lastRowNum; j++) {
                     row = sheet.getRow(j);
