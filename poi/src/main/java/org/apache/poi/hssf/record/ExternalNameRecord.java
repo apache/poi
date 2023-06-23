@@ -137,7 +137,7 @@ public final class ExternalNameRecord extends StandardRecord {
      *
      * @return {@code true} if this is a picture link
      */
-    public boolean isPicureLink() {
+    public boolean isPictureLink() {
         return (field_1_option_flag & OPT_PICTURE_LINK) != 0;
     }
     /**

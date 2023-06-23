@@ -484,7 +484,7 @@ public final class Picture {
     /**
      * returns the description stored in the alternative text
      *
-     * @return pictue description
+     * @return picture description
      */
     public String getDescription()
     {

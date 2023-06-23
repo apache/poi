@@ -79,7 +79,7 @@ final class TestExternalNameRecord {
         assertFalse(enr.isBuiltInName());
         assertFalse(enr.isIconifiedPictureLink());
         assertFalse(enr.isOLELink());
-        assertFalse(enr.isPicureLink());
+        assertFalse(enr.isPictureLink());
         assertTrue(enr.isStdDocumentNameIdentifier());
 
         confirmRecordEncoding(0x0023, dataAutoDocName, enr.serialize());
@@ -94,7 +94,7 @@ final class TestExternalNameRecord {
         assertFalse(enr.isBuiltInName());
         assertFalse(enr.isIconifiedPictureLink());
         assertFalse(enr.isOLELink());
-        assertFalse(enr.isPicureLink());
+        assertFalse(enr.isPictureLink());
         assertFalse(enr.isStdDocumentNameIdentifier());
 
         confirmRecordEncoding(0x0023, dataPlainName, enr.serialize());
