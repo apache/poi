@@ -86,7 +86,7 @@ public final class RecordInputStream implements LittleEndianInput {
      * is finished.
      * This field is only really valid during the time that ({@link #_currentDataLength} ==
      * {@link #DATA_LEN_NEEDS_TO_BE_READ}).  At most other times its value is not really the
-     * 'sid of the next record'.  Wwhile mid-record, this field coincidentally holds the sid
+     * 'sid of the next record'.  While mid-record, this field coincidentally holds the sid
      * of the current record.
      */
     private int _nextSid;
