@@ -680,7 +680,7 @@ public class AddDimensionedImage {
                 // positons there are per millimetre
                 coordinatePositionsPerMM = (colWidthMM == 0) ? 0
                         : ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS / colWidthMM;
-                // From this figure, determine how many co-ordinat positions to
+                // From this figure, determine how many co-ordinate positions to
                 // inset the left hand or bottom edge of the image.
                 inset = (int) (coordinatePositionsPerMM * overlapMM);
             } else {
