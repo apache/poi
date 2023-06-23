@@ -183,7 +183,7 @@ public class ToCSV {
      *         problems during processing.
      * @throws java.lang.IllegalArgumentException Thrown if the values passed
      *         to the strSource parameter refers to a file or folder that does not
-     *         exist or if the value passed to the strDestination paramater refers
+     *         exist or if the value passed to the strDestination parameter refers
      *         to a folder that does not exist or simply does not refer to a
      *         folder.
      */
@@ -223,7 +223,7 @@ public class ToCSV {
      *         problems during processing.
      * @throws java.lang.IllegalArgumentException Thrown if the values passed
      *         to the strSource parameter refers to a file or folder that does not
-     *         exist or if the value passed to the strDestination paramater refers
+     *         exist or if the value passed to the strDestination parameter refers
      *         to a folder that does not exist or simply does not refer to a
      *         folder.
      */
@@ -266,7 +266,7 @@ public class ToCSV {
      *         problems during processing.
      * @throws java.lang.IllegalArgumentException Thrown if the values passed
      *         to the strSource parameter refers to a file or folder that does not
-     *         exist, if the value passed to the strDestination paramater refers
+     *         exist, if the value passed to the strDestination parameter refers
      *         to a folder that does not exist,  if the value passed to the
      *         strDestination parameter does not refer to a folder or if the
      *         value passed to the formattingConvention parameter is other than

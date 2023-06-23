@@ -648,7 +648,7 @@ public class AddDimensionedImage {
             // more columns. If that occurs, the value in the toColumn variable
             // will be in error. To overcome this, there are two options, to
             // increment the toColumn variable's value by one or to pass the
-            // total number of co-ordinate positions to the third paramater
+            // total number of co-ordinate positions to the third parameter
             // of the ClientAnchorDetail constructor. For no sepcific reason,
             // the latter option is used below.
             if (sheet instanceof HSSFSheet) {
