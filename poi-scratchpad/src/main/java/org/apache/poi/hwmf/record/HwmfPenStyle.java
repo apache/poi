@@ -176,7 +176,7 @@ public class HwmfPenStyle implements Duplicatable, GenericRecord {
     }
 
     /**
-     * Convienence method which should be used instead of accessing {@link HwmfLineDash#dashes}
+     * Convenience method which should be used instead of accessing {@link HwmfLineDash#dashes}
      * directly, so an subclass can provide user-style dashes
      *
      * @return the dash pattern
