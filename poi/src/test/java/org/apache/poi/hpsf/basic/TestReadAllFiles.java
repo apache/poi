@@ -134,7 +134,7 @@ class TestReadAllFiles {
 
     /**
      * This test method checks whether DocumentSummary information streams
-     * can be read. This is done by opening all "Test*" files in the 'poifs' directrory
+     * can be read. This is done by opening all "Test*" files in the 'poifs' directory
      * pointed to by the "POI.testdata.path" system property, trying to extract
      * the document summary information stream in the root directory and calling
      * its get... methods.
