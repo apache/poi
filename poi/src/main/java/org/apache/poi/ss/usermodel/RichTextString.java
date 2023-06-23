@@ -19,7 +19,7 @@ package org.apache.poi.ss.usermodel;
 
 /**
  * Rich text unicode string.  These strings can have fonts
- *  applied to arbitary parts of the string.
+ *  applied to arbitrary parts of the string.
  */
 public interface RichTextString {
 
