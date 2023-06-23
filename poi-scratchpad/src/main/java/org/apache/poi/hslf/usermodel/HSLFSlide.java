@@ -148,7 +148,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     }
 
     /**
-     * Called by SlideShow ater a new slide is created.
+     * Called by SlideShow after a new slide is created.
      * <p>
      * For Slide we need to do the following:
      * <ul>
