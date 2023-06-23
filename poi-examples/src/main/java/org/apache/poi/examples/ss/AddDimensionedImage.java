@@ -669,7 +669,7 @@ public class AddDimensionedImage {
 
             // When the required size is very close indeed to the column size,
             // the calculation above can produce a negative value. To prevent
-            // problems occuring in later calculations, this is simply removed
+            // problems occurring in later calculations, this is simply removed
             // be setting the overlapMM value to zero.
             if (overlapMM < 0) {
                 overlapMM = 0.0D;
