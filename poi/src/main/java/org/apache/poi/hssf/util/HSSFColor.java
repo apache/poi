@@ -203,7 +203,7 @@ public class HSSFColor implements Color {
     }
 
     /**
-     * this function returns all colors in a hastable.  It's not implemented as a
+     * this function returns all colors in a hashtable.  It's not implemented as a
      * static member/statically initialized because that would be dirty in a
      * server environment as it is intended.  This means you'll eat the time
      * it takes to create it once per request but you will not hold onto it
