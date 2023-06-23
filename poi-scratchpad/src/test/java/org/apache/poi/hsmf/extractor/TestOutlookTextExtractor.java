@@ -122,7 +122,7 @@ public final class TestOutlookTextExtractor {
      * recipients in an email we sent.
      */
     @Test
-    void testSentWithMulipleRecipients() throws Exception {
+    void testSentWithMultipleRecipients() throws Exception {
         // To: 'Ashutosh Dandavate' <ashutosh.dandavate@alfresco.com>,
         //   'Paul Holmes-Higgin' <paul.hh@alfresco.com>,
         //   'Mike Farman' <mikef@alfresco.com>
