@@ -328,7 +328,7 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
     }
 
     /**
-     * Count of all children and their childrens children.
+     * Count of all children and their children's children.
      */
     @Override
     public int countOfAllChildren() {
