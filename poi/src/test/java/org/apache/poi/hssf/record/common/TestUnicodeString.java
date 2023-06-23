@@ -131,7 +131,7 @@ final class TestUnicodeString {
       confirmSize(MAX_DATA_SIZE, s);
 
       //Test an uncompressed string
-      //Note that we can only ever get to a maximim size of 8227 since an uncompressed
+      //Note that we can only ever get to a maximum size of 8227 since an uncompressed
       //string is writing double bytes.
       s = makeUnicodeString((MAX_DATA_SIZE-2-1)/2, true);
       s.setOptionFlags((byte)0x1);
