@@ -329,7 +329,7 @@ final class TestBATBlock {
         assertEquals(0, BATBlock.getBATBlockAndIndex(offset, header, blocks).getIndex());
         assertEquals(1, blocks.indexOf(BATBlock.getBATBlockAndIndex(offset, header, blocks).getBlock()));
 
-        // Biggr block size, back to real BATs
+        // Bigger block size, back to real BATs
         header.setBATCount(2);
 
         offset = 0;
