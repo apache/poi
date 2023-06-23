@@ -652,7 +652,7 @@ public final class ConditionalFormats {
 
     /**
      * Print out a summary of the conditional formatting rules applied to cells on the given sheet.
-     * Only cells with a matching rule are printed, and for those, all matching rules are sumarized.
+     * Only cells with a matching rule are printed, and for those, all matching rules are summarized.
      */
     static void evaluateRules(Workbook wb, String sheetName) {
         final WorkbookEvaluatorProvider wbEvalProv = (WorkbookEvaluatorProvider) wb.getCreationHelper().createFormulaEvaluator();
