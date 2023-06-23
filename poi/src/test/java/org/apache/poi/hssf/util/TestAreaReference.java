@@ -200,7 +200,7 @@ final class TestAreaReference {
     }
 
     @Test
-    void testDiscontinousReference() throws Exception {
+    void testDiscontinuousReference() throws Exception {
         try (InputStream is = HSSFTestDataSamples.openSampleFileStream("44167.xls");
              HSSFWorkbook wb = new HSSFWorkbook(is)) {
             InternalWorkbook workbook = TestHSSFWorkbook.getInternalWorkbook(wb);

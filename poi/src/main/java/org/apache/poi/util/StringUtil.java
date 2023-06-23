@@ -649,7 +649,7 @@ public final class StringUtil {
      * format (most important byte last), return a Java String representation
      * of it.
      *
-     * Scans the byte array for two continous 0 bytes and returns the string before.
+     * Scans the byte array for two continuous 0 bytes and returns the string before.
      * <p>
      *
      * #61881: there seem to be programs out there, which write the 0-termination also
