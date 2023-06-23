@@ -184,7 +184,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
             }
         }
 
-        //PPT doen't increment the number of saved shapes for group descriptor and background
+        //PPT doesn't increment the number of saved shapes for group descriptor and background
         dg.setNumShapes(1);
     }
 
