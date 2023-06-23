@@ -374,7 +374,7 @@ public final class WorkbookEvaluator {
 
         String dbgIndentStr = "";        // always init. to non-null just for defensive avoiding NPE
         if (dbgEvaluationOutputForNextEval) {
-            // first evaluation call when ouput is desired, so iit. this evaluator instance
+            // first evaluation call when ouput is desired, so init. this evaluator instance
             dbgEvaluationOutputIndent = 1;
             dbgEvaluationOutputForNextEval = true;
         }
