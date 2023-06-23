@@ -2181,7 +2181,7 @@ public abstract class CHPAbstractType {
 
     /**
      * Sets the fObj field value.
-     * Embedded objec
+     * Embedded object
      */
     @Internal
     public void setFObj( boolean value )
@@ -2190,7 +2190,7 @@ public abstract class CHPAbstractType {
     }
 
     /**
-     * Embedded objec
+     * Embedded object
      * @return  the fObj field value.
      */
     @Internal
