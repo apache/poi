@@ -89,8 +89,8 @@ class TestDocument {
         final int blockSize = (size >= 4096) ? 512 : 64;
         final int blockCount = (size + (blockSize-1)) / blockSize;
 
-        final byte[] bytCpy = checkValues(blockCount, document, input);
-        final POIFSDocument copied = makeCopy(document,bytCpy);
+        final byte[] byteCpy = checkValues(blockCount, document, input);
+        final POIFSDocument copied = makeCopy(document,byteCpy);
 
         checkValues(blockCount, copied, input);
 
