@@ -533,7 +533,7 @@ public final class WorkbookEvaluator {
                 }
                 ec.setArrayMode(arrayMode);
 
-//                logDebug("invoke " + operation + " (nAgs=" + numops + ")");
+//                logDebug("invoke " + operation + " (nArgs=" + numops + ")");
                 opResult = OperationEvaluatorFactory.evaluate(optg, ops, ec);
 
                 ec.setArrayMode(false);
