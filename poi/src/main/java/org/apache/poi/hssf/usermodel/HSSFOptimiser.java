@@ -166,7 +166,7 @@ public class HSSFOptimiser {
     }
 
    /**
-    * Goes through the Wokrbook, optimising the cell styles
+    * Goes through the Workbook, optimising the cell styles
     *  by removing duplicate ones, and ones that aren't used.
     * For best results, optimise the fonts via a call to
     *  {@link #optimiseFonts(HSSFWorkbook)} first.

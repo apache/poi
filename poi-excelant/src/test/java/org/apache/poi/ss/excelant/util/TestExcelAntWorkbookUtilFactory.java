@@ -24,7 +24,7 @@ import org.junit.jupiter.api.Test;
 
 
 /**
- * Tests for the ExcelAntWorbookUtilFactory.
+ * Tests for the ExcelAntWorkbookUtilFactory.
  */
 class TestExcelAntWorkbookUtilFactory {
 

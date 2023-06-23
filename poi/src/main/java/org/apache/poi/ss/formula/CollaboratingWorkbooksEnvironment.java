@@ -62,13 +62,13 @@ public final class CollaboratingWorkbooksEnvironment {
                     + " but number of evaluators is " + evaluators.length);
         }
         if (nItems < 1) {
-            throw new IllegalArgumentException("Must provide at least one collaborating worbook");
+            throw new IllegalArgumentException("Must provide at least one collaborating workbook");
         }
         new CollaboratingWorkbooksEnvironment(workbookNames, evaluators, nItems);
     }
     public static void setup(Map<String,WorkbookEvaluator> evaluatorsByName) {
         if (evaluatorsByName.size() < 1) {
-            throw new IllegalArgumentException("Must provide at least one collaborating worbook");
+            throw new IllegalArgumentException("Must provide at least one collaborating workbook");
         }
         WorkbookEvaluator[] evaluators =
                 evaluatorsByName.values().toArray(new WorkbookEvaluator[0]);
