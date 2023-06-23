@@ -243,7 +243,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
         try (InputStream stream = part.getInputStream()) {
             return ImageUtils.getImageDimension(stream, type);
         } catch (IOException e){
-            //return a "singulariry" if ImageIO failed to read the image
+            //return a "singularity" if ImageIO failed to read the image
             LOG.atWarn().withThrowable(e).log("Failed to read image");
             return new Dimension();
         }
