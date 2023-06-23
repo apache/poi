@@ -40,7 +40,7 @@ public interface Shape<
    Rectangle2D getAnchor();
 
    /**
-    * @return human-readable name of this shape, e.g. "Rectange 3"
+    * @return human-readable name of this shape, e.g. "Rectangle 3"
     *
     * @since POI 4.0.0
     */
