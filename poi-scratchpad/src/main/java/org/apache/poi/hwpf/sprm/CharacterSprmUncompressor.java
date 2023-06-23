@@ -148,7 +148,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
    *
    * @param oldCHP The base CharacterProperties.
    * @param newCHP The current CharacterProperties.
-   * @param sprm an SPRM opearation
+   * @param sprm an SPRM operation
    */
   static void unCompressCHPOperation (CharacterProperties oldCHP,
                                       CharacterProperties newCHP,
