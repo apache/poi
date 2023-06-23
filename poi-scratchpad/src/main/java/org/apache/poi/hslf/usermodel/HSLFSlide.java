@@ -257,7 +257,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     }
 
     /**
-     * @return set of records inside {@code SlideListWithtext} container
+     * @return set of records inside {@code SlideListWithText} container
      *  which hold text data for this slide (typically for placeholders).
      */
     public SlideAtomsSet getSlideAtomsSet() { return _atomSet;  }
