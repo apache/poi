@@ -60,7 +60,7 @@ import java.util.Map;
  * you issue commands such as drawString().  A good way to calculate this
  * is to use the follow formula:
  * <pre>{@code
- *      multipler = groupHeightInPoints / heightOfGroup
+ *      multiplier = groupHeightInPoints / heightOfGroup
  * }</pre>
  * <p>
  * The height of the group is calculated fairly simply by calculating the
