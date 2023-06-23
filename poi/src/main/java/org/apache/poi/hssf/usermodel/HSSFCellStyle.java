@@ -830,7 +830,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
      */
     public void verifyBelongsToWorkbook(HSSFWorkbook wb) {
         if(wb.getWorkbook() != _workbook) {
-            throw new IllegalArgumentException("This Style does not belong to the supplied Workbook. Are you trying to assign a style from one workbook to the cell of a differnt workbook?");
+            throw new IllegalArgumentException("This Style does not belong to the supplied Workbook. Are you trying to assign a style from one workbook to the cell of a different workbook?");
         }
     }
 
