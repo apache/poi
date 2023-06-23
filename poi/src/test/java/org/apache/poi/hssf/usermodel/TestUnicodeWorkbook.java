@@ -43,7 +43,7 @@ final class TestUnicodeWorkbook {
             HSSFCell c = r.createCell(1);
             c.setCellValue(new HSSFRichTextString("\u00e4"));
 
-            //Confirm that the sring will be compressed
+            //Confirm that the string will be compressed
             assertEquals(0, c.getRichStringCellValue().getUnicodeString().getOptionFlags());
 
             try (HSSFWorkbook wb = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
