@@ -763,9 +763,9 @@ public final class TestStyleTextPropAtom {
 
         // changed original data: ... 0x41 and 0x06 don't match
         // the bitmask text properties will sanitize the bytes and thus the bytes differ
-        byte[] exptected = data.clone();
-        exptected[18] = 0;
+        byte[] expected = data.clone();
+        expected[18] = 0;
 
-        doReadWrite(data, exptected, length);
+        doReadWrite(data, expected, length);
     }
 }
