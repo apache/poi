@@ -50,7 +50,7 @@ final class TestFormulas {
     }
 
     /**
-     * Add 1+1 -- WHoohoo!
+     * Add 1+1 -- Woohoo!
      */
     @Test
     void testBasicAddIntegers() throws IOException {
