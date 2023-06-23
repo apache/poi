@@ -27,7 +27,7 @@ import org.apache.poi.ss.formula.FormulaShifter;
 /**
  * Holds all the conditional formatting for a workbook sheet.<p>
  *
- * See OOO exelfileformat.pdf sec 4.12 'Conditional Formatting Table'
+ * See OOO excelfileformat.pdf sec 4.12 'Conditional Formatting Table'
  */
 public final class ConditionalFormattingTable extends RecordAggregate {
     private final List<CFRecordsAggregate> _cfHeaders = new ArrayList<>();

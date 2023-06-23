@@ -1360,7 +1360,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Returns the spreadsheet version (EXCLE2007) of this workbook
+     * Returns the spreadsheet version (EXCEL2007) of this workbook
      *
      * @return EXCEL2007 SpreadsheetVersion enum
      * @since 3.14 beta 2
