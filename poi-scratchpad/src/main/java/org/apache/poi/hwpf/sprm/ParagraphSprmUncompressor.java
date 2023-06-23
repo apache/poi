@@ -154,7 +154,7 @@ public final class ParagraphSprmUncompressor extends SprmUncompressor {
         newPAP.setFNoLnn (sprm.getOperand() != 0);
         break;
       case 0xd:
-        // handle tabs . variable parameter. seperate processing needed
+        // handle tabs . variable parameter. separate processing needed
         handleTabs(newPAP, sprm);
         break;
       case 0xe:
