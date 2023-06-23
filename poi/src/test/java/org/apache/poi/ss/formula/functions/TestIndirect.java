@@ -124,7 +124,7 @@ final class TestIndirect {
         confirm(feA, c, "INDIRECT(\"A1:G1\")", 13); // de-reference area ref (note formula is in C4)
 
         confirm(feA, c, "SUM(INDIRECT(A4))", 50); // indirect defined name
-        confirm(feA, c, "SUM(INDIRECT(B4))", 351); // indirect defined name pointinh to other sheet
+        confirm(feA, c, "SUM(INDIRECT(B4))", 351); // indirect defined name pointing to other sheet
 
 
         // simple error propagation:
