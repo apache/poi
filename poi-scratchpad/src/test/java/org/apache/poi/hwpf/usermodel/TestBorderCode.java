@@ -26,7 +26,7 @@ import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
 /**
- * API for BorderCode, see Bugzill 49919
+ * API for BorderCode, see Bugzilla 49919
  */
 public final class TestBorderCode {
 
