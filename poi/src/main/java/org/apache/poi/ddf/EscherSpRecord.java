@@ -101,7 +101,7 @@ public class EscherSpRecord extends EscherRecord {
      *
      * @param offset   The offset into <code>data</code> to start writing the record data to.
      * @param data     The byte array to serialize to.
-     * @param listener A listener to retrieve start and end callbacks.  Use a <code>NullEscherSerailizationListener</code> to ignore these events.
+     * @param listener A listener to retrieve start and end callbacks.  Use a <code>NullEscherSerializationListener</code> to ignore these events.
      * @return The number of bytes written.
      *
      * @see NullEscherSerializationListener
