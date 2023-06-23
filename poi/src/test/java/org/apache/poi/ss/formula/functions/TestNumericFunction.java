@@ -131,7 +131,7 @@ final class TestNumericFunction {
     }
 
     @Test
-    @Disabled("fails on some Java Runtimes (kr apprears at start of result in some JREs)")
+    @Disabled("fails on some Java Runtimes (kr appears at start of result in some JREs)")
     void testDOLLARDenmark() {
         Locale defaultLocale = LocaleUtil.getUserLocale();
         try {
