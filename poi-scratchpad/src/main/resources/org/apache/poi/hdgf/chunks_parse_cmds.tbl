@@ -44,7 +44,7 @@
 # Lines start with # are comments.
 # Every list of commands starts with 'start ch_type'
 # and ends with 'end'.
-# In between start and end are space-separeted lines
+# In between start and end are space-separated lines
 # with 'type', 'offset', 'name' values.  
 # Atm I use 'atoi', so only decimal value is allowed for ch_type, type and offset.
 # The possible values for 'type' are:
