@@ -26,7 +26,7 @@ public interface PathIf {
     void addCommand(PathCommand cmd);
 
     /**
-     * Convert the internal represenation to java.awt.geom.Path2D
+     * Convert the internal representation to java.awt.geom.Path2D
      */
     Path2D.Double getPath(Context ctx);
 

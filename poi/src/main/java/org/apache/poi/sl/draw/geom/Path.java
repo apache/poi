@@ -88,7 +88,7 @@ public final class Path implements PathIf {
     }
 
     /**
-     * Convert the internal represenation to java.awt.geom.Path2D
+     * Convert the internal representation to java.awt.geom.Path2D
      */
     @Override
     public Path2D.Double getPath(Context ctx) {
