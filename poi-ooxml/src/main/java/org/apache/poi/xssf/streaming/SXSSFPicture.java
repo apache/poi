@@ -85,7 +85,7 @@ public final class SXSSFPicture implements Picture {
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with the default font size (Calibri 11pt for .xlsx).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * If the default font is changed the resized image can be stretched vertically or horizontally.
      * </p>
      */
     @Override
@@ -98,7 +98,7 @@ public final class SXSSFPicture implements Picture {
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with the default font size (Calibri 11pt for .xlsx).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * If the default font is changed the resized image can be stretched vertically or horizontally.
      * </p>
      *
      * @param scale the amount by which image dimensions are multiplied relative to the original size.
