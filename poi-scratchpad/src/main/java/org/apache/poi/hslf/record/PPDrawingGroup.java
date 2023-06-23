@@ -36,7 +36,7 @@ import org.apache.poi.util.LittleEndian;
  * Container records which always exists inside Document.
  * It always acts as a holder for escher DGG container
  *  which may contain which Escher BStore container information
- *  about pictures containes in the presentation (if any).
+ *  about pictures contained in the presentation (if any).
  */
 public final class PPDrawingGroup extends RecordAtom {
 
