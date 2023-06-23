@@ -203,7 +203,7 @@ public final class ParagraphSprmUncompressor extends SprmUncompressor {
         break;
       case 0x1b:
         byte param = (byte)sprm.getOperand();
-        // TODO: handle paragraph postioning
+        // TODO: handle paragraph positioning
         byte pcVert = (byte) ((param & 0x0c) >> 2);
         byte pcHorz = (byte) (param & 0x03);
         if (pcVert != 3)

@@ -33,7 +33,7 @@ public final class ArrayUtil {
      *  shifting those in between as required.
      * @param array The array to alter
      * @param moveFrom The (0 based) index of the first entry to move
-     * @param moveTo The (0 based) index of the positition to move to
+     * @param moveTo The (0 based) index of the position to move to
      * @param numToMove The number of entries to move
      */
     public static void arrayMoveWithin(Object[] array, int moveFrom, int moveTo, int numToMove) {

@@ -649,7 +649,7 @@ final class LinkTable {
 
         int nameIndex = extBlock.addExternalName(extNameRecord);
         int supLinkIndex = 0;
-        // find the posistion of the Add-In SupBookRecord in the workbook stream,
+        // find the position of the Add-In SupBookRecord in the workbook stream,
         // the created ExternalNameRecord will be appended to it
         for (org.apache.poi.hssf.record.Record record : _workbookRecordList.getRecords()) {
             if (record instanceof SupBookRecord && ((SupBookRecord) record).isAddInFunctions()) {

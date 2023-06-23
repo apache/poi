@@ -19,8 +19,8 @@ package org.apache.poi.xwpf.usermodel;
 
 
 /**
- * postion of a character in a paragraph
- * 1st RunPositon
+ * position of a character in a paragraph
+ * 1st RunPosition
  * 2nd TextPosition
  * 3rd CharacterPosition
  */

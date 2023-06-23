@@ -677,7 +677,7 @@ public class AddDimensionedImage {
 
             if (sheet instanceof HSSFSheet) {
                 // Next, from the columns width, calculate how many co-ordinate
-                // positons there are per millimetre
+                // positions there are per millimetre
                 coordinatePositionsPerMM = (colWidthMM == 0) ? 0
                         : ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS / colWidthMM;
                 // From this figure, determine how many co-ordinate positions to
