@@ -497,7 +497,7 @@ public final class InternalWorkbook {
     /**
      * Removes the given font record from the
      *  file's list. This will make all
-     *  subsequent font indicies drop by one,
+     *  subsequent font indices drop by one,
      *  so you'll need to update those yourself!
      *
      * @param rec the font record
@@ -840,7 +840,7 @@ public final class InternalWorkbook {
     /**
      * Removes the given ExtendedFormatRecord record from the
      *  file's list. This will make all
-     *  subsequent font indicies drop by one,
+     *  subsequent font indices drop by one,
      *  so you'll need to update those yourself!
      *
      * @param rec the ExtendedFormatRecord
@@ -853,7 +853,7 @@ public final class InternalWorkbook {
     /**
      * Removes ExtendedFormatRecord record with given index from the
      *  file's list. This will make all
-     *  subsequent font indicies drop by one,
+     *  subsequent font indices drop by one,
      *  so you'll need to update those yourself!
      *  @param index of the Extended format record (0-based)
      */
