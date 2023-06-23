@@ -38,7 +38,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 
 class TestXSLFAutoShape {
     @Test
-    void testTextBodyProperies() throws IOException {
+    void testTextBodyProperties() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 

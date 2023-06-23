@@ -54,7 +54,7 @@ public final class TestPackageCoreProperties {
     void testGetProperties() throws Exception {
         // Open the package
         @SuppressWarnings("resource")
-        OPCPackage p = OPCPackage.open(openSampleStream("TestPackageCoreProperiesGetters.docx"));
+        OPCPackage p = OPCPackage.open(openSampleStream("TestPackageCorePropertiesGetters.docx"));
         compareProperties(p);
         p.revert();
     }
@@ -64,9 +64,9 @@ public final class TestPackageCoreProperties {
      */
     @Test
     void testSetProperties() throws Exception {
-        String inputPath = getSampleFileName("TestPackageCoreProperiesSetters.docx");
+        String inputPath = getSampleFileName("TestPackageCorePropertiesSetters.docx");
 
-        File outputFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageCoreProperiesSettersOUTPUT.docx");
+        File outputFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageCorePropertiesSettersOUTPUT.docx");
 
         // Open package
         @SuppressWarnings("resource")
