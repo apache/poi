@@ -568,7 +568,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     /**
      * Adds a picture to the workbook.
      *
-     * @param is                The sream to read image from
+     * @param is                The stream to read image from
      * @param format            The format of the picture.
      *
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
