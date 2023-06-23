@@ -931,7 +931,7 @@ public class AddDimensionedImage {
         // of pixels per inch. Displays and printers differ but 96 pixels per
         // inch is an acceptable standard to begin with.
         public static final int PIXELS_PER_INCH = 96;
-        // Cnstants that defines how many pixels and points there are in a
+        // Constants that defines how many pixels and points there are in a
         // millimetre. These values are required for the conversion algorithm.
         public static final double PIXELS_PER_MILLIMETRES = 3.78;
         public static final double POINTS_PER_MILLIMETRE = 2.83;
