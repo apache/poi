@@ -561,7 +561,7 @@ public class ToCSV {
      * characters. If the data in a worksheet is exported as a CSV file using
      * Excel itself, then the field will be surounded with speech marks. If the
      * resulting CSV file is then re-imports into another worksheet, the EOL
-     * character will result in the original simgle field occupying more than
+     * character will result in the original single field occupying more than
      * one cell. This same 'feature' is replicated in this classes behaviour.
      *
      * @param field An instance of the String class encapsulating the formatted
