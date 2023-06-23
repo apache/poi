@@ -110,7 +110,7 @@ public final class XSSFName implements Name {
     /**
      * Creates an XSSFName object - called internally by XSSFWorkbook.
      *
-     * @param name - the xml bean that holds data represenring this defined name.
+     * @param name - the xml bean that holds data representing this defined name.
      * @param workbook - the workbook object associated with the name
      * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createName()
      */
