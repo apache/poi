@@ -93,7 +93,7 @@ public abstract class BaseTestNamedRange {
             String[] invalidNames = {"", "123", "1Name", "Named Range"};
             for (String name : invalidNames) {
                 assertThrows(IllegalArgumentException.class, () -> name1.setNameName(name),
-                    "should have thrown exceptiuon due to invalid name: " + name);
+                    "should have thrown exception due to invalid name: " + name);
             }
         }
     }
