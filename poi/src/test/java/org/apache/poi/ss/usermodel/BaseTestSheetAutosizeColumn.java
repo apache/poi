@@ -184,7 +184,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         assertEquals(sheet.getColumnWidth(6), sheet.getColumnWidth(5)); // date formatted as 'mmm/dd/yyyy'
 
         // YK: width of not-evaluated formulas that return data is not determined
-        // POI seems to conevert '0' to Excel date which is the beginning of the Excel's date system
+        // POI seems to convert '0' to Excel date which is the beginning of the Excel's date system
 
         // evaluate formulas and re-autosize
         evaluateWorkbook(workbook);
