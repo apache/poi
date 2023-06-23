@@ -40,12 +40,12 @@ import static org.apache.logging.log4j.util.Unbox.box;
 public final class HeadersFootersContainer extends RecordContainer {
 
     /**
-     * "instance" field in the record header indicating that this HeadersFootersContaine
+     * "instance" field in the record header indicating that this HeadersFootersContainer
      *  is applied for slides
      */
     public static final short SlideHeadersFootersContainer = 0x3F;
     /**
-      * "instance" field in the record header indicating that this HeadersFootersContaine
+      * "instance" field in the record header indicating that this HeadersFootersContainer
      *   is applied for notes and handouts
       */
     public static final short NotesHeadersFootersContainer = 0x4F;

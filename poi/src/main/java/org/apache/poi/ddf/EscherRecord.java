@@ -218,7 +218,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
 
     /**
      * @return  Returns the children of this record.  By default this will
-     *          be an empty list.  EscherCotainerRecord is the only record
+     *          be an empty list.  EscherContainerRecord is the only record
      *          that may contain children.
      *
      * @see EscherContainerRecord

@@ -1334,7 +1334,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
      * ---***
      * --***
      * -EscherDgRecord
-     * set id for the sp record of the first spContainer in main spgrConatiner
+     * set id for the sp record of the first spContainer in main spgrContainer
      * @param shapeId - id which must be set
      */
     public void setMainSpRecordId(int shapeId) {
