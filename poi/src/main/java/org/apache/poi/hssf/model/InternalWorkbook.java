@@ -1735,7 +1735,7 @@ public final class InternalWorkbook {
 
 
     /**
-     * Returns the first occurance of a record matching a particular sid.
+     * Returns the first occurrence of a record matching a particular sid.
      *
      * @param sid the sid
      *
@@ -1767,7 +1767,7 @@ public final class InternalWorkbook {
     }
 
     /**
-     * Returns the next occurance of a record matching a particular sid.
+     * Returns the next occurrence of a record matching a particular sid.
      *
      * @param sid the sid
      * @param pos specifies the n-th matching sid
