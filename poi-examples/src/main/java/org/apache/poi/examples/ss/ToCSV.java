@@ -306,7 +306,7 @@ public class ToCSV {
                     ToCSV.EXCEL_STYLE_ESCAPING + " or " + ToCSV.UNIX_STYLE_ESCAPING);
         }
 
-        // Copy the spearator character and formatting convention into local
+        // Copy the separator character and formatting convention into local
         // variables for use in other methods.
         this.separator = separator;
         this.formattingConvention = formattingConvention;
