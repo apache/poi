@@ -822,7 +822,7 @@ public final class HSSFSheet implements Sheet {
      *
      * It is recommended to force recalcuation of formulas on workbook level using
      * {@link Workbook#setForceFormulaRecalculation(boolean)}
-     * to ensure that all cross-worksheet formuals and external dependencies are updated.
+     * to ensure that all cross-worksheet formulas and external dependencies are updated.
      *
      * @param value true if the application will perform a full recalculation of
      *              this worksheet values when the workbook is opened

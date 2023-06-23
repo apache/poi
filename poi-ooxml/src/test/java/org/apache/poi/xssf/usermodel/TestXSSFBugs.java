@@ -1377,7 +1377,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * Bugzilla 51710: problems reading shared formuals from .xlsx
+     * Bugzilla 51710: problems reading shared formulas from .xlsx
      */
     @Test
     void bug51710() throws IOException {

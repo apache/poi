@@ -2082,7 +2082,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      *  <p>
      *  It is recommended to force recalcuation of formulas on workbook level using
      *  {@link Workbook#setForceFormulaRecalculation(boolean)}
-     *  to ensure that all cross-worksheet formuals and external dependencies are updated.
+     *  to ensure that all cross-worksheet formulas and external dependencies are updated.
      *  </p>
      * @param value true if the application will perform a full recalculation of
      * this worksheet values when the workbook is opened
