@@ -166,7 +166,7 @@ public abstract class Record implements GenericRecord
         // We use the RecordTypes class to provide us with the right
         //  class to use for a given type
         // A spot of reflection gets us the (byte[],int,int) constructor
-        // From there, we instanciate the class
+        // From there, we instantiate the class
         // Any special record handling occurs once we have the class
         RecordTypes recordType = RecordTypes.forTypeID((short) type);
         RecordConstructor c = recordType.recordConstructor;
