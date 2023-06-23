@@ -105,7 +105,7 @@ public final class TestTable {
 
     // Table(rownum, colnum) must throw IllegalArgumentException if any of the arguments is less than 1
     @Test
-    void testIllegalRowCnstruction() throws IOException {
+    void testIllegalRowConstruction() throws IOException {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFSlide slide = ppt.createSlide();
             assertThrows(IllegalArgumentException.class, () -> slide.createTable(0, 5));
