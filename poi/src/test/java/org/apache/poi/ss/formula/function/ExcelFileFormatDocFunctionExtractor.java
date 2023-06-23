@@ -168,7 +168,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
             _groupFunctionNames = new HashSet<>();
         }
 
-        public void addFuntion(int funcIx, boolean hasFootnote, String funcName, int minParams, int maxParams,
+        public void addFunction(int funcIx, boolean hasFootnote, String funcName, int minParams, int maxParams,
                 String returnClass, String paramClasses, String volatileFlagStr) {
             boolean isVolatile = volatileFlagStr.length() > 0;
 
@@ -360,7 +360,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
             String paramClasses = cellData[i + 5];
             String volatileFlagStr = cellData[i + 6];
 
-            _fdc.addFuntion(funcIx, hasFootnote, funcName, minParams, maxParams, returnClass, paramClasses, volatileFlagStr);
+            _fdc.addFunction(funcIx, hasFootnote, funcName, minParams, maxParams, returnClass, paramClasses, volatileFlagStr);
         }
 
         private static int parseInt(String valStr) {
