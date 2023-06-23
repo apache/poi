@@ -32,7 +32,7 @@ import org.apache.poi.util.Removal;
  * High level representation of a cell in a row of a spreadsheet.
  * <p>
  * Cells can be numeric, formula-based or string-based (text).  The cell type
- * specifies this.  String cells cannot conatin numbers and numeric cells cannot
+ * specifies this.  String cells cannot contain numbers and numeric cells cannot
  * contain strings (at least according to our model).  Client apps should do the
  * conversions themselves.  Formula cells have the formula string, as well as
  * the formula result, which can be numeric or string.

@@ -922,7 +922,7 @@ public class AddDimensionedImage {
      */
     public static class ConvertImageUnits {
 
-        // Each cell conatins a fixed number of co-ordinate points; this number
+        // Each cell contains a fixed number of co-ordinate points; this number
         // does not vary with row height or column width or with font. These two
         // constants are defined below.
         public static final int TOTAL_COLUMN_COORDINATE_POSITIONS = 1023;
