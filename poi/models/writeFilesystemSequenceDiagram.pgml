@@ -1486,7 +1486,7 @@
       strokecolor="-16777216"
       font="dialog"
       textsize="9"
-    > : add the propert to the block</text>
+    > : add the property to the block</text>
   </group>
   <group name="Fig23.1"
        description="org.argouml.uml.diagram.sequence.ui.FigSeqStimulus[587, 572, 111, 14]"
