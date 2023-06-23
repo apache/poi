@@ -269,7 +269,7 @@ public final class Countif extends Fixed2ArgFunction {
             } else if((x instanceof NumberEval)) {
                 switch (getCode()) {
                     case CmpOp.NE:
-                        // not-equals comparison of a number to boolean always returnes false
+                        // not-equals comparison of a number to boolean always returns false
                         return true;
                     default:
                         return false;
