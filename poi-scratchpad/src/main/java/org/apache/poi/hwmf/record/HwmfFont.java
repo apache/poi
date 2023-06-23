@@ -224,7 +224,7 @@ public class HwmfFont implements FontInfo, GenericRecord {
 
         /**
          * Specifies that the character quality of the font is less important than the
-         * matching of logical attribuetes. For rasterized fonts, scaling SHOULD be enabled, which
+         * matching of logical attributes. For rasterized fonts, scaling SHOULD be enabled, which
          * means that more font sizes are available.
          */
         DRAFT_QUALITY (0x01),

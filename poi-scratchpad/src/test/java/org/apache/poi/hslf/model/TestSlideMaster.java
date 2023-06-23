@@ -252,7 +252,7 @@ public final class TestSlideMaster {
     }
 
     /**
-     * Varify we can read attrubutes for different identtation levels.
+     * Varify we can read attributes for different identtation levels.
      * (typical for the "bullted body" placeholder)
      */
     @Test
