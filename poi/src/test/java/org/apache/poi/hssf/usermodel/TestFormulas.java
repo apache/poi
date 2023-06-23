@@ -319,7 +319,7 @@ final class TestFormulas {
 
 
     /**
-     * tests order wrting out == order writing in for a given formula
+     * tests order writing out == order writing in for a given formula
      */
     private static void orderTest(String formula) throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
