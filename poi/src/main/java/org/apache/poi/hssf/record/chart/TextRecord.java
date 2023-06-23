@@ -389,7 +389,7 @@ public final class TextRecord extends StandardRecord {
 
     /**
      * Sets the auto color field value.
-     * true = automaticly selected colour, false = user-selected
+     * true = automatically selected colour, false = user-selected
      */
     public void setAutoColor(boolean value)
     {
@@ -397,7 +397,7 @@ public final class TextRecord extends StandardRecord {
     }
 
     /**
-     * true = automaticly selected colour, false = user-selected
+     * true = automatically selected colour, false = user-selected
      * @return  the auto color field value.
      */
     public boolean isAutoColor()
