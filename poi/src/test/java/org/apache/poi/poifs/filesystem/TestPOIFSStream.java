@@ -2533,7 +2533,7 @@ final class TestPOIFSStream {
             // Can't delete yet, has stuff
             assertFalse(vbaProj.delete());
             // Recursively delete
-            _recursiveDeletee(vbaProj);
+            _recursiveDelete(vbaProj);
 
             // Entries gone
             assertEquals(4, _countChildren(src._get_property_table().getRoot()));
@@ -2541,7 +2541,7 @@ final class TestPOIFSStream {
         }
     }
 
-    private void _recursiveDeletee(Entry entry) throws IOException {
+    private void _recursiveDelete(Entry entry) throws IOException {
         if (entry.isDocumentEntry()) {
             assertTrue(entry.delete());
             return;
@@ -2551,7 +2551,7 @@ final class TestPOIFSStream {
         String[] names = dir.getEntryNames().toArray(new String[dir.getEntryCount()]);
         for (String name : names) {
             Entry ce = dir.getEntry(name);
-            _recursiveDeletee(ce);
+            _recursiveDelete(ce);
         }
         assertTrue(dir.delete());
     }
