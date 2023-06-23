@@ -31,7 +31,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
  * Cell settings available in the Format/Alignment tab
  */
 public class XSSFCellAlignment {
-    private final CTCellAlignment cellAlignement;
+    private final CTCellAlignment cellAlignment;
 
     /**
      * Creates a Cell Alignment from the supplied XML definition
@@ -39,17 +39,17 @@ public class XSSFCellAlignment {
      * @param cellAlignment The low-level XML definition of the cell alignment
      */
     public XSSFCellAlignment(CTCellAlignment cellAlignment) {
-        this.cellAlignement = cellAlignment;
+        this.cellAlignment = cellAlignment;
     }
 
     /**
      * Get the type of vertical alignment for the cell
      *
-     * @return the type of aligment
+     * @return the type of alignment
      * @see VerticalAlignment
      */
     public VerticalAlignment getVertical() {
-        STVerticalAlignment.Enum align = cellAlignement.getVertical();
+        STVerticalAlignment.Enum align = cellAlignment.getVertical();
         if (align == null) align = STVerticalAlignment.BOTTOM;
 
         return VerticalAlignment.values()[align.intValue() - 1];
@@ -62,17 +62,17 @@ public class XSSFCellAlignment {
      * @see VerticalAlignment
      */
     public void setVertical(VerticalAlignment align) {
-        cellAlignement.setVertical(STVerticalAlignment.Enum.forInt(align.ordinal() + 1));
+        cellAlignment.setVertical(STVerticalAlignment.Enum.forInt(align.ordinal() + 1));
     }
 
     /**
      * Get the type of horizontal alignment for the cell
      *
-     * @return the type of aligment
+     * @return the type of alignment
      * @see HorizontalAlignment
      */
     public HorizontalAlignment getHorizontal() {
-        STHorizontalAlignment.Enum align = cellAlignement.getHorizontal();
+        STHorizontalAlignment.Enum align = cellAlignment.getHorizontal();
         if (align == null) align = STHorizontalAlignment.GENERAL;
 
         return HorizontalAlignment.values()[align.intValue() - 1];
@@ -85,7 +85,7 @@ public class XSSFCellAlignment {
      * @see HorizontalAlignment
      */
     public void setHorizontal(HorizontalAlignment align) {
-        cellAlignement.setHorizontal(STHorizontalAlignment.Enum.forInt(align.ordinal() + 1));
+        cellAlignment.setHorizontal(STHorizontalAlignment.Enum.forInt(align.ordinal() + 1));
     }
 
     /**
@@ -95,7 +95,7 @@ public class XSSFCellAlignment {
      * @see ReadingOrder
      */
     public void setReadingOrder(ReadingOrder order) {
-        cellAlignement.setReadingOrder(order.getCode());
+        cellAlignment.setReadingOrder(order.getCode());
     }
 
     /**
@@ -105,8 +105,8 @@ public class XSSFCellAlignment {
      * @see ReadingOrder
      */
     public ReadingOrder getReadingOrder() {
-        if(cellAlignement != null && cellAlignement.isSetReadingOrder()) {
-            return ReadingOrder.forLong(cellAlignement.getReadingOrder());
+        if(cellAlignment != null && cellAlignment.isSetReadingOrder()) {
+            return ReadingOrder.forLong(cellAlignment.getReadingOrder());
         }
         return ReadingOrder.CONTEXT;
     }
@@ -117,7 +117,7 @@ public class XSSFCellAlignment {
      * @return indent - number of spaces
      */
     public long getIndent() {
-        return cellAlignement.getIndent();
+        return cellAlignment.getIndent();
     }
 
     /**
@@ -126,7 +126,7 @@ public class XSSFCellAlignment {
      * @param indent - number of spaces
      */
     public void setIndent(long indent) {
-        cellAlignement.setIndent(indent);
+        cellAlignment.setIndent(indent);
     }
 
     /**
@@ -144,7 +144,7 @@ public class XSSFCellAlignment {
      * @return rotation degrees (between 0 and 180 degrees)
      */
     public long getTextRotation() {
-        return cellAlignement.isSetTextRotation() ? cellAlignement.getTextRotation().longValue() : 0;
+        return cellAlignment.isSetTextRotation() ? cellAlignment.getTextRotation().longValue() : 0;
     }
 
     /**
@@ -170,7 +170,7 @@ public class XSSFCellAlignment {
         if(rotation < 0 && rotation >= -90) {
             rotation = 90 + ((-1)*rotation);
         }
-        cellAlignement.setTextRotation(BigInteger.valueOf(rotation));
+        cellAlignment.setTextRotation(BigInteger.valueOf(rotation));
     }
 
     /**
@@ -179,7 +179,7 @@ public class XSSFCellAlignment {
      * @return a boolean value indicating if the text in a cell should be line-wrapped within the cell.
      */
     public boolean getWrapText() {
-        return cellAlignement.getWrapText();
+        return cellAlignment.getWrapText();
     }
 
     /**
@@ -188,15 +188,15 @@ public class XSSFCellAlignment {
      * @param wrapped a boolean value indicating if the text in a cell should be line-wrapped within the cell.
      */
     public void setWrapText(boolean wrapped) {
-        cellAlignement.setWrapText(wrapped);
+        cellAlignment.setWrapText(wrapped);
     }
 
     public boolean getShrinkToFit() {
-        return cellAlignement.getShrinkToFit();
+        return cellAlignment.getShrinkToFit();
     }
 
     public void setShrinkToFit(boolean shrink) {
-        cellAlignement.setShrinkToFit(shrink);
+        cellAlignment.setShrinkToFit(shrink);
     }
 
     /**
@@ -204,6 +204,6 @@ public class XSSFCellAlignment {
      */
     @Internal
     public CTCellAlignment getCTCellAlignment() {
-        return cellAlignement;
+        return cellAlignment;
     }
 }
