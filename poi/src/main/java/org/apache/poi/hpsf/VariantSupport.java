@@ -231,7 +231,7 @@ public class VariantSupport extends Variant {
              *
              * August 20, 2009
              */
-            // l1 = LittleEndian.getInt(src, o1); o1 += LittleEndianConts.INT_SIZE;
+            // l1 = LittleEndian.getInt(src, o1); o1 += LittleEndianConsts.INT_SIZE;
             // }
             // final byte[] v = new byte[l1];
             // System.arraycopy(src, o1, v, 0, v.length);
