@@ -47,7 +47,7 @@ public final class Ffn {
     private byte[] _panose = new byte[10];//????
     private byte[] _fontSig = new byte[24];//????
 
-    // zero terminated string that records name of font, cuurently not
+    // zero terminated string that records name of font, currently not
     // supporting Extended chars
     private char[] _xszFfn;
 
