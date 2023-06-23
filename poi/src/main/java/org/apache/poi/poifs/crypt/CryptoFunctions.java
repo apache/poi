@@ -112,7 +112,7 @@ public final class CryptoFunctions {
      * uses first the last hash value and then the current iterator value
      *
      * @param password the pasword
-     * @param hashAlgorithm the hash algorighm
+     * @param hashAlgorithm the hash algorithm
      * @param salt the initial salt value
      * @param spinCount the repetition count
      * @param iteratorFirst if true, the iterator is hashed before the n-1 hash value,
