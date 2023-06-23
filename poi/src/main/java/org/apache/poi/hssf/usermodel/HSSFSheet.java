@@ -2088,7 +2088,7 @@ public final class HSSFSheet implements Sheet {
     protected void validateRow(int row) {
         int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
         if (row > maxrow) throw new IllegalArgumentException("Maximum row number is " + maxrow);
-        if (row < 0) throw new IllegalArgumentException("Minumum row number is 0");
+        if (row < 0) throw new IllegalArgumentException("Minimum row number is 0");
     }
 
     /**

@@ -86,7 +86,7 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
     private static void validateRow(int row, SpreadsheetVersion ssVersion) {
         int maxrow = ssVersion.getLastRowIndex();
         if (row > maxrow) throw new IllegalArgumentException("Maximum row number is " + maxrow);
-        if (row < 0) throw new IllegalArgumentException("Minumum row number is 0");
+        if (row < 0) throw new IllegalArgumentException("Minimum row number is 0");
     }
 
     /**

@@ -28,7 +28,7 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Provides the minumum and maximum bounds of a sheet.
+ * Provides the minimum and maximum bounds of a sheet.
  *
  * @version 2.0-pre
  */
