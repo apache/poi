@@ -60,7 +60,7 @@ final class TestRecordFactoryInputStream {
      */
     @Test
     void defaultPasswordWrong() {
-        // This encodng depends on docId, password and stream position
+        // This encoding depends on docId, password and stream position
         final String SAMPLE_WINDOW1_ENCR1 = "3D 00 12 00"
             + "C4, 9B, 02, 50, 86, E0, DF, 34, FB, 57, 0E, 8C, CE, 25, 45, E3, 80, 01";
 
@@ -79,7 +79,7 @@ final class TestRecordFactoryInputStream {
 
     @Test
     void defaultPasswordOK() {
-        // This encodng depends on docId, password and stream position
+        // This encoding depends on docId, password and stream position
         final String SAMPLE_WINDOW1_ENCR1 = "3D 00 12 00"
             + "C4, 9B, 02, 50, 86, E0, DF, 34, FB, 57, 0E, 8C, CE, 25, 45, E3, 80, 01";
 
