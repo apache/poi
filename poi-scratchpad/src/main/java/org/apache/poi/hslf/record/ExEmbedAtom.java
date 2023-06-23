@@ -135,7 +135,7 @@ public class ExEmbedAtom extends RecordAtom {
     }
 
     /**
-     * Getswhether the object is a Word table.
+     * Gets whether the object is a Word table.
      *
      * @return {@code true} if the object is a Word table.
      */
