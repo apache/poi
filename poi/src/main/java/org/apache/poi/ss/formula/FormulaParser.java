@@ -1282,7 +1282,7 @@ public final class FormulaParser {
         if(result){
             /*
              * Check if the argument is a function. Certain names can be either a cell reference or a function name
-             * depending on the contenxt. Compare the following examples in Excel 2007:
+             * depending on the context. Compare the following examples in Excel 2007:
              * (a) LOG10(100) + 1
              * (b) LOG10 + 1
              * In (a) LOG10 is a name of a built-in function. In (b) LOG10 is a cell reference
