@@ -86,12 +86,12 @@ public class CheckFunctionsSupported {
             System.out.println();
             System.out.println("Sheet = " + sheetName);
 
-            if (probs.unevaluatableCells.isEmpty()) {
+            if (probs.unevaluableCells.isEmpty()) {
                 System.out.println(" All cells evaluated without error");
             } else {
-                for (CellReference cr : probs.unevaluatableCells.keySet()) {
+                for (CellReference cr : probs.unevaluableCells.keySet()) {
                     System.out.println(" " + cr.formatAsString() + " - " +
-                            probs.unevaluatableCells.get(cr));
+                            probs.unevaluableCells.get(cr));
                 }
             }
         }
@@ -123,7 +123,7 @@ public class CheckFunctionsSupported {
     }
     public FormulaEvaluationProblems getEvaluationProblems(Sheet sheet) {
         Set<String> unsupportedFunctions = new HashSet<>();
-        Map<CellReference,Exception> unevaluatableCells = new HashMap<>();
+        Map<CellReference,Exception> unevaluableCells = new HashMap<>();
 
         for (Row r : sheet) {
             for (Cell c : r) {
@@ -139,24 +139,24 @@ public class CheckFunctionsSupported {
                         NotImplementedFunctionException nie = (NotImplementedFunctionException)e;
                         unsupportedFunctions.add(nie.getFunctionName());
                     }
-                    unevaluatableCells.put(new CellReference(c), e);
+                    unevaluableCells.put(new CellReference(c), e);
                 }
             }
         }
 
-        return new FormulaEvaluationProblems(unsupportedFunctions, unevaluatableCells);
+        return new FormulaEvaluationProblems(unsupportedFunctions, unevaluableCells);
     }
 
     public static class FormulaEvaluationProblems {
         /** Which used functions are unsupported by POI at this time */
         private final Set<String> unsupportedFunctions;
-        /** Which cells had unevaluatable formulas, and why? */
-        private final Map<CellReference,Exception> unevaluatableCells;
+        /** Which cells had unevaluable formulas, and why? */
+        private final Map<CellReference,Exception> unevaluableCells;
 
         protected FormulaEvaluationProblems(Set<String> unsupportedFunctions,
-                             Map<CellReference, Exception> unevaluatableCells) {
+                             Map<CellReference, Exception> unevaluableCells) {
             this.unsupportedFunctions = Collections.unmodifiableSet(unsupportedFunctions);
-            this.unevaluatableCells = Collections.unmodifiableMap(unevaluatableCells);
+            this.unevaluableCells = Collections.unmodifiableMap(unevaluableCells);
         }
     }
 }
