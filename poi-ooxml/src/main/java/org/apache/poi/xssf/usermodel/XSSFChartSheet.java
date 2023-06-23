@@ -56,7 +56,7 @@ public class XSSFChartSheet extends XSSFSheet  {
 
     @Override
     protected void read(InputStream is) throws IOException {
-        //initialize the supeclass with a blank worksheet
+        //initialize the superclass with a blank worksheet
         super.read(UnsynchronizedByteArrayInputStream.builder().setByteArray(BLANK_WORKSHEET).get());
 
         try {
