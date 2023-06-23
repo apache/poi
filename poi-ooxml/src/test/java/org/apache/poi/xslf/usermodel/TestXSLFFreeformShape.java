@@ -43,7 +43,7 @@ class TestXSLFFreeformShape {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
         XSLFFreeformShape shape1 = slide.createFreeform();
-        // comples path consisting of a rectangle and an ellipse inside it
+        // complex path consisting of a rectangle and an ellipse inside it
         Path2D.Double path1 = new Path2D.Double(new Rectangle2D.Double(150, 150, 300, 300));
         path1.append(new Ellipse2D.Double(200, 200, 100, 50), false);
         shape1.setPath(path1);
