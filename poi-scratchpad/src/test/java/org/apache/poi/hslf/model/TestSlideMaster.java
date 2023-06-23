@@ -253,7 +253,7 @@ public final class TestSlideMaster {
 
     /**
      * Varify we can read attributes for different identtation levels.
-     * (typical for the "bullted body" placeholder)
+     * (typical for the "bulleted body" placeholder)
      */
     @Test
     void testIndentation() throws IOException {
