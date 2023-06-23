@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Tests to verify that we can read a simple msg file, that is in plain/text
- *  format with no attachments or extra recipents.
+ *  format with no attachments or extra recipients.
  */
 public final class TestSimpleFileRead {
     private final MAPIMessage mapiMessage;
