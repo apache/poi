@@ -608,7 +608,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
                 setFillBackgroundColor((short)(autoIdx+1));
             }
         } else if (_format.getFillBackground() == autoIdx+1) {
-            //Now if the forground changes to a non-AUTOMATIC color the background resets itself!!!
+            //Now if the foreground changes to a non-AUTOMATIC color the background resets itself!!!
             if (_format.getFillForeground() != autoIdx) {
                 setFillBackgroundColor(autoIdx);
             }

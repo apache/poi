@@ -1274,7 +1274,7 @@ public final class ExtendedFormatRecord extends StandardRecord {
 
     /**
      * get whether or not to use the pattern in this XF instead of the parent XF.
-     * (foregrount/background)
+     * (foreground/background)
      *
      * @return pattern- true if this XF has a different pattern value than its parent,
      *                 false otherwise.
