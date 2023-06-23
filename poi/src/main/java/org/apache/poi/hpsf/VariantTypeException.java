@@ -19,7 +19,7 @@ package org.apache.poi.hpsf;
 
 /**
  * <p>This exception is thrown if HPSF encounters a problem with a variant type.
- * Concrete subclasses specifiy the problem further.</p>
+ * Concrete subclasses specify the problem further.</p>
  */
 public abstract class VariantTypeException extends HPSFException
 {
