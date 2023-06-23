@@ -929,7 +929,7 @@ public class AddDimensionedImage {
         public static final int TOTAL_ROW_COORDINATE_POSITIONS = 255;
         // The resoultion of an image can be expressed as a specific number
         // of pixels per inch. Displays and printers differ but 96 pixels per
-        // inch is an acceptable standard to beging with.
+        // inch is an acceptable standard to begin with.
         public static final int PIXELS_PER_INCH = 96;
         // Cnstants that defines how many pixels and points there are in a
         // millimetre. These values are required for the conversion algorithm.
