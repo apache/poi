@@ -22,7 +22,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.provider.Arguments;
 
 /**
- * Tests for numeric functions with two arguments such aqs +, -, *, POWER
+ * Tests for numeric functions with two arguments such as +, -, *, POWER
  * as loaded from a test data spreadsheet.
  */
 class TestTwoOperandNumericFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
