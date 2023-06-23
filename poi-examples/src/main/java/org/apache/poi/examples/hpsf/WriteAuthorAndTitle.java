@@ -152,7 +152,7 @@ public final class WriteAuthorAndTitle {
             try (InputStream is = isSup.get()) {
                 final POIFSDocumentPath path = event.getPath();
 
-                // Ensures that the directory hierarchy for a document in a POI fileystem is in place.
+                // Ensures that the directory hierarchy for a document in a POI filesystem is in place.
                 // Get the root directory. It does not have to be created since it always exists in a POIFS.
                 DirectoryEntry de = poiFs.getRoot();
 
