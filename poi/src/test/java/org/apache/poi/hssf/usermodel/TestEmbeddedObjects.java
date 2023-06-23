@@ -58,7 +58,7 @@ class TestEmbeddedObjects {
     }
 
     /**
-     * One with large numbers of recursivly embedded resources
+     * One with large numbers of recursively embedded resources
      * See https://github.com/apache/poi/pull/2
      */
     @Test
