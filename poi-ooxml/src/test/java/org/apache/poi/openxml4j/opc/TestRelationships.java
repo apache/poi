@@ -48,7 +48,7 @@ class TestRelationships {
 
     /**
      * Test relationships are correctly loaded. This at the moment fails (as of r499)
-     * whenever a document is loaded before its correspondig .rels file has been found.
+     * whenever a document is loaded before its corresponding .rels file has been found.
      * The code in this case assumes there are no relationships defined, but it should
      * really look also for not yet loaded parts.
      */
