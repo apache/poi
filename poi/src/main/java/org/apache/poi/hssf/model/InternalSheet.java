@@ -885,7 +885,7 @@ public final class InternalSheet {
     }
 
     /**
-     * creates the Guts record and sets leftrow/topcol guttter and rowlevelmax/collevelmax to 0
+     * creates the Guts record and sets leftrow/topcol gutter and rowlevelmax/collevelmax to 0
       */
     private static GutsRecord createGuts() {
         GutsRecord retval = new GutsRecord();
