@@ -466,14 +466,14 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * and the bottom of the inscribed rectangle of the shape that contains the text.
      * Default value is 1/20 inch.
      *
-     * @return the botom margin
+     * @return the bottom margin
      */
     public double getBottomInset(){
         return getInset(EscherPropertyTypes.TEXT__TEXTBOTTOM, .05);
     }
 
     /**
-     * Sets the botom margin.
+     * Sets the bottom margin.
      * @see #getBottomInset()
      *
      * @param margin    the bottom margin
