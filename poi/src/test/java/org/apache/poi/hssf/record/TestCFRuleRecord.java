@@ -311,9 +311,9 @@ final class TestCFRuleRecord {
         fontFormatting.setEscapementTypeModified(true);
         assertTrue(fontFormatting.isEscapementTypeModified());
 
-        fontFormatting.setFontWieghtModified(false);
+        fontFormatting.setFontWeightModified(false);
         assertFalse(fontFormatting.isFontWeightModified());
-        fontFormatting.setFontWieghtModified(true);
+        fontFormatting.setFontWeightModified(true);
         assertTrue(fontFormatting.isFontWeightModified());
 
         fontFormatting.setFontCancellationModified(false);

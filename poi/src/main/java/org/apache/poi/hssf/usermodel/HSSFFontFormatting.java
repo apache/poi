@@ -230,7 +230,7 @@ public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.Fon
         fontFormatting.setItalic(italic);
         fontFormatting.setBold(bold);
         fontFormatting.setFontStyleModified(modified);
-        fontFormatting.setFontWieghtModified(modified);
+        fontFormatting.setFontWeightModified(modified);
     }
 
     /**
