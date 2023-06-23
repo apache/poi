@@ -726,7 +726,7 @@ public class ToCSV {
          * @param name An instance of the String class that encapsulates the
          *             name of the file.
          * @return A boolean value that indicates whether the file should be
-         *         included in the array retirned by the call to the listFiles()
+         *         included in the array returned by the call to the listFiles()
          *         method. In this case true will be returned if the name of the
          *         file ends with either '.xls' or '.xlsx' and false will be
          *         returned in all other instances.
