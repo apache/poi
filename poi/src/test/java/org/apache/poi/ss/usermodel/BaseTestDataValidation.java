@@ -164,11 +164,11 @@ public abstract class BaseTestDataValidation {
         }
 
         private static void writeOtherSettings(Sheet sheet, CellStyle style,
-            String strStettings) {
+            String strSettings) {
             Row row = sheet.getRow(sheet.getPhysicalNumberOfRows() - 1);
             Cell cell = row.createCell(5);
             cell.setCellStyle(style);
-            setCellValue(cell, strStettings);
+            setCellValue(cell, strSettings);
         }
 
         void addListValidation(String[] explicitListValues, String listFormula, String listValsDescr,

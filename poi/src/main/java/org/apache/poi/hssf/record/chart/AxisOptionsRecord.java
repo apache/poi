@@ -383,7 +383,7 @@ public final class AxisOptionsRecord extends StandardRecord {
 
     /**
      * Sets the default date settings field value.
-     * use default date setttings for this axis
+     * use default date settings for this axis
      */
     public void setDefaultDateSettings(boolean value)
     {
@@ -391,7 +391,7 @@ public final class AxisOptionsRecord extends StandardRecord {
     }
 
     /**
-     * use default date setttings for this axis
+     * use default date settings for this axis
      * @return  the default date settings field value.
      */
     public boolean isDefaultDateSettings()
