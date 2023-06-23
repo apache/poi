@@ -59,7 +59,7 @@ public abstract class BaseTestHyperlink {
         cell = sheet.createRow(1).createCell((short) 0);
         cell.setCellValue("File Link");
         link = createHelper.createHyperlink(HyperlinkType.FILE);
-        link.setAddress("hyperinks-beta4-dump.txt");
+        link.setAddress("hyperlinks-beta4-dump.txt");
         cell.setHyperlink(link);
 
         //e-mail link
@@ -90,7 +90,7 @@ public abstract class BaseTestHyperlink {
 
         assertEquals("https://poi.apache.org/", link.getAddress());
         link = sheet.getRow(1).getCell(0).getHyperlink();
-        assertEquals("hyperinks-beta4-dump.txt", link.getAddress());
+        assertEquals("hyperlinks-beta4-dump.txt", link.getAddress());
         link = sheet.getRow(2).getCell(0).getHyperlink();
         assertEquals("mailto:poi@apache.org?subject=Hyperlinks", link.getAddress());
         link = sheet.getRow(3).getCell(0).getHyperlink();
