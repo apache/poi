@@ -405,7 +405,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         XSSFGraphicFrame graphicFrame = new XSSFGraphicFrame(this, ctGraphicFrame);
         graphicFrame.setAnchor(anchor);
         graphicFrame.setId(frameId);
-        graphicFrame.setName("Diagramm" + frameId);
+        graphicFrame.setName("Diagram" + frameId);
         return graphicFrame;
     }
 
