@@ -128,7 +128,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
                 consumedSize += wr.init(leis, recordSize, recordFunction);
                 int remainingSize = (int)(recordSize - consumedSize);
                 if (remainingSize < 0) {
-                    throw new RecordFormatException("read too many bytes. record size: "+recordSize + "; comsumed size: "+consumedSize);
+                    throw new RecordFormatException("read too many bytes. record size: "+recordSize + "; consumed size: "+consumedSize);
                 } else if(remainingSize > 0) {
                     long skipped = IOUtils.skipFully(leis, remainingSize);
                     if (skipped != (long)remainingSize) {
