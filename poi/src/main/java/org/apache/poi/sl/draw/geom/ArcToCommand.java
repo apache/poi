@@ -137,7 +137,7 @@ public class ArcToCommand implements ArcToCommandIf {
         // normalize angle, in case it's < -360 or > 360 degrees
         double awtAngle2 = awtAngle%360.;
         double awtAngle3 = awtAngle-awtAngle2;
-        // because of tangens nature, the values left [90°-270°] and right [270°-90°] of the axis are mirrored/the same
+        // because of tangent's nature, the values left [90°-270°] and right [270°-90°] of the axis are mirrored/the same
         // and the result of atan2 need to be justified
         switch ((int)(awtAngle2 / 90)) {
             case -3:
