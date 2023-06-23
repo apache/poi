@@ -1613,7 +1613,7 @@ public final class ExtendedFormatRecord extends StandardRecord {
     // fill palette options
 
     /**
-     * get the fill palette options bitmask (see indivdual bit getters that
+     * get the fill palette options bitmask (see individual bit getters that
      * reference this method)
      *
      * @return options
