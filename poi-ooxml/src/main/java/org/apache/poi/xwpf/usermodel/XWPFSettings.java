@@ -464,7 +464,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * Turn mirrored margins on or off
      *
      * @param enable {@code true} to turn on mirrored margins,
-     * {@code false} to turn off mirrored marginss.
+     * {@code false} to turn off mirrored margins.
      */
     public void setMirrorMargins(boolean enable) {
         CTOnOff onOff = CTOnOff.Factory.newInstance();
