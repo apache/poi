@@ -27,7 +27,7 @@ public interface Paragraph {
 //  public boolean isTableRowEnd();
 //  public int getTableLevel();
 
-    // TODO Implement justifaction in XWPF
+    // TODO Implement justification in XWPF
 //  public int getJustification();
 //  public void setJustification(byte jc);
 
