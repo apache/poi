@@ -127,7 +127,7 @@ public final class TestTable {
      */
     @Test
     void test57820() throws IOException {
-        try (SlideShow<?,?> ppt = getSlideShow("bug57820-initTableNullRefrenceException.ppt")) {
+        try (SlideShow<?,?> ppt = getSlideShow("bug57820-initTableNullReferenceException.ppt")) {
 
             List<? extends Slide<?, ?>> slides = ppt.getSlides();
             assertEquals(1, slides.size());
