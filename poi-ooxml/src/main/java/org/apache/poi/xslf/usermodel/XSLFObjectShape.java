@@ -238,7 +238,7 @@ public class XSLFObjectShape extends XSLFGraphicFrame implements ObjectShape<XSL
         CTGraphicalObjectFrameNonVisual nvGr = frame.addNewNvGraphicFramePr();
 
         CTNonVisualDrawingProps cnv = nvGr.addNewCNvPr();
-        // usually the shape name has its index based on the n-th embeding, but having
+        // usually the shape name has its index based on the n-th embedding, but having
         // the prototype separate from the actual updating of the object, we use the shape id
         cnv.setName("Object " + shapeId);
         cnv.setId(shapeId);
