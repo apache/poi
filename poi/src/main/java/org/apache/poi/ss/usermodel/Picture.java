@@ -20,7 +20,7 @@ import java.awt.Dimension;
 
 
 /**
- * Repersents a picture in a SpreadsheetML document
+ * Represents a picture in a SpreadsheetML document
  */
 public interface Picture extends Shape {
 
