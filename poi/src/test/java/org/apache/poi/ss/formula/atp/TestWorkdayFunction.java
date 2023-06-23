@@ -40,11 +40,11 @@ import org.junit.jupiter.api.Test;
 
 class TestWorkdayFunction {
 
-    private static final String STARTING_DATE      = "2008/10/01";
-    private static final String FIRST_HOLIDAY      = "2008/11/26";
-    private static final String SECOND_HOLIDAY     = "2008/12/04";
-    private static final String THIRD_HOLIDAY      = "2009/01/21";
-    private static final String RETROATIVE_HOLIDAY = "2008/09/29";
+    private static final String STARTING_DATE       = "2008/10/01";
+    private static final String FIRST_HOLIDAY       = "2008/11/26";
+    private static final String SECOND_HOLIDAY      = "2008/12/04";
+    private static final String THIRD_HOLIDAY       = "2009/01/21";
+    private static final String RETROACTIVE_HOLIDAY = "2008/09/29";
 
     private static final OperationEvaluationContext EC = new OperationEvaluationContext(null, null, 1, 1, 1, null);
 
@@ -146,11 +146,11 @@ class TestWorkdayFunction {
     }
 
     @Test
-    void testReturnRetroativeWorkday() {
+    void testReturnRetroactiveWorkday() {
         Calendar expCal = LocaleUtil.getLocaleCalendar(2008, 8, 23);
         Date expDate = expCal.getTime();
 
-        ValueEval[] ve = {new StringEval(STARTING_DATE), new NumberEval(-5), new StringEval(RETROATIVE_HOLIDAY)};
+        ValueEval[] ve = {new StringEval(STARTING_DATE), new NumberEval(-5), new StringEval(RETROACTIVE_HOLIDAY)};
         double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
 
         Date actDate = DateUtil.getJavaDate(numberValue);
