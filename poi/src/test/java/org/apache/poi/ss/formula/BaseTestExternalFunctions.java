@@ -107,7 +107,7 @@ public abstract class BaseTestExternalFunctions {
             assertEquals("ISODD(1)+ISEVEN(2)", cell1.getCellFormula());
 
             Cell cell2 = sh.createRow(1).createCell(0);
-            // unregistered functions are parseable and renderable, but may not be evaluateable
+            // unregistered functions are parseable and renderable, but may not be evaluable
             cell2.setCellFormula("MYFUNC(\"B1\")");
             NotImplementedException e = assertThrows(NotImplementedException.class, () -> evaluator.evaluate(cell2),
                 "Expected NotImplementedFunctionException/NotImplementedException");
