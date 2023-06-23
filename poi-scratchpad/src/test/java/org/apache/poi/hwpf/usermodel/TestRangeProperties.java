@@ -96,7 +96,7 @@ public final class TestRangeProperties {
 
         // no PAP reconstruction
         // assertEquals( 7, r.numParagraphs() );
-        // with PAP reconstructon
+        // with PAP reconstruction
         assertEquals( 8, r.numParagraphs() );
 
         String[] p1_parts = a_page_1.split("\r");
