@@ -191,7 +191,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
     public abstract int serialize( int offset, byte[] data, EscherSerializationListener listener );
 
     /**
-     * Subclasses should effeciently return the number of bytes required to
+     * Subclasses should efficiently return the number of bytes required to
      * serialize the record.
      *
      * @return  number of bytes
