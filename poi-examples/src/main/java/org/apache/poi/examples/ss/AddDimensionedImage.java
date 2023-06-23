@@ -647,7 +647,7 @@ public class AddDimensionedImage {
             // A problem could occur if the image is sized to fit into one or
             // more columns. If that occurs, the value in the toColumn variable
             // will be in error. To overcome this, there are two options, to
-            // ibcrement the toColumn variable's value by one or to pass the
+            // increment the toColumn variable's value by one or to pass the
             // total number of co-ordinate positions to the third paramater
             // of the ClientAnchorDetail constructor. For no sepcific reason,
             // the latter option is used below.
