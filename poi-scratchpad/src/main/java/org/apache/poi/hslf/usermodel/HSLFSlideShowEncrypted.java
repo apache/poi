@@ -230,7 +230,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
             int endOffset = offset + rlen;
 
             if (recType == 0xF007) {
-                // TOOD: get a real example file ... to actual test the FBSE entry
+                // TODO: get a real example file ... to actual test the FBSE entry
                 // not sure where the foDelay block is
 
                 // File BLIP Store Entry (FBSE)
@@ -308,7 +308,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
             int endOffset = offset + rlen;
 
             if (recType == 0xF007) {
-                // TOOD: get a real example file ... to actual test the FBSE entry
+                // TODO: get a real example file ... to actual test the FBSE entry
                 // not sure where the foDelay block is
 
                 // File BLIP Store Entry (FBSE)

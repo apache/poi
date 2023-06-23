@@ -50,7 +50,7 @@ public class SVGImageRenderer implements ImageRenderer {
 
     public SVGImageRenderer() {
         String parser = XMLResourceDescriptor.getXMLParserClassName();
-        // TOOO: tell the batik guys to use secure parsing feature
+        // TODO: tell the batik guys to use secure parsing feature
         svgFact = new SAXSVGDocumentFactory(parser);
         SVGUserAgent agent = new SVGUserAgent();
 

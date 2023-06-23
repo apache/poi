@@ -860,7 +860,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
     @Override
     public void setTextPlaceholder(TextPlaceholder placeholder) {
-        // TOOD: check for correct placeholder handling - see org.apache.poi.hslf.model.Placeholder
+        // TODO: check for correct placeholder handling - see org.apache.poi.hslf.model.Placeholder
         Placeholder ph = null;
         int runType;
         switch (placeholder) {
