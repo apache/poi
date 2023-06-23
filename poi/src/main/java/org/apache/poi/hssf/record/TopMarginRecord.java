@@ -79,6 +79,6 @@ public final class TopMarginRecord extends StandardRecord implements Margin {
 
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {
-        return GenericRecordUtil.getGenericProperties("magin", this::getMargin);
+        return GenericRecordUtil.getGenericProperties("margin", this::getMargin);
     }
 }
