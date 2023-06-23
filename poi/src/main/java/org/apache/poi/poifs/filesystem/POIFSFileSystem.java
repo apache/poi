@@ -639,7 +639,7 @@ public class POIFSFileSystem extends BlockStore
     }
 
     /**
-     * add a new POIFSDocument to the FileSytem
+     * add a new POIFSDocument to the FileSystem
      *
      * @param document the POIFSDocument being added
      */
