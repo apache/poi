@@ -26,7 +26,7 @@ public enum ShapeType {
     NOT_PRIMITIVE(-1, 0, "NotPrimitive"),
     LINE(1, 20, "Line"),
     LINE_INV(2, -1, null),
-    TRIANGLE(3, 5, "IsocelesTriangle"),
+    TRIANGLE(3, 5, "IsoscelesTriangle"),
     RT_TRIANGLE(4, 6, "RightTriangle"),
     RECT(5, 1, "Rectangle"),
     DIAMOND(6, 4, "Diamond"),

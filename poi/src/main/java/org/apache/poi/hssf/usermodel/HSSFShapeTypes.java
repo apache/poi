@@ -23,7 +23,7 @@ public interface HSSFShapeTypes {
     public static final int RoundRectangle = 2;
     public static final int Ellipse = 3;
     public static final int Diamond = 4;
-    public static final int IsocelesTriangle = 5;
+    public static final int IsoscelesTriangle = 5;
     public static final int RightTriangle = 6;
     public static final int Parallelogram = 7;
     public static final int Trapezoid = 8;
