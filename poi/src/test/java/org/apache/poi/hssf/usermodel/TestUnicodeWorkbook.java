@@ -29,7 +29,7 @@ final class TestUnicodeWorkbook {
 
     /**
      *  Tests Bug38230
-     *  That a Umlat is written  and then read back.
+     *  That an Umlat is written  and then read back.
      *  It should have been written as a compressed unicode.
      */
     @Test
