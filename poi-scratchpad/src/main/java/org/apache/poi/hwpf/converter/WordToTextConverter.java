@@ -407,7 +407,7 @@ public class WordToTextConverter extends AbstractWordConverter
             Section section, int s )
     {
         Element sectionElement = textDocumentFacade.createBlock();
-        processParagraphes( wordDocument, sectionElement, section,
+        processParagraphs( wordDocument, sectionElement, section,
                 Integer.MIN_VALUE );
         sectionElement.appendChild( textDocumentFacade.createText( "\n" ) );
         textDocumentFacade.body.appendChild( sectionElement );

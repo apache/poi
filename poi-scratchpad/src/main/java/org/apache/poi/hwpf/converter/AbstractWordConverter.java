@@ -911,7 +911,7 @@ public abstract class AbstractWordConverter {
         Element parentElement, int currentTableLevel, Paragraph paragraph,
         String bulletText);
 
-    protected void processParagraphes(HWPFDocumentCore wordDocument, Element flow, Range range, int currentTableLevel) {
+    protected void processParagraphs(HWPFDocumentCore wordDocument, Element flow, Range range, int currentTableLevel) {
         final int paragraphs = range.numParagraphs();
         for (int p = 0; p < paragraphs; p++) {
             Paragraph paragraph = range.getParagraph(p);

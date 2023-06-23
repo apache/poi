@@ -599,7 +599,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         htmlDocumentFacade.addStyleClass( div, "d", getSectionStyle( section ) );
         htmlDocumentFacade.getBody().appendChild( div );
 
-        processParagraphes( wordDocument, div, section, Integer.MIN_VALUE );
+        processParagraphs( wordDocument, div, section, Integer.MIN_VALUE );
     }
 
     @Override
@@ -609,7 +609,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         htmlDocumentFacade.addStyleClass( htmlDocumentFacade.getBody(), "b",
                 getSectionStyle( section ) );
 
-        processParagraphes( wordDocument, htmlDocumentFacade.getBody(), section,
+        processParagraphs( wordDocument, htmlDocumentFacade.getBody(), section,
                 Integer.MIN_VALUE );
     }
 
@@ -688,7 +688,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
                             String.valueOf( rowSpan ) );
                 }
 
-                processParagraphes( hwpfDocument, tableCellElement, tableCell,
+                processParagraphs( hwpfDocument, tableCellElement, tableCell,
                         table.getTableLevel() );
 
                 if ( !tableCellElement.hasChildNodes() )
