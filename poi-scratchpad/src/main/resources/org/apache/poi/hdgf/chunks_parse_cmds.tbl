@@ -484,7 +484,7 @@ start 148
 0 31 AllCaps
 1 31 InitCaps
 0 32 Subscript
-1 32 Superscipt
+1 32 Superscript
 25 33 Scale*100 %
 8 35 LangCode
 31 36 Size
