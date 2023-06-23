@@ -240,17 +240,17 @@ final class TestExcelExtractor {
     }
 
     /**
-     * Embeded in a non-excel file
+     * Embedded in a non-excel file
      */
     @Test
-    void testWithEmbeded() throws Exception {
+    void testWithEmbedded() throws Exception {
         POIFSFileSystem fs = null;
 
         HSSFWorkbook wbA = null, wbB = null;
         ExcelExtractor exA = null, exB = null;
 
         try {
-            fs = new POIFSFileSystem(POIDataSamples.getDocumentInstance().getFile("word_with_embeded.doc"));
+            fs = new POIFSFileSystem(POIDataSamples.getDocumentInstance().getFile("word_with_embedded.doc"));
 
             DirectoryNode objPool = (DirectoryNode) fs.getRoot().getEntry("ObjectPool");
             DirectoryNode dirA = (DirectoryNode) objPool.getEntry("_1269427460");
@@ -285,7 +285,7 @@ final class TestExcelExtractor {
         ExcelExtractor exA = null, exB = null, ex = null;
 
         try {
-            fs = new POIFSFileSystem(ssSamples.getFile("excel_with_embeded.xls"));
+            fs = new POIFSFileSystem(ssSamples.getFile("excel_with_embedded.xls"));
 
             DirectoryNode dirA = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B5");
             DirectoryNode dirB = (DirectoryNode) fs.getRoot().getEntry("MBD0000A3B4");
@@ -303,8 +303,8 @@ final class TestExcelExtractor {
 
             // And the base file too
             ex = new ExcelExtractor(fs);
-            assertEquals("Sheet1\nI have lots of embeded files in me\nSheet2\nSheet3\n", ex.getText());
-            assertEquals("Excel With Embeded", ex.getSummaryInformation().getTitle());
+            assertEquals("Sheet1\nI have lots of embeded files in me\nSheet2\nSheet3\n", ex.getText()); /* fixing the spelling here requires editing 44643.xls */
+            assertEquals("Excel With Embeded", ex.getSummaryInformation().getTitle()); /* fixing the spelling here requires editing 44643.xls */
         } finally {
             if (ex != null) ex.close();
             if (exB != null) exB.close();

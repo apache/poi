@@ -174,8 +174,8 @@ public final class TestExtractor {
     }
 
     @Test
-    void testExtractFromEmbeded() throws IOException {
-        try (final InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("excel_with_embeded.xls");
+    void testExtractFromEmbedded() throws IOException {
+        try (final InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("excel_with_embedded.xls");
             final POIFSFileSystem fs = new POIFSFileSystem(is)) {
             final DirectoryNode root = fs.getRoot();
 
@@ -200,8 +200,8 @@ public final class TestExtractor {
      * A powerpoint file with embedded powerpoint files
      */
     @Test
-    void testExtractFromOwnEmbeded() throws IOException {
-        try (SlideShowExtractor<?,?> ppe = openExtractor("ppt_with_embeded.ppt")) {
+    void testExtractFromOwnEmbedded() throws IOException {
+        try (SlideShowExtractor<?,?> ppe = openExtractor("ppt_with_embedded.ppt")) {
             List<? extends ObjectShape<?,?>> shapes = ppe.getOLEShapes();
             assertEquals(6, shapes.size(), "Expected 6 ole shapes");
             int num_ppt = 0, num_doc = 0, num_xls = 0;

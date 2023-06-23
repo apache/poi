@@ -1900,19 +1900,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     @Override
     public List<PackagePart> getAllEmbeddedParts() throws OpenXML4JException {
-        List<PackagePart> embedds = new LinkedList<>();
+        List<PackagePart> embedded = new LinkedList<>();
 
         for(XSSFSheet sheet : sheets){
             // Get the embeddings for the workbook
             for(PackageRelationship rel : sheet.getPackagePart().getRelationshipsByType(XSSFRelation.OLEEMBEDDINGS.getRelation())) {
-                embedds.add( sheet.getPackagePart().getRelatedPart(rel) );
+                embedded.add( sheet.getPackagePart().getRelatedPart(rel) );
             }
 
             for(PackageRelationship rel : sheet.getPackagePart().getRelationshipsByType(XSSFRelation.PACKEMBEDDINGS.getRelation())) {
-                embedds.add( sheet.getPackagePart().getRelatedPart(rel) );
+                embedded.add( sheet.getPackagePart().getRelatedPart(rel) );
             }
         }
-        return embedds;
+        return embedded;
     }
 
     @Override

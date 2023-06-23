@@ -191,7 +191,7 @@ public final class TestOutlookTextExtractor {
     }
 
     /**
-     * See also {@link org.apache.poi.extractor.ooxml.TestExtractorFactory#testEmbeded()}
+     * See also {@link org.apache.poi.extractor.ooxml.TestExtractorFactory#testEmbedded()}
      */
     @SuppressWarnings("JavadocReference")
     @Test
@@ -213,7 +213,7 @@ public final class TestOutlookTextExtractor {
             assertContains(text, "Attachment: pj1.txt\n");
             assertContains(text, "contenu");
 
-            // Embeded bits are checked in
+            // Embedded bits are checked in
             //  TestExtractorFactory
         }
     }

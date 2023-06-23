@@ -612,19 +612,19 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     @Override
     public List<PackagePart> getAllEmbeddedParts() throws OpenXML4JException {
-        List<PackagePart> embedds = new LinkedList<>();
+        List<PackagePart> embedded = new LinkedList<>();
 
         // Get the embeddings for the workbook
         PackagePart part = getPackagePart();
         for (PackageRelationship rel : getPackagePart().getRelationshipsByType(OLE_OBJECT_REL_TYPE)) {
-            embedds.add(part.getRelatedPart(rel));
+            embedded.add(part.getRelatedPart(rel));
         }
 
         for (PackageRelationship rel : getPackagePart().getRelationshipsByType(PACK_OBJECT_REL_TYPE)) {
-            embedds.add(part.getRelatedPart(rel));
+            embedded.add(part.getRelatedPart(rel));
         }
 
-        return embedds;
+        return embedded;
     }
 
     /**
