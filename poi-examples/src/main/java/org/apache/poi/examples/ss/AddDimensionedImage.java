@@ -668,8 +668,8 @@ public class AddDimensionedImage {
             overlapMM = reqImageWidthMM - (totalWidthMM - colWidthMM);
 
             // When the required size is very close indded to the column size,
-            // the calcaulation above can produce a negative value. To prevent
-            // problems occuring in later caculations, this is simply removed
+            // the calculation above can produce a negative value. To prevent
+            // problems occuring in later calculations, this is simply removed
             // be setting the overlapMM value to zero.
             if (overlapMM < 0) {
                 overlapMM = 0.0D;

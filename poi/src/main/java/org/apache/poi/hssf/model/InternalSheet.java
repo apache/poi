@@ -800,7 +800,7 @@ public final class InternalSheet {
     }
 
     /**
-     * creates the CalcMode record and sets it to 1 (automatic formula caculation)
+     * creates the CalcMode record and sets it to 1 (automatic formula calculation)
      */
     private static CalcModeRecord createCalcMode() {
         CalcModeRecord retval = new CalcModeRecord();
