@@ -213,8 +213,8 @@ public class SlideShowExtractor<
 
     private void printHeaderFooter(final Sheet<S,P> sheet, final Consumer<String> consumer, final Consumer<String> footerCon) {
         final Sheet<S, P> m = (sheet instanceof Slide) ? sheet.getMasterSheet() : sheet;
-        addSheetPlaceholderDatails(sheet, Placeholder.HEADER, consumer);
-        addSheetPlaceholderDatails(sheet, Placeholder.FOOTER, footerCon);
+        addSheetPlaceholderDetails(sheet, Placeholder.HEADER, consumer);
+        addSheetPlaceholderDetails(sheet, Placeholder.FOOTER, footerCon);
 
         if (!masterByDefault) {
             return;
@@ -249,7 +249,7 @@ public class SlideShowExtractor<
     }
 
 
-    private void addSheetPlaceholderDatails(final Sheet<S,P> sheet, final Placeholder placeholder, final Consumer<String> consumer) {
+    private void addSheetPlaceholderDetails(final Sheet<S,P> sheet, final Placeholder placeholder, final Consumer<String> consumer) {
         final PlaceholderDetails headerPD = sheet.getPlaceholderDetails(placeholder);
         final String headerStr = (headerPD != null) ? headerPD.getText() : null;
         if (headerStr != null && filter.test(headerPD)) {
