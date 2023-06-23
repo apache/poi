@@ -205,7 +205,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     }
 
 
-    // Complex Accesser methods follow
+    // Complex Accessor methods follow
 
     /**
      * <p>
