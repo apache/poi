@@ -1314,7 +1314,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     }
 
     /**
-     * Retrieves all relationships with specified id (normally just ine because
+     * Retrieves all relationships with specified id (normally just fine because
      * a relationship id is supposed to be unique).
      *
      * @param id
