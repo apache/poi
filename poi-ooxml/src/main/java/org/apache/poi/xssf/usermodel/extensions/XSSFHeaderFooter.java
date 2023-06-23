@@ -58,7 +58,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
  * <dd>code for "text font size", where font size is a font size in points.</dd>
  * <dt>&amp;K</dt>
  * <dd>code for "text font color" RGB Color is specified as RRGGBB Theme Color
- * is specifed as TTSNN where TT is the theme color Id, S is either "+" or "-"
+ * is specified as TTSNN where TT is the theme color Id, S is either "+" or "-"
  * of the tint/shade value, NN is the tint/shade value.</dd>
  * <dt>&amp;S</dt>
  * <dd>code for "text strikethrough" on / off</dd>
