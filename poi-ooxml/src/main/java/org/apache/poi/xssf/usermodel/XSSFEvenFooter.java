@@ -33,7 +33,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
  * </p><p>
  * Creating an even header or footer sets this property by default, so all you need to do to
  * get an even header or footer to display is to create one. Likewise, if both the even header
- * and footer are usnset, then this property is unset, and the odd header and footer are used
+ * and footer are unset, then this property is unset, and the odd header and footer are used
  * for even pages.
  * </p>
  */

@@ -32,7 +32,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
  * </p><p>
  * Creating a first page header or footer sets this property by default, so all you need to do to
  * get an first page header or footer to display is to create one. Likewise, if both the first page
- * header and footer are usnset, then this property is unset, and the first page header and footer
+ * header and footer are unset, then this property is unset, and the first page header and footer
  * are ignored.
  * </p>
  */

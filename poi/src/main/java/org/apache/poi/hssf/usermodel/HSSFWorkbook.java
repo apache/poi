@@ -2309,7 +2309,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
-     * Returns the spreadsheet version (EXCLE97) of this workbook
+     * Returns the spreadsheet version (EXCEL97) of this workbook
      *
      * @return EXCEL97 SpreadsheetVersion enum
      * @since 3.14 beta 2

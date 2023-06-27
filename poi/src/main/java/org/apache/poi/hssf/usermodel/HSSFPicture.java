@@ -91,7 +91,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with default font size (Arial 10pt for .xls).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * If the default font is changed the resized image can be stretched vertically or horizontally.
      * </p>
      */
     @Override
@@ -114,7 +114,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with default font size (Arial 10pt for .xls).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * If the default font is changed the resized image can be stretched vertically or horizontally.
      * </p>
      * <p>
      * <code>resize(1.0,1.0)</code> keeps the original size,<br>
