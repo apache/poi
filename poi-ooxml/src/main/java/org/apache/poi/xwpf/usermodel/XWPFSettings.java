@@ -192,7 +192,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * @param editValue the protection type
      * @param password  the plaintext password, if null no password will be applied
      * @param hashAlgo  the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                  if null, it will default default to sha1
+     *                  if null, it will default to sha1
      */
     public void setEnforcementEditValue(org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect.Enum editValue,
                                         String password, HashAlgorithm hashAlgo) {

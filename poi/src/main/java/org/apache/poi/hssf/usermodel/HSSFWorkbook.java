@@ -2168,7 +2168,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
-     * protect a workbook with a password (not encypted, just sets writeprotect
+     * protect a workbook with a password (not encrypted, just sets writeprotect
      * flags and the password.
      *
      * @param password to set
