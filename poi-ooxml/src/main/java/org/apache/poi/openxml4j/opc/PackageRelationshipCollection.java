@@ -139,7 +139,7 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
      *            The part that own this relationships collection. If <b>null</b>
      *            then this part is considered as the package root.
      * @throws InvalidFormatException
-     *             If an error occurs during the parsing of the relatinships
+     *             If an error occurs during the parsing of the relationships
      *             part fo the specified part.
      */
     public PackageRelationshipCollection(OPCPackage container, PackagePart part)

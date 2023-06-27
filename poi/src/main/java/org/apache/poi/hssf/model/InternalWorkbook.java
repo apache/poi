@@ -1719,7 +1719,7 @@ public final class InternalWorkbook {
      */
     public int createFormat(String formatString) {
 
-        maxformatid = maxformatid >= 0xa4 ? maxformatid + 1 : 0xa4; //Starting value from M$ empircal study.
+        maxformatid = maxformatid >= 0xa4 ? maxformatid + 1 : 0xa4; //Starting value from M$ empirical  study.
         FormatRecord rec = new FormatRecord(maxformatid, formatString);
 
         int pos = 0;

@@ -282,8 +282,7 @@ public abstract class BaseTestRow {
         assertEquals(5, row.getCell(5, MissingCellPolicy.CREATE_NULL_AS_BLANK).getColumnIndex());
 
 
-        // Now change the cell policy on the workbook, check
-        //  that that is now used if no policy given
+        // Now change the cell policy on the workbook, check that is now used if no policy given
         workbook.setMissingCellPolicy(MissingCellPolicy.RETURN_BLANK_AS_NULL);
 
         assertEquals(CellType.STRING,  row.getCell(0).getCellType());

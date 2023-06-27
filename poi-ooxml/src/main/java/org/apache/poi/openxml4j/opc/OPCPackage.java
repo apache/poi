@@ -212,7 +212,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
            // pack.originalPackagePath = file.getAbsolutePath();
            return pack;
        } catch (InvalidFormatException | RuntimeException e) {
-           // use revert() to free resources when the packgae is opened read-only
+           // use revert() to free resources when the package is opened read-only
            pack.revert();
 
            throw e;
@@ -495,7 +495,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     /**
      * Add a thumbnail to the package. This method is provided to make easier
      * the addition of a thumbnail in a package. You can do the same work by
-     * using the traditionnal relationship and part mechanism.
+     * using the traditional relationship and part mechanism.
      *
      * @param path The full path to the image file.
      */
@@ -513,7 +513,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     /**
      * Add a thumbnail to the package. This method is provided to make easier
      * the addition of a thumbnail in a package. You can do the same work by
-     * using the traditionnal relationship and part mechanism.
+     * using the traditional relationship and part mechanism.
      *
      * @param filename The full path to the image file.
      * @param data the image data
@@ -950,7 +950,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
             // If the specified partis flagged as deleted, we make it
             // available
             part.setDeleted(false);
-            // and delete the old part to replace it thereafeter
+            // and delete the old part to replace it thereafter
             this.partList.remove(part._partName);
         }
         this.partList.put(part._partName, part);
@@ -1554,7 +1554,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 
     /**
      * Replace a content type in this package.<p>
-     * A typical scneario to call this method is to rename a template file to the main format, e.g.
+     * A typical scenario to call this method is to rename a template file to the main format, e.g.
      * <ul>
      *     <li>".dotx" to ".docx"</li>
      *     <li>".dotm" to ".docm"</li>

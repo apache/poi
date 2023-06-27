@@ -59,7 +59,7 @@ under the License.
     <property name="util.lib" location="${basedir}/lib/util"/>
 
 
-    <!-- compiler options options -->
+    <!-- compiler options -->
     <property name="jdk.version.source" value="1.8" description="JDK version of source code"/>
     <property name="jdk.version.class" value="1.8" description="JDK version of generated class files"/>
     <property name="compile.debug" value="true"/>
@@ -482,7 +482,7 @@ under the License.
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${ooxml.test.guava.jar}"/>
         <pathelement location="${ooxml.test.opczip.jar}"/>
-        <!-- classes are omitted on test cases outside the xml-dsign area to avoid classpath poisioning -->
+        <!-- classes are omitted on test cases outside the xml-dsign area to avoid classpath poisoning -->
         <!--path refid="ooxml.xmlsec.classpath"/-->
         <!-- Used only for ExtractorFactory, see #57963 -->
         <pathelement location="${scratchpad.output.dir}" unless:true="${scratchpad.ignore}"/>
@@ -2518,7 +2518,7 @@ under the License.
         <fail><condition><matches pattern="[1-9][0-9]* Unknown Licens" string="${rat.reportcontent}"/></condition></fail>
     </target>
 
-    <!-- Runs the Forbiddens APIs checker against the source code, to -->
+    <!-- Runs the Forbidden APIs checker against the source code, to -->
     <!--  spot any cases where we've accidently used methods we shouldn't -->
     <!-- See https://github.com/policeman-tools/forbidden-apis for details -->
     <!--  of the checks that this can do -->
@@ -2761,7 +2761,7 @@ under the License.
 
 
     <target name="test-scratchpad-download-resources">
-        <!-- disable font downloading until TestFontRendering works on all plattforms -->
+        <!-- disable font downloading until TestFontRendering works on all platforms -->
         <!-- ... eventually copy the files into the resource dirs ... -->
         <!--
         <mkdir dir="build/scratchpad-test-resources"/>
@@ -3076,7 +3076,7 @@ under the License.
 
         <tstamp>
             <!-- usually overwritten by a command line argument -->
-            <!-- for convience this is kept in the same format as in the release-prep call  -->
+            <!-- for convenience this is kept in the same format as in the release-prep call  -->
             <format property="file_date" pattern="yyyyMMdd" locale="US"/>
         </tstamp>
 
@@ -3192,7 +3192,7 @@ under the License.
         </sequential>
     </macrodef>
 
-    <!-- TODO: currently this only saves a copy and paste snipplet to a file ...
+    <!-- TODO: currently this only saves a copy and paste snippet to a file ...
          would be nice if it really changes changes.xml and download.xml
          Doesn't work with Java6 - the https urls can't be accessed via loadChecksum
      -->

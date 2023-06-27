@@ -285,7 +285,7 @@ public final class ConditionalFormats {
     /**
      * Use Excel conditional formatting to hide the duplicate values,
      * and make the list easier to read. In this example, when the table is sorted by Region,
-     * the second (and subsequent) occurences of each region name will have white font colour.
+     * the second (and subsequent) occurrences of each region name will have white font colour.
      */
     static void hideDupplicates(Sheet sheet) {
         sheet.createRow(0).createCell(0).setCellValue("City");
@@ -309,7 +309,7 @@ public final class ConditionalFormats {
         sheetCF.addConditionalFormatting(regions, rule1);
 
         sheet.getRow(1).createCell(1).setCellValue("<== the second (and subsequent) " +
-                "occurences of each region name will have white font colour.  " +
+                "occurrences of each region name will have white font colour.  " +
                 "Condition: Formula Is   =A2=A1   (White Font)");
     }
 

@@ -358,7 +358,7 @@ public final class PPTX2PNG {
                 try {
                     return new SVGFormat(textAsShapes);
                 } catch (Exception | NoClassDefFoundError e) {
-                    LOG.atError().withThrowable(e).log("Batik is not not added to/working on the module-path. Use classpath mode instead of JPMS. Fallback to PNG.");
+                    LOG.atError().withThrowable(e).log("Batik is not added to/working on the module-path. Use classpath mode instead of JPMS. Fallback to PNG.");
                     return new BitmapFormat("png");
                 }
             }

@@ -255,7 +255,7 @@ public class SignatureConfig {
     private String commitmentType = "Created and approved this document";
 
     /**
-     * Swtich to enable/disable automatic CRL download - by default the download is with all https hostname
+     * Switch to enable/disable automatic CRL download - by default the download is with all https hostname
      * and certificate verifications disabled.
      *
      * @since POI 5.2.1
@@ -834,7 +834,7 @@ public class SignatureConfig {
     }
 
     /**
-     * @param xadesIssuerNameNoReverseOrder when true, the issuer DN instead of the issuer X500 prinicpal is used
+     * @param xadesIssuerNameNoReverseOrder when true, the issuer DN instead of the issuer X500 principal is used
      */
     public void setXadesIssuerNameNoReverseOrder(boolean xadesIssuerNameNoReverseOrder) {
         this.xadesIssuerNameNoReverseOrder = xadesIssuerNameNoReverseOrder;
@@ -1004,7 +1004,7 @@ public class SignatureConfig {
 
 
     /**
-     * @return the cannonicalization method for XAdES-XL signing.
+     * @return the canonicalization method for XAdES-XL signing.
      * Defaults to {@code EXCLUSIVE}
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/javax/xml/crypto/dsig/CanonicalizationMethod.html">javax.xml.crypto.dsig.CanonicalizationMethod</a>
      */
@@ -1013,7 +1013,7 @@ public class SignatureConfig {
     }
 
     /**
-     * @param xadesCanonicalizationMethod the cannonicalization method for XAdES-XL signing
+     * @param xadesCanonicalizationMethod the canonicalization method for XAdES-XL signing
      * @see <a href="http://docs.oracle.com/javase/7/docs/api/javax/xml/crypto/dsig/CanonicalizationMethod.html">javax.xml.crypto.dsig.CanonicalizationMethod</a>
      */
     public void setXadesCanonicalizationMethod(String xadesCanonicalizationMethod) {

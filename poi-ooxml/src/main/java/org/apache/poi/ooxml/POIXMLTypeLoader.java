@@ -43,7 +43,7 @@ public class POIXMLTypeLoader {
         DEFAULT_XML_OPTIONS.setCharacterEncoding("UTF-8");
         DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(true);
         DEFAULT_XML_OPTIONS.setEntityExpansionLimit(1);
-        // Piccolo is disabled for POI builts, i.e. JAXP is used for parsing
+        // JAXP is used for parsing
         // so only user code using XmlObject/XmlToken.Factory.parse
         // directly can bypass the entity check, which is probably unlikely (... and not within our responsibility :)) 
         // DEFAULT_XML_OPTIONS.setLoadEntityBytesLimit(4096);

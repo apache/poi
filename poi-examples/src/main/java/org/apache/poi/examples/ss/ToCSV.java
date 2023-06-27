@@ -689,7 +689,7 @@ public class ToCSV {
         // It is not wise to have such a wide catch clause - Exception is very
         // close to being at the top of the inheritance hierarchy - though it
         // will suffice for this example as it is really not possible to recover
-        // easilly from an exceptional set of circumstances at this point in the
+        // easily  from an exceptional set of circumstances at this point in the
         // program. It should however, ideally be replaced with one or more
         // catch clauses optimised to handle more specific problems.
         catch(Exception ex) {

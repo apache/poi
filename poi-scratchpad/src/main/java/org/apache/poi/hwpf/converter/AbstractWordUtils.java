@@ -228,7 +228,7 @@ public class AbstractWordUtils
                 final String key = lsid + "#" + ( (int) element );
                 int num;
 
-                if ( !list.isStartAtOverriden( element )
+                if ( !list.isStartAtOverridden( element )
                         && numberingState.levels.containsKey( key ) )
                 {
                     num = numberingState.levels.get( key );
