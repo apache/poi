@@ -113,7 +113,7 @@ public interface SimpleShape<
     Hyperlink<S,P> getHyperlink();
     
     /**
-     * Creates a hyperlink and asigns it to this shape.
+     * Creates a hyperlink and assigns it to this shape.
      * If the shape has already a hyperlink assigned, return it instead
      *
      * @return the hyperlink assigned to this shape

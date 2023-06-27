@@ -93,7 +93,7 @@ public final class Picture {
     private final List<? extends EscherRecord> _blipRecords;
 
     private byte[] content;
-    private int dataBlockStartOfsset;
+    private int dataBlockStartOffset;
 
     private int height = -1;
     private int width = -1;
@@ -112,11 +112,11 @@ public final class Picture {
      * Builds a Picture object for a Picture stored in the
      *  DataStream
      */
-    public Picture( int dataBlockStartOfsset, byte[] _dataStream, boolean fillBytes ) { // NOSONAR
-        _picfAndOfficeArtData = new PICFAndOfficeArtData( _dataStream, dataBlockStartOfsset );
+    public Picture( int dataBlockStartOffset, byte[] _dataStream, boolean fillBytes ) { // NOSONAR
+        _picfAndOfficeArtData = new PICFAndOfficeArtData( _dataStream, dataBlockStartOffset );
         _picf = _picfAndOfficeArtData.getPicf();
 
-        this.dataBlockStartOfsset = dataBlockStartOfsset;
+        this.dataBlockStartOffset = dataBlockStartOffset;
 
         _blipRecords = _picfAndOfficeArtData.getBlipRecords();
 
@@ -457,7 +457,7 @@ public final class Picture {
      */
     public int getStartOffset()
     {
-        return dataBlockStartOfsset;
+        return dataBlockStartOffset;
     }
 
     /**
@@ -484,7 +484,7 @@ public final class Picture {
     /**
      * returns the description stored in the alternative text
      *
-     * @return pictue description
+     * @return picture description
      */
     public String getDescription()
     {
@@ -524,7 +524,7 @@ public final class Picture {
     public String suggestFullFileName()
     {
         String fileExt = suggestFileExtension();
-        return Integer.toHexString( dataBlockStartOfsset )
+        return Integer.toHexString( dataBlockStartOffset )
                 + ( fileExt.length() > 0 ? "." + fileExt : "" );
     }
 
@@ -592,7 +592,7 @@ public final class Picture {
      * @param out
      *            a stream to write to
      * @throws IOException
-     *             if some exception is occured while writing to specified out
+     *             if some exception is occurred while writing to specified out
      */
     public void writeImageContent( OutputStream out ) throws IOException
     {

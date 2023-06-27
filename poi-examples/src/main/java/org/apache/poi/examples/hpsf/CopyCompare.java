@@ -165,7 +165,7 @@ public final class CopyCompare {
             try (InputStream is = su.get()) {
                 final POIFSDocumentPath path = event.getPath();
 
-                // Ensures that the directory hierarchy for a document in a POI fileystem is in place.
+                // Ensures that the directory hierarchy for a document in a POI filesystem is in place.
                 // Get the root directory. It does not have to be created since it always exists in a POIFS.
                 DirectoryEntry de = poiFs.getRoot();
                 if (File.separator.equals(path.toString())) {

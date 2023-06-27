@@ -38,7 +38,7 @@ import org.apache.poi.util.LittleEndian;
  * and then the next SlidePersistAtom.
  *
  * Eventually, Slides will find the blocks that interest them from all
- *  the SlideListWithText entries, and refere to them
+ *  the SlideListWithText entries, and refer to them
  *
  * For now, we scan through looking for interesting bits, then creating
  *  the helpful Sheet from model for them

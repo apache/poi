@@ -61,7 +61,7 @@ final class TestRoundFuncs {
     }
 
     @Test
-    void testGithub321() throws IOException {
+    void testGitHub321() throws IOException {
         try (HSSFWorkbook hssfWorkbook = new HSSFWorkbook()) {
             HSSFSheet hssfSheet = hssfWorkbook.createSheet();
             HSSFRow hssfRow = hssfSheet.createRow(0);

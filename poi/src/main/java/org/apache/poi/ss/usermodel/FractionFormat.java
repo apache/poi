@@ -124,7 +124,7 @@ public class FractionFormat extends Format {
 
         // if the absolute value is smaller than 1 over the exact or maxDenom
         // you can stop here and return "0"
-        // reciprocal is result of an int devision ... and so it's nearly always 0
+        // reciprocal is result of an int division ... and so it's nearly always 0
         // double reciprocal = 1/Math.max(exactDenom,  maxDenom);
         // if (absDoubleValue < reciprocal) {
         //    return "0";

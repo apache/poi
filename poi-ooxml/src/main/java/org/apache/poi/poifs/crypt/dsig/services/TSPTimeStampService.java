@@ -187,7 +187,7 @@ public class TSPTimeStampService implements TimeStampService {
             X509CertificateHolder parentHolder = certificateMap.get(issuer.getName());
             child = (parentHolder != null)
                 ? x509converter.getCertificate(parentHolder)
-                : signatureConfig.getCachedCertificateByPrinicipal(issuer.getName());
+                : signatureConfig.getCachedCertificateByPrincipal(issuer.getName());
             if (child != null) {
                 retrieveCRL(signatureConfig, child).forEach(revocationData::addCRL);
             }

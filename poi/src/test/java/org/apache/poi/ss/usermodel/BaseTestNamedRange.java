@@ -93,7 +93,7 @@ public abstract class BaseTestNamedRange {
             String[] invalidNames = {"", "123", "1Name", "Named Range"};
             for (String name : invalidNames) {
                 assertThrows(IllegalArgumentException.class, () -> name1.setNameName(name),
-                    "should have thrown exceptiuon due to invalid name: " + name);
+                    "should have thrown exception due to invalid name: " + name);
             }
         }
     }
@@ -556,7 +556,7 @@ public abstract class BaseTestNamedRange {
         // contrived example to expose bug:
         n.setRefersToFormula("if(A1,\"#REF!\", \"\")");
 
-        assertFalse(n.isDeleted(), "Identified bug in recoginising formulas referring to deleted cells");
+        assertFalse(n.isDeleted(), "Identified bug in recognising formulas referring to deleted cells");
 
         wb.close();
     }
@@ -580,7 +580,7 @@ public abstract class BaseTestNamedRange {
     }
 
     @Test
-    public final void testDefferedSetting() throws Exception {
+    public final void testDeferredSetting() throws Exception {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Name n1 = wb.createName();
             assertNull(n1.getRefersToFormula());

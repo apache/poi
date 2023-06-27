@@ -78,7 +78,7 @@ public final class FontFormatting implements Duplicatable, GenericRecord {
     public FontFormatting() {
         setFontHeight(-1);
         setItalic(false);
-        setFontWieghtModified(false);
+        setFontWeightModified(false);
         setOutline(false);
         setShadow(false);
         setStrikeout(false);
@@ -386,7 +386,7 @@ public final class FontFormatting implements Duplicatable, GenericRecord {
         return underlineModified == 0;
     }
 
-    public void setFontWieghtModified(boolean modified) {
+    public void setFontWeightModified(boolean modified) {
         int value = modified? 0 : 1;
         setInt(OFFSET_FONT_WEIGHT_MODIFIED, value);
     }

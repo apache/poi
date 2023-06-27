@@ -45,7 +45,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  * Though different methods are provided to construct single and multi-level
  * plain, numbered and bulleted lists, close examination will reveal that they
  * are not strictly necessary. If the inputs to the listInCell() and
- * multilLevelListInCell() methods are constructed to include the bullet
+ * multiLevelListInCell() methods are constructed to include the bullet
  * character or the item numbers then these methods alone may be sufficient.
  */
 @SuppressWarnings({"java:S106","java:S4823"})

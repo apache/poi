@@ -137,8 +137,8 @@ public final class TestWordExtractor {
      * Test that we can get data from two different embedded word documents
      */
     @Test
-    void testExtractFromEmbeded() throws IOException {
-        InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("excel_with_embeded.xls");
+    void testExtractFromEmbedded() throws IOException {
+        InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("excel_with_embedded.xls");
         POIFSFileSystem fs = new POIFSFileSystem(is);
         is.close();
 

@@ -193,7 +193,7 @@ public final class StyleSheet {
     }
 
     /**
-     * Creates a PartagraphProperties object from a papx stored in the
+     * Creates a ParagraphProperties object from a papx stored in the
      * StyleDescription at the index istd in the StyleDescription array. The PAP
      * is placed in the StyleDescription at istd after its been created. Not
      * every StyleDescription will contain a papx. In these cases this function

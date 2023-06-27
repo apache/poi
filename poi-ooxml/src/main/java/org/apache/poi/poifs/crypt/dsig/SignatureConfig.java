@@ -1164,7 +1164,7 @@ public class SignatureConfig {
         addCachedCertificate(null, x509);
     }
 
-    public X509Certificate getCachedCertificateByPrinicipal(String principalName) {
+    public X509Certificate getCachedCertificateByPrincipal(String principalName) {
         if (keyStore == null) {
             return null;
         }

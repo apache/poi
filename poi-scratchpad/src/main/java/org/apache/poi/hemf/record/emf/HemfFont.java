@@ -348,7 +348,7 @@ public class HemfFont extends HwmfFont {
         }
 
         // A string of 64 Unicode characters that contains the font's full name.
-        // Ifthe length of this string is less than 64 characters, a terminating
+        // If the length of this string is less than 64 characters, a terminating
         // NULL MUST be present, after which the remainder of this field MUST be ignored.
         readBytes = readString(leis, sb, 64);
         if (readBytes == -1) {

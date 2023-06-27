@@ -50,7 +50,7 @@ final class TestFormulas {
     }
 
     /**
-     * Add 1+1 -- WHoohoo!
+     * Add 1+1 -- Woohoo!
      */
     @Test
     void testBasicAddIntegers() throws IOException {
@@ -84,7 +84,7 @@ final class TestFormulas {
      * Multiply various integers
      */
     @Test
-    void testMultplyIntegers() throws IOException {
+    void testMultiplyIntegers() throws IOException {
         binomialOperator("*");
     }
 
@@ -319,7 +319,7 @@ final class TestFormulas {
 
 
     /**
-     * tests order wrting out == order writing in for a given formula
+     * tests order writing out == order writing in for a given formula
      */
     private static void orderTest(String formula) throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {

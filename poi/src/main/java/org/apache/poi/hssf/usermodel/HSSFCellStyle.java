@@ -608,7 +608,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
                 setFillBackgroundColor((short)(autoIdx+1));
             }
         } else if (_format.getFillBackground() == autoIdx+1) {
-            //Now if the forground changes to a non-AUTOMATIC color the background resets itself!!!
+            //Now if the foreground changes to a non-AUTOMATIC color the background resets itself!!!
             if (_format.getFillForeground() != autoIdx) {
                 setFillBackgroundColor(autoIdx);
             }
@@ -830,7 +830,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
      */
     public void verifyBelongsToWorkbook(HSSFWorkbook wb) {
         if(wb.getWorkbook() != _workbook) {
-            throw new IllegalArgumentException("This Style does not belong to the supplied Workbook. Are you trying to assign a style from one workbook to the cell of a differnt workbook?");
+            throw new IllegalArgumentException("This Style does not belong to the supplied Workbook. Are you trying to assign a style from one workbook to the cell of a different workbook?");
         }
     }
 

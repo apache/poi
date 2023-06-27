@@ -649,7 +649,7 @@ final class LinkTable {
 
         int nameIndex = extBlock.addExternalName(extNameRecord);
         int supLinkIndex = 0;
-        // find the posistion of the Add-In SupBookRecord in the workbook stream,
+        // find the position of the Add-In SupBookRecord in the workbook stream,
         // the created ExternalNameRecord will be appended to it
         for (org.apache.poi.hssf.record.Record record : _workbookRecordList.getRecords()) {
             if (record instanceof SupBookRecord && ((SupBookRecord) record).isAddInFunctions()) {
@@ -682,7 +682,7 @@ final class LinkTable {
      * Changes an external referenced file to another file.
      * A formular in Excel which refers a cell in another file is saved in two parts:
      * The referenced file is stored in an reference table. the row/cell information is saved separate.
-     * This method invokation will only change the reference in the lookup-table itself.
+     * This method invocation will only change the reference in the lookup-table itself.
      *
      * @param oldUrl The old URL to search for and which is to be replaced
      * @param newUrl The URL replacement

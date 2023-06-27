@@ -25,7 +25,7 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * Conditional Formatting Rule Record (0x01B1).
  *
- * <p>This is for the older-style Excel conditional formattings,
+ * <p>This is for the older-style Excel conditional formatting,
  *  new-style (Excel 2007+) also make use of {@link CFRule12Record}
  *  for their rules.</p>
  */

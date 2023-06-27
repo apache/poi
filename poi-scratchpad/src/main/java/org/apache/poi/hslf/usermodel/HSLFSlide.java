@@ -148,7 +148,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     }
 
     /**
-     * Called by SlideShow ater a new slide is created.
+     * Called by SlideShow after a new slide is created.
      * <p>
      * For Slide we need to do the following:
      * <ul>
@@ -184,7 +184,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
             }
         }
 
-        //PPT doen't increment the number of saved shapes for group descriptor and background
+        //PPT doesn't increment the number of saved shapes for group descriptor and background
         dg.setNumShapes(1);
     }
 
@@ -205,7 +205,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     }
 
 
-    // Complex Accesser methods follow
+    // Complex Accessor methods follow
 
     /**
      * <p>
@@ -257,7 +257,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
     }
 
     /**
-     * @return set of records inside {@code SlideListWithtext} container
+     * @return set of records inside {@code SlideListWithText} container
      *  which hold text data for this slide (typically for placeholders).
      */
     public SlideAtomsSet getSlideAtomsSet() { return _atomSet;  }

@@ -727,7 +727,7 @@ public class DocumentSummaryInformation extends PropertySet {
      * Gets the document version as a string, which is normally unset and empty
      *  (or {@code null}).
      *
-     *  @return the document verion
+     *  @return the document version
      */
     public String getDocumentVersion() {
         return getPropertyStringValue(PropertyIDMap.PID_DOCVERSION);

@@ -83,8 +83,8 @@ public final class LoadEmbedded {
                }
                case "Presentation": {
                    DirectoryNode dn = (DirectoryNode) obj.getDirectory();
-                   SlideShow<?, ?> embeddedSlieShow = new HSLFSlideShow(dn);
-                   embeddedSlieShow.close();
+                   SlideShow<?, ?> embeddedSlideShow = new HSLFSlideShow(dn);
+                   embeddedSlideShow.close();
                    break;
                }
                default:

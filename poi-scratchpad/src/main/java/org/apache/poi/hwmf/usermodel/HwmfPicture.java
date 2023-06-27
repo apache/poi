@@ -128,7 +128,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
                 consumedSize += wr.init(leis, recordSize, recordFunction);
                 int remainingSize = (int)(recordSize - consumedSize);
                 if (remainingSize < 0) {
-                    throw new RecordFormatException("read too many bytes. record size: "+recordSize + "; comsumed size: "+consumedSize);
+                    throw new RecordFormatException("read too many bytes. record size: "+recordSize + "; consumed size: "+consumedSize);
                 } else if(remainingSize > 0) {
                     long skipped = IOUtils.skipFully(leis, remainingSize);
                     if (skipped != (long)remainingSize) {
@@ -161,7 +161,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
         state.backup(ctx);
         try {
             Rectangle2D wmfBounds = getBounds();
-            Rectangle2D innerBounds = getInnnerBounds();
+            Rectangle2D innerBounds = getInnerBounds();
             if (innerBounds == null) {
                 innerBounds = wmfBounds;
             }
@@ -204,7 +204,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
         if (placeableHeader != null) {
             return placeableHeader.getBounds();
         }
-        Rectangle2D inner = getInnnerBounds();
+        Rectangle2D inner = getInnerBounds();
         if (inner != null) {
             return inner;
         }
@@ -216,7 +216,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
      *
      * @return the bounding box or null, if the WmfSetWindowOrg/Ext records aren't set
      */
-    public Rectangle2D getInnnerBounds() {
+    public Rectangle2D getInnerBounds() {
         WmfSetWindowOrg wOrg = null;
         WmfSetWindowExt wExt = null;
         for (HwmfRecord r : getRecords()) {

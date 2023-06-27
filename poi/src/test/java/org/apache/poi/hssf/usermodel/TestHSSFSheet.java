@@ -359,8 +359,8 @@ final class TestHSSFSheet extends BaseTestSheet {
      */
     @Test
     void cloneWithProtect() throws IOException {
-        String passwordA = "secrect";
-        int expectedHashA = -6810;
+        String passwordA = "secret";
+        int expectedHashA = -9561;
         String passwordB = "admin";
         int expectedHashB = -14556;
 
@@ -940,7 +940,7 @@ final class TestHSSFSheet extends BaseTestSheet {
             HSSFSimpleShape comboBoxShape = (HSSFSimpleShape) dr.getChildren().get(0);
             assertEquals(HSSFSimpleShape.OBJECT_TYPE_COMBO_BOX, comboBoxShape.getShapeType());
 
-            assertNull(ish.findFirstRecordBySid(ObjRecord.sid)); // ObjRecord will appear after serializetion
+            assertNull(ish.findFirstRecordBySid(ObjRecord.sid)); // ObjRecord will appear after serialization
 
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
                 sh = wb2.getSheetAt(0);

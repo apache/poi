@@ -3223,7 +3223,7 @@ under the License.
         <download-line prop="li3" dist="src" pack="tar.gz"/>
         <download-line prop="li4" dist="src" pack="zip"/>
 
-<echo file="download-snipplet.xml"><![CDATA[
+<echo file="download-snippet.xml"><![CDATA[
     <section id="POI-${version.id}"><title>${rel_date} - POI ${version.id} available</title>
       <p>The Apache POI team is pleased to announce the release of ${version.id}.
          Featured are a handful of new areas of functionality and numerous bug fixes.</p>

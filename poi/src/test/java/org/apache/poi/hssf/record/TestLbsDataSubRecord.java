@@ -128,7 +128,7 @@ final class TestLbsDataSubRecord {
                         "00, 00, 00, 00, 00, 00, 01, 00, 09, 00, " +
                         "00, 00, 0F, 00, 01, 00, " +
                         "13, 00, 1B, 00, " +
-                        "10, 00, " + //next 16 bytes is a ptg aray
+                        "10, 00, " + //next 16 bytes is a ptg array
                         "09, 00, 00, 00, 00, 00, 25, 09, 00, 0C, 00, 07, 00, 07, 00, 00, " +
                         "01, 00, " + //num lines
                         "00, 00, " + //selected

@@ -161,7 +161,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with the default font size (Calibri 11pt for .xlsx).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * If the default font is changed the resized image can be stretched vertically or horizontally.
      * <p>
      * {@code resize(1.0,1.0)} keeps the original size,<br>
      * {@code resize(0.5,0.5)} resize to 50% of the original,<br>
@@ -243,7 +243,7 @@ public final class XSSFPicture extends XSSFShape implements Picture {
         try (InputStream stream = part.getInputStream()) {
             return ImageUtils.getImageDimension(stream, type);
         } catch (IOException e){
-            //return a "singulariry" if ImageIO failed to read the image
+            //return a "singularity" if ImageIO failed to read the image
             LOG.atWarn().withThrowable(e).log("Failed to read image");
             return new Dimension();
         }

@@ -56,7 +56,7 @@ class TestXSSFSheetShiftRowsAndColumns {
     }
 
     /**
-     * This creates a workbook with one worksheet.  It then puts data in rows 0 to numRows-1 and colulmns
+     * This creates a workbook with one worksheet.  It then puts data in rows 0 to numRows-1 and columns
      * 0 to numCols-1.
      */
     @BeforeEach

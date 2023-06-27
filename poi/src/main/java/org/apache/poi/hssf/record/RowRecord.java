@@ -234,7 +234,7 @@ public final class RowRecord extends StandardRecord {
     /**
      * A bit that specifies whether the phonetic guide feature is enabled for
      * any cell in this row.
-     * @param f use phoenetic guide
+     * @param f use phonetic guide
      */
     public void setPhoeneticGuide(boolean f) {
         field_8_option_flags = phoneticGuide.setBoolean(field_8_option_flags, f);
@@ -301,8 +301,8 @@ public final class RowRecord extends StandardRecord {
     }
 
     /**
-     * get whether or not to colapse this row
-     * @return c - colapse or not
+     * get whether or not to collapse this row
+     * @return c - collapse or not
      * @see #getOptionFlags()
      */
     public boolean getColapsed() {
@@ -377,7 +377,7 @@ public final class RowRecord extends StandardRecord {
     /**
      * A bit that specifies whether the phonetic guide feature is enabled for
      * any cell in this row.
-     * @return has phoentic guide
+     * @return has phonetic guide
      */
     public boolean getPhoeneticGuide() {
         return phoneticGuide.isSet(field_8_option_flags);

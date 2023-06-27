@@ -252,8 +252,8 @@ public final class TestSlideMaster {
     }
 
     /**
-     * Varify we can read attrubutes for different identtation levels.
-     * (typical for the "bullted body" placeholder)
+     * Verify we can read attributes for different indentation levels.
+     * (typical for the "bulleted body" placeholder)
      */
     @Test
     void testIndentation() throws IOException {

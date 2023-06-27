@@ -416,7 +416,7 @@ final class TestFormulaEvaluatorBugs {
         // much time (~3 sec on Core 2 Duo 2.2GHz)
         // short-circuit-if optimisation cuts this down to 255 evaluations which is still too high
         // System.err.println("Cell A9 took " + evalCount + " intermediate evaluations");
-        assertTrue(evalCount <= 10, "Identifed bug 45376 - Formula evaluator should cache values");
+        assertTrue(evalCount <= 10, "Identified bug 45376 - Formula evaluator should cache values");
         // With caching, the evaluationCount is 8 which is exactly the
         // number of formula cells that needed to be evaluated.
         assertEquals(8, evalCount);

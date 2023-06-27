@@ -60,7 +60,7 @@ public class TestSlideShowDumper extends BaseTestPPTIterating {
 
             SlideShowDumper.main(new String[]{pFile.getAbsolutePath()});
         } catch (ArrayIndexOutOfBoundsException e) {
-            // some corrupted documents currently can cause this excpetion
+            // some corrupted documents currently can cause this exception
             if (!FAILING.contains(pFile.getName()) && !ENCRYPTED_FILES.contains(pFile.getName())) {
                 throw e;
             }

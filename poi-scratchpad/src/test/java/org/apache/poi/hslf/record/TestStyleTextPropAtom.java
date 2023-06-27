@@ -72,7 +72,7 @@ public final class TestStyleTextPropAtom {
         0, 0x18, 0, 0,     // mask is 0x1800
         0, 0,               // left aligned
         0x50, 0,             // line spacing 80
-        0x1C, 0, 0, 0,     // paragprah is 28 long
+        0x1C, 0, 0, 0,     // paragraph is 28 long
         0, 0,               // paragraph reserved field
         0, 0x10, 0, 0,     // mask is 0x1000
         0x50, 0,             // line spacing 80
@@ -763,9 +763,9 @@ public final class TestStyleTextPropAtom {
 
         // changed original data: ... 0x41 and 0x06 don't match
         // the bitmask text properties will sanitize the bytes and thus the bytes differ
-        byte[] exptected = data.clone();
-        exptected[18] = 0;
+        byte[] expected = data.clone();
+        expected[18] = 0;
 
-        doReadWrite(data, exptected, length);
+        doReadWrite(data, expected, length);
     }
 }

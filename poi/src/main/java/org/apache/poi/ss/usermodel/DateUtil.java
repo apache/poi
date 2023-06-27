@@ -58,7 +58,7 @@ public class DateUtil {
 
 
     private static final BigDecimal BD_NANOSEC_DAY = BigDecimal.valueOf(SECONDS_PER_DAY * 1e9);
-    private static final BigDecimal BD_MILISEC_RND = BigDecimal.valueOf(0.5 * 1e6);
+    private static final BigDecimal BD_MILLISEC_RND = BigDecimal.valueOf(0.5 * 1e6);
     private static final BigDecimal BD_SECOND_RND = BigDecimal.valueOf(0.5 * 1e9);
 
     private static final Pattern TIME_SEPARATOR_PATTERN = Pattern.compile(":");
@@ -433,7 +433,7 @@ public class DateUtil {
         long nanosTime =
             bd.subtract(BigDecimal.valueOf(wholeDays))
             .multiply(BD_NANOSEC_DAY)
-            .add(roundSeconds ? BD_SECOND_RND : BD_MILISEC_RND)
+            .add(roundSeconds ? BD_SECOND_RND : BD_MILLISEC_RND)
             .longValue();
 
         ldt = ldt.plusNanos(nanosTime);

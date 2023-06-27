@@ -263,7 +263,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     /**
      * @param pos - index of the row
-     * @return the row at the position specified or null if no rows is defined or if the position is greather than the max size of rows array
+     * @return the row at the position specified or null if no rows is defined or if the position is greater than the max size of rows array
      */
     public XWPFTableRow getRow(int pos) {
         if (pos >= 0 && pos < ctTbl.sizeOfTrArray()) {

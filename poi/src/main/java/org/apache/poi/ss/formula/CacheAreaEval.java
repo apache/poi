@@ -32,7 +32,7 @@ import org.apache.poi.ss.util.CellReference;
 
 public final class CacheAreaEval extends AreaEvalBase {
 
-    /* Value Containter */
+    /* Value Container */
     private final ValueEval[] _values;
 
     public CacheAreaEval(AreaI ptg, ValueEval[] values) {

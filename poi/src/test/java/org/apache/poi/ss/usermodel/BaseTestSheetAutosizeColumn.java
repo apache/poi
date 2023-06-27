@@ -184,7 +184,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         assertEquals(sheet.getColumnWidth(6), sheet.getColumnWidth(5)); // date formatted as 'mmm/dd/yyyy'
 
         // YK: width of not-evaluated formulas that return data is not determined
-        // POI seems to conevert '0' to Excel date which is the beginng of the Excel's date system
+        // POI seems to convert '0' to Excel date which is the beginning of the Excel's date system
 
         // evaluate formulas and re-autosize
         evaluateWorkbook(workbook);
@@ -274,13 +274,13 @@ public abstract class BaseTestSheetAutosizeColumn {
         Cell cell0 = row.createCell(0);
         cell0.setCellValue("Apache Software Foundation");
 
-        int defaulWidth = sheet.getColumnWidth(0);
+        int defaultWidth = sheet.getColumnWidth(0);
         sheet.autoSizeColumn(0);
         // column is unchanged if merged regions are ignored (Excel like behavior)
-        assertEquals(defaulWidth, sheet.getColumnWidth(0));
+        assertEquals(defaultWidth, sheet.getColumnWidth(0));
 
         sheet.autoSizeColumn(0, true);
-        assertTrue(sheet.getColumnWidth(0) > defaulWidth);
+        assertTrue(sheet.getColumnWidth(0) > defaultWidth);
 
         workbook.close();
     }

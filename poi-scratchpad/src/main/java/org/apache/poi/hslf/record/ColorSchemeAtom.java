@@ -95,7 +95,7 @@ public final class ColorSchemeAtom extends RecordAtom {
     /* *************** record code follows ********************** */
 
     /**
-     * For the Colour Scheme (ColorSchem) Atom
+     * For the Colour Scheme (ColorScheme) Atom
      */
     protected ColorSchemeAtom(byte[] source, int start, int len) {
         // Sanity Checking - we're always 40 bytes long

@@ -132,7 +132,7 @@ public class CodePageUtil
     public static final int CP_MAC_CROATIAN = 10082;
 
     /** <p>Codepage for US-ASCII</p> */
-    public static final int CP_US_ACSII = 20127;
+    public static final int CP_US_ASCII = 20127;
 
     /** <p>Codepage for KOI8-R</p> */
     public static final int CP_KOI8_R = 20866;
@@ -371,7 +371,7 @@ public class CodePageUtil
                 return "MacTurkish";
             case CP_MAC_CROATIAN:
                 return "MacCroatian";
-            case CP_US_ACSII:
+            case CP_US_ASCII:
             case CP_US_ASCII2:
                 return "US-ASCII";
             case CP_KOI8_R:

@@ -81,7 +81,7 @@ public final class WSBoolRecord extends StandardRecord {
 
     // why?  Why ask why?  But don't drink bud dry as its a really
     // crappy beer, try the czech "Budvar" beer (which is the real
-    // budweiser though its ironically good...its sold in the USs
+    // budweiser though its ironically good...its sold in the US
     // as czechvar  --- odd that they had the name first but can't
     // use it)...
 

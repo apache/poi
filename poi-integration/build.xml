@@ -125,7 +125,7 @@ Before running this, you should execute the "jar" target in the main build.gradl
         <javac srcdir="../poi-examples/src/main/java" destdir="${build}"
                target="1.8" source="1.8" debug="true"
                encoding="ASCII" fork="yes" includeantruntime="false"
-               excludes="org/apache/poi/examples/hslf/**,org/apache/poi/examples/hsmf/**,org/apache/poi/examples/hwmf/**,**/EmbeddedObjects.java,**/EmeddedObjects.java,**/LoadEmbedded.java,**/Word2Forrest.java"
+               excludes="org/apache/poi/examples/hslf/**,org/apache/poi/examples/hsmf/**,org/apache/poi/examples/hwmf/**,**/EmbeddedObjects.java,**/LoadEmbedded.java,**/Word2Forrest.java"
                classpath="${jarpackage}" classpathref="libs">
         </javac>
 

@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum EscherRecordTypes {
-    // records greater then 0xF000 belong to Microsoft Office Drawing format also known as Escher
+    // records greater than 0xF000 belong to Microsoft Office Drawing format also known as Escher
 
     /**
      * {@link EscherContainerRecord Container} for all OfficeArt file records that contain document-wide data.

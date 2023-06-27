@@ -1422,7 +1422,7 @@ public class DataFormatter {
     }
     /**
      * Workaround until we merge {@link DataFormatter} with {@link CellFormat}.
-     * Constant, non-cachable wrapper around a {@link CellFormatResult}
+     * Constant, non-cacheable wrapper around a {@link CellFormatResult}
      */
     @SuppressWarnings("serial")
     private final class CellFormatResultWrapper extends Format {

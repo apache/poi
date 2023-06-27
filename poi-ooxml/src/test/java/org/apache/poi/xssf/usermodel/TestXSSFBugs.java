@@ -1377,7 +1377,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * Bugzilla 51710: problems reading shared formuals from .xlsx
+     * Bugzilla 51710: problems reading shared formulas from .xlsx
      */
     @Test
     void bug51710() throws IOException {
@@ -1689,7 +1689,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     /**
      * Formulas which reference named ranges, either in other
      * sheets, or workbook scoped but in other workbooks.
-     * Used to fail with with errors like
+     * Used to fail with errors like
      * org.apache.poi.ss.formula.FormulaParseException: Cell reference expected after sheet name at index 9
      * org.apache.poi.ss.formula.FormulaParseException: Parse error near char 0 '[' in specified formula '[0]!NR_Global_B2'. Expected number, string, or defined name
      */
@@ -2049,7 +2049,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             // Try to write-out and read again, should only work
             //  in read-write mode, not read-only mode
             try (XSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
-                assertNotEquals(PackageAccess.READ, access, "Shouln't be able to write from read-only mode");
+                assertNotEquals(PackageAccess.READ, access, "Shouldn't be able to write from read-only mode");
 
                 // Check again
                 s = wb2.getSheetAt(0);
@@ -3357,7 +3357,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 cellBack.setCellValue("123");
                 assertEquals("123", cellBack.getStringCellValue(),
                     "String value should be set now");
-                assertNull(((XSSFCell) cellBack).getCTCell().getF(), "No formula should be set any more");
+                assertNull(((XSSFCell) cellBack).getCTCell().getF(), "No formula should be set anymore");
             }
         }
     }
@@ -3809,7 +3809,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             }
         }
 
-        // for the decrytped bytes
+        // for the decrypted bytes
         UnsynchronizedByteArrayOutputStream bosDec = UnsynchronizedByteArrayOutputStream.builder().get();
 
         /* decrypt excel by poi */

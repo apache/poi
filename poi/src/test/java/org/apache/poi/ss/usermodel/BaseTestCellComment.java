@@ -197,7 +197,7 @@ public abstract class BaseTestCellComment {
             row = sheet.getRow(rownum);
             cell = row.getCell(1);
             comment = cell.getCellComment();
-            comment.setAuthor("Mofified[" + rownum + "] by Yegor");
+            comment.setAuthor("Modified[" + rownum + "] by Yegor");
             comment.setString(factory.createRichTextString("Modified comment at row " + rownum));
         }
 
@@ -210,7 +210,7 @@ public abstract class BaseTestCellComment {
             cell = row.getCell(1);
             comment = cell.getCellComment();
 
-            assertEquals("Mofified[" + rownum + "] by Yegor", comment.getAuthor());
+            assertEquals("Modified[" + rownum + "] by Yegor", comment.getAuthor());
             assertEquals("Modified comment at row " + rownum, comment.getString().getString());
         }
 

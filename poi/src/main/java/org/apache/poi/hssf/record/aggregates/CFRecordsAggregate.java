@@ -53,7 +53,7 @@ import static org.apache.logging.log4j.util.Unbox.box;
  */
 public final class CFRecordsAggregate extends RecordAggregate implements GenericRecord {
     /** Excel 97-2003 allows up to 3 conditional formating rules */
-    private static final int MAX_97_2003_CONDTIONAL_FORMAT_RULES = 3;
+    private static final int MAX_97_2003_CONDITIONAL_FORMAT_RULES = 3;
     private static final Logger LOG = LogManager.getLogger(CFRecordsAggregate.class);
 
     private final CFHeaderBase header;
@@ -73,9 +73,9 @@ public final class CFRecordsAggregate extends RecordAggregate implements Generic
         if(pRules == null) {
             throw new IllegalArgumentException("rules must not be null");
         }
-        if(pRules.length > MAX_97_2003_CONDTIONAL_FORMAT_RULES) {
+        if(pRules.length > MAX_97_2003_CONDITIONAL_FORMAT_RULES) {
             LOG.atWarn().log("Excel versions before 2007 require that No more than " +
-                    MAX_97_2003_CONDTIONAL_FORMAT_RULES + " rules may be specified, {} were found, this file will " +
+                    MAX_97_2003_CONDITIONAL_FORMAT_RULES + " rules may be specified, {} were found, this file will " +
                     "cause problems with old Excel versions", box(pRules.length));
         }
         if (pRules.length != pHeader.getNumberOfConditionalFormats()) {
@@ -185,9 +185,9 @@ public final class CFRecordsAggregate extends RecordAggregate implements Generic
         if (r == null) {
             throw new IllegalArgumentException("r must not be null");
         }
-        if(rules.size() >= MAX_97_2003_CONDTIONAL_FORMAT_RULES) {
+        if(rules.size() >= MAX_97_2003_CONDITIONAL_FORMAT_RULES) {
             LOG.atWarn().log("Excel versions before 2007 cannot cope with"
-                    + " any more than " + MAX_97_2003_CONDTIONAL_FORMAT_RULES
+                    + " any more than " + MAX_97_2003_CONDITIONAL_FORMAT_RULES
                     + " - this file will cause problems with old Excel versions");
         }
         checkRuleType(r);

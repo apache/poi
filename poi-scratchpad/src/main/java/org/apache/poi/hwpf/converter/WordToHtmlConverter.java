@@ -70,12 +70,12 @@ public class WordToHtmlConverter extends AbstractWordConverter
      * Holds properties values, applied to current {@code p} element. Those
      * properties shall not be doubled in children {@code span} elements.
      */
-    private static class BlockProperies
+    private static class BlockProperties
     {
         final String pFontName;
         final int pFontSize;
 
-        public BlockProperies( String pFontName, int pFontSize )
+        public BlockProperties( String pFontName, int pFontSize )
         {
             this.pFontName = pFontName;
             this.pFontSize = pFontSize;
@@ -84,7 +84,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
 
     private static final Logger LOG = LogManager.getLogger(WordToHtmlConverter.class);
 
-    private final Deque<BlockProperies> blocksProperies = new LinkedList<>();
+    private final Deque<BlockProperties> blocksProperties = new LinkedList<>();
 
     private final HtmlDocumentFacade htmlDocumentFacade;
 
@@ -194,16 +194,16 @@ public class WordToHtmlConverter extends AbstractWordConverter
         pElement.appendChild( span );
 
         StringBuilder style = new StringBuilder();
-        BlockProperies blockProperies = this.blocksProperies.peek();
+        BlockProperties blockProperties = this.blocksProperties.peek();
         Triplet triplet = getCharacterRunTriplet( characterRun );
 
         if ( AbstractWordUtils.isNotEmpty( triplet.fontName )
                 && !Objects.equals( triplet.fontName,
-                        blockProperies.pFontName ) )
+                        blockProperties.pFontName ) )
         {
             style.append("font-family:").append(triplet.fontName).append(";");
         }
-        if ( characterRun.getFontSize() / 2 != blockProperies.pFontSize )
+        if ( characterRun.getFontSize() / 2 != blockProperties.pFontSize )
         {
             style.append("font-size:").append(characterRun.getFontSize() / 2).append("pt;");
         }
@@ -465,14 +465,14 @@ public class WordToHtmlConverter extends AbstractWordConverter
         span.setAttribute( "class", type + "notetext" );
         note.appendChild( span );
 
-        this.blocksProperies.add( new BlockProperies( "", -1 ) );
+        this.blocksProperties.add( new BlockProperties( "", -1 ) );
         try
         {
             processCharacters( doc, Integer.MIN_VALUE, noteTextRange, span );
         }
         finally
         {
-            this.blocksProperies.pop();
+            this.blocksProperties.pop();
         }
     }
 
@@ -531,7 +531,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
                 pFontSize = -1;
                 pFontName = AbstractWordUtils.EMPTY;
             }
-            blocksProperies.push( new BlockProperies( pFontName, pFontSize ) );
+            blocksProperties.push( new BlockProperties( pFontName, pFontSize ) );
         }
         try
         {
@@ -581,7 +581,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         }
         finally
         {
-            blocksProperies.pop();
+            blocksProperties.pop();
         }
 
         if ( style.length() > 0 ) {
@@ -599,7 +599,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         htmlDocumentFacade.addStyleClass( div, "d", getSectionStyle( section ) );
         htmlDocumentFacade.getBody().appendChild( div );
 
-        processParagraphes( wordDocument, div, section, Integer.MIN_VALUE );
+        processParagraphs( wordDocument, div, section, Integer.MIN_VALUE );
     }
 
     @Override
@@ -609,7 +609,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         htmlDocumentFacade.addStyleClass( htmlDocumentFacade.getBody(), "b",
                 getSectionStyle( section ) );
 
-        processParagraphes( wordDocument, htmlDocumentFacade.getBody(), section,
+        processParagraphs( wordDocument, htmlDocumentFacade.getBody(), section,
                 Integer.MIN_VALUE );
     }
 
@@ -688,7 +688,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
                             String.valueOf( rowSpan ) );
                 }
 
-                processParagraphes( hwpfDocument, tableCellElement, tableCell,
+                processParagraphs( hwpfDocument, tableCellElement, tableCell,
                         table.getTableLevel() );
 
                 if ( !tableCellElement.hasChildNodes() )

@@ -85,7 +85,7 @@ public final class SXSSFPicture implements Picture {
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with the default font size (Calibri 11pt for .xlsx).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * If the default font is changed the resized image can be stretched vertically or horizontally.
      * </p>
      */
     @Override
@@ -98,7 +98,7 @@ public final class SXSSFPicture implements Picture {
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with the default font size (Calibri 11pt for .xlsx).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * If the default font is changed the resized image can be stretched vertically or horizontally.
      * </p>
      *
      * @param scale the amount by which image dimensions are multiplied relative to the original size.
@@ -201,7 +201,7 @@ public final class SXSSFPicture implements Picture {
 
     private float getRowHeightInPixels(int rowIndex) {
         // THE FOLLOWING THREE LINES ARE THE MAIN CHANGE compared to the non-streaming version: use the SXSSF sheet,
-        // not the XSSF sheet (which never contais rows when using SXSSF)
+        // not the XSSF sheet (which never contains rows when using SXSSF)
         XSSFSheet xssfSheet = getSheet();
         SXSSFSheet sxSheet = _wb.getSXSSFSheet(xssfSheet);
         Sheet sheet = sxSheet == null ? xssfSheet : sxSheet;
@@ -222,7 +222,7 @@ public final class SXSSFPicture implements Picture {
         try (InputStream stream = part.getInputStream()) {
             return ImageUtils.getImageDimension(stream, type);
         } catch (IOException e){
-            //return a "singulariry" if ImageIO failed to read the image
+            //return a "singularity" if ImageIO failed to read the image
             LOG.atWarn().withThrowable(e).log("Failed to read image");
             return new Dimension();
         }

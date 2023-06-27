@@ -122,7 +122,7 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
                     break;
                 case MulRKRecord.sid:
                     // This is multiple consecutive number cells in one record
-                    // Exand this out into multiple regular number cells
+                    // Expand this out into multiple regular number cells
                     MulRKRecord mrk = (MulRKRecord)record;
                     expandedRecords = RecordFactory.convertRKRecords(mrk);
                     break;

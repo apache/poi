@@ -137,7 +137,7 @@ final class TestPOIFSMiniStore {
             POIFSMiniStore ministore = fs.getMiniStore();
             ByteBuffer b;
 
-            // Runs from the start of the data section in 64 byte chungs
+            // Runs from the start of the data section in 64 byte chunks
             b = ministore.getBlockAt(0);
             assertEquals((byte) 0x9e, b.get());
             assertEquals((byte) 0x75, b.get());
@@ -307,7 +307,7 @@ final class TestPOIFSMiniStore {
         }
         assertEquals(24, count);
 
-        // The mini block block counts now run to 191
+        // The mini block counts now run to 191
         for (int i = 0; i <= 191; i++) {
             ministore.getBlockAt(i);
         }

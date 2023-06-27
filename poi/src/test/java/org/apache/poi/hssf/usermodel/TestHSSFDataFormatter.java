@@ -394,7 +394,7 @@ public final class TestHSSFDataFormatter {
     }
 
     /**
-     * Tests various formattings of dates and numbers
+     * Tests various formatting of dates and numbers
      */
     @Test
     void testFromFile() {

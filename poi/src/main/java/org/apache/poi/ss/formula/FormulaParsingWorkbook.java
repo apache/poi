@@ -72,7 +72,7 @@ public interface FormulaParsingWorkbook {
     int getExternalSheetIndex(String workbookName, String sheetName);
 
     /**
-     * Returns an enum holding spreadhseet properties specific to an Excel version (
+     * Returns an enum holding spreadsheet properties specific to an Excel version (
      * max column and row numbers, max arguments to a function, etc.)
      */
     SpreadsheetVersion getSpreadsheetVersion();

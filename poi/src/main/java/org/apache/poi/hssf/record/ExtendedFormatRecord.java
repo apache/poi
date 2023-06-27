@@ -762,7 +762,7 @@ public final class ExtendedFormatRecord extends StandardRecord {
     }
 
     // i've no idea.. possible values are 1 for down, 2 for up and 3 for both...0 for none..
-    // maybe a diagnal line?
+    // maybe a diagonal line?
 
     /**
      * Not sure what this is for (maybe fill lines?) 1 = down, 2 = up, 3 = both, 0 for none..
@@ -1274,7 +1274,7 @@ public final class ExtendedFormatRecord extends StandardRecord {
 
     /**
      * get whether or not to use the pattern in this XF instead of the parent XF.
-     * (foregrount/background)
+     * (foreground/background)
      *
      * @return pattern- true if this XF has a different pattern value than its parent,
      *                 false otherwise.
@@ -1474,7 +1474,7 @@ public final class ExtendedFormatRecord extends StandardRecord {
     }
 
     // i've no idea.. possible values are 1 for down, 2 for up and 3 for both...0 for none..
-    // maybe a diagnal line?
+    // maybe a diagonal line?
 
     /**
      * Not sure what this is for (maybe fill lines?) 1 = down, 2 = up, 3 = both, 0 for none..
@@ -1613,7 +1613,7 @@ public final class ExtendedFormatRecord extends StandardRecord {
     // fill palette options
 
     /**
-     * get the fill palette options bitmask (see indivdual bit getters that
+     * get the fill palette options bitmask (see individual bit getters that
      * reference this method)
      *
      * @return options

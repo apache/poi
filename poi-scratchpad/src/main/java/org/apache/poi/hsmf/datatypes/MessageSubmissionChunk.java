@@ -41,7 +41,7 @@ public class MessageSubmissionChunk extends Chunk {
     private String rawId;
     private Calendar date;
 
-    private static final Pattern datePatern = Pattern
+    private static final Pattern datePattern = Pattern
         .compile("(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)(\\d\\d)Z?");
 
     /**
@@ -87,7 +87,7 @@ public class MessageSubmissionChunk extends Chunk {
                 }
                 if (dateS != null) {
                     // Should be yymmddhhmmssZ
-                    Matcher m = datePatern.matcher(dateS);
+                    Matcher m = datePattern.matcher(dateS);
                     if (m.matches()) {
                         date = LocaleUtil.getLocaleCalendar();
 

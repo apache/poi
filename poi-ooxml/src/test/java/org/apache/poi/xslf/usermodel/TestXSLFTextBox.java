@@ -44,7 +44,7 @@ class TestXSLFTextBox {
     }
 
     /**
-     * text box inherits default text proeprties from presentation.xml
+     * text box inherits default text properties from presentation.xml
      */
     @Test
     void testDefaultTextStyle() throws IOException {

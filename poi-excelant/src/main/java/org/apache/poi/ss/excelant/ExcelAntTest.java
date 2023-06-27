@@ -180,7 +180,7 @@ public class ExcelAntTest extends Task{
                 } catch( NullPointerException npe ) {
                     // this means the cell reference in the test is bad.
                     log( "Cell assignment " + eval.getCell() + " in test " + getName() +
-                          " appears to point to an empy cell.  Please check the " +
+                          " appears to point to an empty cell.  Please check the " +
                           " reference in the ant script.", Project.MSG_ERR );
                 }
             }

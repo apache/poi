@@ -36,7 +36,7 @@ class POIFSReaderRegistry
     private Set<POIFSReaderListener> omnivorousListeners;
 
     // Each mapping in this Map has a key consisting of a
-    // POIFSReaderListener and a value cosisting of a Set of
+    // POIFSReaderListener and a value consisting of a Set of
     // DocumentDescriptors for the documents that POIFSReaderListener
     // is interested in; used to efficiently manage the registry
     private Map<POIFSReaderListener, Set<DocumentDescriptor>> selectiveListeners;

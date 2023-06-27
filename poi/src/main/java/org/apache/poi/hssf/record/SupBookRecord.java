@@ -48,7 +48,7 @@ public final class SupBookRecord extends StandardRecord {
     static final char CH_STARTUP_DIR = 6;
     static final char CH_ALT_STARTUP_DIR = 7;
     static final char CH_LIB_DIR = 8;
-    static final String PATH_SEPERATOR = System.getProperty("file.separator");
+    static final String PATH_SEPARATOR = System.getProperty("file.separator");
 
     private short field_1_number_of_sheets;
     private String field_2_encoded_url;
@@ -215,10 +215,10 @@ public final class SupBookRecord extends StandardRecord {
                 break;
             case CH_SAME_VOLUME:
             case CH_DOWN_DIR:
-                sb.append(PATH_SEPERATOR);
+                sb.append(PATH_SEPARATOR);
                 break;
             case CH_UP_DIR:
-                sb.append("..").append(PATH_SEPERATOR);
+                sb.append("..").append(PATH_SEPARATOR);
                 break;
             case CH_LONG_VOLUME:
                 //Don't known to handle...
@@ -228,7 +228,7 @@ public final class SupBookRecord extends StandardRecord {
             case CH_ALT_STARTUP_DIR:
             case CH_LIB_DIR:
                 LOG.atWarn().log("EXCEL.EXE path unknown - using this directory instead: .");
-                sb.append('.').append(PATH_SEPERATOR);
+                sb.append('.').append(PATH_SEPARATOR);
                 break;
             default:
                 sb.append(c);

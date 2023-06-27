@@ -612,19 +612,19 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     @Override
     public List<PackagePart> getAllEmbeddedParts() throws OpenXML4JException {
-        List<PackagePart> embedds = new LinkedList<>();
+        List<PackagePart> embedded = new LinkedList<>();
 
         // Get the embeddings for the workbook
         PackagePart part = getPackagePart();
         for (PackageRelationship rel : getPackagePart().getRelationshipsByType(OLE_OBJECT_REL_TYPE)) {
-            embedds.add(part.getRelatedPart(rel));
+            embedded.add(part.getRelatedPart(rel));
         }
 
         for (PackageRelationship rel : getPackagePart().getRelationshipsByType(PACK_OBJECT_REL_TYPE)) {
-            embedds.add(part.getRelatedPart(rel));
+            embedded.add(part.getRelatedPart(rel));
         }
 
-        return embedds;
+        return embedded;
     }
 
     /**
@@ -1309,7 +1309,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param password the plaintext password, if null no password will be applied
      * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                 if null, it will default default to sha1
+     *                 if null, it will default to sha1
      */
     public void enforceReadonlyProtection(String password, HashAlgorithm hashAlgo) {
         settings.setEnforcementEditValue(STDocProtect.READ_ONLY, password, hashAlgo);
@@ -1345,7 +1345,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param password the plaintext password, if null no password will be applied
      * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                 if null, it will default default to sha1
+     *                 if null, it will default to sha1
      */
     public void enforceFillingFormsProtection(String password, HashAlgorithm hashAlgo) {
         settings.setEnforcementEditValue(STDocProtect.FORMS, password, hashAlgo);
@@ -1381,7 +1381,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param password the plaintext password, if null no password will be applied
      * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                 if null, it will default default to sha1
+     *                 if null, it will default to sha1
      */
     public void enforceCommentsProtection(String password, HashAlgorithm hashAlgo) {
         settings.setEnforcementEditValue(STDocProtect.COMMENTS, password, hashAlgo);
@@ -1417,7 +1417,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param password the plaintext password, if null no password will be applied
      * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                 if null, it will default default to sha1
+     *                 if null, it will default to sha1
      */
     public void enforceTrackedChangesProtection(String password, HashAlgorithm hashAlgo) {
         settings.setEnforcementEditValue(STDocProtect.TRACKED_CHANGES, password, hashAlgo);

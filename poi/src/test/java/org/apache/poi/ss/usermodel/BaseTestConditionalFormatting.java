@@ -537,7 +537,7 @@ public abstract class BaseTestConditionalFormatting {
             SheetConditionalFormatting sheetCF = s.getSheetConditionalFormatting();
             int numCF = 3;
             int numCF12 = 15;
-            int numCFEX = 0; // TODO This should be 2, but we don't support CFEX formattings yet, see #58149
+            int numCFEX = 0; // TODO This should be 2, but we don't support CFEX formatting yet, see #58149
             assertEquals(numCF + numCF12 + numCFEX, sheetCF.getNumConditionalFormattings());
 
             int fCF = 0, fCF12 = 0, fCFEX = 0;
@@ -705,7 +705,7 @@ public abstract class BaseTestConditionalFormatting {
 
 
             // Icons : 3 stars (ext) - Column Q
-            // TODO Support EXT formattings
+            // TODO Support EXT formatting
 
 
             // Icons : 4 ratings - Column R
@@ -744,7 +744,7 @@ public abstract class BaseTestConditionalFormatting {
 
 
             // Mixed icons - Column U
-            // TODO Support EXT formattings
+            // TODO Support EXT formatting
 
         }
     }
@@ -1231,7 +1231,7 @@ public abstract class BaseTestConditionalFormatting {
     }
 
     @Test
-    void testSetCellRangeAddresswithSingleRange() throws IOException {
+    void testSetCellRangeAddressWithSingleRange() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             final Sheet sheet = wb.createSheet("S1");
             final SheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();

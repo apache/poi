@@ -568,7 +568,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     /**
      * Adds a picture to the workbook.
      *
-     * @param is                The sream to read image from
+     * @param is                The stream to read image from
      * @param format            The format of the picture.
      *
      * @return the index to this picture (0 based), the added picture can be obtained from {@link #getAllPictures()} .
@@ -1900,19 +1900,19 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     @Override
     public List<PackagePart> getAllEmbeddedParts() throws OpenXML4JException {
-        List<PackagePart> embedds = new LinkedList<>();
+        List<PackagePart> embedded = new LinkedList<>();
 
         for(XSSFSheet sheet : sheets){
             // Get the embeddings for the workbook
             for(PackageRelationship rel : sheet.getPackagePart().getRelationshipsByType(XSSFRelation.OLEEMBEDDINGS.getRelation())) {
-                embedds.add( sheet.getPackagePart().getRelatedPart(rel) );
+                embedded.add( sheet.getPackagePart().getRelatedPart(rel) );
             }
 
             for(PackageRelationship rel : sheet.getPackagePart().getRelationshipsByType(XSSFRelation.PACKEMBEDDINGS.getRelation())) {
-                embedds.add( sheet.getPackagePart().getRelatedPart(rel) );
+                embedded.add( sheet.getPackagePart().getRelatedPart(rel) );
             }
         }
-        return embedds;
+        return embedded;
     }
 
     @Override
@@ -2416,7 +2416,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     /**
-     * Returns the spreadsheet version (EXCLE2007) of this workbook
+     * Returns the spreadsheet version (EXCEL2007) of this workbook
      *
      * @return EXCEL2007 SpreadsheetVersion enum
      * @since 3.14 beta 2

@@ -94,7 +94,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
     }
 
     /**
-     * Used when writing out a Word docunment. This method is part of a sequence
+     * Used when writing out a Word document. This method is part of a sequence
      * that is necessary because there is no easy and efficient way to
      * determine the number PAPX's that will fit into one FKP. THe sequence is
      * as follows:

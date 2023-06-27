@@ -16,7 +16,7 @@
 ==================================================================== */
 
 /**
- * Implementation of the ECMA-376 and MS-propritary document encryptions<p>
+ * Implementation of the ECMA-376 and MS-proprietary document encryptions<p>
  *
  * The implementation is split into the following packages:
  *

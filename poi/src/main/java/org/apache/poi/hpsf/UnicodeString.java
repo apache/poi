@@ -81,7 +81,7 @@ public class UnicodeString {
         }
         
         if ( terminator != result.length() - 1 ) {
-            LOG.atWarn().log("String terminator (\\0) for UnicodeString property value occured before the end of " +
+            LOG.atWarn().log("String terminator (\\0) for UnicodeString property value occurred before the end of " +
                     "string. Trimming and hope for the best.");
         }
         return result.substring( 0, terminator );

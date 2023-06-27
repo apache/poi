@@ -103,7 +103,7 @@ public final class Section extends Range implements Duplicatable {
      *
      * section.setMarginBottom( (int) 1.5 * AbstractWordUtils.TWIPS_PER_INCH );
      *
-     * @param marginWidth A primitive int whose value will indciate how high the margin should
+     * @param marginWidth A primitive int whose value will indicate how high the margin should
      *                be - in twips.
      */
     public void setMarginBottom(int marginWidth)
@@ -118,7 +118,7 @@ public final class Section extends Range implements Duplicatable {
      *
      * section.setMarginLeft( (int) 1.5 * AbstractWordUtils.TWIPS_PER_INCH );
      *
-     * @param marginWidth A primitive int whose value will indciate how high the margin should
+     * @param marginWidth A primitive int whose value will indicate how high the margin should
      *                be - in twips.
      */
     public void setMarginLeft(int marginWidth)
@@ -133,7 +133,7 @@ public final class Section extends Range implements Duplicatable {
      *
      * section.setMarginRight( (int) 1.5 * AbstractWordUtils.TWIPS_PER_INCH );
      *
-     * @param marginWidth A primitive int whose value will indciate how high the margin should
+     * @param marginWidth A primitive int whose value will indicate how high the margin should
      *                be - in twips.
      */
     public void setMarginRight(int marginWidth)
@@ -148,7 +148,7 @@ public final class Section extends Range implements Duplicatable {
      *
      * section.setMarginTop( (int) 1.5 * AbstractWordUtils.TWIPS_PER_INCH );
      *
-     * @param marginWidth A primitive int whose value will indciate how high the margin should
+     * @param marginWidth A primitive int whose value will indicate how high the margin should
      *                be - in twips.
      */
     public void setMarginTop(int marginWidth)
@@ -170,7 +170,7 @@ public final class Section extends Range implements Duplicatable {
      * <dt>{@code 0x02}</dt><dd>If the numbering restarts on every page</dd>
      * </dl>
      *
-     * @return an Rnc, as decribed above, specifying when and where footnote numbering restarts
+     * @return an Rnc, as described above, specifying when and where footnote numbering restarts
      */
     public short getFootnoteRestartQualifier() {
         return _props.getRncFtn();
@@ -203,7 +203,7 @@ public final class Section extends Range implements Duplicatable {
      * <dt>{@code 0x02}</dt><dd>If the numbering restarts on every page</dd>
      * </dl>
      *
-     * @return an Rnc, as decribed above, specifying when and where endnote numbering restarts
+     * @return an Rnc, as described above, specifying when and where endnote numbering restarts
      */
     public short getEndnoteRestartQualifier() {
         return _props.getRncEdn();

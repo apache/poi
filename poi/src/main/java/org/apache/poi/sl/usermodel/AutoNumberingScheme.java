@@ -174,10 +174,10 @@ public enum AutoNumberingScheme {
     public String format(int value) {
         String index = formatIndex(value);
         String cased = formatCase(index);
-        return formatSeperator(cased);
+        return formatSeparator(cased);
     }
 
-    private String formatSeperator(String cased) {
+    private String formatSeparator(String cased) {
         String name = name().toLowerCase(Locale.ROOT);
         if (name.contains("plain")) return cased;
         if (name.contains("parenright")) return cased+")";

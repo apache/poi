@@ -148,7 +148,7 @@ public final class TableSprmUncompressor extends SprmUncompressor {
         short itcMac = grpprl[offset];
         short[] rgdxaCenter = new short[itcMac + 1];
         TableCellDescriptor[] rgtc = new TableCellDescriptor[itcMac];
-        //I use varParam[0] and newTAP._itcMac interchangably
+        //I use varParam[0] and newTAP._itcMac interchangeably
         newTAP.setItcMac (itcMac);
         newTAP.setRgdxaCenter (rgdxaCenter);
         newTAP.setRgtc (rgtc);

@@ -75,7 +75,7 @@ public final class ConditionalFormats {
             multiCell(wb.createSheet("MultiCell"));
             overlapping(wb.createSheet("Overlapping"));
             errors(wb.createSheet("Errors"));
-            hideDupplicates(wb.createSheet("Hide Dups"));
+            hideDuplicates(wb.createSheet("Hide Dups"));
             formatDuplicates(wb.createSheet("Duplicates"));
             inList(wb.createSheet("In List"));
             expiry(wb.createSheet("Expiry"));
@@ -287,7 +287,7 @@ public final class ConditionalFormats {
      * and make the list easier to read. In this example, when the table is sorted by Region,
      * the second (and subsequent) occurrences of each region name will have white font colour.
      */
-    static void hideDupplicates(Sheet sheet) {
+    static void hideDuplicates(Sheet sheet) {
         sheet.createRow(0).createCell(0).setCellValue("City");
         sheet.createRow(1).createCell(0).setCellValue("Boston");
         sheet.createRow(2).createCell(0).setCellValue("Boston");
@@ -652,7 +652,7 @@ public final class ConditionalFormats {
 
     /**
      * Print out a summary of the conditional formatting rules applied to cells on the given sheet.
-     * Only cells with a matching rule are printed, and for those, all matching rules are sumarized.
+     * Only cells with a matching rule are printed, and for those, all matching rules are summarized.
      */
     static void evaluateRules(Workbook wb, String sheetName) {
         final WorkbookEvaluatorProvider wbEvalProv = (WorkbookEvaluatorProvider) wb.getCreationHelper().createFormulaEvaluator();

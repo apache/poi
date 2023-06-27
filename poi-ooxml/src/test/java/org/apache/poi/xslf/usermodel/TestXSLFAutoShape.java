@@ -38,7 +38,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 
 class TestXSLFAutoShape {
     @Test
-    void testTextBodyProperies() throws IOException {
+    void testTextBodyProperties() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
@@ -69,7 +69,7 @@ class TestXSLFAutoShape {
         shape.setRightInset(0.0);
         assertEquals(0.0, shape.getRightInset(), 0);
 
-        // unset to defauls
+        // unset to defaults
         shape.setBottomInset(-1);
         assertEquals(3.6, shape.getBottomInset(), 0);
         shape.setTopInset(-1);

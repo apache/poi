@@ -1155,7 +1155,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * Incorrect handling of non-ISO 8859-1 characters in Windows ANSII Code Page 1252
+     * Incorrect handling of non-ISO 8859-1 characters in Windows ANSI Code Page 1252
      */
     @Test
     void bug27394() throws Exception {

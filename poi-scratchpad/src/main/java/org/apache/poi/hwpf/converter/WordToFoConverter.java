@@ -463,7 +463,7 @@ public class WordToFoConverter extends AbstractWordConverter
         Element flow = foDocumentFacade.addFlowToPageSequence( pageSequence,
                 "xsl-region-body" );
 
-        processParagraphes( wordDocument, flow, section, Integer.MIN_VALUE );
+        processParagraphs( wordDocument, flow, section, Integer.MIN_VALUE );
 
         if ( endnotes != null && !endnotes.isEmpty() )
         {
@@ -532,7 +532,7 @@ public class WordToFoConverter extends AbstractWordConverter
                     tableCellElement.setAttribute( "number-rows-spanned",
                             String.valueOf( rowSpan ) );
 
-                processParagraphes( wordDocument, tableCellElement, tableCell,
+                processParagraphs( wordDocument, tableCellElement, tableCell,
                         table.getTableLevel() );
 
                 if ( !tableCellElement.hasChildNodes() )

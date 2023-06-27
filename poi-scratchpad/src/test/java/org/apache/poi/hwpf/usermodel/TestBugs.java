@@ -592,7 +592,7 @@ class TestBugs {
     @CsvSource({
         // Bug 51834 - Opening and Writing .doc file results in corrupt document
         // we don't have Java test for this file - it should be checked using
-        // Microsoft BFF Validator. But check read-write-read anyway. -- sergey
+        // Microsoft Office Binary File Format Validator. But check read-write-read anyway. -- sergey
         "Bug51834.doc, true",
         // Bug 52032 - ArrayIndexOutOfBoundsException with no stack trace (broken after revision 1178063)
         "Bug52032_1.doc, true",

@@ -352,7 +352,7 @@ public final class NameRecord extends ContinuableRecord {
     }
 
     /** get the help topic text
-     * @return gelp topic text
+     * @return help topic text
      */
     public String getHelpTopicText(){
         return field_16_help_topic_text;

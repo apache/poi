@@ -164,7 +164,7 @@ public final class WindowTwoRecord extends StandardRecord {
     }
 
     /**
-     * set whether the outline symbols are displaed
+     * set whether the outline symbols are displayed
      * @param guts  symbols or not
      */
     public void setDisplayGuts(boolean guts)
@@ -342,7 +342,7 @@ public final class WindowTwoRecord extends StandardRecord {
     }
 
     /**
-     * get whether the outline symbols are displaed
+     * get whether the outline symbols are displayed
      * @return symbols or not
      */
     public boolean getDisplayGuts()
@@ -415,7 +415,7 @@ public final class WindowTwoRecord extends StandardRecord {
     }
 
     /**
-     * zoom magification in page break view
+     * zoom magnification in page break view
      * @return zoom
      */
     public short getPageBreakZoom()

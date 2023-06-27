@@ -180,7 +180,7 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
      *
      * <p>
      * If the Shared String table already contains this <code>CTRst</code> bean, its index is returned.
-     * Otherwise a new entry is aded.
+     * Otherwise a new entry is added.
      * </p>
      *
      * @param st the entry to add

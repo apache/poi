@@ -154,7 +154,7 @@ public final class ParagraphSprmUncompressor extends SprmUncompressor {
         newPAP.setFNoLnn (sprm.getOperand() != 0);
         break;
       case 0xd:
-        // handle tabs . variable parameter. seperate processing needed
+        // handle tabs . variable parameter. separate processing needed
         handleTabs(newPAP, sprm);
         break;
       case 0xe:
@@ -203,7 +203,7 @@ public final class ParagraphSprmUncompressor extends SprmUncompressor {
         break;
       case 0x1b:
         byte param = (byte)sprm.getOperand();
-        // TODO: handle paragraph postioning
+        // TODO: handle paragraph positioning
         byte pcVert = (byte) ((param & 0x0c) >> 2);
         byte pcHorz = (byte) (param & 0x03);
         if (pcVert != 3)

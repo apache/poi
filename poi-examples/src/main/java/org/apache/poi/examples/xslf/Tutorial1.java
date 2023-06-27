@@ -60,7 +60,7 @@ public final class Tutorial1 {
             XSLFTextShape titlePlaceholder2 = ph2[0];
             titlePlaceholder2.setText("This is a title");
             XSLFTextShape bodyPlaceholder = ph2[1];
-            // we are going to add text by paragraphs. Clear the default placehoder text before that
+            // we are going to add text by paragraphs. Clear the default placeholder text before that
             bodyPlaceholder.clearText();
             XSLFTextParagraph p1 = bodyPlaceholder.addNewTextParagraph();
             p1.setIndentLevel(0);

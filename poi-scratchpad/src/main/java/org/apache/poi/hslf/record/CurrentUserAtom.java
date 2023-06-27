@@ -125,7 +125,7 @@ public class CurrentUserAtom {
 
         // If it's clearly junk, bail out
         if(docProps.getSize() > 131072) {
-            throw new CorruptPowerPointFileException("The Current User stream is implausably long. It's normally 28-200 bytes long, but was " + docProps.getSize() + " bytes");
+            throw new CorruptPowerPointFileException("The Current User stream is implausibly long. It's normally 28-200 bytes long, but was " + docProps.getSize() + " bytes");
         }
 
         // Grab the contents

@@ -136,7 +136,7 @@ public class TextPiece extends PropertyNode<TextPiece> {
     }
 
     /**
-     * Adjusts the internal string for deletinging
+     * Adjusts the internal string for deleting
      * some characters within this.
      *
      * @param start  The start position for the delete, in characters

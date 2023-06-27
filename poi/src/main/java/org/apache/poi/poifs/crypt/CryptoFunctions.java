@@ -111,8 +111,8 @@ public final class CryptoFunctions {
      * The difference is, read protection uses the order iterator then hash in the hash loop, whereas write protection
      * uses first the last hash value and then the current iterator value
      *
-     * @param password the pasword
-     * @param hashAlgorithm the hash algorighm
+     * @param password the password
+     * @param hashAlgorithm the hash algorithm
      * @param salt the initial salt value
      * @param spinCount the repetition count
      * @param iteratorFirst if true, the iterator is hashed before the n-1 hash value,
@@ -598,7 +598,7 @@ public final class CryptoFunctions {
          */
         short intermediate1 = (short)(((verifier & 0x4000) == 0) ? 0 : 1);
         /*
-         *  SET Intermediate2 TO Verifier MULTIPLED BY 2
+         *  SET Intermediate2 TO Verifier MULTIPLIED BY 2
          *  SET most significant bit of Intermediate2 TO 0
          */
         short intermediate2 = (short)((verifier<<1) & 0x7FFF);

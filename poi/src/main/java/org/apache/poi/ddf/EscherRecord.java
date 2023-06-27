@@ -131,7 +131,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
     }
 
     /**
-     * Set the options this this record. Container records should have the
+     * Set the options for this record. Container records should have the
      * last nibble set to 0xF.<p>
      *
      * Note that {@code options} is an internal field.
@@ -191,7 +191,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
     public abstract int serialize( int offset, byte[] data, EscherSerializationListener listener );
 
     /**
-     * Subclasses should effeciently return the number of bytes required to
+     * Subclasses should efficiently return the number of bytes required to
      * serialize the record.
      *
      * @return  number of bytes
@@ -218,7 +218,7 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
 
     /**
      * @return  Returns the children of this record.  By default this will
-     *          be an empty list.  EscherCotainerRecord is the only record
+     *          be an empty list.  EscherContainerRecord is the only record
      *          that may contain children.
      *
      * @see EscherContainerRecord

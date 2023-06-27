@@ -344,7 +344,7 @@ class TestXSLFTextParagraph {
         assertNull(p.getIndent());
         p.setIndent(72.0);
         assertEquals(72.0, p.getIndent(), 0);
-        p.setIndent(-1d); // the value of -1.0 resets to the defaults (not any more ...)
+        p.setIndent(-1d); // the value of -1.0 resets to the defaults (not anymore ...)
         assertEquals(-1d, p.getIndent(), 0);
         p.setIndent(null);
         assertNull(p.getIndent());

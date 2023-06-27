@@ -144,10 +144,10 @@ public final class TestPictures {
      * Check that we can properly read one of these
      */
     @Test
-    void testEmbededDocumentIcon() {
+    void testEmbeddedDocumentIcon() {
         // This file has two embedded excel files, an embedded powerpoint
         //   file and an embedded word file, in that order
-        HWPFDocument doc = openSampleFile("word_with_embeded.doc");
+        HWPFDocument doc = openSampleFile("word_with_embedded.doc");
 
         // Check we don't break loading the pictures
         doc.getPicturesTable().getAllPictures();

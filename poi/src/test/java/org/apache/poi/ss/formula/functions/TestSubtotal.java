@@ -495,7 +495,7 @@ final class TestSubtotal {
         Sheet sh = wb.createSheet();
         Cell b4 = sh.createRow(3).createCell(1);
 
-        // formula, throws NotImplemnted?
+        // formula, throws NotImplemented?
         String[][] formulas = {
             { "SUBTOTAL(0,B2:B3)", null },
             { "SUBTOTAL(9)", FormulaParseException.class.getName() },

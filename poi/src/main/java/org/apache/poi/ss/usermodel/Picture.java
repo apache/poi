@@ -20,7 +20,7 @@ import java.awt.Dimension;
 
 
 /**
- * Repersents a picture in a SpreadsheetML document
+ * Represents a picture in a SpreadsheetML document
  */
 public interface Picture extends Shape {
 
@@ -43,7 +43,7 @@ public interface Picture extends Shape {
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with the default font size (Arial 10pt for .xls and Calibri 11pt for .xlsx).
-     * If the default font is changed the resized image can be streched vertically or horizontally.
+     * If the default font is changed the resized image can be stretched vertically or horizontally.
      * </p>
      * <p>
      * <code>resize(1.0,1.0)</code> keeps the original size,<br>

@@ -51,7 +51,7 @@ class TestPackagingURIHelper {
         // Document to itself is the same place (empty URI)
         URI retURI2 = PackagingURIHelper.relativizeURI(uri1, uri1);
         // YK: the line below used to assert empty string which is wrong
-        // if source and target are the same they should be relaitivized as the last segment,
+        // if source and target are the same they should be relativized as the last segment,
         // see Bugzilla 51187
         assertEquals("document.xml", retURI2.getPath());
 
@@ -138,7 +138,7 @@ class TestPackagingURIHelper {
     @Test
     void test53734() throws Exception {
         URI uri = PackagingURIHelper.toURI("javascript://");
-        // POI appends a trailing slash tpo avoid "Expected authority at index 13: javascript://"
+        // POI appends a trailing slash to avoid "Expected authority at index 13: javascript://"
         // https://issues.apache.org/bugzilla/show_bug.cgi?id=53734
         assertEquals("javascript:///", uri.toASCIIString());
     }

@@ -764,7 +764,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     /**
      * Specifies the line end decoration, such as a triangle or arrowhead.
      *
-     * @param style the line end docoration style
+     * @param style the line end decoration style
      */
     @SuppressWarnings("WeakerAccess")
     public void setLineHeadDecoration(DecorationShape style) {

@@ -567,7 +567,7 @@ public final class IOUtils {
 
         if (offset < 0 || length < 0 || maxLength < 0) {
             throw new RecordFormatException("Invalid offset/length specified: "
-                    + "offset: " + offset + ", lenght: " + length + ", maxLength: " + maxLength);
+                    + "offset: " + offset + ", length: " + length + ", maxLength: " + maxLength);
         }
 
         int realLength = Math.min(src.length - offset, length);

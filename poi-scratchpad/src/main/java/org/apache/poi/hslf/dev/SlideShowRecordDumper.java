@@ -37,7 +37,7 @@ import org.apache.poi.util.HexDump;
 
 /**
  * This class provides a way to view the contents of a powerpoint file.
- * It will use the recored layer to grok the contents of the file, and
+ * It will use the record layer to grok the contents of the file, and
  *  will print out what it finds.
  */
 public final class SlideShowRecordDumper {

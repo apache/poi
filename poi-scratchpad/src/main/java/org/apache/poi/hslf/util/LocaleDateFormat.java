@@ -35,7 +35,7 @@ import org.apache.poi.util.SuppressForbidden;
 public final class LocaleDateFormat {
 
     /**
-     * Enum to specify initial remapping of the FormatID based on thd LCID
+     * Enum to specify initial remapping of the FormatID based on the LCID
      */
     public enum MapFormatId {
         NONE, PPT

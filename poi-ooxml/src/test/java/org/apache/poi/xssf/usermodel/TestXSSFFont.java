@@ -377,7 +377,7 @@ public final class TestXSSFFont extends BaseTestFont {
     @Test
     void testCanComputeWidthInvalidFont() {
         Font font = new XSSFFont(CTFont.Factory.newInstance());
-        font.setFontName("some non existing font name");
+        font.setFontName("some nonexistent font name");
 
         // Even with invalid fonts we still get back useful data most of the time...
         assertDoesNotThrow(() -> SheetUtil.canComputeColumnWidth(font));

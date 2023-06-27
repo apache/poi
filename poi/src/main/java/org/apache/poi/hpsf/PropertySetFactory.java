@@ -34,7 +34,7 @@ import org.apache.poi.util.LittleEndianInputStream;
 public class PropertySetFactory {
     /**
      * Creates the most specific {@link PropertySet} from an entry
-     *  in the specified POIFS Directory. This is preferrably a {@link
+     *  in the specified POIFS Directory. This is preferably a {@link
      * DocumentSummaryInformation} or a {@link SummaryInformation}. If
      * the specified entry does not contain a property set stream, an
      * exception is thrown. If no entry is found with the given name,
@@ -59,7 +59,7 @@ public class PropertySetFactory {
 
     /**
      * Creates the most specific {@link PropertySet} from an {@link
-     * InputStream}. This is preferrably a {@link
+     * InputStream}. This is preferably a {@link
      * DocumentSummaryInformation} or a {@link SummaryInformation}. If
      * the specified {@link InputStream} does not contain a property
      * set stream, an exception is thrown and the {@link InputStream}

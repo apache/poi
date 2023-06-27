@@ -1516,7 +1516,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      * @param s the <code>Shape</code> to check for a hit
      * @param onStroke flag used to choose between testing the
      * stroked or the filled shape.  If the flag is <code>true</code>, the
-     * <code>Stroke</code> oultine is tested.  If the flag is
+     * <code>Stroke</code> outline is tested.  If the flag is
      * <code>false</code>, the filled <code>Shape</code> is tested.
      * @return <code>true</code> if there is a hit; <code>false</code>
      * otherwise.

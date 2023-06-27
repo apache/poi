@@ -21,7 +21,7 @@ package org.apache.poi.sl.usermodel;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Extended details about placholders
+ * Extended details about placeholders
  *
  * @since POI 4.0.0
  */

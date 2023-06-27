@@ -55,14 +55,14 @@ public class DrawTextFragment implements Drawable  {
             try {
                 graphics.drawString(str.getIterator(), (float) x, (float) yBaseline);
             } catch (ClassCastException e) {
-                // workaround: batik issue, which expects only Color as forground color
-                replaceForgroundPaintWithBlack(str);
+                // workaround: batik issue, which expects only Color as foreground color
+                replaceForegroundPaintWithBlack(str);
                 graphics.drawString(str.getIterator(), (float) x, (float) yBaseline);
             }
         }
     }
 
-    private void replaceForgroundPaintWithBlack(AttributedString as) {
+    private void replaceForegroundPaintWithBlack(AttributedString as) {
         AttributedCharacterIterator iter = as.getIterator(new TextAttribute[]{TextAttribute.FOREGROUND});
         for (char ch = iter.first();
              ch != CharacterIterator.DONE;

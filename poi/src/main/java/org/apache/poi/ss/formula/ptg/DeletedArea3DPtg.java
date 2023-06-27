@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Deleted Area 3D Ptg - 3D referecnce (Sheet + Area)<p>
+ * Deleted Area 3D Ptg - 3D reference (Sheet + Area)<p>
  * Defined an area in Extern Sheet.
  *
  * @version 1.0-pre

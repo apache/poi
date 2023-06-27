@@ -59,7 +59,7 @@ public interface TextShape<
     /**
      * Specifies alist of auto-fit types.
      * <p>
-     * Autofit specofies that a shape should be auto-fit to fully contain the text described within it.
+     * Autofit specifies that a shape should be auto-fit to fully contain the text described within it.
      * Auto-fitting is when text within a shape is scaled in order to contain all the text inside
      * </p>
      */

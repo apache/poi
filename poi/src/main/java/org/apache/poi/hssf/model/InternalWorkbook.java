@@ -497,7 +497,7 @@ public final class InternalWorkbook {
     /**
      * Removes the given font record from the
      *  file's list. This will make all
-     *  subsequent font indicies drop by one,
+     *  subsequent font indices drop by one,
      *  so you'll need to update those yourself!
      *
      * @param rec the font record
@@ -840,7 +840,7 @@ public final class InternalWorkbook {
     /**
      * Removes the given ExtendedFormatRecord record from the
      *  file's list. This will make all
-     *  subsequent font indicies drop by one,
+     *  subsequent font indices drop by one,
      *  so you'll need to update those yourself!
      *
      * @param rec the ExtendedFormatRecord
@@ -853,7 +853,7 @@ public final class InternalWorkbook {
     /**
      * Removes ExtendedFormatRecord record with given index from the
      *  file's list. This will make all
-     *  subsequent font indicies drop by one,
+     *  subsequent font indices drop by one,
      *  so you'll need to update those yourself!
      *  @param index of the Extended format record (0-based)
      */
@@ -1735,7 +1735,7 @@ public final class InternalWorkbook {
 
 
     /**
-     * Returns the first occurance of a record matching a particular sid.
+     * Returns the first occurrence of a record matching a particular sid.
      *
      * @param sid the sid
      *
@@ -1767,7 +1767,7 @@ public final class InternalWorkbook {
     }
 
     /**
-     * Returns the next occurance of a record matching a particular sid.
+     * Returns the next occurrence of a record matching a particular sid.
      *
      * @param sid the sid
      * @param pos specifies the n-th matching sid
@@ -2041,7 +2041,7 @@ public final class InternalWorkbook {
     }
 
     /**
-     * protect a workbook with a password (not encypted, just sets writeprotect
+     * protect a workbook with a password (not encrypted, just sets writeprotect
      * flags and the password.
      *
      * @param password the password
@@ -2080,7 +2080,7 @@ public final class InternalWorkbook {
      *
      * @param name the  name of an external function, typically a name of a UDF
      * @param sheetRefIndex the sheet ref index, or -1 if not known
-     * @param udf  locator of user-defiend functions to resolve names of VBA and Add-In functions
+     * @param udf  locator of user-defined functions to resolve names of VBA and Add-In functions
      * @return the external name or null
      */
     public NameXPtg getNameXPtg(String name, int sheetRefIndex, UDFFinder udf) {
@@ -2232,7 +2232,7 @@ public final class InternalWorkbook {
      * Changes an external referenced file to another file.
      * A formular in Excel which refers a cell in another file is saved in two parts:
      * The referenced file is stored in an reference table. the row/cell information is saved separate.
-     * This method invokation will only change the reference in the lookup-table itself.
+     * This method invocation will only change the reference in the lookup-table itself.
      * @param oldUrl The old URL to search for and which is to be replaced
      * @param newUrl The URL replacement
      * @return true if the oldUrl was found and replaced with newUrl. Otherwise false

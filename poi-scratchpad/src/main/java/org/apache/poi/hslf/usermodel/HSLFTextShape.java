@@ -280,11 +280,11 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
         StyleTextPropAtom sta = (StyleTextPropAtom)_txtbox.findFirstOfType(StyleTextPropAtom._type);
         TextPropCollection paraStyle = null, charStyle = null;
         if (sta == null) {
-            int parSiz = text.length();
-            sta = new StyleTextPropAtom(parSiz+1);
+            int parSize = text.length();
+            sta = new StyleTextPropAtom(parSize+1);
             if (_paragraphs.isEmpty()) {
-                paraStyle = sta.addParagraphTextPropCollection(parSiz+1);
-                charStyle = sta.addCharacterTextPropCollection(parSiz+1);
+                paraStyle = sta.addParagraphTextPropCollection(parSize+1);
+                charStyle = sta.addCharacterTextPropCollection(parSize+1);
             } else {
                 for (HSLFTextParagraph htp : _paragraphs) {
                     int runsLen = 0;
@@ -466,14 +466,14 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * and the bottom of the inscribed rectangle of the shape that contains the text.
      * Default value is 1/20 inch.
      *
-     * @return the botom margin
+     * @return the bottom margin
      */
     public double getBottomInset(){
         return getInset(EscherPropertyTypes.TEXT__TEXTBOTTOM, .05);
     }
 
     /**
-     * Sets the botom margin.
+     * Sets the bottom margin.
      * @see #getBottomInset()
      *
      * @param margin    the bottom margin
@@ -860,7 +860,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
 
     @Override
     public void setTextPlaceholder(TextPlaceholder placeholder) {
-        // TOOD: check for correct placeholder handling - see org.apache.poi.hslf.model.Placeholder
+        // TODO: check for correct placeholder handling - see org.apache.poi.hslf.model.Placeholder
         Placeholder ph = null;
         int runType;
         switch (placeholder) {

@@ -91,7 +91,7 @@ import java.util.Locale;
  * Taken together, the first four methods define the locations of the top left
  * and bottom right hand corners of the image if you imagine that the image is
  * represented by a simple rectangle. The setDx1() and setDy1() methods locate
- * the top left hand corner of the image while setDx2() and and Dy2() locate the
+ * the top left hand corner of the image while setDx2() and Dy2() locate the
  * bottom right hand corner of the image. An individual image can be inserted
  * into a single cell or is can lie across many cells and the latter four methods
  * are used to define just where the image should be positioned. They do this by
@@ -211,7 +211,7 @@ public class AddDimensionedImage {
     // increased to accommodate the image if it is not already larger. The image
     // will be layed across one or many rows.
     // Passing EXPAND_ROW_AND_COLUMN will result in the height of the row
-    // bing increased along with the width of the column to accomdate the
+    // bing increased along with the width of the column to accommodate the
     // image if either is not already larger.
     // Passing OVERLAY_ROW_AND_COLUMN will result in the image being layed
     // over one or more rows and columns. No row or column will be resized,
@@ -434,7 +434,7 @@ public class AddDimensionedImage {
         int pictureWidthCoordinates;
         ClientAnchorDetail colClientAnchorDetail = null;
 
-        // Get the colum's width in millimetres
+        // Get the column's width in millimetres
         colWidthMM = ConvertImageUnits.widthUnits2Millimetres(
                 (short) sheet.getColumnWidth(colNumber));
 
@@ -632,7 +632,7 @@ public class AddDimensionedImage {
             totalWidthMM += (colWidthMM + ConvertImageUnits.CELL_BORDER_WIDTH_MILLIMETRES);
             toColumn++;
         }
-        // De-crement by one the last column value.
+        // Decrement by one the last column value.
         toColumn--;
         // Highly unlikely that this will be true but, if the width of a series
         // of columns is exactly equal to the required width of the image, then
@@ -647,9 +647,9 @@ public class AddDimensionedImage {
             // A problem could occur if the image is sized to fit into one or
             // more columns. If that occurs, the value in the toColumn variable
             // will be in error. To overcome this, there are two options, to
-            // ibcrement the toColumn variable's value by one or to pass the
-            // total number of co-ordinate positions to the third paramater
-            // of the ClientAnchorDetail constructor. For no sepcific reason,
+            // increment the toColumn variable's value by one or to pass the
+            // total number of co-ordinate positions to the third parameter
+            // of the ClientAnchorDetail constructor. For no specific reason,
             // the latter option is used below.
             if (sheet instanceof HSSFSheet) {
                 anchorDetail = new ClientAnchorDetail(startingColumn,
@@ -663,13 +663,13 @@ public class AddDimensionedImage {
         // necessary to calculate just how much - this will become the inset
         // for the ClientAnchorDetail object.
         else {
-            // Firstly, claculate how much of the image should overlap into
+            // Firstly, calculate how much of the image should overlap into
             // the next column.
             overlapMM = reqImageWidthMM - (totalWidthMM - colWidthMM);
 
-            // When the required size is very close indded to the column size,
-            // the calcaulation above can produce a negative value. To prevent
-            // problems occuring in later caculations, this is simply removed
+            // When the required size is very close indeed to the column size,
+            // the calculation above can produce a negative value. To prevent
+            // problems occurring in later calculations, this is simply removed
             // be setting the overlapMM value to zero.
             if (overlapMM < 0) {
                 overlapMM = 0.0D;
@@ -677,10 +677,10 @@ public class AddDimensionedImage {
 
             if (sheet instanceof HSSFSheet) {
                 // Next, from the columns width, calculate how many co-ordinate
-                // positons there are per millimetre
+                // positions there are per millimetre
                 coordinatePositionsPerMM = (colWidthMM == 0) ? 0
                         : ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS / colWidthMM;
-                // From this figure, determine how many co-ordinat positions to
+                // From this figure, determine how many co-ordinate positions to
                 // inset the left hand or bottom edge of the image.
                 inset = (int) (coordinatePositionsPerMM * overlapMM);
             } else {
@@ -922,16 +922,16 @@ public class AddDimensionedImage {
      */
     public static class ConvertImageUnits {
 
-        // Each cell conatins a fixed number of co-ordinate points; this number
+        // Each cell contains a fixed number of co-ordinate points; this number
         // does not vary with row height or column width or with font. These two
         // constants are defined below.
         public static final int TOTAL_COLUMN_COORDINATE_POSITIONS = 1023;
         public static final int TOTAL_ROW_COORDINATE_POSITIONS = 255;
-        // The resoultion of an image can be expressed as a specific number
+        // The resolution of an image can be expressed as a specific number
         // of pixels per inch. Displays and printers differ but 96 pixels per
-        // inch is an acceptable standard to beging with.
+        // inch is an acceptable standard to begin with.
         public static final int PIXELS_PER_INCH = 96;
-        // Cnstants that defines how many pixels and points there are in a
+        // Constants that defines how many pixels and points there are in a
         // millimetre. These values are required for the conversion algorithm.
         public static final double PIXELS_PER_MILLIMETRES = 3.78;
         public static final double POINTS_PER_MILLIMETRE = 2.83;
@@ -939,7 +939,7 @@ public class AddDimensionedImage {
         // positioned to exactly cover one cell are different by almost exactly
         // 2mm - give or take rounding errors. This constant allows that
         // additional amount to be accounted for when calculating how many
-        // celles the image ought to overlie.
+        // cells the image ought to overlie.
         public static final double CELL_BORDER_WIDTH_MILLIMETRES = 2.0D;
         public static final short EXCEL_COLUMN_WIDTH_FACTOR = 256;
         public static final int UNIT_OFFSET_LENGTH = 7;

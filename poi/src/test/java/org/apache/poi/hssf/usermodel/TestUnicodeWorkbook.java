@@ -29,11 +29,11 @@ final class TestUnicodeWorkbook {
 
     /**
      *  Tests Bug38230
-     *  That a Umlat is written  and then read back.
+     *  That an Umlaut is written and then read back.
      *  It should have been written as a compressed unicode.
      */
     @Test
-    void testUmlatReadWrite() throws IOException {
+    void testUmlautReadWrite() throws IOException {
         try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
 
             //Create a unicode sheet name (euro symbol)
@@ -43,7 +43,7 @@ final class TestUnicodeWorkbook {
             HSSFCell c = r.createCell(1);
             c.setCellValue(new HSSFRichTextString("\u00e4"));
 
-            //Confirm that the sring will be compressed
+            //Confirm that the string will be compressed
             assertEquals(0, c.getRichStringCellValue().getUnicodeString().getOptionFlags());
 
             try (HSSFWorkbook wb = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {

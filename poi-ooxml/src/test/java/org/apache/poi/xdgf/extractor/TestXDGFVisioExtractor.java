@@ -97,7 +97,7 @@ class TestXDGFVisioExtractor {
     }
 
     @Test
-    void testGithub260() throws IOException {
+    void testGitHub260() throws IOException {
         XmlVisioDocument document;
         try (InputStream is = SAMPLES.openResourceAsStream("github260.vsdx")) {
             document = new XmlVisioDocument(is);

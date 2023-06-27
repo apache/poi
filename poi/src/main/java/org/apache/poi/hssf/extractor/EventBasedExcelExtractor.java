@@ -128,7 +128,7 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
 
 
    /**
-    * Retreives the text contents of the file
+    * Retrieves the text contents of the file
     */
    public String getText() {
        String text;

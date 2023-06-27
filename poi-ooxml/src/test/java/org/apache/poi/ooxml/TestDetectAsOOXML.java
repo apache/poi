@@ -36,7 +36,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 /**
- * Class to test that HXF correctly detects OOXML
+ * Class to test that FileMagic correctly detects OOXML
  *  documents
  */
 @SuppressWarnings("deprecation")

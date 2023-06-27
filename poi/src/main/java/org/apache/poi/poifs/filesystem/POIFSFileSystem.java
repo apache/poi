@@ -288,7 +288,7 @@ public class POIFSFileSystem extends BlockStore
      * <p>
      * Some streams are usable after reaching EOF (typically those that return {@code true}
      * for {@code markSupported()}).  In the unlikely case that the caller has such a stream
-     * <i>and</i> needs to use it after this constructor completes, a work around is to wrap the
+     * <i>and</i> needs to use it after this constructor completes, a workaround is to wrap the
      * stream in order to trap the {@code close()} call.  A convenience method (
      * {@code createNonClosingInputStream()}) has been provided for this purpose:
      * <pre>
@@ -639,7 +639,7 @@ public class POIFSFileSystem extends BlockStore
     }
 
     /**
-     * add a new POIFSDocument to the FileSytem
+     * add a new POIFSDocument to the FileSystem
      *
      * @param document the POIFSDocument being added
      */

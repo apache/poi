@@ -78,7 +78,7 @@ public final class TestFontCollection {
         Record[] child = fonts.getChildRecords();
         assertEquals(3, child.length);
 
-        // Check we get the right font name for the indicies
+        // Check we get the right font name for the indices
         fi = fonts.getFontInfo(0);
         assertNotNull(fi);
         assertEquals("Times New Roman", fi.getTypeface());

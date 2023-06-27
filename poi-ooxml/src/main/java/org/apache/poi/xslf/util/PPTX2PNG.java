@@ -82,7 +82,7 @@ public final class PPTX2PNG {
             "    -charset <cs>     sets the default charset to be used, defaults to Windows-1252\n" +
             "    -emfHeaderBounds  force the usage of the emf header bounds to calculate the bounding box\n" +
             "    -fontdir <dir>    (PDF only) font directories separated by \";\" - use $HOME for current users home dir\n" +
-            "                      defaults to the usual plattform directories\n" +
+            "                      defaults to the usual platform directories\n" +
             "    -fontTtf <regex>  (PDF only) regex to match the .ttf filenames\n" +
             "    -fontMap <map>    \";\"-separated list of font mappings <typeface from>:<typeface to>";
 

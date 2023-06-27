@@ -58,7 +58,7 @@ public abstract class HRESIAbstractType {
     }
 
     /**
-     * Size of record (exluding 4 byte header)
+     * Size of record (excluding 4 byte header)
      */
     public static int getSize()
     {

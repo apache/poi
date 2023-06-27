@@ -162,7 +162,7 @@ final class TestSheetUtil {
             cell.setCellValue("sometext");
 
             assertTrue(SheetUtil.getColumnWidth(sheet, 0, true) > 0, "Having some width for rows with actual cells");
-            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any widht for rows with all empty cells");
+            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any width for rows with all empty cells");
         }
     }
 
@@ -178,7 +178,7 @@ final class TestSheetUtil {
             cell.setCellValue((String)null);
 
             assertEquals(-1, SheetUtil.getColumnWidth(sheet, 0, true), "Having some width for rows with actual cells");
-            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any widht for rows with all empty cells");
+            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any width for rows with all empty cells");
         }
     }
 
@@ -194,7 +194,7 @@ final class TestSheetUtil {
             cell.setCellValue("");
 
             assertTrue(SheetUtil.getColumnWidth(sheet, 0, true) > 0, "Having some width for rows with actual cells");
-            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any widht for rows with all empty cells");
+            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any width for rows with all empty cells");
         }
     }
 
@@ -212,7 +212,7 @@ final class TestSheetUtil {
             cell.setCellType(CellType.STRING);
 
             assertTrue(SheetUtil.getColumnWidth(sheet, 0, true) > 0, "Having some width for rows with actual cells");
-            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any widht for rows with all empty cells");
+            assertEquals(-1.0, SheetUtil.getColumnWidth(sheet, 0, true, 1, 2), 0.01, "Not having any width for rows with all empty cells");
         }
     }
 }

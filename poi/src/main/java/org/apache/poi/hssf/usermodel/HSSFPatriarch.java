@@ -545,8 +545,8 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
         if (dgContainer == null) {
             return;
         }
-        EscherContainerRecord spgrConrainer = dgContainer.getChildContainers().get(0);
-        List<EscherContainerRecord> spgrChildren = spgrConrainer.getChildContainers();
+        EscherContainerRecord spgrContainer = dgContainer.getChildContainers().get(0);
+        List<EscherContainerRecord> spgrChildren = spgrContainer.getChildContainers();
 
         for (int i = 0; i < spgrChildren.size(); i++) {
             EscherContainerRecord spContainer = spgrChildren.get(i);

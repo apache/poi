@@ -31,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @Isolated //changes IOUtils and other static changes
 class TestXSSFWorkbookWithMemoryConfigs {
     @Test
-    void loadXslsxWithLowThreshold() {
+    void loadXslxWithLowThreshold() {
         final int defaultMaxEntrySize = ZipArchiveFakeEntry.getMaxEntrySize();
         ZipArchiveFakeEntry.setMaxEntrySize(100);
         try {

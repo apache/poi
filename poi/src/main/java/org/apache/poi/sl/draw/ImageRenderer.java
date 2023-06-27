@@ -37,7 +37,7 @@ import org.apache.poi.util.Dimension2DDouble;
  *
  * <pre>
  * <code>
- * public class MyImageRendener implements ImageRendener {
+ * public class MyImageRenderer implements ImageRenderer {
  *     InputStream data;
  *
  *     public boolean drawImage(Graphics2D graphics,Rectangle2D anchor,Insets clip) {
@@ -75,7 +75,7 @@ import org.apache.poi.util.Dimension2DDouble;
  *
  * <pre>
  * <code>
- * graphics.setRenderingHint(Drawable.IMAGE_RENDERER, new MyImageRendener());
+ * graphics.setRenderingHint(Drawable.IMAGE_RENDERER, new MyImageRenderer());
  * </code>
  * </pre>
  */

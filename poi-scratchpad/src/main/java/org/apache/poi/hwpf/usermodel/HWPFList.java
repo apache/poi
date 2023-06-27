@@ -47,7 +47,7 @@ import org.apache.poi.util.Removal;
  */
 public final class HWPFList
 {
-    private boolean _ignoreLogicalLeftIdentation;
+    private boolean _ignoreLogicalLeftIndentation;
     private LFO _lfo;
     private LFOData _lfoData;
     private ListData _listData;
@@ -92,7 +92,7 @@ public final class HWPFList
             int nilfo = ilfo ^ 0xFFFF;
             _lfo = listTables.getLfo( nilfo );
             _lfoData = listTables.getLfoData( nilfo );
-            _ignoreLogicalLeftIdentation = true;
+            _ignoreLogicalLeftIndentation = true;
         }
         else
         {
@@ -174,9 +174,9 @@ public final class HWPFList
         return getLVL( level ).getTypeOfCharFollowingTheNumber();
     }
 
-    public boolean isIgnoreLogicalLeftIdentation()
+    public boolean isIgnoreLogicalLeftIndentation()
     {
-        return _ignoreLogicalLeftIdentation;
+        return _ignoreLogicalLeftIndentation;
     }
 
     /**
@@ -204,10 +204,10 @@ public final class HWPFList
                 && !lfolvl.isFormatting();
     }
 
-    public void setIgnoreLogicalLeftIdentation(
-            boolean ignoreLogicalLeftIdentation )
+    public void setIgnoreLogicalLeftIndentation(
+            boolean ignoreLogicalLeftIndentation )
     {
-        this._ignoreLogicalLeftIdentation = ignoreLogicalLeftIdentation;
+        this._ignoreLogicalLeftIndentation = ignoreLogicalLeftIndentation;
     }
 
     /**

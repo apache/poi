@@ -88,7 +88,7 @@ public class HyperlinkExample {
             cell.setHyperlink(link2);
             cell.setCellStyle(hlink_style);
 
-            try (FileOutputStream out = new FileOutputStream("hyperinks.xlsx")) {
+            try (FileOutputStream out = new FileOutputStream("hyperlinks.xlsx")) {
                 wb.write(out);
             }
         }

@@ -137,7 +137,7 @@ public class DrawShape implements Drawable {
         if (quadrant == 1 || quadrant == 3) {
             // In a rotated quadrant 1 (=45-135 degrees) and 3 (=225-315 degrees), which is basically a shape in a
             // more or less portrait orientation, Powerpoint doesn't use the normal shape anchor,
-            // but rotate it 90 degress and apply the group transformations.
+            // but rotate it 90 degrees and apply the group transformations.
             // We try to revert that distortion and return the normalized anchor.
             // It's strange that you'll need to rotate the shape back and forth again, but you can
             // think of it, as if you paint the shape on a canvas. First you rotate the canvas, which might

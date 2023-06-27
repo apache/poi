@@ -209,7 +209,7 @@ public final class RecordFactoryInputStream {
         * non-zero padding that is read OK by Excel (Excel also fixes the padding).
         *
         * So to properly detect the workbook end of stream, this code has to identify the last
-        * EOF record.  This is not so easy because the worbook bof+eof pair do not bracket the
+        * EOF record.  This is not so easy because the workbook bof+eof pair do not bracket the
         * whole stream.  The worksheets follow the workbook, but it is not easy to tell how many
         * sheet sub-streams should be present.  Hence we are looking for an EOF record that is not
         * immediately followed by a BOF record.  One extra complication is that bof+eof sub-
@@ -358,7 +358,7 @@ public final class RecordFactoryInputStream {
                 //  outputs a file like this all the same
                 return record;
             }
-            throw new RecordFormatException("Unhandled Continue Record followining " + _lastRecord.getClass());
+            throw new RecordFormatException("Unhandled Continue Record following " + _lastRecord.getClass());
         }
         _lastRecord = record;
         if (record instanceof DrawingRecord) {

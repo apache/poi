@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 
 
 /**
- * Rich text unicode string.  These strings can have fonts applied to arbitary parts of the string.
+ * Rich text unicode string.  These strings can have fonts applied to arbitrary parts of the string.
  *
  * <p>
  * Most strings in a workbook have formatting applied at the cell level, that is, the entire string in the cell has the

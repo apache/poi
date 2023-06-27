@@ -109,7 +109,7 @@ public class PathGradientPaint implements Paint {
         ) {
             shape = (Shape)hints.get(Drawable.GRADIENT_SHAPE);
             if (shape == null) {
-                throw new IllegalPathStateException("PathGradientPaint needs a shape to be set via the rendering hint Drawable.GRADIANT_SHAPE.");
+                throw new IllegalPathStateException("PathGradientPaint needs a shape to be set via the rendering hint Drawable.GRADIENT_SHAPE.");
             }
 
             this.deviceBounds = deviceBounds;

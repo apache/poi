@@ -582,7 +582,7 @@ public class Section {
      * was available or not. This information might be important for
      * callers of {@link #getPropertyIntValue} since the latter
      * returns 0 if the property does not exist. Using {@link
-     * #wasNull} the caller can distiguish this case from a property's
+     * #wasNull} the caller can distinguish this case from a property's
      * real value of 0.
      *
      * @return {@code true} if the last call to {@link

@@ -48,7 +48,7 @@ import org.apache.poi.util.Removal;
 
 /**
  * This class is used to aggregate the MSODRAWING and OBJ record
- * combinations.  This is necessary due to the bizare way in which
+ * combinations.  This is necessary due to the bizarre way in which
  * these records are serialized.  What happens is that you get a
  * combination of MSODRAWING -&gt; OBJ -&gt; MSODRAWING -&gt; OBJ records
  * but the escher records are serialized _across_ the MSODRAWING
@@ -84,7 +84,7 @@ import org.apache.poi.util.Removal;
  * <p>
  * ObjRecord contains information about shape. Thus each ObjRecord corresponds EscherContainerRecord(SPGR)
  * <p>
- * EscherAggrefate contains also NoteRecords
+ * EscherAggregate contains also NoteRecords
  * NoteRecords must be serial
  */
 
@@ -116,7 +116,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     /** @deprecated use {@link ShapeType#NOT_PRIMITIVE} */
     @Deprecated
     @Removal(version = "5.3")
-    public static final short ST_NOT_PRIMATIVE = (short) 0;
+    public static final short ST_NOT_PRIMITIVE = (short) 0;
     /** @deprecated use {@link ShapeType#RECT} */
     @Deprecated
     @Removal(version = "5.3")
@@ -1104,7 +1104,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         spEndingOffsets.add(0, 0);
 
         // Split escher records into separate MSODRAWING and OBJ, TXO records.  (We don't break on
-        // the first one because it's the patriach).
+        // the first one because it's the patriarch).
         pos = offset;
         int writtenEscherBytes = 0;
         boolean isFirst = true;
@@ -1244,7 +1244,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     }
 
     /**
-     * Remove echerRecord and associated to it Obj or TextObj record
+     * Remove escherRecord and associated to it Obj or TextObj record
      * @param rec - clientData or textbox record to be removed
      */
     public void removeShapeToObjRecord(EscherRecord rec) {
@@ -1334,7 +1334,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
      * ---***
      * --***
      * -EscherDgRecord
-     * set id for the sp record of the first spContainer in main spgrConatiner
+     * set id for the sp record of the first spContainer in main spgrContainer
      * @param shapeId - id which must be set
      */
     public void setMainSpRecordId(int shapeId) {

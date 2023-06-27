@@ -22,7 +22,7 @@ import java.util.function.BiConsumer;
 
 /**
  * The BinaryRasterOperation Enumeration section lists the binary raster-operation codes.
- * Rasteroperation codes define how metafile processing combines the bits from the selected
+ * Raster operation codes define how metafile processing combines the bits from the selected
  * pen with the bits in the destination bitmap.
  *
  * Each raster-operation code represents a Boolean operation in which the values of the pixels in the

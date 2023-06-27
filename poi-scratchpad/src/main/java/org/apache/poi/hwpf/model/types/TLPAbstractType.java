@@ -73,7 +73,7 @@ public abstract class TLPAbstractType {
     }
 
     /**
-     * Size of record (exluding 4 byte header)
+     * Size of record (excluding 4 byte header)
      */
     public int getSize()
     {

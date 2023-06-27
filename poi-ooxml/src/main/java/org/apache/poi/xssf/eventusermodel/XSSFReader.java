@@ -89,7 +89,7 @@ public class XSSFReader {
     /**
      * Creates a new XSSFReader, for the given package
      *
-     * @param pkg an {@code OPCPackage} representing a spreasheet file
+     * @param pkg an {@code OPCPackage} representing a spreadsheet file
      * @param allowStrictOoxmlFiles whether to try to handle Strict OOXML format files
      * @throws OpenXML4JException if the package format is invalid
      * @throws IOException if there is an I/O issue reading the data

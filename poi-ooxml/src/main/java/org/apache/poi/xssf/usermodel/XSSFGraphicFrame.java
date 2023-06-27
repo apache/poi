@@ -88,7 +88,7 @@ public final class XSSFGraphicFrame extends XSSFShape {
             CTGraphicalObjectFrameNonVisual nvGraphic = graphicFrame.addNewNvGraphicFramePr();
             CTNonVisualDrawingProps props = nvGraphic.addNewCNvPr();
             props.setId(0);
-            props.setName("Diagramm 1");
+            props.setName("Diagram 1");
             nvGraphic.addNewCNvGraphicFramePr();
 
             CTTransform2D transform = graphicFrame.addNewXfrm();

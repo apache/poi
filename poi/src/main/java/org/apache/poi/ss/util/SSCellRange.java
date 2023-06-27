@@ -90,7 +90,7 @@ public final class SSCellRange<K extends Cell> implements CellRange<K> {
                     + " is outside the allowable range (0.." + (_height-1) + ").");
         }
         if (relativeColumnIndex < 0 || relativeColumnIndex >= _width) {
-            throw new ArrayIndexOutOfBoundsException("Specified colummn " + relativeColumnIndex
+            throw new ArrayIndexOutOfBoundsException("Specified column " + relativeColumnIndex
                     + " is outside the allowable range (0.." + (_width-1) + ").");
         }
         int flatIndex = _width * relativeRowIndex + relativeColumnIndex;

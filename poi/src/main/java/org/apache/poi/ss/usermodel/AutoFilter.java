@@ -54,7 +54,7 @@ public interface AutoFilter {
      * @param operator the operator to apply
      * @param criteria top or bottom value used in the filter criteria.
      *
-     * TODO YK: think how to combine AutoFilter with with DataValidationConstraint, they are really close relatives
+     * TODO YK: think how to combine AutoFilter with DataValidationConstraint, they are really close relatives
      * void applyFilter(int columnIndex, FilterOperator operator, String criteria);
      */
 

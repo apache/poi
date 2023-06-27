@@ -584,7 +584,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                 } else if (ostyle instanceof String) {
                     setBulletFont((String)ostyle);
                 } else if (ostyle instanceof AutoNumberingScheme) {
-                    throw new HSLFException("setting bullet auto-numberin scheme for HSLF not supported ... yet");
+                    throw new HSLFException("setting bullet auto-numbering scheme for HSLF not supported ... yet");
                 }
             }
         }

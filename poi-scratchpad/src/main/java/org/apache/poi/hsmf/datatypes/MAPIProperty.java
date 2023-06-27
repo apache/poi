@@ -996,8 +996,8 @@ public class MAPIProperty {
         new MAPIProperty(0x3a17, ASCII_STRING, "Title", "PR_TITLE");
     public static final MAPIProperty TNEF_CORRELATION_KEY =
         new MAPIProperty(0x7f, BINARY, "TnefCorrelationKey", "PR_TNEF_CORRELATION_KEY");
-    public static final MAPIProperty TRANSMITABLE_DISPLAY_NAME =
-        new MAPIProperty(0x3a20, ASCII_STRING, "TransmitableDisplayName", "PR_TRANSMITABLE_DISPLAY_NAME");
+    public static final MAPIProperty TRANSMITTABLE_DISPLAY_NAME =
+        new MAPIProperty(0x3a20, ASCII_STRING, "TransmittableDisplayName", "PR_TRANSMITTABLE_DISPLAY_NAME");
     public static final MAPIProperty TRANSPORT_KEY =
         new MAPIProperty(0xe16, LONG, "TransportKey", "PR_TRANSPORT_KEY");
     public static final MAPIProperty TRANSPORT_MESSAGE_HEADERS =

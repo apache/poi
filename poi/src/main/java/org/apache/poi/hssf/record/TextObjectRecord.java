@@ -71,7 +71,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 
     /*
      * Note - the next three fields are very similar to those on
-     * EmbededObjectRefSubRecord(ftPictFmla 0x0009)
+     * EmbeddedObjectRefSubRecord(ftPictFmla 0x0009)
      *
      * some observed values for the 4 bytes preceding the formula: C0 5E 86 03
      * C0 11 AC 02 80 F1 8A 03 D4 F0 8A 03
@@ -254,7 +254,7 @@ public final class TextObjectRecord extends ContinuableRecord {
     /**
      * Sets the Vertical text alignment field value.
      *
-     * @param value The vertical alignment, use one of the VERTIUCAL_TEST_ALIGNMENT_... constants in this class
+     * @param value The vertical alignment, use one of the VERTICAL_TEST_ALIGNMENT_... constants in this class
      */
     public void setVerticalTextAlignment(int value) {
         field_1_options = VerticalTextAlignment.setValue(field_1_options, value);

@@ -224,7 +224,7 @@ public class HwmfFont implements FontInfo, GenericRecord {
 
         /**
          * Specifies that the character quality of the font is less important than the
-         * matching of logical attribuetes. For rasterized fonts, scaling SHOULD be enabled, which
+         * matching of logical attributes. For rasterized fonts, scaling SHOULD be enabled, which
          * means that more font sizes are available.
          */
         DRAFT_QUALITY (0x01),
@@ -534,7 +534,7 @@ public class HwmfFont implements FontInfo, GenericRecord {
         final Map<String,Supplier<?>> m = new LinkedHashMap<>();
         m.put("height", this::getHeight);
         m.put("width", this::getWidth);
-        m.put("escapment", this::getEscapement);
+        m.put("escapement", this::getEscapement);
         m.put("weight", this::getWeight);
         m.put("italic", this::isItalic);
         m.put("underline", this::isUnderline);

@@ -58,7 +58,7 @@ public interface DrawFontManager {
      * <p>
      * Currently this only maps for wingdings and symbol font (into unicode private use area)
      * <p>
-     * Depending if the requested font is installed in the system, tbe mapped string varies:<br>
+     * Depending if the requested font is installed in the system, the mapped string varies:<br>
      * If the font is registered into the graphics environment the characters are mapped to the
      * private use area. If the font is missing (and hence a AWT logical font is used), the
      * characters are mapped to the corresponding unicode characters

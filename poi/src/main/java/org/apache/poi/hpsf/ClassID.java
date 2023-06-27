@@ -216,7 +216,7 @@ public class ClassID implements Duplicatable, GenericRecord {
     }
 
     /**
-     * Checks whether this {@code ClassID} is equal to another ClassID with inverted endianess,
+     * Checks whether this {@code ClassID} is equal to another ClassID with inverted endianness,
      * because there are apparently not only version 1 GUIDs (aka "network" with big-endian encoding),
      * but also version 2 GUIDs (aka "native" with little-endian encoding) out there.
      *

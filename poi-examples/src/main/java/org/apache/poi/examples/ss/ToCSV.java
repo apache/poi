@@ -183,7 +183,7 @@ public class ToCSV {
      *         problems during processing.
      * @throws java.lang.IllegalArgumentException Thrown if the values passed
      *         to the strSource parameter refers to a file or folder that does not
-     *         exist or if the value passed to the strDestination paramater refers
+     *         exist or if the value passed to the strDestination parameter refers
      *         to a folder that does not exist or simply does not refer to a
      *         folder.
      */
@@ -223,7 +223,7 @@ public class ToCSV {
      *         problems during processing.
      * @throws java.lang.IllegalArgumentException Thrown if the values passed
      *         to the strSource parameter refers to a file or folder that does not
-     *         exist or if the value passed to the strDestination paramater refers
+     *         exist or if the value passed to the strDestination parameter refers
      *         to a folder that does not exist or simply does not refer to a
      *         folder.
      */
@@ -266,7 +266,7 @@ public class ToCSV {
      *         problems during processing.
      * @throws java.lang.IllegalArgumentException Thrown if the values passed
      *         to the strSource parameter refers to a file or folder that does not
-     *         exist, if the value passed to the strDestination paramater refers
+     *         exist, if the value passed to the strDestination parameter refers
      *         to a folder that does not exist,  if the value passed to the
      *         strDestination parameter does not refer to a folder or if the
      *         value passed to the formattingConvention parameter is other than
@@ -284,7 +284,7 @@ public class ToCSV {
                     "file(s) cannot be found at " + source);
         }
 
-        // Ensure thaat the folder the user has chosen to save the CSV files
+        // Ensure that the folder the user has chosen to save the CSV files
         // away into firstly exists and secondly is a folder rather than, for
         // instance, a data file.
         File destination = new File(strDestination);
@@ -306,7 +306,7 @@ public class ToCSV {
                     ToCSV.EXCEL_STYLE_ESCAPING + " or " + ToCSV.UNIX_STYLE_ESCAPING);
         }
 
-        // Copy the spearator character and formatting convention into local
+        // Copy the separator character and formatting convention into local
         // variables for use in other methods.
         this.separator = separator;
         this.formattingConvention = formattingConvention;
@@ -374,7 +374,7 @@ public class ToCSV {
 
             // Open the workbook and then create the FormulaEvaluator and
             // DataFormatter instances that will be needed to, respectively,
-            // force evaluation of forumlae found in cells and create a
+            // force evaluation of formulae found in cells and create a
             // formatted String encapsulating the cells contents.
             this.workbook = WorkbookFactory.create(fis);
             this.evaluator = this.workbook.getCreationHelper().createFormulaEvaluator();
@@ -409,7 +409,7 @@ public class ToCSV {
                 // from the very first row - number 1 - even if it is missing.
                 // Recover a reference to the row and then call another method
                 // which will strip the data from the cells and build lines
-                // for inclusion in the resylting CSV file.
+                // for inclusion in the resulting CSV file.
                 lastRowNum = sheet.getLastRowNum();
                 for(int j = 0; j <= lastRowNum; j++) {
                     row = sheet.getRow(j);
@@ -426,7 +426,7 @@ public class ToCSV {
      * @param file An instance of the File class that encapsulates a handle
      *             referring to the CSV file.
      * @throws java.io.IOException Thrown to indicate and error occurred in the
-     *                             underylying file system.
+     *                             underlying file system.
      */
     private void saveCSVFile(File file) throws IOException {
         ArrayList<String> line;
@@ -559,9 +559,9 @@ public class ToCSV {
      *
      * It is worth making one further note with regard to embedded EOL
      * characters. If the data in a worksheet is exported as a CSV file using
-     * Excel itself, then the field will be surounded with speech marks. If the
+     * Excel itself, then the field will be surrounded with speech marks. If the
      * resulting CSV file is then re-imports into another worksheet, the EOL
-     * character will result in the original simgle field occupying more than
+     * character will result in the original single field occupying more than
      * one cell. This same 'feature' is replicated in this classes behaviour.
      *
      * @param field An instance of the String class encapsulating the formatted
@@ -573,12 +573,12 @@ public class ToCSV {
     private String escapeEmbeddedCharacters(String field) {
         StringBuilder buffer;
 
-        // If the fields contents should be formatted to confrom with Excel's
+        // If the fields contents should be formatted to conform with Excel's
         // convention....
         if(this.formattingConvention == ToCSV.EXCEL_STYLE_ESCAPING) {
 
             // Firstly, check if there are any speech marks (") in the field;
-            // each occurrence must be escaped with another set of spech marks
+            // each occurrence must be escaped with another set of speech marks
             // and then the entire field should be enclosed within another
             // set of speech marks. Thus, "Yes" he said would become
             // """Yes"" he said"
@@ -629,8 +629,8 @@ public class ToCSV {
         // files should be written, - optionally - the separator character
         // that should be used to separate individual items (fields) on the
         // lines (records) of the CSV file and - again optionally - an integer
-        // that idicates whether the CSV file ought to obey Excel's or UNIX
-        // convnetions with regard to formatting fields that contain embedded
+        // that indicates whether the CSV file ought to obey Excel's or UNIX
+        // conventions with regard to formatting fields that contain embedded
         // separator, Speech mark or EOL character(s).
         //
         // Note that the names of the CSV files will be derived from those
@@ -726,7 +726,7 @@ public class ToCSV {
          * @param name An instance of the String class that encapsulates the
          *             name of the file.
          * @return A boolean value that indicates whether the file should be
-         *         included in the array retirned by the call to the listFiles()
+         *         included in the array returned by the call to the listFiles()
          *         method. In this case true will be returned if the name of the
          *         file ends with either '.xls' or '.xlsx' and false will be
          *         returned in all other instances.

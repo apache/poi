@@ -192,7 +192,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * @param editValue the protection type
      * @param password  the plaintext password, if null no password will be applied
      * @param hashAlgo  the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                  if null, it will default default to sha1
+     *                  if null, it will default to sha1
      */
     public void setEnforcementEditValue(org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect.Enum editValue,
                                         String password, HashAlgorithm hashAlgo) {
@@ -464,7 +464,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * Turn mirrored margins on or off
      *
      * @param enable {@code true} to turn on mirrored margins,
-     * {@code false} to turn off mirrored marginss.
+     * {@code false} to turn off mirrored margins.
      */
     public void setMirrorMargins(boolean enable) {
         CTOnOff onOff = CTOnOff.Factory.newInstance();

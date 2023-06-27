@@ -64,7 +64,7 @@ class TestExtractorFactory {
     @SuppressWarnings("unused")
     private static final File xlsxStrict = getFileAndCheck(ssTests, "SampleSS.strict.xlsx");
     private static final File xltx = getFileAndCheck(ssTests, "test.xltx");
-    private static final File xlsEmb = getFileAndCheck(ssTests, "excel_with_embeded.xls");
+    private static final File xlsEmb = getFileAndCheck(ssTests, "excel_with_embedded.xls");
     private static final File xlsb = getFileAndCheck(ssTests, "testVarious.xlsb");
 
     private static final POIDataSamples wpTests = POIDataSamples.getDocumentInstance();
@@ -73,8 +73,8 @@ class TestExtractorFactory {
     private static final File doc95 = getFileAndCheck(wpTests, "Word95.doc");
     private static final File docx = getFileAndCheck(wpTests, "SampleDoc.docx");
     private static final File dotx = getFileAndCheck(wpTests, "test.dotx");
-    private static final File docEmb = getFileAndCheck(wpTests, "word_with_embeded.doc");
-    private static final File docEmbOOXML = getFileAndCheck(wpTests, "word_with_embeded_ooxml.doc");
+    private static final File docEmb = getFileAndCheck(wpTests, "word_with_embedded.doc");
+    private static final File docEmbOOXML = getFileAndCheck(wpTests, "word_with_embedded_ooxml.doc");
 
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
     private static final File ppt = getFileAndCheck(slTests, "SampleShow.ppt");

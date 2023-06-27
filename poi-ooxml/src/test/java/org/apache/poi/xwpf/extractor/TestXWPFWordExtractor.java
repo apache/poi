@@ -48,7 +48,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 import javax.xml.namespace.QName;
 
 /**
- * Tests for HXFWordExtractor
+ * Tests for XWPFWordExtractor
  */
 class TestXWPFWordExtractor {
 

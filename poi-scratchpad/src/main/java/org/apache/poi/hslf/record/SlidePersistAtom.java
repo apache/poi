@@ -107,7 +107,7 @@ public final class SlidePersistAtom extends RecordAtom {
         slideIdentifier = LittleEndian.getInt(source,start+20);
 
         // Finally you have typically 4 or 8 bytes of reserved fields,
-        //  all zero running from 24 bytes in to the end
+        //  all zero running from 24 bytes into the end
         reservedFields = IOUtils.safelyClone(source,start+24, len-24, MAX_RECORD_LENGTH);
     }
 

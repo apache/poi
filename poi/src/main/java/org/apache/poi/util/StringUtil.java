@@ -268,7 +268,7 @@ public final class StringUtil {
      *
      * @param input  the String containing the data to be written
      * @param output the byte array to which the data is to be written
-     * @param offset an offset into the byte arrat at which the data is start
+     * @param offset an offset into the byte array at which the data is start
      *               when written
      */
     public static void putCompressedUnicode(String input, byte[] output, int offset) {
@@ -649,7 +649,7 @@ public final class StringUtil {
      * format (most important byte last), return a Java String representation
      * of it.
      *
-     * Scans the byte array for two continous 0 bytes and returns the string before.
+     * Scans the byte array for two continuous 0 bytes and returns the string before.
      * <p>
      *
      * #61881: there seem to be programs out there, which write the 0-termination also

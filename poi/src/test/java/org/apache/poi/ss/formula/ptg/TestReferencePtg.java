@@ -47,25 +47,25 @@ final class TestReferencePtg {
         assertEquals(55.0, sheet.getRow(0).getCell(0).getNumericCellValue(), 0.0,
                      "Wrong numeric value for original number");
         assertEquals(55.0, sheet.getRow(0).getCell(1).getNumericCellValue(), 0.0,
-                     "Wrong numeric value for referemce");
+                     "Wrong numeric value for reference");
         assertEquals("A1", sheet.getRow(0).getCell(1).getCellFormula(), "Wrong formula string for reference");
 
         // Now moving over the 2**15 boundary
         // (Remember that excel row (n) is poi row (n-1)
         assertEquals(32767.0, sheet.getRow(32766).getCell(0).getNumericCellValue(), 0.0, "Wrong numeric value for original number");
-        assertEquals(32767.0, sheet.getRow(32766).getCell(1).getNumericCellValue(), 0.0, "Wrong numeric value for referemce");
+        assertEquals(32767.0, sheet.getRow(32766).getCell(1).getNumericCellValue(), 0.0, "Wrong numeric value for reference");
         assertEquals("A32767", sheet.getRow(32766).getCell(1).getCellFormula(), "Wrong formula string for reference");
 
         assertEquals(32768.0, sheet.getRow(32767).getCell(0).getNumericCellValue(), 0.0, "Wrong numeric value for original number");
-        assertEquals(32768.0, sheet.getRow(32767).getCell(1).getNumericCellValue(), 0.0, "Wrong numeric value for referemce");
+        assertEquals(32768.0, sheet.getRow(32767).getCell(1).getNumericCellValue(), 0.0, "Wrong numeric value for reference");
         assertEquals("A32768", sheet.getRow(32767).getCell(1).getCellFormula(), "Wrong formula string for reference");
 
         assertEquals(32769.0, sheet.getRow(32768).getCell(0).getNumericCellValue(), 0.0, "Wrong numeric value for original number");
-        assertEquals(32769.0, sheet.getRow(32768).getCell(1).getNumericCellValue(), 0.0, "Wrong numeric value for referemce");
+        assertEquals(32769.0, sheet.getRow(32768).getCell(1).getNumericCellValue(), 0.0, "Wrong numeric value for reference");
         assertEquals("A32769", sheet.getRow(32768).getCell(1).getCellFormula(), "Wrong formula string for reference");
 
         assertEquals(32770.0, sheet.getRow(32769).getCell(0).getNumericCellValue(), 0.0, "Wrong numeric value for original number");
-        assertEquals(32770.0, sheet.getRow(32769).getCell(1).getNumericCellValue(), 0.0, "Wrong numeric value for referemce");
+        assertEquals(32770.0, sheet.getRow(32769).getCell(1).getNumericCellValue(), 0.0, "Wrong numeric value for reference");
         assertEquals("A32770", sheet.getRow(32769).getCell(1).getCellFormula(), "Wrong formula string for reference");
     }
 

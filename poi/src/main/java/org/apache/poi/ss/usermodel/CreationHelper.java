@@ -57,7 +57,7 @@ public interface CreationHelper {
     
     /**
      * Creates a XSSF-style Color object, used for extended sheet
-     *  formattings and conditional formattings
+     *  formatting and conditional formatting
      */
     ExtendedColor createExtendedColor();
 

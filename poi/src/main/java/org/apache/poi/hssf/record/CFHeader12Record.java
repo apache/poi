@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Conditional Formatting Header v12 record CFHEADER12 (0x0879),
- *  for conditional formattings introduced in Excel 2007 and newer.
+ *  for conditional formatting introduced in Excel 2007 and newer.
  */
 public final class CFHeader12Record extends CFHeaderBase implements FutureRecord {
     public static final short sid = 0x0879;

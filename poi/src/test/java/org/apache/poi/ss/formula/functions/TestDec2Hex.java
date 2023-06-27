@@ -79,7 +79,7 @@ final class TestDec2Hex {
         confirmValue("If argument places contains a decimal value, dec2hex ignores the numbers to the right side of the decimal point.", "100","10.0", "0000000064");
 
         confirmValue("Converts decimal -54 to hexadecimal, 2 is ignored","-54", "2",  "FFFFFFFFCA");
-        confirmValue("places is optionnal","-54", "FFFFFFFFCA");
+        confirmValue("places is optional","-54", "FFFFFFFFCA");
 
         confirmValue("Converts normal decimal number to hexadecimal", "100", "64");
 

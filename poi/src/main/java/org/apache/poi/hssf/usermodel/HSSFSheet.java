@@ -143,7 +143,7 @@ public final class HSSFSheet implements Sheet {
 
     /**
      * Creates an HSSFSheet representing the given Sheet object.  Should only be
-     * called by HSSFWorkbook when reading in an exisiting file.
+     * called by HSSFWorkbook when reading in an existing file.
      *
      * @param workbook - The HSSF Workbook object associated with the sheet.
      * @param sheet    - lowlevel Sheet object this sheet will represent
@@ -512,7 +512,7 @@ public final class HSSFSheet implements Sheet {
      * using the default font (first font in the workbook).<p>
      *
      * Unless you are using a very special font, the default character is '0' (zero),
-     * this is true for Arial (default font font in HSSF) and Calibri (default font in XSSF)<p>
+     * this is true for Arial (default font in HSSF) and Calibri (default font in XSSF)<p>
      *
      * Please note, that the width set by this method includes 4 pixels of margin padding (two on each side),
      * plus 1 pixel padding for the gridlines (Section 3.3.1.12 of the OOXML spec).
@@ -820,9 +820,9 @@ public final class HSSFSheet implements Sheet {
      * recommended solution, but this may be used for certain cases where
      * evaluation in POI is not possible.<p>
      *
-     * It is recommended to force recalcuation of formulas on workbook level using
+     * It is recommended to force recalculation of formulas on workbook level using
      * {@link Workbook#setForceFormulaRecalculation(boolean)}
-     * to ensure that all cross-worksheet formuals and external dependencies are updated.
+     * to ensure that all cross-worksheet formulas and external dependencies are updated.
      *
      * @param value true if the application will perform a full recalculation of
      *              this worksheet values when the workbook is opened
@@ -1076,7 +1076,7 @@ public final class HSSFSheet implements Sheet {
                 (WSBoolRecord) _sheet.findFirstRecordBySid(WSBoolRecord.sid);
 
         record.setRowSumsBelow(b);
-        //setAlternateExpression must be set in conjuction with setRowSumsBelow
+        //setAlternateExpression must be set in conjunction with setRowSumsBelow
         record.setAlternateExpression(b);
     }
 
@@ -1995,7 +1995,7 @@ public final class HSSFSheet implements Sheet {
      * Breaks occur above the specified row and left of the specified column inclusive.<p>
      *
      * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+     * with columns A,B,C in the first and D,E,... in the second. Similar, <code>sheet.setRowBreak(2);</code>
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -2047,7 +2047,7 @@ public final class HSSFSheet implements Sheet {
      * Breaks occur above the specified row and left of the specified column inclusive.<p>
      *
      * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, {@code sheet.setRowBreak(2);}
+     * with columns A,B,C in the first and D,E,... in the second. Similar, {@code sheet.setRowBreak(2);}
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -2088,7 +2088,7 @@ public final class HSSFSheet implements Sheet {
     protected void validateRow(int row) {
         int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
         if (row > maxrow) throw new IllegalArgumentException("Maximum row number is " + maxrow);
-        if (row < 0) throw new IllegalArgumentException("Minumum row number is 0");
+        if (row < 0) throw new IllegalArgumentException("Minimum row number is 0");
     }
 
     /**
@@ -2122,7 +2122,7 @@ public final class HSSFSheet implements Sheet {
     }
 
     /**
-     * Returns the agregate escher records for this sheet,
+     * Returns the aggregate escher records for this sheet,
      * it there is one.
      */
     public EscherAggregate getDrawingEscherAggregate() {

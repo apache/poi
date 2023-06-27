@@ -264,7 +264,7 @@ public class DrawPaint {
 
         ImageRenderer renderer = DrawPictureShape.getImageRenderer(graphics, contentType);
 
-        // TODO: handle tile settings, currently the pattern is always streched 100% in height/width
+        // TODO: handle tile settings, currently the pattern is always stretched 100% in height/width
         Rectangle2D textAnchor = shape.getAnchor();
 
         try (InputStream is = fill.getImageData()) {

@@ -46,7 +46,7 @@ class TestIfna {
     }
 
     @Test
-    void testNumbericArgsWorkCorrectly() {
+    void testNumericArgsWorkCorrectly() {
         confirmResult(fe, cell, "IFNA(-1,42)", new CellValue(-1.0));
         confirmResult(fe, cell, "IFNA(NA(),42)", new CellValue(42.0));
     }

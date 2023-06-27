@@ -27,7 +27,7 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
 /**
  * Rich text unicode string.  These strings can have fonts applied to
- * arbitary parts of the string.
+ * arbitrary parts of the string.
  *
  * <p>
  * Note, that in certain cases creating too many HSSFRichTextString cells may cause Excel 2003 and lower to crash

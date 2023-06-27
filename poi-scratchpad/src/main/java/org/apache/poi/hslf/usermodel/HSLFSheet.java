@@ -241,7 +241,7 @@ public abstract class HSLFSheet implements HSLFShapeContainer, Sheet<HSLFShape,H
     }
 
     /**
-     * Called by SlideShow ater a new sheet is created
+     * Called by SlideShow after a new sheet is created
      */
     public void onCreate(){
 

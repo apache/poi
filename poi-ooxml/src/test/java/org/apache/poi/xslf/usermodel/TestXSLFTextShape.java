@@ -220,7 +220,7 @@ class TestXSLFTextShape {
         assertNull(getSpPr(shape2).getXfrm());
 
         XSLFTextShape masterShape2 = (XSLFTextShape)layout.getPlaceholder(ph2);
-        // anchor of the body text is missing in the slide layout, llokup in the slide master
+        // anchor of the body text is missing in the slide layout, lookup in the slide master
         assertNull(getSpPr(masterShape2).getXfrm());
         masterShape2 = (XSLFTextShape)layout.getSlideMaster().getPlaceholder(ph2);
         assertNotNull(getSpPr(masterShape2).getXfrm());

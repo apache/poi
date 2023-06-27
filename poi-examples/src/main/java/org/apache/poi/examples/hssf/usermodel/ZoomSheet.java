@@ -26,7 +26,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
- * Sets the zoom magnication for a sheet.
+ * Sets the zoom magnification for a sheet.
  */
 public class ZoomSheet
 {

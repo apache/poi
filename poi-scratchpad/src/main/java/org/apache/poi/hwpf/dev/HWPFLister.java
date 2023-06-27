@@ -497,19 +497,19 @@ public final class HWPFLister {
         }
     }
 
-    public void dumpParagraphs( boolean dumpAssotiatedPapx ) {
+    public void dumpParagraphs( boolean dumpAssociatedPapx ) {
         for ( Map.Entry<Integer, String> entry : paragraphs.entrySet() ) {
             Integer endOfParagraphCharOffset = entry.getKey();
             System.out.println( "[...; " + ( endOfParagraphCharOffset + 1 )
                     + "): " + entry.getValue() );
 
-            if ( dumpAssotiatedPapx ) {
-                boolean hasAssotiatedPapx = false;
+            if ( dumpAssociatedPapx ) {
+                boolean hasAssociatedPapx = false;
                 for ( PAPX papx : _doc.getParagraphTable().getParagraphs() ) {
                     if ( papx.getStart() <= endOfParagraphCharOffset
                             && endOfParagraphCharOffset < papx
                                     .getEnd() ) {
-                        hasAssotiatedPapx = true;
+                        hasAssociatedPapx = true;
                         System.out.println( "* " + papx );
 
                         SprmIterator sprmIt = new SprmIterator(
@@ -517,9 +517,9 @@ public final class HWPFLister {
                         dumpSprms( sprmIt, "** " );
                     }
                 }
-                if ( !hasAssotiatedPapx ) {
+                if ( !hasAssociatedPapx ) {
                     System.out.println( "* "
-                            + "NO PAPX ASSOTIATED WITH PARAGRAPH!" );
+                            + "NO PAPX ASSOCIATED WITH PARAGRAPH!" );
                 }
             }
         }

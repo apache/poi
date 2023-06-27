@@ -374,7 +374,7 @@ public final class WorkbookEvaluator {
 
         String dbgIndentStr = "";        // always init. to non-null just for defensive avoiding NPE
         if (dbgEvaluationOutputForNextEval) {
-            // first evaluation call when ouput is desired, so iit. this evaluator instance
+            // first evaluation call when output is desired, so init. this evaluator instance
             dbgEvaluationOutputIndent = 1;
             dbgEvaluationOutputForNextEval = true;
         }
@@ -533,7 +533,7 @@ public final class WorkbookEvaluator {
                 }
                 ec.setArrayMode(arrayMode);
 
-//                logDebug("invoke " + operation + " (nAgs=" + numops + ")");
+//                logDebug("invoke " + operation + " (nArgs=" + numops + ")");
                 opResult = OperationEvaluatorFactory.evaluate(optg, ops, ec);
 
                 ec.setArrayMode(false);

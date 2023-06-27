@@ -36,21 +36,21 @@ import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 public class SanityChecker {
     static class CheckRecord {
         Class<? extends RecordBase> record;
-        char occurance;  // 1 = one time, M = 1..many times, * = 0..many, 0 = optional
+        char occurrence;  // 1 = one time, M = 1..many times, * = 0..many, 0 = optional
         private final boolean together;
 
-        public CheckRecord(Class<? extends RecordBase> record, char occurance) {
-            this(record, occurance, true);
+        public CheckRecord(Class<? extends RecordBase> record, char occurrence) {
+            this(record, occurrence, true);
         }
 
         /**
          * @param record    The record type to check
-         * @param occurance The occurance 1 = occurs once, M = occurs many times
+         * @param occurrence The occurrence 1 = occurs once, M = occurs many times
          * @param together
          */
-        public CheckRecord(Class<? extends RecordBase> record, char occurance, boolean together) {
+        public CheckRecord(Class<? extends RecordBase> record, char occurrence, boolean together) {
             this.record = record;
-            this.occurance = occurance;
+            this.occurrence = occurrence;
             this.together = together;
         }
 
@@ -59,15 +59,15 @@ public class SanityChecker {
         }
 
         public boolean isRequired() {
-            return occurance == '1' || occurance == 'M';
+            return occurrence == '1' || occurrence == 'M';
         }
 
         public boolean isOptional() {
-            return occurance == '0' || occurance == '*';
+            return occurrence == '0' || occurrence == '*';
         }
 
         public boolean isMany() {
-            return occurance == '*' || occurance == 'M';
+            return occurrence == '*' || occurrence == 'M';
         }
 
         public int match(List<? extends RecordBase> records, int recordIdx) {
@@ -87,7 +87,7 @@ public class SanityChecker {
         }
 
         private int matchRequired(int firstRecord, List<? extends RecordBase> records, int recordIdx) {
-            assertNotEquals(-1, firstRecord, "Manditory record missing or out of order: " + record);
+            assertNotEquals(-1, firstRecord, "Mandatory record missing or out of order: " + record);
 
             return matchOneOrMany(records, firstRecord);
         }
@@ -111,11 +111,11 @@ public class SanityChecker {
         }
 
         private boolean isZeroToMany() {
-            return occurance == '*' || occurance == 'M';
+            return occurrence == '*' || occurrence == 'M';
         }
 
         private boolean isZeroOrOne() {
-            return occurance == '0' || occurance == '1';
+            return occurrence == '0' || occurrence == '1';
         }
     }
 

@@ -101,12 +101,12 @@ class TestEmbedOLEPackage {
             assertTrue(digestMatch);
 
             final String expLabel = "Apache_POI_project_logo_(2018).pdf";
-            final String expFilenName = "C:\\Dell\\Apache_POI_project_logo_(2018).pdf";
+            final String expFilename = "C:\\Dell\\Apache_POI_project_logo_(2018).pdf";
             final String expCmd1 = "C:\\Users\\KIWIWI~1\\AppData\\Local\\Temp\\{84287F34-B79C-4F3A-9A92-6BB664586F48}\\Apache_POI_project_logo_(2018).pdf";
             final String expCmd2 = "C:\\Users\\KIWIWI~1\\AppData\\Local\\Temp\\{84287F34-B79C-4F3A-9A92-6BB664586F48}\\Apache_POI_project_logo_(2).pdf";
 
             assertTrue(ole10s.stream().map(Ole10Native::getLabel).allMatch(expLabel::equals));
-            assertTrue(ole10s.stream().map(Ole10Native::getFileName).allMatch(expFilenName::equals));
+            assertTrue(ole10s.stream().map(Ole10Native::getFileName).allMatch(expFilename::equals));
             assertEquals(expCmd1, ole10s.get(0).getCommand());
             assertEquals(expCmd2, ole10s.get(1).getCommand());
 
@@ -116,9 +116,9 @@ class TestEmbedOLEPackage {
                 assertEquals(o.getFileName(), o.getFileName2());
             }
 
-            Ole10Native scratch = new Ole10Native(expLabel, expFilenName, expCmd1,  ole10s.get(0).getDataBuffer());
+            Ole10Native scratch = new Ole10Native(expLabel, expFilename, expCmd1,  ole10s.get(0).getDataBuffer());
             scratch.setLabel2(expLabel);
-            scratch.setFileName2(expFilenName);
+            scratch.setFileName2(expFilename);
             scratch.setCommand2(expCmd1);
 
             try (POIFSFileSystem scratchFS = new POIFSFileSystem();

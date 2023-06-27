@@ -16,6 +16,6 @@
 ==================================================================== */
 
 /**
- * The util package contains tools needed for writing HSSF files that are not necesarily "real" HSSF concepts.
+ * The util package contains tools needed for writing HSSF files that are not necessarily "real" HSSF concepts.
  */
 package org.apache.poi.hssf.util;

@@ -121,7 +121,7 @@ public final class WindowOneRecord extends StandardRecord {
     }
 
     /**
-     * set teh height of the window
+     * set the height of the window
      * @param h  height
      */
 

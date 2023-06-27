@@ -267,7 +267,7 @@ public class XWPFHeaderFooterPolicy {
      * text. The reason was that this line of code; CTHdrFtr ftr = CTHdrFtr.Factory.newInstance();
      * created a brand new instance of the CTHDRFtr class which was then populated with data when
      * it should have recovered the CTHdrFtr object encapsulated within the XWPFHeaderFooter object
-     * that had previoulsy been instantiated in the createHeader(int, XWPFParagraph[]) or
+     * that had previously been instantiated in the createHeader(int, XWPFParagraph[]) or
      * createFooter(int, XWPFParagraph[]) methods.
      */
     private CTHdrFtr buildHdrFtr(XWPFParagraph[] paragraphs, XWPFHeaderFooter wrapper) {

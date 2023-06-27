@@ -603,7 +603,7 @@ public abstract class AbstractWordConverter {
         }
         LOG.atWarn().log(debug);
 
-        Range deadFieldValueSubrage = new Range(range.getCharacterRun(
+        Range deadFieldValueSubrange = new Range(range.getCharacterRun(
             separatorMark).getStartOffset() + 1, range.getCharacterRun(
             endMark).getStartOffset(), range) {
             @Override
@@ -615,7 +615,7 @@ public abstract class AbstractWordConverter {
         // just output field value
         if (separatorMark + 1 < endMark) {
             processCharacters(wordDocument, currentTableLevel,
-                deadFieldValueSubrage, currentBlock);
+                deadFieldValueSubrange, currentBlock);
         }
     }
 
@@ -911,7 +911,7 @@ public abstract class AbstractWordConverter {
         Element parentElement, int currentTableLevel, Paragraph paragraph,
         String bulletText);
 
-    protected void processParagraphes(HWPFDocumentCore wordDocument, Element flow, Range range, int currentTableLevel) {
+    protected void processParagraphs(HWPFDocumentCore wordDocument, Element flow, Range range, int currentTableLevel) {
         final int paragraphs = range.numParagraphs();
         for (int p = 0; p < paragraphs; p++) {
             Paragraph paragraph = range.getParagraph(p);

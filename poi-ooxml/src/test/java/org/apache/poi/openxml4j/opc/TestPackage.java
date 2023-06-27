@@ -946,7 +946,7 @@ public final class TestPackage {
     }
 
     @Test
-    void unparseableCentralDirectory() throws IOException {
+    void unparsableCentralDirectory() throws IOException {
         File f = getSampleFile("at.pzp.www_uploads_media_PP_Scheinecker-jdk6error.pptx");
         try (SlideShow<?,?> ppt = SlideShowFactory.create(f, null, true)) {
             assertNotNull(ppt);

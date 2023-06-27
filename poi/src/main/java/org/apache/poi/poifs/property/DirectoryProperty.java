@@ -152,7 +152,7 @@ public class DirectoryProperty extends Property implements Parent, Iterable<Prop
               {
                 if (name1.startsWith("__") && name2.startsWith("__"))
                 {
-                  // Betweeen __SRP_0 and __SRP_1 just sort as normal
+                  // Between __SRP_0 and __SRP_1 just sort as normal
                   result = name1.compareToIgnoreCase(name2);
                 }
                 else if (name1.startsWith("__"))

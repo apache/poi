@@ -44,7 +44,7 @@ import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.model.RevisionMarkAuthorTable;
 import org.apache.poi.hwpf.model.SavedByTable;
 import org.apache.poi.hwpf.model.SectionTable;
-import org.apache.poi.hwpf.model.SinglentonTextPiece;
+import org.apache.poi.hwpf.model.SingletonTextPiece;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.hwpf.model.TextPiece;
@@ -319,7 +319,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         if (!preserveTextTable) {
             _cft = new ComplexFileTable();
             _tpt = _cft.getTextPieceTable();
-            final TextPiece textPiece = new SinglentonTextPiece(_text);
+            final TextPiece textPiece = new SingletonTextPiece(_text);
             _tpt.add(textPiece);
             _text = textPiece.getStringBuilder();
         }
@@ -441,10 +441,10 @@ public final class HWPFDocument extends HWPFDocumentCore {
 
     private Range getRange(SubdocumentType subdocument) {
         int startCp = 0;
-        for (SubdocumentType previos : SubdocumentType.ORDERED) {
+        for (SubdocumentType previous : SubdocumentType.ORDERED) {
             int length = getFileInformationBlock()
-                    .getSubdocumentTextStreamLength(previos);
-            if (subdocument == previos) {
+                    .getSubdocumentTextStreamLength(previous);
+            if (subdocument == previous) {
                 return new Range(startCp, startCp + length, this);
             }
             startCp += length;

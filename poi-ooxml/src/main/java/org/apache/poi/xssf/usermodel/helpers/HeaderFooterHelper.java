@@ -73,7 +73,7 @@ public class HeaderFooterHelper {
         int rAt = 0;
         
         while(
-            // Ensure all indicies get updated, then -1 tested
+            // Ensure all indices get updated, then -1 tested
             (lAt = string.indexOf(HeaderFooterEntity_L)) > -2 &&
             (cAt = string.indexOf(HeaderFooterEntity_C)) > -2 &&  
             (rAt = string.indexOf(HeaderFooterEntity_R)) > -2 &&

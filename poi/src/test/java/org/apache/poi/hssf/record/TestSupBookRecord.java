@@ -25,7 +25,7 @@ import static org.apache.poi.hssf.record.SupBookRecord.CH_SAME_VOLUME;
 import static org.apache.poi.hssf.record.SupBookRecord.CH_STARTUP_DIR;
 import static org.apache.poi.hssf.record.SupBookRecord.CH_UP_DIR;
 import static org.apache.poi.hssf.record.SupBookRecord.CH_VOLUME;
-import static org.apache.poi.hssf.record.SupBookRecord.PATH_SEPERATOR;
+import static org.apache.poi.hssf.record.SupBookRecord.PATH_SEPARATOR;
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -138,34 +138,34 @@ final class TestSupBookRecord {
 
         //UNC path notation
         record = new SupBookRecord(startMarker + "" + CH_VOLUME + "@servername" + CH_DOWN_DIR + "test.xls", sheetNames);
-        assertEquals("\\\\servername" + PATH_SEPERATOR + "test.xls", record.getURL());
+        assertEquals("\\\\servername" + PATH_SEPARATOR + "test.xls", record.getURL());
 
         //Absolute path notation - different device
         record = new SupBookRecord(startMarker + "" + CH_VOLUME + "D" + CH_DOWN_DIR + "test.xls", sheetNames);
-        assertEquals("D:" + PATH_SEPERATOR + "test.xls", record.getURL());
+        assertEquals("D:" + PATH_SEPARATOR + "test.xls", record.getURL());
 
         //Absolute path notation - same device
         record = new SupBookRecord(startMarker + "" + CH_SAME_VOLUME + "folder" + CH_DOWN_DIR + "test.xls", sheetNames);
-        assertEquals(PATH_SEPERATOR + "folder" + PATH_SEPERATOR + "test.xls", record.getURL());
+        assertEquals(PATH_SEPARATOR + "folder" + PATH_SEPARATOR + "test.xls", record.getURL());
 
         //Relative path notation - down
         record = new SupBookRecord(startMarker + "folder" + CH_DOWN_DIR + "test.xls", sheetNames);
-        assertEquals("folder" + PATH_SEPERATOR + "test.xls", record.getURL());
+        assertEquals("folder" + PATH_SEPARATOR + "test.xls", record.getURL());
 
         //Relative path notation - up
         record = new SupBookRecord(startMarker +""+ CH_UP_DIR + "test.xls", sheetNames);
-        assertEquals(".." + PATH_SEPERATOR + "test.xls", record.getURL());
+        assertEquals(".." + PATH_SEPARATOR + "test.xls", record.getURL());
 
         //Relative path notation - for EXCEL.exe - fallback
         record = new SupBookRecord(startMarker +""+ CH_STARTUP_DIR + "test.xls", sheetNames);
-        assertEquals("." + PATH_SEPERATOR + "test.xls", record.getURL());
+        assertEquals("." + PATH_SEPARATOR + "test.xls", record.getURL());
 
         //Relative path notation - for EXCEL lib folder - fallback
         record = new SupBookRecord(startMarker +""+ CH_LIB_DIR + "test.xls", sheetNames);
-        assertEquals("." + PATH_SEPERATOR + "test.xls", record.getURL());
+        assertEquals("." + PATH_SEPARATOR + "test.xls", record.getURL());
 
         //Relative path notation - for alternative EXCEL.exe - fallback
         record = new SupBookRecord(startMarker +""+ CH_ALT_STARTUP_DIR+ "test.xls", sheetNames);
-        assertEquals("." + PATH_SEPERATOR + "test.xls", record.getURL());
+        assertEquals("." + PATH_SEPARATOR + "test.xls", record.getURL());
     }
 }
