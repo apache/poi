@@ -114,7 +114,7 @@ public enum FormulaError {
      */
     CIRCULAR_REF(0xFFFFFFC4, "~CIRCULAR~REF~"),
     /**
-     * POI specific code to indicate that the funcition required is
+     * POI specific code to indicate that the function required is
      *  not implemented in POI
      */
     FUNCTION_NOT_IMPLEMENTED(0xFFFFFFE2, "~FUNCTION~NOT~IMPLEMENTED~");

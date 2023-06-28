@@ -95,7 +95,7 @@ public final class ExtractorFactory {
      * (usermodel extractors tend to be more accurate, but use more memory)
      * Default is false.
      *
-     * @return true if event extractors should be preferred in the current thread, fals otherwise.
+     * @return true if event extractors should be preferred in the current thread, false otherwise.
      */
     public static boolean getThreadPrefersEventExtractors() {
         return threadPreferEventExtractors.get();
@@ -106,7 +106,7 @@ public final class ExtractorFactory {
      * (usermodel extractors tend to be more accurate, but use more memory)
      * Default is to use the thread level setting, which defaults to false.
      *
-     * @return true if event extractors should be preferred in all threads, fals otherwise.
+     * @return true if event extractors should be preferred in all threads, false otherwise.
      */
     public static Boolean getAllThreadsPreferEventExtractors() {
         return allPreferEventExtractors;
