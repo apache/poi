@@ -412,7 +412,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                 if (packageReadOnly) {
                     sharedStringSource = new SharedStringsTable();
                 } else {
-                    sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, this.xssfFactory);
+                    List<PackagePart> matchingParts = getPackagePart().getPackage()
+                            .getPartsByContentType(XSSFRelation.SHARED_STRINGS.getContentType());
+                    if (matchingParts.isEmpty()) {
+                        sharedStringSource = (SharedStringsTable)
+                                createRelationship(XSSFRelation.SHARED_STRINGS, this.xssfFactory);
+                    } else {
+                        sharedStringSource = new SharedStringsTable(matchingParts.get(0));
+                    }
                 }
             }
 

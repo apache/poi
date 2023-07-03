@@ -110,6 +110,7 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
@@ -3851,6 +3852,15 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             PackageRelationshipCollection prc2 = prc.getRelationships(XSSFRelation.MACRO_SHEET_XML.getRelation());
             assertNotNull(prc2);
             assertEquals(1, prc2.size());
+        }
+    }
+
+    @Test
+    void testBug62181() throws Exception {
+        try (XSSFWorkbook wb = openSampleWorkbook("bug62181.xlsx")) {
+            SharedStringsTable sst = wb.getSharedStringSource();
+            assertNotNull(sst);
+            assertEquals(0, sst.getCount());
         }
     }
 
