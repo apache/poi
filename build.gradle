@@ -129,7 +129,7 @@ subprojects {
         xmlbeansVersion = '5.1.1'
         batikVersion = '1.16'
         graphics2dVersion = '0.43'
-        pdfboxVersion = '2.0.28'
+        pdfboxVersion = '2.0.29'
         saxonVersion = '11.5'
         apiGuardianVersion = '1.1.2'
 
