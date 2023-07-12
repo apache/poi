@@ -98,6 +98,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
                 handleCellReal(data);
                 break;
             case BrtCellBool:
+            case BrtFmlaBool:
                 handleBoolean(data);
                 break;
             case BrtCellError:
