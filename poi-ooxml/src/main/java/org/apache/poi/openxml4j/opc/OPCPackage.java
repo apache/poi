@@ -940,7 +940,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
             throw new IllegalArgumentException("part");
         }
 
-        if (partList.containsKey(part._partName)) {
+        if (hasPackagePart(part)) {
             if (!partList.get(part._partName).isDeleted()) {
                 throw new InvalidOperationException(
                         "A part with the name '"
@@ -956,6 +956,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         this.partList.put(part._partName, part);
         this.isDirty = true;
         return part;
+    }
+
+    protected boolean hasPackagePart(PackagePart part) {
+        return partList.containsKey(part._partName);
     }
 
     /**

@@ -3864,6 +3864,23 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
     }
 
+    @Test
+    void testBug66675() throws Exception {
+        try (XSSFWorkbook wb = openSampleWorkbook("bug66675.xlsx")) {
+            POIXMLProperties.CoreProperties coreProperties = wb.getProperties().getCoreProperties();
+            assertNotNull(coreProperties);
+            wb.removeSheetAt(0);
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                wb.write(bos);
+                try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet sheet = wb2.getSheetAt(0);
+                    assertNotNull(sheet);
+                    assertNotNull(wb2.getProperties().getCoreProperties());
+                }
+            }
+        }
+    }
+
     private static void readByCommonsCompress(File temp_excel_poi) throws IOException {
         /* read by commons-compress*/
         try (ZipFile zipFile = new ZipFile(temp_excel_poi)) {

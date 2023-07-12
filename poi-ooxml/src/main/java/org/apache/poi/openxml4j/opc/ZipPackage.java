@@ -542,7 +542,9 @@ public final class ZipPackage extends OPCPackage {
                 // Ensure that core properties are added if missing
                 getPackageProperties();
                 // Add core properties to part list ...
-                addPackagePart(this.packageProperties);
+                if (!hasPackagePart(this.packageProperties)) {
+                    addPackagePart(this.packageProperties);
+                }
                 // ... and to add its relationship ...
                 this.relationships.addRelationship(this.packageProperties
                         .getPartName().getURI(), TargetMode.INTERNAL,
