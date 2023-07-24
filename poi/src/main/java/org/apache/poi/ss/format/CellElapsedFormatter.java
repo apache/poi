@@ -59,7 +59,7 @@ public class CellElapsedFormatter extends CellFormatter {
                 val = elapsed / factor;
             else
                 val = elapsed / factor % modBy;
-            if (type == '0' || type == 's')
+            if (type == '0')
                 return Math.round(val);
             else
                 return (long) val;
