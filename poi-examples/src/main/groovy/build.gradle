@@ -37,7 +37,7 @@ tasks.withType(JavaExec) {
    classpath = sourceSets.main.runtimeClasspath
 }
 task runScript(type: JavaExec) {
-    main = "SpreadSheetDemo"
+    mainClass = "SpreadSheetDemo"
     args = ["../../../test-data/spreadsheet/Simple.xls"]
 }
 defaultTasks 'runScript'

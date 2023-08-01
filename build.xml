@@ -291,8 +291,8 @@ under the License.
     <dependency prefix="main.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.20.0" usage="main-tests"/>
     <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="main-tests"/>
 
-    <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.12" usage="excelant"/>
-    <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.12" usage="excelant"/>
+    <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.13" usage="excelant"/>
+    <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.13" usage="excelant"/>
 
     <!-- xml signature libs - not part of the distribution -->
     <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:3.0.2" usage="ooxml-provided"/>
