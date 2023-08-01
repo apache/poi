@@ -3881,6 +3881,20 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
     }
 
+    @Test
+    void testBug66827() throws Exception {
+        final int expectedCount = 6;
+        try (XSSFWorkbook wb = openSampleWorkbook("bug66827.xlsx")) {
+            SharedStringsTable sst = wb.getSharedStringSource();
+            assertNotNull(sst);
+            assertEquals(expectedCount, sst.getCount());
+            for (int i = 0; i < expectedCount; i++) {
+                assertNotNull(sst.getItemAt(i));
+            }
+
+        }
+    }
+
     private static void readByCommonsCompress(File temp_excel_poi) throws IOException {
         /* read by commons-compress*/
         try (ZipFile zipFile = new ZipFile(temp_excel_poi)) {
