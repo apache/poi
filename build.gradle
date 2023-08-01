@@ -67,7 +67,7 @@ configurations {
 
 dependencies {
     antLibs("org.junit.jupiter:junit-jupiter:5.10.0")
-    antLibs("org.apache.ant:ant-junitlauncher:1.10.13")
+    antLibs("org.apache.ant:ant-junitlauncher:1.10.12")
 }
 
 ant.taskdef(name: "junit",
