@@ -60,7 +60,12 @@ class TestReadAllFiles {
         Objects.requireNonNull(files, "Could not find directory " + hpsfTestDir.getAbsolutePath());
 
         // convert to list of object-arrays for @Parameterized
-        return Arrays.stream(files).map(Arguments::of);
+        return Arrays.
+                stream(files).
+                // exclude some files which can be created by other parallel tests,
+                // but then might not exist any more when they are processed here
+                filter(file -> !file.getName().endsWith("-saved.xls")).
+                map(Arguments::of);
     }
 
     /**
