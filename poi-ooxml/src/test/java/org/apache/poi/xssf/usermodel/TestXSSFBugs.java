@@ -3891,7 +3891,17 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             for (int i = 0; i < expectedCount; i++) {
                 assertNotNull(sst.getItemAt(i));
             }
-
+            XSSFSheet ws = wb.getSheetAt(0);
+            int nRowCount = ws.getLastRowNum(); // does not include header row in the count
+            for (int r = 1; r <= nRowCount; r++) {
+                XSSFRow row = ws.getRow(r);
+                if (row != null) {
+                    XSSFCell cellSymbol = row.getCell(0);
+                    if (cellSymbol != null) {
+                        XSSFComment comment = cellSymbol.getCellComment();
+                    }
+                }
+            }
         }
     }
 
