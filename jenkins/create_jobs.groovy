@@ -36,6 +36,8 @@ def poijobs = [
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
         [ name: 'POI-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
+          // let's save some CPU cycles here, 18 is not a LTS and JDK 20 is out
+          disabled: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
         [ name: 'POI-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
@@ -90,7 +92,9 @@ def poijobs = [
         [ name: 'POI-DSL-Windows-1.17', jdk: '1.17', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.18', jdk: '1.18', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          skipSpotbugs: true
+          skipSpotbugs: true,
+          // let's save some CPU cycles here, 18 is not a LTS and JDK 20 is out
+          disabled: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', skipcigame: true, disabled: true
         ],
@@ -108,8 +112,12 @@ def xmlbeansjobs = [
         [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 18 is not a LTS and JDK 20 is out
+          disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true,
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
           sonar: true
