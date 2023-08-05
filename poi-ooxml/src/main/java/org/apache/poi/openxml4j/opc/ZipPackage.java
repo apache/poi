@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -271,6 +272,7 @@ public final class ZipPackage extends OPCPackage {
         // First we need to parse the content type part
         final ZipArchiveEntry contentTypeEntry =
                 zipArchive.getEntry(CONTENT_TYPES_PART_NAME);
+        final Enumeration<? extends ZipArchiveEntry> zipEntries;
         if (contentTypeEntry != null) {
             if (this.contentTypeManager != null) {
                 throw new InvalidFormatException("ContentTypeManager can only be created once. This must be a cyclic relation?");
@@ -281,6 +283,7 @@ public final class ZipPackage extends OPCPackage {
             } catch (IOException e) {
                 throw new InvalidFormatException(e.getMessage(), e);
             }
+            zipEntries = zipArchive.getEntries();
         } else {
             // Is it a different Zip-based format?
             final boolean hasMimetype = zipArchive.getEntry(MIMETYPE) != null;
@@ -290,7 +293,8 @@ public final class ZipPackage extends OPCPackage {
                         "The supplied data appears to be in ODF (Open Document) Format. " +
                                 "Formats like these (eg ODS, ODP) are not supported, try Apache ODFToolkit");
             }
-            if (!zipArchive.getEntries().hasMoreElements()) {
+            zipEntries = zipArchive.getEntries();
+            if (!zipEntries.hasMoreElements()) {
                 throw new NotOfficeXmlFileException(
                         "No valid entries or contents found, this is not a valid OOXML " +
                                 "(Office Open XML) file");
@@ -305,7 +309,7 @@ public final class ZipPackage extends OPCPackage {
         //  parts, otherwise we might create a part before
         //  its relationship exists, and then it won't tie up)
         final List<EntryTriple> entries =
-                Collections.list(zipArchive.getEntries()).stream()
+                Collections.list(zipEntries).stream()
                         .filter(zipArchiveEntry -> !ignoreEntry(zipArchiveEntry))
                         .map(zae -> new EntryTriple(zae, contentTypeManager))
                         .filter(mm -> mm.partName != null)
