@@ -1357,8 +1357,8 @@ final class TestFormulaParser {
                 UnionPtg.class
         );
 
-        wb.createSheet("Sh't1");
-        ptgs = parse("'Sh''t1'!$A:$A,'Sh''t1'!$1:$4", wb);
+        wb.createSheet("Sh''t1");
+        ptgs = parse("'Sh''''t1'!$A:$A,'Sh''''t1'!$1:$4", wb);
         confirmTokenClasses(ptgs,
                 MemFuncPtg.class,
                 Area3DPtg.class,
