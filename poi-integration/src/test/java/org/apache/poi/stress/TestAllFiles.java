@@ -184,7 +184,7 @@ public class TestAllFiles {
             FileHandler fileHandler = handler.getHandler();
             assertNotNull(fileHandler, "Did not find a handler for file " + file);
             Executable exec = () -> fileHandler.handleExtracting(new File(ROOT_DIR, file));
-            verify(file, exec, exClass, exMessage, password);
+            verify(file, exec, exClass, exMessage, password, fileHandler);
         } finally {
             Thread.currentThread().setName(threadName);
         }
@@ -205,7 +205,7 @@ public class TestAllFiles {
             assertNotNull(fileHandler, "Did not find a handler for file " + file);
             try (InputStream stream = new BufferedInputStream(new FileInputStream(new File(ROOT_DIR, file)), 64 * 1024)) {
                 Executable exec = () -> fileHandler.handleFile(stream, file);
-                verify(file, exec, exClass, exMessage, password);
+                verify(file, exec, exClass, exMessage, password, fileHandler);
             }
         } finally {
             Thread.currentThread().setName(threadName);
@@ -226,15 +226,16 @@ public class TestAllFiles {
             FileHandler fileHandler = handler.getHandler();
             assertNotNull(fileHandler, "Did not find a handler for file " + file);
             Executable exec = () -> fileHandler.handleAdditional(new File(ROOT_DIR, file));
-            verify(file, exec, exClass, exMessage, password);
+            verify(file, exec, exClass, exMessage, password, fileHandler);
         } finally {
             Thread.currentThread().setName(threadName);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private static void verify(String file, Executable exec, Class<? extends Throwable> exClass, String exMessage, String password) {
-        final String errPrefix = file + " - failed. ";
+    private static void verify(String file, Executable exec, Class<? extends Throwable> exClass, String exMessage, String password,
+            FileHandler fileHandler) {
+        final String errPrefix = file + " - failed for handler " + fileHandler.getClass().getSimpleName() + ": ";
         // this also removes the password for non encrypted files
         Biff8EncryptionKey.setCurrentUserPassword(password);
         if (exClass != null && AssertionFailedError.class.isAssignableFrom(exClass)) {
