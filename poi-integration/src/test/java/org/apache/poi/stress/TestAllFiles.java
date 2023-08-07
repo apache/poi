@@ -253,13 +253,22 @@ public class TestAllFiles {
             Exception e = assertThrows((Class<? extends Exception>)exClass, exec, errPrefix + " expected " + exClass);
             String actMsg = pathReplace(e.getMessage());
 
-            // verify that message is either null for both or set for both
-            assertTrue(actMsg != null || StringUtils.isBlank(exMessage),
-                    errPrefix + " for " + exClass + " expected message '" + exMessage + "' but had '" + actMsg + "'");
+            // perform special handling of NullPointerException as
+            // JDK started to add more information in some newer JDK, so
+            // it sometimes has a message and sometimes not!
+            if (NullPointerException.class.isAssignableFrom(exClass)) {
+                if (actMsg != null) {
+                    assertTrue(actMsg.contains(exMessage), errPrefix + "Message: "+actMsg+" - didn't contain: "+exMessage);
+                }
+            } else {
+                // verify that message is either null for both or set for both
+                assertTrue(actMsg != null || StringUtils.isBlank(exMessage),
+                        errPrefix + " for " + exClass + " expected message '" + exMessage + "' but had '" + actMsg + "'");
 
-            if (actMsg != null) {
-                assertTrue(actMsg.contains(exMessage),
-                        errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
+                if (actMsg != null) {
+                    assertTrue(actMsg.contains(exMessage),
+                            errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
+                }
             }
         } else {
             assertDoesNotThrow(exec, errPrefix);

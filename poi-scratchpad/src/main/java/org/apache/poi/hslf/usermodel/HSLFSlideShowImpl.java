@@ -72,6 +72,7 @@ import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.PictureData;
@@ -229,7 +230,11 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
 
         // Get the main document stream
-        DocumentEntry docProps = (DocumentEntry)dir.getEntry(POWERPOINT_DOCUMENT);
+        final Entry entry = dir.getEntry(POWERPOINT_DOCUMENT);
+        if (!(entry instanceof DocumentEntry)) {
+            throw new IllegalArgumentException("Had unexpected type of entry for name: " + POWERPOINT_DOCUMENT + ": " + entry.getClass());
+        }
+        DocumentEntry docProps = (DocumentEntry) entry;
 
         // Grab the document stream
         int len = docProps.getSize();
