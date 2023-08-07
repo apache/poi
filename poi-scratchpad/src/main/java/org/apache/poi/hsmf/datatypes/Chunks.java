@@ -251,7 +251,7 @@ public final class Chunks implements ChunkGroupWithProperties {
             allChunks.computeIfAbsent(prop, k -> new ArrayList<>());
             allChunks.get(prop).add(chunk);
         } catch (ClassCastException e) {
-            throw new IllegalArgumentException("Property and type of chunk did not match, had property " + prop + " and type of chunk: " + chunk.getClass());
+            throw new IllegalArgumentException("Property and type of chunk did not match, had property " + prop + " and type of chunk: " + chunk.getClass(), e);
         }
     }
 

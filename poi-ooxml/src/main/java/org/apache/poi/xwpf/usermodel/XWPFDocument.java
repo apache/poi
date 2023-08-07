@@ -286,7 +286,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                         }
                     }
                 } catch (ClassCastException e) {
-                    throw new IllegalArgumentException("Relation and type of document-part did not match, had relation " + relation + " and type of document-part: " + p.getClass());
+                    throw new IllegalArgumentException("Relation and type of document-part did not match, had relation " + relation + " and type of document-part: " + p.getClass(), e);
                 }
             }
             initHyperlinks();
