@@ -241,48 +241,52 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             for (RelationPart rp : getRelationParts()) {
                 POIXMLDocumentPart p = rp.getDocumentPart();
                 String relation = rp.getRelationship().getRelationshipType();
-                if (relation.equals(XWPFRelation.STYLES.getRelation())) {
-                    this.styles = (XWPFStyles) p;
-                    this.styles.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.THEME.getRelation())) {
-                    this.theme = (XWPFTheme) p;
-                    this.theme.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.NUMBERING.getRelation())) {
-                    this.numbering = (XWPFNumbering) p;
-                    this.numbering.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.FOOTER.getRelation())) {
-                    XWPFFooter footer = (XWPFFooter) p;
-                    footers.add(footer);
-                    footer.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.HEADER.getRelation())) {
-                    XWPFHeader header = (XWPFHeader) p;
-                    headers.add(header);
-                    header.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.COMMENT.getRelation())) {
-                    this.comments = (XWPFComments) p;
-                    this.comments.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.SETTINGS.getRelation())) {
-                    settings = (XWPFSettings) p;
-                    settings.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.IMAGES.getRelation())) {
-                    XWPFPictureData picData = (XWPFPictureData) p;
-                    picData.onDocumentRead();
-                    registerPackagePictureData(picData);
-                    pictures.add(picData);
-                } else if (relation.equals(XWPFRelation.CHART.getRelation())) {
-                    //now we can use all methods to modify charts in XWPFDocument
-                    XWPFChart chartData = (XWPFChart) p;
-                    charts.add(chartData);
-                } else if (relation.equals(XWPFRelation.GLOSSARY_DOCUMENT.getRelation())) {
-                    // We don't currently process the glossary itself
-                    // Until we do, we do need to load the glossary child parts of it
-                    for (POIXMLDocumentPart gp : p.getRelations()) {
-                        // Trigger the onDocumentRead for all the child parts
-                        // Otherwise we'll hit issues on Styles, Settings etc on save
-                        // TODO: Refactor this to not need to access protected method
-                        // from other package! Remove the static helper method once fixed!!!
-                        POIXMLDocumentPart._invokeOnDocumentRead(gp);
+                try {
+                    if (relation.equals(XWPFRelation.STYLES.getRelation())) {
+                        this.styles = (XWPFStyles) p;
+                        this.styles.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.THEME.getRelation())) {
+                        this.theme = (XWPFTheme) p;
+                        this.theme.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.NUMBERING.getRelation())) {
+                        this.numbering = (XWPFNumbering) p;
+                        this.numbering.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.FOOTER.getRelation())) {
+                        XWPFFooter footer = (XWPFFooter) p;
+                        footers.add(footer);
+                        footer.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.HEADER.getRelation())) {
+                        XWPFHeader header = (XWPFHeader) p;
+                        headers.add(header);
+                        header.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.COMMENT.getRelation())) {
+                        this.comments = (XWPFComments) p;
+                        this.comments.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.SETTINGS.getRelation())) {
+                        settings = (XWPFSettings) p;
+                        settings.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.IMAGES.getRelation())) {
+                        XWPFPictureData picData = (XWPFPictureData) p;
+                        picData.onDocumentRead();
+                        registerPackagePictureData(picData);
+                        pictures.add(picData);
+                    } else if (relation.equals(XWPFRelation.CHART.getRelation())) {
+                        //now we can use all methods to modify charts in XWPFDocument
+                        XWPFChart chartData = (XWPFChart) p;
+                        charts.add(chartData);
+                    } else if (relation.equals(XWPFRelation.GLOSSARY_DOCUMENT.getRelation())) {
+                        // We don't currently process the glossary itself
+                        // Until we do, we do need to load the glossary child parts of it
+                        for (POIXMLDocumentPart gp : p.getRelations()) {
+                            // Trigger the onDocumentRead for all the child parts
+                            // Otherwise we'll hit issues on Styles, Settings etc on save
+                            // TODO: Refactor this to not need to access protected method
+                            // from other package! Remove the static helper method once fixed!!!
+                            POIXMLDocumentPart._invokeOnDocumentRead(gp);
+                        }
                     }
+                } catch (ClassCastException e) {
+                    throw new IllegalArgumentException("Relation and type of document-part did not match, had relation " + relation + " and type of document-part: " + p.getClass());
                 }
             }
             initHyperlinks();
