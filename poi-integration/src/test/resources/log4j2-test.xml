@@ -39,7 +39,7 @@
     <Logger name="org.apache.poi.hslf.record.Record" level="ERROR" />
 
     <!-- Change to DEBUG or another level to get log output -->
-    <Root level="DEBUG">
+    <Root level="ERROR">
       <AppenderRef ref="Console" />
     </Root>
   </Loggers>
