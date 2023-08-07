@@ -275,10 +275,12 @@ public class TestAllFiles {
     }
 
     private static boolean isBlank(final String str) {
-        final int strLen = str.length();
-        for (int i = 0; i < strLen; i++) {
-            if (!Character.isWhitespace(str.charAt(i))) {
-                return false;
+        if (str != null) {
+            final int strLen = str.length();
+            for (int i = 0; i < strLen; i++) {
+                if (!Character.isWhitespace(str.charAt(i))) {
+                    return false;
+                }
             }
         }
         return true;
