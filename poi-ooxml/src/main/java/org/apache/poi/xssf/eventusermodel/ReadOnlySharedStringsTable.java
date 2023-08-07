@@ -251,7 +251,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
             this.strings = new ArrayList<>(this.uniqueCount);
             characters = new StringBuilder(64);
         } else if ("si".equals(localName)) {
-            characters.setLength(0);
+            if (characters != null) {
+                characters.setLength(0);
+            }
         } else if ("t".equals(localName)) {
             tIsOpen = true;
         } else if ("rPh".equals(localName)) {
@@ -269,7 +271,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
         }
 
         if ("si".equals(localName)) {
-            strings.add(characters.toString());
+            if (strings != null && characters != null) {
+                strings.add(characters.toString());
+            }
         } else if ("t".equals(localName)) {
             tIsOpen = false;
         } else if ("rPh".equals(localName)) {
@@ -285,7 +289,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
             if (inRPh && includePhoneticRuns) {
                 characters.append(ch, start, length);
             } else if (! inRPh){
-                characters.append(ch, start, length);
+                if (characters != null) {
+                    characters.append(ch, start, length);
+                }
             }
         }
     }

@@ -235,7 +235,7 @@ public class TestAllFiles {
     @SuppressWarnings("unchecked")
     private static void verify(String file, Executable exec, Class<? extends Throwable> exClass, String exMessage, String password,
             FileHandler fileHandler) {
-        final String errPrefix = file + " - failed for handler " + fileHandler.getClass().getSimpleName() + ": ";
+        final String errPrefix = file.replace("\\", "/") + " - failed for handler " + fileHandler.getClass().getSimpleName() + ": ";
         // this also removes the password for non encrypted files
         Biff8EncryptionKey.setCurrentUserPassword(password);
         if (exClass != null && AssertionFailedError.class.isAssignableFrom(exClass)) {
