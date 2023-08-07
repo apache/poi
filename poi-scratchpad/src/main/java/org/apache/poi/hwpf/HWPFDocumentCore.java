@@ -47,6 +47,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
@@ -337,7 +338,11 @@ public abstract class HWPFDocumentCore extends POIDocument {
      */
     protected byte[] getDocumentEntryBytes(String name, int encryptionOffset, final int len) throws IOException {
         DirectoryNode dir = getDirectory();
-        DocumentEntry documentProps = (DocumentEntry)dir.getEntry(name);
+        final Entry entry = dir.getEntry(name);
+        if (!(entry instanceof DocumentEntry)) {
+            throw new IllegalArgumentException("Had unexpected type of entry for name: " + name + ": " + entry);
+        }
+        DocumentEntry documentProps = (DocumentEntry) entry;
         int streamSize = documentProps.getSize();
         boolean isEncrypted = (encryptionOffset > -1 && getEncryptionInfo() != null);
 

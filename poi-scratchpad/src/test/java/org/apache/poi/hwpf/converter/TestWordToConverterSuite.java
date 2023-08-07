@@ -23,6 +23,7 @@ import java.io.FilenameFilter;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
 import javax.xml.transform.OutputKeys;
@@ -52,16 +53,26 @@ public class TestWordToConverterSuite
         "password_password_cryptoapi.doc",
         // WORD 2.0 file
         "word2.doc",
-        // Corrupt file
-        "Fuzzed.doc"
+        // Excel file
+        "TestRobert_Flaherty.doc",
+        // Corrupt files
+        "Fuzzed.doc",
+        "clusterfuzz-testcase-minimized-POIHWPFFuzzer-5418937293340672.doc",
+        "TestHPSFWritingFunctionality.doc"
     );
 
     public static Stream<Arguments> files() {
-        File directory = POIDataSamples.getDocumentInstance().getFile("../document" );
-        FilenameFilter ff = (dir, name) -> name.endsWith(".doc") && !failingFiles.contains(name);
+        return Stream.concat(
+                Arrays.stream(getFiles(POIDataSamples.getDocumentInstance().getFile(""))),
+                Arrays.stream(getFiles(POIDataSamples.getHPSFInstance().getFile("")))
+        ).map(Arguments::of);
+    }
+
+    private static File[] getFiles(File directory) {
+        FilenameFilter ff = (dir, name) -> name.toLowerCase(Locale.ROOT).endsWith(".doc") && !failingFiles.contains(name);
         File[] docs = directory.listFiles(ff);
         assertNotNull(docs);
-        return Arrays.stream(docs).map(Arguments::of);
+        return docs;
     }
 
     @ParameterizedTest

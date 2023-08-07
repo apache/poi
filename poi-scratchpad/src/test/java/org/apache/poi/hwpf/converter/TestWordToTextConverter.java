@@ -25,9 +25,10 @@ import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.filefilter.SuffixFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.EncryptedDocumentException;
@@ -43,6 +44,14 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 public class TestWordToTextConverter {
     private static final Logger LOG = LogManager.getLogger(WordToTextConverter.class);
+
+    private static final List<String> failingFiles = Arrays.asList(
+        // Excel file
+        "TestRobert_Flaherty.doc",
+        // Corrupt files
+        "clusterfuzz-testcase-minimized-POIHWPFFuzzer-5418937293340672.doc",
+        "TestHPSFWritingFunctionality.doc"
+    );
 
     /**
      * [FAILING] Bug 47731 - Word Extractor considers text copied from some
@@ -104,13 +113,16 @@ public class TestWordToTextConverter {
     }
 
     public static Stream<Arguments> files() {
-        String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY,
-                new File("test-data").exists() ? "test-data" : "../test-data");
+        return Stream.concat(
+            Arrays.stream(getFiles(POIDataSamples.getDocumentInstance().getFile(""))),
+            Arrays.stream(getFiles(POIDataSamples.getHPSFInstance().getFile("")))
+        ).map(Arguments::of);
+    }
 
-        File[] documents = new File(dataDirName, "document").listFiles(
-                (FilenameFilter) new SuffixFileFilter(".doc"));
-        assertNotNull(documents);
-
-        return Arrays.stream(documents).map(Arguments::of);
+    private static File[] getFiles(File directory) {
+        FilenameFilter ff = (dir, name) -> name.toLowerCase(Locale.ROOT).endsWith(".doc") && !failingFiles.contains(name);
+        File[] docs = directory.listFiles(ff);
+        assertNotNull(docs);
+        return docs;
     }
 }
