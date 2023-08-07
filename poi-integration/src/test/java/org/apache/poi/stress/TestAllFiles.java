@@ -42,7 +42,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.platform.commons.util.StringUtils;
 import org.opentest4j.AssertionFailedError;
 
 /**
@@ -262,7 +261,7 @@ public class TestAllFiles {
                 }
             } else {
                 // verify that message is either null for both or set for both
-                assertTrue(actMsg != null || StringUtils.isBlank(exMessage),
+                assertTrue(actMsg != null || isBlank(exMessage),
                         errPrefix + " for " + exClass + " expected message '" + exMessage + "' but had '" + actMsg + "'");
 
                 if (actMsg != null) {
@@ -273,6 +272,16 @@ public class TestAllFiles {
         } else {
             assertDoesNotThrow(exec, errPrefix);
         }
+    }
+
+    private static boolean isBlank(final String str) {
+        final int strLen = str.length();
+        for (int i = 0; i < strLen; i++) {
+            if (!Character.isWhitespace(str.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private static String pathReplace(String msg) {
