@@ -42,6 +42,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.platform.commons.util.StringUtils;
 import org.opentest4j.AssertionFailedError;
 
 /**
@@ -251,12 +252,12 @@ public class TestAllFiles {
         } else if (exClass != null) {
             Exception e = assertThrows((Class<? extends Exception>)exClass, exec, errPrefix + " expected " + exClass);
             String actMsg = pathReplace(e.getMessage());
-            if (NullPointerException.class.isAssignableFrom(exClass)) {
-                if (actMsg != null) {
-                    assertTrue(actMsg.contains(exMessage), errPrefix + "Message: "+actMsg+" - didn't contain: "+exMessage);
-                }
-            } else {
-                assertNotNull(actMsg, errPrefix);
+
+            // verify that message is either null for both or set for both
+            assertTrue(actMsg != null || StringUtils.isBlank(exMessage),
+                    errPrefix + " for " + exClass + " expected message '" + exMessage + "' but had '" + actMsg + "'");
+
+            if (actMsg != null) {
                 assertTrue(actMsg.contains(exMessage),
                         errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
             }

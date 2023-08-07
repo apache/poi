@@ -102,9 +102,9 @@ public abstract class BaseTestIteratingXLS {
 
         Executable ex = () -> runOneFile(file);
         if (t == null) {
-            assertDoesNotThrow(ex);
+            assertDoesNotThrow(ex, "Failing file: " + file);
         } else {
-            assertThrows(t, ex);
+            assertThrows(t, ex, "Failing file: " + file);
         }
     }
 

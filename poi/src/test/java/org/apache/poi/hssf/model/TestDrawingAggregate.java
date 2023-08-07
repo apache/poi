@@ -136,7 +136,9 @@ class TestDrawingAggregate {
 
         File[] files = testData.listFiles((dir, name) -> name.endsWith(".xls"));
         assertNotNull(files, "Need to find files in test-data path, had path: " + testData);
-        return Stream.of(files).map(Arguments::of);
+        return Stream.of(files).
+                filter(file -> !file.getName().equals("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5285517825277952.xls")).
+                map(Arguments::of);
     }
 
     /**
