@@ -84,6 +84,8 @@ public class HSLFFileHandler extends SlideShowHandler {
         }
 
         handleExtracting(file);
+
+        handleAdditional(file);
     }
 
     public static void main(String[] args) throws Exception {
