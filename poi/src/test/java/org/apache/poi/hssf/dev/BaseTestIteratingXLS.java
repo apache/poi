@@ -86,6 +86,8 @@ public abstract class BaseTestIteratingXLS {
         excludes.put("61300.xls", RecordFormatException.class);
         // BIFF 5
         excludes.put("64130.xls", OldExcelFormatException.class);
+        // fuzzed binaries
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-6322470200934400.xls", RuntimeException.class);
         return excludes;
     }
 
