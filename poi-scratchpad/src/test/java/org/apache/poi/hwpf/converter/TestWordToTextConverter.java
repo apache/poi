@@ -50,7 +50,8 @@ public class TestWordToTextConverter {
         "TestRobert_Flaherty.doc",
         // Corrupt files
         "clusterfuzz-testcase-minimized-POIHWPFFuzzer-5418937293340672.doc",
-        "TestHPSFWritingFunctionality.doc"
+        "TestHPSFWritingFunctionality.doc",
+        "clusterfuzz-testcase-minimized-POIHWPFFuzzer-4947285593948160.doc"
     );
 
     /**

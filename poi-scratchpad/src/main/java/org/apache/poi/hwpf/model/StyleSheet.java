@@ -20,6 +20,8 @@ package org.apache.poi.hwpf.model;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.hwpf.sprm.CharacterSprmUncompressor;
 import org.apache.poi.hwpf.sprm.ParagraphSprmUncompressor;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
@@ -39,12 +41,16 @@ import org.apache.poi.util.LittleEndianConsts;
  */
 @Internal
 public final class StyleSheet {
+    private static final Logger LOG = LogManager.getLogger(StyleSheet.class);
 
     public static final int NIL_STYLE = 4095;
 //  private static final int PAP_TYPE = 1;
 //  private static final int CHP_TYPE = 2;
 //  private static final int SEP_TYPE = 4;
 //  private static final int TAP_TYPE = 5;
+
+    private static final int MAX_PAPX_NESTING = 1000;
+    private static final int MAX_CHPX_NESTING = 1000;
 
     @Deprecated
     private static final ParagraphProperties NIL_PAP = new ParagraphProperties();
@@ -114,8 +120,8 @@ public final class StyleSheet {
         }
         for (int x = 0; x < _styleDescriptions.length; x++) {
             if (_styleDescriptions[x] != null) {
-                createPap(x);
-                createChp(x);
+                createPap(x, 0);
+                createChp(x, 0);
             }
         }
     }
@@ -203,7 +209,14 @@ public final class StyleSheet {
      *             ParagraphProperties  from (and also place the finished PAP in)
      */
     @Deprecated
-    private void createPap(int istd) {
+    private void createPap(int istd, int nesting) {
+        if (nesting > MAX_PAPX_NESTING) {
+            LOG.warn("Encountered too deep nesting, cannot fully process stylesheet at " + istd +
+                    " with more than " + MAX_PAPX_NESTING + " nested ParagraphProperties." +
+                    " Some data could not be parsed.");
+            return;
+        }
+
         StyleDescription sd = _styleDescriptions[istd];
         if (sd == null) {
             throw new IllegalStateException("Cannot create Pap, empty styleDescription, had : " + _styleDescriptions.length + " descriptions");
@@ -227,7 +240,7 @@ public final class StyleSheet {
                         throw new IllegalStateException("Pap style " + istd + " claimed to have itself as its parent, which isn't allowed");
                     }
                     // Create the parent style
-                    createPap(baseIndex);
+                    createPap(baseIndex, nesting+1);
                     parentPAP = styleDescription.getPAP();
                 }
 
@@ -253,7 +266,14 @@ public final class StyleSheet {
      *             CharacterProperties object from.
      */
     @Deprecated
-    private void createChp(int istd) {
+    private void createChp(int istd, int nesting) {
+        if (nesting > MAX_CHPX_NESTING) {
+            LOG.warn("Encountered too deep nesting, cannot fully process stylesheet at " + istd +
+                    " with more than " + MAX_CHPX_NESTING + " nested CharacterProperties." +
+                    " Some data could not be parsed.");
+            return;
+        }
+
         StyleDescription sd = _styleDescriptions[istd];
         if (sd == null) {
             throw new IllegalStateException("Cannot create Chp, empty styleDescription, had : " + _styleDescriptions.length + " descriptions");
@@ -282,7 +302,7 @@ public final class StyleSheet {
 
                 parentCHP = styleDescription.getCHP();
                 if (parentCHP == null) {
-                    createChp(baseIndex);
+                    createChp(baseIndex, nesting + 1);
                     parentCHP = styleDescription.getCHP();
                 }
                 if (parentCHP == null) {
