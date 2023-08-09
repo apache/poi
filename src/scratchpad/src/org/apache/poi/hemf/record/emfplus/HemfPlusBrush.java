@@ -355,7 +355,7 @@ public class HemfPlusBrush {
                 size += LittleEndianConsts.INT_SIZE;
             }
 
-            brushBytes = IOUtils.toByteArray(leis, dataSize-size, MAX_OBJECT_SIZE);
+            brushBytes = IOUtils.toByteArray(leis, Math.toIntExact(dataSize-size), MAX_OBJECT_SIZE);
 
             return dataSize;
         }

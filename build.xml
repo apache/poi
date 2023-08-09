@@ -42,7 +42,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="4.1.2"/>
+    <property name="version.id" value="4.1.3"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -175,6 +175,9 @@ under the License.
     <property name="main.commons-codec.jar" location="${main.lib}/commons-codec-1.13.jar"/>
     <property name="main.commons-codec.url"
               value="${repository.m2}/maven2/commons-codec/commons-codec/1.13/commons-codec-1.13.jar"/>
+    <property name="main.commons-io.jar" location="${main.lib}/commons-io-2.11.0.jar"/>
+    <property name="main.commons-io.url"
+      value="${repository.m2}/maven2/commons-io/commons-io/2.11.0/commons-io-2.11.0.jar"/>
     <property name="main.log4j.jar" location="${main.lib}/log4j-1.2.17.jar"/>
     <property name="main.log4j.url" value="${repository.m2}/maven2/log4j/log4j/1.2.17/log4j-1.2.17.jar"/>
     <property name="main.junit.jar" location="${main.lib}/junit-4.12.jar"/>
@@ -375,6 +378,7 @@ under the License.
     <path id="main.classpath">
         <pathelement location="${main.commons-logging.jar}"/>
         <pathelement location="${main.commons-codec.jar}"/>
+        <pathelement location="${main.commons-io.jar}"/>
         <pathelement location="${main.commons-collections4.jar}"/>
         <pathelement location="${main.commons-math3.jar}"/>
         <pathelement location="${main.xmlbind.jar}"/>
@@ -655,6 +659,7 @@ under the License.
                 <include name="commons-codec-1.10*"/>
                 <include name="commons-codec-1.11*"/>
                 <include name="commons-codec-1.12*"/>
+                <include name="commons-io-2.11*"/>
                 <include name="commons-compress-1.16*"/>
                 <include name="commons-compress-1.17*"/>
                 <include name="commons-compress-1.18*"/>
@@ -729,6 +734,7 @@ under the License.
                 <and>
                     <available file="${main.commons-logging.jar}"/>
                     <available file="${main.commons-codec.jar}"/>
+                    <available file="${main.commons-io.jar}"/>
                     <available file="${main.log4j.jar}"/>
                     <available file="${main.junit.jar}"/>
                     <available file="${main.jmh.jar}"/>
@@ -772,6 +778,7 @@ under the License.
         <mkdir dir="${main.lib}"/>
         <downloadfile src="${main.commons-logging.url}" dest="${main.commons-logging.jar}"/>
         <downloadfile src="${main.commons-codec.url}" dest="${main.commons-codec.jar}"/>
+        <downloadfile src="${main.commons-io.url}" dest="${main.commons-io.jar}"/>
         <downloadfile src="${main.log4j.url}" dest="${main.log4j.jar}"/>
         <downloadfile src="${main.junit.url}" dest="${main.junit.jar}"/>
         <downloadfile src="${main.jmh.url}" dest="${main.jmh.jar}"/>
@@ -2035,6 +2042,7 @@ under the License.
             <mappedresources cache="true">
                 <fileset dir="${main.lib}">
                     <include name="commons-codec-*.jar"/>
+                    <include name="commons-io-*.jar"/>
                     <include name="commons-logging-*.jar"/>
                     <include name="commons-collections4-*.jar"/>
                     <include name="commons-compress*.jar"/>
@@ -2319,6 +2327,7 @@ under the License.
             <auxClasspath path="${main.commons-collections4.jar}" />
             <auxClasspath path="${main.commons-math3.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
+            <auxClasspath path="${main.commons-io.jar}" />
             <auxClasspath path="${main.commons-logging.jar}" />
             <auxClasspath path="${main.junit.jar}" />
             <auxClasspath path="${main.jmh.jar}"/>

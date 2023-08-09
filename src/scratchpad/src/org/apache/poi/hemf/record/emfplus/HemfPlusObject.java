@@ -262,7 +262,7 @@ public class HemfPlusObject {
 
             long size = graphicsVersion.init(leis);
 
-            objectDataBytes = IOUtils.toByteArray(leis, dataSize - size, MAX_OBJECT_SIZE);
+            objectDataBytes = IOUtils.toByteArray(leis, Math.toIntExact(dataSize - size), MAX_OBJECT_SIZE);
 
             return dataSize;
         }

@@ -247,7 +247,7 @@ public class HwmfEscape implements HwmfRecord {
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, EscapeFunction escapeFunction) throws IOException {
             this.escapeFunction = escapeFunction;
-            escapeDataBytes = IOUtils.toByteArray(leis,recordSize,MAX_OBJECT_SIZE);
+            escapeDataBytes = IOUtils.toByteArray(leis,Math.toIntExact(recordSize),MAX_OBJECT_SIZE);
             return (int)recordSize;
         }
 
@@ -290,7 +290,7 @@ public class HwmfEscape implements HwmfRecord {
             if (commentIdentifier != EMF_COMMENT_IDENTIFIER) {
                 // there are some WMF implementation using this record as a MFCOMMENT or similar
                 // if the commentIdentifier doesn't match, then return immediately
-                emfData = IOUtils.toByteArray(leis, recordSize-LittleEndianConsts.INT_SIZE, MAX_OBJECT_SIZE);
+                emfData = IOUtils.toByteArray(leis, Math.toIntExact(recordSize-LittleEndianConsts.INT_SIZE), MAX_OBJECT_SIZE);
                 remainingBytes = emfData.length;
                 return (int)recordSize;
             }
