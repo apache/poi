@@ -60,6 +60,7 @@ public abstract class BaseTestPPTIterating {
     static final Map<String,Class<? extends Throwable>> EXCLUDED = new HashMap<>();
     static {
         EXCLUDED.put("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6416153805979648.ppt", Exception.class);
+        EXCLUDED.put("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6710128412590080.ppt", RuntimeException.class);
     }
 
     public static Stream<Arguments> files() {
