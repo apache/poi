@@ -139,9 +139,6 @@ artifacts {
 test {
     // exclude these from the normal test-run
     exclude '**/*FileHandler.class'
-    if (jdkVersion == 8)  {
-        exclude '**/*.class'
-    }
 
     dependsOn { testJar }
 

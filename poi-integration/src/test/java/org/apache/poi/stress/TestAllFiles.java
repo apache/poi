@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.tools.ant.DirectoryScanner;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -200,6 +201,13 @@ public class TestAllFiles {
         String threadName = Thread.currentThread().getName();
         try {
             Thread.currentThread().setName("Handle - " + file + " - " + handler);
+
+            // Some of the tests hang in JDK 8 due to Graphics-Rendering issues in JDK itself,
+            // therefore we do not run some tests here
+            Assumptions.assumeFalse(isJava8() && (
+                    file.endsWith("23884_defense_FINAL_OOimport_edit.ppt")
+            ), "Some files hang in JDK graphics rendering on Java 8 due to a JDK bug");
+
             System.out.println("Running handleFiles on "+file);
             FileHandler fileHandler = handler.getHandler();
             assertNotNull(fileHandler, "Did not find a handler for file " + file);
@@ -300,5 +308,9 @@ public class TestAllFiles {
         }
 
         return msg;
+    }
+
+    private static boolean isJava8() {
+        return System.getProperty("java.version").startsWith("1.8");
     }
 }
