@@ -265,14 +265,19 @@ public class TestAllFiles {
             // it sometimes has a message and sometimes not!
             if (NullPointerException.class.isAssignableFrom(exClass)) {
                 if (actMsg != null) {
-                    assertTrue(actMsg.contains(exMessage), errPrefix + "Message: "+actMsg+" - didn't contain: "+exMessage);
+                    assertTrue(actMsg.contains(exMessage), errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
                 }
             } else {
                 // verify that message is either null for both or set for both
                 assertTrue(actMsg != null || isBlank(exMessage),
-                        errPrefix + " for " + exClass + " expected message '" + exMessage + "' but had '" + actMsg + "'");
+                        errPrefix + " for " + exClass + " expected message '" + exMessage + "' but had '" + actMsg + "': " + e);
 
-                if (actMsg != null) {
+                if (actMsg != null &&
+                        // sometimes ArrayIndexOutOfBoundsException has null-message?!?
+                        // so skip the check for this type of exception if expected message is null
+                        (exMessage != null || !ArrayIndexOutOfBoundsException.class.isAssignableFrom(exClass))) {
+                    assertNotNull(exMessage,
+                            errPrefix + "Expected message was null, but actMsg wasn't: Message: " + actMsg + ": " + e);
                     assertTrue(actMsg.contains(exMessage),
                             errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
                 }
