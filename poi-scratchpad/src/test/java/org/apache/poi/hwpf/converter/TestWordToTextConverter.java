@@ -51,7 +51,8 @@ public class TestWordToTextConverter {
         // Corrupt files
         "clusterfuzz-testcase-minimized-POIHWPFFuzzer-5418937293340672.doc",
         "TestHPSFWritingFunctionality.doc",
-        "clusterfuzz-testcase-minimized-POIHWPFFuzzer-4947285593948160.doc"
+        "clusterfuzz-testcase-minimized-POIHWPFFuzzer-4947285593948160.doc",
+        "clusterfuzz-testcase-minimized-POIHWPFFuzzer-5440721166139392.doc"
     );
 
     /**

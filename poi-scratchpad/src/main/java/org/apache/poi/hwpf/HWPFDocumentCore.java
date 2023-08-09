@@ -54,7 +54,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 
-
 /**
  * This class holds much of the core of a Word document, but
  *  without some of the table structure information.
@@ -187,7 +186,11 @@ public abstract class HWPFDocumentCore extends POIDocument {
 
         DirectoryEntry objectPoolEntry = null;
         if (directory.hasEntry(STREAM_OBJECT_POOL)) {
-            objectPoolEntry = (DirectoryEntry) directory.getEntry(STREAM_OBJECT_POOL);
+            final Entry entry = directory.getEntry(STREAM_OBJECT_POOL);
+            if (!(entry instanceof DirectoryEntry)) {
+                throw new IllegalArgumentException("Had unexpected type of entry for name: " + STREAM_OBJECT_POOL + ": " + entry.getClass());
+            }
+            objectPoolEntry = (DirectoryEntry) entry;
         }
         _objectPool = new ObjectPoolImpl(objectPoolEntry);
     }
