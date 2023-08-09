@@ -444,18 +444,6 @@ subprojects {
         targetCompatibility = (JavaVersion.VERSION_17.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_17)
     }
 
-    task jenkins
-    jenkins.dependsOn build
-    jenkins.dependsOn check
-    jenkins.dependsOn javadoc
-    jenkins.dependsOn jacocoTestReport
-    jenkins.dependsOn rat
-    jenkins.dependsOn getDeps
-
-    task jenkinsLite
-    jenkins.dependsOn build
-    jenkins.dependsOn test
-
     publishing {
         publications {
             POI(MavenPublication) {
@@ -609,11 +597,6 @@ task allJavaDoc(type: Javadoc) {
 //  options.group('Examples', 'org.apache.poi.examples*')
 }
 
-
-task jenkins(dependsOn: ['replaceVersion', subprojects.build, 'srcDistZip', 'srcDistTar']) {}
-
-task jenkinsLite(dependsOn: ['replaceVersion', subprojects.build]) {}
-
 clean {
     delete "${rootDir}/build/dist"
 }
@@ -672,6 +655,24 @@ rat {
     // Prints the list of files with unapproved licences to the console, defaults to false
     verbose.set(true)
 }
+
+task jenkins(dependsOn: [
+        'replaceVersion',
+        subprojects.build,
+        subprojects.check,
+        subprojects.javadoc,
+        subprojects.jacocoTestReport,
+        subprojects.getDeps,
+        'srcDistZip',
+        'srcDistTar',
+        rat
+]) {}
+
+task jenkinsLite(dependsOn: [
+        'replaceVersion',
+        subprojects.build,
+        subprojects.test
+]) {}
 
 /*task downloadJarsToLibs() {
     def f = new File("$projectDir/../lib/ooxml/xmlbeans-5.0.0.jar")
