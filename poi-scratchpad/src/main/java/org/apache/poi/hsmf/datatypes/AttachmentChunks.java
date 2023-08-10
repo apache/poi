@@ -181,32 +181,38 @@ public class AttachmentChunks implements ChunkGroup {
         // - ATTACH_LONG_PATHNAME
         // - ATTACH_SIZE
         final int chunkId = chunk.getChunkId();
-        if (chunkId == ATTACH_DATA.id) {
-            if (chunk instanceof ByteChunk) {
-                attachData = (ByteChunk) chunk;
-            } else if (chunk instanceof DirectoryChunk) {
-                attachmentDirectory = (DirectoryChunk) chunk;
-            } else {
-                LOG.atError().log("Unexpected data chunk of type {}", chunk.getEntryName());
-            }
-        } else if (chunkId == ATTACH_EXTENSION.id) {
-            attachExtension = (StringChunk) chunk;
-        } else if (chunkId == ATTACH_FILENAME.id) {
-            attachFileName = (StringChunk) chunk;
-        } else if (chunkId == ATTACH_LONG_FILENAME.id) {
-            attachLongFileName = (StringChunk) chunk;
-        } else if (chunkId == ATTACH_MIME_TAG.id) {
-            attachMimeTag = (StringChunk) chunk;
-        } else if (chunkId == ATTACH_RENDERING.id) {
-            attachRenderingWMF = (ByteChunk) chunk;
-        } else if (chunkId == ATTACH_CONTENT_ID.id) {
-            attachContentId = (StringChunk) chunk;
-        } else {
-            LOG.atWarn().log("Currently unsupported attachment chunk property will be ignored. {}", chunk.getEntryName());
-        }
 
-        // And add to the main list
-        allChunks.add(chunk);
+        try {
+            if (chunkId == ATTACH_DATA.id) {
+                if (chunk instanceof ByteChunk) {
+                    attachData = (ByteChunk) chunk;
+                } else if (chunk instanceof DirectoryChunk) {
+                    attachmentDirectory = (DirectoryChunk) chunk;
+                } else {
+                    LOG.atError().log("Unexpected data chunk of type {}", chunk.getEntryName());
+                }
+            } else if (chunkId == ATTACH_EXTENSION.id) {
+                attachExtension = (StringChunk) chunk;
+            } else if (chunkId == ATTACH_FILENAME.id) {
+                attachFileName = (StringChunk) chunk;
+            } else if (chunkId == ATTACH_LONG_FILENAME.id) {
+                attachLongFileName = (StringChunk) chunk;
+            } else if (chunkId == ATTACH_MIME_TAG.id) {
+                attachMimeTag = (StringChunk) chunk;
+            } else if (chunkId == ATTACH_RENDERING.id) {
+                attachRenderingWMF = (ByteChunk) chunk;
+            } else if (chunkId == ATTACH_CONTENT_ID.id) {
+                attachContentId = (StringChunk) chunk;
+            } else {
+                LOG.atWarn().log("Currently unsupported attachment chunk property will be ignored. {}", chunk.getEntryName());
+            }
+
+            // And add to the main list
+            allChunks.add(chunk);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("ChunkId and type of chunk did not match, had id " +
+                    chunkId + " and type of chunk: " + chunk.getClass(), e);
+        }
     }
 
     /**
