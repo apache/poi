@@ -632,6 +632,8 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'jdk_17_latest',
                 'jdk_18_latest',
                 'jdk_19_latest',
+                'jdk_20_latest',
+                'jdk_21_latest',
                 'adoptopenjdk_hotspot_8u282',
                 'ibmjdk_1.8.0_261'
         )
