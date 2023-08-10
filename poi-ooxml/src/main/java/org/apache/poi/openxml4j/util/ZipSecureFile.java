@@ -37,11 +37,22 @@ public class ZipSecureFile extends ZipFile {
     private static final Logger LOG = LogManager.getLogger(ZipSecureFile.class);
     /* package */ static double MIN_INFLATE_RATIO = 0.01d;
     /* package */ static final long DEFAULT_MAX_ENTRY_SIZE = 0xFFFFFFFFL;
+    /* package */ static final long DEFAULT_MAX_FILE_COUNT = 1000;
+    /* package */ static final long DEFAULT_GRACE_ENTRY_SIZE = 100*1024L;
     /* package */ static long MAX_ENTRY_SIZE = DEFAULT_MAX_ENTRY_SIZE;
+    /* package */ static long MAX_FILE_COUNT = DEFAULT_MAX_FILE_COUNT;
+    /* package */ static long GRACE_ENTRY_SIZE = DEFAULT_GRACE_ENTRY_SIZE;
 
     // The maximum chars of extracted text
     /* package */ static final long DEFAULT_MAX_TEXT_SIZE = 10*1024*1024L;
     private static long MAX_TEXT_SIZE = DEFAULT_MAX_TEXT_SIZE;
+
+    public static final String MAX_FILE_COUNT_MSG =
+            "The file appears to be potentially malicious. This file embeds more internal file entries than expected.\n" +
+                    "This may indicates that the file could pose a security risk.\n" +
+                    "You can adjust this limit via ZipSecureFile.setMaxFileCount() if you need to work with files which are very large.\n" +
+                    "Limits: MAX_FILE_COUNT: %d";
+
 
     private final String fileName;
 
@@ -66,6 +77,29 @@ public class ZipSecureFile extends ZipFile {
      */
     public static double getMinInflateRatio() {
         return MIN_INFLATE_RATIO;
+    }
+
+    /**
+     * Returns the current maximum file count that is used.
+     *
+     * See setMaxFileCount() for details.
+     *
+     * @return The max accepted file count (i.e. the max number of files we allow inside zip files that we read - including OOXML files like xlsx, docx, pptx, etc.).
+     * @since POI 5.2.4
+     */
+    public static long getMaxFileCount() {
+        return MAX_FILE_COUNT;
+    }
+
+    /**
+     * Sets the maximum file count that we allow inside zip files that we read -
+     * including OOXML files like xlsx, docx, pptx, etc. The default is 1000.
+     *
+     * @param maxFileCount The max accepted file count
+     * @since POI 5.2.4
+     */
+    public static void setMaxFileCount(final long maxFileCount) {
+        MAX_FILE_COUNT = maxFileCount;
     }
 
     /**
@@ -96,6 +130,39 @@ public class ZipSecureFile extends ZipFile {
      */
     public static long getMaxEntrySize() {
         return MAX_ENTRY_SIZE;
+    }
+
+    /**
+     * Sets the grace entry size of a single zip entry. It defaults to 100Kb.
+     *
+     * When decompressed data in a zip entry is smaller than this size, the
+     * Minimum Inflation Ratio check is ignored.
+     *
+     * Setting this to a very small value may lead to more files being flagged
+     * as potential Zip Bombs are rejected as a result.
+     *
+     * @param graceEntrySize the grace entry size of a single zip entry
+     * @throws IllegalArgumentException for negative graceEntrySize
+     * @since POI 5.2.4
+     */
+    public static void setGraceEntrySize(long graceEntrySize) {
+        if (graceEntrySize < 0) {
+            throw new IllegalArgumentException("Grace entry size must be greater than or equal to zero");
+        }
+        GRACE_ENTRY_SIZE = graceEntrySize;
+    }
+
+    /**
+     * Returns the current threshold for decompressed data in zip entries that are regarded as too small
+     * to worry about from a Zip Bomb perspective (default is 100Kb).
+     *
+     * See setGraceEntrySize() for details.
+     *
+     * @return The current grace entry size
+     * @since POI 5.2.4
+     */
+    public static long getGraceEntrySize() {
+        return GRACE_ENTRY_SIZE;
     }
 
     /**

@@ -17,9 +17,6 @@
 
 package org.apache.poi.openxml4j.util;
 
-import static org.apache.poi.openxml4j.util.ZipSecureFile.MAX_ENTRY_SIZE;
-import static org.apache.poi.openxml4j.util.ZipSecureFile.MIN_INFLATE_RATIO;
-
 import java.io.EOFException;
 import java.io.FilterInputStream;
 import java.io.IOException;
@@ -34,10 +31,10 @@ import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 
+import static org.apache.poi.openxml4j.util.ZipSecureFile.*;
+
 @Internal
 public class ZipArchiveThresholdInputStream extends FilterInputStream {
-    // don't alert for expanded sizes smaller than 100k
-    private static final long GRACE_ENTRY_SIZE = 100*1024L;
 
     private static final String MAX_ENTRY_SIZE_MSG =
         "Zip bomb detected! The file would exceed the max size of the expanded data in the zip-file.\n" +
@@ -58,6 +55,7 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
      */
     private ZipArchiveEntry entry;
     private boolean guardState = true;
+    private long entryCount;
 
     public ZipArchiveThresholdInputStream(InputStream is) {
         super(is);
@@ -125,7 +123,7 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
         final String entryName = entry == null ? "not set" : entry.getName();
 
         // check the file size first, in case we are working on uncompressed streams
-        if(payloadSize > MAX_ENTRY_SIZE) {
+        if (payloadSize > MAX_ENTRY_SIZE) {
             throw new IOException(String.format(Locale.ROOT, MAX_ENTRY_SIZE_MSG, payloadSize, rawSize, MAX_ENTRY_SIZE, entryName));
         }
 
@@ -150,6 +148,11 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
 
         try {
             entry = ((ZipArchiveInputStream) in).getNextZipEntry();
+            if (guardState && entry != null) {
+                if (++entryCount > MAX_FILE_COUNT) {
+                    throw new IOException(String.format(Locale.ROOT, MAX_FILE_COUNT_MSG, MAX_FILE_COUNT));
+                }
+            }
             return entry;
         } catch (ZipException ze) {
             if (ze.getMessage().startsWith("Unexpected record signature")) {

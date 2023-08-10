@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -50,6 +51,7 @@ import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 
@@ -308,8 +310,13 @@ public final class ZipPackage extends OPCPackage {
         // (Need to create relationships before other
         //  parts, otherwise we might create a part before
         //  its relationship exists, and then it won't tie up)
+        final List<? extends ZipArchiveEntry> list = Collections.list(zipEntries);
+        if (list.size() > ZipSecureFile.getMaxFileCount()) {
+            throw new InvalidFormatException(String.format(
+                    Locale.ROOT, ZipSecureFile.MAX_FILE_COUNT_MSG, ZipSecureFile.getMaxFileCount()));
+        }
         final List<EntryTriple> entries =
-                Collections.list(zipEntries).stream()
+                list.stream()
                         .filter(zipArchiveEntry -> !ignoreEntry(zipArchiveEntry))
                         .map(zae -> new EntryTriple(zae, contentTypeManager))
                         .filter(mm -> mm.partName != null)

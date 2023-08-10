@@ -79,4 +79,25 @@ class TestZipSecureFile {
             ZipSecureFile.setMaxTextSize(ZipSecureFile.DEFAULT_MAX_TEXT_SIZE);
         }
     }
+
+    @Test
+    void testSettingGraceEntrySize() {
+        long approx8G = ZipSecureFile.MAX_ENTRY_SIZE * 2;
+        try {
+            ZipSecureFile.setGraceEntrySize(approx8G);
+            assertEquals(approx8G, ZipSecureFile.getGraceEntrySize());
+        } finally {
+            ZipSecureFile.setGraceEntrySize(ZipSecureFile.DEFAULT_GRACE_ENTRY_SIZE);
+        }
+    }
+
+    @Test
+    void testSettingMaxFileCount() {
+        try {
+            ZipSecureFile.setMaxFileCount(123456789);
+            assertEquals(123456789, ZipSecureFile.getMaxFileCount());
+        } finally {
+            ZipSecureFile.setMaxFileCount(ZipSecureFile.DEFAULT_MAX_FILE_COUNT);
+        }
+    }
 }
