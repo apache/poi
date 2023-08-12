@@ -642,11 +642,12 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'jdk_19_latest',
                 'jdk_20_latest',
                 'jdk_21_latest',
+                'jdk_22_latest',
                 'adoptopenjdk_hotspot_8u282',
                 'ibmjdk_1.8.0_261'
         )
         // Note H50 is reserved according to its node-description
-        label('Nodes','H22','H23','H24','H25','H26','H27','H28','H29','H30','H31','H32','H33','H34','H35','H36','H37','H38','H39','H40','H41','H42','H43','H44','H48','lucene1','lucene2','master')
+        label('Nodes','builds22','builds23','builds24','builds25','builds26','builds27','builds28','builds29','builds30','builds31','builds32','builds33','builds34','builds35','builds36','builds37','builds38','builds39','builds40','builds50','builds56','builds57','builds58','builds59','builds60')
     }
     steps {
         conditionalSteps {
