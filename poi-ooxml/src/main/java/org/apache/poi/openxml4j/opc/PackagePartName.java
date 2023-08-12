@@ -201,7 +201,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
         }
 
         String uriPath = partURI.getPath();
-        if (uriPath.length() == 0
+        if (uriPath == null || uriPath.isEmpty()
                 || ((uriPath.length() == 1) && (uriPath.charAt(0) == PackagingURIHelper.FORWARD_SLASH_CHAR))) {
             throw new InvalidFormatException(
                     "A part name shall not be empty [M1.1]: "
