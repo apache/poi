@@ -187,7 +187,7 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
     }
 
     /** Holds all the chunks that were found. */
-    private List<Chunk> allChunks = new ArrayList<>();
+    private final List<Chunk> allChunks = new ArrayList<>();
 
     @Override
     public Map<MAPIProperty, List<PropertyValue>> getProperties() {
@@ -212,21 +212,26 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
      */
     @Override
     public void record(Chunk chunk) {
-        if (chunk.getChunkId() == RECIPIENT_SEARCH.id) {
-            // TODO - parse
-            recipientSearchChunk = (ByteChunk) chunk;
-        } else if (chunk.getChunkId() == RECIPIENT_NAME.id) {
-            recipientDisplayNameChunk = (StringChunk) chunk;
-        } else if (chunk.getChunkId() == RECIPIENT_DISPLAY_NAME.id) {
-            recipientNameChunk = (StringChunk) chunk;
-        } else if (chunk.getChunkId() == RECIPIENT_EMAIL_ADDRESS.id) {
-            recipientEmailChunk = (StringChunk) chunk;
-        } else if (chunk.getChunkId() == RECIPIENT_SMTP_ADDRESS.id) {
-            recipientSMTPChunk = (StringChunk) chunk;
-        } else if (chunk.getChunkId() == DELIVERY_TYPE.id) {
-            deliveryTypeChunk = (StringChunk) chunk;
-        } else if (chunk instanceof PropertiesChunk) {
-            recipientProperties = (PropertiesChunk) chunk;
+        try {
+            if (chunk.getChunkId() == RECIPIENT_SEARCH.id) {
+                // TODO - parse
+                recipientSearchChunk = (ByteChunk) chunk;
+            } else if (chunk.getChunkId() == RECIPIENT_NAME.id) {
+                recipientDisplayNameChunk = (StringChunk) chunk;
+            } else if (chunk.getChunkId() == RECIPIENT_DISPLAY_NAME.id) {
+                recipientNameChunk = (StringChunk) chunk;
+            } else if (chunk.getChunkId() == RECIPIENT_EMAIL_ADDRESS.id) {
+                recipientEmailChunk = (StringChunk) chunk;
+            } else if (chunk.getChunkId() == RECIPIENT_SMTP_ADDRESS.id) {
+                recipientSMTPChunk = (StringChunk) chunk;
+            } else if (chunk.getChunkId() == DELIVERY_TYPE.id) {
+                deliveryTypeChunk = (StringChunk) chunk;
+            } else if (chunk instanceof PropertiesChunk) {
+                recipientProperties = (PropertiesChunk) chunk;
+            }
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("ChunkId and type of chunk did not match, had id " +
+                    chunk.getChunkId() + " and type of chunk: " + chunk.getClass(), e);
         }
 
         // And add to the main list
