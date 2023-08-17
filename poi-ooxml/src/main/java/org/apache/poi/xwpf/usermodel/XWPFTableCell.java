@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
-
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
@@ -421,10 +420,29 @@ public class XWPFTableCell implements IBody, ICell {
         return text.toString();
     }
 
+    /**
+     * Set the text of the cell to the passed string, replacing previous content. Up until POI 5.2.3, this method appended the text, which is now done
+     * by {@link XWPFTableCell#appendText(String)}.
+     *
+     * @param text The text to replace the cell content with
+     */
     public void setText(String text) {
         XWPFParagraph par = paragraphs.isEmpty() ? addParagraph() : paragraphs.get(0);
-        par.getRuns().clear();
-        par.getIRuns().clear();
+        while (!par.runsIsEmpty()) {
+            par.removeRun(0);
+        }
+        par.createRun().setText(text);
+    }
+
+    /**
+     * Append the passed string to the cell content.
+     * This was the behaviour of {@link XWPFTableCell#setText(String)} before POI 5.2.4
+     *
+     * @param text The text to append to the cells content.
+     * @since POI 5.2.4
+     */
+    public void appendText(String text) {
+        XWPFParagraph par = paragraphs.isEmpty() ? addParagraph() : paragraphs.get(0);
         par.createRun().setText(text);
     }
 

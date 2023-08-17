@@ -229,6 +229,17 @@ class TestXWPFBugs {
         }
     }
 
+    @Test
+    void bug66988() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("Bug66988.docx"))) {
+            XWPFTableCell cell = document.getTableArray(0).getRow(0).getCell(0);
+            cell.appendText("World");
+            assertEquals("HelloWorld", cell.getText());
+            cell.setText("FooBar");
+            assertEquals("FooBar", cell.getText());
+        }
+    }
+
 
     public static void insertParagraph(XWPFParagraph xwpfParagraph, XWPFDocument document) {
         XmlCursor xmlCursor = xwpfParagraph.getCTP().newCursor();
