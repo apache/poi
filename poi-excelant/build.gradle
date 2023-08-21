@@ -31,7 +31,7 @@ sourceSets {
 }
 
 dependencies {
-    api 'org.apache.ant:ant:1.10.12'
+    api 'org.apache.ant:ant:1.10.14'
 
     api project(':poi-ooxml')
     compileOnly project(path: ':poi-ooxml', configuration: 'archives')

@@ -39,7 +39,7 @@ sourceSets {
 }
 
 dependencies {
-    testImplementation 'org.apache.ant:ant:1.10.12'
+    testImplementation 'org.apache.ant:ant:1.10.14'
     testImplementation 'org.apache.commons:commons-collections4:4.4'
     testImplementation 'com.google.guava:guava:32.1.1-jre'
 
