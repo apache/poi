@@ -57,8 +57,10 @@ public abstract class XWPFAbstractFootnotesEndnotes extends POIXMLDocumentPart {
 
     public XWPFAbstractFootnoteEndnote getFootnoteById(int id) {
         for (XWPFAbstractFootnoteEndnote note : listFootnote) {
-            if (note.getCTFtnEdn().getId().intValue() == id)
+            if (note.getCTFtnEdn().getId() != null &&
+                    note.getCTFtnEdn().getId().intValue() == id) {
                 return note;
+            }
         }
         return null;
     }
