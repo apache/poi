@@ -404,7 +404,11 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             return;
         }
 
-        DocumentEntry entry = (DocumentEntry) getDirectory().getEntry("Pictures");
+        final Entry en = getDirectory().getEntry("Pictures");
+        if (!(en instanceof DocumentEntry)) {
+            throw new IllegalArgumentException("Had unexpected type of entry for name: Pictures: " + en.getClass());
+        }
+        DocumentEntry entry = (DocumentEntry) en;
         EscherContainerRecord blipStore = getBlipStore();
         byte[] pictstream;
         try (DocumentInputStream is = getDirectory().createDocumentInputStream(entry)) {

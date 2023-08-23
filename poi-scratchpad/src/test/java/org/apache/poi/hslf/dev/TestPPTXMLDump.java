@@ -21,6 +21,7 @@ import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -31,6 +32,7 @@ public class TestPPTXMLDump extends BaseTestPPTIterating {
     static final Set<String> LOCAL_EXCLUDED = new HashSet<>();
     static {
         LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-5306877435838464.ppt");
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6032591399288832.ppt");
     }
 
     @Test
@@ -49,7 +51,7 @@ public class TestPPTXMLDump extends BaseTestPPTIterating {
     void runOneFile(File pFile) throws Exception {
         try {
            PPTXMLDump.main(new String[]{pFile.getAbsolutePath()});
-        } catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException | IOException e) {
             if (!LOCAL_EXCLUDED.contains(pFile.getName())) {
                 throw e;
             }
