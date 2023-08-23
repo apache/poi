@@ -233,7 +233,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 }
             }
             // Sort out headers and footers
-            if (doc.getDocument().getBody().getSectPr() != null) {
+            if (doc.getDocument().getBody() != null && doc.getDocument().getBody().getSectPr() != null) {
                 headerFooterPolicy = new XWPFHeaderFooterPolicy(this);
             }
 
