@@ -300,7 +300,7 @@ public class XWPFTableCell implements IBody, ICell {
             cursor.beginElement(localPart, uri);
             cursor.toParent();
             CTTbl t = (CTTbl) cursor.getObject();
-            XWPFTable newT = new XWPFTable(t, this, true);
+            XWPFTable newT = new XWPFTable(t, this);
             cursor.removeXmlContents();
             XmlObject o = null;
             while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {

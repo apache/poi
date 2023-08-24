@@ -729,7 +729,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         cursor.beginElement(localPart, uri);
         cursor.toParent();
         CTTbl t = (CTTbl) cursor.getObject();
-        XWPFTable newT = new XWPFTable(t, this, true);
+        XWPFTable newT = new XWPFTable(t, this);
         insertIntoParentElement(newT, path);
         cursor.toCursor(newT.getCTTbl().newCursor());
         cursor.toEndToken();
@@ -1152,7 +1152,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return a new table
      */
     public XWPFTable createTable() {
-        XWPFTable table = new XWPFTable(ctDocument.getBody().addNewTbl(), this, true);
+        XWPFTable table = new XWPFTable(ctDocument.getBody().addNewTbl(), this);
         bodyElements.add(table);
         tables.add(table);
         return table;

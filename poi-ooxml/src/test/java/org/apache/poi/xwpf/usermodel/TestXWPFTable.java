@@ -50,7 +50,7 @@ class TestXWPFTable {
     void testConstructor() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
-            XWPFTable xtab = new XWPFTable(ctTable, doc, true);
+            XWPFTable xtab = new XWPFTable(ctTable, doc);
             assertNotNull(xtab);
             assertEquals(1, ctTable.sizeOfTrArray());
             assertEquals(1, ctTable.getTrArray(0).sizeOfTcArray());
@@ -73,7 +73,7 @@ class TestXWPFTable {
             cttblgrid.addNewGridCol().setW(BigInteger.valueOf(123));
             cttblgrid.addNewGridCol().setW(BigInteger.valueOf(321));
 
-            XWPFTable xtab = new XWPFTable(ctTable, doc, true);
+            XWPFTable xtab = new XWPFTable(ctTable, doc);
             CTTblGridCol[] ca = xtab.getCTTbl().getTblGrid().getGridColArray();
             assertEquals("123", ca[0].getW().toString());
             assertEquals("321", ca[1].getW().toString());
@@ -91,7 +91,7 @@ class TestXWPFTable {
             CTText text = run.addNewT();
             text.setStringValue("finally I can write!");
 
-            XWPFTable xtab = new XWPFTable(table, doc, true);
+            XWPFTable xtab = new XWPFTable(table, doc);
             assertEquals("finally I can write!\n", xtab.getText());
         }
     }
@@ -111,7 +111,7 @@ class TestXWPFTable {
             r3.addNewTc().addNewP();
             r3.addNewTc().addNewP();
 
-            XWPFTable xtab = new XWPFTable(table, doc, true);
+            XWPFTable xtab = new XWPFTable(table, doc);
             assertEquals(3, xtab.getNumberOfRows());
             assertNotNull(xtab.getRow(2));
 
@@ -123,7 +123,7 @@ class TestXWPFTable {
             assertEquals(2, table.getTrArray(0).sizeOfTcArray());
 
             //check creation of first row
-            xtab = new XWPFTable(CTTbl.Factory.newInstance(), doc, true);
+            xtab = new XWPFTable(CTTbl.Factory.newInstance(), doc);
             assertEquals(1, xtab.getCTTbl().getTrArray(0).sizeOfTcArray());
         }
     }
@@ -197,7 +197,7 @@ class TestXWPFTable {
 
             CTTbl table = CTTbl.Factory.newInstance();
 
-            XWPFTable xtab = new XWPFTable(table, doc, true);
+            XWPFTable xtab = new XWPFTable(table, doc);
             XWPFTableRow row = xtab.createRow();
             row.setHeight(20);
             assertEquals(20, row.getHeight());
@@ -214,7 +214,7 @@ class TestXWPFTable {
         // create a table
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
-            XWPFTable table = new XWPFTable(ctTable, doc, true);
+            XWPFTable table = new XWPFTable(ctTable, doc);
             // set margins
             table.setCellMargins(50, 50, 250, 450);
             // get margin components
@@ -241,7 +241,7 @@ class TestXWPFTable {
         // create a table
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
-            XWPFTable table = new XWPFTable(ctTable, doc, true);
+            XWPFTable table = new XWPFTable(ctTable, doc);
             // check initial state
             XWPFBorderType bt = table.getInsideHBorderType();
             assertEquals(XWPFBorderType.SINGLE, bt);
@@ -303,7 +303,7 @@ class TestXWPFTable {
         // create a table
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
-            XWPFTable table = new XWPFTable(ctTable, doc, true);
+            XWPFTable table = new XWPFTable(ctTable, doc);
             // check initial state
             XWPFBorderType bt = table.getInsideVBorderType();
             assertEquals(XWPFBorderType.SINGLE, bt);
@@ -369,7 +369,7 @@ class TestXWPFTable {
         // create a table
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
-            XWPFTable table = new XWPFTable(ctTable, doc, true);
+            XWPFTable table = new XWPFTable(ctTable, doc);
             // check initial state
             XWPFBorderType bt = table.getTopBorderType();
             assertEquals(XWPFBorderType.SINGLE, bt);
@@ -408,7 +408,7 @@ class TestXWPFTable {
         // create a table
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
-            XWPFTable table = new XWPFTable(ctTable, doc, true);
+            XWPFTable table = new XWPFTable(ctTable, doc);
             // check initial state
             XWPFBorderType bt = table.getBottomBorderType();
             assertEquals(XWPFBorderType.SINGLE, bt);
@@ -447,7 +447,7 @@ class TestXWPFTable {
         // create a table
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
-            XWPFTable table = new XWPFTable(ctTable, doc, true);
+            XWPFTable table = new XWPFTable(ctTable, doc);
             // check initial state
             XWPFBorderType bt = table.getLeftBorderType();
             assertEquals(XWPFBorderType.SINGLE, bt);
@@ -486,7 +486,7 @@ class TestXWPFTable {
         // create a table
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
-            XWPFTable table = new XWPFTable(ctTable, doc, true);
+            XWPFTable table = new XWPFTable(ctTable, doc);
             // check initial state
             XWPFBorderType bt = table.getRightBorderType();
             assertEquals(XWPFBorderType.SINGLE, bt);
@@ -524,7 +524,7 @@ class TestXWPFTable {
     void testSetGetRowBandSize() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
-            XWPFTable table = new XWPFTable(ctTable, doc, true);
+            XWPFTable table = new XWPFTable(ctTable, doc);
             table.setRowBandSize(12);
             int sz = table.getRowBandSize();
             assertEquals(12, sz);
@@ -535,7 +535,7 @@ class TestXWPFTable {
     void testSetGetColBandSize() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             CTTbl ctTable = CTTbl.Factory.newInstance();
-            XWPFTable table = new XWPFTable(ctTable, doc, true);
+            XWPFTable table = new XWPFTable(ctTable, doc);
             table.setColBandSize(16);
             int sz = table.getColBandSize();
             assertEquals(16, sz);

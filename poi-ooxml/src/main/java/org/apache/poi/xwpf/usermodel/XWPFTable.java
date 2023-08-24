@@ -143,7 +143,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     private final CTTbl ctTbl;
 
     public XWPFTable(CTTbl table, IBody part, int row, int col) {
-        this(table, part, true);
+        this(table, part);
 
         for (int i = 0; i < row; i++) {
             XWPFTableRow tabRow = (getRow(i) == null) ? createRow() : getRow(i);
@@ -153,6 +153,10 @@ public class XWPFTable implements IBodyElement, ISDTContents {
                 }
             }
         }
+    }
+
+    public XWPFTable(CTTbl table, IBody part) {
+        this(table, part, true);
     }
 
     public XWPFTable(CTTbl table, IBody part, boolean initRow) {
