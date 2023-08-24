@@ -45,14 +45,9 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
     private final TreeMap<String, PackageRelationship> relationshipsByID = new TreeMap<>();
 
     /**
-     * Package relationships ordered by type.
-     */
-    private final TreeMap<String, PackageRelationship> relationshipsByType = new TreeMap<>();
-
-    /**
      * A lookup of internal relationships to avoid
      */
-    private HashMap<String, PackageRelationship> internalRelationshipsByTargetName = new HashMap<>();
+    private final HashMap<String, PackageRelationship> internalRelationshipsByTargetName = new HashMap<>();
 
 
     /**
@@ -195,7 +190,6 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
                     (relPart == null ? "<null>" : relPart.getId()) + " for relationship: " + relPart);
         }
         relationshipsByID.put(relPart.getId(), relPart);
-        relationshipsByType.put(relPart.getRelationshipType(), relPart);
     }
 
     /**
@@ -214,8 +208,8 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
      */
     public PackageRelationship addRelationship(URI targetUri,
             TargetMode targetMode, String relationshipType, String id) {
-      if (id == null || id.length() == 0) {
-         // Generate a unique ID is id parameter is null.
+      if (id == null || id.isEmpty()) {
+         // Generate a unique ID if id parameter is null.
          if (nextRelationshipId == -1) {
             nextRelationshipId = size() + 1;
          }
@@ -245,7 +239,6 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
         PackageRelationship rel = relationshipsByID.get(id);
         if (rel != null) {
             relationshipsByID.remove(rel.getId());
-            relationshipsByType.values().remove(rel);
             internalRelationshipsByTargetName.values().remove(rel);
         }
     }
@@ -277,6 +270,11 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
      * @return The package relationship identified by the specified id.
      */
     public PackageRelationship getRelationshipByID(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Cannot read relationship, provided ID is empty: " + id +
+                    ", having relationships: " + relationshipsByID.keySet());
+        }
+
         return relationshipsByID.get(id);
     }
 
@@ -418,7 +416,6 @@ public final class PackageRelationshipCollection implements Iterable<PackageRela
      */
     public void clear() {
         relationshipsByID.clear();
-        relationshipsByType.clear();
         internalRelationshipsByTargetName.clear();
     }
 
