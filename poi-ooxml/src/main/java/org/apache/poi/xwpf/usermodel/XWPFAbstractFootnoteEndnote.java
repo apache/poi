@@ -83,7 +83,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
                     bodyElements.add(p);
                     paragraphs.add(p);
                 } else if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this);
+                    XWPFTable t = new XWPFTable((CTTbl) o, this, false);
                     bodyElements.add(t);
                     tables.add(t);
                 } else if (o instanceof CTSdtBlock) {
@@ -306,7 +306,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
             cursor.beginElement(localPart, uri);
             cursor.toParent();
             CTTbl t = (CTTbl) cursor.getObject();
-            XWPFTable newT = new XWPFTable(t, this);
+            XWPFTable newT = new XWPFTable(t, this, true);
             cursor.removeXmlContents();
             XmlObject o = null;
             while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {
@@ -388,7 +388,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
     public XWPFTable addNewTbl(CTTbl table) {
         CTTbl newTable = ctFtnEdn.addNewTbl();
         newTable.set(table);
-        XWPFTable xTable = new XWPFTable(newTable, this);
+        XWPFTable xTable = new XWPFTable(newTable, this, true);
         tables.add(xTable);
         return xTable;
     }
@@ -487,7 +487,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
      * @since 4.0.0
      */
     public XWPFTable createTable() {
-        XWPFTable table = new XWPFTable(ctFtnEdn.addNewTbl(), this);
+        XWPFTable table = new XWPFTable(ctFtnEdn.addNewTbl(), this, true);
         if (bodyElements.isEmpty()) {
             XWPFParagraph p = createParagraph();
             ensureFootnoteRef(p);

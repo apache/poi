@@ -219,7 +219,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                                     bodyElements.add(p);
                                     paragraphs.add(p);
                                 } else if (bodyObj instanceof CTTbl) {
-                                    XWPFTable t = new XWPFTable((CTTbl) bodyObj, this);
+                                    XWPFTable t = new XWPFTable((CTTbl) bodyObj, this, false);
                                     bodyElements.add(t);
                                     tables.add(t);
                                 } else if (bodyObj instanceof CTSdtBlock) {
@@ -729,7 +729,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         cursor.beginElement(localPart, uri);
         cursor.toParent();
         CTTbl t = (CTTbl) cursor.getObject();
-        XWPFTable newT = new XWPFTable(t, this);
+        XWPFTable newT = new XWPFTable(t, this, true);
         insertIntoParentElement(newT, path);
         cursor.toCursor(newT.getCTTbl().newCursor());
         cursor.toEndToken();
@@ -1152,7 +1152,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return a new table
      */
     public XWPFTable createTable() {
-        XWPFTable table = new XWPFTable(ctDocument.getBody().addNewTbl(), this);
+        XWPFTable table = new XWPFTable(ctDocument.getBody().addNewTbl(), this, true);
         bodyElements.add(table);
         tables.add(table);
         return table;

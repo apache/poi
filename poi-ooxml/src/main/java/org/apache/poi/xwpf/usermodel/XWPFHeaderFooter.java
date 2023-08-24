@@ -455,7 +455,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             cursor.beginElement(localPart, uri);
             cursor.toParent();
             CTTbl t = (CTTbl) cursor.getObject();
-            XWPFTable newT = new XWPFTable(t, this);
+            XWPFTable newT = new XWPFTable(t, this, true);
             cursor.removeXmlContents();
             XmlObject o = null;
             while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {
@@ -545,7 +545,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
                     bodyElements.add(p);
                 }
                 if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this);
+                    XWPFTable t = new XWPFTable((CTTbl) o, this, false);
                     tables.add(t);
                     bodyElements.add(t);
                 }

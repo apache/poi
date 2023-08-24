@@ -55,7 +55,7 @@ public class XWPFComment implements IBody {
                     bodyElements.add(p);
                     paragraphs.add(p);
                 } else if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this);
+                    XWPFTable t = new XWPFTable((CTTbl) o, this, false);
                     bodyElements.add(t);
                     tables.add(t);
                 } else if (o instanceof CTSdtBlock) {
@@ -207,7 +207,7 @@ public class XWPFComment implements IBody {
             cursor.beginElement(localPart, uri);
             cursor.toParent();
             CTTbl t = (CTTbl) cursor.getObject();
-            XWPFTable newT = new XWPFTable(t, this);
+            XWPFTable newT = new XWPFTable(t, this, true);
             cursor.removeXmlContents();
             XmlObject o = null;
             while (!(o instanceof CTTbl) && (cursor.toPrevSibling())) {

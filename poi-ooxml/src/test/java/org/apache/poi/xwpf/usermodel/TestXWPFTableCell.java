@@ -62,7 +62,7 @@ class TestXWPFTableCell {
         // create a table
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
-        XWPFTable table = new XWPFTable(ctTable, doc);
+        XWPFTable table = new XWPFTable(ctTable, doc, true);
         // table has a single row by default; grab it
         XWPFTableRow tr = table.getRow(0);
         assertNotNull(tr);
@@ -79,7 +79,7 @@ class TestXWPFTableCell {
         // create a table
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
-        XWPFTable table = new XWPFTable(ctTable, doc);
+        XWPFTable table = new XWPFTable(ctTable, doc, true);
         // table has a single row by default; grab it
         XWPFTableRow tr = table.getRow(0);
         assertNotNull(tr);
@@ -98,7 +98,7 @@ class TestXWPFTableCell {
     void test54099() {
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
-        XWPFTable table = new XWPFTable(ctTable, doc);
+        XWPFTable table = new XWPFTable(ctTable, doc, true);
         XWPFTableRow tr = table.getRow(0);
         XWPFTableCell cell = tr.getCell(0);
 
