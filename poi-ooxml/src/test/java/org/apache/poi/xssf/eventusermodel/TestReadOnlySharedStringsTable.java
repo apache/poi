@@ -67,6 +67,12 @@ public final class TestReadOnlySharedStringsTable {
                     assertEquals(i1.getString(), rtbl.getItemAt(i).getString());
                     assertEquals(i1.getString(), rtbl2.getItemAt(i).getString());
                 }
+
+                // verify invalid indices
+                assertThrows(IllegalStateException.class,
+                        () -> rtbl.getItemAt(stbl.getUniqueCount()));
+                assertThrows(IndexOutOfBoundsException.class,
+                        () -> rtbl.getItemAt(-1));
             }
         }
     }

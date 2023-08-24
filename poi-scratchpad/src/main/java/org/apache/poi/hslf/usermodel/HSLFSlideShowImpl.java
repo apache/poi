@@ -1085,17 +1085,17 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         int count;
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(int b) {
             count++;
         }
 
         @Override
-        public void write(byte[] b) throws IOException {
+        public void write(byte[] b) {
             count += b.length;
         }
 
         @Override
-        public void write(byte[] b, int off, int len) throws IOException {
+        public void write(byte[] b, int off, int len) {
             count += len;
         }
 

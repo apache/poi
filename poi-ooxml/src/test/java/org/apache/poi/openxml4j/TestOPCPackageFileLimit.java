@@ -22,6 +22,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.parallel.Isolated;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import java.io.InputStream;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+@Isolated // changes static values, so other tests should not run at the same time
 class TestOPCPackageFileLimit {
     @Test
     void testWithReducedFileLimit() throws InvalidFormatException {
