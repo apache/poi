@@ -655,6 +655,7 @@ public final class TestXSSFFormulaParser {
           16 Table1[[#Headers],[#Data],[col2]]
           17 Table1[[#This Row], [col1]]
           18 Table1[ [col1]:[col2] ]
+          19 Table1[]
         */
 
         final String tbl = "\\_Prime.1";
@@ -697,7 +698,7 @@ public final class TestXSSFFormulaParser {
         assertEquals(1, ptgs.length);
         assertEquals("Table!A1:C7", ptgs[0].toFormulaString(), "Table1[#All]");
 
-        ////// Case 5: Evaluate "Table1[#Data]" (excludes Header and Data rows) ////////
+        ////// Case 5: Evaluate "Table1[#Data]" (excludes Header and Total rows) ////////
         ptgs = parse(fpb, tbl+"[#Data]");
         assertEquals(1, ptgs.length);
         assertEquals("Table!A2:C7", ptgs[0].toFormulaString(), "Table1[#Data]");
@@ -789,6 +790,13 @@ public final class TestXSSFFormulaParser {
         ptgs = parse(fpb, tbl+"[[Name]:[Number]]");
         assertEquals(1, ptgs.length);
         assertEquals("Table!B2:C7", ptgs[0].toFormulaString(), "Table1[[col]:[col2]]");
+
+        ////// Case 19: Evaluate "Table1[]" ////////
+        // Excludes Header and Total rows, equivalent to Table1[#Data] (see case 5).
+        // This is the only case where [] is allowed.
+        ptgs = parse(fpb, tbl+"[]");
+        assertEquals(1, ptgs.length);
+        assertEquals("Table!A2:C7", ptgs[0].toFormulaString(), "Table1[]");
 
         wb.close();
     }
