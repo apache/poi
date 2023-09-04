@@ -44,7 +44,7 @@ dependencies {
     api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
 
     testImplementation 'org.reflections:reflections:0.10.2'
-    testImplementation 'org.apache.ant:ant:1.10.12'
+    testImplementation 'org.apache.ant:ant:1.10.14'
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"

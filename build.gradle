@@ -67,7 +67,7 @@ configurations {
 
 dependencies {
     antLibs("org.junit.jupiter:junit-jupiter:5.10.0")
-    antLibs("org.apache.ant:ant-junitlauncher:1.10.12")
+    antLibs("org.apache.ant:ant-junitlauncher:1.10.14")
 }
 
 ant.taskdef(name: "junit",
@@ -128,8 +128,8 @@ subprojects {
         hamcrestVersion = '2.2'
         xmlbeansVersion = '5.1.1'
         batikVersion = '1.17'
-        graphics2dVersion = '0.43'
-        pdfboxVersion = '2.0.29'
+        graphics2dVersion = '3.0.0'
+        pdfboxVersion = '3.0.0'
         saxonVersion = '11.5'
         apiGuardianVersion = '1.1.2'
 
@@ -151,7 +151,7 @@ subprojects {
         all {
             resolutionStrategy {
                 force "commons-io:commons-io:${commonsIoVersion}"
-                force 'org.slf4j:slf4j-api:2.0.7'
+                force 'org.slf4j:slf4j-api:2.0.9'
                 force 'com.fasterxml.woodstox:woodstox-core:6.5.1'
             }
         }

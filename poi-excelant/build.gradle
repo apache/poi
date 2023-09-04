@@ -31,7 +31,7 @@ sourceSets {
 }
 
 dependencies {
-    api 'org.apache.ant:ant:1.10.12'
+    api 'org.apache.ant:ant:1.10.14'
 
     api project(':poi-ooxml')
     compileOnly project(path: ':poi-ooxml', configuration: 'archives')
@@ -43,7 +43,7 @@ dependencies {
     }
     testImplementation 'com.google.guava:guava:32.1.1-jre'
     testImplementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
-    testImplementation 'org.slf4j:slf4j-simple:2.0.7'
+    testImplementation 'org.slf4j:slf4j-simple:2.0.9'
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
 }
 
