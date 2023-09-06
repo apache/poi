@@ -205,6 +205,9 @@ public abstract class POIXMLRelation {
             PackageRelationship rel = it.next();
             PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
             PackagePart part = corePart.getPackage().getPart(relName);
+            if (part == null) {
+                throw new IllegalArgumentException("Could not read part " + relName + " from " + corePart);
+            }
             return part.getInputStream();
         }
         LOGGER.atWarn().log("No part {} found", getDefaultFileName());
