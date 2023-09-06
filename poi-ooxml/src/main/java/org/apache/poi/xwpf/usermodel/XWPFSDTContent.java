@@ -71,7 +71,7 @@ public class XWPFSDTContent implements ISDTContent {
                     bodyElements.add(p);
                     // paragraphs.add(p);
                 } else if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, part);
+                    XWPFTable t = new XWPFTable((CTTbl) o, part,false);
                     bodyElements.add(t);
                     // tables.add(t);
                 } else if (o instanceof CTSdtBlock) {

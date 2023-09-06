@@ -156,11 +156,15 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     public XWPFTable(CTTbl table, IBody part) {
+        this(table, part, true);
+    }
+
+    public XWPFTable(CTTbl table, IBody part, boolean initRow) {
         this.part = part;
         this.ctTbl = table;
 
         // is an empty table: I add one row and one column as default
-        if (table.sizeOfTrArray() == 0) {
+        if (initRow && table.sizeOfTrArray() == 0) {
             createEmptyTable(table);
         }
 
