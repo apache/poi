@@ -127,6 +127,9 @@ public class TestAllFiles {
         "publisher/clusterfuzz-testcase-minimized-POIHPBFFuzzer-4701121678278656.pub",
         "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-5285517825277952.xls",
         "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-6322470200934400.xls",
+        "document/clusterfuzz-testcase-minimized-POIHWPFFuzzer-5418937293340672.doc",
+        "document/clusterfuzz-testcase-minimized-POIHWPFFuzzer-5440721166139392.doc",
+        "diagram/clusterfuzz-testcase-minimized-POIHDGFFuzzer-5947849161179136.vsd",
 
         // exclude files failing on windows nodes, because of limited JCE policies
         "document/bug53475-password-is-pass.docx",
