@@ -119,6 +119,14 @@ public class TestAllFiles {
         "spreadsheet/testEXCEL_3.xls",
         "spreadsheet/testEXCEL_4.xls",
         "poifs/unknown_properties.msg",
+        "publisher/clusterfuzz-testcase-minimized-POIHPBFFuzzer-4701121678278656.pub",
+        "hsmf/clusterfuzz-testcase-minimized-POIHSMFFuzzer-4848576776503296.msg",
+        "hsmf/clusterfuzz-testcase-minimized-POIHSMFFuzzer-5336473854148608.msg",
+        "slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-6416153805979648.ppt",
+        "slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-6710128412590080.ppt",
+        "publisher/clusterfuzz-testcase-minimized-POIHPBFFuzzer-4701121678278656.pub",
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-5285517825277952.xls",
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-6322470200934400.xls",
 
         // exclude files failing on windows nodes, because of limited JCE policies
         "document/bug53475-password-is-pass.docx",
