@@ -831,7 +831,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     private XSSFName createAndStoreName(CTDefinedName ctName) {
         XSSFName name = new XSSFName(ctName, this);
         namedRanges.add(name);
-        namedRangesByName.put(ctName.getName().toLowerCase(Locale.ENGLISH), name);
+        namedRangesByName.put(ctName.getName() == null ? null : ctName.getName().toLowerCase(Locale.ENGLISH), name);
         return name;
     }
 
