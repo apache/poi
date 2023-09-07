@@ -803,7 +803,12 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
      *  manually add cells with values of "Column1", "Column2" etc first.
      */
     public void updateHeaders() {
-        XSSFSheet sheet = (XSSFSheet)getParent();
+        final POIXMLDocumentPart parent = getParent();
+        if (!(parent instanceof XSSFSheet)) {
+            throw new IllegalArgumentException("Had unexpected type of parent: " + (parent == null ? "<null>" : parent.getClass()));
+        }
+
+        XSSFSheet sheet = (XSSFSheet) parent;
         CellReference ref = getStartCellReference();
         if (ref == null) return;
 
