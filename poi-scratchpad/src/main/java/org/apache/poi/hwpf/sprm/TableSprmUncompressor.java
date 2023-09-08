@@ -30,44 +30,39 @@ public final class TableSprmUncompressor extends SprmUncompressor {
 
   private static final Logger LOG = LogManager.getLogger(TableSprmUncompressor.class);
 
-  public TableSprmUncompressor()
-  {
+  public TableSprmUncompressor() {
   }
 
-    public static TableProperties uncompressTAP( SprmBuffer sprmBuffer )
-    {
+    public static TableProperties uncompressTAP( SprmBuffer sprmBuffer ) {
         TableProperties tableProperties;
 
+        if (sprmBuffer == null) {
+            throw new IllegalArgumentException("Cannot process TableProperties with an empty SprmBuffer");
+        }
+
         SprmOperation sprmOperation = sprmBuffer.findSprm( (short) 0xd608 );
-        if ( sprmOperation != null )
-        {
+        if ( sprmOperation != null ) {
             byte[] grpprl = sprmOperation.getGrpprl();
             int offset = sprmOperation.getGrpprlOffset();
             short itcMac = grpprl[offset];
             tableProperties = new TableProperties( itcMac );
-        }
-        else
-        {
+        } else {
             LOG.atWarn().log("Some table rows didn't specify number of columns in SPRMs");
             tableProperties = new TableProperties( (short) 1 );
         }
 
-        for ( SprmIterator iterator = sprmBuffer.iterator(); iterator.hasNext(); )
-        {
+        for ( SprmIterator iterator = sprmBuffer.iterator(); iterator.hasNext(); ) {
             SprmOperation sprm = iterator.next();
 
             /*
              * TAPXs are actually PAPXs so we have to make sure we are only
              * trying to uncompress the right type of sprm.
              */
-            if ( sprm.getType() == SprmOperation.TYPE_TAP )
-            {
-                try
-                {
+            if ( sprm.getType() == SprmOperation.TYPE_TAP ) {
+                try {
                     unCompressTAPOperation( tableProperties, sprm );
                 }
-                catch ( ArrayIndexOutOfBoundsException ex )
-                {
+                catch ( ArrayIndexOutOfBoundsException ex ) {
                   LOG.atError().withThrowable(ex).log("Unable to apply {}", sprm);
                 }
             }
@@ -82,29 +77,23 @@ public final class TableSprmUncompressor extends SprmUncompressor {
    * @param newTAP The TableProperties object to perform the operation on.
    * @param sprm The operation to perform.
    */
-  static void unCompressTAPOperation (TableProperties newTAP, SprmOperation sprm)
-  {
-    switch (sprm.getOperation())
-    {
+  static void unCompressTAPOperation (TableProperties newTAP, SprmOperation sprm) {
+    switch (sprm.getOperation()) {
       case 0:
         newTAP.setJc ((short) sprm.getOperand());
         break;
-      case 0x01:
-      {
+      case 0x01: {
         short[] rgdxaCenter = newTAP.getRgdxaCenter ();
         short itcMac = newTAP.getItcMac ();
         int adjust = sprm.getOperand() - (rgdxaCenter[0] + newTAP.getDxaGapHalf ());
-        for (int x = 0; x < itcMac; x++)
-        {
+        for (int x = 0; x < itcMac; x++) {
           rgdxaCenter[x] += (short) adjust;
         }
         break;
       }
-      case 0x02:
-      {
+      case 0x02: {
         short[] rgdxaCenter = newTAP.getRgdxaCenter ();
-        if (rgdxaCenter != null)
-        {
+        if (rgdxaCenter != null) {
           int adjust = newTAP.getDxaGapHalf () - sprm.getOperand();
           rgdxaCenter[0] += (short) adjust;
         }
@@ -117,8 +106,7 @@ public final class TableSprmUncompressor extends SprmUncompressor {
       case 0x04:
         newTAP.setFTableHeader (getFlag (sprm.getOperand()));
         break;
-      case 0x05:
-      {
+      case 0x05: {
         byte[] buf = sprm.getGrpprl();
         int offset = sprm.getGrpprlOffset();
         newTAP.setBrcTop(new BorderCode(buf, offset));
@@ -141,8 +129,7 @@ public final class TableSprmUncompressor extends SprmUncompressor {
       case 0x07:
         newTAP.setDyaRowHeight (sprm.getOperand());
         break;
-      case 0x08:
-      {
+      case 0x08: {
         byte[] grpprl = sprm.getGrpprl();
         int offset = sprm.getGrpprlOffset();
         short itcMac = grpprl[offset];
@@ -154,8 +141,7 @@ public final class TableSprmUncompressor extends SprmUncompressor {
         newTAP.setRgtc (rgtc);
 
         // get the rgdxaCenters
-        for (int x = 0; x < itcMac; x++)
-        {
+        for (int x = 0; x < itcMac; x++) {
           rgdxaCenter[x] = LittleEndian.getShort (grpprl, offset + (1 + (x * 2)));
         }
 
@@ -165,8 +151,7 @@ public final class TableSprmUncompressor extends SprmUncompressor {
 
         boolean hasTCs = startOfTCs < endOfSprm;
 
-        for (int x = 0; x < itcMac; x++)
-        {
+        for (int x = 0; x < itcMac; x++) {
           // Sometimes, the grpprl does not contain data at every offset. I have no idea why this happens.
           if(hasTCs && offset + (1 + ( (itcMac + 1) * 2) + (x * 20)) < grpprl.length)
             rgtc[x] = TableCellDescriptor.convertBytesToTC(grpprl,
@@ -193,26 +178,19 @@ public final class TableSprmUncompressor extends SprmUncompressor {
 //        for (int x = varParam[0]; x < varParam[1]; x++)
 //        {
 //
-//          if ((varParam[2] & 0x08) > 0)
-//          {
+//          if ((varParam[2] & 0x08) > 0) {
 //            short[] brcRight = rgtc[x].getBrcRight ();
 //            brcRight[0] = LittleEndian.getShort (varParam, 6);
 //            brcRight[1] = LittleEndian.getShort (varParam, 8);
-//          }
-//          else if ((varParam[2] & 0x04) > 0)
-//          {
+//          } else if ((varParam[2] & 0x04) > 0) {
 //            short[] brcBottom = rgtc[x].getBrcBottom ();
 //            brcBottom[0] = LittleEndian.getShort (varParam, 6);
 //            brcBottom[1] = LittleEndian.getShort (varParam, 8);
-//          }
-//          else if ((varParam[2] & 0x02) > 0)
-//          {
+//          } else if ((varParam[2] & 0x02) > 0) {
 //            short[] brcLeft = rgtc[x].getBrcLeft ();
 //            brcLeft[0] = LittleEndian.getShort (varParam, 6);
 //            brcLeft[1] = LittleEndian.getShort (varParam, 8);
-//          }
-//          else if ((varParam[2] & 0x01) > 0)
-//          {
+//          } else if ((varParam[2] & 0x01) > 0) {
 //            short[] brcTop = rgtc[x].getBrcTop ();
 //            brcTop[0] = LittleEndian.getShort (varParam, 6);
 //            brcTop[1] = LittleEndian.getShort (varParam, 8);
@@ -221,8 +199,7 @@ public final class TableSprmUncompressor extends SprmUncompressor {
 //        break;
 //      }
         break;
-      case 0x21:
-      {
+      case 0x21: {
         int param = sprm.getOperand();
         int index = (param & 0xff000000) >> 24;
         int count = (param & 0x00ff0000) >> 16;
@@ -231,15 +208,13 @@ public final class TableSprmUncompressor extends SprmUncompressor {
 
         short[] rgdxaCenter = new short[itcMac + count + 1];
         TableCellDescriptor[] rgtc = new TableCellDescriptor[itcMac + count];
-        if (index >= itcMac)
-        {
+        if (index >= itcMac) {
           index = itcMac;
           System.arraycopy(newTAP.getRgdxaCenter(), 0, rgdxaCenter, 0,
                            itcMac + 1);
           System.arraycopy(newTAP.getRgtc(), 0, rgtc, 0, itcMac);
         }
-        else
-        {
+        else {
           //copy rgdxaCenter
           System.arraycopy(newTAP.getRgdxaCenter(), 0, rgdxaCenter, 0,
                            index + 1);
@@ -251,8 +226,7 @@ public final class TableSprmUncompressor extends SprmUncompressor {
                            itcMac - index);
         }
 
-        for (int x = index; x < index + count; x++)
-        {
+        for (int x = index; x < index + count; x++) {
           rgtc[x] = new TableCellDescriptor();
           rgdxaCenter[x] = (short)(rgdxaCenter[x - 1] + width);
         }
@@ -311,7 +285,4 @@ public final class TableSprmUncompressor extends SprmUncompressor {
         break;
     }
   }
-
-
-
 }
