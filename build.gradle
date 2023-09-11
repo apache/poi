@@ -119,7 +119,7 @@ subprojects {
     ext {
         bouncyCastleVersion = '1.76'
         commonsCodecVersion = '1.16.0'
-        commonsCompressVersion = '1.23.0'
+        commonsCompressVersion = '1.24.0'
         commonsIoVersion = '2.13.0'
         commonsMathVersion = '3.6.1'
         junitVersion = '5.10.0'
