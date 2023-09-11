@@ -395,7 +395,11 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
             if(sp.length == 0) {
                 throw new IllegalStateException("CTGroupShape was not found");
             }
-            _spTree = (CTGroupShape)sp[0];
+            XmlObject xmlObject = sp[0];
+            if (!(xmlObject instanceof CTGroupShape)) {
+                throw new IllegalArgumentException("Had unexpected type of entry: " + xmlObject.getClass());
+            }
+            _spTree = (CTGroupShape) xmlObject;
         }
         return _spTree;
     }
