@@ -259,7 +259,7 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
         } else if ("rPh".equals(localName)) {
             inRPh = true;
             //append space...this assumes that rPh always comes after regular <t>
-            if (includePhoneticRuns && characters.length() > 0) {
+            if (includePhoneticRuns && characters != null && characters.length() > 0) {
                 characters.append(" ");
             }
         }
@@ -287,7 +287,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (tIsOpen) {
             if (inRPh && includePhoneticRuns) {
-                characters.append(ch, start, length);
+                if (characters != null) {
+                    characters.append(ch, start, length);
+                }
             } else if (! inRPh){
                 if (characters != null) {
                     characters.append(ch, start, length);
