@@ -54,8 +54,10 @@ public final class XSSFGraphicFrame extends XSSFShape {
     protected XSSFGraphicFrame(XSSFDrawing drawing, CTGraphicalObjectFrame ctGraphicFrame) {
         this.drawing = drawing; // protected field on XSSFShape
         this.graphicFrame = ctGraphicFrame;
+
         // TODO: there may be a better way to delegate this
-        CTGraphicalObjectData graphicData = graphicFrame.getGraphic().getGraphicData();
+        CTGraphicalObjectData graphicData = graphicFrame.getGraphic() == null ?
+                null : graphicFrame.getGraphic().getGraphicData();
         if (graphicData != null) {
             NodeList nodes = graphicData.getDomNode().getChildNodes();
             for (int i = 0; i < nodes.getLength(); i++) {
