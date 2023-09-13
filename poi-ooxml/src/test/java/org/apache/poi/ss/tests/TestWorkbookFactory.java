@@ -351,4 +351,12 @@ public final class TestWorkbookFactory {
             return false;
         }
     }
+
+    @Test
+    void testEncryptionNullPointerException() throws IOException {
+        assertThrows(IllegalArgumentException.class,
+                () -> WorkbookFactory.create(POIDataSamples.getSpreadSheetInstance().
+                        openResourceAsStream(
+                                "crash-9bf3cd4bd6f50a8a9339d363c2c7af14b536865c.xlsx")));
+    }
 }

@@ -90,8 +90,9 @@ public class XSSFChartSheet extends XSSFSheet  {
         XmlOptions xmlOptions = new XmlOptions(DEFAULT_XML_OPTIONS);
         xmlOptions.setSaveSyntheticDocumentElement(
                 new QName(CTChartsheet.type.getName().getNamespaceURI(), "chartsheet"));
-        chartsheet.save(out, xmlOptions);
-
+        if (chartsheet != null) {
+            chartsheet.save(out, xmlOptions);
+        }
     }
 
     private static byte[] blankWorksheet(){

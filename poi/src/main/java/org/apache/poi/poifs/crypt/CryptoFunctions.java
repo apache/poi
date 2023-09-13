@@ -252,9 +252,15 @@ public final class CryptoFunctions {
             if (cipherAlgorithm == CipherAlgorithm.rc4) {
                 cipher = Cipher.getInstance(cipherAlgorithm.jceId);
             } else if (cipherAlgorithm.needsBouncyCastle) {
+                if (chain == null) {
+                    throw new IllegalArgumentException("Did not have a chain for cipher " + cipherAlgorithm);
+                }
                 registerBouncyCastle();
                 cipher = Cipher.getInstance(cipherAlgorithm.jceId + "/" + chain.jceId + "/" + padding, "BC");
             } else {
+                if (chain == null) {
+                    throw new IllegalArgumentException("Did not have a chain for cipher " + cipherAlgorithm);
+                }
                 cipher = Cipher.getInstance(cipherAlgorithm.jceId + "/" + chain.jceId + "/" + padding);
             }
 
