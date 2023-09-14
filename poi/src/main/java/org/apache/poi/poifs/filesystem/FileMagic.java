@@ -19,9 +19,9 @@ package org.apache.poi.poifs.filesystem;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 import org.apache.poi.poifs.storage.HeaderBlockConstants;
@@ -171,7 +171,7 @@ public enum FileMagic {
      * @param inp a file to be identified
      */
     public static FileMagic valueOf(final File inp) throws IOException {
-        try (FileInputStream fis = new FileInputStream(inp)) {
+        try (InputStream fis = Files.newInputStream(inp.toPath())) {
             // read as many bytes as possible, up to the required number of bytes
             byte[] data = new byte[MAX_PATTERN_LENGTH];
             int read = IOUtils.readFully(fis, data, 0, MAX_PATTERN_LENGTH);

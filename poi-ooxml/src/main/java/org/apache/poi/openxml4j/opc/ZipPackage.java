@@ -21,11 +21,10 @@ import static org.apache.poi.openxml4j.opc.ContentTypes.RELATIONSHIPS_PART;
 import static org.apache.poi.openxml4j.opc.internal.ContentTypeManager.CONTENT_TYPES_PART_NAME;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -179,12 +178,12 @@ public final class ZipPackage extends OPCPackage {
     }
 
     private static ZipEntrySource openZipEntrySourceStream(File file) throws InvalidOperationException {
-        final FileInputStream fis;
+        final InputStream fis;
         // Acquire a resource that is needed to read the next level of openZipEntrySourceStream
         try {
             // open the file input stream
-            fis = new FileInputStream(file); // NOSONAR
-        } catch (final FileNotFoundException e) {
+            fis = Files.newInputStream(file.toPath());
+        } catch (final IOException e) {
             // If the source cannot be acquired, abort (no resources to free at this level)
             throw new InvalidOperationException("Can't open the specified file input stream from file: '" + file + "'", e);
         }
@@ -204,7 +203,7 @@ public final class ZipPackage extends OPCPackage {
         }
     }
 
-    private static ZipEntrySource openZipEntrySourceStream(FileInputStream fis) throws InvalidOperationException {
+    private static ZipEntrySource openZipEntrySourceStream(InputStream fis) throws InvalidOperationException {
         final ZipArchiveThresholdInputStream zis;
         // Acquire a resource that is needed to read the next level of openZipEntrySourceStream
         try {

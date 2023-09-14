@@ -21,10 +21,10 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.awt.Dimension;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -607,7 +607,7 @@ public class XMLSlideShow extends POIXMLDocument
     @Override
     public XSLFPictureData addPicture(File pict, PictureType format) throws IOException {
         byte[] data = IOUtils.safelyAllocate(pict.length(), MAX_RECORD_LENGTH);
-        try (InputStream is = new FileInputStream(pict)) {
+        try (InputStream is = Files.newInputStream(pict.toPath())) {
             IOUtils.readFully(is, data);
         }
         return addPicture(data, format);

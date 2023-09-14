@@ -30,6 +30,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 
 import java.io.*;
+import java.nio.file.Files;
 
 /**
  * (Experimental) Temp File version of a package part.
@@ -89,12 +90,12 @@ public final class TempFilePackagePart extends PackagePart {
 
     @Override
     protected InputStream getInputStreamImpl() throws IOException {
-        return new FileInputStream(tempFile);
+        return Files.newInputStream(tempFile.toPath());
     }
 
     @Override
     protected OutputStream getOutputStreamImpl() throws IOException {
-        return new FileOutputStream(tempFile);
+        return Files.newOutputStream(tempFile.toPath());
     }
 
     @Override

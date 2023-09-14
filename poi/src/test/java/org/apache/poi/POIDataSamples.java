@@ -17,10 +17,10 @@
 package org.apache.poi;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -150,9 +150,9 @@ public final class POIDataSamples {
 
         File f = getFile(sampleFileName);
         try {
-            return new FileInputStream(f);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            return Files.newInputStream(f.toPath());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 

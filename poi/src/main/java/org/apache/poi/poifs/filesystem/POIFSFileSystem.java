@@ -18,8 +18,6 @@ package org.apache.poi.poifs.filesystem;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,6 +25,8 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -822,8 +822,8 @@ public class POIFSFileSystem extends BlockStore
             System.exit(1);
         }
 
-        try (FileInputStream istream = new FileInputStream(args[0])) {
-            try (FileOutputStream ostream = new FileOutputStream(args[1])) {
+        try (InputStream istream = Files.newInputStream(Paths.get(args[0]))) {
+            try (OutputStream ostream = Files.newOutputStream(Paths.get(args[1]))) {
                 try (POIFSFileSystem fs = new POIFSFileSystem(istream)) {
                     fs.writeFilesystem(ostream);
                 }
@@ -959,7 +959,7 @@ public class POIFSFileSystem extends BlockStore
     public static POIFSFileSystem create(File file) throws IOException {
         // Create a new empty POIFS in the file
         try (POIFSFileSystem tmp = new POIFSFileSystem();
-             OutputStream out = new FileOutputStream(file)) {
+             OutputStream out = Files.newOutputStream(file.toPath())) {
             tmp.writeFilesystem(out);
         }
 

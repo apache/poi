@@ -18,19 +18,18 @@
 package org.apache.poi.ss.formula.function;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -486,9 +485,9 @@ public final class ExcelFileFormatDocFunctionExtractor {
         }
         OutputStream os;
         try {
-            os = new FileOutputStream(outFile);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            os = Files.newOutputStream(outFile.toPath());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
         os = new SimpleAsciiOutputStream(os);
         PrintStream ps;
@@ -559,7 +558,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 
         byte[]buf = new byte[2048];
         try {
-            InputStream is = new FileInputStream(f);
+            InputStream is = Files.newInputStream(f.toPath());
             while(true) {
                 int bytesRead = is.read(buf);
                 if(bytesRead<1) {
@@ -590,7 +589,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
             InputStream is = conn.getInputStream();
             System.out.println("downloading " + url.toExternalForm());
             result = TempFile.createTempFile("excelfileformat", ".odt");
-            OutputStream os = new FileOutputStream(result);
+            OutputStream os = Files.newOutputStream(result.toPath());
             while(true) {
                 int bytesRead = is.read(buf);
                 if(bytesRead<1) {
@@ -601,7 +600,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
             is.close();
             os.close();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
         System.out.println("file downloaded ok");
         return result;

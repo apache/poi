@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
@@ -197,7 +198,7 @@ public final class ZipHelper {
         }
         
         // Peek at the first few bytes to sanity check
-        try (FileInputStream input = new FileInputStream(file)) {
+        try (InputStream input = Files.newInputStream(file.toPath())) {
             verifyZipHeader(input);
         }
 

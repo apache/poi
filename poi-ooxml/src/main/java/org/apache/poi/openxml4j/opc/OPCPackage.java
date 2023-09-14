@@ -25,13 +25,13 @@ import static org.apache.poi.openxml4j.opc.PackagingURIHelper.RELATIONSHIP_PART_
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -506,7 +506,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         }
         String name = path.substring(path.lastIndexOf(File.separatorChar) + 1);
 
-        try (FileInputStream is = new FileInputStream(path)) {
+        try (InputStream is = Files.newInputStream(Paths.get(path))) {
             addThumbnail(name, is);
         }
     }
@@ -1483,7 +1483,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         }
 
         // Do the save
-        try (FileOutputStream fos = new FileOutputStream(targetFile)) {
+        try (OutputStream fos = Files.newOutputStream(targetFile.toPath())) {
             this.save(fos);
         }
     }

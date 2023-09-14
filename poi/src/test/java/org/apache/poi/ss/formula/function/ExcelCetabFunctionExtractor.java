@@ -19,7 +19,6 @@ package org.apache.poi.ss.formula.function;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +26,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -369,7 +370,7 @@ public final class ExcelCetabFunctionExtractor {
             throw new IllegalStateException("Did not find file " + SOURCE_DOC_FILE_NAME + " in the resources");
         }
 
-        try (InputStream stream = new FileInputStream(SOURCE_DOC_FILE_NAME)) {
+        try (InputStream stream = Files.newInputStream(Paths.get(SOURCE_DOC_FILE_NAME))) {
             File outFile = new File("functionMetadataCetab.txt");
 
             processFile(stream, outFile);

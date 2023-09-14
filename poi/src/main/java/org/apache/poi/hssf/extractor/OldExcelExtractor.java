@@ -27,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.extractor.POITextExtractor;
@@ -94,7 +95,7 @@ public class OldExcelExtractor implements POITextExtractor {
         }
 
         @SuppressWarnings("resource")
-        FileInputStream biffStream = new FileInputStream(f); // NOSONAR
+        InputStream biffStream = Files.newInputStream(f.toPath());
         try {
             open(biffStream);
         } catch (IOException | RuntimeException e)  {
