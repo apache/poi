@@ -18,8 +18,10 @@
 package org.apache.poi.poifs.dev;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Iterator;
 
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -68,7 +70,7 @@ public class POIFSLister {
    }
 
    public static void viewFileOld(final String filename, boolean withSizes) throws IOException {
-      try (FileInputStream fis = new FileInputStream(filename);
+      try (InputStream fis = Files.newInputStream(Paths.get(filename));
            POIFSFileSystem fs = new POIFSFileSystem(fis)) {
          displayDirectory(fs.getRoot(), "", withSizes);
       }

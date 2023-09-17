@@ -22,10 +22,10 @@ import static org.apache.logging.log4j.util.Unbox.box;
 import java.awt.Dimension;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -877,7 +877,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
             throw new IllegalArgumentException("Unsupported picture format: " + format);
         }
         byte[] data = IOUtils.safelyAllocate(pict.length(), MAX_RECORD_LENGTH);
-        try (FileInputStream is = new FileInputStream(pict)) {
+        try (InputStream is = Files.newInputStream(pict.toPath())) {
             IOUtils.readFully(is, data);
         }
         return addPicture(data, format);

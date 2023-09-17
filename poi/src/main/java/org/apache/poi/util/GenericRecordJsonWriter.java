@@ -34,7 +34,6 @@ import java.awt.image.IndexColorModel;
 import java.awt.image.PackedColorModel;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.Flushable;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -43,6 +42,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -116,7 +116,8 @@ public class GenericRecordJsonWriter implements Closeable {
     protected int childIndex = 0;
 
     public GenericRecordJsonWriter(File fileName) throws IOException {
-        OutputStream os = ("null".equals(fileName.getName())) ? NullOutputStream.INSTANCE : new FileOutputStream(fileName);
+        OutputStream os = ("null".equals(fileName.getName())) ?
+                NullOutputStream.INSTANCE : Files.newOutputStream(fileName.toPath());
         aw = new AppendableWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
         fw = new PrintWriter(aw);
     }

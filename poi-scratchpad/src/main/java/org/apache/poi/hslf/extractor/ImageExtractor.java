@@ -17,8 +17,10 @@
 
 package org.apache.poi.hslf.extractor;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -44,7 +46,8 @@ public final class ImageExtractor {
                 byte[] data = pict.getData();
 
                 PictureType type = pict.getType();
-                try (FileOutputStream out = new FileOutputStream("pict_" + i++ + type.extension)) {
+                try (OutputStream out = Files.newOutputStream(
+                        Paths.get("pict_" + i++ + type.extension))) {
                     out.write(data);
                 }
             }

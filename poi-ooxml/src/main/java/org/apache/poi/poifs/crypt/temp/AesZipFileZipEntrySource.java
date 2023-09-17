@@ -20,9 +20,10 @@
 package org.apache.poi.poifs.crypt.temp;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Enumeration;
 
 import javax.crypto.Cipher;
@@ -130,8 +131,8 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
         Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, CipherAlgorithm.aes128, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, PADDING);
 
         try (ZipArchiveInputStream zis = new ZipArchiveInputStream(is);
-            FileOutputStream fos = new FileOutputStream(tmpFile);
-            ZipArchiveOutputStream zos = new ZipArchiveOutputStream(fos)) {
+             OutputStream fos = Files.newOutputStream(tmpFile.toPath());
+             ZipArchiveOutputStream zos = new ZipArchiveOutputStream(fos)) {
 
             ZipArchiveEntry ze;
             while ((ze = zis.getNextZipEntry()) != null) {

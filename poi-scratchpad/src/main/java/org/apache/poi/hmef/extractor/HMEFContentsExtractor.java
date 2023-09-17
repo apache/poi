@@ -18,11 +18,10 @@
 package org.apache.poi.hmef.extractor;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.apache.poi.hmef.Attachment;
 import org.apache.poi.hmef.HMEFMessage;
@@ -70,8 +69,9 @@ public final class HMEFContentsExtractor {
     }
     
     private final HMEFMessage message;
-    public HMEFContentsExtractor(File filename) throws IOException {
-        this(new HMEFMessage(new FileInputStream(filename)));
+
+    public HMEFContentsExtractor(File file) throws IOException {
+        this(new HMEFMessage(Files.newInputStream(file.toPath())));
     }
     public HMEFContentsExtractor(HMEFMessage message) {
         this.message = message;
@@ -94,7 +94,7 @@ public final class HMEFContentsExtractor {
             dest = new File(name + ".txt");
         }
 
-        try (OutputStream fout = new FileOutputStream(dest)) {
+        try (OutputStream fout = Files.newOutputStream(dest.toPath())) {
             if (body instanceof MAPIStringAttribute) {
                 // Save in a predictable encoding, not raw bytes
                 String text = ((MAPIStringAttribute) body).getDataString();
@@ -153,7 +153,7 @@ public final class HMEFContentsExtractor {
             
             // Save it
             File file = new File(dir, filename);
-            try (OutputStream fout = new FileOutputStream(file)) {
+            try (OutputStream fout = Files.newOutputStream(file.toPath())) {
                 fout.write(att.getContents());
             }
         }

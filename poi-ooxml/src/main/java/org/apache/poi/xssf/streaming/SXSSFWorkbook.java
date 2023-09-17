@@ -18,7 +18,6 @@
 package org.apache.poi.xssf.streaming;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -27,6 +26,7 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -941,7 +941,7 @@ public class SXSSFWorkbook implements Workbook {
         File tmplFile = TempFile.createTempFile("poi-sxssf-template", ".xlsx");
         boolean deleted;
         try {
-            try (FileOutputStream os = new FileOutputStream(tmplFile)) {
+            try (OutputStream os = Files.newOutputStream(tmplFile.toPath())) {
                 _wb.write(os);
             }
 

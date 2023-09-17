@@ -22,9 +22,11 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 
@@ -94,7 +96,7 @@ public class VsdxToPng {
 
         graphics.dispose();
 
-        try (FileOutputStream out = new FileOutputStream(outFile)) {
+        try (OutputStream out = Files.newOutputStream(outFile.toPath())) {
             ImageIO.write(img, "png", out);
         }
     }
@@ -127,7 +129,7 @@ public class VsdxToPng {
             renderer = new ShapeDebuggerRenderer();
         }
 
-        try (FileInputStream is = new FileInputStream(inFilename)) {
+        try (InputStream is = Files.newInputStream(Paths.get(inFilename))) {
             XmlVisioDocument doc = new XmlVisioDocument(is);
             renderToPng(doc, pngDir, 2000 / 11.0, renderer);
         }

@@ -17,9 +17,10 @@
 
 package org.apache.poi.hpbf.dev;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import org.apache.poi.hpbf.HPBFDocument;
 import org.apache.poi.hpbf.model.QuillContents;
@@ -54,7 +55,7 @@ public final class PLCDumper {
             System.exit(1);
         }
 
-        try (FileInputStream fis = new FileInputStream(args[0])) {
+        try (InputStream fis = Files.newInputStream(Paths.get(args[0]))) {
             PLCDumper dump = new PLCDumper(fis);
 
             System.out.println("Dumping " + args[0]);

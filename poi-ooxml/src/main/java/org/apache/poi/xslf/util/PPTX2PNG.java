@@ -24,10 +24,11 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Dimension2D;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
@@ -426,7 +427,7 @@ public final class PPTX2PNG {
             // do some sanitizing for creative filenames ...
             filename = new File(filename == null ? "dummy.dat" : filename).getName();
             filename = calcOutFile(proxy, slideNo).replaceFirst("\\.\\w+$", "")+"_"+filename;
-            try (FileOutputStream fos = new FileOutputStream(new File(outdir, filename))) {
+            try (OutputStream fos = Files.newOutputStream(new File(outdir, filename).toPath())) {
                 fos.write(ep.getData().get());
             }
         }

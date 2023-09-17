@@ -19,8 +19,10 @@
 
 package org.apache.poi.examples.ss;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -93,7 +95,7 @@ public final class ConditionalFormats {
             if (wb instanceof XSSFWorkbook) {
                 file += "x";
             }
-            try (FileOutputStream out = new FileOutputStream(file)) {
+            try (OutputStream out = Files.newOutputStream(Paths.get(file))) {
                 wb.write(out);
             }
             System.out.println("Generated: " + file);

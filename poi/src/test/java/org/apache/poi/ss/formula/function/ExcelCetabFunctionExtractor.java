@@ -19,7 +19,6 @@ package org.apache.poi.ss.formula.function;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -322,8 +321,8 @@ public final class ExcelCetabFunctionExtractor {
     }
 
     private static void processFile(InputStream input, File outFile) throws IOException {
-        try (OutputStream os = new SimpleAsciiOutputStream(new FileOutputStream(outFile));
-        PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8.name())) {
+        try (OutputStream os = new SimpleAsciiOutputStream(Files.newOutputStream(outFile.toPath()));
+             PrintStream ps = new PrintStream(os, true, StandardCharsets.UTF_8.name())) {
 
             outputLicenseHeader(ps);
             Class<?> genClass = ExcelCetabFunctionExtractor.class;
