@@ -476,6 +476,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
     /**
      * @return boolean; true if the picture is an audio
+     * @since POI 5.2.4
      */
     public boolean isAudioFile() {
         CTApplicationNonVisualDrawingProps nvPr = getCTApplicationNonVisualDrawing();
@@ -484,6 +485,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
 
     /**
      * @return the link ID for the audio file
+     * @since POI 5.2.4
      */
     public String getAudioFileLink() {
         CTApplicationNonVisualDrawingProps nvPr = getCTApplicationNonVisualDrawing();
