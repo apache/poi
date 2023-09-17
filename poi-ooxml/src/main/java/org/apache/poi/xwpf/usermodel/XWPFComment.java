@@ -21,6 +21,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -361,7 +362,8 @@ public class XWPFComment implements IBody {
      * @return string id
      */
     public String getId() {
-        return ctComment.getId().toString();
+        final BigInteger id = ctComment.getId();
+        return id == null ? "-1" : id.toString();
     }
 
     /**

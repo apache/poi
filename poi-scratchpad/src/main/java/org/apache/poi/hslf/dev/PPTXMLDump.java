@@ -17,6 +17,7 @@
 
 package org.apache.poi.hslf.dev;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -26,7 +27,6 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import org.apache.commons.io.output.StringBuilderWriter;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -122,6 +122,11 @@ public final class PPTXMLDump {
             int size = (int)LittleEndian.getUInt(data, pos);
             pos += LittleEndianConsts.INT_SIZE;
 
+            if (size < 0) {
+                // stop processing of invalid header data
+                continue;
+            }
+
             //get name of the record by type
             String recname = RecordTypes.forTypeID(type).name();
             write(out, "<"+recname + " info=\""+info+"\" type=\""+type+"\" size=\""+size+"\" offset=\""+(pos-8)+"\"", padding);
@@ -214,12 +219,10 @@ public final class PPTXMLDump {
                     dump.dump(out);
                     out.close();
                 } else {
-                    StringBuilderWriter out = new StringBuilderWriter(1024);
-                    dump.dump(out);
-                    System.out.println(out);
+                    dump.dump(new BufferedWriter(
+                            new OutputStreamWriter(System.out, StandardCharsets.UTF_8)));
                 }
             }
-
         }
     }
 

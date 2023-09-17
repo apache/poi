@@ -31,6 +31,7 @@ public class TestSlideIdListing extends BaseTestPPTIterating {
     static final Set<String> LOCAL_EXCLUDED = new HashSet<>();
     static {
         LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-5306877435838464.ppt");
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6360479850954752.ppt");
     }
 
     @Test
@@ -46,7 +47,7 @@ public class TestSlideIdListing extends BaseTestPPTIterating {
     void runOneFile(File pFile) throws Exception {
         try {
             SlideIdListing.main(new String[]{pFile.getAbsolutePath()});
-        } catch (IllegalArgumentException e) {
+        } catch (RuntimeException e) {
             if (!LOCAL_EXCLUDED.contains(pFile.getName())) {
                 throw e;
             }

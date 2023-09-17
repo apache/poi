@@ -34,6 +34,8 @@ public class TestPPTXMLDump extends BaseTestPPTIterating {
     static {
         LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-5306877435838464.ppt");
         LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6032591399288832.ppt");
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6360479850954752.ppt");
+        LOCAL_EXCLUDED.add("ppt_with_png_encrypted.ppt");
     }
 
     @Test
@@ -52,14 +54,18 @@ public class TestPPTXMLDump extends BaseTestPPTIterating {
     void runOneFile(File pFile) throws Exception {
         try {
            PPTXMLDump.main(new String[]{pFile.getAbsolutePath()});
+            if (LOCAL_EXCLUDED.contains(pFile.getName())) {
+                throw new IllegalStateException("Expected failure for file " + pFile + ", but processing did not throw an exception");
+            }
         } catch (IndexOutOfBoundsException | IOException e) {
             if (!LOCAL_EXCLUDED.contains(pFile.getName())) {
                 throw e;
             }
         }
 
-        // work around one file which works here but not in other tests
-        if (pFile.getName().equals("clusterfuzz-testcase-minimized-POIFuzzer-5429732352851968.ppt")) {
+        // work around two files which works here but not in other tests
+        if (pFile.getName().equals("clusterfuzz-testcase-minimized-POIFuzzer-5429732352851968.ppt") ||
+                pFile.getName().equals("clusterfuzz-testcase-minimized-POIFuzzer-5681320547975168.ppt")) {
             throw new FileNotFoundException();
         }
     }

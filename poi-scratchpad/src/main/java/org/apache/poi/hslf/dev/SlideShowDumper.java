@@ -194,6 +194,11 @@ public final class SlideShowDumper {
             pos += 8;
             out.printf(Locale.ROOT, ind + "That's a %2$s%n", "", recordName);
 
+            if (len < 0 /*|| len > Integer.MAX_VALUE*/) {
+                // stop processing of invalid header data
+                continue;
+            }
+
             // Now check if it's a container or not
             int container = opt & 0x0f;
 
@@ -219,7 +224,7 @@ public final class SlideShowDumper {
                 }
             }
 
-            pos += (int) len;
+            pos += (int) Math.min(len, Integer.MAX_VALUE);
         }
     }
 

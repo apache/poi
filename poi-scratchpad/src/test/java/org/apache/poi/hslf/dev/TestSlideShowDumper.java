@@ -38,6 +38,7 @@ public class TestSlideShowDumper extends BaseTestPPTIterating {
         FAILING.add("cryptoapi-proc2356.ppt");
         FAILING.add("41384.ppt");
         FAILING.add("bug56240.ppt");
+        FAILING.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6360479850954752.ppt");
     }
 
     @Test
@@ -66,7 +67,7 @@ public class TestSlideShowDumper extends BaseTestPPTIterating {
             }
         } catch (FileNotFoundException e) {
             // some old files are not detected correctly
-            if(!OLD_FILES.contains(pFile.getName())) {
+            if(!FAILING.contains(pFile.getName()) && !OLD_FILES.contains(pFile.getName())) {
                 throw e;
             }
         }
