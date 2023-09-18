@@ -50,6 +50,8 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
 
     private static final Logger LOGGER = LogManager.getLogger(EscherContainerRecord.class);
 
+    private static final int MAX_NESTED_CHILD_NODES = 1000;
+
     /**
      * in case if document contains any charts we have such document structure:
      * BOF
@@ -86,12 +88,26 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
 
     @Override
     public int fillFields(byte[] data, int pOffset, EscherRecordFactory recordFactory) {
+        return fillFields(data, pOffset, recordFactory, 0);
+    }
+
+    private int fillFields(byte[] data, int pOffset, EscherRecordFactory recordFactory, int nesting) {
+        if (nesting > MAX_NESTED_CHILD_NODES) {
+            throw new IllegalStateException("Had more than the limit of " + MAX_NESTED_CHILD_NODES + " nested child notes");
+        }
         int bytesRemaining = readHeader(data, pOffset);
         int bytesWritten = 8;
         int offset = pOffset + 8;
         while (bytesRemaining > 0 && offset < data.length) {
             EscherRecord child = recordFactory.createRecord(data, offset);
-            int childBytesWritten = child.fillFields(data, offset, recordFactory);
+
+            final int childBytesWritten;
+            if (child instanceof EscherContainerRecord) {
+                childBytesWritten = ((EscherContainerRecord)child).fillFields(data, offset, recordFactory, nesting + 1);
+            } else {
+                childBytesWritten = child.fillFields(data, offset, recordFactory);
+            }
+
             bytesWritten += childBytesWritten;
             offset += childBytesWritten;
             bytesRemaining -= childBytesWritten;

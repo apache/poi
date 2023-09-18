@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.util.IOUtils;
 import org.apache.commons.io.output.NullPrintStream;
@@ -65,6 +66,7 @@ public abstract class BaseTestPPTIterating {
         EXCLUDED.put("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6710128412590080.ppt", RuntimeException.class);
         EXCLUDED.put("clusterfuzz-testcase-minimized-POIFuzzer-5429732352851968.ppt", FileNotFoundException.class);
         EXCLUDED.put("clusterfuzz-testcase-minimized-POIFuzzer-5681320547975168.ppt", FileNotFoundException.class);
+        EXCLUDED.put("clusterfuzz-testcase-minimized-POIHSLFFuzzer-5962760801091584.ppt", RuntimeException.class);
     }
 
     public static Stream<Arguments> files() {

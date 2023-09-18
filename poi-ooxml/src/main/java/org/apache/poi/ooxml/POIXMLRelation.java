@@ -198,6 +198,9 @@ public abstract class POIXMLRelation {
      *  @since 3.16-beta3
      */
     public InputStream getContents(PackagePart corePart) throws IOException, InvalidFormatException {
+        if (corePart == null) {
+            throw new IllegalArgumentException("Core-Part cannot be empty");
+        }
         PackageRelationshipCollection prc =
                 corePart.getRelationshipsByType(getRelation());
         Iterator<PackageRelationship> it = prc.iterator();

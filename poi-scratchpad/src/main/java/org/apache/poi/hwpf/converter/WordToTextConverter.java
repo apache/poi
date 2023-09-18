@@ -22,8 +22,6 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.dom.DOMSource;
@@ -53,9 +51,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 @Beta
-public class WordToTextConverter extends AbstractWordConverter
-{
+public class WordToTextConverter extends AbstractWordConverter {
     private static final Logger LOG = LogManager.getLogger(WordToTextConverter.class);
+
+    private static final int MAX_NESTED_CHILD_NODES = 500;
 
     public static String getText( DirectoryNode root ) throws Exception
     {
@@ -109,7 +108,7 @@ public class WordToTextConverter extends AbstractWordConverter
         serializer.transform( domSource, streamResult );
     }
 
-    private static Document process( File docFile ) throws IOException, ParserConfigurationException {
+    private static Document process( File docFile ) throws IOException {
         try (final HWPFDocumentCore wordDocument = AbstractWordUtils.loadDoc( docFile )) {
             WordToTextConverter wordToTextConverter = new WordToTextConverter(
                     XMLHelper.newDocumentBuilder().newDocument());
@@ -118,7 +117,7 @@ public class WordToTextConverter extends AbstractWordConverter
         }
     }
 
-    private AtomicInteger noteCounters = new AtomicInteger( 1 );
+    private final AtomicInteger noteCounters = new AtomicInteger( 1 );
 
     private Element notes;
 
@@ -130,11 +129,8 @@ public class WordToTextConverter extends AbstractWordConverter
      * Creates new instance of {@link WordToTextConverter}. Can be used for
      * output several {@link HWPFDocument}s into single text document.
      *
-     * @throws ParserConfigurationException
-     *             if an internal {@link DocumentBuilder} cannot be created
      */
-    public WordToTextConverter() throws ParserConfigurationException
-    {
+    public WordToTextConverter() {
         this.textDocumentFacade = new TextDocumentFacade(
                 XMLHelper.newDocumentBuilder().newDocument() );
     }
@@ -311,6 +307,12 @@ public class WordToTextConverter extends AbstractWordConverter
 
         Element note = textDocumentFacade.createBlock();
         notes.appendChild( note );
+
+        // avoid StackOverflowException with very deeply nested files (mostly synthetic test files via fuzzing)
+        // if this limit is reached in real-word documents, we can make this configurable
+        if (note.getParentNode() != null && note.getParentNode().getChildNodes().getLength() > MAX_NESTED_CHILD_NODES) {
+            throw new IllegalStateException("Had more than the limit of " + MAX_NESTED_CHILD_NODES + " nested child notes");
+        }
 
         note.appendChild( textDocumentFacade.createText( "^" + noteIndex
                 + "\t " ) );
