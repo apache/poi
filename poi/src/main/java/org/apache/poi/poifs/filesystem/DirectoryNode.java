@@ -349,7 +349,7 @@ public class DirectoryNode
         Entry rval = null;
 
         if (name != null) {
-            rval = _byname.get(name.toUpperCase(Locale.ROOT));
+            rval = _byname.get(name);
         }
         if (rval == null) {
             // throw more useful exceptions for known wrong file-extensions
