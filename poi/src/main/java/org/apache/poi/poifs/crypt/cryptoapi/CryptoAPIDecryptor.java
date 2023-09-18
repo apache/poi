@@ -130,6 +130,9 @@ public class CryptoAPIDecryptor extends Decryptor {
     }
 
     protected static SecretKey generateSecretKey(String password, EncryptionVerifier ver) {
+        if (password == null) {
+            throw new IllegalArgumentException("Did not receive a password");
+        }
         if (password.length() > 255) {
             password = password.substring(0, 255);
         }

@@ -25,23 +25,31 @@ def poijobs = [
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 15 is not a LTS and JDK 16 is GA
+          // let's save some CPU cycles here, 15 is not an LTS and JDK 16 is GA
           disabled: true
         ],
-        [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: 'H */12 * * *', skipcigame: true,
-          // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
+        [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 16 is not an LTS and JDK 17 is GA
           disabled: true
         ],
         [ name: 'POI-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
-        [ name: 'POI-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
+        [ name: 'POI-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
+          // let's save some CPU cycles here, 18 is not a LTS and JDK 20 is out
+          disabled: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
         [ name: 'POI-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
         [ name: 'POI-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
+        ],
+        // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
+        [ name: 'POI-DSL-1.21', jdk: '1.21', trigger: 'H */12 * * *', skipcigame: true, skipSpotbugs: true
+        ],
+        // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
+        [ name: 'POI-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
         ],
         // Use Ant-build for now as selecting IBM JDK via toolchain does not work (yet)
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, useAnt: true
@@ -80,17 +88,25 @@ def poijobs = [
           jenkinsLite: true
         ],
         [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
+          // let's save some CPU cycles here, 14 is not an LTS and JDK 15 is GA as of 15 September 2020
           disabled: true
         ],
-        [ name: 'POI-DSL-Windows-1.16', jdk: '1.16', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true,
-          // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
+        [ name: 'POI-DSL-Windows-1.16', jdk: '1.16', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
+          // let's save some CPU cycles here, 16 is not an LTS and JDK 17 is GA
           disabled: true
         ],
         [ name: 'POI-DSL-Windows-1.17', jdk: '1.17', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.18', jdk: '1.18', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          skipSpotbugs: true
+          skipSpotbugs: true,
+          // let's save some CPU cycles here, 18 is not an LTS and JDK 20 is out
+          disabled: true
+        ],
+        [ name: 'POI-DSL-Windows-1.20', jdk: '1.20', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
+        ],
+        [ name: 'POI-DSL-Windows-1.21', jdk: '1.21', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true
+        ],
+        [ name: 'POI-DSL-Windows-1.22', jdk: '1.22', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', skipcigame: true, disabled: true
         ],
@@ -102,14 +118,26 @@ def xmlbeansjobs = [
         [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 16 is not a LTS and JDK 17 is GA
+          // let's save some CPU cycles here, 16 is not an LTS and JDK 17 is GA
           disabled: true
         ],
-        [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: triggerSundays, skipcigame: true,
+        [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 18 is not an LTS and JDK 20 is out
+          disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 19 is not an LTS
+          disabled: true
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true,
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.21', jdk: '1.21', trigger: 'H */12 * * *', skipcigame: true,
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true,
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
           sonar: true
@@ -130,17 +158,15 @@ def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H29'
 
 def jdkMapping = [
         '1.8': [ jenkinsJdk: 'jdk_1.8_latest', jdkVersion: 8, jdkVendor: '' ],
-        '1.10': [ jenkinsJdk: 'jdk_10_latest', jdkVersion: 10, jdkVendor: '' ],
         '1.11': [ jenkinsJdk: 'jdk_11_latest', jdkVersion: 11, jdkVendor: '' ],
-        '1.12': [ jenkinsJdk: 'jdk_12_latest', jdkVersion: 12, jdkVendor: '' ],
-        '1.13': [ jenkinsJdk: 'jdk_13_latest', jdkVersion: 13, jdkVendor: '' ],
-        '1.14': [ jenkinsJdk: 'jdk_14_latest', jdkVersion: 14, jdkVendor: '' ],
         '1.15': [ jenkinsJdk: 'jdk_15_latest', jdkVersion: 15, jdkVendor: '' ],
         '1.16': [ jenkinsJdk: 'jdk_16_latest', jdkVersion: 16, jdkVendor: '' ],
         '1.17': [ jenkinsJdk: 'jdk_17_latest', jdkVersion: 17, jdkVendor: '' ],
         '1.18': [ jenkinsJdk: 'jdk_18_latest', jdkVersion: 18, jdkVendor: '' ],
         '1.19': [ jenkinsJdk: 'jdk_19_latest', jdkVersion: 19, jdkVendor: '' ],
         '1.20': [ jenkinsJdk: 'jdk_20_latest', jdkVersion: 20, jdkVendor: '' ],
+        '1.21': [ jenkinsJdk: 'jdk_21_latest', jdkVersion: 21, jdkVendor: '' ],
+        '1.22': [ jenkinsJdk: 'jdk_22_latest', jdkVersion: 22, jdkVendor: '' ],
         'OpenJDK 1.8': [ jenkinsJdk: 'adoptopenjdk_hotspot_8u282', jdkVersion: 8, jdkVendor: 'adoptopenjdk' ],
         'IBMJDK': [ jenkinsJdk: 'ibmjdk_1.8.0_261', jdkVersion: 8, jdkVendor: 'ibm' ]
 ]
@@ -263,11 +289,6 @@ poijobs.each { poijob ->
         environmentVariables {
             env('LANG', 'en_US.UTF-8')
             env('CI_BUILD', 'TRUE')
-            if(jdkKey == '1.10') {
-                // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
-                // on JDK 11 and newer there is no such module any more, so do not add it here
-                env('ANT_OPTS', '--add-modules=java.xml.bind --add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
-            }
             env('FORREST_HOME', poijob.windows ? 'f:\\jenkins\\tools\\forrest\\latest' : '/home/jenkins/tools/forrest/latest')
         }
 
@@ -488,11 +509,7 @@ xmlbeansjobs.each { xjob ->
         label(slaves)
         environmentVariables {
             env('LANG', 'en_US.UTF-8')
-            if(jdkKey == '1.10') {
-                // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
-                // on JDK 11 and newer there is no such module any more, so do not add it here
-                env('ANT_OPTS', '--add-modules=java.xml.bind --add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
-            } else if (jdkKey == '1.11' || jdkKey == '1.12' || jdkKey == '1.13' || jdkKey == '1.14' || jdkKey == '1.15' || jdkKey == '1.16' || jdkKey == '1.17'
+            if (jdkKey == '1.11' || jdkKey == '1.15' || jdkKey == '1.16' || jdkKey == '1.17'
                     || jdkKey == '1.18' || jdkKey == '1.19' || jdkKey == '1.20' || jdkKey == '1.21') {
                 env('ANT_OPTS', '--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
             }
@@ -623,11 +640,14 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'jdk_17_latest',
                 'jdk_18_latest',
                 'jdk_19_latest',
+                'jdk_20_latest',
+                'jdk_21_latest',
+                'jdk_22_latest',
                 'adoptopenjdk_hotspot_8u282',
                 'ibmjdk_1.8.0_261'
         )
-        // Note H50 is reserved according to its node-descripion
-        label('Nodes','H22','H23','H24','H25','H26','H27','H28','H29','H30','H31','H32','H33','H34','H35','H36','H37','H38','H39','H40','H41','H42','H43','H44','H48','lucene1','lucene2','master')
+        // Note H50 is reserved according to its node-description
+        label('Nodes','builds22','builds23','builds24','builds25','builds26','builds27','builds28','builds29','builds30','builds31','builds32','builds33','builds34','builds35','builds36','builds37','builds38','builds39','builds40','builds50','builds56','builds57','builds58','builds59','builds60')
     }
     steps {
         conditionalSteps {

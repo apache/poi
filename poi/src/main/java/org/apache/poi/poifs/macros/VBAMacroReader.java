@@ -24,12 +24,12 @@ import static org.apache.poi.util.StringUtil.startsWithIgnoreCase;
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -93,7 +93,7 @@ public class VBAMacroReader implements Closeable {
         try {
             this.fs = new POIFSFileSystem(file);
         } catch (OfficeXmlFileException e) {
-            openOOXML(new FileInputStream(file));
+            openOOXML(Files.newInputStream(file.toPath()));
         }
     }
     public VBAMacroReader(POIFSFileSystem fs) {

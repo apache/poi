@@ -36,6 +36,7 @@ import java.util.stream.Stream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.tools.ant.DirectoryScanner;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.function.Executable;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
@@ -118,6 +119,17 @@ public class TestAllFiles {
         "spreadsheet/testEXCEL_3.xls",
         "spreadsheet/testEXCEL_4.xls",
         "poifs/unknown_properties.msg",
+        "publisher/clusterfuzz-testcase-minimized-POIHPBFFuzzer-4701121678278656.pub",
+        "hsmf/clusterfuzz-testcase-minimized-POIHSMFFuzzer-4848576776503296.msg",
+        "hsmf/clusterfuzz-testcase-minimized-POIHSMFFuzzer-5336473854148608.msg",
+        "slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-6416153805979648.ppt",
+        "slideshow/clusterfuzz-testcase-minimized-POIHSLFFuzzer-6710128412590080.ppt",
+        "publisher/clusterfuzz-testcase-minimized-POIHPBFFuzzer-4701121678278656.pub",
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-5285517825277952.xls",
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-6322470200934400.xls",
+        "document/clusterfuzz-testcase-minimized-POIHWPFFuzzer-5418937293340672.doc",
+        "document/clusterfuzz-testcase-minimized-POIHWPFFuzzer-5440721166139392.doc",
+        "diagram/clusterfuzz-testcase-minimized-POIHDGFFuzzer-5947849161179136.vsd",
 
         // exclude files failing on windows nodes, because of limited JCE policies
         "document/bug53475-password-is-pass.docx",
@@ -184,7 +196,7 @@ public class TestAllFiles {
             FileHandler fileHandler = handler.getHandler();
             assertNotNull(fileHandler, "Did not find a handler for file " + file);
             Executable exec = () -> fileHandler.handleExtracting(new File(ROOT_DIR, file));
-            verify(file, exec, exClass, exMessage, password);
+            verify(file, exec, exClass, exMessage, password, fileHandler);
         } finally {
             Thread.currentThread().setName(threadName);
         }
@@ -200,12 +212,19 @@ public class TestAllFiles {
         String threadName = Thread.currentThread().getName();
         try {
             Thread.currentThread().setName("Handle - " + file + " - " + handler);
+
+            // Some of the tests hang in JDK 8 due to Graphics-Rendering issues in JDK itself,
+            // therefore we do not run some tests here
+            Assumptions.assumeFalse(isJava8() && (
+                    file.endsWith("23884_defense_FINAL_OOimport_edit.ppt")
+            ), "Some files hang in JDK graphics rendering on Java 8 due to a JDK bug");
+
             System.out.println("Running handleFiles on "+file);
             FileHandler fileHandler = handler.getHandler();
             assertNotNull(fileHandler, "Did not find a handler for file " + file);
             try (InputStream stream = new BufferedInputStream(new FileInputStream(new File(ROOT_DIR, file)), 64 * 1024)) {
                 Executable exec = () -> fileHandler.handleFile(stream, file);
-                verify(file, exec, exClass, exMessage, password);
+                verify(file, exec, exClass, exMessage, password, fileHandler);
             }
         } finally {
             Thread.currentThread().setName(threadName);
@@ -226,15 +245,16 @@ public class TestAllFiles {
             FileHandler fileHandler = handler.getHandler();
             assertNotNull(fileHandler, "Did not find a handler for file " + file);
             Executable exec = () -> fileHandler.handleAdditional(new File(ROOT_DIR, file));
-            verify(file, exec, exClass, exMessage, password);
+            verify(file, exec, exClass, exMessage, password, fileHandler);
         } finally {
             Thread.currentThread().setName(threadName);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private static void verify(String file, Executable exec, Class<? extends Throwable> exClass, String exMessage, String password) {
-        final String errPrefix = file + " - failed. ";
+    private static void verify(String file, Executable exec, Class<? extends Throwable> exClass, String exMessage, String password,
+            FileHandler fileHandler) {
+        final String errPrefix = file.replace("\\", "/") + " - failed for handler " + fileHandler.getClass().getSimpleName() + ": ";
         // this also removes the password for non encrypted files
         Biff8EncryptionKey.setCurrentUserPassword(password);
         if (exClass != null && AssertionFailedError.class.isAssignableFrom(exClass)) {
@@ -250,18 +270,44 @@ public class TestAllFiles {
         } else if (exClass != null) {
             Exception e = assertThrows((Class<? extends Exception>)exClass, exec, errPrefix + " expected " + exClass);
             String actMsg = pathReplace(e.getMessage());
+
+            // perform special handling of NullPointerException as
+            // JDK started to add more information in some newer JDK, so
+            // it sometimes has a message and sometimes not!
             if (NullPointerException.class.isAssignableFrom(exClass)) {
                 if (actMsg != null) {
-                    assertTrue(actMsg.contains(exMessage), errPrefix + "Message: "+actMsg+" - didn't contain: "+exMessage);
+                    assertTrue(actMsg.contains(exMessage), errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
                 }
             } else {
-                assertNotNull(actMsg, errPrefix);
-                assertTrue(actMsg.contains(exMessage),
-                        errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
+                // verify that message is either null for both or set for both
+                assertTrue(actMsg != null || isBlank(exMessage),
+                        errPrefix + " for " + exClass + " expected message '" + exMessage + "' but had '" + actMsg + "': " + e);
+
+                if (actMsg != null &&
+                        // sometimes ArrayIndexOutOfBoundsException has null-message?!?
+                        // so skip the check for this type of exception if expected message is null
+                        (exMessage != null || !ArrayIndexOutOfBoundsException.class.isAssignableFrom(exClass))) {
+                    assertNotNull(exMessage,
+                            errPrefix + "Expected message was null, but actMsg wasn't: Message: " + actMsg + ": " + e);
+                    assertTrue(actMsg.contains(exMessage),
+                            errPrefix + "Message: " + actMsg + " - didn't contain: " + exMessage);
+                }
             }
         } else {
             assertDoesNotThrow(exec, errPrefix);
         }
+    }
+
+    private static boolean isBlank(final String str) {
+        if (str != null) {
+            final int strLen = str.length();
+            for (int i = 0; i < strLen; i++) {
+                if (!Character.isWhitespace(str.charAt(i))) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private static String pathReplace(String msg) {
@@ -278,5 +324,9 @@ public class TestAllFiles {
         }
 
         return msg;
+    }
+
+    private static boolean isJava8() {
+        return System.getProperty("java.version").startsWith("1.8");
     }
 }

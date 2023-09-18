@@ -486,7 +486,7 @@ public final class PackagingURIHelper {
      *
      * @param partName
      *            The part name to validate.
-     * @return The correspondant part name if valid, else <code>null</code>.
+     * @return The correspondent part name if valid, else <code>null</code>.
      * @throws InvalidFormatException
      *             Throws if the specified part name is not OPC compliant.
      * @see #createPartName(URI)
@@ -509,7 +509,7 @@ public final class PackagingURIHelper {
      *            The part name to validate.
      * @param relativePart
      *            The relative base part.
-     * @return The correspondant part name if valid, else <code>null</code>.
+     * @return The correspondent part name if valid, else <code>null</code>.
      * @throws InvalidFormatException
      *             Throws if the specified part name is not OPC compliant.
      * @see #createPartName(URI)
@@ -533,7 +533,7 @@ public final class PackagingURIHelper {
      *            The part name URI to validate.
      * @param relativePart
      *            The relative base part.
-     * @return The correspondant part name if valid, else <code>null</code>.
+     * @return The correspondent part name if valid, else <code>null</code>.
      * @throws InvalidFormatException
      *             Throws if the specified part name is not OPC compliant.
      * @see #createPartName(URI)
@@ -625,7 +625,7 @@ public final class PackagingURIHelper {
      *            Source part URI
      * @return the full path (as URI) of the relation file
      * @throws InvalidOperationException
-     *             Throws if the specified URI is a relationshp part.
+     *             Throws if the specified URI is a relationship part.
      */
     public static PackagePartName getRelationshipPartName(
             PackagePartName partName) {
@@ -688,7 +688,7 @@ public final class PackagingURIHelper {
              value = value.replace('\\', '/');
         }
 
-        // URI fragemnts (those starting with '#') are not encoded
+        // URI fragments (those starting with '#') are not encoded
         // and may contain white spaces and raw unicode characters
         int fragmentIdx = value.indexOf('#');
         if(fragmentIdx != -1){

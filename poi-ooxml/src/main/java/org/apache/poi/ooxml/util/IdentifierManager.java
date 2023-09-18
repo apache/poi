@@ -34,7 +34,7 @@ public class IdentifierManager {
 
     /**
      * @param lowerbound the lower limit of the id-range to manage. Must be greater than or equal to {@link #MIN_ID}.
-     * @param upperbound the upper limit of the id-range to manage. Must be less then or equal {@link #MAX_ID}.
+     * @param upperbound the upper limit of the id-range to manage. Must be less than or equal {@link #MAX_ID}.
      */
     public IdentifierManager(long lowerbound, long upperbound) {
         if (lowerbound > upperbound) {

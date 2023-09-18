@@ -54,7 +54,7 @@ public class DateValue extends Fixed1ArgFunction {
                     OperandResolver.getSingleValue(dateTextArg, srcRowIndex, srcColumnIndex));
 
             if (dateText == null || dateText.isEmpty()) {
-                return BlankEval.instance;
+                return ErrorEval.VALUE_INVALID;
             }
 
             return new NumberEval(DateUtil.getExcelDate(DateParser.parseLocalDate(dateText)));

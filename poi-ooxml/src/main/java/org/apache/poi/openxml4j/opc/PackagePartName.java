@@ -111,7 +111,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
             partURI = new URI(partName);
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException(
-                    "partName argmument is not a valid OPC part name !");
+                    "partName argument is not a valid OPC part name !");
         }
 
         if (checkConformance) {
@@ -201,7 +201,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
         }
 
         String uriPath = partURI.getPath();
-        if (uriPath.length() == 0
+        if (uriPath == null || uriPath.isEmpty()
                 || ((uriPath.length() == 1) && (uriPath.charAt(0) == PackagingURIHelper.FORWARD_SLASH_CHAR))) {
             throw new InvalidFormatException(
                     "A part name shall not be empty [M1.1]: "
@@ -364,13 +364,13 @@ public final class PackagePartName implements Comparable<PackagePartName> {
     }
 
     /**
-     * Throws an exception if the specified part name ends with a forwar slash
+     * Throws an exception if the specified part name ends with a forward slash
      * character '/'. [M1.5]
      *
      * @param partUri
      *            The part name to check.
      * @throws InvalidFormatException
-     *             If the specified part name ends with a forwar slash character
+     *             If the specified part name ends with a forward slash character
      *             '/'.
      */
     private static void throwExceptionIfPartNameEndsWithForwardSlashChar(

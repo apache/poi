@@ -21,6 +21,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -55,7 +56,7 @@ public class XWPFComment implements IBody {
                     bodyElements.add(p);
                     paragraphs.add(p);
                 } else if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this);
+                    XWPFTable t = new XWPFTable((CTTbl) o, this, false);
                     bodyElements.add(t);
                     tables.add(t);
                 } else if (o instanceof CTSdtBlock) {
@@ -361,7 +362,8 @@ public class XWPFComment implements IBody {
      * @return string id
      */
     public String getId() {
-        return ctComment.getId().toString();
+        final BigInteger id = ctComment.getId();
+        return id == null ? "-1" : id.toString();
     }
 
     /**

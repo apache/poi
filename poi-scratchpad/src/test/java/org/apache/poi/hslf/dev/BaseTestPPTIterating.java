@@ -18,8 +18,10 @@ package org.apache.poi.hslf.dev;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +35,7 @@ import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
+import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.util.IOUtils;
 import org.apache.commons.io.output.NullPrintStream;
@@ -58,6 +61,13 @@ public abstract class BaseTestPPTIterating {
     ));
 
     static final Map<String,Class<? extends Throwable>> EXCLUDED = new HashMap<>();
+    static {
+        EXCLUDED.put("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6416153805979648.ppt", Exception.class);
+        EXCLUDED.put("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6710128412590080.ppt", RuntimeException.class);
+        EXCLUDED.put("clusterfuzz-testcase-minimized-POIFuzzer-5429732352851968.ppt", FileNotFoundException.class);
+        EXCLUDED.put("clusterfuzz-testcase-minimized-POIFuzzer-5681320547975168.ppt", FileNotFoundException.class);
+        EXCLUDED.put("clusterfuzz-testcase-minimized-POIHSLFFuzzer-5962760801091584.ppt", RuntimeException.class);
+    }
 
     public static Stream<Arguments> files() {
         String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);
@@ -91,7 +101,11 @@ public abstract class BaseTestPPTIterating {
     }
 
     private static void findFile(List<Arguments> list, String dir) {
-        String[] files = new File(dir).list((arg0, arg1) -> arg1.toLowerCase(Locale.ROOT).endsWith(".ppt"));
+        File dirFile = new File(dir);
+        assertTrue(dirFile.exists(), "Directory does not exist: " + dirFile.getAbsolutePath());
+        assertTrue(dirFile.isDirectory(), "Not a directory: " + dirFile.getAbsolutePath());
+
+        String[] files = dirFile.list((arg0, arg1) -> arg1.toLowerCase(Locale.ROOT).endsWith(".ppt"));
 
         assertNotNull(files, "Did not find any ppt files in directory " + dir);
 

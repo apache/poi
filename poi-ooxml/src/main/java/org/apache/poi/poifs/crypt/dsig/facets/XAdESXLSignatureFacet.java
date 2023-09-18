@@ -142,7 +142,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                 insertXChild(unsignedSigProps, validationData);
             }
         } catch (CertificateEncodingException e) {
-            throw new MarshalException("unable to create XAdES signatrue", e);
+            throw new MarshalException("unable to create XAdES signature", e);
         }
 
 

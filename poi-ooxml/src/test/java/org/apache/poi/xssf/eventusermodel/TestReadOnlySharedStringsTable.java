@@ -20,6 +20,7 @@
 package org.apache.poi.xssf.eventusermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +40,7 @@ import org.xml.sax.SAXException;
  * Tests for {@link org.apache.poi.xssf.eventusermodel.XSSFReader}
  */
 public final class TestReadOnlySharedStringsTable {
-    private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
+    private static final POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
     @Test
     void testParse() throws Exception {
@@ -47,24 +48,31 @@ public final class TestReadOnlySharedStringsTable {
             List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
             assertEquals(1, parts.size());
 
-            SharedStringsTable stbl = new SharedStringsTable(parts.get(0));
-            ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0));
-            ReadOnlySharedStringsTable rtbl2;
-            try (InputStream stream = parts.get(0).getInputStream()){
-                rtbl2 = new ReadOnlySharedStringsTable(stream);
-            }
+            try (SharedStringsTable stbl = new SharedStringsTable(parts.get(0))) {
+                ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0));
+                ReadOnlySharedStringsTable rtbl2;
+                try (InputStream stream = parts.get(0).getInputStream()) {
+                    rtbl2 = new ReadOnlySharedStringsTable(stream);
+                }
 
-            assertEquals(stbl.getCount(), rtbl.getCount());
-            assertEquals(stbl.getUniqueCount(), rtbl.getUniqueCount());
-            assertEquals(stbl.getUniqueCount(), rtbl2.getUniqueCount());
+                assertEquals(stbl.getCount(), rtbl.getCount());
+                assertEquals(stbl.getUniqueCount(), rtbl.getUniqueCount());
+                assertEquals(stbl.getUniqueCount(), rtbl2.getUniqueCount());
 
-            assertEquals(stbl.getCount(), stbl.getUniqueCount());
-            assertEquals(rtbl.getCount(), rtbl.getUniqueCount());
-            assertEquals(rtbl.getCount(), rtbl2.getUniqueCount());
-            for (int i = 0; i < stbl.getUniqueCount(); i++) {
-                RichTextString i1 = stbl.getItemAt(i);
-                assertEquals(i1.getString(), rtbl.getItemAt(i).getString());
-                assertEquals(i1.getString(), rtbl2.getItemAt(i).getString());
+                assertEquals(stbl.getCount(), stbl.getUniqueCount());
+                assertEquals(rtbl.getCount(), rtbl.getUniqueCount());
+                assertEquals(rtbl.getCount(), rtbl2.getUniqueCount());
+                for (int i = 0; i < stbl.getUniqueCount(); i++) {
+                    RichTextString i1 = stbl.getItemAt(i);
+                    assertEquals(i1.getString(), rtbl.getItemAt(i).getString());
+                    assertEquals(i1.getString(), rtbl2.getItemAt(i).getString());
+                }
+
+                // verify invalid indices
+                assertThrows(IllegalStateException.class,
+                        () -> rtbl.getItemAt(stbl.getUniqueCount()));
+                assertThrows(IndexOutOfBoundsException.class,
+                        () -> rtbl.getItemAt(-1));
             }
         }
     }
@@ -75,20 +83,21 @@ public final class TestReadOnlySharedStringsTable {
             List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
             assertEquals(1, parts.size());
 
-            SharedStringsTable stbl = new SharedStringsTable(parts.get(0));
-            ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0));
-            ReadOnlySharedStringsTable rtbl2;
-            try (InputStream stream = parts.get(0).getInputStream()) {
-                rtbl2 = new ReadOnlySharedStringsTable(stream);
-            }
+            try (SharedStringsTable stbl = new SharedStringsTable(parts.get(0))) {
+                ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0));
+                ReadOnlySharedStringsTable rtbl2;
+                try (InputStream stream = parts.get(0).getInputStream()) {
+                    rtbl2 = new ReadOnlySharedStringsTable(stream);
+                }
 
-            assertEquals(stbl.getCount(), rtbl.getCount());
-            assertEquals(stbl.getUniqueCount(), rtbl.getUniqueCount());
-            assertEquals(stbl.getUniqueCount(), rtbl2.getUniqueCount());
-            for (int i = 0; i < stbl.getUniqueCount(); i++) {
-                RichTextString i1 = stbl.getItemAt(i);
-                assertEquals(i1.getString(), rtbl.getItemAt(i).getString());
-                assertEquals(i1.getString(), rtbl2.getItemAt(i).getString());
+                assertEquals(stbl.getCount(), rtbl.getCount());
+                assertEquals(stbl.getUniqueCount(), rtbl.getUniqueCount());
+                assertEquals(stbl.getUniqueCount(), rtbl2.getUniqueCount());
+                for (int i = 0; i < stbl.getUniqueCount(); i++) {
+                    RichTextString i1 = stbl.getItemAt(i);
+                    assertEquals(i1.getString(), rtbl.getItemAt(i).getString());
+                    assertEquals(i1.getString(), rtbl2.getItemAt(i).getString());
+                }
             }
         }
     }
@@ -127,6 +136,22 @@ public final class TestReadOnlySharedStringsTable {
     void testEmptySSTOnPackageDirect() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("noSharedStringTable.xlsx"))) {
             assertEmptySST(pkg);
+        }
+    }
+
+    @Test
+    void testNullPointerException() throws Exception {
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("clusterfuzz-testcase-minimized-XLSX2CSVFuzzer-5025401116950528.xlsx"))) {
+            assertEmptySST(pkg);
+        }
+
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("clusterfuzz-testcase-minimized-XLSX2CSVFuzzer-5025401116950528.xlsx"))) {
+            List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
+            assertEquals(1, parts.size());
+
+            //noinspection resource
+            assertThrows(IOException.class,
+                    () -> new SharedStringsTable(parts.get(0)));
         }
     }
 

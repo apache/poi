@@ -19,8 +19,10 @@
 
 package org.apache.poi.examples.ss;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -93,7 +95,7 @@ public final class ConditionalFormats {
             if (wb instanceof XSSFWorkbook) {
                 file += "x";
             }
-            try (FileOutputStream out = new FileOutputStream(file)) {
+            try (OutputStream out = Files.newOutputStream(Paths.get(file))) {
                 wb.write(out);
             }
             System.out.println("Generated: " + file);
@@ -285,7 +287,7 @@ public final class ConditionalFormats {
     /**
      * Use Excel conditional formatting to hide the duplicate values,
      * and make the list easier to read. In this example, when the table is sorted by Region,
-     * the second (and subsequent) occurences of each region name will have white font colour.
+     * the second (and subsequent) occurrences of each region name will have white font colour.
      */
     static void hideDupplicates(Sheet sheet) {
         sheet.createRow(0).createCell(0).setCellValue("City");
@@ -309,7 +311,7 @@ public final class ConditionalFormats {
         sheetCF.addConditionalFormatting(regions, rule1);
 
         sheet.getRow(1).createCell(1).setCellValue("<== the second (and subsequent) " +
-                "occurences of each region name will have white font colour.  " +
+                "occurrences of each region name will have white font colour.  " +
                 "Condition: Formula Is   =A2=A1   (White Font)");
     }
 

@@ -45,22 +45,16 @@ public class HPBFFileHandler extends POIFSFileHandler {
     void test() throws Exception {
         File file = new File("test-data/publisher/SampleBrochure.pub");
 
-        InputStream stream = new FileInputStream(file);
-        try {
+        try (InputStream stream = new FileInputStream(file)) {
             handleFile(stream, file.getPath());
-        } finally {
-            stream.close();
         }
 
         handleExtracting(file);
 
-        stream = new FileInputStream(file);
-        try {
+        try (InputStream stream = new FileInputStream(file)) {
             try (PublisherTextExtractor extractor = new PublisherTextExtractor(stream)) {
                 assertNotNull(extractor.getText());
             }
-        } finally {
-            stream.close();
         }
     }
 

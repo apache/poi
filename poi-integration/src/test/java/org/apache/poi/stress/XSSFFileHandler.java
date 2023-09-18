@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -54,6 +55,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.extractor.XSSFExportToXml;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -114,6 +116,13 @@ public class XSSFFileHandler extends SpreadsheetHandler {
 
         // and finally ensure that exporting to XML works
         exportToXML(wb);
+
+        // also try to read and write the sheet via SXSSF
+        try (SXSSFWorkbook swb = new SXSSFWorkbook(wb)) {
+            try (OutputStream out = NullOutputStream.INSTANCE) {
+                swb.write(out);
+            }
+        }
 
         // this allows to trigger a heap-dump at this point to see which memory is still allocated
         //HeapDump.dumpHeap("/tmp/poi.hprof", false);
@@ -217,6 +226,8 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         }
 
         handleExtracting(file);
+
+        handleAdditional(file);
     }
 
     @Test

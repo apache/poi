@@ -85,7 +85,7 @@ public abstract class BaseTestSheetAutosizeColumn {
         // autosize not-evaluated cells, formula cells are sized as if the result is 0
         for (int i = 0; i < 6; i++) sheet.autoSizeColumn(i);
 
-        assertTrue(sheet.getColumnWidth(0) < sheet.getColumnWidth(1));  // width of '0' is less then width of '10'
+        assertTrue(sheet.getColumnWidth(0) < sheet.getColumnWidth(1));  // width of '0' is less than width of '10'
         assertEquals(sheet.getColumnWidth(1), sheet.getColumnWidth(2)); // 10 and '10' should be sized equally
         assertEquals(sheet.getColumnWidth(3), sheet.getColumnWidth(0)); // formula result is unknown, the width is calculated  for '0'
         assertEquals(sheet.getColumnWidth(4), sheet.getColumnWidth(5)); // 10.0000 and '10.0000'
@@ -95,7 +95,7 @@ public abstract class BaseTestSheetAutosizeColumn {
 
         for (int i = 0; i < 6; i++) sheet.autoSizeColumn(i);
 
-        assertTrue(sheet.getColumnWidth(0) < sheet.getColumnWidth(1));  // width of '0' is less then width of '10'
+        assertTrue(sheet.getColumnWidth(0) < sheet.getColumnWidth(1));  // width of '0' is less than width of '10'
         assertEquals(sheet.getColumnWidth(1), sheet.getColumnWidth(2)); // columns 1, 2 and 3 should have the same width
         assertEquals(sheet.getColumnWidth(2), sheet.getColumnWidth(3)); // columns 1, 2 and 3 should have the same width
         assertEquals(sheet.getColumnWidth(4), sheet.getColumnWidth(5)); // 10.0000 and '10.0000'

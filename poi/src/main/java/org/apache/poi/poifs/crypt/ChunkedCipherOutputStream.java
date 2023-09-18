@@ -19,11 +19,11 @@ package org.apache.poi.poifs.crypt;
 import static org.apache.poi.poifs.crypt.Decryptor.DEFAULT_POIFS_ENTRY;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FilterOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.security.GeneralSecurityException;
 
 import javax.crypto.Cipher;
@@ -71,7 +71,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         this.plainByteFlags = new SparseBitSet(cs);
         this.chunkBits = Integer.bitCount(cs-1);
         this.fileOut = TempFile.createTempFile("encrypted_package", "crypt");
-        this.out = new FileOutputStream(fileOut);
+        this.out = Files.newOutputStream(fileOut.toPath());
         this.dir = dir;
         this.cipher = initCipherForBlock(null, 0, false);
     }
@@ -303,7 +303,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     private void processPOIFSWriterEvent(POIFSWriterEvent event) {
         try {
             try (OutputStream os = event.getStream();
-                 FileInputStream fis = new FileInputStream(fileOut)) {
+                 InputStream fis = Files.newInputStream(fileOut.toPath())) {
 
                 // StreamSize (8 bytes): An unsigned integer that specifies the number of bytes used by data
                 // encrypted within the EncryptedData field, not including the size of the StreamSize field.

@@ -271,9 +271,9 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
      */
     @Override
     public XSLFBackground getBackground() {
-        CTBackground bg = _slide.getCSld().getBg();
-        if(bg != null) {
-            return new XSLFBackground(bg, this);
+        if(_slide.getCSld() != null &&
+                _slide.getCSld().getBg() != null) {
+            return new XSLFBackground(_slide.getCSld().getBg(), this);
         } else {
             return getMasterSheet().getBackground();
         }

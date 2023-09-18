@@ -43,8 +43,6 @@ import org.apache.poi.util.TempFile;
 import org.junit.jupiter.api.Test;
 
 public class HPSFFileHandler extends POIFSFileHandler {
-    private static final String NL = System.getProperty("line.separator");
-
     private static final ThreadLocal<File> copyOutput = ThreadLocal.withInitial(HPSFFileHandler::getTempFile);
 
     static final Set<String> EXCLUDES_HANDLE_ADD = StressTestUtils.unmodifiableHashSet(
@@ -140,12 +138,10 @@ public class HPSFFileHandler extends POIFSFileHandler {
         try (InputStream stream = new FileInputStream(path)) {
             handleFile(stream, path);
         }
-    }
 
-    // a test-case to test this locally without executing the full TestAllFiles
-    @Test
-    void testExtractor() {
-        File file = new File("test-data/hpsf/TestBug44375.xls");
+        File file = new File(path);
         assertDoesNotThrow(() -> handleExtracting(file));
+
+        handleAdditional(file);
     }
 }

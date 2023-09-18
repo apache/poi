@@ -20,11 +20,10 @@
 package org.apache.poi.poifs.crypt.temp;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -73,7 +72,7 @@ public class EncryptedTempData {
      */
     public OutputStream getOutputStream() throws IOException {
         Cipher ciEnc = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.ENCRYPT_MODE, PADDING);
-        outputStream = new CountingOutputStream(new CipherOutputStream(new FileOutputStream(tempFile), ciEnc));
+        outputStream = new CountingOutputStream(new CipherOutputStream(Files.newOutputStream(tempFile.toPath()), ciEnc));
         return outputStream;
     }
 
@@ -85,7 +84,7 @@ public class EncryptedTempData {
      */
     public InputStream getInputStream() throws IOException {
         Cipher ciDec = CryptoFunctions.getCipher(skeySpec, cipherAlgorithm, ChainingMode.cbc, ivBytes, Cipher.DECRYPT_MODE, PADDING);
-        return new CipherInputStream(new FileInputStream(tempFile), ciDec);
+        return new CipherInputStream(Files.newInputStream(tempFile.toPath()), ciDec);
     }
 
     /**

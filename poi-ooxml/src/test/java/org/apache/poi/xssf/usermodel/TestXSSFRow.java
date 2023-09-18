@@ -17,14 +17,11 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.tests.usermodel.BaseTestXRow;
@@ -40,6 +37,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests for XSSFRow
@@ -461,6 +460,31 @@ public final class TestXSSFRow extends BaseTestXRow {
         writeToFile(wb);
     }
 
+    @Test
+    void duplicateRows() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet("sheet123");
+            // it is not a good idea to create a row twice but does it shouldn't fail
+            // you would likely lose all the cells associated with the first row instance
+            // ie when you write the file you will only have 1 row2 and only the cells for the 2nd row instance
+            XSSFRow rowX = sheet.createRow(2);
+            rowX.createCell(0).setCellValue("rowX-c0");
+            XSSFRow rowY = sheet.createRow(2);
+            rowY.createCell(1).setCellValue("rowY-c1");
+            assertNotSame(rowX, rowY);
+
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                wb.write(bos);
+                try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet sheet2 = wb2.getSheet(sheet.getSheetName());
+                    XSSFRow rowZ = sheet2.getRow(2);
+                    assertNull(rowZ.getCell(0));
+                    assertEquals(rowY.getCell(1).getStringCellValue(), rowZ.getCell(1).getStringCellValue());
+                }
+            }
+        }
+    }
+
     private void fillData(int startAtRow, Sheet sheet) {
         Row header = sheet.createRow(0);
         for (int rownum = startAtRow; rownum < 2; rownum++) {
@@ -472,7 +496,7 @@ public final class TestXSSFRow extends BaseTestXRow {
     }
 
     private void writeToFile(Workbook wb) throws IOException {
-        try (OutputStream fileOut = new ByteArrayOutputStream()) {
+        try (OutputStream fileOut = UnsynchronizedByteArrayOutputStream.builder().get()) {
             wb.write(fileOut);
         }
     }

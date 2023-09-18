@@ -251,13 +251,15 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
             this.strings = new ArrayList<>(this.uniqueCount);
             characters = new StringBuilder(64);
         } else if ("si".equals(localName)) {
-            characters.setLength(0);
+            if (characters != null) {
+                characters.setLength(0);
+            }
         } else if ("t".equals(localName)) {
             tIsOpen = true;
         } else if ("rPh".equals(localName)) {
             inRPh = true;
             //append space...this assumes that rPh always comes after regular <t>
-            if (includePhoneticRuns && characters.length() > 0) {
+            if (includePhoneticRuns && characters != null && characters.length() > 0) {
                 characters.append(" ");
             }
         }
@@ -269,7 +271,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
         }
 
         if ("si".equals(localName)) {
-            strings.add(characters.toString());
+            if (strings != null && characters != null) {
+                strings.add(characters.toString());
+            }
         } else if ("t".equals(localName)) {
             tIsOpen = false;
         } else if ("rPh".equals(localName)) {
@@ -283,9 +287,13 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
     public void characters(char[] ch, int start, int length) throws SAXException {
         if (tIsOpen) {
             if (inRPh && includePhoneticRuns) {
-                characters.append(ch, start, length);
+                if (characters != null) {
+                    characters.append(ch, start, length);
+                }
             } else if (! inRPh){
-                characters.append(ch, start, length);
+                if (characters != null) {
+                    characters.append(ch, start, length);
+                }
             }
         }
     }

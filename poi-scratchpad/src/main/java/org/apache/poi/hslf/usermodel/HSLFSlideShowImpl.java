@@ -72,6 +72,7 @@ import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
+import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.PictureData;
@@ -93,6 +94,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private static final int DEFAULT_MAX_RECORD_LENGTH = 200_000_000;
     private static final int MAX_DOCUMENT_SIZE = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
+    private static final int MAX_IMAGE_LENGTH = 10_000_000;
 
     // Holds metadata on where things are in our document
     private CurrentUserAtom currentUser;
@@ -229,7 +231,11 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
 
         // Get the main document stream
-        DocumentEntry docProps = (DocumentEntry)dir.getEntryCaseInsensitive(POWERPOINT_DOCUMENT);
+        final Entry entry = dir.getEntryCaseInsensitive(POWERPOINT_DOCUMENT);
+        if (!(entry instanceof DocumentEntry)) {
+            throw new IllegalArgumentException("Had unexpected type of entry for name: " + POWERPOINT_DOCUMENT + ": " + entry.getClass());
+        }
+        DocumentEntry docProps = (DocumentEntry) entry;
 
         // Grab the document stream
         int len = docProps.getSize();
@@ -398,11 +404,15 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             return;
         }
 
-        DocumentEntry entry = (DocumentEntry) getDirectory().getEntryCaseInsensitive("Pictures");
+        final Entry en = getDirectory().getEntryCaseInsensitive("Pictures");
+        if (!(en instanceof DocumentEntry)) {
+            throw new IllegalArgumentException("Had unexpected type of entry for name: Pictures: " + en.getClass());
+        }
+        DocumentEntry entry = (DocumentEntry) en;
         EscherContainerRecord blipStore = getBlipStore();
         byte[] pictstream;
         try (DocumentInputStream is = getDirectory().createDocumentInputStream(entry)) {
-            pictstream = IOUtils.toByteArray(is, entry.getSize());
+            pictstream = IOUtils.toByteArray(is, entry.getSize(), MAX_IMAGE_LENGTH);
         }
 
         List<PictureFactory> factories = new ArrayList<>();
@@ -1075,17 +1085,17 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         int count;
 
         @Override
-        public void write(int b) throws IOException {
+        public void write(int b) {
             count++;
         }
 
         @Override
-        public void write(byte[] b) throws IOException {
+        public void write(byte[] b) {
             count += b.length;
         }
 
         @Override
-        public void write(byte[] b, int off, int len) throws IOException {
+        public void write(byte[] b, int off, int len) {
             count += len;
         }
 

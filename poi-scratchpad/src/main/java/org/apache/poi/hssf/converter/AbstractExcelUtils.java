@@ -17,8 +17,9 @@
 package org.apache.poi.hssf.converter;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Arrays;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -181,7 +182,7 @@ class AbstractExcelUtils {
     }
 
     public static HSSFWorkbook loadXls(File xlsFile) throws IOException {
-        try (final FileInputStream inputStream = new FileInputStream(xlsFile)) {
+        try (final InputStream inputStream = Files.newInputStream(xlsFile.toPath())) {
             return new HSSFWorkbook(inputStream);
         }
     }

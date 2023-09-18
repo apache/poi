@@ -264,3 +264,5 @@ Copyright (c) 2011-2023 Lightbend, Inc.
 The POI Source Release bundles the Gradle Wrapper. (https://docs.gradle.org/current/userguide/gradle_wrapper.html)
 This is released under the Apache License, v2.0.
 Copyright © 2015-2021 the original authors.
+
+The wrapper.gradle file was developed by the Apache Kafka project and is released under the Apache License, v2.0.

@@ -46,7 +46,7 @@ public class StressMap {
     private final Pattern SCRATCH_HANDLER = Pattern.compile("(HSLF|HWPF|HSMF|HMEF)");
 
     public void load(File mapFile) throws IOException {
-        try (Workbook wb = WorkbookFactory.create(mapFile)) {
+        try (Workbook wb = WorkbookFactory.create(mapFile, null, true)) {
             readExMap(wb.getSheet("Exceptions"));
             readHandlerMap(wb.getSheet("Handlers"));
         }

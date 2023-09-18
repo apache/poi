@@ -19,9 +19,11 @@ package org.apache.poi.ss.util;
 
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -151,7 +153,7 @@ public class NumberRenderingSpreadsheetGenerator {
         File outputFile = new File("ExcelNumberRendering.xls");
 
         try (UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
-             FileOutputStream os = new FileOutputStream(outputFile)) {
+             OutputStream os = Files.newOutputStream(outputFile.toPath())) {
             wb.write(baos);
 
             byte[] fileContent = baos.toByteArray();
@@ -159,7 +161,7 @@ public class NumberRenderingSpreadsheetGenerator {
 
             os.write(fileContent);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
 
         System.out.println("Finished writing '" + outputFile.getAbsolutePath() + "'");

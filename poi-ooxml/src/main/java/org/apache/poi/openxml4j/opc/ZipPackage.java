@@ -21,13 +21,14 @@ import static org.apache.poi.openxml4j.opc.ContentTypes.RELATIONSHIPS_PART;
 import static org.apache.poi.openxml4j.opc.internal.ContentTypeManager.CONTENT_TYPES_PART_NAME;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -49,6 +50,7 @@ import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 
@@ -176,12 +178,12 @@ public final class ZipPackage extends OPCPackage {
     }
 
     private static ZipEntrySource openZipEntrySourceStream(File file) throws InvalidOperationException {
-        final FileInputStream fis;
+        final InputStream fis;
         // Acquire a resource that is needed to read the next level of openZipEntrySourceStream
         try {
             // open the file input stream
-            fis = new FileInputStream(file); // NOSONAR
-        } catch (final FileNotFoundException e) {
+            fis = Files.newInputStream(file.toPath());
+        } catch (final IOException e) {
             // If the source cannot be acquired, abort (no resources to free at this level)
             throw new InvalidOperationException("Can't open the specified file input stream from file: '" + file + "'", e);
         }
@@ -201,7 +203,7 @@ public final class ZipPackage extends OPCPackage {
         }
     }
 
-    private static ZipEntrySource openZipEntrySourceStream(FileInputStream fis) throws InvalidOperationException {
+    private static ZipEntrySource openZipEntrySourceStream(InputStream fis) throws InvalidOperationException {
         final ZipArchiveThresholdInputStream zis;
         // Acquire a resource that is needed to read the next level of openZipEntrySourceStream
         try {
@@ -271,6 +273,7 @@ public final class ZipPackage extends OPCPackage {
         // First we need to parse the content type part
         final ZipArchiveEntry contentTypeEntry =
                 zipArchive.getEntry(CONTENT_TYPES_PART_NAME);
+        final Enumeration<? extends ZipArchiveEntry> zipEntries;
         if (contentTypeEntry != null) {
             if (this.contentTypeManager != null) {
                 throw new InvalidFormatException("ContentTypeManager can only be created once. This must be a cyclic relation?");
@@ -281,6 +284,7 @@ public final class ZipPackage extends OPCPackage {
             } catch (IOException e) {
                 throw new InvalidFormatException(e.getMessage(), e);
             }
+            zipEntries = zipArchive.getEntries();
         } else {
             // Is it a different Zip-based format?
             final boolean hasMimetype = zipArchive.getEntry(MIMETYPE) != null;
@@ -290,7 +294,8 @@ public final class ZipPackage extends OPCPackage {
                         "The supplied data appears to be in ODF (Open Document) Format. " +
                                 "Formats like these (eg ODS, ODP) are not supported, try Apache ODFToolkit");
             }
-            if (!zipArchive.getEntries().hasMoreElements()) {
+            zipEntries = zipArchive.getEntries();
+            if (!zipEntries.hasMoreElements()) {
                 throw new NotOfficeXmlFileException(
                         "No valid entries or contents found, this is not a valid OOXML " +
                                 "(Office Open XML) file");
@@ -304,8 +309,13 @@ public final class ZipPackage extends OPCPackage {
         // (Need to create relationships before other
         //  parts, otherwise we might create a part before
         //  its relationship exists, and then it won't tie up)
+        final List<? extends ZipArchiveEntry> list = Collections.list(zipEntries);
+        if (list.size() > ZipSecureFile.getMaxFileCount()) {
+            throw new InvalidFormatException(String.format(
+                    Locale.ROOT, ZipSecureFile.MAX_FILE_COUNT_MSG, ZipSecureFile.getMaxFileCount()));
+        }
         final List<EntryTriple> entries =
-                Collections.list(zipArchive.getEntries()).stream()
+                list.stream()
                         .filter(zipArchiveEntry -> !ignoreEntry(zipArchiveEntry))
                         .map(zae -> new EntryTriple(zae, contentTypeManager))
                         .filter(mm -> mm.partName != null)
@@ -542,7 +552,9 @@ public final class ZipPackage extends OPCPackage {
                 // Ensure that core properties are added if missing
                 getPackageProperties();
                 // Add core properties to part list ...
-                addPackagePart(this.packageProperties);
+                if (!hasPackagePart(this.packageProperties)) {
+                    addPackagePart(this.packageProperties);
+                }
                 // ... and to add its relationship ...
                 this.relationships.addRelationship(this.packageProperties
                         .getPartName().getURI(), TargetMode.INTERNAL,

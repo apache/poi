@@ -38,7 +38,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  can return the text for you (example: for use with Lucene).
  */
 public final class VisioTextExtractor implements POIOLE2TextExtractor {
-    private HDGFDiagram hdgf;
+    private final HDGFDiagram hdgf;
     private boolean doCloseFilesystem = true;
 
     public VisioTextExtractor(HDGFDiagram hdgf) {
@@ -72,8 +72,10 @@ public final class VisioTextExtractor implements POIOLE2TextExtractor {
     private void findText(Stream stream, List<String> text) {
         if(stream instanceof PointerContainingStream) {
             PointerContainingStream ps = (PointerContainingStream)stream;
-            for(final Stream substream : ps.getPointedToStreams()) {
-                findText(substream, text);
+            if (ps.getPointedToStreams() != null) {
+                for (final Stream substream : ps.getPointedToStreams()) {
+                    findText(substream, text);
+                }
             }
         }
         if(stream instanceof ChunkStream) {

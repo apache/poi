@@ -62,7 +62,7 @@ dependencies {
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
     api "org.apache.commons:commons-compress:${commonsCompressVersion}"
     api "commons-io:commons-io:${commonsIoVersion}"
-    api 'com.github.virtuald:curvesapi:1.07'
+    api 'com.github.virtuald:curvesapi:1.08'
     api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
     api 'org.apache.commons:commons-collections4:4.4'
 
@@ -118,14 +118,14 @@ dependencies {
     testImplementation 'org.reflections:reflections:0.10.2'
     testImplementation 'org.openjdk.jmh:jmh-core:1.36'
     testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.36'
-    testImplementation 'com.google.guava:guava:32.0.1-jre'
+    testImplementation 'com.google.guava:guava:32.1.1-jre'
     testImplementation 'org.tukaani:xz:1.9'
     testImplementation 'com.github.rzymek:opczip:1.2.0'
 
     // prevent slf4j warnings coming from xmlsec -> slf4j-api 1.7.x dependency
     // see https://logging.apache.org/log4j/2.x/log4j-slf4j-impl/
     testImplementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
-    testImplementation 'org.slf4j:slf4j-simple:2.0.7'
+    testImplementation 'org.slf4j:slf4j-simple:2.0.9'
 
     broken("org.apache.xmlgraphics:batik-script:${batikVersion}"){
         exclude group: 'xalan', module: 'xalan'

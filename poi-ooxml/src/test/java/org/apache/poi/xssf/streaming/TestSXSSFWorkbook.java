@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.Arrays;
 
@@ -725,4 +726,13 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
+    @Test
+    void writeBrokenFile() throws IOException {
+        try (final Workbook wb = _testDataProvider.openSampleWorkbook("clusterfuzz-testcase-minimized-POIXSSFFuzzer-5185049589579776.xlsx")) {
+            try (OutputStream out = NullOutputStream.INSTANCE) {
+                assertThrows(IllegalArgumentException.class,
+                        () -> wb.write(out));
+            }
+        }
+    }
 }

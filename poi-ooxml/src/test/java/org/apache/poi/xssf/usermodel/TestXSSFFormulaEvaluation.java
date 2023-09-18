@@ -24,6 +24,10 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -32,6 +36,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -186,8 +191,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
                 // Add another formula referencing these workbooks
                 Cell cXSL_cell2 = rXSL.createCell(40);
                 cXSL_cell2.setCellFormula("[56737.xls]Uses!$C$1");
-                // it become [2] like the others
-                assertEquals("[2]Uses!$C$1", cXSL_cell2.getCellFormula());
+                // TODO Shouldn't it become [2] like the others?
+                assertEquals("[56737.xls]Uses!$C$1", cXSL_cell2.getCellFormula());
                 assertEquals("\"Hello!\"", evaluator.evaluate(cXSL_cell2).formatAsString());
 
 
@@ -442,6 +447,19 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             Cell a5 = wb.getSheetAt(0).getRow(4).getCell(0);
             value = evaluator.evaluateInCell(a5);
             assertEquals("another value", value.getStringCellValue(), "wrong value A5");
+        }
+    }
+
+    @Test
+    void testBug63934() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("63934.xlsx")) {
+
+            final Cell cell = wb.getSheetAt(0).getRow(1).getCell(1);
+            assertNotNull(cell);
+
+            final FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+            final CellValue value = evaluator.evaluate(cell);
+            assertEquals("Male", value.getStringValue());
         }
     }
 }

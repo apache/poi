@@ -229,7 +229,7 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
 
             // Grab the core document part, and try to identify from that
             final PackagePart corePart = pkg.getPart(core.getRelationship(0));
-            final String contentType = corePart.getContentType();
+            final String contentType = corePart == null ? null : corePart.getContentType();
 
             // Is it XSSF?
             for (XSSFRelation rel : XSSFExcelExtractor.SUPPORTED_TYPES) {

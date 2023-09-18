@@ -1046,4 +1046,11 @@ class TestCellFormat {
                 .map(CellFormatPart.NAMED_COLORS::get)
                 .forEach(Assertions::assertNotNull);
     }
+
+    @Test
+    void testElapsedSecondsRound() {
+        CellFormatPart part = new CellFormatPart("[h]\\h m\\m s\\s");
+        assertNotNull(part);
+        assertEquals("0h 0m 9s", part.apply(0.0001).text);
+    }
 }

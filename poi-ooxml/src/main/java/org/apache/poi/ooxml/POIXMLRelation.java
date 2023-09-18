@@ -198,6 +198,9 @@ public abstract class POIXMLRelation {
      *  @since 3.16-beta3
      */
     public InputStream getContents(PackagePart corePart) throws IOException, InvalidFormatException {
+        if (corePart == null) {
+            throw new IllegalArgumentException("Core-Part cannot be empty");
+        }
         PackageRelationshipCollection prc =
                 corePart.getRelationshipsByType(getRelation());
         Iterator<PackageRelationship> it = prc.iterator();
@@ -205,6 +208,9 @@ public abstract class POIXMLRelation {
             PackageRelationship rel = it.next();
             PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
             PackagePart part = corePart.getPackage().getPart(relName);
+            if (part == null) {
+                throw new IllegalArgumentException("Could not read part " + relName + " from " + corePart);
+            }
             return part.getInputStream();
         }
         LOGGER.atWarn().log("No part {} found", getDefaultFileName());

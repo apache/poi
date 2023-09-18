@@ -130,7 +130,7 @@ final class TestPOIFSFileSystem {
      *  multiple of 512 bytes)
      *
      * As yet, this problem remains. One school of thought is
-     *  not not issue an EOF when we discover the last block
+     *  to not issue an EOF when we discover the last block
      *  is short, but this seems a bit wrong.
      * The other is to fix the handling of the last block in
      *  POIFS, since it seems to be slight wrong

@@ -219,7 +219,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                                     bodyElements.add(p);
                                     paragraphs.add(p);
                                 } else if (bodyObj instanceof CTTbl) {
-                                    XWPFTable t = new XWPFTable((CTTbl) bodyObj, this);
+                                    XWPFTable t = new XWPFTable((CTTbl) bodyObj, this, false);
                                     bodyElements.add(t);
                                     tables.add(t);
                                 } else if (bodyObj instanceof CTSdtBlock) {
@@ -233,7 +233,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 }
             }
             // Sort out headers and footers
-            if (doc.getDocument().getBody().getSectPr() != null) {
+            if (doc.getDocument().getBody() != null && doc.getDocument().getBody().getSectPr() != null) {
                 headerFooterPolicy = new XWPFHeaderFooterPolicy(this);
             }
 
@@ -241,48 +241,52 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             for (RelationPart rp : getRelationParts()) {
                 POIXMLDocumentPart p = rp.getDocumentPart();
                 String relation = rp.getRelationship().getRelationshipType();
-                if (relation.equals(XWPFRelation.STYLES.getRelation())) {
-                    this.styles = (XWPFStyles) p;
-                    this.styles.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.THEME.getRelation())) {
-                    this.theme = (XWPFTheme) p;
-                    this.theme.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.NUMBERING.getRelation())) {
-                    this.numbering = (XWPFNumbering) p;
-                    this.numbering.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.FOOTER.getRelation())) {
-                    XWPFFooter footer = (XWPFFooter) p;
-                    footers.add(footer);
-                    footer.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.HEADER.getRelation())) {
-                    XWPFHeader header = (XWPFHeader) p;
-                    headers.add(header);
-                    header.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.COMMENT.getRelation())) {
-                    this.comments = (XWPFComments) p;
-                    this.comments.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.SETTINGS.getRelation())) {
-                    settings = (XWPFSettings) p;
-                    settings.onDocumentRead();
-                } else if (relation.equals(XWPFRelation.IMAGES.getRelation())) {
-                    XWPFPictureData picData = (XWPFPictureData) p;
-                    picData.onDocumentRead();
-                    registerPackagePictureData(picData);
-                    pictures.add(picData);
-                } else if (relation.equals(XWPFRelation.CHART.getRelation())) {
-                    //now we can use all methods to modify charts in XWPFDocument
-                    XWPFChart chartData = (XWPFChart) p;
-                    charts.add(chartData);
-                } else if (relation.equals(XWPFRelation.GLOSSARY_DOCUMENT.getRelation())) {
-                    // We don't currently process the glossary itself
-                    // Until we do, we do need to load the glossary child parts of it
-                    for (POIXMLDocumentPart gp : p.getRelations()) {
-                        // Trigger the onDocumentRead for all the child parts
-                        // Otherwise we'll hit issues on Styles, Settings etc on save
-                        // TODO: Refactor this to not need to access protected method
-                        // from other package! Remove the static helper method once fixed!!!
-                        POIXMLDocumentPart._invokeOnDocumentRead(gp);
+                try {
+                    if (relation.equals(XWPFRelation.STYLES.getRelation())) {
+                        this.styles = (XWPFStyles) p;
+                        this.styles.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.THEME.getRelation())) {
+                        this.theme = (XWPFTheme) p;
+                        this.theme.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.NUMBERING.getRelation())) {
+                        this.numbering = (XWPFNumbering) p;
+                        this.numbering.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.FOOTER.getRelation())) {
+                        XWPFFooter footer = (XWPFFooter) p;
+                        footers.add(footer);
+                        footer.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.HEADER.getRelation())) {
+                        XWPFHeader header = (XWPFHeader) p;
+                        headers.add(header);
+                        header.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.COMMENT.getRelation())) {
+                        this.comments = (XWPFComments) p;
+                        this.comments.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.SETTINGS.getRelation())) {
+                        settings = (XWPFSettings) p;
+                        settings.onDocumentRead();
+                    } else if (relation.equals(XWPFRelation.IMAGES.getRelation())) {
+                        XWPFPictureData picData = (XWPFPictureData) p;
+                        picData.onDocumentRead();
+                        registerPackagePictureData(picData);
+                        pictures.add(picData);
+                    } else if (relation.equals(XWPFRelation.CHART.getRelation())) {
+                        //now we can use all methods to modify charts in XWPFDocument
+                        XWPFChart chartData = (XWPFChart) p;
+                        charts.add(chartData);
+                    } else if (relation.equals(XWPFRelation.GLOSSARY_DOCUMENT.getRelation())) {
+                        // We don't currently process the glossary itself
+                        // Until we do, we do need to load the glossary child parts of it
+                        for (POIXMLDocumentPart gp : p.getRelations()) {
+                            // Trigger the onDocumentRead for all the child parts
+                            // Otherwise we'll hit issues on Styles, Settings etc on save
+                            // TODO: Refactor this to not need to access protected method
+                            // from other package! Remove the static helper method once fixed!!!
+                            POIXMLDocumentPart._invokeOnDocumentRead(gp);
+                        }
                     }
+                } catch (ClassCastException e) {
+                    throw new IllegalArgumentException("Relation and type of document-part did not match, had relation " + relation + " and type of document-part: " + p.getClass(), e);
                 }
             }
             initHyperlinks();
@@ -308,11 +312,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         for (RelationPart rp : getRelationParts()) {
             POIXMLDocumentPart p = rp.getDocumentPart();
             String relation = rp.getRelationship().getRelationshipType();
-            if (relation.equals(XWPFRelation.FOOTNOTE.getRelation())) {
+            if (relation.equals(XWPFRelation.FOOTNOTE.getRelation()) && p instanceof XWPFFootnotes) {
                 this.footnotes = (XWPFFootnotes) p;
                 this.footnotes.onDocumentRead();
                 this.footnotes.setIdManager(footnoteIdManager);
-            } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation())) {
+            } else if (relation.equals(XWPFRelation.ENDNOTE.getRelation()) && p instanceof XWPFEndnotes) {
                 this.endnotes = (XWPFEndnotes) p;
                 this.endnotes.onDocumentRead();
                 this.endnotes.setIdManager(footnoteIdManager);
@@ -1309,7 +1313,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param password the plaintext password, if null no password will be applied
      * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                 if null, it will default default to sha1
+     *                 if null, it will default to sha1
      */
     public void enforceReadonlyProtection(String password, HashAlgorithm hashAlgo) {
         settings.setEnforcementEditValue(STDocProtect.READ_ONLY, password, hashAlgo);
@@ -1345,7 +1349,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param password the plaintext password, if null no password will be applied
      * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                 if null, it will default default to sha1
+     *                 if null, it will default to sha1
      */
     public void enforceFillingFormsProtection(String password, HashAlgorithm hashAlgo) {
         settings.setEnforcementEditValue(STDocProtect.FORMS, password, hashAlgo);
@@ -1381,7 +1385,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param password the plaintext password, if null no password will be applied
      * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                 if null, it will default default to sha1
+     *                 if null, it will default to sha1
      */
     public void enforceCommentsProtection(String password, HashAlgorithm hashAlgo) {
         settings.setEnforcementEditValue(STDocProtect.COMMENTS, password, hashAlgo);
@@ -1417,7 +1421,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      *
      * @param password the plaintext password, if null no password will be applied
      * @param hashAlgo the hash algorithm - only md2, m5, sha1, sha256, sha384 and sha512 are supported.
-     *                 if null, it will default default to sha1
+     *                 if null, it will default to sha1
      */
     public void enforceTrackedChangesProtection(String password, HashAlgorithm hashAlgo) {
         settings.setEnforcementEditValue(STDocProtect.TRACKED_CHANGES, password, hashAlgo);

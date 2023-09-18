@@ -127,6 +127,9 @@ public final class TextObjectRecord extends ContinuableRecord {
                 throw new RecordFormatException("Read " + ptgs.length
                         + " tokens but expected exactly 1");
             }
+            if (!(ptgs[0] instanceof OperandPtg)) {
+                throw new IllegalArgumentException("Had unexpected type of ptg at index 0: " + ptgs[0].getClass());
+            }
             _linkRefPtg = (OperandPtg) ptgs[0];
             _unknownPostFormulaByte = in.remaining() > 0 ? in.readByte() : null;
         } else {

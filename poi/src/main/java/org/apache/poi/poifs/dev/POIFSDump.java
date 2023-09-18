@@ -17,11 +17,12 @@
 package org.apache.poi.poifs.dev;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Iterator;
 
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -65,7 +66,7 @@ public final class POIFSDump {
             }
 
             System.out.println("Dumping " + filename);
-            try (FileInputStream is = new FileInputStream(filename);
+            try (InputStream is = Files.newInputStream(Paths.get(filename));
                  POIFSFileSystem fs = new POIFSFileSystem(is)) {
                 DirectoryEntry root = fs.getRoot();
                 String filenameWithoutPath = new File(filename).getName();
@@ -98,12 +99,12 @@ public final class POIFSDump {
         for(Iterator<Entry> it = root.getEntries(); it.hasNext();){
             Entry entry = it.next();
             if(entry instanceof DocumentNode){
-                DocumentNode node = (DocumentNode)entry;
-                DocumentInputStream is = new DocumentInputStream(node);
-                byte[] bytes = IOUtils.toByteArray(is);
-                is.close();
-
-                try (OutputStream out = new FileOutputStream(new File(parent, node.getName().trim()))) {
+                final DocumentNode node = (DocumentNode) entry;
+                final byte[] bytes;
+                try (DocumentInputStream is = new DocumentInputStream(node)) {
+                   bytes = IOUtils.toByteArray(is);
+                }
+                try (OutputStream out = Files.newOutputStream(new File(parent, node.getName().trim()).toPath())) {
                     out.write(bytes);
                 }
             } else if (entry instanceof DirectoryEntry){
@@ -120,7 +121,7 @@ public final class POIFSDump {
     }
     public static void dump(POIFSFileSystem fs, int startBlock, String name, File parent) throws IOException {
         File file = new File(parent, name);
-        try (FileOutputStream out = new FileOutputStream(file)) {
+        try (OutputStream out = Files.newOutputStream(file.toPath())) {
             POIFSStream stream = new POIFSStream(fs, startBlock);
 
             byte[] b = IOUtils.safelyAllocate(fs.getBigBlockSize(), POIFSFileSystem.getMaxRecordLength());

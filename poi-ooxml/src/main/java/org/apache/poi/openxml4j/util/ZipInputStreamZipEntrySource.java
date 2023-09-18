@@ -55,7 +55,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
     }
 
     /**
-     * Get the threshold at which it a zip entry is regarded as too large for holding in memory
+     * Get the threshold at which a zip entry is regarded as too large for holding in memory
      * and the data is put in a temp file instead (defaults to -1 meaning temp files are not used)
      * @return threshold in bytes
      * @since POI 5.1.0

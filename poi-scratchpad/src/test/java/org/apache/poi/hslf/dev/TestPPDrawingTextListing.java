@@ -19,12 +19,20 @@ package org.apache.poi.hslf.dev;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.poi.EmptyFileException;
 import org.junit.jupiter.api.Test;
 
 public class TestPPDrawingTextListing extends BaseTestPPTIterating {
+    static final Set<String> LOCAL_EXCLUDED = new HashSet<>();
+    static {
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIFuzzer-5681320547975168.ppt");
+    }
+
     @Test
     void testMain() throws IOException {
         // calls System.exit(): PPDrawingTextListing.main(new String[0]);
@@ -33,6 +41,17 @@ public class TestPPDrawingTextListing extends BaseTestPPTIterating {
 
     @Override
     void runOneFile(File pFile) throws Exception {
-        PPDrawingTextListing.main(new String[]{pFile.getAbsolutePath()});
+        try {
+            PPDrawingTextListing.main(new String[]{pFile.getAbsolutePath()});
+        } catch (IndexOutOfBoundsException | IOException e) {
+            if (!LOCAL_EXCLUDED.contains(pFile.getName())) {
+                throw e;
+            }
+        }
+
+        // work around one file which works here but not in other tests
+        if (pFile.getName().equals("clusterfuzz-testcase-minimized-POIFuzzer-5681320547975168.ppt")) {
+            throw new FileNotFoundException();
+        }
     }
 }

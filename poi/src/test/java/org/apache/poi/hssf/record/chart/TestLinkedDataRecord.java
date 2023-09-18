@@ -39,7 +39,7 @@ final class TestLinkedDataRecord {
 
     The first record links to the series title (linkType = 0).   It's
     reference type is 1 which means that it links directly to data entered
-    into the forumula bar.  There seems to be no reference to any data
+    into the formula bar.  There seems to be no reference to any data
     however.  The formulaOfLink field contains two 0 bytes.  This probably
     means that there is no particular heading set.
 

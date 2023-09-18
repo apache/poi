@@ -54,7 +54,11 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
 
         // read internal and external coordinates from spgrContainer
         EscherContainerRecord spContainer = spgrContainer.getChildContainers().get(0);
-        _spgrRecord = (EscherSpgrRecord) spContainer.getChild(0);
+        final EscherRecord child = spContainer.getChild(0);
+        if (!(child instanceof EscherSpgrRecord)) {
+            throw new IllegalArgumentException("Had unexpected type of child at index 0: " + child.getClass());
+        }
+        _spgrRecord = (EscherSpgrRecord) child;
         for (EscherRecord ch : spContainer) {
             switch (EscherRecordTypes.forTypeID(ch.getRecordId())) {
                 case CLIENT_ANCHOR:

@@ -71,11 +71,11 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      */
     public XWPFHeaderFooter(POIXMLDocumentPart parent, PackagePart part) {
         super(parent, part);
-        this.document = (XWPFDocument) getParent();
-
-        if (this.document == null) {
-            throw new NullPointerException();
+        final POIXMLDocumentPart p = getParent();
+        if (!(p instanceof XWPFDocument)) {
+            throw new IllegalArgumentException("Had unexpected type of parent: " + (p == null ? "<null>" : p.getClass()));
         }
+        this.document = (XWPFDocument) p;
     }
 
     @Override
@@ -545,7 +545,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
                     bodyElements.add(p);
                 }
                 if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this);
+                    XWPFTable t = new XWPFTable((CTTbl) o, this, false);
                     tables.add(t);
                     bodyElements.add(t);
                 }

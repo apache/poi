@@ -845,7 +845,7 @@ public class XDGFShape extends XDGFSheet {
 
     /**
      * @return returns bounds as a path in local coordinates, which is
-     *         userful if you need to transform to global coordinates
+     *         useful if you need to transform to global coordinates
      *
      * Warning: Don't use this for 1d objects, and will fail for
      *          infinite line objects

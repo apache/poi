@@ -84,6 +84,9 @@ public class XSSFTableStyle implements TableStyle {
         }
 
         for (CTTableStyleElement element : tableStyle.getTableStyleElementList()) {
+            if (element.getType() == null) {
+                throw new IllegalArgumentException("Did not have a type in table-style " + element);
+            }
             TableStyleType type = TableStyleType.valueOf(element.getType().toString());
             DifferentialStyleProvider dstyle = null;
             if (element.isSetDxfId()) {

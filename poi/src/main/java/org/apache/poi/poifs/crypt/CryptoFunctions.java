@@ -252,9 +252,15 @@ public final class CryptoFunctions {
             if (cipherAlgorithm == CipherAlgorithm.rc4) {
                 cipher = Cipher.getInstance(cipherAlgorithm.jceId);
             } else if (cipherAlgorithm.needsBouncyCastle) {
+                if (chain == null) {
+                    throw new IllegalArgumentException("Did not have a chain for cipher " + cipherAlgorithm);
+                }
                 registerBouncyCastle();
                 cipher = Cipher.getInstance(cipherAlgorithm.jceId + "/" + chain.jceId + "/" + padding, "BC");
             } else {
+                if (chain == null) {
+                    throw new IllegalArgumentException("Did not have a chain for cipher " + cipherAlgorithm);
+                }
                 cipher = Cipher.getInstance(cipherAlgorithm.jceId + "/" + chain.jceId + "/" + padding);
             }
 
@@ -277,7 +283,7 @@ public final class CryptoFunctions {
 
     /**
      * Returns a new byte array with a truncated to the given size.
-     * If the hash has less then size bytes, it will be filled with 0x36-bytes
+     * If the hash has less than size bytes, it will be filled with 0x36-bytes
      *
      * @param hash the to be truncated/filled hash byte array
      * @param size the size of the returned byte array
@@ -289,7 +295,7 @@ public final class CryptoFunctions {
 
     /**
      * Returns a new byte array with a truncated to the given size.
-     * If the hash has less then size bytes, it will be filled with 0-bytes
+     * If the hash has less than size bytes, it will be filled with 0-bytes
      *
      * @param hash the to be truncated/filled hash byte array
      * @param size the size of the returned byte array

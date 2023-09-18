@@ -17,9 +17,9 @@
 package org.apache.poi.hwpf.converter;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -228,7 +228,7 @@ public class AbstractWordUtils
                 final String key = lsid + "#" + ( (int) element );
                 int num;
 
-                if ( !list.isStartAtOverriden( element )
+                if ( !list.isStartAtOverridden( element )
                         && numberingState.levels.containsKey( key ) )
                 {
                     num = numberingState.levels.get( key );
@@ -458,7 +458,7 @@ public class AbstractWordUtils
 
     public static HWPFDocumentCore loadDoc( File docFile ) throws IOException
     {
-        try (FileInputStream istream = new FileInputStream(docFile)) {
+        try (InputStream istream = Files.newInputStream(docFile.toPath())) {
             return loadDoc(istream);
         }
     }

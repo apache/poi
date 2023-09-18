@@ -27,7 +27,6 @@ package org.apache.poi;
  */
 public class Version {
 	private static final String VERSION_STRING = "@VERSION@";
-	private static final String RELEASE_DATE = "@DSTAMP@";
 
 	/**
 	 * Return the basic version string, of the form
@@ -35,13 +34,6 @@ public class Version {
 	 */
 	public static String getVersion() {
 		return VERSION_STRING;
-	}
-
-	/**
-	 * Return the date of the release / build
-	 */
-	public static String getReleaseDate() {
-		return RELEASE_DATE;
 	}
 
 	/**
@@ -62,8 +54,7 @@ public class Version {
 	 */
 	public static void main(String[] args) {
 		System.out.println(
-			"Apache " + getProduct() + " " +
-			getVersion() + " (" + getReleaseDate() + ")"
+			"Apache " + getProduct() + " " + getVersion()
 		);
 	}
 }

@@ -25,13 +25,13 @@ import static org.apache.poi.openxml4j.opc.PackagingURIHelper.RELATIONSHIP_PART_
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -212,7 +212,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
            // pack.originalPackagePath = file.getAbsolutePath();
            return pack;
        } catch (InvalidFormatException | RuntimeException e) {
-           // use revert() to free resources when the packgae is opened read-only
+           // use revert() to free resources when the package is opened read-only
            pack.revert();
 
            throw e;
@@ -495,7 +495,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     /**
      * Add a thumbnail to the package. This method is provided to make easier
      * the addition of a thumbnail in a package. You can do the same work by
-     * using the traditionnal relationship and part mechanism.
+     * using the traditional relationship and part mechanism.
      *
      * @param path The full path to the image file.
      */
@@ -506,14 +506,14 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         }
         String name = path.substring(path.lastIndexOf(File.separatorChar) + 1);
 
-        try (FileInputStream is = new FileInputStream(path)) {
+        try (InputStream is = Files.newInputStream(Paths.get(path))) {
             addThumbnail(name, is);
         }
     }
     /**
      * Add a thumbnail to the package. This method is provided to make easier
      * the addition of a thumbnail in a package. You can do the same work by
-     * using the traditionnal relationship and part mechanism.
+     * using the traditional relationship and part mechanism.
      *
      * @param filename The full path to the image file.
      * @param data the image data
@@ -940,7 +940,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
             throw new IllegalArgumentException("part");
         }
 
-        if (partList.containsKey(part._partName)) {
+        if (hasPackagePart(part)) {
             if (!partList.get(part._partName).isDeleted()) {
                 throw new InvalidOperationException(
                         "A part with the name '"
@@ -950,12 +950,16 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
             // If the specified partis flagged as deleted, we make it
             // available
             part.setDeleted(false);
-            // and delete the old part to replace it thereafeter
+            // and delete the old part to replace it thereafter
             this.partList.remove(part._partName);
         }
         this.partList.put(part._partName, part);
         this.isDirty = true;
         return part;
+    }
+
+    protected boolean hasPackagePart(PackagePart part) {
+        return partList.containsKey(part._partName);
     }
 
     /**
@@ -1479,7 +1483,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         }
 
         // Do the save
-        try (FileOutputStream fos = new FileOutputStream(targetFile)) {
+        try (OutputStream fos = Files.newOutputStream(targetFile.toPath())) {
             this.save(fos);
         }
     }
@@ -1554,7 +1558,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 
     /**
      * Replace a content type in this package.<p>
-     * A typical scneario to call this method is to rename a template file to the main format, e.g.
+     * A typical scenario to call this method is to rename a template file to the main format, e.g.
      * <ul>
      *     <li>".dotx" to ".docx"</li>
      *     <li>".dotm" to ".docm"</li>

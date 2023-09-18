@@ -18,6 +18,8 @@
 package org.apache.poi.util;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -36,7 +38,7 @@ public class HexRead {
      */
     public static byte[] readData( String filename ) throws IOException {
         File file = new File( filename );
-        try (InputStream stream = new FileInputStream(file)) {
+        try (InputStream stream = Files.newInputStream(file.toPath())) {
             return readData(stream, -1);
         }
     }
@@ -83,7 +85,7 @@ public class HexRead {
     }
 
     public static byte[] readData( String filename, String section ) throws IOException {
-        return readData(new FileInputStream( filename ), section);
+        return readData(Files.newInputStream(Paths.get(filename)), section);
     }
 
     @SuppressWarnings("fallthrough")

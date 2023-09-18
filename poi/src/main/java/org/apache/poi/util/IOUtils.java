@@ -20,13 +20,13 @@ package org.apache.poi.util;
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.zip.CRC32;
@@ -436,7 +436,7 @@ public final class IOUtils {
         if (!(destDirectory.exists() || destDirectory.mkdirs())) {
             throw new IllegalStateException("Can't create destination directory: "+destDirectory);
         }
-        try (OutputStream destStream = new FileOutputStream(destFile)) {
+        try (OutputStream destStream = Files.newOutputStream(destFile.toPath())) {
             return IOUtils.copy(srcStream, destStream);
         }
     }

@@ -2174,7 +2174,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
-     * protect a workbook with a password (not encypted, just sets writeprotect
+     * protect a workbook with a password (not encrypted, just sets writeprotect
      * flags and the password.
      *
      * @param password to set
@@ -2315,7 +2315,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
-     * Returns the spreadsheet version (EXCLE97) of this workbook
+     * Returns the spreadsheet version (EXCEL97) of this workbook
      *
      * @return EXCEL97 SpreadsheetVersion enum
      * @since 3.14 beta 2

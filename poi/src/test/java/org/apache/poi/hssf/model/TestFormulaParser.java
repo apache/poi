@@ -1372,6 +1372,22 @@ final class TestFormulaParser {
     }
 
     @Test
+    void testParseSheetNameWithMultipleSingleQuotes() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            wb.createSheet("Sh''t1");
+            Ptg[] ptgs = parse("'Sh''''t1'!$A:$A,'Sh''''t1'!$1:$4", wb);
+            confirmTokenClasses(ptgs,
+                    MemFuncPtg.class,
+                    Area3DPtg.class,
+                    Area3DPtg.class,
+                    UnionPtg.class
+            );
+            assertEquals(0, ((Area3DPtg)ptgs[1]).getExternSheetIndex());
+            assertEquals(0, ((Area3DPtg)ptgs[2]).getExternSheetIndex());
+        }
+    }
+
+    @Test
     void testExplicitRangeWithTwoSheetNames() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet("Sheet1");

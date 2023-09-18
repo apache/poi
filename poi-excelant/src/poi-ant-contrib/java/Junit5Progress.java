@@ -28,7 +28,7 @@ import org.junit.platform.launcher.TestIdentifier;
 /**
  * Custom listener class for Ants junitlauncher, because it chomps the important running details
  *
- * @see <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=64836">Bug 64836 - junitlaucher poor summary</a>
+ * @see <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=64836">Bug 64836 - junitlauncher poor summary</a>
  **/
 public class Junit5Progress implements TestExecutionListener {
     private final AtomicInteger numSkippedInTestSet = new AtomicInteger();

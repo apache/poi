@@ -110,6 +110,7 @@ import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.CalculationChain;
+import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
@@ -3809,7 +3810,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             }
         }
 
-        // for the decrytped bytes
+        // for the decrypted bytes
         UnsynchronizedByteArrayOutputStream bosDec = UnsynchronizedByteArrayOutputStream.builder().get();
 
         /* decrypt excel by poi */
@@ -3851,6 +3852,56 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             PackageRelationshipCollection prc2 = prc.getRelationships(XSSFRelation.MACRO_SHEET_XML.getRelation());
             assertNotNull(prc2);
             assertEquals(1, prc2.size());
+        }
+    }
+
+    @Test
+    void testBug62181() throws Exception {
+        try (XSSFWorkbook wb = openSampleWorkbook("bug62181.xlsx")) {
+            SharedStringsTable sst = wb.getSharedStringSource();
+            assertNotNull(sst);
+            assertEquals(0, sst.getCount());
+        }
+    }
+
+    @Test
+    void testBug66675() throws Exception {
+        try (XSSFWorkbook wb = openSampleWorkbook("bug66675.xlsx")) {
+            POIXMLProperties.CoreProperties coreProperties = wb.getProperties().getCoreProperties();
+            assertNotNull(coreProperties);
+            wb.removeSheetAt(0);
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                wb.write(bos);
+                try (XSSFWorkbook wb2 = new XSSFWorkbook(bos.toInputStream())) {
+                    XSSFSheet sheet = wb2.getSheetAt(0);
+                    assertNotNull(sheet);
+                    assertNotNull(wb2.getProperties().getCoreProperties());
+                }
+            }
+        }
+    }
+
+    @Test
+    void testBug66827() throws Exception {
+        final int expectedCount = 6;
+        try (XSSFWorkbook wb = openSampleWorkbook("bug66827.xlsx")) {
+            SharedStringsTable sst = wb.getSharedStringSource();
+            assertNotNull(sst);
+            assertEquals(expectedCount, sst.getCount());
+            for (int i = 0; i < expectedCount; i++) {
+                assertNotNull(sst.getItemAt(i));
+            }
+            XSSFSheet ws = wb.getSheetAt(0);
+            int nRowCount = ws.getLastRowNum(); // does not include header row in the count
+            for (int r = 1; r <= nRowCount; r++) {
+                XSSFRow row = ws.getRow(r);
+                if (row != null) {
+                    XSSFCell cellSymbol = row.getCell(0);
+                    if (cellSymbol != null) {
+                        XSSFComment comment = cellSymbol.getCellComment();
+                    }
+                }
+            }
         }
     }
 

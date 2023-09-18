@@ -402,7 +402,7 @@ public abstract class ContentTypeManager {
                 addDefaultContentType(extension, contentType);
             }
 
-            // Overriden content types
+            // Overridden content types
             NodeList overrideTypes = xmlContentTypetDoc.getDocumentElement().getElementsByTagNameNS(TYPES_NAMESPACE_URI, OVERRIDE_TAG_NAME);
             int overrideTypeCount = overrideTypes.getLength();
             for (int i = 0; i < overrideTypeCount; i++) {

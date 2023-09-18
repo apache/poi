@@ -18,8 +18,9 @@
 package org.apache.poi.ss.util;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
@@ -135,7 +136,7 @@ public class NumberComparingSpreadsheetGenerator {
             }
 
             File outputFile = new File("ExcelNumberCompare.xls");
-            try (FileOutputStream os = new FileOutputStream(outputFile)) {
+            try (OutputStream os = Files.newOutputStream(outputFile.toPath())) {
                 wb.write(os);
             }
             System.out.println("Finished writing '" + outputFile.getAbsolutePath() + "'");

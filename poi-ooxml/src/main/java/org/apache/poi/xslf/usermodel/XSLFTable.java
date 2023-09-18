@@ -114,7 +114,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
     @Override
     public int getNumberOfColumns() {
-        return _table.getTblGrid().sizeOfGridColArray();
+        return _table.getTblGrid() == null ? 0 : _table.getTblGrid().sizeOfGridColArray();
     }
 
     @Override

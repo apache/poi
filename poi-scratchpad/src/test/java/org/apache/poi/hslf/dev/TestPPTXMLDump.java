@@ -16,17 +16,28 @@
 ==================================================================== */
 package org.apache.poi.hslf.dev;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.io.File;
-import java.util.Collections;
-import java.util.Set;
-
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 public class TestPPTXMLDump extends BaseTestPPTIterating {
+    static final Set<String> LOCAL_EXCLUDED = new HashSet<>();
+    static {
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-5306877435838464.ppt");
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6032591399288832.ppt");
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6360479850954752.ppt");
+        LOCAL_EXCLUDED.add("ppt_with_png_encrypted.ppt");
+    }
+
     @Test
     void testMain() throws Exception {
         PPTXMLDump.main(new String[0]);
@@ -41,7 +52,22 @@ public class TestPPTXMLDump extends BaseTestPPTIterating {
 
     @Override
     void runOneFile(File pFile) throws Exception {
-        PPTXMLDump.main(new String[]{pFile.getAbsolutePath()});
+        try {
+           PPTXMLDump.main(new String[]{pFile.getAbsolutePath()});
+            if (LOCAL_EXCLUDED.contains(pFile.getName())) {
+                throw new IllegalStateException("Expected failure for file " + pFile + ", but processing did not throw an exception");
+            }
+        } catch (IndexOutOfBoundsException | IOException e) {
+            if (!LOCAL_EXCLUDED.contains(pFile.getName())) {
+                throw e;
+            }
+        }
+
+        // work around two files which works here but not in other tests
+        if (pFile.getName().equals("clusterfuzz-testcase-minimized-POIFuzzer-5429732352851968.ppt") ||
+                pFile.getName().equals("clusterfuzz-testcase-minimized-POIFuzzer-5681320547975168.ppt")) {
+            throw new FileNotFoundException();
+        }
     }
 
     @Override

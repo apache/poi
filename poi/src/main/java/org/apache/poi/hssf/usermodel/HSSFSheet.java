@@ -512,7 +512,7 @@ public final class HSSFSheet implements Sheet {
      * using the default font (first font in the workbook).<p>
      *
      * Unless you are using a very special font, the default character is '0' (zero),
-     * this is true for Arial (default font font in HSSF) and Calibri (default font in XSSF)<p>
+     * this is true for Arial (default font in HSSF) and Calibri (default font in XSSF)<p>
      *
      * Please note, that the width set by this method includes 4 pixels of margin padding (two on each side),
      * plus 1 pixel padding for the gridlines (Section 3.3.1.12 of the OOXML spec).
@@ -1995,7 +1995,7 @@ public final class HSSFSheet implements Sheet {
      * Breaks occur above the specified row and left of the specified column inclusive.<p>
      *
      * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+     * with columns A,B,C in the first and D,E,... in the second. Similar, <code>sheet.setRowBreak(2);</code>
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -2047,7 +2047,7 @@ public final class HSSFSheet implements Sheet {
      * Breaks occur above the specified row and left of the specified column inclusive.<p>
      *
      * For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, {@code sheet.setRowBreak(2);}
+     * with columns A,B,C in the first and D,E,... in the second. Similar, {@code sheet.setRowBreak(2);}
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *

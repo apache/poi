@@ -31,7 +31,7 @@ buildscript {
 
 plugins {
     id 'base'
-    id 'com.dorongold.task-tree' version '2.1.0'
+    id 'com.dorongold.task-tree' version '2.1.1'
     id 'org.nosphere.apache.rat' version '0.8.0'
     id 'distribution'
     id "com.github.spotbugs" version '5.0.14'
@@ -66,8 +66,8 @@ configurations {
 }
 
 dependencies {
-    antLibs("org.junit.jupiter:junit-jupiter:5.9.3")
-    antLibs("org.apache.ant:ant-junitlauncher:1.10.12")
+    antLibs("org.junit.jupiter:junit-jupiter:5.10.0")
+    antLibs("org.apache.ant:ant-junitlauncher:1.10.14")
 }
 
 ant.taskdef(name: "junit",
@@ -76,7 +76,7 @@ ant.taskdef(name: "junit",
 
 
 wrapper {
-    gradleVersion = '8.1.1'
+    gradleVersion = '8.3'
 }
 
 task adjustWrapperPropertiesFile {
@@ -117,19 +117,19 @@ subprojects {
     apply plugin: 'com.adarshr.test-logger'
 
     ext {
-        bouncyCastleVersion = '1.74'
-        commonsCodecVersion = '1.15'
-        commonsCompressVersion = '1.23.0'
+        bouncyCastleVersion = '1.76'
+        commonsCodecVersion = '1.16.0'
+        commonsCompressVersion = '1.24.0'
         commonsIoVersion = '2.13.0'
         commonsMathVersion = '3.6.1'
-        junitVersion = '5.9.3'
+        junitVersion = '5.10.0'
         log4jVersion = '2.20.0'
         mockitoVersion = '4.11.0'
         hamcrestVersion = '2.2'
         xmlbeansVersion = '5.1.1'
-        batikVersion = '1.16'
+        batikVersion = '1.17'
         graphics2dVersion = '0.43'
-        pdfboxVersion = '2.0.28'
+        pdfboxVersion = '2.0.29'
         saxonVersion = '11.5'
         apiGuardianVersion = '1.1.2'
 
@@ -151,7 +151,7 @@ subprojects {
         all {
             resolutionStrategy {
                 force "commons-io:commons-io:${commonsIoVersion}"
-                force 'org.slf4j:slf4j-api:2.0.7'
+                force 'org.slf4j:slf4j-api:2.0.9'
                 force 'com.fasterxml.woodstox:woodstox-core:6.5.1'
             }
         }
@@ -366,7 +366,7 @@ subprojects {
                 jvmArgs += [
                     // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
                     // opposed to the recommendation there, it doesn't work to add ... to the dependencies
-                    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.7.1'
+                    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.0'
                     // gradles gradle-worker.jar is still not a JPMS module and thus runs as unnamed module
                     '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=org.apache.poi.poi',
                     '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
@@ -405,7 +405,7 @@ subprojects {
         // https://docs.sonarqube.org/display/SONARQUBE52/Analyzing+with+SonarQube+Scanner+for+Gradle
         // for documentation of properties.
         //
-        // Some additional properties are currently set in the Jenkins-DSL, see jenksin/create_jobs.groovy
+        // Some additional properties are currently set in the Jenkins-DSL, see jenkins/create_jobs.groovy
         //
         sonarqube {
             properties {
@@ -443,18 +443,6 @@ subprojects {
         signaturesFiles += files('../src/resources/devtools/forbidden-signatures-prod.txt')
         targetCompatibility = (JavaVersion.VERSION_17.isCompatibleWith(JavaVersion.current()) ? JavaVersion.current() : JavaVersion.VERSION_17)
     }
-
-    task jenkins
-    jenkins.dependsOn build
-    jenkins.dependsOn check
-    jenkins.dependsOn javadoc
-    jenkins.dependsOn jacocoTestReport
-    jenkins.dependsOn rat
-    jenkins.dependsOn getDeps
-
-    task jenkinsLite
-    jenkins.dependsOn build
-    jenkins.dependsOn test
 
     publishing {
         publications {
@@ -609,11 +597,6 @@ task allJavaDoc(type: Javadoc) {
 //  options.group('Examples', 'org.apache.poi.examples*')
 }
 
-
-task jenkins(dependsOn: ['replaceVersion', subprojects.build, 'srcDistZip', 'srcDistTar']) {}
-
-task jenkinsLite(dependsOn: ['replaceVersion', subprojects.build]) {}
-
 clean {
     delete "${rootDir}/build/dist"
 }
@@ -672,6 +655,24 @@ rat {
     // Prints the list of files with unapproved licences to the console, defaults to false
     verbose.set(true)
 }
+
+task jenkins(dependsOn: [
+        'replaceVersion',
+        subprojects.build,
+        subprojects.check,
+        subprojects.javadoc,
+        subprojects.jacocoTestReport,
+        subprojects.getDeps,
+        'srcDistZip',
+        'srcDistTar',
+        rat
+]) {}
+
+task jenkinsLite(dependsOn: [
+        'replaceVersion',
+        subprojects.build,
+        subprojects.test
+]) {}
 
 /*task downloadJarsToLibs() {
     def f = new File("$projectDir/../lib/ooxml/xmlbeans-5.0.0.jar")

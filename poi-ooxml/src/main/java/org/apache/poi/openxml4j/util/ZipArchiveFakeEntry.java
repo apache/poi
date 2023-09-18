@@ -18,6 +18,7 @@
 package org.apache.poi.openxml4j.util;
 
 import java.io.*;
+import java.nio.file.Files;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.io.input.UnsynchronizedByteArrayInputStream;
@@ -99,7 +100,7 @@ import org.apache.poi.util.TempFile;
             }
         } else if (tempFile != null) {
             try {
-                return new FileInputStream(tempFile);
+                return Files.newInputStream(tempFile.toPath());
             } catch (FileNotFoundException e) {
                 throw new IOException("temp file " + tempFile.getAbsolutePath() + " is missing");
             }

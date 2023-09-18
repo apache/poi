@@ -18,10 +18,10 @@
 package org.apache.poi.hssf.extractor;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.file.Files;
 import java.util.Locale;
 
 import org.apache.poi.extractor.POIOLE2TextExtractor;
@@ -225,7 +225,7 @@ public class ExcelExtractor implements POIOLE2TextExtractor, org.apache.poi.ss.e
             return;
         }
 
-        try (InputStream is = cmdArgs.getInputFile() == null ? System.in : new FileInputStream(cmdArgs.getInputFile());
+        try (InputStream is = cmdArgs.getInputFile() == null ? System.in : Files.newInputStream(cmdArgs.getInputFile().toPath());
              HSSFWorkbook wb = new HSSFWorkbook(is);
              ExcelExtractor extractor = new ExcelExtractor(wb)
         ) {

@@ -412,7 +412,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                 if (packageReadOnly) {
                     sharedStringSource = new SharedStringsTable();
                 } else {
-                    sharedStringSource = (SharedStringsTable)createRelationship(XSSFRelation.SHARED_STRINGS, this.xssfFactory);
+                    List<PackagePart> matchingParts = getPackagePart().getPackage()
+                            .getPartsByContentType(XSSFRelation.SHARED_STRINGS.getContentType());
+                    if (matchingParts.isEmpty()) {
+                        sharedStringSource = (SharedStringsTable)
+                                createRelationship(XSSFRelation.SHARED_STRINGS, this.xssfFactory);
+                    } else {
+                        sharedStringSource = new SharedStringsTable(matchingParts.get(0));
+                    }
                 }
             }
 
@@ -824,7 +831,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     private XSSFName createAndStoreName(CTDefinedName ctName) {
         XSSFName name = new XSSFName(ctName, this);
         namedRanges.add(name);
-        namedRangesByName.put(ctName.getName().toLowerCase(Locale.ENGLISH), name);
+        namedRangesByName.put(ctName.getName() == null ? null : ctName.getName().toLowerCase(Locale.ENGLISH), name);
         return name;
     }
 
@@ -2416,7 +2423,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     /**
-     * Returns the spreadsheet version (EXCLE2007) of this workbook
+     * Returns the spreadsheet version (EXCEL2007) of this workbook
      *
      * @return EXCEL2007 SpreadsheetVersion enum
      * @since 3.14 beta 2

@@ -194,67 +194,65 @@ public final class Chunks implements ChunkGroupWithProperties {
     public void record(Chunk chunk) {
         // Work out what MAPIProperty this corresponds to
         MAPIProperty prop = MAPIProperty.get(chunk.getChunkId());
-        if (prop == MAPIProperty.UNKNOWN) {
-            long id = (chunk.getChunkId() << 16) + (long)chunk.getType().getId();
-            prop = unknownProperties.get(id);
-            if (prop == null) {
-                prop = MAPIProperty.createCustom(chunk.getChunkId(), chunk.getType(), chunk.getEntryName());
-                unknownProperties.put(id, prop);
+        try {
+            if (prop == MAPIProperty.UNKNOWN) {
+                long id = (chunk.getChunkId() << 16) + (long) chunk.getType().getId();
+                prop = unknownProperties.get(id);
+                if (prop == null) {
+                    prop = MAPIProperty.createCustom(chunk.getChunkId(), chunk.getType(), chunk.getEntryName());
+                    unknownProperties.put(id, prop);
+                }
             }
-        }
 
-        // Assign it for easy lookup, as best we can
-        if (prop == MAPIProperty.MESSAGE_CLASS) {
-            messageClass = (StringChunk) chunk;
-        } else if (prop == MAPIProperty.INTERNET_MESSAGE_ID) {
-            messageId = (StringChunk) chunk;
-        } else if (prop == MAPIProperty.MESSAGE_SUBMISSION_ID) {
-            // TODO - parse
-            submissionChunk = (MessageSubmissionChunk) chunk;
-        } else if (prop == MAPIProperty.RECEIVED_BY_ADDRTYPE) {
-            sentByServerType = (StringChunk) chunk;
-        } else if (prop == MAPIProperty.TRANSPORT_MESSAGE_HEADERS) {
-            messageHeaders = (StringChunk) chunk;
-        }
-
-        else if (prop == MAPIProperty.CONVERSATION_TOPIC) {
-            conversationTopic = (StringChunk) chunk;
-        } else if (prop == MAPIProperty.SUBJECT) {
-            subjectChunk = (StringChunk) chunk;
-        } /*else if (prop == MAPIProperty.ORIGINAL_SUBJECT) {
+            // Assign it for easy lookup, as best we can
+            if (prop == MAPIProperty.MESSAGE_CLASS) {
+                messageClass = (StringChunk) chunk;
+            } else if (prop == MAPIProperty.INTERNET_MESSAGE_ID) {
+                messageId = (StringChunk) chunk;
+            } else if (prop == MAPIProperty.MESSAGE_SUBMISSION_ID) {
+                // TODO - parse
+                submissionChunk = (MessageSubmissionChunk) chunk;
+            } else if (prop == MAPIProperty.RECEIVED_BY_ADDRTYPE) {
+                sentByServerType = (StringChunk) chunk;
+            } else if (prop == MAPIProperty.TRANSPORT_MESSAGE_HEADERS) {
+                messageHeaders = (StringChunk) chunk;
+            } else if (prop == MAPIProperty.CONVERSATION_TOPIC) {
+                conversationTopic = (StringChunk) chunk;
+            } else if (prop == MAPIProperty.SUBJECT) {
+                subjectChunk = (StringChunk) chunk;
+            } /*else if (prop == MAPIProperty.ORIGINAL_SUBJECT) {
             // TODO
-        }*/
-
-        else if (prop == MAPIProperty.DISPLAY_TO) {
-            displayToChunk = (StringChunk) chunk;
-        } else if (prop == MAPIProperty.DISPLAY_CC) {
-            displayCCChunk = (StringChunk) chunk;
-        } else if (prop == MAPIProperty.DISPLAY_BCC) {
-            displayBCCChunk = (StringChunk) chunk;
-        }
-
-        else if (prop == MAPIProperty.SENDER_EMAIL_ADDRESS) {
-            emailFromChunk = (StringChunk) chunk;
-        } else if (prop == MAPIProperty.SENDER_NAME) {
-            displayFromChunk = (StringChunk) chunk;
-        } else if (prop == MAPIProperty.BODY) {
-            textBodyChunk = (StringChunk) chunk;
-        } else if (prop == MAPIProperty.BODY_HTML) {
-            if (chunk instanceof StringChunk) {
-                htmlBodyChunkString = (StringChunk) chunk;
+        }*/ else if (prop == MAPIProperty.DISPLAY_TO) {
+                displayToChunk = (StringChunk) chunk;
+            } else if (prop == MAPIProperty.DISPLAY_CC) {
+                displayCCChunk = (StringChunk) chunk;
+            } else if (prop == MAPIProperty.DISPLAY_BCC) {
+                displayBCCChunk = (StringChunk) chunk;
+            } else if (prop == MAPIProperty.SENDER_EMAIL_ADDRESS) {
+                emailFromChunk = (StringChunk) chunk;
+            } else if (prop == MAPIProperty.SENDER_NAME) {
+                displayFromChunk = (StringChunk) chunk;
+            } else if (prop == MAPIProperty.BODY) {
+                textBodyChunk = (StringChunk) chunk;
+            } else if (prop == MAPIProperty.BODY_HTML) {
+                if (chunk instanceof StringChunk) {
+                    htmlBodyChunkString = (StringChunk) chunk;
+                }
+                if (chunk instanceof ByteChunk) {
+                    htmlBodyChunkBinary = (ByteChunk) chunk;
+                }
+            } else if (prop == MAPIProperty.RTF_COMPRESSED) {
+                rtfBodyChunk = (ByteChunk) chunk;
+            } else if (chunk instanceof MessagePropertiesChunk) {
+                messageProperties = (MessagePropertiesChunk) chunk;
             }
-            if (chunk instanceof ByteChunk) {
-                htmlBodyChunkBinary = (ByteChunk) chunk;
-            }
-        } else if (prop == MAPIProperty.RTF_COMPRESSED) {
-            rtfBodyChunk = (ByteChunk) chunk;
-        } else if (chunk instanceof MessagePropertiesChunk) {
-            messageProperties = (MessagePropertiesChunk) chunk;
-        }
 
-        // And add to the main list
-        allChunks.computeIfAbsent(prop, k -> new ArrayList<>());
-        allChunks.get(prop).add(chunk);
+            // And add to the main list
+            allChunks.computeIfAbsent(prop, k -> new ArrayList<>());
+            allChunks.get(prop).add(chunk);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Property and type of chunk did not match, had property " + prop + " and type of chunk: " + chunk.getClass(), e);
+        }
     }
 
     @Override

@@ -18,10 +18,10 @@
 package org.apache.poi.xssf;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -76,7 +76,7 @@ public class XSSFTestDataSamples {
     }
 
     private static <R extends Workbook> void writeOut(R wb, File file) throws IOException {
-        try (FileOutputStream out = new FileOutputStream(file)) {
+        try (OutputStream out = Files.newOutputStream(file.toPath())) {
             wb.write(out);
         }
     }
@@ -197,7 +197,7 @@ public class XSSFTestDataSamples {
      * @throws IOException If reading the file fails
      */
     public static XSSFWorkbook readBack(File file) throws IOException {
-        try (InputStream in = new FileInputStream(file)) {
+        try (InputStream in = Files.newInputStream(file.toPath())) {
             return new XSSFWorkbook(in);
         }
     }

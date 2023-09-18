@@ -1942,7 +1942,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * Breaks occur above the specified row and left of the specified column inclusive.
      *
      * For example, {@code sheet.setColumnBreak(2);} breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, {@code sheet.setRowBreak(2);}
+     * with columns A,B,C in the first and D,E,... in the second. Similar, {@code sheet.setRowBreak(2);}
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -2181,7 +2181,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * Breaks occur above the specified row and left of the specified column inclusive.
      *
      * For example, {@code sheet.setColumnBreak(2);} breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, {@code sheet.setRowBreak(2);}
+     * with columns A,B,C in the first and D,E,... in the second. Similar, {@code sheet.setRowBreak(2);}
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -2560,7 +2560,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
      * using the default font (first font in the workbook).
      * <br>
      * Unless you are using a very special font, the default character is '0' (zero),
-     * this is true for Arial (default font font in HSSF) and Calibri (default font in XSSF)
+     * this is true for Arial (default font in HSSF) and Calibri (default font in XSSF)
      * </p>
      *
      * <p>
@@ -4639,7 +4639,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
         pivotTables.add(pivotTable);
         XSSFWorkbook workbook = getWorkbook();
 
-        //Create relationship between the pivot cache defintion and the workbook
+        //Create relationship between the pivot cache definition and the workbook
         XSSFPivotCacheDefinition pivotCacheDefinition = (XSSFPivotCacheDefinition) workbook.
                 createRelationship(XSSFRelation.PIVOT_CACHE_DEFINITION, getWorkbook().getXssfFactory(), tableId);
         String rId = workbook.getRelationId(pivotCacheDefinition);

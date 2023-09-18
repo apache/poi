@@ -262,8 +262,7 @@ class TestXWPFTableCell {
         cell.setText("test text 1");
         assertEquals("test text 1", cell.getText());
 
-        // currently the text is added, I am not sure if this is expected or not...
-        cell.setText("test text 2");
+        cell.appendText("test text 2");
         assertEquals("test text 1test text 2", cell.getText());
     }
 
@@ -283,5 +282,16 @@ class TestXWPFTableCell {
         XWPFDocument readDoc = XWPFTestDataSamples.writeOutAndReadBack(doc);
         XWPFTableCell readCell = readDoc.getTableArray(0).getRow(0).getCell(0);
         assertEquals(0, readCell.getParagraphs().size());
+    }
+
+    @Test
+    void bug66988() throws IOException {
+        try (XWPFDocument document = XWPFTestDataSamples.openSampleDocument("Bug66988.docx")) {
+            XWPFTableCell cell = document.getTableArray(0).getRow(0).getCell(0);
+            cell.appendText("World");
+            assertEquals("HelloWorld", cell.getText());
+            cell.setText("FooBar");
+            assertEquals("FooBar", cell.getText());
+        }
     }
 }

@@ -170,7 +170,7 @@ public final class Section extends Range implements Duplicatable {
      * <dt>{@code 0x02}</dt><dd>If the numbering restarts on every page</dd>
      * </dl>
      *
-     * @return an Rnc, as decribed above, specifying when and where footnote numbering restarts
+     * @return an Rnc, as described above, specifying when and where footnote numbering restarts
      */
     public short getFootnoteRestartQualifier() {
         return _props.getRncFtn();
@@ -203,7 +203,7 @@ public final class Section extends Range implements Duplicatable {
      * <dt>{@code 0x02}</dt><dd>If the numbering restarts on every page</dd>
      * </dl>
      *
-     * @return an Rnc, as decribed above, specifying when and where endnote numbering restarts
+     * @return an Rnc, as described above, specifying when and where endnote numbering restarts
      */
     public short getEndnoteRestartQualifier() {
         return _props.getRncEdn();

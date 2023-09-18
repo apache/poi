@@ -39,9 +39,9 @@ sourceSets {
 }
 
 dependencies {
-    testImplementation 'org.apache.ant:ant:1.10.12'
+    testImplementation 'org.apache.ant:ant:1.10.14'
     testImplementation 'org.apache.commons:commons-collections4:4.4'
-    testImplementation 'com.google.guava:guava:32.0.1-jre'
+    testImplementation 'com.google.guava:guava:32.1.1-jre'
 
     misc(project(':poi-ooxml')) {
         capabilities {
@@ -76,7 +76,7 @@ dependencies {
     }
     testImplementation project(path: ':poi-ooxml-lite-agent', configuration: 'archives')
     testImplementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
-    testImplementation 'org.slf4j:slf4j-simple:2.0.7'
+    testImplementation 'org.slf4j:slf4j-simple:2.0.9'
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
 }
 
@@ -139,9 +139,6 @@ artifacts {
 test {
     // exclude these from the normal test-run
     exclude '**/*FileHandler.class'
-    if (jdkVersion == 8)  {
-        exclude '**/*.class'
-    }
 
     dependsOn { testJar }
 

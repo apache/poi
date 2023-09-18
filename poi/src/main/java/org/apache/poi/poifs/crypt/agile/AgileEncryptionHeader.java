@@ -61,7 +61,7 @@ public class AgileEncryptionHeader extends EncryptionHeader {
         setFlags(0);
         setSizeExtra(0);
         setCspName(null);
-        setBlockSize(keyData.getBlockSize());
+        setBlockSize(keyData.getBlockSize() == null ? 0 : keyData.getBlockSize());
 
         setChainingMode(keyData.getCipherChaining());
 

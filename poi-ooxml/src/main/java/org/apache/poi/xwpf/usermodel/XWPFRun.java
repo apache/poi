@@ -1430,8 +1430,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         }
         if (o instanceof CTFtnEdnRef) {
             CTFtnEdnRef ftn = (CTFtnEdnRef) o;
+            final int i = ftn.getId() == null ? -1 : ftn.getId().intValue();
             String footnoteRef = ftn.getDomNode().getLocalName().equals("footnoteReference") ?
-                    "[footnoteRef:" + ftn.getId().intValue() + "]" : "[endnoteRef:" + ftn.getId().intValue() + "]";
+                    "[footnoteRef:" + i + "]" : "[endnoteRef:" + i + "]";
             text.append(footnoteRef);
         }
     }

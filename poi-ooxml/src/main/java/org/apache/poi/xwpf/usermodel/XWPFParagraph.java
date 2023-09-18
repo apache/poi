@@ -78,11 +78,12 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                     XmlObject o = c.getObject();
                     if (o instanceof CTFtnEdnRef) {
                         CTFtnEdnRef ftn = (CTFtnEdnRef) o;
-                        footnoteText.append(" [").append(ftn.getId()).append(": ");
+                        final BigInteger id = ftn.getId();
+                        footnoteText.append(" [").append(id).append(": ");
                         XWPFAbstractFootnoteEndnote footnote =
                                 ftn.getDomNode().getLocalName().equals("footnoteReference") ?
-                                        document.getFootnoteByID(ftn.getId().intValue()) :
-                                        document.getEndnoteByID(ftn.getId().intValue());
+                                        document.getFootnoteByID(id == null ? 0 : id.intValue()) :
+                                        document.getEndnoteByID(id == null ? 0 : id.intValue());
                         if (null != footnote) {
                             boolean first = true;
                             for (XWPFParagraph p : footnote.getParagraphs()) {
@@ -93,7 +94,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                                 footnoteText.append(p.getText());
                             }
                         } else {
-                            footnoteText.append("!!! End note with ID \"").append(ftn.getId()).append("\" not found in document.");
+                            footnoteText.append("!!! End note with ID \"").append(id).append("\" not found in document.");
                         }
                         footnoteText.append("] ");
 

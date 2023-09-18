@@ -1732,7 +1732,7 @@ public final class InternalWorkbook {
      */
     public int createFormat(String formatString) {
 
-        maxformatid = maxformatid >= 0xa4 ? maxformatid + 1 : 0xa4; //Starting value from M$ empircal study.
+        maxformatid = maxformatid >= 0xa4 ? maxformatid + 1 : 0xa4; //Starting value from M$ empirical  study.
         FormatRecord rec = new FormatRecord(maxformatid, formatString);
 
         int pos = 0;
@@ -2054,7 +2054,7 @@ public final class InternalWorkbook {
     }
 
     /**
-     * protect a workbook with a password (not encypted, just sets writeprotect
+     * protect a workbook with a password (not encrypted, just sets writeprotect
      * flags and the password.
      *
      * @param password the password
@@ -2093,7 +2093,7 @@ public final class InternalWorkbook {
      *
      * @param name the  name of an external function, typically a name of a UDF
      * @param sheetRefIndex the sheet ref index, or -1 if not known
-     * @param udf  locator of user-defiend functions to resolve names of VBA and Add-In functions
+     * @param udf  locator of user-defined functions to resolve names of VBA and Add-In functions
      * @return the external name or null
      */
     public NameXPtg getNameXPtg(String name, int sheetRefIndex, UDFFinder udf) {

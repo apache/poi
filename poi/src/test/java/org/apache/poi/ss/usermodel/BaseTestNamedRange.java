@@ -580,7 +580,7 @@ public abstract class BaseTestNamedRange {
     }
 
     @Test
-    public final void testDefferedSetting() throws Exception {
+    public final void testDeferredSetting() throws Exception {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Name n1 = wb.createName();
             assertNull(n1.getRefersToFormula());

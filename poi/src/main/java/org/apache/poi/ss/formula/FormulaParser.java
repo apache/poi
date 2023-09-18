@@ -595,6 +595,7 @@ public final class FormulaParser {
      * Parses a structured reference, returns it as area reference.
      * Examples:
      * <pre>
+     * Table1[]
      * Table1[col]
      * Table1[[#Totals],[col]]
      * Table1[#Totals]
@@ -636,6 +637,29 @@ public final class FormulaParser {
         // Throwing exceptions is okay.
         int savePtr0 = _pointer;
         nextChar();
+
+        // Special case: Table1[] is equivalent to Table1[#Data]
+        if (look == ']') {
+
+            // Consume the ']' character
+            nextChar();
+
+            // Skip header and total rows if available
+            int actualStartRow = startRow;
+            if (tbl.getHeaderRowCount() > 0) {
+                actualStartRow = startRow + 1;
+            }
+            int actualEndRow = endRow;
+            if (tbl.getTotalsRowCount() > 0) {
+                actualEndRow = endRow - 1;
+            }
+
+            final CellReference topLeft = new CellReference(actualStartRow, startCol);
+            final CellReference bottomRight = new CellReference(actualEndRow, endCol);
+            final SheetIdentifier sheetIden = new SheetIdentifier( null, new NameIdentifier(sheetName, true));
+            final Ptg ptg = _book.get3DReferencePtg(new AreaReference(topLeft, bottomRight, _ssVersion), sheetIden);
+            return new ParseNode(ptg);
+        }
 
         boolean isTotalsSpec = false;
         boolean isThisRowSpec = false;
@@ -1182,8 +1206,6 @@ public final class FormulaParser {
                         if (look == '\''){
                             // Any single quotes which were already present in the sheet name will be converted to double single quotes ('')
                             // so switch back to single quote
-                            sb.appendCodePoint(look);
-                            nextChar();
                             break;
                         }
                     }

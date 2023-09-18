@@ -380,6 +380,10 @@ public class XSSFReader {
          */
         @Override
         public InputStream next() {
+            if (!sheetIterator.hasNext()) {
+                throw new IllegalStateException("Cannot get next from iterator");
+            }
+
             xssfSheetRef = sheetIterator.next();
 
             String sheetId = xssfSheetRef.getId();

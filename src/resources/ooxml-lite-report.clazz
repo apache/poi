@@ -2525,3 +2525,5 @@ org/openxmlformats/schemas/drawingml/x2006/main/CTComplementTransform
 org/openxmlformats/schemas/drawingml/x2006/main/CTPositiveFixedAngle
 org/openxmlformats/schemas/drawingml/x2006/chart/impl/STAxisUnitImpl
 org/openxmlformats/schemas/drawingml/x2006/chart/STAxisUnit
+org/openxmlformats/schemas/drawingml/x2006/main/impl/CTAudioFileImpl
+org/openxmlformats/schemas/drawingml/x2006/main/CTAudioFile

@@ -57,7 +57,7 @@ public class XWPFFooter extends XWPFHeaderFooter {
                     bodyElements.add(p);
                 }
                 if (o instanceof CTTbl) {
-                    XWPFTable t = new XWPFTable((CTTbl) o, this);
+                    XWPFTable t = new XWPFTable((CTTbl) o, this, false);
                     tables.add(t);
                     bodyElements.add(t);
                 }
@@ -105,7 +105,7 @@ public class XWPFFooter extends XWPFHeaderFooter {
                         bodyElements.add(p);
                     }
                     if (o instanceof CTTbl) {
-                        XWPFTable t = new XWPFTable((CTTbl) o, this);
+                        XWPFTable t = new XWPFTable((CTTbl) o, this, false);
                         tables.add(t);
                         bodyElements.add(t);
                     }

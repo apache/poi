@@ -271,4 +271,12 @@ public final class XWPFRelation extends POIXMLRelation {
         return _table.get(rel);
     }
 
+    @Override
+    public String toString() {
+        return "XWPFRelation{" +
+                //getRelation() + "/" +
+                getContentType() + "/" +
+                getDefaultFileName() +
+                "}";
+    }
 }

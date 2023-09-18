@@ -247,6 +247,10 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     }
 
     public <T extends EscherRecord> T getEscherChild(int recordId){
+        if (_escherContainer == null) {
+            throw new IllegalStateException("Did not have a container for fetching children");
+        }
+
         return _escherContainer.getChildById((short)recordId);
     }
 

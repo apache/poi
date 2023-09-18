@@ -22,7 +22,7 @@ module org.apache.poi.ooxml {
     requires org.apache.commons.collections4;
     requires org.apache.commons.codec;
     requires commons.math3;
-    requires SparseBitSet;
+    requires com.zaxxer.sparsebitset;
     requires org.apache.logging.log4j;
     requires java.logging;
     requires java.desktop;
@@ -81,6 +81,7 @@ module org.apache.poi.ooxml {
     exports org.apache.poi.poifs.crypt.temp;
 
     opens org.apache.poi.openxml4j.opc to org.apache.poi.poi, org.junit.platform.commons;
+    opens org.apache.poi.openxml4j to org.apache.poi.ooxml, org.junit.platform.commons;
 
 
     /* optional dependencies for xml signatures - you need to add a require entry your module-info
