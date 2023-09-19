@@ -119,7 +119,7 @@ public class StressMap {
             Row row = iter.next();
 
             if (SCRATCH_IGNORE && handlerIdx > -1) {
-                String handler = row.getCell(handlerIdx).getStringCellValue();
+                String handler = row.getCell(handlerIdx) == null ? "" : row.getCell(handlerIdx).getStringCellValue();
                 if (SCRATCH_HANDLER.matcher(handler).find()) {
                     // ignore exception of ignored files
                     continue;
