@@ -2451,7 +2451,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
         try (POIFSFileSystem poifs = new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream("61300.xls"))) {
 
             DocumentEntry entry =
-                    (DocumentEntry) poifs.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+                    (DocumentEntry) poifs.getRoot().getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME);
 
             RuntimeException ex = assertThrows(
                 RuntimeException.class,

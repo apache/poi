@@ -129,7 +129,7 @@ public class FilteringDirectoryNode implements DirectoryEntry
    public int getEntryCount() {
       int size = directory.getEntryCount();
       for (String excl : excludes) {
-         if (directory.hasEntry(excl)) {
+         if (directory.hasEntryCaseInsensitive(excl)) {
             size--;
          }
       }
@@ -161,6 +161,15 @@ public class FilteringDirectoryNode implements DirectoryEntry
    }
 
    @Override
+   public boolean hasEntryCaseInsensitive(String name) {
+      if (excludes.contains(name)) {
+         return false;
+      }
+      return directory.hasEntryCaseInsensitive(name);
+   }
+
+
+   @Override
    public Entry getEntry(String name) throws FileNotFoundException {
       if (excludes.contains(name)) {
          throw new FileNotFoundException(name);
@@ -169,6 +178,17 @@ public class FilteringDirectoryNode implements DirectoryEntry
       Entry entry = directory.getEntry(name);
       return wrapEntry(entry);
    }
+
+   @Override
+   public Entry getEntryCaseInsensitive(String name) throws FileNotFoundException {
+      if (excludes.contains(name)) {
+         throw new FileNotFoundException(name);
+      }
+
+      Entry entry = directory.getEntryCaseInsensitive(name);
+      return wrapEntry(entry);
+   }
+
    private Entry wrapEntry(Entry entry) {
       String name = entry.getName();
       if (childExcludes.containsKey(name) && entry instanceof DirectoryEntry) {

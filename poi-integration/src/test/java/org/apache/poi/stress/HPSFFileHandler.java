@@ -101,7 +101,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
 
     private static boolean hasPropertyStream(POIFSFileSystem poifs, String streamName) throws IOException {
         DirectoryNode root = poifs.getRoot();
-        if (!root.hasEntry(streamName)) {
+        if (!root.hasEntryCaseInsensitive(streamName)) {
             return false;
         }
         try (DocumentInputStream dis = root.createDocumentInputStream(streamName)) {

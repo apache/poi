@@ -494,7 +494,7 @@ class TestWriteWellKnown {
 
     static DocumentSummaryInformation getDocumentSummaryInformation(POIFSFileSystem poifs)
     throws IOException, NoPropertySetStreamException, UnexpectedPropertySetTypeException {
-        if (!poifs.getRoot().hasEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME)) {
+        if (!poifs.getRoot().hasEntryCaseInsensitive(DocumentSummaryInformation.DEFAULT_STREAM_NAME)) {
             return null;
         }
 

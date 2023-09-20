@@ -63,16 +63,16 @@ final class TestFilteringDirectoryNode {
     void testNoFiltering() throws Exception {
         FilteringDirectoryNode d = new FilteringDirectoryNode(fs.getRoot(), new HashSet<>());
         assertEquals(3, d.getEntryCount());
-        assertEquals(dirA.getName(), d.getEntry(dirA.getName()).getName());
+        assertEquals(dirA.getName(), d.getEntryCaseInsensitive(dirA.getName()).getName());
 
-        assertTrue(d.getEntry(dirA.getName()).isDirectoryEntry());
-        assertFalse(d.getEntry(dirA.getName()).isDocumentEntry());
+        assertTrue(d.getEntryCaseInsensitive(dirA.getName()).isDirectoryEntry());
+        assertFalse(d.getEntryCaseInsensitive(dirA.getName()).isDocumentEntry());
 
-        assertTrue(d.getEntry(dirB.getName()).isDirectoryEntry());
-        assertFalse(d.getEntry(dirB.getName()).isDocumentEntry());
+        assertTrue(d.getEntryCaseInsensitive(dirB.getName()).isDirectoryEntry());
+        assertFalse(d.getEntryCaseInsensitive(dirB.getName()).isDocumentEntry());
 
-        assertFalse(d.getEntry(eRoot.getName()).isDirectoryEntry());
-        assertTrue(d.getEntry(eRoot.getName()).isDocumentEntry());
+        assertFalse(d.getEntryCaseInsensitive(eRoot.getName()).isDirectoryEntry());
+        assertTrue(d.getEntryCaseInsensitive(eRoot.getName()).isDocumentEntry());
 
         Iterator<Entry> i = d.getEntries();
         assertEquals(dirA, i.next());
@@ -93,13 +93,13 @@ final class TestFilteringDirectoryNode {
         FilteringDirectoryNode d1 = new FilteringDirectoryNode(fs.getRoot(), excl);
 
         assertEquals(2, d1.getEntryCount());
-        assertTrue(d1.hasEntry(dirA.getName()));
-        assertTrue(d1.hasEntry(dirB.getName()));
-        assertFalse(d1.hasEntry(eRoot.getName()));
+        assertTrue(d1.hasEntryCaseInsensitive(dirA.getName()));
+        assertTrue(d1.hasEntryCaseInsensitive(dirB.getName()));
+        assertFalse(d1.hasEntryCaseInsensitive(eRoot.getName()));
 
-        assertEquals(dirA, d1.getEntry(dirA.getName()));
-        assertEquals(dirB, d1.getEntry(dirB.getName()));
-        assertThrows(FileNotFoundException.class, () -> d1.getEntry(eRoot.getName()));
+        assertEquals(dirA, d1.getEntryCaseInsensitive(dirA.getName()));
+        assertEquals(dirB, d1.getEntryCaseInsensitive(dirB.getName()));
+        assertThrows(FileNotFoundException.class, () -> d1.getEntryCaseInsensitive(eRoot.getName()));
 
         Iterator<Entry> i = d1.getEntries();
         assertEquals(dirA, i.next());
@@ -117,12 +117,12 @@ final class TestFilteringDirectoryNode {
         FilteringDirectoryNode d2 = new FilteringDirectoryNode(fs.getRoot(), excl);
 
         assertEquals(1, d2.getEntryCount());
-        assertFalse(d2.hasEntry(dirA.getName()));
-        assertTrue(d2.hasEntry(dirB.getName()));
-        assertFalse(d2.hasEntry(eRoot.getName()));
-        assertThrows(FileNotFoundException.class, () -> d2.getEntry(dirA.getName()), "Should be filtered");
-        assertEquals(dirB, d2.getEntry(dirB.getName()));
-        assertThrows(FileNotFoundException.class, () -> d2.getEntry(eRoot.getName()), "Should be filtered");
+        assertFalse(d2.hasEntryCaseInsensitive(dirA.getName()));
+        assertTrue(d2.hasEntryCaseInsensitive(dirB.getName()));
+        assertFalse(d2.hasEntryCaseInsensitive(eRoot.getName()));
+        assertThrows(FileNotFoundException.class, () -> d2.getEntryCaseInsensitive(dirA.getName()), "Should be filtered");
+        assertEquals(dirB, d2.getEntryCaseInsensitive(dirB.getName()));
+        assertThrows(FileNotFoundException.class, () -> d2.getEntryCaseInsensitive(eRoot.getName()), "Should be filtered");
 
         i = d2.getEntries();
         assertEquals(dirB, i.next());
@@ -137,12 +137,12 @@ final class TestFilteringDirectoryNode {
         FilteringDirectoryNode d3 = new FilteringDirectoryNode(fs.getRoot(), excl);
 
         assertEquals(0, d3.getEntryCount());
-        assertFalse(d3.hasEntry(dirA.getName()));
-        assertFalse(d3.hasEntry(dirB.getName()));
-        assertFalse(d3.hasEntry(eRoot.getName()));
-        assertThrows(FileNotFoundException.class, () -> d3.getEntry(dirA.getName()), "Should be filtered");
-        assertThrows(FileNotFoundException.class, () -> d3.getEntry(dirB.getName()), "Should be filtered");
-        assertThrows(FileNotFoundException.class, () -> d3.getEntry(eRoot.getName()), "Should be filtered");
+        assertFalse(d3.hasEntryCaseInsensitive(dirA.getName()));
+        assertFalse(d3.hasEntryCaseInsensitive(dirB.getName()));
+        assertFalse(d3.hasEntryCaseInsensitive(eRoot.getName()));
+        assertThrows(FileNotFoundException.class, () -> d3.getEntryCaseInsensitive(dirA.getName()), "Should be filtered");
+        assertThrows(FileNotFoundException.class, () -> d3.getEntryCaseInsensitive(dirB.getName()), "Should be filtered");
+        assertThrows(FileNotFoundException.class, () -> d3.getEntryCaseInsensitive(eRoot.getName()), "Should be filtered");
 
         i = d3.getEntries();
         assertThrows(NoSuchElementException.class, i::next, "Should throw NoSuchElementException when depleted");
@@ -161,20 +161,20 @@ final class TestFilteringDirectoryNode {
 
         // Check main
         assertEquals(2, d.getEntryCount());
-        assertTrue(d.hasEntry(dirA.getName()));
-        assertTrue(d.hasEntry(dirB.getName()));
-        assertFalse(d.hasEntry(eRoot.getName()));
+        assertTrue(d.hasEntryCaseInsensitive(dirA.getName()));
+        assertTrue(d.hasEntryCaseInsensitive(dirB.getName()));
+        assertFalse(d.hasEntryCaseInsensitive(eRoot.getName()));
 
         // Check filtering down
-        assertTrue(d.getEntry(dirA.getName()) instanceof FilteringDirectoryNode);
-        assertFalse(d.getEntry(dirB.getName()) instanceof FilteringDirectoryNode);
+        assertTrue(d.getEntryCaseInsensitive(dirA.getName()) instanceof FilteringDirectoryNode);
+        assertFalse(d.getEntryCaseInsensitive(dirB.getName()) instanceof FilteringDirectoryNode);
 
-        DirectoryEntry fdA = (DirectoryEntry) d.getEntry(dirA.getName());
-        assertFalse(fdA.hasEntry(eA.getName()));
-        assertTrue(fdA.hasEntry(dirAA.getName()));
+        DirectoryEntry fdA = (DirectoryEntry) d.getEntryCaseInsensitive(dirA.getName());
+        assertFalse(fdA.hasEntryCaseInsensitive(eA.getName()));
+        assertTrue(fdA.hasEntryCaseInsensitive(dirAA.getName()));
 
-        DirectoryEntry fdAA = (DirectoryEntry) fdA.getEntry(dirAA.getName());
-        assertTrue(fdAA.hasEntry(eAA.getName()));
+        DirectoryEntry fdAA = (DirectoryEntry) fdA.getEntryCaseInsensitive(dirAA.getName());
+        assertTrue(fdAA.hasEntryCaseInsensitive(eAA.getName()));
     }
 
     @Test

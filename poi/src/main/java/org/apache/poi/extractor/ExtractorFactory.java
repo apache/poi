@@ -222,7 +222,7 @@ public final class ExtractorFactory {
 
         POIFSFileSystem poifs = new POIFSFileSystem(is);
         DirectoryNode root = poifs.getRoot();
-        boolean isOOXML = root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
+        boolean isOOXML = root.hasEntryCaseInsensitive(DEFAULT_POIFS_ENTRY) || root.hasEntryCaseInsensitive(OOXML_PACKAGE);
 
         return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(root, password));
     }
@@ -267,7 +267,7 @@ public final class ExtractorFactory {
         try {
             poifs = new POIFSFileSystem(file, true);
             DirectoryNode root = poifs.getRoot();
-            boolean isOOXML = root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
+            boolean isOOXML = root.hasEntryCaseInsensitive(DEFAULT_POIFS_ENTRY) || root.hasEntryCaseInsensitive(OOXML_PACKAGE);
             return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(root, password));
         } catch (IOException | RuntimeException e) {
             IOUtils.closeQuietly(poifs);
@@ -313,7 +313,7 @@ public final class ExtractorFactory {
      */
     public static POITextExtractor createExtractor(final DirectoryNode root, String password) throws IOException {
         // Encrypted OOXML files go inside OLE2 containers, is this one?
-        if (root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE)) {
+        if (root.hasEntryCaseInsensitive(DEFAULT_POIFS_ENTRY) || root.hasEntryCaseInsensitive(OOXML_PACKAGE)) {
             return wp(FileMagic.OOXML, w -> w.create(root, password));
         } else {
             return wp(FileMagic.OLE2, w ->  w.create(root, password));

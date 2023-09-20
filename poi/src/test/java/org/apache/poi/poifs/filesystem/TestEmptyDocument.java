@@ -101,13 +101,13 @@ final class TestEmptyDocument {
 
         // This line caused the error.
         try (POIFSFileSystem fs = new POIFSFileSystem(out.toInputStream())) {
-            DocumentEntry entry = (DocumentEntry) fs.getRoot().getEntry("Empty");
+            DocumentEntry entry = (DocumentEntry) fs.getRoot().getEntryCaseInsensitive("Empty");
             assertEquals(0, entry.getSize(), "Expected zero size");
             byte[] actualReadbackData;
             actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
             assertEquals(0, actualReadbackData.length, "Expected zero read from stream");
 
-            entry = (DocumentEntry) fs.getRoot().getEntry("NotEmpty");
+            entry = (DocumentEntry) fs.getRoot().getEntryCaseInsensitive("NotEmpty");
             actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
             assertEquals(testData.length, entry.getSize(), "Expected size was wrong");
             assertArrayEquals(testData, actualReadbackData, "Expected same data read from stream");

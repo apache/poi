@@ -390,7 +390,7 @@ final class TestPOIFSMiniStore {
         assertEquals(POIFSConstants.UNUSED_BLOCK, ministore.getNextBlock(2));
 
         // Check the data is unchanged and the right length
-        entry = (DocumentEntry) fs.getRoot().getEntry("mini");
+        entry = (DocumentEntry) fs.getRoot().getEntryCaseInsensitive("mini");
         assertEquals(data.length, entry.getSize());
         byte[] rdata = new byte[data.length];
         dis = new DocumentInputStream(entry);
@@ -398,7 +398,7 @@ final class TestPOIFSMiniStore {
         assertArrayEquals(data, rdata);
         dis.close();
 
-        entry = (DocumentEntry) fs.getRoot().getEntry("mini2");
+        entry = (DocumentEntry) fs.getRoot().getEntryCaseInsensitive("mini2");
         assertEquals(data.length, entry.getSize());
         rdata = new byte[data.length];
         dis = new DocumentInputStream(entry);

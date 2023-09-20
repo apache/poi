@@ -133,7 +133,7 @@ public class Ole10Native {
      * @throws Ole10NativeException on invalid or unexcepted data format
      */
     public static Ole10Native createFromEmbeddedOleObject(DirectoryNode directory) throws IOException, Ole10NativeException {
-        DocumentEntry nativeEntry = (DocumentEntry) directory.getEntry(OLE10_NATIVE);
+        DocumentEntry nativeEntry = (DocumentEntry) directory.getEntryCaseInsensitive(OLE10_NATIVE);
         try (DocumentInputStream dis = directory.createDocumentInputStream(nativeEntry)) {
             byte[] data = IOUtils.toByteArray(dis, nativeEntry.getSize(), MAX_RECORD_LENGTH);
             return new Ole10Native(data, 0);
@@ -253,7 +253,7 @@ public class Ole10Native {
      * OlePresXXX, but it seems, that they aren't necessary
      */
     public static void createOleMarkerEntry(final DirectoryEntry parent) throws IOException {
-        if (!parent.hasEntry(OLE_MARKER_NAME)) {
+        if (!parent.hasEntryCaseInsensitive(OLE_MARKER_NAME)) {
             parent.createDocument(OLE_MARKER_NAME, UnsynchronizedByteArrayInputStream.builder().setByteArray(OLE_MARKER_BYTES).get());
         }
     }

@@ -23,9 +23,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Spliterator;
@@ -40,12 +43,15 @@ import org.apache.poi.poifs.property.Property;
  * Simple implementation of DirectoryEntry
  */
 public class DirectoryNode
-    extends EntryNode
-    implements DirectoryEntry, POIFSViewable, Iterable<Entry>
+        extends EntryNode
+        implements DirectoryEntry, POIFSViewable, Iterable<Entry>
 {
 
-    // Map of Entry instances, keyed by their names
+    // Map of Entry instances, keyed by their literal names as stored
     private final Map<String,Entry> _byname = new HashMap<>();
+
+    // Map of Entry instances, keyed by their Uppercased names
+    private final Map<String,Entry> _byUCName = new HashMap<>();
 
     // Our list of entries, kept sorted to preserve order
     private final ArrayList<Entry> _entries = new ArrayList<>();
@@ -100,6 +106,7 @@ public class DirectoryNode
             }
             _entries.add(childNode);
             _byname.put(childNode.getName(), childNode);
+            _byUCName.put(childNode.getName().toUpperCase(Locale.ROOT), childNode);
         }
     }
 
@@ -132,9 +139,9 @@ public class DirectoryNode
      */
     public DocumentInputStream createDocumentInputStream(
             final String documentName)
-        throws IOException
+            throws IOException
     {
-        return createDocumentInputStream(getEntry(documentName));
+        return createDocumentInputStream(getEntryCaseInsensitive(documentName));
     }
 
     /**
@@ -149,11 +156,11 @@ public class DirectoryNode
      */
     public DocumentInputStream createDocumentInputStream(
             final Entry document)
-        throws IOException
+            throws IOException
     {
         if (!document.isDocumentEntry()) {
             throw new IOException("Entry '" + document.getName()
-                                  + "' is not a DocumentEntry");
+                    + "' is not a DocumentEntry");
         }
 
         DocumentEntry entry = (DocumentEntry)document;
@@ -170,7 +177,7 @@ public class DirectoryNode
      * @throws IOException if the document can't be created
      */
     DocumentEntry createDocument(final POIFSDocument document)
-        throws IOException
+            throws IOException
     {
         DocumentProperty property = document.getDocumentProperty();
         DocumentNode     rval     = new DocumentNode(property, this);
@@ -180,6 +187,7 @@ public class DirectoryNode
 
         _entries.add(rval);
         _byname.put(property.getName(), rval);
+        _byUCName.put(property.getName().toUpperCase(Locale.ROOT), rval);
         return rval;
     }
 
@@ -194,16 +202,18 @@ public class DirectoryNode
     boolean changeName(final String oldName, final String newName)
     {
         boolean   rval  = false;
-        EntryNode child = ( EntryNode ) _byname.get(oldName);
+        EntryNode child = ( EntryNode ) _byUCName.get(oldName.toUpperCase(Locale.ROOT));
 
         if (child != null)
         {
             rval = (( DirectoryProperty ) getProperty())
-                .changeName(child.getProperty(), newName);
+                    .changeName(child.getProperty(), newName);
             if (rval)
             {
                 _byname.remove(oldName);
                 _byname.put(child.getProperty().getName(), child);
+                _byUCName.remove(oldName.toUpperCase(Locale.ROOT));
+                _byUCName.put(child.getProperty().getName().toUpperCase(Locale.ROOT), child);
             }
         }
         return rval;
@@ -220,13 +230,14 @@ public class DirectoryNode
     boolean deleteEntry(final EntryNode entry)
     {
         boolean rval =
-            (( DirectoryProperty ) getProperty())
-                .deleteChild(entry.getProperty());
+                (( DirectoryProperty ) getProperty())
+                        .deleteChild(entry.getProperty());
 
         if (rval)
         {
             _entries.remove(entry);
             _byname.remove(entry.getName());
+            _byUCName.remove(entry.getName().toUpperCase(Locale.ROOT));
 
             try {
                 _filesystem.remove(entry);
@@ -258,9 +269,9 @@ public class DirectoryNode
     }
 
     /**
-     * get the names of all the Entries contained directly in this
-     * instance (in other words, names of children only; no grandchildren
-     * etc).
+     * get the literal, case-sensitive names of all the Entries contained
+     * directly in this instance (in other words, names of children only;
+     * no grandchildren etc).
      *
      * @return the names of all the entries that may be retrieved with
      *         getEntry(String), which may be empty (if this
@@ -298,14 +309,32 @@ public class DirectoryNode
         return _entries.size();
     }
 
+    /**
+     * Checks for a specific entry in a case-sensitive way.
+     *
+     * @param name
+     * @return whether or not an entry exists for that name (case-sensitive)
+     */
     @Override
-    public boolean hasEntry( String name )
+    public boolean hasEntry(String name )
     {
-        return name != null && _byname.containsKey( name );
+        return name != null && _byname.containsKey(name);
     }
 
     /**
-     * get a specified Entry by name
+     * Checks for a specific entry in a case-insensitive way.
+     *
+     * @param name
+     * @return whether or not an entry exists for that name (case-insensitive)
+     */
+    @Override
+    public boolean hasEntryCaseInsensitive(String name )
+    {
+        return name != null && _byUCName.containsKey(name.toUpperCase(Locale.ROOT));
+    }
+
+    /**
+     * get a specified Entry by name, case sensitive
      *
      * @param name the name of the Entry to obtain.
      *
@@ -315,7 +344,6 @@ public class DirectoryNode
      * @throws FileNotFoundException if no Entry with the specified
      *            name exists in this DirectoryEntry
      */
-
     @Override
     public Entry getEntry(final String name) throws FileNotFoundException {
         Entry rval = null;
@@ -341,6 +369,41 @@ public class DirectoryNode
     }
 
     /**
+     * get a specified Entry by name, case-insensitive
+     *
+     * @param name the name of the Entry to obtain.
+     *
+     * @return the specified Entry, if it is directly contained in
+     *         this DirectoryEntry
+     *
+     * @throws FileNotFoundException if no Entry with the specified
+     *            name exists in this DirectoryEntry
+     */
+    @Override
+    public Entry getEntryCaseInsensitive(final String name) throws FileNotFoundException {
+        Entry rval = null;
+
+        if (name != null) {
+            rval = _byUCName.get(name.toUpperCase(Locale.ROOT));
+        }
+        if (rval == null) {
+            // throw more useful exceptions for known wrong file-extensions
+            if(_byname.containsKey("Workbook")) {
+                throw new IllegalArgumentException("The document is really a XLS file");
+            } else if(_byname.containsKey("PowerPoint Document")) {
+                throw new IllegalArgumentException("The document is really a PPT file");
+            } else if(_byname.containsKey("VisioDocument")) {
+                throw new IllegalArgumentException("The document is really a VSD file");
+            }
+
+            // either a null name was given, or there is no such name
+            throw new FileNotFoundException("no such entry: \"" + name
+                    + "\", had: " + _byUCName.keySet());
+        }
+        return rval;
+    }
+
+    /**
      * create a new DocumentEntry
      *
      * @param name the name of the new DocumentEntry
@@ -355,7 +418,7 @@ public class DirectoryNode
     @Override
     public DocumentEntry createDocument(final String name,
                                         final InputStream stream)
-        throws IOException
+            throws IOException
     {
         return createDocument(new POIFSDocument(name, _filesystem, stream));
     }
@@ -375,7 +438,7 @@ public class DirectoryNode
     @Override
     public DocumentEntry createDocument(final String name, final int size,
                                         final POIFSWriterListener writer)
-        throws IOException
+            throws IOException
     {
         return createDocument(new POIFSDocument(name, size, _filesystem, writer));
     }
@@ -392,16 +455,17 @@ public class DirectoryNode
 
     @Override
     public DirectoryEntry createDirectory(final String name)
-        throws IOException
+            throws IOException
     {
         DirectoryProperty property = new DirectoryProperty(name);
 
         DirectoryNode rval = new DirectoryNode(property, _filesystem, this);
-       _filesystem.addDirectory(property);
+        _filesystem.addDirectory(property);
 
         (( DirectoryProperty ) getProperty()).addChild(property);
         _entries.add(rval);
         _byname.put(name, rval);
+        _byUCName.put(name.toUpperCase(Locale.ROOT), rval);
         return rval;
     }
 
@@ -419,12 +483,12 @@ public class DirectoryNode
     @SuppressWarnings("WeakerAccess")
     public DocumentEntry createOrUpdateDocument(final String name,
                                                 final InputStream stream)
-        throws IOException
+            throws IOException
     {
-        if (! hasEntry(name)) {
+        if (! hasEntryCaseInsensitive(name)) {
             return createDocument(name, stream);
         } else {
-            DocumentNode existing = (DocumentNode)getEntry(name);
+            DocumentNode existing = (DocumentNode) getEntryCaseInsensitive(name);
             POIFSDocument nDoc = new POIFSDocument(existing);
             nDoc.replaceContents(stream);
             return existing;

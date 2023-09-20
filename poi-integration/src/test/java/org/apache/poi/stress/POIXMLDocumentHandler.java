@@ -40,7 +40,7 @@ public final class POIXMLDocumentHandler {
     protected static boolean isEncrypted(InputStream stream) throws IOException {
         if (FileMagic.valueOf(stream) == FileMagic.OLE2) {
             try (POIFSFileSystem poifs = new POIFSFileSystem(stream)) {
-                if (poifs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
+                if (poifs.getRoot().hasEntryCaseInsensitive(Decryptor.DEFAULT_POIFS_ENTRY)) {
                     return true;
                 }
             }

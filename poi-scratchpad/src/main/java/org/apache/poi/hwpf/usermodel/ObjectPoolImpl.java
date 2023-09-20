@@ -42,7 +42,7 @@ public class ObjectPoolImpl implements ObjectsPool
 
         try
         {
-            return _objectPool.getEntry( objId );
+            return _objectPool.getEntryCaseInsensitive( objId );
         }
         catch ( FileNotFoundException exc )
         {

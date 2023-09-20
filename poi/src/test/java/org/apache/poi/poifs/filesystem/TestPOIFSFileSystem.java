@@ -214,7 +214,7 @@ final class TestPOIFSFileSystem {
 
        DirectoryNode root = fs.getRoot();
        assertEquals(1, root.getEntryCount());
-       DocumentNode big = (DocumentNode)root.getEntry("BIG");
+       DocumentNode big = (DocumentNode)root.getEntryCaseInsensitive("BIG");
        assertEquals(hugeStream.length, big.getSize());
     }
 

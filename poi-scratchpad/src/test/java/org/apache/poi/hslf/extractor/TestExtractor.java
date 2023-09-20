@@ -185,8 +185,8 @@ public final class TestExtractor {
             };
 
             for (int i=0; i<TEST_SET.length; i+=2) {
-                DirectoryNode dir = (DirectoryNode)root.getEntry(TEST_SET[i]);
-                assertTrue(dir.hasEntry(HSLFSlideShow.POWERPOINT_DOCUMENT));
+                DirectoryNode dir = (DirectoryNode)root.getEntryCaseInsensitive(TEST_SET[i]);
+                assertTrue(dir.hasEntryCaseInsensitive(HSLFSlideShow.POWERPOINT_DOCUMENT));
 
                 try (final SlideShow<?,?> ppt = SlideShowFactory.create(dir);
                      final SlideShowExtractor<?,?> ppe = new SlideShowExtractor<>(ppt)) {

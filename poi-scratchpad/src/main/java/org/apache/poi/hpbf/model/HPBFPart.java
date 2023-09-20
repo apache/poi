@@ -44,7 +44,7 @@ public abstract class HPBFPart {
         DirectoryNode dir = getDir(baseDir, path);
         String name = path[path.length-1];
 
-        if (!dir.hasEntry(name)) {
+        if (!dir.hasEntryCaseInsensitive(name)) {
             throw new IllegalArgumentException("File invalid - failed to find document entry '" + name + "'");
         }
 
@@ -78,7 +78,7 @@ public abstract class HPBFPart {
         DirectoryNode dir = baseDir;
         for(int i=0; i<path.length-1; i++) {
             try {
-                dir = (DirectoryNode)dir.getEntry(path[i]);
+                dir = (DirectoryNode)dir.getEntryCaseInsensitive(path[i]);
             } catch(FileNotFoundException e) {
                 dir.createDirectory(path[i]);
             }

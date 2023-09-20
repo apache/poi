@@ -644,7 +644,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
                             DirectoryEntry dir = embeddedObject.getDirectory();
                             if (dir instanceof DirectoryNode) {
                                 DirectoryNode dNode = (DirectoryNode) dir;
-                                if (dNode.hasEntry("WordDocument")) {
+                                if (dNode.hasEntryCaseInsensitive("WordDocument")) {
                                     found = true;
                                     break;
                                 }

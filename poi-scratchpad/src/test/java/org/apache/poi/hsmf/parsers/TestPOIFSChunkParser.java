@@ -56,13 +56,13 @@ public final class TestPOIFSChunkParser {
     void testFindsCore() throws IOException, ChunkNotFoundException {
         try (POIFSFileSystem simple = new POIFSFileSystem(samples.getFile("quick.msg"), true)) {
 
-            // Check a few core things are present
-            simple.getRoot().getEntry(
-                    (new StringChunk(MAPIProperty.SUBJECT.id, Types.ASCII_STRING)).getEntryName()
-            );
-            simple.getRoot().getEntry(
-                    (new StringChunk(MAPIProperty.SENDER_NAME.id, Types.ASCII_STRING)).getEntryName()
-            );
+      // Check a few core things are present
+      simple.getRoot().getEntryCaseInsensitive(
+            (new StringChunk(MAPIProperty.SUBJECT.id, Types.ASCII_STRING)).getEntryName()
+      );
+      simple.getRoot().getEntryCaseInsensitive(
+            (new StringChunk(MAPIProperty.SENDER_NAME.id, Types.ASCII_STRING)).getEntryName()
+      );
 
             // Now load the file
             try (MAPIMessage msg = new MAPIMessage(simple)) {
@@ -82,7 +82,7 @@ public final class TestPOIFSChunkParser {
     void testFindsRecips() throws IOException, ChunkNotFoundException {
         try (POIFSFileSystem simple = new POIFSFileSystem(samples.getFile("quick.msg"), true)) {
 
-            simple.getRoot().getEntry("__recip_version1.0_#00000000");
+      simple.getRoot().getEntryCaseInsensitive("__recip_version1.0_#00000000");
 
             ChunkGroup[] groups = POIFSChunkParser.parse(simple.getRoot());
             assertEquals(3, groups.length);
@@ -136,12 +136,12 @@ public final class TestPOIFSChunkParser {
     void testFindsMultipleRecipients() throws IOException, ChunkNotFoundException {
         try (POIFSFileSystem multiple = new POIFSFileSystem(samples.getFile("example_received_unicode.msg"), true)) {
 
-            multiple.getRoot().getEntry("__recip_version1.0_#00000000");
-            multiple.getRoot().getEntry("__recip_version1.0_#00000001");
-            multiple.getRoot().getEntry("__recip_version1.0_#00000002");
-            multiple.getRoot().getEntry("__recip_version1.0_#00000003");
-            multiple.getRoot().getEntry("__recip_version1.0_#00000004");
-            multiple.getRoot().getEntry("__recip_version1.0_#00000005");
+      multiple.getRoot().getEntryCaseInsensitive("__recip_version1.0_#00000000");
+      multiple.getRoot().getEntryCaseInsensitive("__recip_version1.0_#00000001");
+      multiple.getRoot().getEntryCaseInsensitive("__recip_version1.0_#00000002");
+      multiple.getRoot().getEntryCaseInsensitive("__recip_version1.0_#00000003");
+      multiple.getRoot().getEntryCaseInsensitive("__recip_version1.0_#00000004");
+      multiple.getRoot().getEntryCaseInsensitive("__recip_version1.0_#00000005");
 
             ChunkGroup[] groups = POIFSChunkParser.parse(multiple.getRoot());
             assertEquals(9, groups.length);
@@ -228,7 +228,7 @@ public final class TestPOIFSChunkParser {
     void testFindsNameId() throws IOException {
         try (POIFSFileSystem simple = new POIFSFileSystem(samples.getFile("quick.msg"), true)) {
 
-            simple.getRoot().getEntry("__nameid_version1.0");
+      simple.getRoot().getEntryCaseInsensitive("__nameid_version1.0");
 
             ChunkGroup[] groups = POIFSChunkParser.parse(simple.getRoot());
             assertEquals(3, groups.length);
@@ -253,10 +253,11 @@ public final class TestPOIFSChunkParser {
                 POIFSFileSystem without = new POIFSFileSystem(samples.getFile("quick.msg"), true)) {
             AttachmentChunks attachment;
 
-            // Check raw details on the one with
-            with.getRoot().getEntry("__attach_version1.0_#00000000");
-            with.getRoot().getEntry("__attach_version1.0_#00000001");
-            POIFSChunkParser.parse(with.getRoot());
+
+      // Check raw details on the one with
+      with.getRoot().getEntryCaseInsensitive("__attach_version1.0_#00000000");
+      with.getRoot().getEntryCaseInsensitive("__attach_version1.0_#00000001");
+      POIFSChunkParser.parse(with.getRoot());
 
             ChunkGroup[] groups = POIFSChunkParser.parse(with.getRoot());
             assertEquals(5, groups.length);
@@ -276,9 +277,10 @@ public final class TestPOIFSChunkParser {
             assertEquals("pj1.txt", attachment.getAttachLongFileName().toString());
             assertEquals(89, attachment.getAttachData().getValue().length);
 
-            // Check raw details on one without
-            assertFalse(without.getRoot().hasEntry("__attach_version1.0_#00000000"));
-            assertFalse(without.getRoot().hasEntry("__attach_version1.0_#00000001"));
+
+      // Check raw details on one without
+      assertFalse(without.getRoot().hasEntryCaseInsensitive("__attach_version1.0_#00000000"));
+      assertFalse(without.getRoot().hasEntryCaseInsensitive("__attach_version1.0_#00000001"));
 
             // One with, from the top
             try (MAPIMessage msgWith = new MAPIMessage(with)) {

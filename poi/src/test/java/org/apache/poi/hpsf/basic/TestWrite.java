@@ -447,8 +447,8 @@ class TestWrite {
             DirectoryEntry root = fs.getRoot();
 
             // Read the properties in there
-            DocumentNode sinfDoc = (DocumentNode) root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-            DocumentNode dinfDoc = (DocumentNode) root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+            DocumentNode sinfDoc = (DocumentNode) root.getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME);
+            DocumentNode dinfDoc = (DocumentNode) root.getEntryCaseInsensitive(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
             InputStream sinfStream = new DocumentInputStream(sinfDoc);
             SummaryInformation sinf = (SummaryInformation) PropertySetFactory.create(sinfStream);
@@ -479,8 +479,8 @@ class TestWrite {
 
 
             // Check it didn't get changed
-            sinfDoc = (DocumentNode) root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-            dinfDoc = (DocumentNode) root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+            sinfDoc = (DocumentNode) root.getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME);
+            dinfDoc = (DocumentNode) root.getEntryCaseInsensitive(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
             InputStream sinfStream2 = new DocumentInputStream(sinfDoc);
             sinf = (SummaryInformation) PropertySetFactory.create(sinfStream2);
@@ -503,8 +503,8 @@ class TestWrite {
             DirectoryEntry root = fs.getRoot();
 
             // Read the properties in once more
-            DocumentNode sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-            DocumentNode dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+            DocumentNode sinfDoc = (DocumentNode)root.getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME);
+            DocumentNode dinfDoc = (DocumentNode)root.getEntryCaseInsensitive(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
             InputStream sinfStream3 = new DocumentInputStream(sinfDoc);
             SummaryInformation sinf = (SummaryInformation)PropertySetFactory.create(sinfStream3);
@@ -533,8 +533,8 @@ class TestWrite {
 
 
             // Check that the filesystem can give us back the same bytes
-            sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
-            dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+            sinfDoc = (DocumentNode)root.getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME);
+            dinfDoc = (DocumentNode)root.getEntryCaseInsensitive(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 
             InputStream sinfStream4 = new DocumentInputStream(sinfDoc);
             byte[] sinfData = IOUtils.toByteArray(sinfStream4);
@@ -581,13 +581,13 @@ class TestWrite {
 
 
             // Read them back in again
-            sinfDoc = (DocumentNode)root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+            sinfDoc = (DocumentNode)root.getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME);
             InputStream sinfStream6 = new DocumentInputStream(sinfDoc);
             sinf = (SummaryInformation)PropertySetFactory.create(sinfStream6);
             sinfStream6.close();
             assertEquals(131077, sinf.getOSVersion());
 
-            dinfDoc = (DocumentNode)root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+            dinfDoc = (DocumentNode)root.getEntryCaseInsensitive(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
             InputStream dinfStream6 = new DocumentInputStream(dinfDoc);
             dinf = (DocumentSummaryInformation)PropertySetFactory.create(dinfStream6);
             dinfStream6.close();
@@ -609,13 +609,13 @@ class TestWrite {
             DirectoryEntry root = fs.getRoot();
 
             // Re-check on load
-            DocumentNode sinfDoc = (DocumentNode) root.getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
+            DocumentNode sinfDoc = (DocumentNode) root.getEntryCaseInsensitive(SummaryInformation.DEFAULT_STREAM_NAME);
             InputStream sinfStream7 = new DocumentInputStream(sinfDoc);
             SummaryInformation sinf = (SummaryInformation) PropertySetFactory.create(sinfStream7);
             sinfStream7.close();
             assertEquals(131077, sinf.getOSVersion());
 
-            DocumentNode dinfDoc = (DocumentNode) root.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+            DocumentNode dinfDoc = (DocumentNode) root.getEntryCaseInsensitive(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
             InputStream dinfStream7 = new DocumentInputStream(dinfDoc);
             DocumentSummaryInformation dinf = (DocumentSummaryInformation) PropertySetFactory.create(dinfStream7);
             dinfStream7.close();

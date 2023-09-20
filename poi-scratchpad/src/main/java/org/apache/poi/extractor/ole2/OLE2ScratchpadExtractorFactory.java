@@ -108,7 +108,7 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
         final String oldPW = Biff8EncryptionKey.getCurrentUserPassword();
         try {
             Biff8EncryptionKey.setCurrentUserPassword(password);
-            if (poifsDir.hasEntry("WordDocument")) {
+            if (poifsDir.hasEntryCaseInsensitive("WordDocument")) {
                 // Old or new style word document?
                 try {
                     return new WordExtractor(poifsDir);
@@ -117,20 +117,20 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
                 }
             }
 
-            if (poifsDir.hasEntry(HSLFSlideShow.POWERPOINT_DOCUMENT) || poifsDir.hasEntry(HSLFSlideShow.PP97_DOCUMENT)) {
+            if (poifsDir.hasEntryCaseInsensitive(HSLFSlideShow.POWERPOINT_DOCUMENT) || poifsDir.hasEntryCaseInsensitive(HSLFSlideShow.PP97_DOCUMENT)) {
                 return new SlideShowExtractor<>((HSLFSlideShow)SlideShowFactory.create(poifsDir));
             }
 
-            if (poifsDir.hasEntry("VisioDocument")) {
+            if (poifsDir.hasEntryCaseInsensitive("VisioDocument")) {
                 return new VisioTextExtractor(poifsDir);
             }
 
-            if (poifsDir.hasEntry("Quill")) {
+            if (poifsDir.hasEntryCaseInsensitive("Quill")) {
                 return new PublisherTextExtractor(poifsDir);
             }
 
             for (String entryName : OUTLOOK_ENTRY_NAMES) {
-                if (poifsDir.hasEntry(entryName)) {
+                if (poifsDir.hasEntryCaseInsensitive(entryName)) {
                     return new OutlookTextExtractor(poifsDir);
                 }
             }
@@ -168,7 +168,7 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
         } else if (ext instanceof WordExtractor) {
             // These are in ObjectPool -> _... under the root
             try {
-                DirectoryEntry op = (DirectoryEntry) root.getEntry("ObjectPool");
+                DirectoryEntry op = (DirectoryEntry) root.getEntryCaseInsensitive("ObjectPool");
                 StreamSupport.stream(op.spliterator(), false)
                     .filter(entry -> entry.getName().startsWith("_"))
                     .forEach(dirs::add);

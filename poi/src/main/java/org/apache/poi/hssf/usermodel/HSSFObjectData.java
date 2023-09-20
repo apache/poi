@@ -19,7 +19,6 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.record.*;
@@ -56,7 +55,7 @@ public final class HSSFObjectData extends HSSFPicture implements ObjectData {
         int streamId = subRecord.getStreamId().intValue();
         String streamName = "MBD" + HexDump.toHex(streamId);
 
-        Entry entry = _root.getEntry(streamName);
+        Entry entry = _root.getEntryCaseInsensitive(streamName);
         if (entry instanceof DirectoryEntry) {
             return (DirectoryEntry) entry;
         }

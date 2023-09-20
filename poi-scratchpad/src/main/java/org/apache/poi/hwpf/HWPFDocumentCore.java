@@ -185,8 +185,8 @@ public abstract class HWPFDocumentCore extends POIDocument {
         _fib = new FileInformationBlock(_mainStream);
 
         DirectoryEntry objectPoolEntry = null;
-        if (directory.hasEntry(STREAM_OBJECT_POOL)) {
-            final Entry entry = directory.getEntry(STREAM_OBJECT_POOL);
+        if (directory.hasEntryCaseInsensitive(STREAM_OBJECT_POOL)) {
+            final Entry entry = directory.getEntryCaseInsensitive(STREAM_OBJECT_POOL);
             if (!(entry instanceof DirectoryEntry)) {
                 throw new IllegalArgumentException("Had unexpected type of entry for name: " + STREAM_OBJECT_POOL + ": " + entry.getClass());
             }
@@ -341,7 +341,7 @@ public abstract class HWPFDocumentCore extends POIDocument {
      */
     protected byte[] getDocumentEntryBytes(String name, int encryptionOffset, final int len) throws IOException {
         DirectoryNode dir = getDirectory();
-        final Entry entry = dir.getEntry(name);
+        final Entry entry = dir.getEntryCaseInsensitive(name);
         if (!(entry instanceof DocumentEntry)) {
             throw new IllegalArgumentException("Had unexpected type of entry for name: " + name + ": " + entry);
         }

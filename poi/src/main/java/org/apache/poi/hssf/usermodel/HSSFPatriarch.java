@@ -290,7 +290,7 @@ public final class HSSFPatriarch implements HSSFShapeContainer, Drawing<HSSFShap
             if (dn == null) {
                 throw new FileNotFoundException();
             }
-            oleRoot = (DirectoryEntry)dn.getEntry(entryName);
+            oleRoot = (DirectoryEntry)dn.getEntryCaseInsensitive(entryName);
         } catch (FileNotFoundException e) {
             throw new IllegalStateException("trying to add ole shape without actually adding data first - use HSSFWorkbook.addOlePackage first", e);
         }
