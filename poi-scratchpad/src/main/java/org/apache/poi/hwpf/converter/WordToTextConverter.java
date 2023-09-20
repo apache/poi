@@ -54,7 +54,7 @@ import org.w3c.dom.Element;
 public class WordToTextConverter extends AbstractWordConverter {
     private static final Logger LOG = LogManager.getLogger(WordToTextConverter.class);
 
-    private static final int MAX_NESTED_CHILD_NODES = 400;
+    private static final int MAX_NESTED_CHILD_NODES = 300;
 
     public static String getText( DirectoryNode root ) throws Exception
     {

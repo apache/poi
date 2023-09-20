@@ -28,11 +28,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -69,6 +71,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
@@ -1216,5 +1219,16 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     @Disabled
     void createDrawing() {
         // the dimensions for this image are different than for XSSF and SXSSF
+    }
+
+    @Test
+    void writeInvalidFile() throws Exception {
+        try (Workbook wb = WorkbookFactory.create(
+                samples.getFile("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5786329142919168.xls"),
+                null, true)) {
+            try (OutputStream out = new ByteArrayOutputStream()) {
+                wb.write(out);
+            }
+        }
     }
 }
