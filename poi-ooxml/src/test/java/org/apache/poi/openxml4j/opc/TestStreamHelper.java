@@ -17,8 +17,17 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,11 +54,69 @@ class TestStreamHelper {
         elRun.appendChild(elText);
         elText.setTextContent("Hello Open XML !");
 
-        try (UnsynchronizedByteArrayOutputStream bos = new UnsynchronizedByteArrayOutputStream()) {
+        try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
             StreamHelper.saveXmlInStream(doc, bos);
             String xml = bos.toString(StandardCharsets.UTF_8);
             assertTrue(xml.contains("standalone=\"yes\""), "xml contains standalone=yes?");
             assertTrue(xml.contains("encoding=\"UTF-8\""), "xml contains encoding=UTF-8?");
+        }
+    }
+
+    @Test
+    void testXSSF() throws IOException {
+        try(
+                XSSFWorkbook workbook = new XSSFWorkbook();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
+        ) {
+            XSSFSheet sheet = workbook.createSheet("testsheet");
+            Cell cell = sheet.createRow(0).createCell(0);
+            cell.setCellValue("test-value");
+            CellStyle style = workbook.createCellStyle();
+            style.setWrapText(true);
+            cell.setCellStyle(style);
+            workbook.write(bos);
+            try(ZipArchiveInputStream zis = new ZipArchiveInputStream(bos.toInputStream())) {
+                ArchiveEntry entry;
+                final int maxSize = 1024 * 1024;
+                while((entry = zis.getNextEntry()) != null) {
+                    final int entrySize = (int) entry.getSize();
+                    final byte[] data = (entrySize == -1) ? IOUtils.toByteArrayWithMaxLength(zis, maxSize) :
+                            IOUtils.toByteArray(zis, entrySize, maxSize);
+                    final String str = new String(data, StandardCharsets.UTF_8);
+                    if (str.contains("standalone")) {
+                        assertTrue(str.contains("standalone=\"yes\""), "unexpected XML standalone flag in " + entry.getName());
+                    }
+                }
+            }
+        }
+    }
+
+    @Test
+    void testSXSSF() throws IOException {
+        try(
+                SXSSFWorkbook workbook = new SXSSFWorkbook();
+                UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()
+        ) {
+            SXSSFSheet sheet = workbook.createSheet("testsheet");
+            Cell cell = sheet.createRow(0).createCell(0);
+            cell.setCellValue("test-value");
+            CellStyle style = workbook.createCellStyle();
+            style.setWrapText(true);
+            cell.setCellStyle(style);
+            workbook.write(bos);
+            try(ZipArchiveInputStream zis = new ZipArchiveInputStream(bos.toInputStream())) {
+                ArchiveEntry entry;
+                final int maxSize = 1024 * 1024;
+                while((entry = zis.getNextEntry()) != null) {
+                    final int entrySize = (int) entry.getSize();
+                    final byte[] data = (entrySize == -1) ? IOUtils.toByteArrayWithMaxLength(zis, maxSize) :
+                            IOUtils.toByteArray(zis, entrySize, maxSize);
+                    final String str = new String(data, StandardCharsets.UTF_8);
+                    if (str.contains("standalone")) {
+                        assertTrue(str.contains("standalone=\"yes\""), "unexpected XML standalone flag in " + entry.getName());
+                    }
+                }
+            }
         }
     }
 }
