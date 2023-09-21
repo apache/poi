@@ -60,7 +60,7 @@ public class KeyData {
         blockSize = getIntAttr(keyData, "blockSize");
         keyBits = getIntAttr(keyData, "keyBits");
         hashSize = getIntAttr(keyData, "hashSize");
-        cipherAlgorithm = CipherAlgorithm.fromXmlId(keyData.getAttribute("cipherAlgorithm"), keyBits);
+        cipherAlgorithm = CipherAlgorithm.fromXmlId(keyData.getAttribute("cipherAlgorithm"), keyBits == null ? -1 : keyBits);
         cipherChaining = ChainingMode.fromXmlId(keyData.getAttribute("cipherChaining"));
         hashAlgorithm = HashAlgorithm.fromEcmaId(keyData.getAttribute("hashAlgorithm"));
         if (cipherAlgorithm == null || cipherChaining == null || hashAlgorithm == null) {
