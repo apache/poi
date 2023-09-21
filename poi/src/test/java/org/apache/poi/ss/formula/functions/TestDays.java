@@ -23,6 +23,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +42,7 @@ public class TestDays {
 
     @BeforeAll
     static void setup() {
-        Locale.setDefault(Locale.US);
+        LocaleUtil.setUserLocale(Locale.US);
     }
 
     //https://support.microsoft.com/en-us/office/days-function-57740535-d549-4395-8728-0f07bff0b9df

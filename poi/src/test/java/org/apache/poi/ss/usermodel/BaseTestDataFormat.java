@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Locale;
 
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -49,7 +50,7 @@ public abstract class BaseTestDataFormat {
 
     @BeforeAll
     static void setup() {
-        Locale.setDefault(Locale.US);
+        LocaleUtil.setUserLocale(Locale.US);
     }
 
     @Test

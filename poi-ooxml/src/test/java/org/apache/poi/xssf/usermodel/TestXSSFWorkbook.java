@@ -104,7 +104,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @BeforeAll
     static void setup() {
-        Locale.setDefault(Locale.US);
+        LocaleUtil.setUserLocale(Locale.US);
     }
 
     /**
