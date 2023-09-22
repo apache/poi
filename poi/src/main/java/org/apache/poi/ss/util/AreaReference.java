@@ -380,7 +380,10 @@ public class AreaReference {
      * left corner of the area (but this is not a requirement).
      */
    public CellReference getFirstCell() {
-        return _firstCell;
+       if (_firstCell.getCol() == -1) {
+           return new CellReference(_firstCell.getRow(), 0);
+       }
+       return _firstCell;
     }
 
     /**
@@ -391,6 +394,9 @@ public class AreaReference {
      * of the area (but this is not a requirement).
      */
     public CellReference getLastCell() {
+        if (_firstCell.getCol() == -1) {
+            return new CellReference(_lastCell.getRow(), _version.getLastColumnIndex());
+        }
         return _lastCell;
     }
 

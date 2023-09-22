@@ -2191,8 +2191,8 @@ final class TestBugs extends BaseTestBugzillaIssues {
         try (Workbook wb = openSampleWorkbook("Intersection-52111.xls")) {
             Sheet s = wb.getSheetAt(0);
             assertFormula(wb, s.getRow(2).getCell(0), "(C2:D3 D3:E4)", "4.0");
-            assertFormula(wb, s.getRow(6).getCell(0), "Tabelle2!E:E Tabelle2!$A11:$IV11", "5.0");
-            assertFormula(wb, s.getRow(8).getCell(0), "Tabelle2!E:F Tabelle2!$A11:$IV12", null);
+            assertFormula(wb, s.getRow(6).getCell(0), "Tabelle2!E:E Tabelle2!11:11", "5.0");
+            assertFormula(wb, s.getRow(8).getCell(0), "Tabelle2!E:F Tabelle2!11:12", null);
         }
     }
 
