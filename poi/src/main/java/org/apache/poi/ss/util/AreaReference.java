@@ -182,7 +182,7 @@ public class AreaReference {
         if (null == version) {
             version = DEFAULT_SPREADSHEET_VERSION;
         }
-        return new AreaReference("$A" + start + ":$" + version.getLastColumnName() + end, version);
+        return new AreaReference(start + ":" + end, version);
     }
 
     /**
@@ -219,6 +219,24 @@ public class AreaReference {
                 && topLeft.isRowAbsolute()
                 && botRight.getRow() == version.getLastRowIndex()
                 && botRight.isRowAbsolute());
+    }
+
+    /**
+     * Is the reference for a whole-row reference,
+     * such as 2:2 or 3:5 ?
+     */
+    public static boolean isWholeRowReference(SpreadsheetVersion version, CellReference topLeft, CellReference botRight) {
+        if (null == version) {
+            version = DEFAULT_SPREADSHEET_VERSION; // how the code used to behave.
+        }
+
+        // These are represented as something like
+        //   C$1:C$65535 or D$1:F$0
+        // i.e. absolute from 1st row to 0th one
+        return (topLeft.getCol() == 0
+                && topLeft.isColAbsolute()
+                && botRight.getCol() == version.getLastColumnIndex()
+                && botRight.isColAbsolute());
     }
 
     /**
@@ -346,6 +364,10 @@ public class AreaReference {
         return isWholeColumnReference(_version, _firstCell, _lastCell);
     }
 
+    public boolean isWholeRowReference() {
+        return isWholeRowReference(_version, _firstCell, _lastCell);
+    }
+
     /**
      * @return {@code false} if this area reference involves more than one cell
      */
@@ -358,7 +380,10 @@ public class AreaReference {
      * left corner of the area (but this is not a requirement).
      */
    public CellReference getFirstCell() {
-        return _firstCell;
+       if (_firstCell.getCol() == -1) {
+           return new CellReference(_firstCell.getRow(), 0);
+       }
+       return _firstCell;
     }
 
     /**
@@ -369,6 +394,9 @@ public class AreaReference {
      * of the area (but this is not a requirement).
      */
     public CellReference getLastCell() {
+        if (_firstCell.getCol() == -1) {
+            return new CellReference(_lastCell.getRow(), _version.getLastColumnIndex());
+        }
         return _lastCell;
     }
 
@@ -414,11 +442,18 @@ public class AreaReference {
      */
     public String formatAsString() {
         // Special handling for whole-column references
-        if(isWholeColumnReference()) {
-            return
-                CellReference.convertNumToColString(_firstCell.getCol())
-                + ":" +
-                CellReference.convertNumToColString(_lastCell.getCol());
+        if (isWholeColumnReference()) {
+            return _firstCell.formatAsColumnString()
+                    + ":"
+                    + _lastCell.formatAsColumnString();
+        }
+
+        if (isWholeRowReference()) {
+            StringBuilder sb = new StringBuilder();
+            _firstCell.appendRowReference(sb);
+            sb.append(":");
+            _lastCell.appendRowReference(sb);
+            return sb.toString();
         }
 
         StringBuilder sb = new StringBuilder(32);

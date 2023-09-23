@@ -531,8 +531,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         NameRecord nr;
         assertEquals(3, wb1.getWorkbook().getNumNames());
         nr = wb1.getWorkbook().getNameRecord(2);
-        // TODO - render full row and full column refs properly
-        assertEquals("Sheet2!$A$1:$IV$1", HSSFFormulaParser.toFormulaString(wb1, nr.getNameDefinition())); // 1:1
+
+        assertEquals("Sheet2!$1:$1", HSSFFormulaParser.toFormulaString(wb1, nr.getNameDefinition())); // 1:1
 
         try {
           wb1.getSheetAt(3).setRepeatingRows(CellRangeAddress.valueOf("9:12"));
@@ -549,7 +549,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wb1.close();
         assertEquals(3, wb2.getWorkbook().getNumNames());
         nr = wb2.getWorkbook().getNameRecord(2);
-        assertEquals("Sheet2!E:F,Sheet2!$A$9:$IV$12", HSSFFormulaParser.toFormulaString(wb2, nr.getNameDefinition())); // E:F,9:12
+        assertEquals("Sheet2!$E:$F,Sheet2!$9:$12", HSSFFormulaParser.toFormulaString(wb2, nr.getNameDefinition())); // E:F,9:12
         wb2.close();
     }
 
