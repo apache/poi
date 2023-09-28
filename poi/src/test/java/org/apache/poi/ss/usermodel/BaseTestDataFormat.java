@@ -22,8 +22,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.util.LocaleUtil;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -43,6 +47,16 @@ public abstract class BaseTestDataFormat {
     void assertNotBuiltInFormat(String customFmt) {
         //check it is not in built-in formats
         assertEquals(-1, BuiltinFormats.getBuiltinFormat(customFmt));
+    }
+
+    @BeforeAll
+    static void setUp() {
+        LocaleUtil.setUserLocale(Locale.US);
+    }
+
+    @AfterAll
+    static void tearDown() {
+        LocaleUtil.setUserLocale(null);
     }
 
     @Test

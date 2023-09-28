@@ -61,6 +61,8 @@ import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.model.StylesTable;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalLink;
@@ -79,6 +81,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.zip.CRC32;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
@@ -98,6 +101,16 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     public TestXSSFWorkbook() {
         super(XSSFITestDataProvider.instance);
+    }
+
+    @BeforeAll
+    static void setUp() {
+        LocaleUtil.setUserLocale(Locale.US);
+    }
+
+    @AfterAll
+    static void tearDown() {
+        LocaleUtil.setUserLocale(null);
     }
 
     /**
