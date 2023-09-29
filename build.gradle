@@ -52,7 +52,8 @@ if (project.hasProperty('enableSonar')) {
     apply plugin: 'org.sonarqube'
 }
 
-boolean isCIBuild = false;
+boolean isCIBuild = false
+String date = new Date().format('yyyyMMdd')
 
 // For help converting an Ant build to a Gradle build, see
 // https://docs.gradle.org/current/userguide/ant.html
@@ -99,7 +100,7 @@ allprojects {
 //    apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-    version = '5.2.4'
+    version = '5.2.5-SNAPSHOT'
 }
 
 /**
@@ -722,14 +723,7 @@ tasks.withType(Tar) {
 }
 
 distributions {
-    var version = subprojects[0].version
-    var date = new Date().format('yyyyMMdd')
-
-    var poiDep = project(':poi').configurations.getAt('compileClasspath')
-    var ooxmlImp = project(':poi-ooxml').configurations.getAt('compileClasspath')
-
     src {
-        distributionBaseName = "poi-src-${version}-${date}"
         contents {
             from('.') {
                 exclude '*/build/**'
@@ -819,6 +813,8 @@ var srcDep = [
     ':poi-ooxml-lite:generateModuleInfo'
 ]
 
+srcDistTar.setArchiveFileName("poi-src-${subprojects[0].version}-${date}.tgz")
+srcDistZip.setArchiveFileName("poi-src-${subprojects[0].version}-${date}.zip")
 srcDistTar.dependsOn srcDep
 srcDistZip.dependsOn srcDep
 soLinkCheck.dependsOn srcDep
