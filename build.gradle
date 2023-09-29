@@ -53,7 +53,7 @@ if (project.hasProperty('enableSonar')) {
 }
 
 boolean isCIBuild = false
-String date = new Date().format('yyyyMMdd')
+String dateSuffix = new Date().format('yyyyMMdd')
 
 // For help converting an Ant build to a Gradle build, see
 // https://docs.gradle.org/current/userguide/ant.html
@@ -813,8 +813,8 @@ var srcDep = [
     ':poi-ooxml-lite:generateModuleInfo'
 ]
 
-srcDistTar.setArchiveFileName("poi-src-${subprojects[0].version}-${date}.tgz")
-srcDistZip.setArchiveFileName("poi-src-${subprojects[0].version}-${date}.zip")
+srcDistTar.setArchiveFileName("poi-src-${subprojects[0].version}-${dateSuffix}.tgz")
+srcDistZip.setArchiveFileName("poi-src-${subprojects[0].version}-${dateSuffix}.zip")
 srcDistTar.dependsOn srcDep
 srcDistZip.dependsOn srcDep
 soLinkCheck.dependsOn srcDep
