@@ -23,6 +23,7 @@ module org.apache.poi.stress {
     requires java.desktop;
 
     requires org.apache.commons.collections4;
+    requires org.apache.commons.io;
     requires org.apache.poi.examples;
     requires org.apache.poi.scratchpad;
 
