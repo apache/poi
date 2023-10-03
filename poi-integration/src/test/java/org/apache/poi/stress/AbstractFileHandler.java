@@ -37,7 +37,6 @@ import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ss.extractor.ExcelExtractor;
-import org.apache.poi.util.IOUtils;
 
 /**
  * Base class with things that can be run for any supported file handler
@@ -88,53 +87,52 @@ public abstract class AbstractFileHandler implements FileHandler {
         long length = file.length();
         long modified = file.lastModified();
 
-        POITextExtractor extractor = null;
         String fileAndParentName = file.getParentFile().getName() + "/" + file.getName();
         try {
-            // fix windows absolute paths for exception message tracking
-            String relPath = file.getPath().replaceAll(".*test-data", "test-data").replace('\\', '/');
-            extractor = ExtractorFactory.createExtractor(file);
-            assertNotNull(extractor, "Should get a POITextExtractor but had none for file " + relPath);
-
-            assertNotNull(extractor.getText(), "Should get some text but had none for file " + relPath);
-
-            // also try metadata
-            @SuppressWarnings("resource")
-            POITextExtractor metadataExtractor = extractor.getMetadataTextExtractor();
-            assertNotNull(metadataExtractor.getText());
-
-            assertFalse(EXPECTED_EXTRACTOR_FAILURES.contains(fileAndParentName),
-                "Expected Extraction to fail for file " + relPath + " and handler " + this + ", but did not fail!");
-
-            assertEquals(length, file.length(), "File should not be modified by extractor");
-            assertEquals(modified, file.lastModified(), "File should not be modified by extractor");
-
             handleExtractingAsStream(file);
 
-            if (extractor instanceof POIOLE2TextExtractor) {
-                try (HPSFPropertiesExtractor hpsfExtractor = new HPSFPropertiesExtractor((POIOLE2TextExtractor) extractor)) {
-                    assertNotNull(hpsfExtractor.getDocumentSummaryInformationText());
-                    assertNotNull(hpsfExtractor.getSummaryInformationText());
-                    String text = hpsfExtractor.getText();
-                    //System.out.println(text);
+            // fix windows absolute paths for exception message tracking
+            String relPath = file.getPath().replaceAll(".*test-data", "test-data").replace('\\', '/');
+            try (POITextExtractor extractor = ExtractorFactory.createExtractor(file)) {
+                assertNotNull(extractor, "Should get a POITextExtractor but had none for file " + relPath);
+
+                assertNotNull(extractor.getText(), "Should get some text but had none for file " + relPath);
+
+                // also try metadata
+                POITextExtractor metadataExtractor = extractor.getMetadataTextExtractor();
+                assertNotNull(metadataExtractor.getText());
+
+                assertFalse(EXPECTED_EXTRACTOR_FAILURES.contains(fileAndParentName),
+                        "Expected Extraction to fail for file " + relPath + " and handler " + this + ", but did not fail!");
+
+                assertEquals(length, file.length(), "File should not be modified by extractor");
+                assertEquals(modified, file.lastModified(), "File should not be modified by extractor");
+
+                if (extractor instanceof POIOLE2TextExtractor) {
+                    try (HPSFPropertiesExtractor hpsfExtractor = new HPSFPropertiesExtractor((POIOLE2TextExtractor) extractor)) {
+                        assertNotNull(hpsfExtractor.getDocumentSummaryInformationText());
+                        assertNotNull(hpsfExtractor.getSummaryInformationText());
+                        String text = hpsfExtractor.getText();
+                        //System.out.println(text);
+                        assertNotNull(text);
+                    }
+                }
+
+                // test again with including formulas and cell-comments as this caused some bugs
+                if (extractor instanceof ExcelExtractor &&
+                        // comment-extraction and formula extraction are not well supported in event based extraction
+                        !(extractor instanceof EventBasedExcelExtractor)) {
+                    ((ExcelExtractor) extractor).setFormulasNotResults(true);
+
+                    String text = extractor.getText();
+                    assertNotNull(text);
+                    // */
+
+                    ((ExcelExtractor) extractor).setIncludeCellComments(true);
+
+                    text = extractor.getText();
                     assertNotNull(text);
                 }
-            }
-
-            // test again with including formulas and cell-comments as this caused some bugs
-            if (extractor instanceof ExcelExtractor &&
-                // comment-extraction and formula extraction are not well supported in event based extraction
-                !(extractor instanceof EventBasedExcelExtractor)) {
-                ((ExcelExtractor) extractor).setFormulasNotResults(true);
-
-                String text = extractor.getText();
-                assertNotNull(text);
-                // */
-
-                ((ExcelExtractor) extractor).setIncludeCellComments(true);
-
-                text = extractor.getText();
-                assertNotNull(text);
             }
         } catch (IOException | POIXMLException e) {
             Exception prevE = e;
@@ -159,8 +157,6 @@ public abstract class AbstractFileHandler implements FileHandler {
             if (!e.getMessage().contains("POI Scratchpad jar missing") || !Boolean.getBoolean("scratchpad.ignore")) {
                 throw e;
             }
-        } finally {
-            IOUtils.closeQuietly(extractor);
         }
     }
 
