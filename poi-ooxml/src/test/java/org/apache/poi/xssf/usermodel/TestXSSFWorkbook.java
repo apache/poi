@@ -1479,7 +1479,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             }
             assertEquals(2, count);
         } finally {
-            tempFile.delete();
+            assertTrue(tempFile.delete());
         }
     }
 

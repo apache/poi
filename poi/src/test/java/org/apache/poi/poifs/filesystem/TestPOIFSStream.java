@@ -1817,7 +1817,7 @@ final class TestPOIFSStream {
                         main4096[4095] = -11;
                         testDir.createDocument("Normal4096", new ByteArrayInputStream(main4096));
 
-                        root.getEntryCaseInsensitive("Tags").delete();
+                        assertTrue(root.getEntryCaseInsensitive("Tags").delete());
 
 
                         // Write out, re-load
@@ -1848,7 +1848,7 @@ final class TestPOIFSStream {
 
 
                             // Delete a directory, and add one more
-                            testDir.getEntryCaseInsensitive("Testing 456").delete();
+                            assertTrue(testDir.getEntryCaseInsensitive("Testing 456").delete());
                             testDir.createDirectory("Testing ABC");
 
 
@@ -1903,7 +1903,7 @@ final class TestPOIFSStream {
 
 
                                     // Delete a mini stream, add one more
-                                    testDir.getEntryCaseInsensitive("Mini").delete();
+                                    assertTrue(testDir.getEntryCaseInsensitive("Mini").delete());
 
                                     byte[] mini3 = new byte[]{42, 0, 42, 0, 42, 0, 42};
                                     testDir.createDocument("Mini3", new ByteArrayInputStream(mini3));
@@ -2179,8 +2179,8 @@ final class TestPOIFSStream {
 
 
                 // Delete a couple of streams
-                miniDoc.delete();
-                normDoc.delete();
+                assertTrue(miniDoc.delete());
+                assertTrue(normDoc.delete());
 
 
                 // Check - will have un-used sectors now

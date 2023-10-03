@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -61,7 +62,7 @@ class TestXSSFUnicodeSurrogates {
                 assertEquals(unicodeText, cell2.getStringCellValue());
             }
         } finally {
-            tf.delete();
+            assertTrue(tf.delete());
         }
     }
 }
