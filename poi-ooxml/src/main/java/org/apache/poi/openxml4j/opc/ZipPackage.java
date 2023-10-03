@@ -132,6 +132,7 @@ public final class ZipPackage extends OPCPackage {
         try (ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(in)) {
             this.zipArchive = new ZipInputStreamZipEntrySource(zis);
         } catch (final IOException | RuntimeException e) {
+            IOUtils.closeQuietly(in);
             throw e;
         }
     }

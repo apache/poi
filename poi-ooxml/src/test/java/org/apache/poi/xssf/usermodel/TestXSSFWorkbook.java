@@ -17,6 +17,10 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
@@ -77,7 +81,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -85,6 +91,7 @@ import java.util.Locale;
 import java.util.zip.CRC32;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
+import static org.apache.poi.xssf.XSSFTestDataSamples.getSampleFile;
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOut;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
@@ -1437,6 +1444,42 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             assertEquals(2.05, a4.getNumericCellValue());
             assertEquals("2.1", dataFormatter.formatCellValue(a4));
             assertEquals("2.1", dataFormatter.formatCellValue(a4, formulaEvaluator));
+        }
+    }
+
+    @Test
+    void readFromZipStream() throws IOException {
+        File tempFile = TempFile.createTempFile("poitest", ".zip");
+        try {
+            try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(tempFile)) {
+                File f1 = getSampleFile("github-321.xlsx");
+                File f2 = getSampleFile("48495.xlsx");
+                ArchiveEntry e1 = zos.createArchiveEntry(f1, "github-321.xlsx");
+                zos.putArchiveEntry(e1);
+                try (InputStream s = Files.newInputStream(f1.toPath())) {
+                    IOUtils.copy(s, zos);
+                }
+                zos.closeArchiveEntry();
+                ArchiveEntry e2 = zos.createArchiveEntry(f2, "48495.xlsx");
+                zos.putArchiveEntry(e2);
+                try (InputStream s = Files.newInputStream(f2.toPath())) {
+                    IOUtils.copy(s, zos);
+                }
+                zos.closeArchiveEntry();
+                zos.finish();
+            }
+            int count = 0;
+            try (ZipArchiveInputStream zis = new ZipArchiveInputStream(Files.newInputStream(tempFile.toPath()))) {
+                ZipArchiveEntry entry;
+                while ((entry = zis.getNextZipEntry()) != null) {
+                    XSSFWorkbook wb = new XSSFWorkbook(zis);
+                    assertNotNull(wb);
+                    count++;
+                }
+            }
+            assertEquals(2, count);
+        } finally {
+            tempFile.delete();
         }
     }
 
