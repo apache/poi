@@ -67,6 +67,10 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
     @Override
     public Rectangle2D getAnchor(){
         CTTransform2D xfrm = ((CTGraphicalObjectFrame)getXmlObject()).getXfrm();
+        if (xfrm == null) {
+            throw new IllegalArgumentException("Could not retrieve an Xfrm from the XML object");
+        }
+
         CTPoint2D off = xfrm.getOff();
         double x = Units.toPoints(POIXMLUnits.parseLength(off.xgetX()));
         double y = Units.toPoints(POIXMLUnits.parseLength(off.xgetY()));

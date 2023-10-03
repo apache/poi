@@ -89,7 +89,7 @@ public final class OldStringRecord implements GenericRecord {
         try {
             return CodePageUtil.getStringFromCodePage(data, cp);
         } catch (UnsupportedEncodingException uee) {
-            throw new IllegalArgumentException("Unsupported codepage requested", uee);
+            throw new IllegalArgumentException("Unsupported codepage requested: " + cp, uee);
         }
     }
 

@@ -30,7 +30,7 @@ import org.apache.poi.hdgf.pointers.PointerFactory;
 public class PointerContainingStream extends Stream { // TODO - instantiable superclass
     private static final Logger LOG = LogManager.getLogger(PointerContainingStream.class);
 
-    private static final int MAX_CHILDREN_NESTING = 1000;
+    private static final int MAX_CHILDREN_NESTING = 500;
 
     private final Pointer[] childPointers;
     private Stream[] childStreams;
