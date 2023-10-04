@@ -17,9 +17,12 @@
 
 package org.apache.poi.openxml4j.opc.internal;
 
+import org.apache.poi.util.Internal;
+
 import java.io.FilterInputStream;
 import java.io.InputStream;
 
+@Internal
 final class NoCloseInputStream extends FilterInputStream {
     NoCloseInputStream(InputStream stream) {
         super(stream);
