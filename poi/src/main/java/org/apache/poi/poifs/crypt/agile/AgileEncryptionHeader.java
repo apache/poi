@@ -79,10 +79,14 @@ public class AgileEncryptionHeader extends EncryptionHeader {
                     keyData.getHashAlgorithm() + " @ " + hashSize + " bytes");
         }
 
+        if (keyData.getSaltSize() == null) {
+            throw new EncryptedDocumentException("Invalid salt length: " + keyData.getSaltSize());
+        }
+
         int saltLength = keyData.getSaltSize();
         setKeySalt(keyData.getSaltValue());
         if (getKeySalt().length != saltLength) {
-            throw new EncryptedDocumentException("Invalid salt length");
+            throw new EncryptedDocumentException("Invalid salt length: " + getKeySalt().length + " and " + saltLength);
         }
 
         DataIntegrity di = ed.getDataIntegrity();
