@@ -63,8 +63,16 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         setRandomAccessWindowSize(randomAccessWindowSize);
         try {
             _autoSizeColumnTracker = new AutoSizeColumnTracker(this);
-        } catch (UnsatisfiedLinkError | InternalError e) {
-            LOG.atWarn().log("Failed to create AutoSizeColumnTracker, possibly due to fonts not being installed in your OS", e);
+        } catch (UnsatisfiedLinkError | NoClassDefFoundError | InternalError |
+                 // thrown when no fonts are available in the workbook
+                 IndexOutOfBoundsException e) {
+            // only handle special NoClassDefFound
+            if (!e.getMessage().contains("X11FontManager")) {
+                throw e;
+            }
+            LOG.atWarn()
+                    .withThrowable(e)
+                    .log("Failed to create AutoSizeColumnTracker, possibly due to fonts not being installed in your OS");
         }
     }
 
@@ -99,9 +107,21 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         } catch (UnsatisfiedLinkError | NoClassDefFoundError | InternalError |
                  // thrown when no fonts are available in the workbook
                  IndexOutOfBoundsException e) {
+            // only handle special NoClassDefFound
+            if (!e.getMessage().contains("X11FontManager")) {
+                // close temporary resources when throwing exception in the constructor
+                _writer.close();
+
+                throw e;
+            }
             LOG.atWarn()
                     .withThrowable(e)
                     .log("Failed to create AutoSizeColumnTracker, possibly due to fonts not being installed in your OS");
+        } catch (Throwable e) {
+            // close temporary resources when throwing exception in the constructor
+            _writer.close();
+
+            throw e;
         }
     }
 
