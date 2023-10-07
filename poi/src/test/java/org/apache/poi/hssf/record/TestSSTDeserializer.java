@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -137,6 +138,7 @@ final class TestSSTDeserializer {
         deserializer.manufactureStrings(2, in);
 
         assertEquals("At a dinner party or", strings.get(0) + "");
-        assertEquals("", strings.get(1) + "");
+        assertThrows(IndexOutOfBoundsException.class,
+                () -> strings.get(1));
     }
 }

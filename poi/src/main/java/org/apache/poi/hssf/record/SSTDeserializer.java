@@ -48,7 +48,9 @@ class SSTDeserializer {
             UnicodeString str;
             if (in.available() == 0 && (!in.hasNextRecord() || in.getNextSid() != ContinueRecord.sid)) {
                 LOG.atError().log("Ran out of data before creating all the strings! String at index {}", box(i));
-                str = new UnicodeString("");
+
+                // not much sense in trying to continue reading in this case, file seems to be broken
+                return;
             } else {
                 str = new UnicodeString(in);
             }
