@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -163,6 +164,12 @@ class TestDrawingAggregate {
                 DrawingAggregateInfo info = DrawingAggregateInfo.get(sheet);
                 if(info != null) {
                     aggs.put(i, info);
+                    if (file.getName().equals("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5436547081830400.xls")) {
+                        assertThrows(IllegalArgumentException.class,
+                                sheet::getDrawingPatriarch);
+                        return;
+                    }
+
                     HSSFPatriarch p = sheet.getDrawingPatriarch();
 
                     // compare aggregate.serialize() with raw bytes from the record stream
@@ -172,7 +179,8 @@ class TestDrawingAggregate {
                     byte[] dgBytes2 = agg.serialize();
 
                     assertEquals(dgBytes1.length, dgBytes2.length, "different size of raw data ande aggregate.serialize()");
-                    assertArrayEquals(dgBytes1, dgBytes2, "raw drawing data (" + dgBytes1.length + " bytes) and aggregate.serialize() are different.");
+                    assertArrayEquals(dgBytes1, dgBytes2,
+                            "raw drawing data (" + dgBytes1.length + " bytes) and aggregate.serialize() are different.");
                 }
             }
 

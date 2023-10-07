@@ -51,7 +51,11 @@ public class HSSFShapeFactory {
     public static void createShapeTree(EscherContainerRecord container, EscherAggregate agg, HSSFShapeContainer out, DirectoryNode root) {
         if (container.getRecordId() == EscherContainerRecord.SPGR_CONTAINER) {
             ObjRecord obj = null;
-            EscherClientDataRecord clientData = ((EscherContainerRecord) container.getChild(0)).getChildById(EscherClientDataRecord.RECORD_ID);
+            EscherRecord child = container.getChild(0);
+            if (!(child instanceof EscherContainerRecord)) {
+                throw new IllegalArgumentException("Had unexpected type of child: " + child.getClass());
+            }
+            EscherClientDataRecord clientData = ((EscherContainerRecord) child).getChildById(EscherClientDataRecord.RECORD_ID);
             if (null != clientData) {
                 obj = (ObjRecord) agg.getShapeToObjMapping().get(clientData);
             }

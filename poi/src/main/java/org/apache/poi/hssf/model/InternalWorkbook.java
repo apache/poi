@@ -466,7 +466,11 @@ public final class InternalWorkbook {
             "There are only " + numfonts + " font records, but you asked for index " + idx);
         }
 
-        return ( FontRecord ) records.get((records.getFontpos() - (numfonts - 1)) + index);
+        Record record = records.get((records.getFontpos() - (numfonts - 1)) + index);
+        if (!(record instanceof FontRecord)) {
+            throw new IllegalStateException("Did not have the expected record-type FontRecord: " + record.getClass());
+        }
+        return ( FontRecord ) record;
     }
 
     /**

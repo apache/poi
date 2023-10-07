@@ -38,15 +38,16 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class TestExcelConverterSuite
-{
+public class TestExcelConverterSuite {
     /**
      * YK: a quick hack to exclude failing documents from the suite.
      */
-    @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
     private static final List<String> failingFiles = Arrays.asList(
-            /* not failing, but requires more memory */
-            "ex45698-22488.xls" );
+            // not failing, but requires more memory
+            "ex45698-22488.xls",
+            // broken documents
+            "clusterfuzz-testcase-minimized-POIHSSFFuzzer-5436547081830400.xls"
+    );
 
     public static Stream<Arguments> files() {
         List<Arguments> files = new ArrayList<>();

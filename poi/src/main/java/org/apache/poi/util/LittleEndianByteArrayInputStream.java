@@ -87,7 +87,7 @@ public class LittleEndianByteArrayInputStream extends ByteArrayInputStream imple
 
     public void setReadIndex(int pos) {
        if (pos < 0 || pos >= count) {
-            throw new IndexOutOfBoundsException();
+            throw new IndexOutOfBoundsException("Invalid position: " + pos + " with count " + count);
        }
        this.pos = pos;
     }
