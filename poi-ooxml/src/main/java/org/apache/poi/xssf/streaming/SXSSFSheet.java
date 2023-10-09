@@ -51,6 +51,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     protected SheetDataWriter _writer;
     private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
     protected AutoSizeColumnTracker _autoSizeColumnTracker;
+    private int outlineLevelRow;
     private int lastFlushedRowNumber = -1;
     private boolean allFlushed;
     private int leftMostColumn = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
@@ -166,11 +167,11 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
                             "in the range [0," + _writer.getLastFlushedRow() + "] that is already written to disk.");
         }
 
-        // attempt to overwrite an existing row in the input template
+        // attempt to overwrite a existing row in the input template
         if(_sh.getPhysicalNumberOfRows() > 0 && rownum <= _sh.getLastRowNum() ) {
             throw new IllegalArgumentException(
                     "Attempting to write a row["+rownum+"] " +
-                            "in the range [0," + _sh.getLastRowNum() + "] that is already written to disk.");
+                            "in the range [0," + _sh.getLastRowNum() + "] that is already written to disk. Eventually already existing rows are ignored?");
         }
 
         SXSSFRow newRow = new SXSSFRow(this);
@@ -181,7 +182,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
             try {
                 flushRows(_randomAccessWindowSize);
             } catch (IOException ioe) {
-                throw new IllegalStateException(ioe);
+                throw new RuntimeException(ioe);
             }
         }
         return newRow;
@@ -205,6 +206,10 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
                 return;
             }
         }
+    	// jlolling: allow reading all the content
+        if (row.getSheet() == _sh) {
+        	_sh.removeRow(row);
+        }
     }
 
     /**
@@ -215,8 +220,13 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * @return Row representing the rownumber or null if its not defined on the sheet
      */
     @Override
-    public SXSSFRow getRow(int rownum) {
-        return _rows.get(rownum);
+    public Row getRow(int rownum) {
+    	Row row = _rows.get(rownum);
+    	// jlolling: allow reading all the content
+    	if (row == null) {
+    		row = _sh.getRow(rownum);
+    	}
+        return row;
     }
 
     /**
@@ -249,7 +259,8 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      */
     @Override
     public int getLastRowNum() {
-        return _rows.isEmpty() ? -1 : _rows.lastKey();
+    	// jlolling allow append
+        return _rows.isEmpty() ? _sh.getLastRowNum() : _rows.lastKey();
     }
 
     /**
@@ -1008,7 +1019,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     @NotImplemented
     @Override
     public void shiftRows(int startRow, int endRow, int n) {
-        throw new IllegalStateException("Not Implemented");
+        throw new RuntimeException("Not Implemented");
     }
 
     /**
@@ -1032,7 +1043,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     @NotImplemented
     @Override
     public void shiftRows(int startRow, int endRow, int n, boolean copyRowHeight, boolean resetOriginalRowHeight) {
-        throw new IllegalStateException("Not Implemented");
+        throw new RuntimeException("Not Implemented");
     }
 
     /**
@@ -1169,7 +1180,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * Breaks occur above the specified row and left of the specified column inclusive.
      *
      * For example, {@code sheet.setColumnBreak(2);} breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Similar, {@code sheet.setRowBreak(2);}
+     * with columns A,B,C in the first and D,E,... in the second. Simuilar, {@code sheet.setRowBreak(2);}
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -1264,11 +1275,11 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      */
     @Override
     public void groupColumn(int fromColumn, int toColumn) {
-        _sh.groupColumn(fromColumn, toColumn);
+        _sh.groupColumn(fromColumn,toColumn);
     }
 
     /**
-     * Ungroup a range of columns that were previously grouped
+     * Ungroup a range of columns that were previously groupped
      *
      * @param fromColumn   start column (0-based)
      * @param toColumn     end column (0-based)
@@ -1317,14 +1328,16 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      */
     @Override
     public void groupRow(int fromRow, int toRow) {
-        int maxLevelRow = -1;
         for(SXSSFRow row : _rows.subMap(fromRow, toRow + 1).values()){
-            final int level = row.getOutlineLevel() + 1;
+            int level = row.getOutlineLevel() + 1;
             row.setOutlineLevel(level);
-            maxLevelRow = Math.max(maxLevelRow, level);
+
+            if(level > outlineLevelRow) {
+                outlineLevelRow = level;
+            }
         }
 
-        setWorksheetOutlineLevelRowIfNecessary((short) Math.min(Short.MAX_VALUE, maxLevelRow));
+        setWorksheetOutlineLevelRow();
     }
 
     /**
@@ -1344,21 +1357,24 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     public void setRowOutlineLevel(int rownum, int level) {
         SXSSFRow row = _rows.get(rownum);
         row.setOutlineLevel(level);
-        setWorksheetOutlineLevelRowIfNecessary((short) Math.min(Short.MAX_VALUE, level));
+        if(level > 0 && level > outlineLevelRow) {
+            outlineLevelRow = level;
+            setWorksheetOutlineLevelRow();
+        }
     }
 
-    private void setWorksheetOutlineLevelRowIfNecessary(final short levelRow) {
+    private void setWorksheetOutlineLevelRow() {
         CTWorksheet ct = _sh.getCTWorksheet();
         CTSheetFormatPr pr = ct.isSetSheetFormatPr() ?
                 ct.getSheetFormatPr() :
                 ct.addNewSheetFormatPr();
-        if(levelRow > _sh.getSheetFormatPrOutlineLevelRow()) {
-            pr.setOutlineLevelRow(levelRow);
+        if(outlineLevelRow > 0) {
+            pr.setOutlineLevelRow((short)outlineLevelRow);
         }
     }
 
     /**
-     * Ungroup a range of rows that were previously grouped
+     * Ungroup a range of rows that were previously groupped
      *
      * @param fromRow   start row (0-based)
      * @param toRow     end row (0-based)
@@ -1373,9 +1389,9 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      *
      * <i>Not implemented for expanding (i.e. collapse == false)</i>
      *
-     * @param row   start row of a grouped range of rows (0-based)
+     * @param row   start row of a groupped range of rows (0-based)
      * @param collapse whether to expand/collapse the detail rows
-     * @throws IllegalStateException if collapse is false as this is not implemented for SXSSF.
+     * @throws RuntimeException if collapse is false as this is not implemented for SXSSF.
      */
     @Override
     public void setRowGroupCollapsed(int row, boolean collapse) {
@@ -1383,7 +1399,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
             collapseRow(row);
         } else {
             //expandRow(rowIndex);
-            throw new IllegalStateException("Unable to expand row: Not Implemented");
+            throw new RuntimeException("Unable to expand row: Not Implemented");
         }
     }
 
@@ -1391,7 +1407,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * @param rowIndex the zero based row index to collapse
      */
     private void collapseRow(int rowIndex) {
-        SXSSFRow row = getRow(rowIndex);
+        SXSSFRow row = (SXSSFRow) getRow(rowIndex);
         if(row == null) {
             throw new IllegalArgumentException("Invalid row number("+ rowIndex + "). Row does not exist.");
         } else {
@@ -1399,7 +1415,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
 
             // Hide all the columns until the end of the group
             int lastRow = writeHidden(row, startRow);
-            SXSSFRow lastRowObj = getRow(lastRow);
+            SXSSFRow lastRowObj = (SXSSFRow) getRow(lastRow);
             if (lastRowObj != null) {
                 lastRowObj.setCollapsed(true);
             } else {
@@ -1431,12 +1447,12 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
 
     private int writeHidden(SXSSFRow xRow, int rowIndex) {
         int level = xRow.getOutlineLevel();
-        SXSSFRow currRow = getRow(rowIndex);
+        SXSSFRow currRow = (SXSSFRow) getRow(rowIndex);
 
         while (currRow != null && currRow.getOutlineLevel() >= level) {
             currRow.setHidden(true);
             rowIndex++;
-            currRow = getRow(rowIndex);
+            currRow = (SXSSFRow) getRow(rowIndex);
         }
         return rowIndex;
     }
@@ -1783,7 +1799,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         // corrupted .xlsx files as rows appear multiple times in the resulting sheetX.xml files
         // return _sh.setArrayFormula(formula, range);
 
-        throw new IllegalStateException("Not Implemented");
+        throw new RuntimeException("Not Implemented");
     }
 
     /**
@@ -1798,7 +1814,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         // corrupted .xlsx files as rows appear multiple times in the resulting sheetX.xml files
         // return _sh.removeArrayFormula(cell);
 
-        throw new IllegalStateException("Not Implemented");
+        throw new RuntimeException("Not Implemented");
     }
 
     @Override
