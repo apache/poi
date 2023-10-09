@@ -206,7 +206,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
                 return;
             }
         }
-    	// jlolling: allow reading all the content
+    	// BugZilla 67646: allow reading all the content
         if (row.getSheet() == _sh) {
         	_sh.removeRow(row);
         }
@@ -222,7 +222,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     @Override
     public Row getRow(int rownum) {
     	Row row = _rows.get(rownum);
-    	// jlolling: allow reading all the content
+    	// BugZilla 67646: allow reading all the content
     	if (row == null) {
     		row = _sh.getRow(rownum);
     	}
@@ -259,7 +259,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      */
     @Override
     public int getLastRowNum() {
-    	// jlolling allow append
+    	// BugZilla 67646 allow append
         return _rows.isEmpty() ? _sh.getLastRowNum() : _rows.lastKey();
     }
 
@@ -1180,7 +1180,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * Breaks occur above the specified row and left of the specified column inclusive.
      *
      * For example, {@code sheet.setColumnBreak(2);} breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Simuilar, {@code sheet.setRowBreak(2);}
+     * with columns A,B,C in the first and D,E,... in the second. Similar, {@code sheet.setRowBreak(2);}
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -1279,7 +1279,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     }
 
     /**
-     * Ungroup a range of columns that were previously groupped
+     * Ungroup a range of columns that were previously grouped
      *
      * @param fromColumn   start column (0-based)
      * @param toColumn     end column (0-based)
