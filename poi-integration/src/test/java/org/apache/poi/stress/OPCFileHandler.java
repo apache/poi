@@ -19,10 +19,11 @@ package org.apache.poi.stress;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.nio.file.Files;
 import java.util.Set;
 
 import org.apache.poi.openxml4j.opc.ContentTypes;
@@ -61,17 +62,13 @@ public class OPCFileHandler extends AbstractFileHandler {
         }
     }
 
-    @Override
-    public void handleExtracting(File file) {
-        // text-extraction is not possible currently for these types of files
-    }
-
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
     void test() throws Exception {
         File file = new File("test-data/diagram/test.vsdx");
 
-        try (InputStream stream = new PushbackInputStream(new FileInputStream(file), 100000)) {
+        try (InputStream stream = new BufferedInputStream(
+                new PushbackInputStream(Files.newInputStream(file.toPath()), 100000))) {
             handleFile(stream, file.getPath());
         }
 
