@@ -141,7 +141,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         this(r, (IRunBody) p);
     }
 
-
     /**
      * Add the xml:spaces="preserve" attribute if the string has leading or trailing white spaces
      *
