@@ -252,7 +252,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Whether the bold property shall be applied to all non-complex script
      * characters in the contents of this run when displayed in a document
      *
-     * @return {@code true} if the bold property is applied
+     * @return {@code true} if the bold property for non-complex scripts is applied
      */
     @Override
     public boolean isBold() {
@@ -261,7 +261,19 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Whether the bold property shall be applied to all non-complex script
+     * Whether the bold property shall be applied to the complex
+     * characters in the contents of this run when displayed in a document.
+     *
+     * @return {@code true} if the bold property for complex scripts is applied
+     * @since POI 5.2.5
+     */
+    public boolean isComplexScriptBold() {
+        CTRPr pr = getRunProperties(false);
+        return pr != null && pr.sizeOfBCsArray() > 0 && isCTOnOff(pr.getBCsArray(0));
+    }
+
+    /**
+     * Whether the bold property shall be applied to the non-complex
      * characters in the contents of this run when displayed in a document.
      * <p>
      * This formatting property is a toggle property, which specifies that its
@@ -281,13 +293,42 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * applied to non-complex script characters.
      * </p>
      *
-     * @param value {@code true} if the bold property is applied to
-     *              this run
+     * @param value {@code true} if the bold property is applied for non-complex characters.
      */
     @Override
     public void setBold(boolean value) {
         CTRPr pr = getRunProperties(true);
         CTOnOff bold = pr.sizeOfBArray() > 0 ? pr.getBArray(0) : pr.addNewB();
+        bold.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
+    }
+
+    /**
+     * Whether the bold property shall be applied to the complex
+     * characters in the contents of this run when displayed in a document.
+     * <p>
+     * This formatting property is a toggle property, which specifies that its
+     * behavior differs between its use within a style definition and its use as
+     * direct formatting. When used as part of a style definition, setting this
+     * property shall toggle the current state of that property as specified up
+     * to this point in the hierarchy (i.e. applied to not applied, and vice
+     * versa). Setting it to {@code false} (or an equivalent) shall
+     * result in the current setting remaining unchanged. However, when used as
+     * direct formatting, setting this property to true or false shall set the
+     * absolute state of the resulting property.
+     * </p>
+     * <p>
+     * If this element is not present, the default value is to leave the
+     * formatting applied at previous level in the style hierarchy. If this
+     * element is never applied in the style hierarchy, then bold shall not be
+     * applied to the complex characters.
+     * </p>
+     *
+     * @param value {@code true} if the bold property is applied for complex characters
+     * @since POI 5.2.5
+     */
+    public void setComplexScriptBold(boolean value) {
+        CTRPr pr = getRunProperties(true);
+        CTOnOff bold = pr.sizeOfBCsArray() > 0 ? pr.getBCsArray(0) : pr.addNewBCs();
         bold.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
@@ -362,7 +403,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Whether the italic property should be applied to all non-complex script
      * characters in the contents of this run when displayed in a document.
      *
-     * @return {@code true} if the italic property is applied
+     * @return {@code true} if the italic property is applied for non-complex characters.
      */
     @Override
     public boolean isItalic() {
@@ -371,8 +412,20 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Whether the bold property shall be applied to all non-complex script
-     * characters in the contents of this run when displayed in a document
+     * Whether the italic property should be applied to the complex
+     * characters in the contents of this run when displayed in a document.
+     *
+     * @return {@code true} if the italic property is applied for complex characters.
+     * @since POI 5.2.5
+     */
+    public boolean isComplexScriptItalic() {
+        CTRPr pr = getRunProperties(false);
+        return pr != null && pr.sizeOfICsArray() > 0 && isCTOnOff(pr.getICsArray(0));
+    }
+
+    /**
+     * Whether the italic property shall be applied to the non-complex
+     * characters in the contents of this run when displayed in a document.
      * <p>
      * This formatting property is a toggle property, which specifies that its
      * behavior differs between its use within a style definition and its use as
@@ -389,13 +442,40 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * element is never applied in the style hierarchy, then bold shall not be
      * applied to non-complex script characters.
      *
-     * @param value {@code true} if the italic property is applied to
-     *              this run
+     * @param value {@code true} if the italic property is applied for non-complex characters.
      */
     @Override
     public void setItalic(boolean value) {
         CTRPr pr = getRunProperties(true);
         CTOnOff italic = pr.sizeOfIArray() > 0 ? pr.getIArray(0) : pr.addNewI();
+        italic.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
+    }
+
+    /**
+     * Whether the italic property shall be applied to the complex
+     * characters in the contents of this run when displayed in a document.
+     * <p>
+     * This formatting property is a toggle property, which specifies that its
+     * behavior differs between its use within a style definition and its use as
+     * direct formatting. When used as part of a style definition, setting this
+     * property shall toggle the current state of that property as specified up
+     * to this point in the hierarchy (i.e. applied to not applied, and vice
+     * versa). Setting it to {@code false} (or an equivalent) shall
+     * result in the current setting remaining unchanged. However, when used as
+     * direct formatting, setting this property to true or false shall set the
+     * absolute state of the resulting property.
+     * <p>
+     * If this element is not present, the default value is to leave the
+     * formatting applied at previous level in the style hierarchy. If this
+     * element is never applied in the style hierarchy, then italic shall not be
+     * applied to the complex characters.
+     *
+     * @param value {@code true} if the italic property is applied for complex characters.
+     * @since POI 5.2.5
+     */
+    public void setComplexScriptItalic(boolean value) {
+        CTRPr pr = getRunProperties(true);
+        CTOnOff italic = pr.sizeOfICsArray() > 0 ? pr.getICsArray(0) : pr.addNewICs();
         italic.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
@@ -849,7 +929,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Specifies the font size which shall be applied to all non complex script
+     * Specifies the font size which shall be applied to the non-complex
      * characters in the contents of this run when displayed.
      *
      * @return value representing the font size (can be null if size not set)
@@ -861,11 +941,31 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         return bd == null ? null : bd.doubleValue();
     }
 
+    /**
+     * Specifies the font size which shall be applied to the complex script
+     * characters in the contents of this run when displayed.
+     *
+     * @return value representing the font size for the complex scripts (can be null if size not set)
+     * @since POI 5.2.5
+     */
+    public Double getComplexScriptFontSizeAsDouble() {
+        BigDecimal bd = getComplexScriptFontSizeAsBigDecimal(1);
+        return bd == null ? null : bd.doubleValue();
+    }
+
+
     private BigDecimal getFontSizeAsBigDecimal(int scale) {
         CTRPr pr = getRunProperties(false);
         return (pr != null && pr.sizeOfSzArray() > 0)
-            ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(pr.getSzArray(0).xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
-            : null;
+                ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(pr.getSzArray(0).xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
+                : null;
+    }
+
+    private BigDecimal getComplexScriptFontSizeAsBigDecimal(int scale) {
+        CTRPr pr = getRunProperties(false);
+        return (pr != null && pr.sizeOfSzCsArray() > 0)
+                ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(pr.getSzCsArray(0).xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
+                : null;
     }
 
     /**
@@ -890,8 +990,30 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Specifies the font size which shall be applied to all non complex script
+     * Specifies the font size which shall be applied to the currently specified complex
+     * script characters in the contents of this run when displayed.
+     * <p>
+     * If this element is not present, the default value is to leave the value
+     * applied at previous level in the style hierarchy. If this element is
+     * never applied in the style hierarchy, then any appropriate font size may
+     * be used for the non-complex characters.
+     * </p>
+     *
+     * @param size The font size as number of point measurements.
+     * @see #setComplexScriptFontSize(double)
+     * @since POI 5.2.5
+     */
+    public void setComplexScriptFontSize(int size) {
+        CTRPr pr = getRunProperties(true);
+        BigInteger bint = BigInteger.valueOf(size);
+        CTHpsMeasure ctCsSize = pr.sizeOfSzCsArray() > 0 ? pr.getSzCsArray(0) : pr.addNewSzCs();
+        ctCsSize.setVal(bint.multiply(BigInteger.valueOf(2)));
+    }
+
+    /**
+     * Specifies the font size which shall be applied to the currently specified non-complex
      * characters in the contents of this run when displayed.
+     *
      * <p>
      * If this element is not present, the default value is to leave the value
      * applied at previous level in the style hierarchy. If this element is
@@ -909,6 +1031,29 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         CTRPr pr = getRunProperties(true);
         CTHpsMeasure ctSize = pr.sizeOfSzArray() > 0 ? pr.getSzArray(0) : pr.addNewSz();
         ctSize.setVal(bd.multiply(BigDecimal.valueOf(2)).setScale(0, RoundingMode.HALF_UP).toBigInteger());
+    }
+
+
+    /**
+     * Specifies the font size which shall be applied to the currently specified complex
+     * characters in the contents of this run when displayed.
+     *
+     * <p>
+     * If this element is not present, the default value is to leave the value
+     * applied at previous level in the style hierarchy. If this element is
+     * never applied in the style hierarchy, then any appropriate font size may
+     * be used for the non-complex characters.
+     * </p>
+     *
+     * @param size The font size as number of point measurements.
+     * @see #setFontSize(int)
+     * @since POI 5.2.5
+     */
+    public void setComplexScriptFontSize(double size) {
+        CTRPr pr = getRunProperties(true);
+        BigDecimal bd = BigDecimal.valueOf(size);
+        CTHpsMeasure ctCsSize = pr.sizeOfSzCsArray() > 0 ? pr.getSzCsArray(0) : pr.addNewSzCs();
+        ctCsSize.setVal(bd.multiply(BigDecimal.valueOf(2)).setScale(0, RoundingMode.HALF_UP).toBigInteger());
     }
 
     /**
@@ -1250,7 +1395,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setStyle(String styleId) {
         CTRPr pr = getCTR().getRPr();
         if (null == pr) {
-           pr = getCTR().addNewRPr();
+            pr = getCTR().addNewRPr();
         }
         CTString style = pr.sizeOfRStyleArray() > 0 ? pr.getRStyleArray(0) : pr.addNewRStyle();
         style.setVal(styleId);

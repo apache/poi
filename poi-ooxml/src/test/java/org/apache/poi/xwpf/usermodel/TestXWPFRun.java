@@ -146,6 +146,20 @@ class TestXWPFRun {
     }
 
     @Test
+    void testSetGetComplexBold() {
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewBCs().setVal(STOnOff1.ON);
+
+        XWPFRun run = new XWPFRun(ctRun, irb);
+        assertTrue(run.isComplexScriptBold());
+
+        run.setComplexScriptBold(false);
+        // Implementation detail: POI natively prefers <w:b w:val="false"/>,
+        // but should correctly read val="0" and val="off"
+        assertEquals("off", rpr.getBCsArray(0).getVal());
+    }
+
+    @Test
     void testSetGetItalic() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewI().setVal(STOnOff1.ON);
@@ -155,6 +169,18 @@ class TestXWPFRun {
 
         run.setItalic(false);
         assertEquals("off", rpr.getIArray(0).getVal());
+    }
+
+    @Test
+    void testSetGetItalicComplex() {
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewICs().setVal(STOnOff1.ON);
+
+        XWPFRun run = new XWPFRun(ctRun, irb);
+        assertTrue(run.isComplexScriptItalic());
+
+        run.setComplexScriptItalic(false);
+        assertEquals("off", rpr.getICsArray(0).getVal());
     }
 
     @Test
@@ -211,6 +237,23 @@ class TestXWPFRun {
         assertEquals("49", rpr.getSzArray(0).getVal().toString());
         assertEquals(25, run.getFontSize());
         assertEquals(24.5, run.getFontSizeAsDouble(), 0.01);
+    }
+
+    @Test
+    void testSetGetFontSizeComplex() {
+        CTRPr rpr = ctRun.addNewRPr();
+        rpr.addNewSzCs().setVal(BigInteger.valueOf(14));
+
+        XWPFRun run = new XWPFRun(ctRun, irb);
+
+        assertEquals(7.0, run.getComplexScriptFontSizeAsDouble(), 0.01);
+
+        run.setComplexScriptFontSize(24);
+        assertEquals("48", rpr.getSzCsArray(0).getVal().toString());
+
+        run.setComplexScriptFontSize(24.5f);
+        assertEquals("49", rpr.getSzCsArray(0).getVal().toString());
+        assertEquals(24.5, run.getComplexScriptFontSizeAsDouble(), 0.01);
     }
 
     @Test
@@ -561,9 +604,9 @@ class TestXWPFRun {
     void testSetFontFamily_52288() throws IOException {
         try (XWPFDocument doc = openSampleDocument("52288.docx")) {
             doc.getParagraphs().stream()
-                .flatMap(p -> p.getRuns().stream())
-                .filter(p -> p != null && p.getText(0) != null)
-                .forEach(r -> assertDoesNotThrow(() -> r.setFontFamily("Times New Roman")));
+                    .flatMap(p -> p.getRuns().stream())
+                    .filter(p -> p != null && p.getText(0) != null)
+                    .forEach(r -> assertDoesNotThrow(() -> r.setFontFamily("Times New Roman")));
         }
     }
 
@@ -573,7 +616,7 @@ class TestXWPFRun {
         try (XWPFDocument document = new XWPFDocument()) {
 
             document.createParagraph().createRun().addPicture(
-                new ByteArrayInputStream(image), Document.PICTURE_TYPE_JPEG, "test.jpg", Units.toEMU(300), Units.toEMU(100));
+                    new ByteArrayInputStream(image), Document.PICTURE_TYPE_JPEG, "test.jpg", Units.toEMU(300), Units.toEMU(100));
 
             try (XWPFDocument docBack = writeOutAndReadBack(document)) {
                 List<XWPFPicture> pictures = docBack.getParagraphArray(0).getRuns().get(0).getEmbeddedPictures();
