@@ -322,8 +322,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * applied to the complex characters.
      * </p>
      *
-     * @param value {@code true} if the bold property is applied to
-     *              this run
+     * @param value {@code true} if the bold property is applied for complex characters
      */
     public void setComplexScriptBold(boolean value) {
         CTRPr pr = getRunProperties(true);
@@ -437,11 +436,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * <p>
      * If this element is not present, the default value is to leave the
      * formatting applied at previous level in the style hierarchy. If this
-     * element is never applied in the style hierarchy, then italic shall not be
-     * applied to the non-complex characters.
+     * element is never applied in the style hierarchy, then bold shall not be
+     * applied to non-complex script characters.
      *
-     * @param value {@code true} if the italic property is applied to
-     *              this run
+     * @param value {@code true} if the italic property is applied for non-complex characters.
      */
     @Override
     public void setItalic(boolean value) {
@@ -469,8 +467,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * element is never applied in the style hierarchy, then italic shall not be
      * applied to the complex characters.
      *
-     * @param value {@code true} if the italic property is applied to
-     *              this run
+     * @param value {@code true} if the italic property is applied for complex characters.
      */
     public void setComplexScriptItalic(boolean value) {
         CTRPr pr = getRunProperties(true);
