@@ -249,8 +249,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Whether the bold property shall be applied to the non-complex
-     * characters in the contents of this run when displayed in a document.
+     * Whether the bold property shall be applied to all non-complex script
+     * characters in the contents of this run when displayed in a document
      *
      * @return {@code true} if the bold property for non-complex scripts is applied
      */
@@ -289,7 +289,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * If this element is not present, the default value is to leave the
      * formatting applied at previous level in the style hierarchy. If this
      * element is never applied in the style hierarchy, then bold shall not be
-     * applied to the non-complex characters.
+     * applied to non-complex script characters.
      * </p>
      *
      * @param value {@code true} if the bold property is applied to
@@ -400,7 +400,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Whether the italic property should be applied to the non-complex
+     * Whether the italic property should be applied to all non-complex script
      * characters in the contents of this run when displayed in a document.
      *
      * @return {@code true} if the italic property is applied for non-complex characters.
@@ -412,10 +412,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Whether the italic property should be applied to the non-complex
+     * Whether the italic property should be applied to the complex
      * characters in the contents of this run when displayed in a document.
      *
-     * @return {@code true} if the italic property is applied for non-complex characters.
+     * @return {@code true} if the italic property is applied for complex characters.
      */
     public boolean isComplexScriptItalic() {
         CTRPr pr = getRunProperties(false);
@@ -913,7 +913,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Specifies the font size which shall be applied to the non-complex
+     * Specifies the font size which shall be applied to all non complex script
      * characters in the contents of this run when displayed.
      *
      * @return value representing the font size (non-integer size will be rounded with half rounding up,
