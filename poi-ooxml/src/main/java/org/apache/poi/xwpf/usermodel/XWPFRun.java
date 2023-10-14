@@ -265,6 +265,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * characters in the contents of this run when displayed in a document.
      *
      * @return {@code true} if the bold property for complex scripts is applied
+     * @since POI 5.2.5
      */
     public boolean isComplexScriptBold() {
         CTRPr pr = getRunProperties(false);
@@ -323,6 +324,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * </p>
      *
      * @param value {@code true} if the bold property is applied for complex characters
+     * @since POI 5.2.5
      */
     public void setComplexScriptBold(boolean value) {
         CTRPr pr = getRunProperties(true);
@@ -414,6 +416,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * characters in the contents of this run when displayed in a document.
      *
      * @return {@code true} if the italic property is applied for complex characters.
+     * @since POI 5.2.5
      */
     public boolean isComplexScriptItalic() {
         CTRPr pr = getRunProperties(false);
@@ -468,6 +471,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * applied to the complex characters.
      *
      * @param value {@code true} if the italic property is applied for complex characters.
+     * @since POI 5.2.5
      */
     public void setComplexScriptItalic(boolean value) {
         CTRPr pr = getRunProperties(true);
@@ -931,6 +935,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @return value representing the font size (non-integer size will be rounded with half rounding up,
      * -1 is returned if size not set)
      * @deprecated use {@link #getComplexScriptFontSizeAsDouble()}
+     * @since POI 5.2.5
      */
     @Deprecated
     @Removal(version = "6.0.0")
@@ -957,7 +962,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * characters in the contents of this run when displayed.
      *
      * @return value representing the font size for the complex scripts (can be null if size not set)
-     * @since POI 5.0.0
+     * @since POI 5.2.5
      */
     public Double getComplexScriptFontSizeAsDouble() {
         BigDecimal bd = getComplexScriptFontSizeAsBigDecimal(1);
@@ -1012,6 +1017,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @param size The font size as number of point measurements.
      * @see #setComplexScriptFontSize(double)
+     * @since POI 5.2.5
      */
     public void setComplexScriptFontSize(int size) {
         CTRPr pr = getRunProperties(true);
@@ -1057,7 +1063,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      *
      * @param size The font size as number of point measurements.
      * @see #setFontSize(int)
-     * @since POI 5.0.0
+     * @since POI 5.2.5
      */
     public void setComplexScriptFontSize(double size) {
         CTRPr pr = getRunProperties(true);
