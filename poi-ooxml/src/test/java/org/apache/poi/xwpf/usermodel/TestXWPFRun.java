@@ -146,15 +146,14 @@ class TestXWPFRun {
     }
 
     @Test
-    void testSetGetBoldComplex() {
+    void testSetGetComplexBold() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewBCs().setVal(STOnOff1.ON);
 
         XWPFRun run = new XWPFRun(ctRun, irb);
-        run.setScriptType(XWPFRun.ScriptType.COMPLEX);
-        assertTrue(run.isBold());
+        assertTrue(run.isComplexScriptBold());
 
-        run.setBold(false);
+        run.setComplexScriptBold(false);
         // Implementation detail: POI natively prefers <w:b w:val="false"/>,
         // but should correctly read val="0" and val="off"
         assertEquals("off", rpr.getBCsArray(0).getVal());
@@ -178,10 +177,9 @@ class TestXWPFRun {
         rpr.addNewICs().setVal(STOnOff1.ON);
 
         XWPFRun run = new XWPFRun(ctRun, irb);
-        run.setScriptType(XWPFRun.ScriptType.COMPLEX);
-        assertTrue(run.isItalic());
+        assertTrue(run.isComplexScriptItalic());
 
-        run.setItalic(false);
+        run.setComplexScriptItalic(false);
         assertEquals("off", rpr.getICsArray(0).getVal());
     }
 
@@ -247,18 +245,17 @@ class TestXWPFRun {
         rpr.addNewSzCs().setVal(BigInteger.valueOf(14));
 
         XWPFRun run = new XWPFRun(ctRun, irb);
-        run.setScriptType(XWPFRun.ScriptType.COMPLEX);
 
-        assertEquals(7, run.getFontSize());
-        assertEquals(7.0, run.getFontSizeAsDouble(), 0.01);
+        assertEquals(7, run.getComplexScriptFontSize());
+        assertEquals(7.0, run.getComplexScriptFontSizeAsDouble(), 0.01);
 
-        run.setFontSize(24);
+        run.setComplexScriptFontSize(24);
         assertEquals("48", rpr.getSzCsArray(0).getVal().toString());
 
-        run.setFontSize(24.5f);
+        run.setComplexScriptFontSize(24.5f);
         assertEquals("49", rpr.getSzCsArray(0).getVal().toString());
-        assertEquals(25, run.getFontSize());
-        assertEquals(24.5, run.getFontSizeAsDouble(), 0.01);
+        assertEquals(25, run.getComplexScriptFontSize());
+        assertEquals(24.5, run.getComplexScriptFontSizeAsDouble(), 0.01);
     }
 
     @Test
