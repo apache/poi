@@ -246,7 +246,6 @@ class TestXWPFRun {
 
         XWPFRun run = new XWPFRun(ctRun, irb);
 
-        assertEquals(7, run.getComplexScriptFontSize());
         assertEquals(7.0, run.getComplexScriptFontSizeAsDouble(), 0.01);
 
         run.setComplexScriptFontSize(24);
@@ -254,7 +253,6 @@ class TestXWPFRun {
 
         run.setComplexScriptFontSize(24.5f);
         assertEquals("49", rpr.getSzCsArray(0).getVal().toString());
-        assertEquals(25, run.getComplexScriptFontSize());
         assertEquals(24.5, run.getComplexScriptFontSizeAsDouble(), 0.01);
     }
 

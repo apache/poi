@@ -929,22 +929,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Specifies the font size which shall be applied to the complex script
-     * characters in the contents of this run when displayed.
-     *
-     * @return value representing the font size (non-integer size will be rounded with half rounding up,
-     * -1 is returned if size not set)
-     * @deprecated use {@link #getComplexScriptFontSizeAsDouble()}
-     * @since POI 5.2.5
-     */
-    @Deprecated
-    @Removal(version = "6.0.0")
-    public int getComplexScriptFontSize() {
-        BigDecimal bd = getComplexScriptFontSizeAsBigDecimal(0);
-        return bd == null ? -1 : bd.intValue();
-    }
-
-    /**
      * Specifies the font size which shall be applied to the non-complex
      * characters in the contents of this run when displayed.
      *
