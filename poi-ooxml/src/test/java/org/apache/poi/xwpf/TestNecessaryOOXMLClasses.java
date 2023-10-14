@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.impl.CTBdoContentRunImpl;
 
 // aim is to get these classes loaded and included in poi-ooxml-lite.jar
 class TestNecessaryOOXMLClasses {
