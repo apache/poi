@@ -18,12 +18,17 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.List;
 import java.util.TimeZone;
 
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
@@ -35,13 +40,16 @@ import org.junit.jupiter.api.Test;
  * Test case for TEXT()
  */
 final class TestText {
+    private static final List<ErrorEval> EXCEL_ERRORS = Arrays.asList(ErrorEval.NULL_INTERSECTION, ErrorEval.DIV_ZERO,
+            ErrorEval.VALUE_INVALID, ErrorEval.REF_INVALID, ErrorEval.NAME_INVALID, ErrorEval.NUM_ERROR, ErrorEval.NA);
+
     @Test
     void testTextWithStringFirstArg() {
         ValueEval strArg = new StringEval("abc");
         ValueEval formatArg = new StringEval("abc");
         ValueEval[] args = { strArg, formatArg };
         ValueEval result = TextFunction.TEXT.evaluate(args, -1, (short)-1);
-        assertEquals(ErrorEval.VALUE_INVALID, result);
+        assertEquals(strArg.toString(), result.toString());
     }
 
     @Test
@@ -159,7 +167,130 @@ final class TestText {
         result = TextFunction.TEXT.evaluate(args, -1, -1);
         testResult = new StringEval("1900-11-16T07:42:14.400");
         assertEquals(testResult.toString(), result.toString());
-
     }
 
+    // Test cases from the workbook attached to the bug 67475 which were OK
+
+    @Test
+    void testTextVariousValidNumberFormats() {
+        // negative values: 3 decimals
+        testText(new NumberEval(-123456.789012345), new StringEval("#0.000"), "-123456.789");
+        // no decimals
+        testText(new NumberEval(-123456.789012345), new StringEval("000000"), "-123457");
+        // common format - more digits
+        testText(new NumberEval(-123456.789012345), new StringEval("00.0000"), "-123456.7890");
+        // common format - less digits
+        testText(new NumberEval(-12.78), new StringEval("00000.000000"), "-00012.780000");
+        // half up
+        testText(new NumberEval(-0.56789012375), new StringEval("#0.0000000000"), "-0.5678901238");
+        // half up
+        testText(new NumberEval(-0.56789012385), new StringEval("#0.0000000000"), "-0.5678901239");
+        // positive values: 3 decimals
+        testText(new NumberEval(123456.789012345), new StringEval("#0.000"), "123456.789");
+        // no decimals
+        testText(new NumberEval(123456.789012345), new StringEval("000000"), "123457");
+        // common format - more digits
+        testText(new NumberEval(123456.789012345), new StringEval("00.0000"), "123456.7890");
+        // common format - less digits
+        testText(new NumberEval(12.78), new StringEval("00000.000000"), "00012.780000");
+        // half up
+        testText(new NumberEval(0.56789012375), new StringEval("#0.0000000000"), "0.5678901238");
+        // half up
+        testText(new NumberEval(0.56789012385), new StringEval("#0.0000000000"), "0.5678901239");
+    }
+
+    @Test
+    void testTextBlankTreatedAsZero() {
+        testText(BlankEval.instance, new StringEval("#0.000"), "0.000");
+    }
+
+    @Test
+    void testTextStrangeFormat() {
+        // number 0
+        testText(new NumberEval(-123456.789012345), new NumberEval(0), "-123457");
+        // negative number with few zeros
+        testText(new NumberEval(-123456.789012345), new NumberEval(-0.0001), "--123456.7891");
+        // format starts with "."
+        testText(new NumberEval(0.0123), new StringEval(".000"), ".012");
+        // one zero negative
+        testText(new NumberEval(1001.202), new NumberEval(-8808), "-8810018");
+        // format contains 0
+        testText(new NumberEval(43368.0), new NumberEval(909), "9433689");
+    }
+
+    @Test
+    void testTextErrorAsFormat() {
+        for (ErrorEval errorEval : EXCEL_ERRORS) {
+            testText(new NumberEval(3.14), errorEval, errorEval);
+            testText(BoolEval.TRUE, errorEval, errorEval);
+            testText(BoolEval.FALSE, errorEval, errorEval);
+        }
+    }
+
+    @Test
+    void testTextErrorAsValue() {
+        for (ErrorEval errorEval : EXCEL_ERRORS) {
+            testText(errorEval, new StringEval("#0.000"), errorEval);
+            testText(errorEval, new StringEval("yyyymmmdd"), errorEval);
+        }
+    }
+
+    // Test cases from the workbook attached to the bug 67475 which were failing and are fixed by the patch
+
+    @Test
+    void testTextEmptyStringWithDateFormat() {
+        testText(new StringEval(""), new StringEval("yyyymmmdd"), "");
+    }
+
+    @Test
+    void testTextAnyTextWithDateFormat() {
+        testText(new StringEval("anyText"), new StringEval("yyyymmmdd"), "anyText");
+    }
+
+    @Test
+    void testTextBooleanWithDateFormat() {
+        testText(BoolEval.TRUE, new StringEval("yyyymmmdd"), BoolEval.TRUE.getStringValue());
+        testText(BoolEval.FALSE, new StringEval("yyyymmmdd"), BoolEval.FALSE.getStringValue());
+    }
+
+    @Test
+    void testTextNumberWithBooleanFormat() {
+        testText(new NumberEval(43368), BoolEval.TRUE, ErrorEval.VALUE_INVALID);
+        testText(new NumberEval(43368), BoolEval.FALSE, ErrorEval.VALUE_INVALID);
+
+        testText(new NumberEval(3.14), BoolEval.TRUE, ErrorEval.VALUE_INVALID);
+        testText(new NumberEval(3.14), BoolEval.FALSE, ErrorEval.VALUE_INVALID);
+    }
+
+    @Test
+    void testTextEmptyStringWithNumberFormat() {
+        testText(new StringEval(""), new StringEval("#0.000"), "");
+    }
+
+    @Test
+    void testTextAnyTextWithNumberFormat() {
+        testText(new StringEval("anyText"), new StringEval("#0.000"), "anyText");
+    }
+
+    @Test
+    void testTextBooleanWithNumberFormat() {
+        testText(BoolEval.TRUE, new StringEval("#0.000"), BoolEval.TRUE.getStringValue());
+        testText(BoolEval.FALSE, new StringEval("#0.000"), BoolEval.FALSE.getStringValue());
+    }
+
+    private void testText(ValueEval valueArg, ValueEval formatArg, String expectedResult) {
+        ValueEval[] args = { valueArg, formatArg };
+        ValueEval result = TextFunction.TEXT.evaluate(args, -1, -1);
+
+        assertTrue(result instanceof StringEval, "Expected StringEval got " + result.getClass().getSimpleName());
+        assertEquals(expectedResult, ((StringEval) result).getStringValue());
+    }
+
+    private void testText(ValueEval valueArg, ValueEval formatArg, ErrorEval expectedResult) {
+        ValueEval[] args = { valueArg, formatArg };
+        ValueEval result = TextFunction.TEXT.evaluate(args, -1, -1);
+
+        assertTrue(result instanceof ErrorEval, "Expected ErrorEval got " + result.getClass().getSimpleName());
+        assertEquals(expectedResult, result);
+    }
 }

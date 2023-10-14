@@ -20,12 +20,15 @@ package org.apache.poi.ss.formula.functions;
 import java.util.Locale;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
+import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.StringValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DataFormatter;
 
@@ -342,22 +345,57 @@ public abstract class TextFunction implements Function {
 
         @Override
         public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0, ValueEval arg1) {
-            double s0;
-            String s1;
-            try {
-                s0 = evaluateDoubleArg(arg0, srcRowIndex, srcColumnIndex);
-                s1 = evaluateStringArg(arg1, srcRowIndex, srcColumnIndex);
-            } catch (EvaluationException e) {
-                return e.getErrorEval();
-            }
+            ValueEval valueEval;
 
             try {
-                // Ask DataFormatter to handle the String for us
-                String formattedStr = formatter.formatRawCellContents(s0, -1, s1);
-                return new StringEval(formattedStr);
-            } catch (Exception e) {
-                return ErrorEval.VALUE_INVALID;
+                ValueEval valueVe = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+                ValueEval formatVe = OperandResolver.getSingleValue(arg1, srcRowIndex, srcColumnIndex);
+                try {
+                    Double valueDouble = null;
+                    String evaluated = null;
+
+                    if (valueVe == BlankEval.instance) {
+                        valueDouble = 0.0;
+                    } else if (valueVe instanceof BoolEval) {
+                        evaluated = ((BoolEval) valueVe).getStringValue();
+                    } else if (valueVe instanceof NumericValueEval) {
+                        valueDouble = ((NumericValueEval) valueVe).getNumberValue();
+                    } else if (valueVe instanceof StringEval) {
+                        evaluated = ((StringEval) valueVe).getStringValue();
+                        valueDouble = OperandResolver.parseDouble(evaluated);
+                    }
+
+                    if (valueDouble != null) {
+                        String format = formatPatternValueEval2String(formatVe);
+                        evaluated = formatter.formatRawCellContents(valueDouble, -1, format);
+                    }
+
+                    valueEval = new StringEval(evaluated);
+                } catch (Exception e) {
+                    valueEval = ErrorEval.VALUE_INVALID;
+                }
+            } catch (EvaluationException e) {
+                valueEval = e.getErrorEval();
             }
+
+            return valueEval;
+        }
+
+        /**
+         * Using it instead of {@link OperandResolver#coerceValueToString(ValueEval)} in order to handle booleans differently.
+         */
+        private String formatPatternValueEval2String(ValueEval ve) {
+            String format = null;
+            if (!(ve instanceof BoolEval) && (ve instanceof StringValueEval)) {
+                StringValueEval sve = (StringValueEval) ve;
+                format = sve.getStringValue();
+            } else if (ve == BlankEval.instance) {
+                format = "";
+            } else {
+                throw new IllegalArgumentException("Unexpected eval class (" + ve.getClass().getName() + ")");
+            }
+
+            return format;
         }
     };
 
