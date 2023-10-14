@@ -135,26 +135,34 @@ class TestXWPFRun {
     void testSetGetBold() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewB().setVal(STOnOff1.ON);
+        rpr.addNewBCs().setVal(STOnOff1.ON);
 
         XWPFRun run = new XWPFRun(ctRun, irb);
         assertTrue(run.isBold());
+        assertTrue(run.isBold(XWPFRun.ScriptType.COMPLEX));
 
         run.setBold(false);
+        run.setBold(false, XWPFRun.ScriptType.COMPLEX);
         // Implementation detail: POI natively prefers <w:b w:val="false"/>,
         // but should correctly read val="0" and val="off"
         assertEquals("off", rpr.getBArray(0).getVal());
+        assertEquals("off", rpr.getBCsArray(0).getVal());
     }
 
     @Test
     void testSetGetItalic() {
         CTRPr rpr = ctRun.addNewRPr();
         rpr.addNewI().setVal(STOnOff1.ON);
+        rpr.addNewICs().setVal(STOnOff1.ON);
 
         XWPFRun run = new XWPFRun(ctRun, irb);
         assertTrue(run.isItalic());
+        assertTrue(run.isItalic(XWPFRun.ScriptType.COMPLEX));
 
         run.setItalic(false);
+        run.setItalic(false, XWPFRun.ScriptType.COMPLEX);
         assertEquals("off", rpr.getIArray(0).getVal());
+        assertEquals("off", rpr.getICsArray(0).getVal());
     }
 
     @Test
@@ -203,20 +211,20 @@ class TestXWPFRun {
 
         XWPFRun run = new XWPFRun(ctRun, irb);
         assertEquals(7, run.getFontSize());
-        assertEquals(7.0, run.getFontSizeAsDouble(XWPFRun.ScriptType.NON_COMPLEX), 0.01);
+        assertEquals(7.0, run.getFontSizeAsDouble(), 0.01);
         assertEquals(7.0, run.getFontSizeAsDouble(XWPFRun.ScriptType.COMPLEX), 0.01);
 
-        run.setFontSize(24, XWPFRun.ScriptType.NON_COMPLEX);
+        run.setFontSize(24);
         run.setFontSize(24, XWPFRun.ScriptType.COMPLEX);
         assertEquals("48", rpr.getSzArray(0).getVal().toString());
         assertEquals("48", rpr.getSzCsArray(0).getVal().toString());
 
-        run.setFontSize(24.5f, XWPFRun.ScriptType.NON_COMPLEX);
+        run.setFontSize(24.5f);
         run.setFontSize(24.5f, XWPFRun.ScriptType.COMPLEX);
         assertEquals("49", rpr.getSzArray(0).getVal().toString());
         assertEquals("49", rpr.getSzCsArray(0).getVal().toString());
         assertEquals(25, run.getFontSize());
-        assertEquals(24.5, run.getFontSizeAsDouble(XWPFRun.ScriptType.NON_COMPLEX), 0.01);
+        assertEquals(24.5, run.getFontSizeAsDouble(), 0.01);
         assertEquals(24.5, run.getFontSizeAsDouble(XWPFRun.ScriptType.COMPLEX), 0.01);
     }
 
