@@ -75,6 +75,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     private final String pictureText;
     private final IRunBody parent;
     private final List<XWPFPicture> pictures;
+    private ScriptType scriptType = ScriptType.NON_COMPLEX;
 
     /**
      * @param r the CTR bean which holds the run attributes
@@ -140,6 +141,29 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public XWPFRun(CTR r, XWPFParagraph p) {
         this(r, (IRunBody) p);
     }
+
+    /**
+     * Gets the current script type for this run.
+     *
+     * @return the current script type.
+     */
+    public ScriptType getScriptType() {
+        return this.scriptType;
+    }
+
+    /**
+     * Sets the script type for this run.
+     *
+     * @param scriptType to be set.
+     */
+    public void setScriptType(ScriptType scriptType){
+        this.scriptType = scriptType;
+    }
+
+    private boolean isComplexScript() {
+        return getScriptType() == ScriptType.COMPLEX;
+    }
+
 
     /**
      * Add the xml:spaces="preserve" attribute if the string has leading or trailing white spaces
@@ -249,26 +273,16 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Whether the bold property shall be applied to all non-complex script
-     * characters in the contents of this run when displayed in a document
+     * Whether the bold property shall be applied to the currently specified
+     * {@link #scriptType script type} characters in the contents of this
+     * run when displayed in a document.
      *
      * @return {@code true} if the bold property is applied
      */
     @Override
     public boolean isBold() {
-        return isBold(ScriptType.NON_COMPLEX);
-    }
-
-    /**
-     * Whether the bold property is applied to the specified script type.
-     *
-     * @param scriptType the script type to check this property for.
-     * @return {@code true} if the bold property for the specified script type is applied
-     */
-    public boolean isBold(ScriptType scriptType) {
         CTRPr pr = getRunProperties(false);
-        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
-        if (isComplexScript) {
+        if (isComplexScript()) {
             return pr != null && pr.sizeOfBCsArray() > 0 && isCTOnOff(pr.getBCsArray(0));
         } else {
             return pr != null && pr.sizeOfBArray() > 0 && isCTOnOff(pr.getBArray(0));
@@ -276,8 +290,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Whether the bold property shall be applied to all non-complex script
-     * characters in the contents of this run when displayed in a document.
+     * Whether the bold property shall be applied to the currently specified
+     * {@link #scriptType script type} characters in the contents of this
+     * run when displayed in a document.
      * <p>
      * This formatting property is a toggle property, which specifies that its
      * behavior differs between its use within a style definition and its use as
@@ -293,7 +308,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * If this element is not present, the default value is to leave the
      * formatting applied at previous level in the style hierarchy. If this
      * element is never applied in the style hierarchy, then bold shall not be
-     * applied to non-complex script characters.
+     * applied to the {@link #scriptType} characters.
      * </p>
      *
      * @param value {@code true} if the bold property is applied to
@@ -301,20 +316,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setBold(boolean value) {
-        setBold(value, ScriptType.NON_COMPLEX);
-    }
-
-    /**
-     * Whether the bold property shall be applied to the specified script type.
-     *
-     * @param value if the bold property is to be applied to this run.
-     * @param scriptType the script type to apply this property to.
-     */
-    public void setBold(boolean value, ScriptType scriptType) {
         CTRPr pr = getRunProperties(true);
-        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
         CTOnOff bold;
-        if (isComplexScript) {
+        if (isComplexScript()) {
             bold = pr.sizeOfBCsArray() > 0 ? pr.getBCsArray(0) : pr.addNewBCs();
         } else {
             bold = pr.sizeOfBArray() > 0 ? pr.getBArray(0) : pr.addNewB();
@@ -390,26 +394,16 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Whether the italic property should be applied to all non-complex script
-     * characters in the contents of this run when displayed in a document.
+     * Whether the italic property should be applied to the currently specified
+     * {@link #scriptType script type} characters in the contents of this run
+     * when displayed in a document.
      *
      * @return {@code true} if the italic property is applied
      */
     @Override
     public boolean isItalic() {
-        return isItalic(ScriptType.NON_COMPLEX);
-    }
-
-    /**
-     * Whether the italic property is applied to the specified script type.
-     *
-     * @param scriptType the script type to check this property for.
-     * @return {@code true} if the italic property for the specified script type is applied
-     */
-    public boolean isItalic(ScriptType scriptType) {
         CTRPr pr = getRunProperties(false);
-        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
-        if (isComplexScript) {
+        if (isComplexScript()) {
             return pr != null && pr.sizeOfICsArray() > 0 && isCTOnOff(pr.getICsArray(0));
         } else {
             return pr != null && pr.sizeOfIArray() > 0 && isCTOnOff(pr.getIArray(0));
@@ -417,8 +411,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Whether the bold property shall be applied to all non-complex script
-     * characters in the contents of this run when displayed in a document
+     * Whether the italic property shall be applied to the currently specified
+     * {@link #scriptType script type} characters in the contents of this run
+     * when displayed in a document.
      * <p>
      * This formatting property is a toggle property, which specifies that its
      * behavior differs between its use within a style definition and its use as
@@ -432,28 +427,17 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * <p>
      * If this element is not present, the default value is to leave the
      * formatting applied at previous level in the style hierarchy. If this
-     * element is never applied in the style hierarchy, then bold shall not be
-     * applied to non-complex script characters.
+     * element is never applied in the style hierarchy, then italic shall not be
+     * applied to the {@link #scriptType} characters.
      *
      * @param value {@code true} if the italic property is applied to
      *              this run
      */
     @Override
     public void setItalic(boolean value) {
-        setItalic(value, ScriptType.NON_COMPLEX);
-    }
-
-    /**
-     * Whether the italic property shall be applied to the specified script type.
-     *
-     * @param value if the italic property is to be applied to this run.
-     * @param scriptType the script type to apply this property to.
-     */
-    public void setItalic(boolean value, ScriptType scriptType) {
         CTRPr pr = getRunProperties(true);
-        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
         CTOnOff italic;
-        if (isComplexScript) {
+        if (isComplexScript()) {
             italic = pr.sizeOfICsArray() > 0 ? pr.getICsArray(0) : pr.addNewICs();
         } else {
             italic = pr.sizeOfIArray() > 0 ? pr.getIArray(0) : pr.addNewI();
@@ -895,8 +879,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Specifies the font size which shall be applied to all non complex script
-     * characters in the contents of this run when displayed.
+     * Specifies the font size which shall be applied to the currently specified
+     * {@link #scriptType script type} characters in the contents of this
+     * run when displayed.
      *
      * @return value representing the font size (non-integer size will be rounded with half rounding up,
      * -1 is returned if size not set)
@@ -911,36 +896,23 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Specifies the font size which shall be applied to all non complex script
-     * characters in the contents of this run when displayed.
+     * Specifies the font size which shall be applied to the currently specified
+     * {@link #scriptType script type} characters in the contents of this
+     * run when displayed.
      *
      * @return value representing the font size (can be null if size not set)
      * @since POI 5.0.0
      */
     @Override
     public Double getFontSizeAsDouble() {
-        return getFontSizeAsDouble(ScriptType.NON_COMPLEX);
-    }
-
-    /**
-     * Specifies the font size which shall be applied to the specified script type
-     *
-     * @param scriptType the script type to get this property for.
-     * @return value representing the font size (can be null if size not set)
-     */
-    public Double getFontSizeAsDouble(ScriptType scriptType) {
-        BigDecimal bd = getFontSizeAsBigDecimal(1, scriptType);
+        BigDecimal bd = getFontSizeAsBigDecimal(1);
         return bd == null ? null : bd.doubleValue();
     }
 
-    private BigDecimal getFontSizeAsBigDecimal(int scale) {
-        return getFontSizeAsBigDecimal(scale, ScriptType.NON_COMPLEX);
-    }
 
-    private BigDecimal getFontSizeAsBigDecimal(int scale, ScriptType scriptType) {
+    private BigDecimal getFontSizeAsBigDecimal(int scale) {
         CTRPr pr = getRunProperties(false);
-        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
-        if (isComplexScript) {
+        if (isComplexScript()) {
             return (pr != null && pr.sizeOfSzCsArray() > 0)
                     ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(pr.getSzCsArray(0).xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
                     : null;
@@ -953,13 +925,14 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Specifies the font size which shall be applied to all non complex script
-     * characters in the contents of this run when displayed.
+     * Specifies the font size which shall be applied to the currently specified
+     * {@link #scriptType script type} characters in the contents of this
+     * run when displayed.
      * <p>
      * If this element is not present, the default value is to leave the value
      * applied at previous level in the style hierarchy. If this element is
      * never applied in the style hierarchy, then any appropriate font size may
-     * be used for non complex script characters.
+     * be used for the {@link #scriptType current script} characters.
      * </p>
      *
      * @param size The font size as number of point measurements.
@@ -967,21 +940,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setFontSize(int size) {
-        setFontSize(size, ScriptType.NON_COMPLEX);
-    }
-
-    /**
-     * Whether the font size property shall be applied to the specified script type.
-     *
-     * @param size The font size as number of point measurements.
-     * @param scriptType the script type to apply this property to.
-     */
-    public void setFontSize(int size, ScriptType scriptType) {
         CTRPr pr = getRunProperties(true);
         BigInteger bint = BigInteger.valueOf(size);
         BigInteger val = bint.multiply(BigInteger.valueOf(2));
-        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
-        if (isComplexScript) {
+        if (isComplexScript()) {
             CTHpsMeasure ctCsSize = pr.sizeOfSzCsArray() > 0 ? pr.getSzCsArray(0) : pr.addNewSzCs();
             ctCsSize.setVal(val);
         } else {
@@ -991,13 +953,15 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Specifies the font size which shall be applied to all non-complex script
-     * characters in the contents of this run when displayed.
+     * Specifies the font size which shall be applied to the currently specified
+     * {@link #scriptType script type} characters in the contents of this
+     * run when displayed.
+     *
      * <p>
      * If this element is not present, the default value is to leave the value
      * applied at previous level in the style hierarchy. If this element is
      * never applied in the style hierarchy, then any appropriate font size may
-     * be used for non complex script characters.
+     * be used for the {@link #scriptType} characters.
      * </p>
      *
      * @param size The font size as number of point measurements.
@@ -1006,22 +970,11 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setFontSize(double size) {
-        setFontSize(size, ScriptType.NON_COMPLEX);
-    }
-
-    /**
-     * Whether the font size property shall be applied to the specified script type.
-     *
-     * @param size The font size as number of point measurements.
-     * @param scriptType the script type to apply this property to.
-     */
-    public void setFontSize(double size, ScriptType scriptType) {
         CTRPr pr = getRunProperties(true);
         BigDecimal bd = BigDecimal.valueOf(size);
         BigInteger val = bd.multiply(BigDecimal.valueOf(2)).setScale(0, RoundingMode.HALF_UP).toBigInteger();
-        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
 
-        if (isComplexScript) {
+        if (isComplexScript()) {
             CTHpsMeasure ctCsSize = pr.sizeOfSzCsArray() > 0 ? pr.getSzCsArray(0) : pr.addNewSzCs();
             ctCsSize.setVal(val);
         } else {
@@ -1567,12 +1520,22 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * @see <a href="https://www.ecma-international.org/publications-and-standards/standards/ecma-376/">OOXML Spec</a>
-     * Part 1 Sections:
-     * - 17.3.2.2
-     * - 17.3.2.17
-     * - 17.3.2.38
-     * - 17.3.2.39
+     * In the OOXML specification, specifically part 1, section 17.3.2, it mentions that there are specific properties for
+     * <a href="https://en.wikipedia.org/wiki/Complex_text_layout">Complex Scripts</a> which are:
+     * - Bold (bCs):
+     *      This element specifies whether the bold property shall be applied to all complex script characters in the contents
+     * of this run when displayed in a document.
+     * - Italic (iCs):
+     *      This element specifies whether the italic property should be applied to all complex script characters in the
+     * contents of this run when displayed in a document.
+     * - Font Size (szCs):
+     *      This element specifies the font size which shall be applied to all complex script characters in the contents of this
+     * run when displayed. The font sizes specified by this element’s val attribute are expressed as half-point values.
+     *
+     * We need to define the script type of the current run so we can set the appropriate field in OOXML for these
+     * properties.
+     *
+     * @see <a href="https://www.ecma-international.org/publications-and-standards/standards/ecma-376/">OOXML Spec part 1</a>
      */
     public enum ScriptType {
         COMPLEX,
