@@ -256,8 +256,23 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public boolean isBold() {
+        return isBold(ScriptType.NON_COMPLEX);
+    }
+
+    /**
+     * Whether the bold property is applied to the specified script type.
+     *
+     * @param scriptType the script type to check this property for.
+     * @return {@code true} if the bold property for the specified script type is applied
+     */
+    public boolean isBold(ScriptType scriptType) {
         CTRPr pr = getRunProperties(false);
-        return pr != null && pr.sizeOfBArray() > 0 && isCTOnOff(pr.getBArray(0));
+        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
+        if (isComplexScript) {
+            return pr != null && pr.sizeOfBCsArray() > 0 && isCTOnOff(pr.getBCsArray(0));
+        } else {
+            return pr != null && pr.sizeOfBArray() > 0 && isCTOnOff(pr.getBArray(0));
+        }
     }
 
     /**
@@ -286,8 +301,24 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setBold(boolean value) {
+        setBold(value, ScriptType.NON_COMPLEX);
+    }
+
+    /**
+     * Whether the bold property shall be applied to the specified script type.
+     *
+     * @param value if the bold property is to be applied to this run.
+     * @param scriptType the script type to apply this property to.
+     */
+    public void setBold(boolean value, ScriptType scriptType) {
         CTRPr pr = getRunProperties(true);
-        CTOnOff bold = pr.sizeOfBArray() > 0 ? pr.getBArray(0) : pr.addNewB();
+        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
+        CTOnOff bold;
+        if (isComplexScript) {
+            bold = pr.sizeOfBCsArray() > 0 ? pr.getBCsArray(0) : pr.addNewBCs();
+        } else {
+            bold = pr.sizeOfBArray() > 0 ? pr.getBArray(0) : pr.addNewB();
+        }
         bold.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
@@ -366,8 +397,23 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public boolean isItalic() {
+        return isItalic(ScriptType.NON_COMPLEX);
+    }
+
+    /**
+     * Whether the italic property is applied to the specified script type.
+     *
+     * @param scriptType the script type to check this property for.
+     * @return {@code true} if the italic property for the specified script type is applied
+     */
+    public boolean isItalic(ScriptType scriptType) {
         CTRPr pr = getRunProperties(false);
-        return pr != null && pr.sizeOfIArray() > 0 && isCTOnOff(pr.getIArray(0));
+        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
+        if (isComplexScript) {
+            return pr != null && pr.sizeOfICsArray() > 0 && isCTOnOff(pr.getICsArray(0));
+        } else {
+            return pr != null && pr.sizeOfIArray() > 0 && isCTOnOff(pr.getIArray(0));
+        }
     }
 
     /**
@@ -394,8 +440,24 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setItalic(boolean value) {
+        setItalic(value, ScriptType.NON_COMPLEX);
+    }
+
+    /**
+     * Whether the italic property shall be applied to the specified script type.
+     *
+     * @param value if the italic property is to be applied to this run.
+     * @param scriptType the script type to apply this property to.
+     */
+    public void setItalic(boolean value, ScriptType scriptType) {
         CTRPr pr = getRunProperties(true);
-        CTOnOff italic = pr.sizeOfIArray() > 0 ? pr.getIArray(0) : pr.addNewI();
+        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
+        CTOnOff italic;
+        if (isComplexScript) {
+            italic = pr.sizeOfICsArray() > 0 ? pr.getICsArray(0) : pr.addNewICs();
+        } else {
+            italic = pr.sizeOfIArray() > 0 ? pr.getIArray(0) : pr.addNewI();
+        }
         italic.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
@@ -857,15 +919,37 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public Double getFontSizeAsDouble() {
-        BigDecimal bd = getFontSizeAsBigDecimal(1);
+        return getFontSizeAsDouble(ScriptType.NON_COMPLEX);
+    }
+
+    /**
+     * Specifies the font size which shall be applied to the specified script type
+     *
+     * @param scriptType the script type to get this property for.
+     * @return value representing the font size (can be null if size not set)
+     */
+    public Double getFontSizeAsDouble(ScriptType scriptType) {
+        BigDecimal bd = getFontSizeAsBigDecimal(1, scriptType);
         return bd == null ? null : bd.doubleValue();
     }
 
     private BigDecimal getFontSizeAsBigDecimal(int scale) {
+        return getFontSizeAsBigDecimal(scale, ScriptType.NON_COMPLEX);
+    }
+
+    private BigDecimal getFontSizeAsBigDecimal(int scale, ScriptType scriptType) {
         CTRPr pr = getRunProperties(false);
-        return (pr != null && pr.sizeOfSzArray() > 0)
-            ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(pr.getSzArray(0).xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
-            : null;
+        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
+        if (isComplexScript) {
+            return (pr != null && pr.sizeOfSzCsArray() > 0)
+                    ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(pr.getSzCsArray(0).xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
+                    : null;
+        } else {
+            return (pr != null && pr.sizeOfSzArray() > 0)
+                    ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(pr.getSzArray(0).xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
+                    : null;
+        }
+
     }
 
     /**
@@ -883,14 +967,31 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setFontSize(int size) {
-        BigInteger bint = BigInteger.valueOf(size);
-        CTRPr pr = getRunProperties(true);
-        CTHpsMeasure ctSize = pr.sizeOfSzArray() > 0 ? pr.getSzArray(0) : pr.addNewSz();
-        ctSize.setVal(bint.multiply(BigInteger.valueOf(2)));
+        setFontSize(size, ScriptType.NON_COMPLEX);
     }
 
     /**
-     * Specifies the font size which shall be applied to all non complex script
+     * Whether the font size property shall be applied to the specified script type.
+     *
+     * @param size The font size as number of point measurements.
+     * @param scriptType the script type to apply this property to.
+     */
+    public void setFontSize(int size, ScriptType scriptType) {
+        CTRPr pr = getRunProperties(true);
+        BigInteger bint = BigInteger.valueOf(size);
+        BigInteger val = bint.multiply(BigInteger.valueOf(2));
+        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
+        if (isComplexScript) {
+            CTHpsMeasure ctCsSize = pr.sizeOfSzCsArray() > 0 ? pr.getSzCsArray(0) : pr.addNewSzCs();
+            ctCsSize.setVal(val);
+        } else {
+            CTHpsMeasure ctSize = pr.sizeOfSzArray() > 0 ? pr.getSzArray(0) : pr.addNewSz();
+            ctSize.setVal(val);
+        }
+    }
+
+    /**
+     * Specifies the font size which shall be applied to all non-complex script
      * characters in the contents of this run when displayed.
      * <p>
      * If this element is not present, the default value is to leave the value
@@ -905,10 +1006,28 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setFontSize(double size) {
-        BigDecimal bd = BigDecimal.valueOf(size);
+        setFontSize(size, ScriptType.NON_COMPLEX);
+    }
+
+    /**
+     * Whether the font size property shall be applied to the specified script type.
+     *
+     * @param size The font size as number of point measurements.
+     * @param scriptType the script type to apply this property to.
+     */
+    public void setFontSize(double size, ScriptType scriptType) {
         CTRPr pr = getRunProperties(true);
-        CTHpsMeasure ctSize = pr.sizeOfSzArray() > 0 ? pr.getSzArray(0) : pr.addNewSz();
-        ctSize.setVal(bd.multiply(BigDecimal.valueOf(2)).setScale(0, RoundingMode.HALF_UP).toBigInteger());
+        BigDecimal bd = BigDecimal.valueOf(size);
+        BigInteger val = bd.multiply(BigDecimal.valueOf(2)).setScale(0, RoundingMode.HALF_UP).toBigInteger();
+        boolean isComplexScript = scriptType == ScriptType.COMPLEX;
+
+        if (isComplexScript) {
+            CTHpsMeasure ctCsSize = pr.sizeOfSzCsArray() > 0 ? pr.getSzCsArray(0) : pr.addNewSzCs();
+            ctCsSize.setVal(val);
+        } else {
+            CTHpsMeasure ctSize = pr.sizeOfSzArray() > 0 ? pr.getSzArray(0) : pr.addNewSz();
+            ctSize.setVal(val);
+        }
     }
 
     /**
@@ -1445,6 +1564,19 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         cs /* complex symbol */,
         eastAsia /* east asia */,
         hAnsi /* high ansi */
+    }
+
+    /**
+     * @see <a href="https://www.ecma-international.org/publications-and-standards/standards/ecma-376/">OOXML Spec</a>
+     * Part 1 Sections:
+     * - 17.3.2.2
+     * - 17.3.2.17
+     * - 17.3.2.38
+     * - 17.3.2.39
+     */
+    public enum ScriptType {
+        COMPLEX,
+        NON_COMPLEX
     }
 
     /**
