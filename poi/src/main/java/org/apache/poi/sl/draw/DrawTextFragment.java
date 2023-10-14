@@ -89,7 +89,7 @@ public class DrawTextFragment implements Drawable  {
      * @return full height of this text run which is sum of ascent, descent and leading
      */
     public float getHeight(){
-        double h = layout.getAscent() + layout.getDescent();
+        double h = layout.getAscent() + layout.getDescent() + getLeading();
         return (float)h;
     }
 
