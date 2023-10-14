@@ -252,7 +252,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Whether the bold property shall be applied to the non-complex
      * characters in the contents of this run when displayed in a document.
      *
-     * @return {@code true} if the bold property non-complex scripts is applied
+     * @return {@code true} if the bold property for non-complex scripts is applied
      */
     @Override
     public boolean isBold() {
@@ -972,8 +972,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     private BigDecimal getFontSizeAsBigDecimal(int scale) {
         CTRPr pr = getRunProperties(false);
         return (pr != null && pr.sizeOfSzArray() > 0)
-                ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(pr.getSzArray(0).xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
-                : null;
+            ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(pr.getSzArray(0).xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
+            : null;
     }
 
     private BigDecimal getComplexScriptFontSizeAsBigDecimal(int scale) {
@@ -984,7 +984,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Specifies the font size which shall be applied to the currently specified non-complex
+     * Specifies the font size which shall be applied to the non-complex
      * script characters in the contents of this run when displayed.
      * <p>
      * If this element is not present, the default value is to leave the value
@@ -998,8 +998,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setFontSize(int size) {
-        CTRPr pr = getRunProperties(true);
         BigInteger bint = BigInteger.valueOf(size);
+        CTRPr pr = getRunProperties(true);
         CTHpsMeasure ctSize = pr.sizeOfSzArray() > 0 ? pr.getSzArray(0) : pr.addNewSz();
         ctSize.setVal(bint.multiply(BigInteger.valueOf(2)));
     }
@@ -1041,8 +1041,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setFontSize(double size) {
-        CTRPr pr = getRunProperties(true);
         BigDecimal bd = BigDecimal.valueOf(size);
+        CTRPr pr = getRunProperties(true);
         CTHpsMeasure ctSize = pr.sizeOfSzArray() > 0 ? pr.getSzArray(0) : pr.addNewSz();
         ctSize.setVal(bd.multiply(BigDecimal.valueOf(2)).setScale(0, RoundingMode.HALF_UP).toBigInteger());
     }
@@ -1605,7 +1605,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         eastAsia /* east asia */,
         hAnsi /* high ansi */
     }
-
 
     /**
      * Set the text expand/collapse scale value.
