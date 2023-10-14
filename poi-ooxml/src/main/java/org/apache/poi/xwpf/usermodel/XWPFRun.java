@@ -292,8 +292,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * applied to non-complex script characters.
      * </p>
      *
-     * @param value {@code true} if the bold property is applied to
-     *              this run
+     * @param value {@code true} if the bold property is applied for non-complex characters.
      */
     @Override
     public void setBold(boolean value) {
@@ -984,13 +983,13 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * Specifies the font size which shall be applied to the non-complex
-     * script characters in the contents of this run when displayed.
+     * Specifies the font size which shall be applied to all non complex script
+     * characters in the contents of this run when displayed.
      * <p>
      * If this element is not present, the default value is to leave the value
      * applied at previous level in the style hierarchy. If this element is
      * never applied in the style hierarchy, then any appropriate font size may
-     * be used for the non-complex characters.
+     * be used for non complex script characters.
      * </p>
      *
      * @param size The font size as number of point measurements.
@@ -1032,7 +1031,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * If this element is not present, the default value is to leave the value
      * applied at previous level in the style hierarchy. If this element is
      * never applied in the style hierarchy, then any appropriate font size may
-     * be used for the non-complex characters.
+     * be used for non complex script characters.
      * </p>
      *
      * @param size The font size as number of point measurements.
