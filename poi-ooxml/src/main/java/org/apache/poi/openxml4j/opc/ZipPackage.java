@@ -458,22 +458,35 @@ public final class ZipPackage extends OPCPackage {
     @Override
     protected void closeImpl() throws IOException {
         // Flush the package
-        flush();
+        try {
+            flush();
+        } catch (RuntimeException|Error e) {
+            IOUtils.closeQuietly(zipArchive);
+            throw e;
+        }
 
         if (this.originalPackagePath == null || this.originalPackagePath.isEmpty()) {
+            IOUtils.closeQuietly(zipArchive);
             return;
         }
 
         // Save the content
         File targetFile = new File(this.originalPackagePath);
         if (!targetFile.exists()) {
+            IOUtils.closeQuietly(zipArchive);
             throw new InvalidOperationException(
                 "Can't close a package not previously open with the open() method !");
         }
 
         // Case of a package previously open
-        String tempFileName = generateTempFileName(FileHelper.getDirectory(targetFile));
-        File tempFile = TempFile.createTempFile(tempFileName, ".tmp");
+        File tempFile;
+        try {
+            String tempFileName = generateTempFileName(FileHelper.getDirectory(targetFile));
+            tempFile = TempFile.createTempFile(tempFileName, ".tmp");
+        } catch (IOException|RuntimeException|Error e) {
+            IOUtils.closeQuietly(zipArchive);
+            throw e;
+        }
 
         // Save the final package to a temporary file
         boolean success = false;
@@ -482,7 +495,7 @@ public final class ZipPackage extends OPCPackage {
             success = true;
         } finally {
             // Close the current zip file, so we can overwrite it on all platforms
-            IOUtils.closeQuietly(this.zipArchive);
+            IOUtils.closeQuietly(zipArchive);
             try {
                 // Copy the new file over the old one if save() succeed
                 if(success) {
