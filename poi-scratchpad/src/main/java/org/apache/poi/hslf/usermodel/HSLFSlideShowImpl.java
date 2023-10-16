@@ -94,7 +94,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private static final int DEFAULT_MAX_RECORD_LENGTH = 200_000_000;
     private static final int MAX_DOCUMENT_SIZE = 100_000_000;
     private static int MAX_RECORD_LENGTH = DEFAULT_MAX_RECORD_LENGTH;
-    private static final int MAX_IMAGE_LENGTH = 10_000_000;
+    private static final int MAX_IMAGE_LENGTH = 150_000_000;
 
     // Holds metadata on where things are in our document
     private CurrentUserAtom currentUser;
