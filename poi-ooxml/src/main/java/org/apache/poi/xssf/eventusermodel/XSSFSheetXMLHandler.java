@@ -215,7 +215,9 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
             formula.setLength(0);
 
             // Mark us as being a formula if not already
-            nextDataType = xssfDataType.FORMULA;
+            if (this.nextDataType == XSSFSheetXMLHandler.xssfDataType.NUMBER) {
+                this.nextDataType = XSSFSheetXMLHandler.xssfDataType.FORMULA;
+            }
 
             // Decide where to get the formula string from
             String type = attributes.getValue("t");
@@ -260,6 +262,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
         // c => cell
         else if ("c".equals(localName)) {
             // Set up defaults.
+            this.formula.setLength(0);
             this.nextDataType = xssfDataType.NUMBER;
             this.formatIndex = -1;
             this.formatString = null;
@@ -367,68 +370,72 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
         String thisStr = null;
 
         // Process the value contents as required, now we have it all
-        switch (nextDataType) {
-            case BOOLEAN:
-                char first = value.charAt(0);
-                thisStr = first == '0' ? "FALSE" : "TRUE";
-                break;
+        if (formulasNotResults && formula.length() > 0) {
+            thisStr = formula.toString();
+        } else {
+            switch (nextDataType) {
+                case BOOLEAN:
+                    char first = value.charAt(0);
+                    thisStr = first == '0' ? "FALSE" : "TRUE";
+                    break;
 
-            case ERROR:
-                thisStr = "ERROR:" + value;
-                break;
+                case ERROR:
+                    thisStr = "ERROR:" + value;
+                    break;
 
-            case FORMULA:
-                if (formulasNotResults) {
-                    thisStr = formula.toString();
-                } else {
-                    String fv = value.toString();
+                case FORMULA:
+                    if (formulasNotResults) {
+                        thisStr = formula.toString();
+                    } else {
+                        String fv = value.toString();
 
-                    if (this.formatString != null) {
-                        try {
-                            // Try to use the value as a formattable number
-                            double d = Double.parseDouble(fv);
-                            thisStr = formatter.formatRawCellContents(d, this.formatIndex, this.formatString);
-                        } catch (NumberFormatException e) {
-                            // Formula is a String result not a Numeric one
+                        if (this.formatString != null) {
+                            try {
+                                // Try to use the value as a formattable number
+                                double d = Double.parseDouble(fv);
+                                thisStr = formatter.formatRawCellContents(d, this.formatIndex, this.formatString);
+                            } catch (NumberFormatException e) {
+                                // Formula is a String result not a Numeric one
+                                thisStr = fv;
+                            }
+                        } else {
+                            // No formatting applied, just do raw value in all cases
                             thisStr = fv;
                         }
-                    } else {
-                        // No formatting applied, just do raw value in all cases
-                        thisStr = fv;
                     }
-                }
-                break;
+                    break;
 
-            case INLINE_STRING:
-                // TODO: Can these ever have formatting on them?
-                XSSFRichTextString rtsi = new XSSFRichTextString(value.toString());
-                thisStr = rtsi.toString();
-                break;
+                case INLINE_STRING:
+                    // TODO: Can these ever have formatting on them?
+                    XSSFRichTextString rtsi = new XSSFRichTextString(value.toString());
+                    thisStr = rtsi.toString();
+                    break;
 
-            case SST_STRING:
-                String sstIndex = value.toString();
-                if (sstIndex.length() > 0) {
-                    try {
-                        int idx = Integer.parseInt(sstIndex);
-                        RichTextString rtss = sharedStringsTable.getItemAt(idx);
-                        thisStr = rtss.toString();
-                    } catch (NumberFormatException ex) {
-                        LOG.atError().withThrowable(ex).log("Failed to parse SST index '{}'", sstIndex);
+                case SST_STRING:
+                    String sstIndex = value.toString();
+                    if (sstIndex.length() > 0) {
+                        try {
+                            int idx = Integer.parseInt(sstIndex);
+                            RichTextString rtss = sharedStringsTable.getItemAt(idx);
+                            thisStr = rtss.toString();
+                        } catch (NumberFormatException ex) {
+                            LOG.atError().withThrowable(ex).log("Failed to parse SST index '{}'", sstIndex);
+                        }
                     }
-                }
-                break;
+                    break;
 
-            case NUMBER:
-                String n = value.toString();
-                if (this.formatString != null && n.length() > 0)
-                    thisStr = formatter.formatRawCellContents(Double.parseDouble(n), this.formatIndex, this.formatString);
-                else
-                    thisStr = n;
-                break;
+                case NUMBER:
+                    String n = value.toString();
+                    if (this.formatString != null && n.length() > 0)
+                        thisStr = formatter.formatRawCellContents(Double.parseDouble(n), this.formatIndex, this.formatString);
+                    else
+                        thisStr = n;
+                    break;
 
-            default:
-                thisStr = "(TODO: Unexpected type: " + nextDataType + ")";
-                break;
+                default:
+                    thisStr = "(TODO: Unexpected type: " + nextDataType + ")";
+                    break;
+            }
         }
 
         // Do we have a comment for this cell?
