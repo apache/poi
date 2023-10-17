@@ -61,7 +61,8 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
         try {
             EvaluationCell evalCell = toEvaluationCell(cell);
             eval = _bookEvaluator.evaluate(evalCell);
-            cacheExternalWorkbookCells(evalCell);
+            if (evalCell instanceof XSSFEvaluationCell)
+                cacheExternalWorkbookCells((XSSFEvaluationCell) evalCell);
         } catch (IllegalStateException e) {
             // enhance IllegalStateException which can be
             // thrown somewhere deep down the evaluation
@@ -103,7 +104,7 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
      *
      * @param evalCell sourceCell
      */
-    private void cacheExternalWorkbookCells(EvaluationCell evalCell) {
+    private void cacheExternalWorkbookCells(XSSFEvaluationCell evalCell) {
         //
         Ptg[] formulaTokens = getEvaluationWorkbook().getFormulaTokens(evalCell);
         for (Ptg ptg : formulaTokens) {
@@ -112,7 +113,7 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
                 if (area3DPxg.getExternalWorkbookNumber() > 0) {
                     EvaluationWorkbook.ExternalSheet externalSheet = getEvaluationWorkbook().getExternalSheet(area3DPxg.getSheetName(), area3DPxg.getLastSheetName(), area3DPxg.getExternalWorkbookNumber());
                     if (externalSheet != null) {
-                        processEvalCell((XSSFEvaluationCell) evalCell, externalSheet, area3DPxg);
+                        processEvalCell(evalCell, externalSheet, area3DPxg);
                     }
                 }
 
