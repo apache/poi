@@ -362,4 +362,31 @@ class TestXSSFEventBasedExcelExtractor {
             assertContains(text, "Bob\tBob");
         }
     }
+
+    @Test
+    void test67784() throws Exception {
+        try (XSSFEventBasedExcelExtractor ex =
+                     new XSSFEventBasedExcelExtractor(
+                             XSSFTestDataSamples.openSamplePackage("bug67784.xlsx"))) {
+            String text = ex.getText().replace("\r", "");
+            String[] lines = text.split("\n");
+            assertEquals("FALSE", lines[2]);
+            assertEquals("TRUE", lines[3]);
+            assertEquals("ERROR:#DIV/0!", lines[4]);
+        }
+    }
+
+    @Test
+    void test67784Formulas() throws Exception {
+        try (XSSFEventBasedExcelExtractor ex =
+                     new XSSFEventBasedExcelExtractor(
+                             XSSFTestDataSamples.openSamplePackage("bug67784.xlsx"))) {
+            ex.setFormulasNotResults(true);
+            String text = ex.getText().replace("\r", "");
+            String[] lines = text.split("\n");
+            assertEquals("(2 > 5)", lines[2]);
+            assertEquals("(2 < 4)", lines[3]);
+            assertEquals("10/0", lines[4]);
+        }
+    }
 }

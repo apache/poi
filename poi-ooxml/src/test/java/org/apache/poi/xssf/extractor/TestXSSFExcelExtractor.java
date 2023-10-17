@@ -245,6 +245,17 @@ class TestXSSFExcelExtractor {
             //in the extracted text
             assertNotContained(text, "\u30CB\u30DB\u30F3");
         }
+    }
 
+    @Test
+    void test67784Formulas() throws Exception {
+        try (XSSFExcelExtractor extractor = getExtractor("bug67784.xlsx")) {
+            extractor.setFormulasNotResults(true);
+            String text = extractor.getText().replace("\r", "");
+            String[] lines = text.split("\n");
+            assertEquals("(2 > 5)", lines[2]);
+            assertEquals("(2 < 4)", lines[3]);
+            assertEquals("10/0", lines[4]);
+        }
     }
 }
