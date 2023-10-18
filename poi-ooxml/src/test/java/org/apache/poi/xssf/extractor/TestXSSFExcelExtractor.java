@@ -248,6 +248,17 @@ class TestXSSFExcelExtractor {
     }
 
     @Test
+    void test67784() throws Exception {
+        try (XSSFExcelExtractor extractor = getExtractor("bug67784.xlsx")) {
+            String text = extractor.getText().replace("\r", "");
+            String[] lines = text.split("\n");
+            assertEquals("FALSE", lines[2]);
+            assertEquals("TRUE", lines[3]);
+            assertEquals("ERROR:#DIV/0!", lines[4]);
+        }
+    }
+
+    @Test
     void test67784Formulas() throws Exception {
         try (XSSFExcelExtractor extractor = getExtractor("bug67784.xlsx")) {
             extractor.setFormulasNotResults(true);
