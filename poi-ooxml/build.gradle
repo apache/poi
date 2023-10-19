@@ -66,11 +66,11 @@ dependencies {
     api "org.apache.logging.log4j:log4j-api:${log4jVersion}"
     api 'org.apache.commons:commons-collections4:4.4'
 
-    signingImplementation 'org.apache.santuario:xmlsec:3.0.2'
+    signingImplementation 'org.apache.santuario:xmlsec:4.0.0'
     signingImplementation "org.bouncycastle:bcpkix-jdk18on:${bouncyCastleVersion}"
     signingImplementation "org.bouncycastle:bcutil-jdk18on:${bouncyCastleVersion}"
 
-    rendersignImplementation 'org.apache.santuario:xmlsec:3.0.2'
+    rendersignImplementation 'org.apache.santuario:xmlsec:4.0.0'
     rendersignImplementation "org.bouncycastle:bcpkix-jdk18on:${bouncyCastleVersion}"
     rendersignImplementation "org.bouncycastle:bcutil-jdk18on:${bouncyCastleVersion}"
 
