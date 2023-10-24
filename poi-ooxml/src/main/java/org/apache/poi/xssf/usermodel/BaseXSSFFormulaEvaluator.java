@@ -143,13 +143,18 @@ public abstract class BaseXSSFFormulaEvaluator extends BaseFormulaEvaluator {
                 int lastRow = area3DPxg.getLastRow();
                 for (int rowIndex = firstRow; rowIndex <= lastRow; rowIndex++) {
                     XSSFRow row = sheet.getRow(rowIndex);
-                    int firstColumn = area3DPxg.getFirstColumn();
-                    int lastColumn = area3DPxg.getLastColumn();
-                    for (int cellIndex = firstColumn; cellIndex <= lastColumn; cellIndex++) {
-                        XSSFCell cell = row.getCell(cellIndex);
-                        String cellValue = cell.getRawValue();
-                        String cellR = new CellReference(cell).formatAsString(false);
-                        externalLinksTable.cacheData(sheet.getSheetName(), (long)rowIndex + 1, cellR, cellValue);
+                    if (row != null) {
+                        int firstColumn = area3DPxg.getFirstColumn();
+                        int lastColumn = area3DPxg.getLastColumn();
+                        for (int cellIndex = firstColumn; cellIndex <= lastColumn; cellIndex++) {
+                            XSSFCell cell = row.getCell(cellIndex);
+                            if (cell != null) {
+                                String cellValue = cell.getRawValue();
+                                String cellR = new CellReference(cell).formatAsString(false);
+                                externalLinksTable.cacheData(sheet.getSheetName(),
+                                        (long)rowIndex + 1, cellR, cellValue);
+                            }
+                        }
                     }
                 }
             }
