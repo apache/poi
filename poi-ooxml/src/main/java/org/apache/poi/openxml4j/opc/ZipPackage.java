@@ -136,7 +136,7 @@ public final class ZipPackage extends OPCPackage {
 
     /**
      * Constructor. Opens a Zip based Open XML document from
-     *  an InputStream. The InputStream is closed.
+     *  an InputStream.
      *
      * @param in
      *            Zip input stream to load.
