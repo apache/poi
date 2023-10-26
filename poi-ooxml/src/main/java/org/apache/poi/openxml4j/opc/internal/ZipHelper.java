@@ -163,20 +163,33 @@ public final class ZipHelper {
     }
 
     /**
-     * Opens the specified stream as a secure zip
+     * Opens the specified stream as a secure zip. Closes the Input Stream.
      *
-     * @param stream
-     *            The stream to open.
+     * @param stream The stream to open.
      * @return The zip stream freshly open.
      */
     @SuppressWarnings("resource")
     public static ZipArchiveThresholdInputStream openZipStream(InputStream stream) throws IOException {
+        return openZipStream(stream, true);
+    }
+
+    /**
+     * Opens the specified stream as a secure zip. Closes the Input Stream.
+     *
+     * @param stream The stream to open.
+     * @param closeStream whether to close the stream
+     * @return The zip stream freshly open.
+     */
+    @SuppressWarnings("resource")
+    public static ZipArchiveThresholdInputStream openZipStream(
+            final InputStream stream, final boolean closeStream) throws IOException {
         // Peek at the first few bytes to sanity check
         InputStream checkedStream = FileMagic.prepareToCheckMagic(stream);
         verifyZipHeader(checkedStream);
-        
+
+        final InputStream processStream = closeStream ? checkedStream : new NoCloseInputStream(checkedStream);
         // Open as a proper zip stream
-        return new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(checkedStream));
+        return new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(processStream));
     }
 
     /**

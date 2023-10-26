@@ -277,17 +277,40 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      *       pkg.close(); // gracefully closes the underlying zip file
      *   }</pre>
      *
+     * @param stream The InputStream, which is closed when it is read.
      * @throws IOException If reading data from the stream fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
      * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
-    public XSSFWorkbook(InputStream is) throws IOException {
-        this(is, false);
+    public XSSFWorkbook(InputStream stream) throws IOException {
+        this(stream, true);
     }
 
-    private XSSFWorkbook(InputStream is, boolean closeStream) throws IOException {
-        this(PackageHelper.open(is, closeStream));
+    /**
+     * Constructs a XSSFWorkbook object, by buffering the whole stream into memory
+     *  and then opening an {@link OPCPackage} object for it.
+     *
+     * <p>Using an {@link InputStream} requires more memory than using a File, so
+     *  if a {@link File} is available then you should instead do something like
+     *   <pre>{@code
+     *       OPCPackage pkg = OPCPackage.open(path);
+     *       XSSFWorkbook wb = new XSSFWorkbook(pkg);
+     *       // work with the wb object
+     *       ......
+     *       pkg.close(); // gracefully closes the underlying zip file
+     *   }</pre>
+     *
+     * @param stream The InputStream.
+     * @param closeStream Whether to close the stream.
+     * @throws IOException If reading data from the stream fails
+     * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @since POI 5.2.5
+     */
+    public XSSFWorkbook(InputStream stream, boolean closeStream) throws IOException {
+        this(PackageHelper.open(stream, closeStream));
     }
 
     /**

@@ -115,7 +115,7 @@ public final class ZipPackage extends OPCPackage {
 
     /**
      * Constructor. Opens a Zip based Open XML document from
-     *  an InputStream.
+     *  an InputStream. The InputStream is closed.
      *
      * @param in
      *            Zip input stream to load.
@@ -130,6 +130,30 @@ public final class ZipPackage extends OPCPackage {
     ZipPackage(InputStream in, PackageAccess access) throws IOException {
         super(access);
         try (ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(in)) {
+            this.zipArchive = new ZipInputStreamZipEntrySource(zis);
+        }
+    }
+
+    /**
+     * Constructor. Opens a Zip based Open XML document from
+     *  an InputStream. The InputStream is closed.
+     *
+     * @param in
+     *            Zip input stream to load.
+     * @param access
+     *            The package access mode.
+     * @param closeStream
+     *            Whether to close the input stream.
+     * @throws IllegalArgumentException
+     *             If the specified input stream is not an instance of
+     *             ZipInputStream.
+     * @throws IOException
+     *            if input stream cannot be opened, read, or closed
+     * @since POI 5.2.5
+     */
+    ZipPackage(InputStream in, PackageAccess access, boolean closeStream) throws IOException {
+        super(access);
+        try (ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(in, closeStream)) {
             this.zipArchive = new ZipInputStreamZipEntrySource(zis);
         }
     }

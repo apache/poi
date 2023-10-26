@@ -329,6 +329,38 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     }
 
     /**
+     * Open a package.
+     *
+     * Note - uses quite a bit more memory than {@link #open(String)}, which
+     * doesn't need to hold the whole zip file in memory, and can take advantage
+     * of native methods
+     *
+     * @param in
+     *            The InputStream to read the package from.
+     * @param closeStream
+     *            Whether to close the input stream.
+     * @return A PackageBase object
+     *
+     * @throws InvalidFormatException
+     *              Throws if the specified file exist and is not valid.
+     * @throws IOException If reading the stream fails
+     * @since POI 5.2.5
+     */
+    public static OPCPackage open(InputStream in, boolean closeStream) throws InvalidFormatException,
+            IOException {
+        OPCPackage pack = new ZipPackage(in, PackageAccess.READ_WRITE, closeStream);
+        try {
+            if (pack.partList == null) {
+                pack.getParts();
+            }
+        } catch (InvalidFormatException | RuntimeException e) {
+            IOUtils.closeQuietly(pack);
+            throw e;
+        }
+        return pack;
+    }
+
+    /**
      * Opens a package if it exists, else it creates one.
      *
      * @param file
