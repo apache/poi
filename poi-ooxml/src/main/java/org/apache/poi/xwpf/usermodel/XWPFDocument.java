@@ -150,14 +150,27 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * @param is The InputStream to read data from
+     * @param stream The InputStream to read data from - the stream is closed
      * @throws IOException If reading data from the stream fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
      * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
-    public XWPFDocument(InputStream is) throws IOException {
-        super(PackageHelper.open(is));
+    public XWPFDocument(InputStream stream) throws IOException {
+        this(stream, true);
+    }
+
+    /**
+     * @param stream The InputStream to read data from
+     * @param closeStream Whether to close the InputStream
+     * @throws IOException If reading data from the stream fails
+     * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @since POI 5.2.5
+     */
+    public XWPFDocument(InputStream stream, boolean closeStream) throws IOException {
+        super(PackageHelper.open(stream, closeStream));
 
         //build a tree of POIXMLDocumentParts, this workbook being the root
         load(XWPFFactory.getInstance());

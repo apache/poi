@@ -129,14 +129,27 @@ public class XMLSlideShow extends POIXMLDocument
     }
 
     /**
-     * @param is InputStream
+     * @param stream InputStream, which is closed after it is read
      * @throws IOException If reading data from the stream fails
      * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
      * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
      * input format
      */
-    public XMLSlideShow(InputStream is) throws IOException {
-        this(PackageHelper.open(is));
+    public XMLSlideShow(InputStream stream) throws IOException {
+        this(stream, true);
+    }
+
+    /**
+     * @param stream InputStream
+     * @param closeStream Whether to close the InputStream
+     * @throws IOException If reading data from the stream fails
+     * @throws POIXMLException a RuntimeException that can be caused by invalid OOXML data
+     * @throws IllegalStateException a number of other runtime exceptions can be thrown, especially if there are problems with the
+     * input format
+     * @since POI 5.2.5
+     */
+    public XMLSlideShow(InputStream stream, boolean closeStream) throws IOException {
+        this(PackageHelper.open(stream, closeStream));
     }
 
     static OPCPackage empty() {
