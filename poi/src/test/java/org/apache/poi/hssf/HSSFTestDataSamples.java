@@ -43,8 +43,8 @@ public final class HSSFTestDataSamples {
     }
 
     public static HSSFWorkbook openSampleWorkbook(String sampleFileName) {
-        try {
-            return new HSSFWorkbook(_inst.openResourceAsStream(sampleFileName));
+        try (InputStream stream = _inst.openResourceAsStream(sampleFileName)){
+            return new HSSFWorkbook(stream);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
