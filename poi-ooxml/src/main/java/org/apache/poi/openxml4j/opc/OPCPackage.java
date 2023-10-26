@@ -307,7 +307,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * of native methods
      *
      * @param in
-     *            The InputStream to read the package from
+     *            The InputStream to read the package from. The stream is closed.
      * @return A PackageBase object
      *
      * @throws InvalidFormatException
