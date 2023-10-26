@@ -1449,15 +1449,24 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    void testWorkbookCloseDoesNotCloseInputStream() throws Exception {
+    void testWorkbookCloseClosesInputStream() throws Exception {
         try (WrappedStream stream = new WrappedStream(
                 HSSFTestDataSamples.openSampleFileStream("github-321.xlsx"))) {
             try (XSSFWorkbook wb = new XSSFWorkbook(stream)) {
                 XSSFSheet xssfSheet = wb.getSheetAt(0);
                 assertNotNull(xssfSheet);
             }
-            assertFalse(stream.isClosed(), "stream should noy be closed by XSSFWorkbook");
+            assertTrue(stream.isClosed(), "stream should be closed by XSSFWorkbook");
         }
+    }
+
+    static class NoCloseInputStream extends FilterInputStream {
+        NoCloseInputStream(InputStream stream) {
+            super(stream);
+        }
+
+        @Override
+        public void close() {}
     }
 
     @Test
@@ -1485,7 +1494,9 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             try (ZipArchiveInputStream zis = new ZipArchiveInputStream(Files.newInputStream(tempFile.toPath()))) {
                 ZipArchiveEntry entry;
                 while ((entry = zis.getNextZipEntry()) != null) {
-                    XSSFWorkbook wb = new XSSFWorkbook(zis);
+                    // NoCloseInputStream is needed to stop XSSFWorkbook closing the underlying InputStream
+                    // this might not sound great but POI has worked like this for years and we can't just change it
+                    XSSFWorkbook wb = new XSSFWorkbook(new NoCloseInputStream(zis));
                     assertNotNull(wb);
                     count++;
                 }

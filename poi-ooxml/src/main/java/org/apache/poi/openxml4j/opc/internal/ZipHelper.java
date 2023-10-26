@@ -176,7 +176,7 @@ public final class ZipHelper {
         verifyZipHeader(checkedStream);
         
         // Open as a proper zip stream
-        return new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(new NoCloseInputStream(checkedStream)));
+        return new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(checkedStream));
     }
 
     /**
