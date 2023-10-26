@@ -80,6 +80,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -1448,6 +1449,18 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
+    void testWorkbookCloseDoesNotCloseInputStream() throws Exception {
+        try (WrappedStream stream = new WrappedStream(
+                HSSFTestDataSamples.openSampleFileStream("github-321.xlsx"))) {
+            try (XSSFWorkbook wb = new XSSFWorkbook(stream)) {
+                XSSFSheet xssfSheet = wb.getSheetAt(0);
+                assertNotNull(xssfSheet);
+            }
+            assertFalse(stream.isClosed(), "stream should noy be closed by XSSFWorkbook");
+        }
+    }
+
+    @Test
     void readFromZipStream() throws IOException {
         File tempFile = TempFile.createTempFile("poitest", ".zip");
         try {
@@ -1492,4 +1505,21 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         return new CellReference(cell).formatAsString();
     }
 
+    private static class WrappedStream extends FilterInputStream {
+        private boolean closed;
+
+        WrappedStream(InputStream stream) {
+            super(stream);
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            closed = true;
+        }
+
+        boolean isClosed() {
+            return closed;
+        }
+    }
 }

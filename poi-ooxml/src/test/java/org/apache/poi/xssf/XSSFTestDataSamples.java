@@ -52,8 +52,7 @@ public class XSSFTestDataSamples {
         }
     }
     public static XSSFWorkbook openSampleWorkbook(String sampleName) {
-        InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleName);
-        try {
+        try (InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleName)) {
             return new XSSFWorkbook(is);
         } catch (IOException e) {
             throw new RuntimeException(e);
