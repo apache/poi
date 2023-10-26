@@ -1432,7 +1432,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     void testGithub321() throws Exception {
-        try (XSSFWorkbook wb = openSampleWorkbook("github-321.xlsx")) {
+        try (XSSFWorkbook wb = new XSSFWorkbook(getSampleFile("github-321.xlsx"))) {
             XSSFSheet xssfSheet = wb.getSheetAt(0);
             DataFormatter dataFormatter = new DataFormatter();
             FormulaEvaluator formulaEvaluator = wb.getCreationHelper().createFormulaEvaluator();
@@ -1445,6 +1445,8 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             assertEquals("2.1", dataFormatter.formatCellValue(a4));
             assertEquals("2.1", dataFormatter.formatCellValue(a4, formulaEvaluator));
         }
+        System.out.println("sleeping");
+        Thread.sleep(1000 * 1000);
     }
 
     @Test
