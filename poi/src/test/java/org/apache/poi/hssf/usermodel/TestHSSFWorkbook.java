@@ -32,6 +32,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -1229,6 +1230,36 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             try (OutputStream out = new ByteArrayOutputStream()) {
                 wb.write(out);
             }
+        }
+    }
+
+    @Test
+    void testWorkbookCloseClosesInputStream() throws Exception {
+        try (WrappedStream stream = new WrappedStream(
+                HSSFTestDataSamples.openSampleFileStream("49423.xls"))) {
+            try (HSSFWorkbook wb = new HSSFWorkbook(stream)) {
+                HSSFSheet hssfSheet = wb.getSheetAt(0);
+                assertNotNull(hssfSheet);
+            }
+            assertTrue(stream.isClosed(), "stream should be closed by HSSFWorkbook");
+        }
+    }
+
+    private static class WrappedStream extends FilterInputStream {
+        private boolean closed;
+
+        WrappedStream(InputStream stream) {
+            super(stream);
+        }
+
+        @Override
+        public void close() throws IOException {
+            super.close();
+            closed = true;
+        }
+
+        boolean isClosed() {
+            return closed;
         }
     }
 }
