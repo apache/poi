@@ -49,7 +49,7 @@ public final class PackageHelper {
      * @throws IOException If reading data from the stream fails
      */
     public static OPCPackage open(InputStream stream) throws IOException {
-        return open(stream, false);
+        return open(stream, true);
     }
 
     /**

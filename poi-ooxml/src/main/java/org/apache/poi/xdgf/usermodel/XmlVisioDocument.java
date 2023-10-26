@@ -76,8 +76,22 @@ public class XmlVisioDocument extends POIXMLDocument {
         load(new XDGFFactory(_document));
     }
 
-    public XmlVisioDocument(InputStream is) throws IOException {
-        this(PackageHelper.open(is));
+    /**
+     * @param stream InputStream - closed when it is read
+     * @throws IOException
+     */
+    public XmlVisioDocument(InputStream stream) throws IOException {
+        this(stream, true);
+    }
+
+    /**
+     * @param stream InputStream
+     * @param closeStream Whether to close the InputStream
+     * @throws IOException
+     * @since POI 5.2.5
+     */
+    public XmlVisioDocument(InputStream stream, boolean closeStream) throws IOException {
+        this(PackageHelper.open(stream, closeStream));
     }
 
     @Override
