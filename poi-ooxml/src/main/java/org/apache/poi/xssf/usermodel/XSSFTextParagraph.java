@@ -836,7 +836,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     public ListAutoNumber getBulletAutoNumberScheme() {
         ParagraphPropertyFetcher<ListAutoNumber> fetcher = new ParagraphPropertyFetcher<ListAutoNumber>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetBuAutoNum()) {
+                if(props.isSetBuAutoNum() && props.getBuAutoNum().getType() != null) {
                     setValue(ListAutoNumber.values()[props.getBuAutoNum().getType().intValue() - 1]);
                     return true;
                 }
