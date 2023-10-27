@@ -69,7 +69,11 @@ public class AgileEncryptionHeader extends EncryptionHeader {
             throw new EncryptedDocumentException("Unsupported chaining mode - "+ keyData.getCipherChaining());
         }
 
-        int hashSize = keyData.getHashSize();
+        Integer hashSizeObj = keyData.getHashSize();
+        if (hashSizeObj == null) {
+            throw new EncryptedDocumentException("Invalid hash size: " + hashSizeObj);
+        }
+        int hashSize = hashSizeObj;
 
         HashAlgorithm ha = keyData.getHashAlgorithm();
         setHashAlgorithm(ha);

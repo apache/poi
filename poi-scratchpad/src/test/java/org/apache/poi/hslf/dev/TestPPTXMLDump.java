@@ -68,7 +68,8 @@ public class TestPPTXMLDump extends BaseTestPPTIterating {
                 pFile.getName().equals("clusterfuzz-testcase-minimized-POIFuzzer-5681320547975168.ppt") ||
                 pFile.getName().equals("clusterfuzz-testcase-minimized-POIHSLFFuzzer-5231088823566336.ppt") ||
                 pFile.getName().equals("clusterfuzz-testcase-minimized-POIFuzzer-6411649193738240.ppt") ||
-                pFile.getName().equals("clusterfuzz-testcase-minimized-POIHSLFFuzzer-4838893004128256.ppt")) {
+                pFile.getName().equals("clusterfuzz-testcase-minimized-POIHSLFFuzzer-4838893004128256.ppt") ||
+                pFile.getName().equals("clusterfuzz-testcase-minimized-POIHSLFFuzzer-4624961081573376.ppt")) {
             throw new FileNotFoundException();
         }
     }

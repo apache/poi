@@ -69,6 +69,7 @@ public abstract class BaseTestPPTIterating {
         EXCLUDED.put("clusterfuzz-testcase-minimized-POIHSLFFuzzer-5231088823566336.ppt", FileNotFoundException.class);
         EXCLUDED.put("clusterfuzz-testcase-minimized-POIFuzzer-6411649193738240.ppt", FileNotFoundException.class);
         EXCLUDED.put("clusterfuzz-testcase-minimized-POIHSLFFuzzer-4838893004128256.ppt", FileNotFoundException.class);
+        EXCLUDED.put("clusterfuzz-testcase-minimized-POIHSLFFuzzer-4624961081573376.ppt", FileNotFoundException.class);
     }
 
     public static Stream<Arguments> files() {
