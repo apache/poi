@@ -18,18 +18,9 @@
 package org.apache.poi.openxml4j;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ooxml.TrackingInputStream;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.poi.xssf.usermodel.TestXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class TestOPCPackage {
     @Test
     void testPackageCloseClosesInputStream() throws Exception {
-        try (WrappedStream stream = new WrappedStream(
+        try (TrackingInputStream stream = new TrackingInputStream(
                      HSSFTestDataSamples.openSampleFileStream("HeaderFooterComplexFormats.xlsx"))) {
             try (OPCPackage opcPackage = OPCPackage.open(stream)) {
                 assertFalse(opcPackage.isClosed());
@@ -48,30 +39,12 @@ class TestOPCPackage {
 
     @Test
     void testPackageCloseDoesNptCloseInputStream() throws Exception {
-        try (WrappedStream stream = new WrappedStream(
+        try (TrackingInputStream stream = new TrackingInputStream(
                 HSSFTestDataSamples.openSampleFileStream("HeaderFooterComplexFormats.xlsx"))) {
             try (OPCPackage opcPackage = OPCPackage.open(stream, false)) {
                 assertFalse(opcPackage.isClosed());
             }
             assertFalse(stream.isClosed(), "stream should not be closed by OPCPackage");
-        }
-    }
-
-    private static class WrappedStream extends FilterInputStream {
-        private boolean closed;
-
-        WrappedStream(InputStream stream) {
-            super(stream);
-        }
-
-        @Override
-        public void close() throws IOException {
-            super.close();
-            closed = true;
-        }
-
-        boolean isClosed() {
-            return closed;
         }
     }
 

@@ -26,6 +26,7 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ooxml.POIXMLProperties;
+import org.apache.poi.ooxml.TrackingInputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -80,7 +81,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -1450,7 +1450,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     void testWorkbookCloseClosesInputStream() throws Exception {
-        try (WrappedStream stream = new WrappedStream(
+        try (TrackingInputStream stream = new TrackingInputStream(
                 HSSFTestDataSamples.openSampleFileStream("github-321.xlsx"))) {
             try (XSSFWorkbook wb = new XSSFWorkbook(stream)) {
                 XSSFSheet xssfSheet = wb.getSheetAt(0);
@@ -1462,7 +1462,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     void testWorkbookCloseCanBeStoppedFromClosingInputStream() throws Exception {
-        try (WrappedStream stream = new WrappedStream(
+        try (TrackingInputStream stream = new TrackingInputStream(
                 HSSFTestDataSamples.openSampleFileStream("github-321.xlsx"))) {
             // uses new constructor, available since POI 5.2.5
             try (XSSFWorkbook wb = new XSSFWorkbook(stream, false)) {
@@ -1519,21 +1519,4 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         return new CellReference(cell).formatAsString();
     }
 
-    private static class WrappedStream extends FilterInputStream {
-        private boolean closed;
-
-        WrappedStream(InputStream stream) {
-            super(stream);
-        }
-
-        @Override
-        public void close() throws IOException {
-            super.close();
-            closed = true;
-        }
-
-        boolean isClosed() {
-            return closed;
-        }
-    }
 }

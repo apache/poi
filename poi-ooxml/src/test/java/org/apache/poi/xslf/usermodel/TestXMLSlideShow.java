@@ -25,7 +25,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.ooxml.TrackingInputStream;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.usermodel.BaseTestSlideShow;
@@ -180,8 +183,32 @@ class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape, XSLFTextParagraph> {
         }
     }
 
+    @Test
+    void testInputStreamClosed() throws Exception {
+        try (TrackingInputStream stream = new TrackingInputStream(
+                POIDataSamples.getSlideShowInstance().openResourceAsStream("45545_Comment.pptx"))) {
+            try (XMLSlideShow xmlComments = new XMLSlideShow(stream)) {
+                assertFalse(xmlComments.getSlides().isEmpty());
+            }
+            assertTrue(stream.isClosed(), "stream was closed?");
+        }
+    }
+
+    @Test
+    void testInputStreamNotClosedWhenOptionUsed() throws Exception {
+        try (TrackingInputStream stream = new TrackingInputStream(
+                POIDataSamples.getSlideShowInstance().openResourceAsStream("45545_Comment.pptx"))) {
+            try (XMLSlideShow xmlComments = new XMLSlideShow(stream, false)) {
+                assertFalse(xmlComments.getSlides().isEmpty());
+            }
+            assertFalse(stream.isClosed(), "stream was not closed?");
+        }
+    }
+
     @Override
     public XMLSlideShow reopen(SlideShow<XSLFShape, XSLFTextParagraph> show) throws IOException {
         return writeOutAndReadBack((XMLSlideShow) show);
     }
+
+
 }
