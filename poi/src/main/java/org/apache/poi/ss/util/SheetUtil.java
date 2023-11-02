@@ -118,7 +118,7 @@ public class SheetUtil {
      * @param useMergedCells    whether to use merged cells
      * @return  the width in pixels or -1 if cell is empty
      */
-    public static double getCellWidth(Cell cell, int defaultCharWidth, DataFormatter formatter, boolean useMergedCells) {
+    public static double getCellWidth(Cell cell, double defaultCharWidth, DataFormatter formatter, boolean useMergedCells) {
         List<CellRangeAddress> mergedRegions = cell.getSheet().getMergedRegions();
         return getCellWidth(cell, defaultCharWidth, formatter, useMergedCells, mergedRegions);
     }
@@ -137,7 +137,7 @@ public class SheetUtil {
      * @param mergedRegions The list of merged regions as received via cell.getSheet().getMergedRegions()
      * @return  the width in pixels or -1 if cell is empty
      */
-    public static double getCellWidth(Cell cell, int defaultCharWidth, DataFormatter formatter, boolean useMergedCells,
+    public static double getCellWidth(Cell cell, double defaultCharWidth, DataFormatter formatter, boolean useMergedCells,
                                       List<CellRangeAddress> mergedRegions) {
         Sheet sheet = cell.getSheet();
         Workbook wb = sheet.getWorkbook();
@@ -219,7 +219,7 @@ public class SheetUtil {
      * @param str the text contained in the cell
      * @return the best fit cell width
      */
-    private static double getCellWidth(int defaultCharWidth, int colspan,
+    private static double getCellWidth(double defaultCharWidth, int colspan,
             CellStyle style, double minWidth, AttributedString str) {
         TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
         final Rectangle2D bounds;
@@ -270,7 +270,7 @@ public class SheetUtil {
      */
     public static double getColumnWidth(Sheet sheet, int column, boolean useMergedCells, int firstRow, int lastRow){
         DataFormatter formatter = new DataFormatter();
-        int defaultCharWidth = getDefaultCharWidth(sheet.getWorkbook());
+        double defaultCharWidth = getDefaultCharWidth(sheet.getWorkbook());
 
         List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
         double width = -1;
@@ -292,14 +292,14 @@ public class SheetUtil {
      * @return default character width in pixels
      */
     @Internal
-    public static int getDefaultCharWidth(final Workbook wb) {
+    public static double getDefaultCharWidth(final Workbook wb) {
         Font defaultFont = wb.getFontAt( 0);
 
         AttributedString str = new AttributedString(String.valueOf(defaultChar));
         copyAttributes(defaultFont, str, 0, 1);
         try {
             TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
-            return Math.round(layout.getAdvance());
+            return layout.getAdvance();
         } catch (UnsatisfiedLinkError | NoClassDefFoundError | InternalError e) {
             if (ignoreMissingFontSystem) {
                 return DEFAULT_CHAR_WIDTH;
@@ -321,7 +321,7 @@ public class SheetUtil {
      * @return  the width in pixels or -1 if cell is empty
      */
     private static double getColumnWidthForRow(
-            Row row, int column, int defaultCharWidth, DataFormatter formatter, boolean useMergedCells,
+            Row row, int column, double defaultCharWidth, DataFormatter formatter, boolean useMergedCells,
             List<CellRangeAddress> mergedRegions) {
         if( row == null ) {
             return -1;
