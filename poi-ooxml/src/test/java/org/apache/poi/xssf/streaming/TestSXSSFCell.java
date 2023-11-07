@@ -165,10 +165,7 @@ class TestSXSSFCell extends BaseTestXCell {
     protected void setCellFormula_onASingleCellArrayFormulaCell_preservesTheValue() {
     }
 
-    @Disabled
-    protected void setCellFormula_isExceptionSafe_onBlankCell() {
-    }
-
+    @Override
     @Disabled
     protected void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() {
     }

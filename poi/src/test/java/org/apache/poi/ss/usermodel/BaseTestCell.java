@@ -1408,7 +1408,7 @@ public abstract class BaseTestCell {
     }
 
     @Test
-    void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() throws IOException {
+    protected void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Cell cell = getInstance(wb);
             cell.getSheet().setArrayFormula("3", CellRangeAddress.valueOf("A1:A2"));

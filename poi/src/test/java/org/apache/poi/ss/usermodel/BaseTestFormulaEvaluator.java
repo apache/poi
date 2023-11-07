@@ -117,7 +117,7 @@ public abstract class BaseTestFormulaEvaluator {
     }
 
     @Test
-    void testSharedFormulas() throws IOException {
+    protected void testSharedFormulas() throws IOException {
         String fileName = "shared_formulas.xls" + (getClass().getName().contains("xssf") ? "x" : "");
         try (Workbook wb = _testDataProvider.openSampleWorkbook(fileName)) {
 
