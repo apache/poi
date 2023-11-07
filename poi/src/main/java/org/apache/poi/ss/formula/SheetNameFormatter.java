@@ -275,25 +275,27 @@ public final class SheetNameFormatter {
      */
     static boolean nameStartsWithR1C1CellReference(String rawSheetName) {
         int len = rawSheetName.length();
-        char ch = rawSheetName.charAt(0);
-        if (ch == 'R' || ch == 'r') {
+        char firstChar = rawSheetName.charAt(0);
+        if (firstChar == 'R' || firstChar == 'r') {
             if (len > 1) {
-                ch = rawSheetName.charAt(1);
-                if (ch == 'C' || ch == 'c') {
+                char secondChar = rawSheetName.charAt(1);
+                if (secondChar == 'C' || secondChar == 'c') {
                     if (len > 2) {
-                        ch = rawSheetName.charAt(2);
-                        return Character.isDigit(ch);
+                        char thirdChar = rawSheetName.charAt(2);
+                        return Character.isDigit(thirdChar);
                     } else {
                         return true;
                     }
+                } else {
+                    return Character.isDigit(secondChar);
                 }
             } else {
                 return true;
             }
-        } else if (ch == 'C' || ch == 'c') {
+        } else if (firstChar == 'C' || firstChar == 'c') {
             if (len > 1) {
-                ch = rawSheetName.charAt(1);
-                return Character.isDigit(ch);
+                char secondChar = rawSheetName.charAt(1);
+                return Character.isDigit(secondChar);
             } else {
                 return true;
             }

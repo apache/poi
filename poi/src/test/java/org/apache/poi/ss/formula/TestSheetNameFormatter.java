@@ -54,6 +54,7 @@ final class TestSheetNameFormatter {
         confirmFormat("C", "'C'"); // R1C1 style ref
         confirmFormat("rCsheet", "rCsheet"); // 'rc' + character is not qualified as R1C1 style ref
         confirmFormat("ra", "ra"); // 'r' + character is not qualified as R1C1 style ref
+        confirmFormat("r1a", "'r1a'"); // 'r1' is R1C1 style ref
         confirmFormat("Rc1sheet", "'Rc1sheet'"); // 'rc1' is R1C1 style ref
 
         confirmFormat(null, "#REF");
