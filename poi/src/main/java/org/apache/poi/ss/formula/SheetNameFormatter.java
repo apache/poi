@@ -164,6 +164,9 @@ public final class SheetNameFormatter {
         if (nameLooksLikeBooleanLiteral(rawSheetName)) {
             return true;
         }
+        if (nameStartsWithR1C1CellReference(rawSheetName)) {
+            return true;
+        }
         // Error constant literals all contain '#' and other special characters
         // so they don't get this far
         return false;
@@ -263,5 +266,38 @@ public final class SheetNameFormatter {
         String lettersPrefix = matcher.group(1);
         String numbersSuffix = matcher.group(2);
         return cellReferenceIsWithinRange(lettersPrefix, numbersSuffix);
+    }
+
+    /**
+     * Checks if the sheet name starts with R1C1 style cell reference.
+     * If this is the case Excel requires the sheet name to be enclosed in single quotes.
+     * @return {@code true} if the specified rawSheetName starts with R1C1 style cell reference
+     */
+    static boolean nameStartsWithR1C1CellReference(String rawSheetName) {
+        int len = rawSheetName.length();
+        char ch = rawSheetName.charAt(0);
+        if (ch == 'R' || ch == 'r') {
+            if (len > 1) {
+                ch = rawSheetName.charAt(1);
+                if (ch == 'C' || ch == 'c') {
+                    if (len > 2) {
+                        ch = rawSheetName.charAt(2);
+                        return Character.isDigit(ch);
+                    } else {
+                        return true;
+                    }
+                }
+            } else {
+                return true;
+            }
+        } else if (ch == 'C' || ch == 'c') {
+            if (len > 1) {
+                ch = rawSheetName.charAt(1);
+                return Character.isDigit(ch);
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -48,6 +48,14 @@ final class TestSheetNameFormatter {
         confirmFormat("A12220", "'A12220'");
         confirmFormat("TAXRETURN19980415", "TAXRETURN19980415");
 
+        confirmFormat("RC9Sheet", "'RC9Sheet'"); // starts with R1C1 style ref ('RC9')
+        confirmFormat("r", "'r'"); // R1C1 style ref
+        confirmFormat("rc", "'rc'"); // R1C1 style ref
+        confirmFormat("C", "'C'"); // R1C1 style ref
+        confirmFormat("rCsheet", "rCsheet"); // 'rc' + character is not qualified as R1C1 style ref
+        confirmFormat("ra", "ra"); // 'r' + character is not qualified as R1C1 style ref
+        confirmFormat("Rc1sheet", "'Rc1sheet'"); // 'rc1' is R1C1 style ref
+
         confirmFormat(null, "#REF");
     }
 
