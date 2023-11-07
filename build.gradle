@@ -37,7 +37,7 @@ plugins {
     id "com.github.spotbugs" version '5.2.1'
     id 'de.thetaphi.forbiddenapis' version '3.6'
     id 'org.sonarqube' version '4.0.0.2929'
-    id 'org.cyclonedx.bom' version '1.8.0'
+    id 'org.cyclonedx.bom' version '1.8.1'
     id 'com.adarshr.test-logger' version '3.2.0'
 }
 
@@ -67,7 +67,7 @@ configurations {
 }
 
 dependencies {
-    antLibs("org.junit.jupiter:junit-jupiter:5.10.0")
+    antLibs("org.junit.jupiter:junit-jupiter:5.10.1")
     antLibs("org.apache.ant:ant-junitlauncher:1.10.14")
 }
 
@@ -123,7 +123,7 @@ subprojects {
         commonsCompressVersion = '1.24.0'
         commonsIoVersion = '2.15.0'
         commonsMathVersion = '3.6.1'
-        junitVersion = '5.10.0'
+        junitVersion = '5.10.1'
         log4jVersion = '2.21.1'
         mockitoVersion = '4.11.0'
         hamcrestVersion = '2.2'
@@ -367,7 +367,7 @@ subprojects {
                 jvmArgs += [
                     // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
                     // opposed to the recommendation there, it doesn't work to add ... to the dependencies
-                    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.0'
+                    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.1'
                     // gradles gradle-worker.jar is still not a JPMS module and thus runs as unnamed module
                     '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=org.apache.poi.poi',
                     '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
