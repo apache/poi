@@ -99,6 +99,15 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         return wb.getWorkbook();
     }
 
+    @Override
+    protected int getDrawingSizeForCreateDrawing1() {
+        return 225;
+    }
+    @Override
+    protected int getDrawingSizeForCreateDrawing2() {
+        return 171;
+    }
+
     /**
      * Tests for {@link HSSFWorkbook#isHidden()} etc
      */
@@ -1215,11 +1224,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
                 assertEquals(CellReferenceType.R1C1, wb2.getCellReferenceType());
             }
         }
-    }
-
-    @Disabled
-    void createDrawing() {
-        // the dimensions for this image are different than for XSSF and SXSSF
     }
 
     @Test
