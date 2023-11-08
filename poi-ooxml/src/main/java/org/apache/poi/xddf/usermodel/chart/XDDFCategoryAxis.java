@@ -221,8 +221,6 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
         ctCatAx.addNewDelete();
         ctCatAx.addNewMajorTickMark();
         ctCatAx.addNewMinorTickMark();
-        ctCatAx.addNewNumFmt().setSourceLinked(true);
-        ctCatAx.getNumFmt().setFormatCode("");
 
         setPosition(position);
         setOrientation(AxisOrientation.MIN_MAX);
