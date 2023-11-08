@@ -105,6 +105,10 @@ public final class LineChart {
             solidLineSeries(data, 0, PresetColor.CHARTREUSE);
             solidLineSeries(data, 1, PresetColor.TURQUOISE);
 
+            // temporary workaround for https://bz.apache.org/bugzilla/show_bug.cgi?id=67510
+            if (bottomAxis.hasNumberFormat()) bottomAxis.setNumberFormat("@");
+            if (leftAxis.hasNumberFormat()) leftAxis.setNumberFormat("#,##0.00");
+
             // Write the output to a file
             try (FileOutputStream fileOut = new FileOutputStream("ooxml-line-chart.xlsx")) {
                 wb.write(fileOut);

@@ -104,6 +104,10 @@ public final class BarChart {
             solidFillSeries(data, 0, PresetColor.CHARTREUSE);
             solidFillSeries(data, 1, PresetColor.TURQUOISE);
 
+            // temporary workaround for https://bz.apache.org/bugzilla/show_bug.cgi?id=67510
+            if (bottomAxis.hasNumberFormat()) bottomAxis.setNumberFormat("@");
+            if (leftAxis.hasNumberFormat()) leftAxis.setNumberFormat("#,##0.00");
+
             // Write the output to a file
             try (FileOutputStream fileOut = new FileOutputStream("ooxml-bar-chart.xlsx")) {
                 wb.write(fileOut);
