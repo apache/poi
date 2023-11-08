@@ -146,10 +146,10 @@ public abstract class XDDFChartAxis implements HasShapeProperties {
     }
 
     /**
-     * @return axis number format
+     * @return axis number format (can be null if no number format is set)
      */
     public String getNumberFormat() {
-        return getCTNumFmt().getFormatCode();
+        return hasNumberFormat() ? getCTNumFmt().getFormatCode() : null;
     }
 
     /**

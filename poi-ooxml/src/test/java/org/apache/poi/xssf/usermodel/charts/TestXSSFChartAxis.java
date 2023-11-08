@@ -17,11 +17,6 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -38,6 +33,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public final class TestXSSFChartAxis {
 
     private static final double EPSILON = 1E-7;
@@ -52,6 +49,8 @@ public final class TestXSSFChartAxis {
         XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
         XSSFChart chart = drawing.createChart(anchor);
         axis = chart.createValueAxis(AxisPosition.BOTTOM);
+        // no format set yet
+        assertNull(axis.getNumberFormat());
     }
 
     @AfterEach
