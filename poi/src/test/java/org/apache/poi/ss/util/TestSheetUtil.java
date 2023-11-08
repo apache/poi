@@ -108,6 +108,9 @@ final class TestSheetUtil {
 
             // no contents: cell.setCellValue("sometext");
             assertEquals(-1.0, SheetUtil.getCellWidth(cell, 1, null, true), 0.01);
+            assertEquals(-1.0, SheetUtil.getCellWidth(cell, 1.0f, null, true), 0.01);
+
+            assertEquals(-1.0, SheetUtil.getCellWidth(cell, 1.5f, null, true), 0.01);
         }
     }
 
@@ -120,7 +123,9 @@ final class TestSheetUtil {
 
             cell.setCellValue("sometext");
 
-            assertTrue(SheetUtil.getCellWidth(cell, 1, null, true) > 0);
+            final double width = SheetUtil.getCellWidth(cell, 1.0f, null, true);
+            assertTrue(width > 0);
+            assertEquals(width, SheetUtil.getCellWidth(cell, 1, null, true));
         }
     }
 

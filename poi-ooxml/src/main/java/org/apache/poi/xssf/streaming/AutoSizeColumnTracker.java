@@ -47,7 +47,7 @@ import org.apache.poi.util.Internal;
 */
 @Internal
 /*package*/ class AutoSizeColumnTracker {
-    private final int defaultCharWidth;
+    private final float defaultCharWidth;
     private final DataFormatter dataFormatter = new DataFormatter();
 
     // map of tracked columns, with values containing the best-fit width for the column
@@ -114,7 +114,7 @@ import org.apache.poi.util.Internal;
      */
     public AutoSizeColumnTracker(final Sheet sheet) {
         // If sheet needs to be saved, use a java.lang.ref.WeakReference to avoid garbage collector gridlock.
-        defaultCharWidth = SheetUtil.getDefaultCharWidth(sheet.getWorkbook());
+        defaultCharWidth = SheetUtil.getDefaultCharWidthAsFloat(sheet.getWorkbook());
     }
     
     /**
