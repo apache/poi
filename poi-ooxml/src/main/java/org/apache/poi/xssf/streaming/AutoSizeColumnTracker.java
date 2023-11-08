@@ -47,7 +47,7 @@ import org.apache.poi.util.Internal;
 */
 @Internal
 /*package*/ class AutoSizeColumnTracker {
-    private final int defaultCharWidth;
+    private final double defaultCharWidth;
     private final DataFormatter dataFormatter = new DataFormatter();
 
     // map of tracked columns, with values containing the best-fit width for the column
