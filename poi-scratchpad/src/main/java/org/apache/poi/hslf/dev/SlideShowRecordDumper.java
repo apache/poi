@@ -79,12 +79,12 @@ public final class SlideShowRecordDumper {
 
         String filename = args[ndx];
 
-        SlideShowRecordDumper foo = new SlideShowRecordDumper(System.out,
-                filename, verbose, escher);
-
-        foo.printDump();
-
-        foo.doc.close();
+        SlideShowRecordDumper foo = new SlideShowRecordDumper(System.out, filename, verbose, escher);
+        try {
+            foo.printDump();
+        } finally {
+            foo.doc.close();
+        }
     }
 
     public static void printUsage() {

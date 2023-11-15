@@ -35,6 +35,8 @@ public class TestSlideShowRecordDumper extends BaseTestPPTIterating {
 
     @Test
     void testMain() throws IOException {
+        SlideShowRecordDumper.main(new String[] {});
+
         SlideShowRecordDumper.main(new String[] {
                 HSLFTestDataSamples.getSampleFile("slide_master.ppt").getAbsolutePath(),
         });
