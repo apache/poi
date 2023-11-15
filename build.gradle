@@ -118,7 +118,7 @@ subprojects {
     apply plugin: 'com.adarshr.test-logger'
 
     ext {
-        bouncyCastleVersion = '1.76'
+        bouncyCastleVersion = '1.77'
         commonsCodecVersion = '1.16.0'
         commonsCompressVersion = '1.24.0'
         commonsIoVersion = '2.15.0'
