@@ -17,7 +17,6 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -1480,13 +1479,13 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(tempFile)) {
                 File f1 = getSampleFile("github-321.xlsx");
                 File f2 = getSampleFile("48495.xlsx");
-                ArchiveEntry e1 = zos.createArchiveEntry(f1, "github-321.xlsx");
+                ZipArchiveEntry e1 = zos.createArchiveEntry(f1, "github-321.xlsx");
                 zos.putArchiveEntry(e1);
                 try (InputStream s = Files.newInputStream(f1.toPath())) {
                     IOUtils.copy(s, zos);
                 }
                 zos.closeArchiveEntry();
-                ArchiveEntry e2 = zos.createArchiveEntry(f2, "48495.xlsx");
+                ZipArchiveEntry e2 = zos.createArchiveEntry(f2, "48495.xlsx");
                 zos.putArchiveEntry(e2);
                 try (InputStream s = Files.newInputStream(f2.toPath())) {
                     IOUtils.copy(s, zos);

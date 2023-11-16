@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
@@ -63,7 +63,7 @@ class TestZipPackagePropertiesMarshaller {
     void ioException() {
         ZipArchiveOutputStream zos = new ZipArchiveOutputStream(UnsynchronizedByteArrayOutputStream.builder().get()) {
             @Override
-            public void putArchiveEntry(final ArchiveEntry archiveEntry) throws IOException {
+            public void putArchiveEntry(final ZipArchiveEntry archiveEntry) throws IOException {
                 throw new IOException("TestException");
             }
         };
