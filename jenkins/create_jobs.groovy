@@ -458,7 +458,7 @@ poijobs.each { poijob ->
                     }
                 }
                 // in archive, junit and jacoco publishers, matches beneath build/*/build/... are for Gradle-build results
-                archiveArtifacts('build/dist/*.zip,build/dist/*.tgz,build/dist/maven/*/*.jar,build/coverage/**,*/build/reports/*.bom.*,build/hs_err*.log')
+                archiveArtifacts('build/dist/*.zip,build/dist/*.tgz,build/dist/maven/*/*.jar,build/dist/maven/*/*.pom,build/dist/maven/*/*.asc,build/dist/maven/*/*.sha256,build/dist/maven/*/*.sha512,build/coverage/**,*/build/reports/*.bom.*,build/hs_err*.log')
                 /* this plugin is currently missing on the Apache Jenkins instance
                 warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                     resolveRelativePaths()
