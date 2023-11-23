@@ -169,4 +169,16 @@ final class TestRate {
             assertDouble(fe, cell, "RATE(360.0,6.56,-2000.0)", 0.0009480170844060, 0.000001);
         }
     }
+
+    @Test
+    void testBugxxxxx() throws Exception {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+            HSSFCell cell = row.createCell(0);
+            assertDouble(fe, cell, "RATE(22,30000,20000,-82257625,0,0.1)", 0.35397960290713076, 0.000001);
+            assertDouble(fe, cell, "RATE(22,10000,10000,-313562750,0,0.1)", 0.5252278265995758, 0.000001);
+        }
+    }
 }
