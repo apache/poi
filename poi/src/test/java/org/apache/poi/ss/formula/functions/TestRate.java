@@ -171,7 +171,7 @@ final class TestRate {
     }
 
     @Test
-    void testBugxxxxx() throws Exception {
+    void testBug68200() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             HSSFRow row = sheet.createRow(0);
