@@ -24,6 +24,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.util.Removal;
 
 /**
  * This class wraps a {@link ZipFile} in order to check the
@@ -195,11 +196,19 @@ public class ZipSecureFile extends ZipFile {
         return MAX_TEXT_SIZE;
     }
 
+    /**
+     * @param file the {@link File}, possibly including path traversal - it is up to users to validate that the input value is safe
+     * @throws IOException if an error occurs while reading the file.
+     */
     public ZipSecureFile(File file) throws IOException {
         super(file);
         this.fileName = file.getAbsolutePath();
     }
 
+    /**
+     * @param name the file name, possibly including path traversal - it is up to users to validate that the input value is safe
+     * @throws IOException  if an error occurs while reading the file.
+     */
     public ZipSecureFile(String name) throws IOException {
         super(name);
         this.fileName = new File(name).getAbsolutePath();
@@ -229,7 +238,9 @@ public class ZipSecureFile extends ZipFile {
     /**
      * Returns the path name of the ZIP file.
      * @return the path name of the ZIP file
+     * @deprecated there is no need for this method - it will be removed in a future version of POI
      */
+    @Removal(version = "7.0.0")
     public String getName() {
         return fileName;
     }
