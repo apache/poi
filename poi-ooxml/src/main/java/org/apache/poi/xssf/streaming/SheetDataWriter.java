@@ -222,11 +222,11 @@ public class SheetDataWriter implements Closeable {
         _out.write("<row");
         writeAttribute("r", Integer.toString(rownum + 1));
         if (row.hasCustomHeight()) {
-            writeAttribute("customHeight", "true");
+            writeAttribute("customHeight", "1");
             writeAttribute("ht", Float.toString(row.getHeightInPoints()));
         }
         if (row.getZeroHeight()) {
-            writeAttribute("hidden", "true");
+            writeAttribute("hidden", "1");
         }
         if (row.isFormatted()) {
             writeAttribute("s", Integer.toString(row.getRowStyleIndex()));
