@@ -295,7 +295,7 @@ under the License.
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.14" usage="excelant"/>
 
     <!-- xml signature libs - not part of the distribution -->
-    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:3.0.3" usage="ooxml-provided"/>
+    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:4.0.1" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk18on:1.77" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk18on:1.77" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-util" artifact="org.bouncycastle:bcutil-jdk18on:1.77" usage="ooxml-provided"/>
