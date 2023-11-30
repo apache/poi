@@ -2614,15 +2614,15 @@ under the License.
         <dependency prefix="spotbugs.bcel" artifact="org.apache.bcel:bcel:6.5.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.slf4j-api" artifact="org.slf4j:slf4j-api:2.0.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.commons-lang3" artifact="org.apache.commons:commons-lang3:3.12.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.commons-text" artifact="org.apache.commons:commons-text:1.10.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.commons-codec" artifact="commons-codec:commons-codec:1.11" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.commons-text" artifact="org.apache.commons:commons-text:1.11.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.commons-codec" artifact="commons-codec:commons-codec:1.16.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.jcip-annotations" artifact="net.jcip:jcip-annotations:1.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.icu4j" artifact="com.ibm.icu:icu4j:68.2" usage="${spotbugs.lib}" target="icu4j-68.2.jar"/>
-        <dependency prefix="spotbugs.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.17.2" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.17.2" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.log4j-slf4j18-impl" artifact="org.apache.logging.log4j:log4j-slf4j18-impl:2.17.2" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.saxon" artifact="net.sf.saxon:Saxon-HE:11.5" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.22.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.22.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-slf4j18-impl" artifact="org.apache.logging.log4j:log4j-slf4j2-impl:2.22.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.saxon" artifact="net.sf.saxon:Saxon-HE:12.4" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.xmlresolver" artifact="org.xmlresolver:xmlresolver:4.2.0" usage="${spotbugs.lib}"/>
 
         <mkdir dir="${basedir}${spotbugs.lib}/config"/>
