@@ -109,12 +109,37 @@ public abstract class AbstractFileHandler implements FileHandler {
                 assertEquals(modified, file.lastModified(), "File should not be modified by extractor");
 
                 if (extractor instanceof POIOLE2TextExtractor) {
-                    try (HPSFPropertiesExtractor hpsfExtractor = new HPSFPropertiesExtractor((POIOLE2TextExtractor) extractor)) {
+                    POIOLE2TextExtractor ole2Extractor = (POIOLE2TextExtractor) extractor;
+                    ole2Extractor.getRoot();
+                    if (!(ole2Extractor instanceof EventBasedExcelExtractor)) {
+                        ole2Extractor.getSummaryInformation();
+                        ole2Extractor.getDocSummaryInformation();
+                    }
+
+                    try (HPSFPropertiesExtractor hpsfExtractor = new HPSFPropertiesExtractor(ole2Extractor)) {
                         assertNotNull(hpsfExtractor.getDocumentSummaryInformationText());
                         assertNotNull(hpsfExtractor.getSummaryInformationText());
                         String text = hpsfExtractor.getText();
                         //System.out.println(text);
                         assertNotNull(text);
+                    }
+
+                    if (ole2Extractor.getRoot() != null && !Boolean.getBoolean("scratchpad.ignore")) {
+                        POITextExtractor[] embedded = ExtractorFactory.getEmbeddedDocsTextExtractors(ole2Extractor);
+                        try {
+                            for (POITextExtractor poiTextExtractor : embedded) {
+                                poiTextExtractor.getText();
+                                poiTextExtractor.getDocument();
+                                poiTextExtractor.getFilesystem();
+                                POITextExtractor metaData = poiTextExtractor.getMetadataTextExtractor();
+                                metaData.getFilesystem();
+                                metaData.getText();
+                            }
+                        } finally {
+                            for (POITextExtractor embeddedExtractor : embedded) {
+                                embeddedExtractor.close();
+                            }
+                        }
                     }
                 }
 
@@ -166,6 +191,8 @@ public abstract class AbstractFileHandler implements FileHandler {
                 assertNotNull(streamExtractor);
 
                 assertNotNull(streamExtractor.getText());
+
+                assertNotNull(streamExtractor.getMetadataTextExtractor());
             }
         }
     }

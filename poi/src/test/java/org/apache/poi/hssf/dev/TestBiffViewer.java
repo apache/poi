@@ -44,6 +44,7 @@ class TestBiffViewer extends BaseTestIteratingXLS {
         excludes.put("protected_66115.xls", RecordFormatException.class);
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5786329142919168.xls", IllegalStateException.class);
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5889658057523200.xls", IndexOutOfBoundsException.class);
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5175219985448960.xls", IndexOutOfBoundsException.class);
 
         return excludes;
     }

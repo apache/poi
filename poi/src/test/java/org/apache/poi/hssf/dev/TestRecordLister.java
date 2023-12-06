@@ -47,6 +47,7 @@ class TestRecordLister extends BaseTestIteratingXLS {
         Map<String, Class<? extends Throwable>> excludes = super.getExcludes();
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5786329142919168.xls", RecordFormatException.class);
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5889658057523200.xls", IndexOutOfBoundsException.class);
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5175219985448960.xls", RecordFormatException.class);
         return excludes;
     }
 

@@ -373,7 +373,9 @@ public final class ExtractorFactory {
 
         ArrayList<POITextExtractor> textExtractors = new ArrayList<>();
         for (Entry dir : dirs) {
-            textExtractors.add(createExtractor((DirectoryNode) dir));
+            if (dir instanceof DirectoryNode) {
+                textExtractors.add(createExtractor((DirectoryNode) dir));
+            }
         }
         for (InputStream stream : nonPOIFS) {
             try {
