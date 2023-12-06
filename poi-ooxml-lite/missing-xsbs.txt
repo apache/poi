@@ -35,6 +35,7 @@ ctcustomshowlist3419type
 ctcustomxmlblockd3c1type
 ctdatarefsb753type
 ctdiagramc1cctype
+ctdocumentbasedf5ctype
 cteastasianlayout0841type
 ctednposd4a3type
 cteqarr9667type
