@@ -252,7 +252,11 @@ class TestSignatureInfo {
             si.setOpcPackage(pkg);
             si.setSignatureConfig(sic);
             boolean isValid = si.verifySignature();
-            assertTrue(isValid);
+
+            assertTrue(isValid,
+                    // add some details to find out why "verifySignature()" returns false sometimes
+                    "Verifying signature failed, hasNext: " + si.getSignatureParts().iterator().hasNext() + ": " +
+                            (si.getSignatureParts().iterator().hasNext() ? si.getSignatureParts().iterator() : ""));
         }
     }
 
