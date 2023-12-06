@@ -289,7 +289,7 @@ public class XSSFEventBasedExcelExtractor
             }
 
             return text.toString();
-        } catch (IOException | OpenXML4JException | SAXException e) {
+        } catch (IOException | OpenXML4JException | SAXException | NumberFormatException e) {
             LOGGER.atWarn().withThrowable(e).log("Failed to load text");
             return "";
         }

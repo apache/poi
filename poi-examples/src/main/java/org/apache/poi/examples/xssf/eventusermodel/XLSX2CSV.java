@@ -212,7 +212,7 @@ public class XLSX2CSV {
                   styles, null, strings, sheetHandler, formatter, false);
             sheetParser.setContentHandler(handler);
             sheetParser.parse(sheetSource);
-         } catch(ParserConfigurationException e) {
+         } catch (ParserConfigurationException e) {
             throw new RuntimeException("SAX parser appears to be broken - " + e.getMessage());
          }
     }
@@ -234,7 +234,12 @@ public class XLSX2CSV {
                 String sheetName = iter.getSheetName();
                 this.output.println();
                 this.output.println(sheetName + " [index=" + index + "]:");
-                processSheet(styles, strings, new SheetToCSV(), stream);
+
+                try {
+                    processSheet(styles, strings, new SheetToCSV(), stream);
+                } catch (NumberFormatException e) {
+                    throw new IOException("Failed to parse sheet " + sheetName, e);
+                }
             }
             ++index;
         }
