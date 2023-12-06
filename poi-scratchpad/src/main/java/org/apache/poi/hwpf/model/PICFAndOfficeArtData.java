@@ -88,7 +88,9 @@ public class PICFAndOfficeArtData {
 
             // [MS-ODRAW] allows for multiple records in a OfficeArtInlineSpContainer, which is what we're parsing here.
             //   However, in the context of a HWPF document, there should be only 1.
-            assert _blipRecords.size() == 1;
+            if (_blipRecords.size() != 1) {
+                throw new IllegalStateException("Should only have one BLIP-Record, but had: " + _blipRecords.size());
+            }
         }
     }
 
