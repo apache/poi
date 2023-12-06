@@ -96,6 +96,7 @@ ctwebpublishobjects30d8type
 ctwrapthrough8b4etype
 ctwraptightae95type
 ctwraptopbottom5e13type
+fonts7aa2doctype
 lockedcanvaselement
 polylineelement
 relationships93b3doctype
