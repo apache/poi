@@ -24,6 +24,7 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 
 /**
@@ -34,6 +35,7 @@ import org.apache.poi.util.Removal;
  * The alert limits can be globally defined via {@link #setMaxEntrySize(long)}
  * and {@link #setMinInflateRatio(double)}.
  */
+@Internal
 public class ZipSecureFile extends ZipFile {
     private static final Logger LOG = LogManager.getLogger(ZipSecureFile.class);
     /* package */ static double MIN_INFLATE_RATIO = 0.01d;
@@ -60,7 +62,7 @@ public class ZipSecureFile extends ZipFile {
     /**
      * Sets the ratio between de- and inflated bytes to detect zipbomb.
      * It defaults to 1% (= 0.01d), i.e. when the compression is better than
-     * 1% for any given read package part, the parsing will fail indicating a 
+     * 1% for any given read package part, the parsing will fail indicating a
      * Zip-Bomb.
      *
      * @param ratio the ratio between de- and inflated bytes to detect zipbomb
@@ -68,13 +70,13 @@ public class ZipSecureFile extends ZipFile {
     public static void setMinInflateRatio(double ratio) {
         MIN_INFLATE_RATIO = ratio;
     }
-    
+
     /**
      * Returns the current minimum compression rate that is used.
-     * 
+     *
      * See setMinInflateRatio() for details.
      *
-     * @return The min accepted compression-ratio.  
+     * @return The min accepted compression-ratio.
      */
     public static double getMinInflateRatio() {
         return MIN_INFLATE_RATIO;
@@ -106,8 +108,8 @@ public class ZipSecureFile extends ZipFile {
     /**
      * Sets the maximum file size of a single zip entry. It defaults to 4GB,
      * i.e. the 32-bit zip format maximum.
-     * 
-     * This can be used to limit memory consumption and protect against 
+     *
+     * This can be used to limit memory consumption and protect against
      * security vulnerabilities when documents are provided by users.
      *
      * @param maxEntrySize the max. file size of a single zip entry
@@ -124,10 +126,10 @@ public class ZipSecureFile extends ZipFile {
 
     /**
      * Returns the current maximum allowed uncompressed file size.
-     * 
+     *
      * See setMaxEntrySize() for details.
      *
-     * @return The max accepted uncompressed file size. 
+     * @return The max accepted uncompressed file size.
      */
     public static long getMaxEntrySize() {
         return MAX_ENTRY_SIZE;
@@ -170,8 +172,8 @@ public class ZipSecureFile extends ZipFile {
      * Sets the maximum number of characters of text that are
      * extracted before an exception is thrown during extracting
      * text from documents.
-     * 
-     * This can be used to limit memory consumption and protect against 
+     *
+     * This can be used to limit memory consumption and protect against
      * security vulnerabilities when documents are provided by users.
      *
      * @param maxTextSize the max. file size of a single zip entry
@@ -188,7 +190,7 @@ public class ZipSecureFile extends ZipFile {
 
     /**
      * Returns the current maximum allowed text size.
-     * 
+     *
      * @return The max accepted text size.
      * @see #setMaxTextSize(long)
      */
