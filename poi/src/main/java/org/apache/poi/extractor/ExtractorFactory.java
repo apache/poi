@@ -88,6 +88,21 @@ public final class ExtractorFactory {
     private ExtractorFactory() {
         ClassLoader cl = ExtractorFactory.class.getClassLoader();
         ServiceLoader.load(ExtractorProvider.class, cl).forEach(provider::add);
+
+        // loading of service-files is non-deterministic as it depends on order of loaded jars
+        // however we would like to "prefer" one Factory, so let's make sure the more
+        // powerful "ScratchpadProvider" is sorted first
+        provider.sort((o1, o2) -> {
+            if (o1.getClass() != o2.getClass()) {
+                if (o1.getClass().getSimpleName().equals("OLE2ScratchpadExtractorFactory")) {
+                    return -1;
+                } else if (o2.getClass().getSimpleName().equals("OLE2ScratchpadExtractorFactory")) {
+                    return 1;
+                }
+            }
+
+            return o1.getClass().getName().compareTo(o2.getClass().getName());
+        });
     }
 
     /**

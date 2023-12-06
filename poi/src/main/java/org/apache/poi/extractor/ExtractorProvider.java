@@ -70,7 +70,8 @@ public interface ExtractorProvider {
      * @param dirs a list to be filled with directory references holding embedded
      * @param nonPOIFS a list to be filled with streams which aren't based on POIFS entries
      *
-     * @throws IOException when the format specific extraction fails because of invalid entires
+     * @throws IOException when the format specific extraction fails because of invalid entries
+     * @throws java.lang.IllegalArgumentException if implementations do not overwrite this method
      */
     default void identifyEmbeddedResources(POIOLE2TextExtractor ext, List<Entry> dirs, List<InputStream> nonPOIFS) throws IOException {
         throw new IllegalArgumentException("Error checking for Scratchpad embedded resources");
