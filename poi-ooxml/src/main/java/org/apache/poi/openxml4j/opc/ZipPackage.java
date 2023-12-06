@@ -210,54 +210,28 @@ public final class ZipPackage extends OPCPackage {
             throw new InvalidOperationException("Can't open the specified file input stream from file: '" + file + "'", e);
         }
 
+        ZipArchiveThresholdInputStream zis = null;
         // If an error occurs while reading the next level of openZipEntrySourceStream, free the acquired resource
         try {
             // read from the file input stream
-            return openZipEntrySourceStream(fis);
+            // Acquire a resource that is needed to read the next level of openZipEntrySourceStream
+            zis = ZipHelper.openZipStream(fis); // NOSONAR
+
+            // If an error occurs while reading the next level of openZipEntrySourceStream, free the acquired resource
+            // read from the zip input stream
+
+            // Acquire the final level resource. If this is acquired successfully, the zip package was read successfully from the input stream
+            return new ZipInputStreamZipEntrySource(zis);
         } catch (final InvalidOperationException|UnsupportedFileFormatException e) {
             // abort: close the zip input stream
             IOUtils.closeQuietly(fis);
+            IOUtils.closeQuietly(zis);
             throw e;
         } catch (final Exception e) {
             // abort: close the file input stream
             IOUtils.closeQuietly(fis);
+            IOUtils.closeQuietly(zis);
             throw new InvalidOperationException("Failed to read the file input stream from file: '" + file + "'", e);
-        }
-    }
-
-    private static ZipEntrySource openZipEntrySourceStream(InputStream fis) throws InvalidOperationException {
-        final ZipArchiveThresholdInputStream zis;
-        // Acquire a resource that is needed to read the next level of openZipEntrySourceStream
-        try {
-            // open the zip input stream
-            zis = ZipHelper.openZipStream(fis); // NOSONAR
-        } catch (final IOException e) {
-            // If the source cannot be acquired, abort (no resources to free at this level)
-            throw new InvalidOperationException("Could not open the file input stream", e);
-        }
-
-        // If an error occurs while reading the next level of openZipEntrySourceStream, free the acquired resource
-        try {
-            // read from the zip input stream
-            return openZipEntrySourceStream(zis);
-        } catch (final InvalidOperationException|UnsupportedFileFormatException e) {
-            // abort: close the zip input stream
-            IOUtils.closeQuietly(zis);
-            throw e;
-        } catch (final Exception e) {
-            // abort: close the zip input stream
-            IOUtils.closeQuietly(zis);
-            throw new InvalidOperationException("Failed to read the zip entry source stream", e);
-        }
-    }
-
-    private static ZipEntrySource openZipEntrySourceStream(ZipArchiveThresholdInputStream zis) throws InvalidOperationException {
-        // Acquire the final level resource. If this is acquired successfully, the zip package was read successfully from the input stream
-        try {
-            // open the zip entry source stream
-            return new ZipInputStreamZipEntrySource(zis);
-        } catch (IOException e) {
-            throw new InvalidOperationException("Could not open the specified zip entry source stream", e);
         }
     }
 
