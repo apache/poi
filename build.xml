@@ -326,6 +326,7 @@ under the License.
     <dependency prefix="svg.batik-util" artifact="org.apache.xmlgraphics:batik-util:1.17" usage="ooxml-batik"/>
     <dependency prefix="svg.batik-xml" artifact="org.apache.xmlgraphics:batik-xml:1.17" usage="ooxml-batik"/>
     <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:3.0.1" usage="ooxml-provided"/>
+    <dependency prefix="pdf.pdfbox.io" artifact="org.apache.pdfbox:pdfbox-io:3.0.1" usage="ooxml-provided"/>
     <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:3.0.1" usage="ooxml-provided"/>
     <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:3.0.1" usage="ooxml-provided"/>
 
@@ -514,6 +515,7 @@ under the License.
 
     <path id="pdfbox.classpath">
         <pathelement location="${pdf.pdfbox.jar}"/>
+        <pathelement location="${pdf.pdfbox.io.jar}"/>
         <pathelement location="${pdf.fontbox.jar}"/>
         <pathelement location="${pdf.graphics2d.jar}"/>
     </path>
@@ -870,6 +872,7 @@ under the License.
                     <available file="${svg.batik-xml.jar}"/>
                     <available file="${svg.xmlgraphics-commons.jar}"/>
                     <available file="${pdf.pdfbox.jar}"/>
+                    <available file="${pdf.pdfbox.io.jar}"/>
                     <available file="${pdf.fontbox.jar}"/>
                     <available file="${pdf.graphics2d.jar}"/>
                 </and>
@@ -911,6 +914,7 @@ under the License.
         <downloadfile src="${svg.xml-apis-ext.url}" dest="${svg.xml-apis-ext.jar}"/>
         <downloadfile src="${svg.xmlgraphics-commons.url}" dest="${svg.xmlgraphics-commons.jar}"/>
         <downloadfile src="${pdf.pdfbox.url}" dest="${pdf.pdfbox.jar}"/>
+        <downloadfile src="${pdf.pdfbox.io.url}" dest="${pdf.pdfbox.io.jar}"/>
         <downloadfile src="${pdf.fontbox.url}" dest="${pdf.fontbox.jar}"/>
         <downloadfile src="${pdf.graphics2d.url}" dest="${pdf.graphics2d.jar}"/>
     </target>
@@ -2734,6 +2738,7 @@ under the License.
             <auxClasspath path="${svg.xml-apis-ext.jar}"/>
             <auxClasspath path="${svg.xmlgraphics-commons.jar}"/>
             <auxClasspath path="${pdf.pdfbox.jar}"/>
+            <auxClasspath path="${pdf.pdfbox.io.jar}"/>
             <auxClasspath path="${pdf.fontbox.jar}"/>
             <auxClasspath path="${pdf.graphics2d.jar}"/>
             <sourcePath path="poi/src/main/java" />
