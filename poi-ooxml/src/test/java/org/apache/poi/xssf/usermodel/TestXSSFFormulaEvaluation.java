@@ -114,6 +114,21 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         }
     }
 
+    @Test
+    void testEvaluateFormulaWithSheetRefEscapedApostrophe() throws IOException {
+        // https://bz.apache.org/bugzilla/show_bug.cgi?id=68305
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet1 = wb.createSheet("Sheet1");
+            XSSFSheet sheet2 = wb.createSheet("(2) 4-Tension Bolt MC's");
+            sheet2.createRow(0).createCell(0).setCellValue(1.0);
+            XSSFCell xssfCell = sheet1.createRow(0).createCell(0);
+            xssfCell.setCellFormula("'(2) 4-Tension Bolt MC''s'!A1");
+            XSSFFormulaEvaluator xssfFormulaEvaluator = new XSSFFormulaEvaluator(wb);
+            xssfFormulaEvaluator.evaluateInCell(xssfCell);
+            assertEquals(1.0, xssfCell.getNumericCellValue());
+        }
+    }
+
     /**
      * Related to bugs #56737 and #56752 - XSSF workbooks which have
      *  formulas that refer to cells and named ranges in multiple other
