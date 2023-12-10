@@ -24,19 +24,15 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestFormulaEvaluator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -124,8 +120,20 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             XSSFCell xssfCell = sheet1.createRow(0).createCell(0);
             xssfCell.setCellFormula("'(2) 4-Tension Bolt MC''s'!A1");
             XSSFFormulaEvaluator xssfFormulaEvaluator = new XSSFFormulaEvaluator(wb);
-            xssfFormulaEvaluator.evaluateInCell(xssfCell);
+            xssfFormulaEvaluator.evaluateAll();
             assertEquals(1.0, xssfCell.getNumericCellValue());
+
+            try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                wb.write(bos);
+                try (XSSFWorkbook wb2 = new XSSFWorkbook()) {
+                    XSSFSheet sheet1Wb2 = wb.getSheet("Sheet1");
+                    assertNotNull(sheet1Wb2, "Sheet1 found?");
+                    XSSFFormulaEvaluator xssfFormulaEvaluator2 = new XSSFFormulaEvaluator(wb2);
+                    xssfFormulaEvaluator2.evaluateAll();
+                    XSSFCell cell2 = sheet1Wb2.getRow(0).getCell(0);
+                    assertEquals(1.0, cell2.getNumericCellValue());
+                }
+            }
         }
     }
 
