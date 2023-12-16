@@ -287,9 +287,10 @@ public class TestAllFiles {
                         errPrefix + " for " + exClass + " expected message '" + exMessage + "' but had '" + actMsg + "': " + e);
 
                 if (actMsg != null &&
-                        // sometimes ArrayIndexOutOfBoundsException has null-message?!?
+                        // in newer JDK versions IndexOutOfBoundsException switch from empty message
+                        // to more useful content
                         // so skip the check for this type of exception if expected message is null
-                        (exMessage != null || !ArrayIndexOutOfBoundsException.class.isAssignableFrom(exClass))) {
+                        (exMessage != null || !IndexOutOfBoundsException.class.isAssignableFrom(exClass))) {
                     assertNotNull(exMessage,
                             errPrefix + "Expected message was null, but actMsg wasn't: Message: " + actMsg + ": " + e);
                     assertTrue(actMsg.contains(exMessage),
