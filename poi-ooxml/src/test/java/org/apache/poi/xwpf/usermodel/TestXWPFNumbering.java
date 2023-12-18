@@ -86,6 +86,11 @@ class TestXWPFNumbering {
         assertEquals(abstractNumId, compareAbstractNum);
     }
 
+   @Test
+    void testAddAbstractNumIfAbstractNumNotEqualNull() throws IOException {
+       throw new RuntimeException();
+    }
+
     @Test
     void testAddAbstractNumIfAbstractNumEqualNull() throws IOException {
         XWPFDocument docOut = new XWPFDocument();
