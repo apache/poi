@@ -53,6 +53,7 @@ import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Units;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.xmlbeans.XmlCursor;
@@ -330,6 +331,12 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         return getShapes().iterator();
     }
 
+    /**
+     * This method is not yet supported.
+     *
+     * @throws UnsupportedOperationException this method is not yet supported
+     */
+    @NotImplemented
     @Override
     public void addShape(XSLFShape shape) {
         throw new UnsupportedOperationException(

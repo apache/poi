@@ -53,6 +53,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdList;
@@ -670,8 +671,14 @@ public class XMLSlideShow extends POIXMLDocument
         return _tableStyles;
     }
 
-    @SuppressWarnings("RedundantThrows")
+    /**
+     * This method is not yet supported.
+     *
+     * @throws UnsupportedOperationException this method is not yet supported
+     */
     @Override
+    @NotImplemented
+    @SuppressWarnings("RedundantThrows")
     public MasterSheet<XSLFShape, XSLFTextParagraph> createMasterSheet() throws IOException {
         // TODO: implement!
         throw new UnsupportedOperationException();

@@ -2172,6 +2172,11 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         pr.setTabColor(color);
     }
 
+    /**
+     * This method is not yet supported.
+     *
+     * @throws UnsupportedOperationException this method is not yet supported
+     */
     @NotImplemented
     @Override
     public void shiftColumns(int startColumn, int endColumn, int n){

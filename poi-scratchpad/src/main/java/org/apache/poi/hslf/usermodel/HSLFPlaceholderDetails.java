@@ -91,6 +91,9 @@ public class HSLFPlaceholderDetails implements PlaceholderDetails {
         return placeholder;
     }
 
+    /**
+     * @throws UnsupportedOperationException Only sub class(es) of HSLFPlaceholderDetails allow setting the placeholder
+     */
     @Override
     public void setPlaceholder(Placeholder placeholder) {
         throw new UnsupportedOperationException("Only sub class(es) of HSLFPlaceholderDetails allow setting the placeholder");
@@ -101,6 +104,9 @@ public class HSLFPlaceholderDetails implements PlaceholderDetails {
         return PlaceholderSize.full;
     }
 
+    /**
+     * @throws UnsupportedOperationException Only sub class(es) of HSLFPlaceholderDetails allow setting the placeholder
+     */
     @Override
     public void setSize(PlaceholderSize size) {
         throw new UnsupportedOperationException("Only sub class(es) of HSLFPlaceholderDetails allow setting the size");

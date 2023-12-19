@@ -270,6 +270,11 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
         return getShapes().spliterator();
     }
 
+    /**
+     * This method is not yet supported.
+     *
+     * @throws UnsupportedOperationException this method is not yet supported
+     */
     @Override
     public boolean removeShape(HSLFShape shape) {
         // TODO: implement!

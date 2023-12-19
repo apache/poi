@@ -63,6 +63,9 @@ public final class TableRow extends Range
         return _tprops.getFCantSplit();
     }
 
+    /**
+     * @throws UnsupportedOperationException not applicable for TableRow
+     */
     public BorderCode getBarBorder()
     {
         throw new UnsupportedOperationException( "not applicable for TableRow" );

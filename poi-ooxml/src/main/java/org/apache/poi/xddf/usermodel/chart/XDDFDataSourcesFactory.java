@@ -383,6 +383,10 @@ public class XDDFDataSourcesFactory {
             return (Number.class.isAssignableFrom(arrayComponentType));
         }
 
+        /**
+         * @return the dataRange
+         * @throws UnsupportedOperationException if there is no Data Range Reference
+         */
         @Override
         public String getDataRangeReference() {
             if (dataRange == null) {

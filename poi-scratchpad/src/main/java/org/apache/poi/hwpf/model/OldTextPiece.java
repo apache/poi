@@ -76,6 +76,7 @@ public class OldTextPiece extends TextPiece {
      *
      * @param start Local start position, in characters
      * @param end   Local end position, in characters
+     * @throws UnsupportedOperationException always throws UnsupportedOperationException
      */
     @Override
     @Deprecated

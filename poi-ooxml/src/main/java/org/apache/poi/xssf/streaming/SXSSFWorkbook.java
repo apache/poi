@@ -780,6 +780,8 @@ public class SXSSFWorkbook implements Workbook {
          * Unexpected behavior may occur if sheets are reordered after iterator
          * has been created. Support for the remove method may be added in the future
          * if someone can figure out a reliable implementation.
+         *
+         * @throws UnsupportedOperationException
          */
         @Override
         public void remove() throws IllegalStateException {

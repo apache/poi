@@ -485,6 +485,12 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         {
             return iter.next();
         }
+
+        /**
+         * This method is not yet supported.
+         *
+         * @throws UnsupportedOperationException this method is not yet supported
+         */
         @Override
         public void remove()
         {
@@ -517,6 +523,13 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
                 throw new NoSuchElementException();
             }
         }
+
+        /**
+         * This method is not yet supported.
+         *
+         * @throws UnsupportedOperationException this method is not yet supported
+         */
+        @NotImplemented
         @Override
         public void remove()
         {

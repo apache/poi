@@ -79,6 +79,7 @@ import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
+import org.apache.poi.util.NotImplemented;
 import org.apache.xml.security.Init;
 import org.apache.xml.security.utils.XMLUtils;
 import org.apache.xmlbeans.XmlOptions;
@@ -341,12 +342,17 @@ public class SignatureInfo {
             return new SignaturePart(sigRelPart, SignatureInfo.this);
         }
 
+        /**
+         * This method is not yet supported.
+         *
+         * @throws UnsupportedOperationException this method is not yet supported
+         */
+        @NotImplemented
         @Override
         public void remove() {
             throw new UnsupportedOperationException();
         }
     }
-
 
 
     /**
