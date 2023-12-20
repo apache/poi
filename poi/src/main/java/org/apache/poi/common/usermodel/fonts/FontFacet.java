@@ -45,6 +45,7 @@ public interface FontFacet {
      * Set the font weight
      *
      * @param weight the font weight
+     * @throws UnsupportedOperationException can return UnsupportedOperationException when FontFacet is read-only
      */
     default void setWeight(int weight) {
         throw new UnsupportedOperationException("FontFacet is read-only.");
@@ -61,6 +62,7 @@ public interface FontFacet {
      * Set the font posture
      *
      * @param italic {@code true} for italic, {@code false} for regular
+     * @throws UnsupportedOperationException can return UnsupportedOperationException when FontFacet is read-only
      */
     default void setItalic(boolean italic) {
         throw new UnsupportedOperationException("FontFacet is read-only.");

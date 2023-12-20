@@ -814,7 +814,7 @@ public class DataFormatter {
                 } else if (obj instanceof Double) {
                     obj = (Double) obj / divider.doubleValue();
                 } else {
-                    throw new UnsupportedOperationException();
+                    throw new UnsupportedOperationException("cannot scaleInput of type " + obj.getClass());
                 }
             }
             return obj;
