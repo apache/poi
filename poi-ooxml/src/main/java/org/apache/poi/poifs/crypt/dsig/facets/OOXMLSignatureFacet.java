@@ -355,7 +355,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
      */
     private static final Set<String> signed = Stream.of(
             "activeXControlBinary", "aFChunk", "attachedTemplate", "attachedToolbars", "audio", "calcChain", "chart", "chartColorStyle",
-            "chartLayout", "chartsheet", "chartStyle", "chartUserShapes", "commentAuthors", "comments", "connections", "connectorXml",
+            "chartLayout", "chartsheet", "chartStyle", "chartUserShapes", "classificationlabels", "commentAuthors", "comments", "connections", "connectorXml",
             "control", "ctrlProp", "customData", "customData", "customProperty", "customXml", "diagram", "diagramColors",
             "diagramColorsHeader", "diagramData", "diagramDrawing", "diagramLayout", "diagramLayoutHeader", "diagramQuickStyle",
             "diagramQuickStyleHeader", "dialogsheet", "dictionary", "documentParts", "downRev", "drawing", "endnotes", "externalLink",
