@@ -204,9 +204,11 @@ public class DataValidationEvaluator {
             // there is no way from the model to tell if the list is fixed values or formula based.
             if (eval instanceof TwoDEval) {
                 TwoDEval twod = (TwoDEval) eval;
-                for (int i=0; i < twod.getHeight(); i++) {
-                    final ValueEval cellValue = twod.getValue(i,  0);
-                    values.add(cellValue);
+                for (int i = 0; i < twod.getHeight(); i++) {
+                    for (int j = 0; j < twod.getWidth(); j++) {
+                        final ValueEval cellValue = twod.getValue(i, j);
+                        values.add(cellValue);
+                    }
                 }
             }
         }
