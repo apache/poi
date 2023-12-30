@@ -132,13 +132,15 @@ public final class FeatRecord extends StandardRecord {
             cellRef.serialize(out);
         }
 
-        sharedFeature.serialize(out);
+        if (sharedFeature != null) {
+            sharedFeature.serialize(out);
+        }
     }
 
     protected int getDataSize() {
         return 12 + 2+1+4+2+4+2+
-            (cellRefs.length * CellRangeAddress.ENCODED_SIZE)
-            +sharedFeature.getDataSize();
+            (cellRefs.length * CellRangeAddress.ENCODED_SIZE) +
+                (sharedFeature == null ? 0 : sharedFeature.getDataSize());
     }
 
     public int getIsf_sharedFeatureType() {
