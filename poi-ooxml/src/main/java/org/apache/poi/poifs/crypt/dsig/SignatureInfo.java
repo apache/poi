@@ -155,8 +155,8 @@ import org.w3c.dom.events.MutationEvent;
  * in the classpath:</p>
  * <ul>
  * <li>BouncyCastle bcpkix and bcprov (tested against 1.77)</li>
- * <li>Apache Santuario "xmlsec" (tested against 4.0.0)</li>
- * <li>and log4j-api (tested against 2.21.x)</li>
+ * <li>Apache Santuario "xmlsec" (tested against 3.0.x)</li>
+ * <li>and log4j-api (tested against 2.22.x)</li>
  * </ul>
  */
 public class SignatureInfo {
