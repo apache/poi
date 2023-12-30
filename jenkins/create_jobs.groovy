@@ -40,16 +40,23 @@ def poijobs = [
           disabled: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
-        [ name: 'POI-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
+        [ name: 'POI-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
+          // let's save some CPU cycles here, 19 is not a LTS and JDK 20 is out
+          disabled: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
-        [ name: 'POI-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
+        [ name: 'POI-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
+          // let's save some CPU cycles here, 20 is not a LTS and JDK 21 is out
+          disabled: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
         [ name: 'POI-DSL-1.21', jdk: '1.21', trigger: 'H */12 * * *', skipcigame: true, skipSpotbugs: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
         [ name: 'POI-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
+        ],
+        // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
+        [ name: 'POI-DSL-1.23', jdk: '1.23', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
         ],
         // Use Ant-build for now as selecting IBM JDK via toolchain does not work (yet)
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, useAnt: true
@@ -102,11 +109,15 @@ def poijobs = [
           // let's save some CPU cycles here, 18 is not an LTS and JDK 20 is out
           disabled: true
         ],
-        [ name: 'POI-DSL-Windows-1.20', jdk: '1.20', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
+        [ name: 'POI-DSL-Windows-1.20', jdk: '1.20', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
+          // let's save some CPU cycles here, 20 is not a LTS and JDK 21 is out
+          disabled: true
         ],
         [ name: 'POI-DSL-Windows-1.21', jdk: '1.21', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.22', jdk: '1.22', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
+        ],
+        [ name: 'POI-DSL-Windows-1.23', jdk: '1.23', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', skipcigame: true, disabled: true
         ],
@@ -132,12 +143,14 @@ def xmlbeansjobs = [
           disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 20 is not an LTS and JDK 21 is out
+          disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.21', jdk: '1.21', trigger: 'H */12 * * *', skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true,
         ],
-        [ name: 'POI-XMLBeans-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true,
+        [ name: 'POI-XMLBeans-DSL-1.23', jdk: '1.23', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
           sonar: true
@@ -167,6 +180,7 @@ def jdkMapping = [
         '1.20': [ jenkinsJdk: 'jdk_20_latest', jdkVersion: 20, jdkVendor: '' ],
         '1.21': [ jenkinsJdk: 'jdk_21_latest', jdkVersion: 21, jdkVendor: '' ],
         '1.22': [ jenkinsJdk: 'jdk_22_latest', jdkVersion: 22, jdkVendor: '' ],
+        '1.23': [ jenkinsJdk: 'jdk_23_latest', jdkVersion: 23, jdkVendor: '' ],
         'OpenJDK 1.8': [ jenkinsJdk: 'adoptopenjdk_hotspot_8u282', jdkVersion: 8, jdkVendor: 'adoptopenjdk' ],
         'IBMJDK': [ jenkinsJdk: 'ibmjdk_1.8.0_261', jdkVersion: 8, jdkVendor: 'ibm' ]
 ]
@@ -643,6 +657,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'jdk_20_latest',
                 'jdk_21_latest',
                 'jdk_22_latest',
+                'jdk_23_latest',
                 'adoptopenjdk_hotspot_8u282',
                 'ibmjdk_1.8.0_261'
         )
