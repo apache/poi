@@ -57,7 +57,11 @@ public class HSSFShapeFactory {
             }
             EscherClientDataRecord clientData = ((EscherContainerRecord) child).getChildById(EscherClientDataRecord.RECORD_ID);
             if (null != clientData) {
-                obj = (ObjRecord) agg.getShapeToObjMapping().get(clientData);
+                Record record = agg.getShapeToObjMapping().get(clientData);
+                if (!(record instanceof ObjRecord)) {
+                    throw new IllegalArgumentException("Had unexpected type of clientData: " + (record == null ? "<null>" : record.getClass()));
+                }
+                obj = (ObjRecord) record;
             }
             HSSFShapeGroup group = new HSSFShapeGroup(container, obj);
             List<EscherContainerRecord> children = container.getChildContainers();

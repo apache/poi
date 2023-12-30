@@ -57,6 +57,7 @@ class TestBiffDrawingToXml extends BaseTestIteratingXLS {
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5285517825277952.xls", IllegalArgumentException.class);
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5436547081830400.xls", IllegalArgumentException.class);
         excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-5889658057523200.xls", IndexOutOfBoundsException.class);
+        excludes.put("clusterfuzz-testcase-minimized-POIHSSFFuzzer-4977868385681408.xls", IllegalArgumentException.class);
         return excludes;
     }
 
