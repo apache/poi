@@ -44,7 +44,7 @@ import org.apache.poi.ss.formula.eval.NotImplementedException;
 @SuppressWarnings("serial")
 public class FractionFormat extends Format {
     private static final Logger LOGGER = LogManager.getLogger(FractionFormat.class);
-    private static final Pattern DENOM_FORMAT_PATTERN = Pattern.compile("(?:(#+)|(\\d+))");
+    private static final Pattern DENOM_FORMAT_PATTERN = Pattern.compile("(#+)|(\\d+)");
 
     //this was chosen to match the earlier limitation of max denom power
     //it can be expanded to get closer to Excel's calculations
@@ -189,6 +189,10 @@ public class FractionFormat extends Format {
 
     @Override
     public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+        if (!(obj instanceof Number)) {
+            throw new IllegalArgumentException("Cannot format object of " + obj.getClass() + " to number: " + obj);
+        }
+
         return toAppendTo.append(format((Number)obj));
     }
 
