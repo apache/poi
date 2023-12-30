@@ -745,6 +745,10 @@ public abstract class AbstractWordConverter {
             }
             case FIELD_DROP_DOWN: {
                 Range fieldContent = field.firstSubrange(parentRange);
+                if (fieldContent == null) {
+                    throw new IllegalStateException("Cannot read field content from field " + field + " and range " + parentRange);
+                }
+
                 CharacterRun cr = fieldContent.getCharacterRun(fieldContent
                     .numCharacterRuns() - 1);
                 String[] values = cr.getDropDownListValues();
