@@ -91,7 +91,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
         return fillFields(data, pOffset, recordFactory, 0);
     }
 
-    private int fillFields(byte[] data, int pOffset, EscherRecordFactory recordFactory, int nesting) {
+    int fillFields(byte[] data, int pOffset, EscherRecordFactory recordFactory, int nesting) {
         if (nesting > MAX_NESTED_CHILD_NODES) {
             throw new IllegalStateException("Had more than the limit of " + MAX_NESTED_CHILD_NODES + " nested child notes");
         }
@@ -104,6 +104,8 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
             final int childBytesWritten;
             if (child instanceof EscherContainerRecord) {
                 childBytesWritten = ((EscherContainerRecord)child).fillFields(data, offset, recordFactory, nesting + 1);
+            } else if (child instanceof UnknownEscherRecord) {
+                childBytesWritten = ((UnknownEscherRecord)child).fillFields(data, offset, recordFactory, nesting + 1);
             } else {
                 childBytesWritten = child.fillFields(data, offset, recordFactory);
             }
