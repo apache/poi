@@ -236,6 +236,66 @@ subprojects {
         destinationDirectory = file("../build/dist/maven/${project.archivesBaseName}")
 
         doLast {
+            // make sure we do not have distribution jar-files with different versions
+            // in the build-dir as those lead to strange errors about "duplicate modules"
+            // when building java9 JPMS class files ("java9")
+            ant.delete(failOnError: true, verbose: true) {
+                fileset(dir: "../build/dist/maven/${project.archivesBaseName}") {
+                    include(name: '*.jar')
+                    exclude(name: "*${version}.jar")
+                    exclude(name: "*${version}-sources.jar")
+
+                    include(name: '*.jar.asc')
+                    exclude(name: "*${version}.jar.asc")
+                    exclude(name: "*${version}-sources.jar.asc")
+
+                    include(name: '*.jar.sha256')
+                    exclude(name: "*${version}.jar.sha256")
+                    exclude(name: "*${version}-sources.jar.sha256")
+
+                    include(name: '*.jar.sha512')
+                    exclude(name: "*${version}.jar.sha512")
+                    exclude(name: "*${version}-sources.jar.sha512")
+
+                    include(name: '*.pom')
+                    exclude(name: "*${version}.pom")
+
+                    include(name: '*.pom.asc')
+                    exclude(name: "*${version}.pom.asc")
+                }
+            }
+            // use failOnError=false for -javadoc and -tests as not all modules create this directory
+            ant.delete(failOnError: false, verbose: true) {
+                fileset(dir: "../build/dist/maven/${project.archivesBaseName}-javadoc") {
+                    include(name: '*-javadoc.jar')
+                    exclude(name: "*${version}-javadoc.jar")
+
+                    include(name: '*-javadoc.jar.asc')
+                    exclude(name: "*${version}-javadoc.jar.asc")
+
+                    include(name: '*-javadoc.jar.sha256')
+                    exclude(name: "*${version}-javadoc.jar.sha256")
+
+                    include(name: '*-javadoc.jar.sha512')
+                    exclude(name: "*${version}-javadoc.jar.sha512")
+                }
+            }
+            ant.delete(failOnError: false, verbose: true) {
+                fileset(dir: "../build/dist/maven/${project.archivesBaseName}-tests") {
+                    include(name: '*-tests.jar')
+                    exclude(name: "*${version}-tests.jar")
+
+                    include(name: '*-tests.jar.asc')
+                    exclude(name: "*${version}-tests.jar.asc")
+
+                    include(name: '*-tests.jar.sha256')
+                    exclude(name: "*${version}-tests.jar.sha256")
+
+                    include(name: '*-tests.jar.sha512')
+                    exclude(name: "*${version}-tests.jar.sha512")
+                }
+            }
+
             ant.checksum(file: it.archivePath, algorithm: 'SHA-256', fileext: '.sha256', format: 'MD5SUM')
             ant.checksum(file: it.archivePath, algorithm: 'SHA-512', fileext: '.sha512', format: 'MD5SUM')
         }
