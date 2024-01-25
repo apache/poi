@@ -38,6 +38,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.ExceptionUtil;
 import org.apache.poi.util.Internal;
 
 
@@ -351,12 +352,13 @@ public class SheetUtil {
         try {
             TextLayout layout = new TextLayout(str.getIterator(), fontRenderContext);
             return layout.getAdvance();
-        } catch (UnsatisfiedLinkError | NoClassDefFoundError | InternalError e) {
-            if (ignoreMissingFontSystem) {
+        } catch (Throwable t) {
+            // fatal exceptions will always be rethrown
+            if (!ExceptionUtil.isFatal(t) && ignoreMissingFontSystem) {
                 return DEFAULT_CHAR_WIDTH;
             }
 
-            throw e;
+            throw t;
         }
     }
 
