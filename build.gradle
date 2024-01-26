@@ -240,7 +240,7 @@ subprojects {
             // in the build-dir as those lead to strange errors about "duplicate modules"
             // when building java9 JPMS class files ("java9")
             ant.delete(failOnError: true, verbose: true) {
-                fileset(dir: "../build/dist/maven/${project.archivesBaseName}") {
+                fileset(dir: "../build/dist/maven/${project.archivesBaseName}", erroronmissingdir: false) {
                     include(name: '*.jar')
                     exclude(name: "*${version}.jar")
                     exclude(name: "*${version}-sources.jar")
@@ -266,7 +266,7 @@ subprojects {
             }
             // use failOnError=false for -javadoc and -tests as not all modules create this directory
             ant.delete(failOnError: false, verbose: true) {
-                fileset(dir: "../build/dist/maven/${project.archivesBaseName}-javadoc") {
+                fileset(dir: "../build/dist/maven/${project.archivesBaseName}-javadoc", erroronmissingdir: false) {
                     include(name: '*-javadoc.jar')
                     exclude(name: "*${version}-javadoc.jar")
 
@@ -281,7 +281,7 @@ subprojects {
                 }
             }
             ant.delete(failOnError: false, verbose: true) {
-                fileset(dir: "../build/dist/maven/${project.archivesBaseName}-tests") {
+                fileset(dir: "../build/dist/maven/${project.archivesBaseName}-tests", erroronmissingdir: false) {
                     include(name: '*-tests.jar')
                     exclude(name: "*${version}-tests.jar")
 
