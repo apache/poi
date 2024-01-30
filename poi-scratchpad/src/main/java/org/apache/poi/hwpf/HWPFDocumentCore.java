@@ -88,7 +88,7 @@ public abstract class HWPFDocumentCore extends POIDocument {
      * Size of the not encrypted part of the FIB
      */
     protected static final int FIB_BASE_LEN = 68;
-    
+
     /**
      * [MS-DOC] 2.2.6.2/3 Office Binary Document ... Encryption:
      * "... The block number MUST be set to zero at the beginning of the stream and
@@ -283,6 +283,9 @@ public abstract class HWPFDocumentCore extends POIDocument {
         EncryptionMode em = fibBase.isFObfuscated() ? EncryptionMode.xor : null;
         EncryptionInfo ei = new EncryptionInfo(leis, em);
         Decryptor dec = ei.getDecryptor();
+        if (dec == null) {
+            throw new EncryptedDocumentException("Invalid encryption info, did not get a matching decryptor");
+        }
         dec.setChunkSize(RC4_REKEYING_INTERVAL);
         try {
             String pass = Biff8EncryptionKey.getCurrentUserPassword();
