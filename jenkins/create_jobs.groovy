@@ -45,10 +45,18 @@ def poijobs = [
         [ name: 'POI-DSL-1.21', jdk: '1.21', trigger: 'H */12 * * *', skipcigame: true, skipSpotbugs: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
-        [ name: 'POI-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
+        [ name: 'POI-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
+          // use Ant for building until Gradle supports JDK 22
+          // see https://docs.gradle.org/current/userguide/compatibility.html
+          // and https://github.com/gradle/gradle/issues/26162
+          useAnt: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
-        [ name: 'POI-DSL-1.23', jdk: '1.23', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
+        [ name: 'POI-DSL-1.23', jdk: '1.23', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
+          // use Ant for building until Gradle supports JDK 23
+          // see https://docs.gradle.org/current/userguide/compatibility.html
+          // and https://github.com/gradle/gradle/issues/26162
+          useAnt: true
         ],
         // Use Ant-build for now as selecting IBM JDK via toolchain does not work (yet)
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true, useAnt: true
