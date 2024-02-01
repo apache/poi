@@ -24,14 +24,6 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
         ],
-        [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 15 is not an LTS and JDK 16 is GA
-          disabled: true
-        ],
-        [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 16 is not an LTS and JDK 17 is GA
-          disabled: true
-        ],
         [ name: 'POI-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
@@ -94,14 +86,6 @@ def poijobs = [
         [ name: 'POI-DSL-Windows-1.11', jdk: '1.11', trigger: triggerSundays, windows: true, slaves: 'Windows',
           jenkinsLite: true
         ],
-        [ name: 'POI-DSL-Windows-1.15', jdk: '1.15', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          // let's save some CPU cycles here, 14 is not an LTS and JDK 15 is GA as of 15 September 2020
-          disabled: true
-        ],
-        [ name: 'POI-DSL-Windows-1.16', jdk: '1.16', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          // let's save some CPU cycles here, 16 is not an LTS and JDK 17 is GA
-          disabled: true
-        ],
         [ name: 'POI-DSL-Windows-1.17', jdk: '1.17', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.18', jdk: '1.18', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
@@ -127,10 +111,6 @@ def xmlbeansjobs = [
         [ name: 'POI-XMLBeans-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
-        ],
-        [ name: 'POI-XMLBeans-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 16 is not an LTS and JDK 17 is GA
-          disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true,
         ],
@@ -172,8 +152,6 @@ def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H29'
 def jdkMapping = [
         '1.8': [ jenkinsJdk: 'jdk_1.8_latest', jdkVersion: 8, jdkVendor: '' ],
         '1.11': [ jenkinsJdk: 'jdk_11_latest', jdkVersion: 11, jdkVendor: '' ],
-        '1.15': [ jenkinsJdk: 'jdk_15_latest', jdkVersion: 15, jdkVendor: '' ],
-        '1.16': [ jenkinsJdk: 'jdk_16_latest', jdkVersion: 16, jdkVendor: '' ],
         '1.17': [ jenkinsJdk: 'jdk_17_latest', jdkVersion: 17, jdkVendor: '' ],
         '1.18': [ jenkinsJdk: 'jdk_18_latest', jdkVersion: 18, jdkVendor: '' ],
         '1.19': [ jenkinsJdk: 'jdk_19_latest', jdkVersion: 19, jdkVendor: '' ],
@@ -523,7 +501,7 @@ xmlbeansjobs.each { xjob ->
         label(slaves)
         environmentVariables {
             env('LANG', 'en_US.UTF-8')
-            if (jdkKey == '1.11' || jdkKey == '1.15' || jdkKey == '1.16' || jdkKey == '1.17'
+            if (jdkKey == '1.11' || jdkKey == '1.17'
                     || jdkKey == '1.18' || jdkKey == '1.19' || jdkKey == '1.20' || jdkKey == '1.21') {
                 env('ANT_OPTS', '--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
             }
@@ -644,13 +622,6 @@ Unfortunately we often see builds break because of changes/new machines...''')
         jdk(
                 'jdk_1.8_latest',
                 'jdk_11_latest',
-                /* don't look for JDKs that are out of support
-                'jdk_10_latest',
-                'jdk_12_latest',
-                'jdk_13_latest',
-                'jdk_14_latest',
-                'jdk_15_latest',
-                'jdk_16_latest',*/
                 'jdk_17_latest',
                 'jdk_18_latest',
                 'jdk_19_latest',
