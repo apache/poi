@@ -28,7 +28,7 @@ public class CodepointsUtil {
      * @return iterator with Strings representing the codepoints
      */
   public static Iterator<String> iteratorFor(String text) {
-    PrimitiveIterator.OfInt iter = text.codePoints().iterator();
+    PrimitiveIterator.OfInt iter = primitiveIterator(text);
     return new Iterator<String>() {
       @Override
       public boolean hasNext() {
