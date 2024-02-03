@@ -573,11 +573,17 @@ public class CellFormatPart {
      * @return The character repeated three times.
      */
     static String expandChar(String part) {
-        List<String> codePoints = new ArrayList<>();
-        CodepointsUtil.iteratorFor(part).forEachRemaining(codePoints::add);
-        if (codePoints.size() < 2) throw new IllegalArgumentException("Expected part string to have at least 2 chars");
-        String ch = codePoints.get(1);
-        return ch + ch + ch;
+        PrimitiveIterator.OfInt iterator = CodepointsUtil.primitiveIterator(part);
+        Integer c0 = iterator.hasNext() ? iterator.next() : null;
+        Integer c1 = iterator.hasNext() ? iterator.next() : null;
+        if (c0 == null || c1 == null)
+            throw new IllegalArgumentException("Expected part string to have at least 2 chars");
+        char[] ch = Character.toChars(c1);
+        StringBuilder sb = new StringBuilder(ch.length * 3);
+        sb.append(ch);
+        sb.append(ch);
+        sb.append(ch);
+        return sb.toString();
     }
 
     /**
