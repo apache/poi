@@ -29,9 +29,18 @@ public class CodepointsUtil {
      * @see #primitiveIterator(String) a more performant iterator
      */
     public static Iterator<String> iteratorFor(String text) {
-        return text.codePoints()
-                .mapToObj(codePoint -> new String(Character.toChars(codePoint)))
-                .iterator();
+        final PrimitiveIterator.OfInt iter = primitiveIterator(text);
+        return new Iterator<String>() {
+            @Override
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            @Override
+            public String next() {
+                return new String(Character.toChars(iter.nextInt()));
+            }
+        };
     }
 
     /**
