@@ -26,13 +26,21 @@ public class CodepointsUtil {
     /**
      * @param text to iterate over
      * @return iterator with Strings representing the codepoints
-     * @see #primitiveIterator(String) a more performant iterator
      */
-    public static Iterator<String> iteratorFor(String text) {
-        return text.codePoints()
-                .mapToObj(codePoint -> new String(Character.toChars(codePoint)))
-                .iterator();
-    }
+  public static Iterator<String> iteratorFor(String text) {
+    PrimitiveIterator.OfInt iter = text.codePoints().iterator();
+    return new Iterator<String>() {
+      @Override
+      public boolean hasNext() {
+        return iter.hasNext();
+      }
+
+      @Override
+      public String next() {
+        return Character.toString(iter.next());
+      }
+    };
+  }
 
     /**
      * @param text to iterate over
