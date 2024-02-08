@@ -356,6 +356,25 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
+    void workbookTempFilesAreDisposedWhenClosingWorkbook() throws IOException {
+        SXSSFWorkbook wb = new SXSSFWorkbook();
+
+        // Closing / auto-closing the workbook should clean up the temp files
+        try (wb) {
+            populateData(wb);
+
+            for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+                assertTrue(wb.getSheetAt(i).getSheetDataWriter().getTempFile().exists());
+            }
+            // Not calling SXSSFWorkbook#dispose since closing the workbook should clean up the temp files
+        }
+
+        for (int i = 0; i < wb.getNumberOfSheets(); i++) {
+            assertFalse(wb.getSheetAt(i).getSheetDataWriter().getTempFile().exists());
+        }
+    }
+
+    @Test
     void bug53515() throws Exception {
         try (Workbook wb1 = new SXSSFWorkbook(10)) {
             populateWorkbook(wb1);

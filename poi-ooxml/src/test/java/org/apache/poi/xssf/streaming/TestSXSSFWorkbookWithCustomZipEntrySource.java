@@ -114,7 +114,6 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         SXSSFCell cell1 = row1.createCell(1);
         cell1.setCellValue(cellValue);
         workbook.write(NullOutputStream.INSTANCE);
-        workbook.close();
         List<File> tempFiles = workbook.getTempFiles();
         assertEquals(1, tempFiles.size());
         File tempFile = tempFiles.get(0);
@@ -127,5 +126,6 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         }
         workbook.dispose();
         assertFalse(tempFile.exists(), "tempFile deleted after dispose?");
+        workbook.close();
     }
 }
