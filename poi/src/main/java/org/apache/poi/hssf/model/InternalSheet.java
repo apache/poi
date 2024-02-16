@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.message.SimpleMessage;
 import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.ChartSubstreamRecordAggregate;
@@ -541,12 +540,8 @@ public final class InternalSheet {
     public void setDimensions(int firstrow, short firstcol, int lastrow, short lastcol)
     {
         LOGGER.atDebug().log("Sheet.setDimensions");
-        LOGGER.atDebug().log(() -> new SimpleMessage(
-                "firstrow" + firstrow +
-                        "firstcol" + firstcol +
-                        "lastrow" + lastrow +
-                        "lastcol" + lastcol
-        ));
+        LOGGER.atDebug().log("firstrow: {} firstcol: {} lastrow: {} lastcol: {}",
+                firstrow, firstcol, lastrow, lastcol);
         _dimensions.setFirstCol(firstcol);
         _dimensions.setFirstRow(firstrow);
         _dimensions.setLastCol(lastcol);
