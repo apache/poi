@@ -25,16 +25,11 @@ import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * Class POIFSDocumentPath
  */
 
 public class POIFSDocumentPath {
-
-    private static final Logger LOGGER = LogManager.getLogger(POIFSDocumentPath.class);
 
     private final String[] components;
     private int hashcode; //lazy-compute hashCode

@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.streaming;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -37,7 +35,6 @@ import org.apache.poi.xssf.usermodel.XSSFRichTextString;
  *  regular XSSF Workbook
  */
 public class SXSSFCreationHelper implements CreationHelper {
-    private static final Logger LOG = LogManager.getLogger(SXSSFCreationHelper.class);
 
     private final SXSSFWorkbook wb;
     private final XSSFCreationHelper helper;

@@ -17,8 +17,6 @@
 
 package org.apache.poi.xssf.binary;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.util.Internal;
@@ -34,7 +32,6 @@ import org.apache.poi.xssf.usermodel.XSSFRelation;
  */
 @Internal
 public class XSSFBRelation extends POIXMLRelation {
-    private static final Logger LOGGER = LogManager.getLogger(XSSFBRelation.class);
 
     static final XSSFBRelation SHARED_STRINGS_BINARY = new XSSFBRelation(
             "application/vnd.ms-excel.sharedStrings",
