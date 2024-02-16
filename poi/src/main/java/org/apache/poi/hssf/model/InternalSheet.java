@@ -540,11 +540,7 @@ public final class InternalSheet {
     public void setDimensions(int firstrow, short firstcol, int lastrow, short lastcol)
     {
         LOGGER.atDebug().log("Sheet.setDimensions");
-        LOGGER.atDebug().log("firstrow" + firstrow +
-                "firstcol" + firstcol +
-                "lastrow" + lastrow +
-                "lastcol" + lastcol
-        );
+        LOGGER.atDebug().log("firstrow: {}, firstcol: {}, lastrow: {}, lastcol: {}", firstrow, firstcol, lastrow, lastcol);
         _dimensions.setFirstCol(firstcol);
         _dimensions.setFirstRow(firstrow);
         _dimensions.setLastCol(lastcol);
