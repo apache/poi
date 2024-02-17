@@ -169,6 +169,10 @@ artifacts {
 }
 
 test {
+    // use US locale for tests
+    systemProperty "user.language", "en"
+    systemProperty "user.country", "US"
+
     dependsOn { testJar }
 
     systemProperties['junit.jupiter.execution.parallel.enabled'] = 'true'
