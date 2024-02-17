@@ -17,6 +17,8 @@
 
 package org.apache.poi.xddf.usermodel.chart;
 
+import static org.apache.logging.log4j.util.Unbox.box;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -170,8 +172,7 @@ public abstract class XDDFChartData {
             if (categoryData != null && values != null) {
                 int numOfPoints = category.getPointCount();
                 if (numOfPoints != values.getPointCount()) {
-                    LOGGER.warn("Category and values must have the same point count, but had " +
-                            numOfPoints + " categories and " + values.getPointCount() + " values.");
+                    LOGGER.atWarn().log("Category and values must have the same point count, but had {} categories and {} values.", box(numOfPoints), box(values.getPointCount()));
                 }
             }
             this.categoryData = category;
