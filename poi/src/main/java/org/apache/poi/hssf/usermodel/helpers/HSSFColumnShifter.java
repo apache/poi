@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.usermodel.helpers;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
@@ -35,7 +33,6 @@ import org.apache.poi.util.NotImplemented;
 // {@link org.apache.poi.hssf.usermodel.helpers.HSSFColumnShifter}
 @Beta
 public final class HSSFColumnShifter extends ColumnShifter {
-    private static final Logger LOG = LogManager.getLogger(HSSFColumnShifter.class);
 
     public HSSFColumnShifter(HSSFSheet sh) {
         super(sh);
