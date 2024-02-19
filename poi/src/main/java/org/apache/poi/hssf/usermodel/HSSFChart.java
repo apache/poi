@@ -113,7 +113,7 @@ public final class HSSFChart {
     public void createBarChart( HSSFWorkbook workbook, HSSFSheet parentSheet )
     {
 
-        List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
+        List<Record> records = new ArrayList<>();
         records.add( createMSDrawingObjectRecord() );
         records.add( createOBJRecord() );
         records.add( createBOFRecord() );
@@ -227,7 +227,7 @@ public final class HSSFChart {
             } else if(r instanceof ValueRangeRecord){
                 lastChart.valueRanges.add((ValueRangeRecord)r);
             } else if (r instanceof Record) {
-                Record record = (org.apache.poi.hssf.record.Record) r;
+                Record record = (Record) r;
                 for (HSSFChartType type : HSSFChartType.values()) {
                     if (type == HSSFChartType.Unknown) {
                         continue;
@@ -440,7 +440,7 @@ public final class HSSFChart {
         return new UnknownRecord((short)0x00EC, data);
     }
 
-    private void createAxisRecords( List<org.apache.poi.hssf.record.Record> records )
+    private void createAxisRecords( List<Record> records )
     {
         records.add( createAxisParentRecord() );
         records.add( createBeginRecord() );
@@ -1221,7 +1221,7 @@ public final class HSSFChart {
             } else if (record instanceof EndRecord) {
                 newRecord = new EndRecord();
             } else if (record instanceof SeriesRecord) {
-                SeriesRecord seriesRecord = (SeriesRecord) ((SeriesRecord)record).copy();
+                SeriesRecord seriesRecord = ((SeriesRecord)record).copy();
                 newSeries = new HSSFSeries(seriesRecord);
                 newRecord = seriesRecord;
             } else if (record instanceof LinkedDataRecord) {
@@ -1238,13 +1238,13 @@ public final class HSSFChart {
 
                 newRecord = dataFormatRecord;
             } else if (record instanceof SeriesTextRecord) {
-                SeriesTextRecord seriesTextRecord = (SeriesTextRecord) ((SeriesTextRecord)record).copy();
+                SeriesTextRecord seriesTextRecord = ((SeriesTextRecord)record).copy();
                 if (newSeries != null) {
                     newSeries.setSeriesTitleText(seriesTextRecord);
                 }
                 newRecord = seriesTextRecord;
             } else if (record instanceof Record) {
-                newRecord = (org.apache.poi.hssf.record.Record) ((org.apache.poi.hssf.record.Record)record).copy();
+                newRecord = ((Record)record).copy();
             }
 
             if (newRecord != null)
