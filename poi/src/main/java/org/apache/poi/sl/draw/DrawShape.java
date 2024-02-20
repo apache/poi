@@ -192,8 +192,8 @@ public class DrawShape implements Drawable {
         }
 
 
-        final java.awt.Shape anc = tx.createTransformedShape(normalizedShape);
-        return (anc != null) ? anc.getBounds2D() : normalizedShape;
+        return (normalizedShape != null) ? tx.createTransformedShape(normalizedShape).getBounds2D()
+                : null;
     }
 
     public static Rectangle2D getAnchor(Graphics2D graphics, Rectangle2D anchor) {
@@ -202,7 +202,7 @@ public class DrawShape implements Drawable {
         }
 
         AffineTransform tx = (AffineTransform)graphics.getRenderingHint(Drawable.GROUP_TRANSFORM);
-        if(tx != null && !tx.isIdentity() && tx.createTransformedShape(anchor) != null) {
+        if(tx != null && !tx.isIdentity() && anchor != null) {
             anchor = tx.createTransformedShape(anchor).getBounds2D();
         }
         return anchor;
