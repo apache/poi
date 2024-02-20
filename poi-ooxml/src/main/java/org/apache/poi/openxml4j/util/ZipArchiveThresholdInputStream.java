@@ -147,7 +147,7 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
         }
 
         try {
-            entry = ((ZipArchiveInputStream) in).getNextZipEntry();
+            entry = ((ZipArchiveInputStream) in).getNextEntry();
             if (guardState && entry != null) {
                 if (++entryCount > MAX_FILE_COUNT) {
                     throw new IOException(String.format(Locale.ROOT, MAX_FILE_COUNT_MSG, MAX_FILE_COUNT));
