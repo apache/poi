@@ -334,6 +334,10 @@ subprojects {
     }
 
     test {
+        // use US locale for tests
+        systemProperty "user.language", "en"
+        systemProperty "user.country", "US"
+
         // make XML test-results available for Jenkins CI
         useJUnitPlatform()
         reports {
