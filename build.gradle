@@ -468,7 +468,7 @@ subprojects {
         //
         // Some additional properties are currently set in the Jenkins-DSL, see jenkins/create_jobs.groovy
         //
-        sonarqube {
+        sonar {
             properties {
                 // as we currently use build/<module>/ as project-basedir, we need to tell Sonar to use
                 // the root-folder as "basedir" for the projects
