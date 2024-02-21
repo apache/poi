@@ -79,7 +79,7 @@ public final class OfficeArtContent {
         int pos = offset;
         pos += drawingGroupData.fillFields(data, pos, recordFactory);
         if (drawingGroupData.getRecordId() == EscherRecordTypes.DGG_CONTAINER.typeID) {
-            LOG.atDebug().log("Invalid record-id for filling Escher records: " + drawingGroupData.getRecordId());
+            LOG.debug("Invalid record-id for filling Escher records: {}", drawingGroupData.getRecordId());
         }
 
         /*

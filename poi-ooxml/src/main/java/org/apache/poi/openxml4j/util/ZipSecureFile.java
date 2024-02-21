@@ -119,7 +119,7 @@ public class ZipSecureFile extends ZipFile {
         if (maxEntrySize < 0) {
             throw new IllegalArgumentException("Max entry size must be greater than or equal to zero");
         } else if (maxEntrySize > DEFAULT_MAX_ENTRY_SIZE) {
-            LOG.atWarn().log("setting max entry size greater than 4Gb can be risky; set to " + maxEntrySize + " bytes");
+            LOG.warn("setting max entry size greater than 4Gb can be risky; set to {} bytes", maxEntrySize);
         }
         MAX_ENTRY_SIZE = maxEntrySize;
     }
@@ -183,7 +183,7 @@ public class ZipSecureFile extends ZipFile {
         if (maxTextSize < 0) {
             throw new IllegalArgumentException("Max text size must be greater than or equal to zero");
         }else if (maxTextSize > DEFAULT_MAX_TEXT_SIZE) {
-            LOG.atWarn().log("setting max text size greater than " + DEFAULT_MAX_TEXT_SIZE + " can be risky; set to " + maxTextSize + " chars");
+            LOG.warn("setting max text size greater than {} can be risky; set to {} chars", DEFAULT_MAX_TEXT_SIZE, maxTextSize);
         }
         MAX_TEXT_SIZE = maxTextSize;
     }

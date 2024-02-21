@@ -256,7 +256,7 @@ public class CellFormatPart {
             return null;
         Color c = NAMED_COLORS.get(cdesc);
         if (c == null) {
-            LOG.warn("Unknown color: " + quote(cdesc));
+            LOG.warn("Unknown color: {}", quote(cdesc));
         }
         return c;
     }

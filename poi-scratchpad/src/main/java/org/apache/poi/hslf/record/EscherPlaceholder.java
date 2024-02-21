@@ -64,7 +64,7 @@ public class EscherPlaceholder extends EscherRecord {
         unused = LittleEndian.getShort(data, offset+14);
 
         if (bytesRemaining + 8 != 16) {
-            LOG.warn("Invalid header-data received, should have 8 bytes left, but had: " + bytesRemaining);
+            LOG.warn("Invalid header-data received, should have 8 bytes left, but had: {}", bytesRemaining);
         }
 
         return bytesRemaining + 8;

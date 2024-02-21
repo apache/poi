@@ -211,9 +211,9 @@ public final class StyleSheet {
     @Deprecated
     private void createPap(int istd, int nesting) {
         if (nesting > MAX_PAPX_NESTING) {
-            LOG.warn("Encountered too deep nesting, cannot fully process stylesheet at " + istd +
-                    " with more than " + MAX_PAPX_NESTING + " nested ParagraphProperties." +
-                    " Some data could not be parsed.");
+            LOG.warn("Encountered too deep nesting, cannot fully process stylesheet at {}" +
+                    " with more than {} nested ParagraphProperties." +
+                    " Some data could not be parsed.", istd, MAX_PAPX_NESTING);
             return;
         }
 
@@ -268,9 +268,9 @@ public final class StyleSheet {
     @Deprecated
     private void createChp(int istd, int nesting) {
         if (nesting > MAX_CHPX_NESTING) {
-            LOG.warn("Encountered too deep nesting, cannot fully process stylesheet at " + istd +
-                    " with more than " + MAX_CHPX_NESTING + " nested CharacterProperties." +
-                    " Some data could not be parsed.");
+            LOG.warn("Encountered too deep nesting, cannot fully process stylesheet at {}" +
+                    " with more than {} nested CharacterProperties." +
+                    " Some data could not be parsed.", istd, MAX_CHPX_NESTING);
             return;
         }
 

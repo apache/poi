@@ -43,7 +43,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 public class TestWordToTextConverter {
-    private static final Logger LOG = LogManager.getLogger(WordToTextConverter.class);
+    private static final Logger LOG = LogManager.getLogger(TestWordToTextConverter.class);
 
     private static final List<String> failingFiles = Arrays.asList(
         // Excel file
@@ -97,13 +97,13 @@ public class TestWordToTextConverter {
     @ParameterizedTest
     @MethodSource("files")
     void testAllFiles(File file) throws Exception {
-        LOG.info("Testing " + file);
+        LOG.info("Testing {}", file);
         try (FileInputStream stream = new FileInputStream(file)) {
             InputStream is = FileMagic.prepareToCheckMagic(stream);
             FileMagic fm = FileMagic.valueOf(is);
 
             if (fm != FileMagic.OLE2) {
-                LOG.info("Skip non-doc file " + file);
+                LOG.info("Skip non-doc file {}", file);
 
                 return;
             }

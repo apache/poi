@@ -192,7 +192,7 @@ public class CellFormat {
 
                 parts.add(new CellFormatPart(locale, valueDesc));
             } catch (RuntimeException e) {
-                LOG.log(Level.WARN, "Invalid format: " + CellFormatter.quote(m.group()), e);
+                LOG.warn("Invalid format: {}", CellFormatter.quote(m.group()), e);
                 parts.add(null);
             }
         }

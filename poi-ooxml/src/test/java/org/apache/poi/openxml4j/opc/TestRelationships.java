@@ -44,7 +44,7 @@ class TestRelationships {
     private static final String SHEET_WITH_COMMENTS =
         "/xl/worksheets/sheet1.xml";
 
-    private static final Logger LOG = LogManager.getLogger(TestPackageCoreProperties.class);
+    private static final Logger LOG = LogManager.getLogger(TestRelationships.class);
 
     /**
      * Test relationships are correctly loaded. This at the moment fails (as of r499)
