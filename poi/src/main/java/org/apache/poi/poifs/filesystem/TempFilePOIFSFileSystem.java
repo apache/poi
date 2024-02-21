@@ -32,7 +32,7 @@ import java.io.IOException;
  */
 @Beta
 public class TempFilePOIFSFileSystem extends POIFSFileSystem {
-    private static Logger LOG = LogManager.getLogger(TempFilePOIFSFileSystem.class);
+    private static final Logger LOG = LogManager.getLogger(TempFilePOIFSFileSystem.class);
     File tempFile;
 
     @Override
