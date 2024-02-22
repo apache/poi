@@ -94,42 +94,38 @@ public class HexRead {
     {
         int characterCount = 0;
         byte b = (byte) 0;
-        List<Byte> bytes = new ArrayList<>();
-        final char a = 'a' - 10;
-        final char A = 'A' - 10;
-        while ( true ) {
-            int count = stream.read();
-            int digitValue = -1;
-            if ( '0' <= count && count <= '9' ) {
-                digitValue = count - '0';
-            } else if ( 'A' <= count && count <= 'F' ) {
-                digitValue = count - A;
-            } else if ( 'a' <= count && count <= 'f' ) {
-                digitValue = count - a;
-            } else if ( '#' == count ) {
-                readToEOL( stream );
-            } else if ( -1 == count || eofChar == count ) {
-                break;
-            }
-            // else: ignore the character
+        try (ByteArrayOutputStream bytes = new ByteArrayOutputStream()) {
+            final char a = 'a' - 10;
+            final char A = 'A' - 10;
+            while (true) {
+                int count = stream.read();
+                int digitValue = -1;
+                if ('0' <= count && count <= '9') {
+                    digitValue = count - '0';
+                } else if ('A' <= count && count <= 'F') {
+                    digitValue = count - A;
+                } else if ('a' <= count && count <= 'f') {
+                    digitValue = count - a;
+                } else if ('#' == count) {
+                    readToEOL(stream);
+                } else if (-1 == count || eofChar == count) {
+                    break;
+                }
+                // else: ignore the character
 
-            if (digitValue != -1) {
-                b <<= 4;
-                b += (byte) digitValue;
-                characterCount++;
-                if ( characterCount == 2 ) {
-                    bytes.add( Byte.valueOf( b ) );
-                    characterCount = 0;
-                    b = (byte) 0;
+                if (digitValue != -1) {
+                    b <<= 4;
+                    b += (byte) digitValue;
+                    characterCount++;
+                    if (characterCount == 2) {
+                        bytes.write(b);
+                        characterCount = 0;
+                        b = (byte) 0;
+                    }
                 }
             }
+            return bytes.toByteArray();
         }
-        Byte[] polished = bytes.toArray(new Byte[0]);
-        byte[] rval = new byte[polished.length];
-        for ( int j = 0; j < polished.length; j++ ) {
-            rval[j] = polished[j].byteValue();
-        }
-        return rval;
     }
 
     static public byte[] readFromString(String data) {
