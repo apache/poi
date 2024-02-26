@@ -136,10 +136,10 @@ class TestXMLHelper {
     @Test
     void testNewXMLInputFactory() {
         XMLInputFactory factory = XMLHelper.newXMLInputFactory();
-        assertTrue((boolean)factory.getProperty(XMLInputFactory.IS_NAMESPACE_AWARE));
-        assertFalse((boolean)factory.getProperty(XMLInputFactory.IS_VALIDATING));
-        assertFalse((boolean)factory.getProperty(XMLInputFactory.SUPPORT_DTD));
-        assertFalse((boolean)factory.getProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES));
+        assertEquals(Boolean.TRUE, factory.getProperty(XMLInputFactory.IS_NAMESPACE_AWARE));
+        assertEquals(Boolean.FALSE, factory.getProperty(XMLInputFactory.IS_VALIDATING));
+        assertEquals(Boolean.FALSE, factory.getProperty(XMLInputFactory.SUPPORT_DTD));
+        assertEquals(Boolean.FALSE, factory.getProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES));
     }
 
     /**
@@ -148,7 +148,7 @@ class TestXMLHelper {
     @Test
     void testNewXMLOutputFactory() {
         XMLOutputFactory factory = XMLHelper.newXMLOutputFactory();
-        assertTrue((boolean)factory.getProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES));
+        assertEquals(Boolean.TRUE, factory.getProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES));
     }
 
     /**
