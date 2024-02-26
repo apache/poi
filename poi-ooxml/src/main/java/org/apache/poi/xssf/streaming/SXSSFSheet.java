@@ -167,7 +167,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
                             "in the range [0," + _writer.getLastFlushedRow() + "] that is already written to disk.");
         }
 
-        // attempt to overwrite an existing row in the input template
+        // attempt to overwrite a existing row in the input template
         if(_sh.getPhysicalNumberOfRows() > 0 && rownum <= _sh.getLastRowNum() ) {
             throw new IllegalArgumentException(
                     "Attempting to write a row["+rownum+"] " +
@@ -1180,7 +1180,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * Breaks occur above the specified row and left of the specified column inclusive.
      *
      * For example, {@code sheet.setColumnBreak(2);} breaks the sheet into two parts
-     * with columns A,B,C in the first and D,E,... in the second. Similar, {@code sheet.setRowBreak(2);}
+     * with columns A,B,C in the first and D,E,... in the second. Simuilar, {@code sheet.setRowBreak(2);}
      * breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
      * and rows starting with rownum=4 in the second.
      *
@@ -1279,7 +1279,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     }
 
     /**
-     * Ungroup a range of columns that were previously grouped
+     * Ungroup a range of columns that were previously groupped
      *
      * @param fromColumn   start column (0-based)
      * @param toColumn     end column (0-based)
