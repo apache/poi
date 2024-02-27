@@ -211,6 +211,8 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     /**
      * Returns the logical row (not physical) 0-based.  If you ask for a row that is not
      * defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
+     * If the row is not created in this streaming sheet, instead is part of the XSSFSheet
+     * then this method takes the row from the XSSFSheet.
      *
      * @param rownum  row to get (0-based)
      * @return Row representing the rownumber or null if its not defined on the sheet
@@ -218,10 +220,22 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     @Override
     public Row getRow(int rownum) {
     	Row row = _rows.get(rownum);
-    	// BugZilla 67646: allow reading all the content
+    	// BugZilla 67646: allow reading all the content also from template sheet
     	if (row == null) {
     		row = _sh.getRow(rownum);
     	}
+        return row;
+    }
+
+    /**
+     * Returns the logical row (not physical) 0-based.  If you ask for a row that is not
+     * defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
+     *
+     * @param rownum  row to get (0-based)
+     * @return Row representing the rownumber or null if its not defined on the sheet
+     */
+    private SXSSFRow getSXSSFRow(int rownum) {
+    	SXSSFRow row = _rows.get(rownum);
         return row;
     }
 
@@ -1387,7 +1401,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      *
      * @param row   start row of a grouped range of rows (0-based)
      * @param collapse whether to expand/collapse the detail rows
-     * @throws RuntimeException if collapse is false as this is not implemented for SXSSF.
+     * @throws IllegalStateException if collapse is false as this is not implemented for SXSSF.
      */
     @Override
     public void setRowGroupCollapsed(int row, boolean collapse) {
@@ -1403,7 +1417,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * @param rowIndex the zero based row index to collapse
      */
     private void collapseRow(int rowIndex) {
-        SXSSFRow row = (SXSSFRow) getRow(rowIndex);
+    	SXSSFRow row = getSXSSFRow(rowIndex);
         if(row == null) {
             throw new IllegalArgumentException("Invalid row number("+ rowIndex + "). Row does not exist.");
         } else {
@@ -1411,11 +1425,11 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
 
             // Hide all the columns until the end of the group
             int lastRow = writeHidden(row, startRow);
-            SXSSFRow lastRowObj = (SXSSFRow) getRow(lastRow);
+            SXSSFRow lastRowObj = getSXSSFRow(lastRow);
             if (lastRowObj != null) {
                 lastRowObj.setCollapsed(true);
             } else {
-                SXSSFRow newRow = createRow(lastRow);
+            	SXSSFRow newRow = createRow(lastRow);
                 newRow.setCollapsed(true);
             }
         }
@@ -1441,14 +1455,13 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         return currentRow + 1;
     }
 
-    private int writeHidden(SXSSFRow xRow, int rowIndex) {
+    private int writeHidden(Row xRow, int rowIndex) {
         int level = xRow.getOutlineLevel();
-        SXSSFRow currRow = (SXSSFRow) getRow(rowIndex);
-
+        SXSSFRow currRow = getSXSSFRow(rowIndex);
         while (currRow != null && currRow.getOutlineLevel() >= level) {
             currRow.setHidden(true);
             rowIndex++;
-            currRow = (SXSSFRow) getRow(rowIndex);
+            currRow = getSXSSFRow(rowIndex);
         }
         return rowIndex;
     }
