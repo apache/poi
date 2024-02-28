@@ -63,7 +63,7 @@ public final class CFRecordsAggregate extends RecordAggregate implements Generic
 
     public CFRecordsAggregate(CFRecordsAggregate other) {
         header = other.header.copy();
-        other.rules.stream().map(t -> t.copy()).forEach(rules::add);
+        other.rules.stream().map(CFRuleBase::copy).forEach(rules::add);
     }
 
     private CFRecordsAggregate(CFHeaderBase pHeader, CFRuleBase[] pRules) {
