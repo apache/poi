@@ -27,11 +27,6 @@ public class BitFieldFactory {
     private static Map<Integer, BitField> instances = new HashMap<>();
 
     public static BitField getInstance(int mask) {
-      BitField f = instances.get(Integer.valueOf(mask));
-      if (f == null) {
-        f = new BitField(mask);
-        instances.put(Integer.valueOf(mask), f);
-      }
-      return f;
+        return instances.computeIfAbsent(mask, k -> new BitField(mask));
     }
 }
