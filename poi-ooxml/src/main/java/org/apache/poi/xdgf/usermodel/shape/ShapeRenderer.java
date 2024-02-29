@@ -24,6 +24,7 @@ import java.awt.geom.Path2D;
 
 import org.apache.poi.xdgf.usermodel.XDGFShape;
 import org.apache.poi.xdgf.usermodel.XDGFText;
+import org.apache.poi.xdgf.usermodel.section.GeometrySection;
 
 /**
  * To use this to render only particular shapes, override it and provide an
@@ -59,18 +60,23 @@ public class ShapeRenderer extends ShapeVisitor {
         _graphics.setTransform(savedTr);
     }
 
-    protected Path2D drawPath(XDGFShape shape) {
-        Path2D.Double path = shape.getPath();
-        if (path != null) {
+    protected void drawPath(XDGFShape shape) {
+        for (GeometrySection geometrySection : shape.getGeometrySections()) {
+            if (geometrySection.getNoShow()) {
+                continue;
+            }
 
-            // setup the stroke for this line
+            Path2D.Double path = geometrySection.getPath(shape);
+            if (path != null) {
 
-            _graphics.setColor(shape.getLineColor());
-            _graphics.setStroke(shape.getStroke());
-            _graphics.draw(path);
+                // setup the stroke for this line
+
+                _graphics.setColor(shape.getLineColor());
+                _graphics.setStroke(shape.getStroke());
+                _graphics.draw(path);
+            }
+
         }
-
-        return path;
     }
 
     protected void drawText(XDGFShape shape) {
