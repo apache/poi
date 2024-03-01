@@ -60,23 +60,37 @@ public class ShapeRenderer extends ShapeVisitor {
         _graphics.setTransform(savedTr);
     }
 
-    protected void drawPath(XDGFShape shape) {
+    protected Path2D drawPath(XDGFShape shape) {
+        Path2D path = null;
+
         for (GeometrySection geometrySection : shape.getGeometrySections()) {
             if (geometrySection.getNoShow()) {
                 continue;
             }
 
-            Path2D.Double path = geometrySection.getPath(shape);
-            if (path != null) {
-
-                // setup the stroke for this line
-
-                _graphics.setColor(shape.getLineColor());
-                _graphics.setStroke(shape.getStroke());
-                _graphics.draw(path);
+            // We preserve only first drawn path
+            if (path == null) {
+                path = drawPath(geometrySection, shape);
+            } else {
+                drawPath(geometrySection, shape);
             }
 
         }
+
+        return path;
+    }
+
+    private Path2D drawPath(GeometrySection geometrySection, XDGFShape shape) {
+        Path2D path = geometrySection.getPath(shape);
+        if (path != null) {
+
+            // setup the stroke for this line
+
+            _graphics.setColor(shape.getLineColor());
+            _graphics.setStroke(shape.getStroke());
+            _graphics.draw(path);
+        }
+        return path;
     }
 
     protected void drawText(XDGFShape shape) {

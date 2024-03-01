@@ -19,6 +19,7 @@ package org.apache.poi.xdgf.usermodel.shape;
 
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
 
 import org.apache.poi.xdgf.usermodel.XDGFShape;
 
@@ -39,9 +40,9 @@ public class ShapeDebuggerRenderer extends ShapeRenderer {
     }
 
     @Override
-    protected void drawPath(XDGFShape shape) {
+    protected Path2D drawPath(XDGFShape shape) {
 
-        super.drawPath(shape);
+        Path2D path = super.drawPath(shape);
         if (_debugAcceptor == null || _debugAcceptor.accept(shape)) {
 
             // show numbers to associate shapes with ids.. doesn't always work
@@ -62,6 +63,7 @@ public class ShapeDebuggerRenderer extends ShapeRenderer {
             _graphics.scale(1, -1);
         }
 
+        return path;
     }
 
 }
