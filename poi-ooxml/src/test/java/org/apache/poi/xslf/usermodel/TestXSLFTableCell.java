@@ -228,4 +228,19 @@ class TestXSLFTableCell
         ppt.close();
     }
 
+    @Test
+    void testBug68703() throws IOException {
+        try(XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("bug68703.pptx")) {
+            XSLFSlide firstSlide = pptx.getSlides().get(0);
+            XSLFTable table = (XSLFTable) firstSlide.getShapes().get(0);
+            XSLFTableCell cell = table.getCell(0, 0);
+            List<XSLFTextParagraph> cellParagraphs = cell.getTextParagraphs();
+            List<XSLFTextRun> cellTextRuns = cellParagraphs.get(0).getTextRuns();
+            PaintStyle fontColor = cellTextRuns.get(0).getFontColor();
+            assertNotNull(fontColor);
+            assertTrue(fontColor instanceof PaintStyle.SolidPaint);
+            assertEquals(Color.black, ((PaintStyle.SolidPaint) fontColor).getSolidColor().getColor());
+        }
+    }
+
 }
