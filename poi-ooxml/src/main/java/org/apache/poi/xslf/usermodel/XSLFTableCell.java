@@ -752,8 +752,12 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
                     }
 
                     XSLFTheme theme = getSheet().getTheme();
-                    final XSLFColor c = new XSLFColor(txStyle, theme, phClr, getSheet());
-                    return DrawPaint.createSolidPaint(c.getColorStyle());
+                    try {
+                        final XSLFColor c = new XSLFColor(txStyle, theme, phClr, getSheet());
+                        return DrawPaint.createSolidPaint(c.getColorStyle());
+                    } catch (IllegalArgumentException e) {
+                        return super.getFontColor();
+                    }
                 }
             }
         }
