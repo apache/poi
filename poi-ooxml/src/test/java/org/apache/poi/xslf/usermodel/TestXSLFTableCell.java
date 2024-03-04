@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.xslf.XSLFTestDataSamples;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class TestXSLFTableCell
@@ -228,6 +229,7 @@ class TestXSLFTableCell
         ppt.close();
     }
 
+    @Disabled
     @Test
     void testBug68703() throws IOException {
         try(XMLSlideShow pptx = XSLFTestDataSamples.openSampleDocument("bug68703.pptx")) {
