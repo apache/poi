@@ -19,7 +19,9 @@ package org.apache.poi.xdgf.usermodel.section.geometry;
 
 import com.microsoft.schemas.office.visio.x2012.main.CellType;
 import com.microsoft.schemas.office.visio.x2012.main.RowType;
+import com.microsoft.schemas.office.visio.x2012.main.ShapeSheetType;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.xdgf.usermodel.XDGFShape;
 import org.junit.jupiter.api.Assertions;
 
 import java.awt.geom.Path2D;
@@ -97,6 +99,21 @@ public final class GeometryTestUtils {
                         "expected <%f> but found <%f>", e, a));
             }
         }
+    }
+
+    /**
+     * Mocks a shape for testing geometries with relative coordinates.
+     */
+    public static XDGFShape mockShape(double width, double height) {
+        ShapeSheetType shapeSheet = ShapeSheetType.Factory.newInstance();
+        CellType[] cells = {
+                createCell("Width", Double.toString(width)),
+                createCell("Height", Double.toString(height))
+        };
+        shapeSheet.setCellArray(cells);
+
+        // Parent page and document is not used during parsing. It's safe to leave them as nulls for mocking
+        return new XDGFShape(shapeSheet, null, null);
     }
 
 }
