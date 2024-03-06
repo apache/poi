@@ -27,6 +27,9 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
 
 public class PolyLineTo implements GeometryRow {
 
+    private static final String POLYLINE_FORMULA_PREFIX = "POLYLINE(";
+    private static final String POLYLINE_FORMULA_SUFFIX = ")";
+
     PolyLineTo _master;
 
     // The x-coordinate of the ending vertex of a polyline.
@@ -96,6 +99,39 @@ public class PolyLineTo implements GeometryRow {
     public void addToPath(java.awt.geom.Path2D.Double path, XDGFShape parent) {
         if (getDel())
             return;
-        throw new POIXMLException("Polyline support not implemented");
+
+        // A polyline formula: POLYLINE(xType, yType, x1, y1, x2, y2, ...)
+        String formula = getA().trim();
+        if (!formula.startsWith(POLYLINE_FORMULA_PREFIX) || !formula.endsWith(POLYLINE_FORMULA_SUFFIX)) {
+            throw new POIXMLException("Invalid POLYLINE formula: " + formula);
+        }
+
+        String[] components = formula
+                .substring(POLYLINE_FORMULA_PREFIX.length(), formula.length() - POLYLINE_FORMULA_SUFFIX.length())
+                .split(",");
+
+        if (components.length < 2) {
+            throw new POIXMLException("Invalid POLYLINE formula (not enough arguments): " + formula);
+        }
+
+        if (components.length % 2 != 0) {
+            throw new POIXMLException("Invalid POLYLINE formula -- need 2 + n*2 arguments, got " + components.length);
+        }
+
+        if (components.length > 2) {
+            // If xType is zero, the X coordinates are interpreted as relative coordinates
+            double xScale = Integer.parseInt(components[0].trim()) == 0 ? parent.getWidth() : 1.0;
+            // If yType is zero, the Y coordinates are interpreted as relative coordinates
+            double yScale = Integer.parseInt(components[1].trim()) == 0 ? parent.getHeight() : 1.0;
+
+            for (int i = 2; i < components.length - 1; i += 2) {
+                double x = Double.parseDouble(components[i].trim());
+                double y = Double.parseDouble(components[i + 1].trim());
+
+                path.lineTo(x * xScale, y * yScale);
+            }
+        }
+
+        path.lineTo(getX(), getY());
     }
 }
