@@ -101,7 +101,7 @@ class TestPPTX2PNG {
             result = zipFile.stream().
                 map(f -> Arguments.of(new File(f.getName()).getName(), f, new ZipFile[]{zipFile}));
         } else if (basedir != null && basedir.getName().endsWith(".7z")) {
-            SevenZFile sevenZFile = new SevenZFile(basedir);
+            SevenZFile sevenZFile = SevenZFile.builder().setFile(basedir).get();
             archive = sevenZFile;
             result = ((ArrayList<SevenZArchiveEntry>)sevenZFile.getEntries()).stream().
                 filter(f -> !f.isDirectory()).
