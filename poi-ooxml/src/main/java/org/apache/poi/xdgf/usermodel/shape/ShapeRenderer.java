@@ -24,6 +24,7 @@ import java.awt.geom.Path2D;
 
 import org.apache.poi.xdgf.usermodel.XDGFShape;
 import org.apache.poi.xdgf.usermodel.XDGFText;
+import org.apache.poi.xdgf.usermodel.section.GeometrySection;
 
 /**
  * To use this to render only particular shapes, override it and provide an
@@ -60,7 +61,27 @@ public class ShapeRenderer extends ShapeVisitor {
     }
 
     protected Path2D drawPath(XDGFShape shape) {
-        Path2D.Double path = shape.getPath();
+        Path2D path = null;
+
+        for (GeometrySection geometrySection : shape.getGeometrySections()) {
+            if (geometrySection.getNoShow()) {
+                continue;
+            }
+
+            // We preserve only first drawn path
+            if (path == null) {
+                path = drawPath(geometrySection, shape);
+            } else {
+                drawPath(geometrySection, shape);
+            }
+
+        }
+
+        return path;
+    }
+
+    private Path2D drawPath(GeometrySection geometrySection, XDGFShape shape) {
+        Path2D path = geometrySection.getPath(shape);
         if (path != null) {
 
             // setup the stroke for this line
@@ -69,7 +90,6 @@ public class ShapeRenderer extends ShapeVisitor {
             _graphics.setStroke(shape.getStroke());
             _graphics.draw(path);
         }
-
         return path;
     }
 
