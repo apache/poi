@@ -96,13 +96,13 @@ public class SheetUtil {
     /**
      * drawing context to measure text
      */
-    private static final FontRenderContext fontRenderContext = new FontRenderContext(null, true, true);
+    private static FontRenderContext fontRenderContext = new FontRenderContext(null, true, true);
 
     /**
      * A system property which can be enabled to not fail when the
      * font-system is not available on the current machine
      */
-    private static final boolean ignoreMissingFontSystem =
+    private static boolean ignoreMissingFontSystem =
             Boolean.parseBoolean(System.getProperty("org.apache.poi.ss.ignoreMissingFontSystem"));
 
     /**
@@ -489,5 +489,22 @@ public class SheetUtil {
         // If we get here, then the cell isn't defined, and doesn't
         //  live within any merged regions
         return null;
+    }
+
+    // Getters/Setters are available to allow in-depth testing
+    protected static boolean isIgnoreMissingFontSystem() {
+        return ignoreMissingFontSystem;
+    }
+
+    protected static void setIgnoreMissingFontSystem(boolean value) {
+        ignoreMissingFontSystem = value;
+    }
+
+    protected static FontRenderContext getFontRenderContext() {
+        return fontRenderContext;
+    }
+
+    protected static void setFontRenderContext(FontRenderContext fontRenderContext) {
+        SheetUtil.fontRenderContext = fontRenderContext;
     }
 }
