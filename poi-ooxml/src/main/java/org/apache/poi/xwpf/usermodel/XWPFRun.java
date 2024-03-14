@@ -1207,6 +1207,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PNG
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_GIF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_DIB
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_SVG
      * @see #addPicture(InputStream, PictureType, String, int, int)
      */
     public XWPFPicture addPicture(InputStream pictureData, int pictureType, String filename, int width, int height)

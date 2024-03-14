@@ -191,11 +191,12 @@ public final class TestXWPFDocument {
             doc.addPictureData(new byte[18], Document.PICTURE_TYPE_EPS);
             doc.addPictureData(new byte[19], Document.PICTURE_TYPE_BMP);
             doc.addPictureData(new byte[20], Document.PICTURE_TYPE_WPG);
+            doc.addPictureData(new byte[21], Document.PICTURE_TYPE_SVG);
 
-            assertEquals(11, doc.getAllPictures().size());
+            assertEquals(12, doc.getAllPictures().size());
 
             try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc)) {
-                assertEquals(11, doc2.getAllPictures().size());
+                assertEquals(12, doc2.getAllPictures().size());
             }
         }
     }
