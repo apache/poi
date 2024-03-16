@@ -74,11 +74,14 @@ public class Rate implements Function {
     }
 
     private static double _g_div_gp(double r, double n, double p, double x, double y, double w) {
-        double t1 = Math.pow(r+1, n);
-        double t2 = Math.pow(r+1, n-1);
-        return (y + t1*x + p*(t1 - 1)*(r*w + 1)/r) /
-                (n*t2*x - p*(t1 - 1)*(r*w + 1)/(Math.pow(r, 2) + n*p*t2*(r*w + 1)/r +
-                        p*(t1 - 1)*w/r));
+        double t1 = Math.pow(r + 1.0, n);
+        double t2 = Math.pow(r + 1.0, n - 1.0);
+        double g = y + t1 * x + p * (t1 - 1.0) * (r * w + 1.0) / r;
+        double gp = (n * t2 * x
+                - p * (t1 - 1.0) * (r * w + 1.0) / (Math.pow(r, 2.0))
+                + n * p * t2 * (r * w + 1.0) / r
+                + p * (t1 - 1.0) * w / r);
+        return g / gp;
     }
 
     /**
