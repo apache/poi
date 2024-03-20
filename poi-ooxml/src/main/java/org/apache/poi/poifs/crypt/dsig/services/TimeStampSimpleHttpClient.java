@@ -265,7 +265,7 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
         HttpsURLConnection conns = (HttpsURLConnection)conn;
 
         try {
-            SSLContext sc = SSLContext.getInstance("TLS");
+            SSLContext sc = SSLContext.getInstance("TLSv1.2");
             sc.init(null, new TrustManager[]{new UnsafeTrustManager()}, RandomSingleton.getInstance());
             conns.setSSLSocketFactory(sc.getSocketFactory());
             conns.setHostnameVerifier((hostname, session) -> true);
