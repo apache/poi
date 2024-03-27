@@ -53,7 +53,7 @@ public enum PictureType {
     /** Microsoft Windows Media Photo image (.wdp) */
     WDP("image/vnd.ms-photo", ".wdp", 13),
     /** Scalable vector graphics (.svg) - supported by Office 2016 and higher */
-    SVG("image/svg+xml", ".svg", -1),
+    SVG("image/svg+xml", ".svg", 14),
     /** Unknown picture type - specific to escher bse record */
     UNKNOWN("", ".dat", -1),
     /** Picture type error - specific to escher bse record */

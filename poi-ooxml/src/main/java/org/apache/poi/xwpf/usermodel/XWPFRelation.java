@@ -234,6 +234,12 @@ public final class XWPFRelation extends POIXMLRelation {
             "/ppt/media/hdphoto#.wdp",
             XWPFPictureData::new, XWPFPictureData::new
     );
+    public static final XWPFRelation IMAGE_SVG = new XWPFRelation(
+        PictureType.SVG.contentType,
+        IMAGE_PART,
+        "/word/media/image#.svg",
+        XWPFPictureData::new, XWPFPictureData::new
+);
     public static final XWPFRelation IMAGES = new XWPFRelation(
             null,
             IMAGE_PART,

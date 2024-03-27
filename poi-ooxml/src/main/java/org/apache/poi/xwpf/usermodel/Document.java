@@ -74,4 +74,9 @@ public interface Document {
      * WordPerfect graphics (.wpg)
      */
     public static final int PICTURE_TYPE_WPG = PictureType.WPG.ooxmlId;
+
+    /**
+     * SVG graphics (.svg)
+     */
+    public static final int PICTURE_TYPE_SVG = PictureType.SVG.ooxmlId;
 }

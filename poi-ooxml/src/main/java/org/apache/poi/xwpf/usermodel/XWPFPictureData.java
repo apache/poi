@@ -58,7 +58,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
     protected static final POIXMLRelation[] RELATIONS;
 
     static {
-        RELATIONS = new POIXMLRelation[14];
+        RELATIONS = new POIXMLRelation[15];
         RELATIONS[PictureType.EMF.ooxmlId] = XWPFRelation.IMAGE_EMF;
         RELATIONS[PictureType.WMF.ooxmlId] = XWPFRelation.IMAGE_WMF;
         RELATIONS[PictureType.PICT.ooxmlId] = XWPFRelation.IMAGE_PICT;
@@ -71,6 +71,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
         RELATIONS[PictureType.BMP.ooxmlId] = XWPFRelation.IMAGE_BMP;
         RELATIONS[PictureType.WPG.ooxmlId] = XWPFRelation.IMAGE_WPG;
         RELATIONS[PictureType.WDP.ooxmlId] = XWPFRelation.HDPHOTO_WDP;
+        RELATIONS[PictureType.SVG.ooxmlId] = XWPFRelation.IMAGE_SVG;
     }
 
     private Long checksum;
@@ -149,6 +150,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PNG
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_GIF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_DIB
+     * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_SVG
      * @see #getPictureTypeEnum()
      */
     public int getPictureType() {
