@@ -47,10 +47,12 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hpsf.ClassIDPredefined;
+import org.apache.poi.ooxml.HyperlinkRelationship;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.POIXMLProperties;
+import org.apache.poi.ooxml.ReferenceRelationship;
 import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -683,6 +685,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             addRelation(rp, clonedSheet);
         }
 
+        // copy sheet's reference relations;
+        List<ReferenceRelationship> referenceRelationships = srcSheet.getReferenceRelationships();
+        for (ReferenceRelationship ref : referenceRelationships) {
+            if (ref instanceof HyperlinkRelationship) {
+                createHyperlink(ref.getUri(), ref.isExternal(), ref.getId());
+            }
+        }
+
         try {
             for(PackageRelationship pr : srcSheet.getPackagePart().getRelationships()) {
                 if (pr.getTargetMode() == TargetMode.EXTERNAL) {
@@ -740,6 +750,14 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                         chart.replaceReferences(clonedSheet);
                     } else {
                         addRelation(rp, clonedDg);
+                    }
+                }
+
+                // copy sheet's reference relations;
+                List<ReferenceRelationship> srcRefs = drawingPatriarch.getReferenceRelationships();
+                for (ReferenceRelationship ref : srcRefs) {
+                    if (ref instanceof HyperlinkRelationship) {
+                        clonedDg.createHyperlink(ref.getUri(), ref.isExternal(), ref.getId());
                     }
                 }
             }
