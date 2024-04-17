@@ -922,7 +922,7 @@ public class DataFormatter {
                 sdf.setTimeZone(LocaleUtil.getUserTimeZone());
                 dateFormat = sdf;
             } else {
-                dateFormat = defaultNumFormat;
+                dateFormat = defaultDateformat;
             }
         }
         synchronized (dateFormat) {

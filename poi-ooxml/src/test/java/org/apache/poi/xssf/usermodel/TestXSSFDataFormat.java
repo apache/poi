@@ -21,6 +21,7 @@ import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.util.Date;
 
 import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
 import org.apache.poi.ss.formula.WorkbookEvaluatorProvider;
@@ -118,6 +119,39 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
             assertEquals("SUM(A1:C1)", formatter.formatCellValue(d1));
             formatter.setUseCachedValuesForFormulaCells(true);
             assertEquals("6.75", formatter.formatCellValue(d1));
+        }
+    }
+
+    @Test
+    public void testFormatCellValue() throws IOException {
+        DataFormatter df = new DataFormatter();
+
+        assertEquals("", df.formatCellValue(null));
+
+        try (Workbook wb = new XSSFWorkbook()) {
+            Cell cell = wb.createSheet("test").createRow(0).createCell(0);
+            assertEquals("", df.formatCellValue(cell));
+
+            cell.setCellValue(123);
+            assertEquals("123", df.formatCellValue(cell));
+
+            cell.setCellValue(new Date(234092383));
+            assertEquals("25571.75107", df.formatCellValue(cell));
+
+            cell.setCellValue("abcdefgh");
+            assertEquals("abcdefgh", df.formatCellValue(cell));
+
+            cell.setCellValue(true);
+            assertEquals("TRUE", df.formatCellValue(cell));
+
+            CellStyle cellStyle = wb.createCellStyle();
+            cellStyle.setDataFormat((short)14);
+            cell.setCellStyle(cellStyle);
+            cell.setCellValue(new Date(234092383));
+            assertEquals("1/3/70", df.formatCellValue(cell));
+
+            cellStyle.setDataFormat((short)9999);
+            assertEquals("25571.751069247686", df.formatCellValue(cell));
         }
     }
 }

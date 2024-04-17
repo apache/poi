@@ -35,6 +35,8 @@ import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.text.DateFormatter;
+
 import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -1162,4 +1164,36 @@ class TestDataFormatter {
         return true;
     }
 
+    @Test
+    public void testFormatCellValue() throws IOException {
+        DataFormatter df = new DataFormatter();
+
+        assertEquals("", df.formatCellValue(null));
+
+        try (Workbook wb = new HSSFWorkbook()) {
+            Cell cell = wb.createSheet("test").createRow(0).createCell(0);
+            assertEquals("", df.formatCellValue(cell));
+
+            cell.setCellValue(123);
+            assertEquals("123", df.formatCellValue(cell));
+
+            cell.setCellValue(new Date(234092383));
+            assertEquals("25571.75107", df.formatCellValue(cell));
+
+            cell.setCellValue("abcdefgh");
+            assertEquals("abcdefgh", df.formatCellValue(cell));
+
+            cell.setCellValue(true);
+            assertEquals("TRUE", df.formatCellValue(cell));
+
+            CellStyle cellStyle = wb.createCellStyle();
+            cellStyle.setDataFormat((short)14);
+            cell.setCellStyle(cellStyle);
+            cell.setCellValue(new Date(234092383));
+            assertEquals("1/3/70", df.formatCellValue(cell));
+
+            cellStyle.setDataFormat((short)9999);
+            assertEquals("25571.751069247686", df.formatCellValue(cell));
+        }
+    }
 }
