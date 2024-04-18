@@ -284,7 +284,7 @@ public final class TestPackage {
             assertEquals(1, rels.size());
             PackageRelationship rel = rels.getRelationship(0);
             assertNotNull(rel);
-            assertEquals("Sheet1!A1", rel.getTargetURI().getRawFragment());
+            assertEquals("#Sheet1!A1", rel.getTargetURI().toString());
 
             assertMSCompatibility(pkg);
         }

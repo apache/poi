@@ -323,10 +323,11 @@ class TestRelationships {
 
         PackageRelationship rId1 = drawingPart.getRelationship("rId1");
         URI parent = drawingPart.getPartName().getURI();
-        URI rel1 = parent.relativize(rId1.getTargetURI());
-        URI rel11 = PackagingURIHelper.relativizeURI(drawingPart.getPartName().getURI(), rId1.getTargetURI());
-        assertEquals("'Another Sheet'!A1", rel1.getFragment());
-        assertEquals("'Another Sheet'!A1", rel11.getFragment());
+        // Hyperlink is not a target of relativize() because it is not resolved based on sourceURI in getTargetURI()
+//        URI rel1 = parent.relativize(rId1.getTargetURI());
+//        URI rel11 = PackagingURIHelper.relativizeURI(drawingPart.getPartName().getURI(), rId1.getTargetURI());
+//        assertEquals("'Another Sheet'!A1", rel1.getFragment());
+//        assertEquals("'Another Sheet'!A1", rel11.getFragment());
 
         PackageRelationship rId2 = drawingPart.getRelationship("rId2");
         URI rel2 = PackagingURIHelper.relativizeURI(drawingPart.getPartName().getURI(), rId2.getTargetURI());

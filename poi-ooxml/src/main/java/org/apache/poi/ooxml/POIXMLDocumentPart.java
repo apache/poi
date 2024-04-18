@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -641,38 +642,42 @@ public class POIXMLDocumentPart {
 
         // scan breadth-first, so parent-relations are hopefully the shallowest element
         for (PackageRelationship rel : rels) {
-            if (rel.getTargetMode() == TargetMode.INTERNAL) {
-                URI uri = rel.getTargetURI();
+            if (Objects.equals(rel.getRelationshipType(), HyperlinkRelationship.RELATIONSHIP_TYPE_CONST)) {
+                referenceRelationships.put(rel.getId(), new HyperlinkRelationship(this, rel.getTargetURI(), rel.getTargetMode() == TargetMode.EXTERNAL, rel.getId()));
+            } else {
+                if (rel.getTargetMode() == TargetMode.INTERNAL) {
+                    URI uri = rel.getTargetURI();
 
-                // check for internal references (e.g. '#Sheet1!A1')
-                PackagePartName relName;
-                if (uri.getRawFragment() != null) {
-                    relName = PackagingURIHelper.createPartName(uri.getPath());
-                } else {
-                    relName = PackagingURIHelper.createPartName(uri);
-                }
-
-                final PackagePart p = packagePart.getPackage().getPart(relName);
-                if (p == null) {
-                    LOG.atError().log("Skipped invalid entry {}", rel.getTargetURI());
-                    continue;
-                }
-
-                POIXMLDocumentPart childPart = context.get(p);
-                if (childPart == null) {
-                    childPart = factory.createDocumentPart(this, p);
-                    //here we are checking if part if embedded and excel then set it to chart class
-                    //so that at the time to writing we can also write updated embedded part
-                    if (this instanceof XDDFChart && childPart instanceof XSSFWorkbook) {
-                        ((XDDFChart) this).setWorkbook((XSSFWorkbook) childPart);
+                    // check for internal references (e.g. '#Sheet1!A1')
+                    PackagePartName relName;
+                    if (uri.getRawFragment() != null) {
+                        relName = PackagingURIHelper.createPartName(uri.getPath());
+                    } else {
+                        relName = PackagingURIHelper.createPartName(uri);
                     }
-                    childPart.parent = this;
-                    // already add child to context, so other children can reference it
-                    context.put(p, childPart);
-                    readLater.add(childPart);
-                }
 
-                addRelation(rel, childPart);
+                    final PackagePart p = packagePart.getPackage().getPart(relName);
+                    if (p == null) {
+                        LOG.atError().log("Skipped invalid entry {}", rel.getTargetURI());
+                        continue;
+                    }
+
+                    POIXMLDocumentPart childPart = context.get(p);
+                    if (childPart == null) {
+                        childPart = factory.createDocumentPart(this, p);
+                        //here we are checking if part if embedded and excel then set it to chart class
+                        //so that at the time to writing we can also write updated embedded part
+                        if (this instanceof XDDFChart && childPart instanceof XSSFWorkbook) {
+                            ((XDDFChart) this).setWorkbook((XSSFWorkbook) childPart);
+                        }
+                        childPart.parent = this;
+                        // already add child to context, so other children can reference it
+                        context.put(p, childPart);
+                        readLater.add(childPart);
+                    }
+
+                    addRelation(rel, childPart);
+                }
             }
         }
 
