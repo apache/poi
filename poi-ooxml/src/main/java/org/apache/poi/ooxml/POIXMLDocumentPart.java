@@ -59,6 +59,7 @@ public class POIXMLDocumentPart {
     private PackagePart packagePart;
     private POIXMLDocumentPart parent;
     private final Map<String, RelationPart> relations = new LinkedHashMap<>();
+    private final Map<String, ReferenceRelationship> referenceRelationships = new LinkedHashMap<>();
     private boolean isCommitted = false;
 
     /**
@@ -766,5 +767,32 @@ public class POIXMLDocumentPart {
             pkg.revert();
             throw new POIXMLException("OOXML file structure broken/invalid", e);
         }
+    }
+
+    public boolean removeReferenceRelationship(String relId) {
+        ReferenceRelationship existing = referenceRelationships.remove(relId);
+        if (existing != null) {
+            packagePart.removeRelationship(relId);
+            return true;
+        }
+
+        return false;
+    }
+
+    public ReferenceRelationship getReferenceRelationship(String relId) {
+        return referenceRelationships.get(relId);
+    }
+
+    public HyperlinkRelationship createHyperlink(URI uri, boolean isExternal, String relId) {
+        PackageRelationship pr = packagePart.addRelationship(uri, isExternal ? TargetMode.EXTERNAL : TargetMode.INTERNAL,
+                HyperlinkRelationship.RELATIONSHIP_TYPE_CONST, relId);
+        HyperlinkRelationship hyperlink = new HyperlinkRelationship(this, uri, isExternal, relId);
+        referenceRelationships.put(relId, hyperlink);
+        return hyperlink;
+    }
+
+    public List<ReferenceRelationship> getReferenceRelationships() {
+        List<ReferenceRelationship> list = new ArrayList<>(referenceRelationships.values());
+        return Collections.unmodifiableList(list);
     }
 }
