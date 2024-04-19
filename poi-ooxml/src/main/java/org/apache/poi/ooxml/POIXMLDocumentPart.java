@@ -641,7 +641,7 @@ public class POIXMLDocumentPart {
 
         // scan breadth-first, so parent-relations are hopefully the shallowest element
         for (PackageRelationship rel : rels) {
-            if (Objects.equals(rel.getRelationshipType(), HyperlinkRelationship.HYPERLINK_REL_TYPE)) {
+            if (Objects.equals(rel.getRelationshipType(), PackageRelationshipTypes.HYPERLINK_PART)) {
                 referenceRelationships.put(rel.getId(), new HyperlinkRelationship(this, rel.getTargetURI(), rel.getTargetMode() == TargetMode.EXTERNAL, rel.getId()));
             } else {
                 if (rel.getTargetMode() == TargetMode.INTERNAL) {
@@ -789,7 +789,7 @@ public class POIXMLDocumentPart {
 
     public HyperlinkRelationship createHyperlink(URI uri, boolean isExternal, String relId) {
         PackageRelationship pr = packagePart.addRelationship(uri, isExternal ? TargetMode.EXTERNAL : TargetMode.INTERNAL,
-                HyperlinkRelationship.HYPERLINK_REL_TYPE, relId);
+            PackageRelationshipTypes.HYPERLINK_PART, relId);
         HyperlinkRelationship hyperlink = new HyperlinkRelationship(this, uri, isExternal, relId);
         referenceRelationships.put(relId, hyperlink);
         return hyperlink;
