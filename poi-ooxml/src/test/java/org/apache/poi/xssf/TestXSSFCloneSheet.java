@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ooxml.ReferenceRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.ss.usermodel.BaseTestCloneSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -143,10 +144,10 @@ class TestXSSFCloneSheet  extends BaseTestCloneSheet {
     void testBug63189() throws IOException {
         try (XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("bug63189.xlsx")) {
             // given
-            String linkRelationType = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink";
-            String linkTargetUrl = "#Sheet3!A1";
-            String imageRelationType = "http://schemas.openxmlformats.org/officeDocument/2006/relationships/image";
-            String imageTargetUrl = "/xl/media/image1.png";
+            final String linkRelationType = PackageRelationshipTypes.HYPERLINK_PART;
+            final String linkTargetUrl = "#Sheet3!A1";
+            final String imageRelationType = PackageRelationshipTypes.IMAGE_PART;
+            final String imageTargetUrl = "/xl/media/image1.png";
 
             XSSFSheet srcSheet = workbook.getSheetAt(0);
             assertEquals("CloneMe", srcSheet.getSheetName());

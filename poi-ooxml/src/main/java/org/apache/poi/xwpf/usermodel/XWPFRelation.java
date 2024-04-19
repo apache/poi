@@ -138,7 +138,7 @@ public final class XWPFRelation extends POIXMLRelation {
     );
     public static final XWPFRelation HYPERLINK = new XWPFRelation(
         null,
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+        PackageRelationshipTypes.HYPERLINK_PART,
         null
     );
     public static final XWPFRelation COMMENT = new XWPFRelation(

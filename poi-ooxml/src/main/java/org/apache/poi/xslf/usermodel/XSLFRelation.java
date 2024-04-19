@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLRelation;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -118,7 +119,7 @@ public final class XSLFRelation extends POIXMLRelation {
 
     public static final XSLFRelation HYPERLINK = new XSLFRelation(
         null,
-        "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink",
+        PackageRelationshipTypes.HYPERLINK_PART,
         null
     );
 
