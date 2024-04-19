@@ -186,6 +186,12 @@ public final class PackageRelationship {
             return targetUri;
         }
 
+        // If it's an internal hyperlink target, we don't
+        //  need to apply our normal validation rules
+        if (PackageRelationshipTypes.HYPERLINK_PART.equals(relationshipType)) {
+            return targetUri;
+        }
+
         // Internal target
         // If it isn't absolute, resolve it relative
         //  to ourselves

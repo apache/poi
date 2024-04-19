@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Objects;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -32,6 +33,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.StreamHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
@@ -154,7 +156,14 @@ public final class ZipPartMarshaller implements PartMarshaller {
             // the relationship Target
             String targetValue;
             URI uri = rel.getTargetURI();
-            if (rel.getTargetMode() == TargetMode.EXTERNAL) {
+            if (Objects.equals(rel.getRelationshipType(), PackageRelationshipTypes.HYPERLINK_PART)) {
+                // Save the target as-is - we don't need to validate it,
+                targetValue = uri.toString();
+                if (rel.getTargetMode() == TargetMode.EXTERNAL) {
+                    // add TargetMode attribute (as it is external link external)
+                    relElem.setAttribute(PackageRelationship.TARGET_MODE_ATTRIBUTE_NAME, "External");
+                }
+            } else if (rel.getTargetMode() == TargetMode.EXTERNAL) {
                 // Save the target as-is - we don't need to validate it,
                 //  alter it etc
                 targetValue = uri.toString();

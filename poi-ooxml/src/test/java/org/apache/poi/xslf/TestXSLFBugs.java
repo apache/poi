@@ -53,8 +53,10 @@ import org.apache.commons.io.output.NullPrintStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.ooxml.HyperlinkRelationship;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.ooxml.ReferenceRelationship;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePartName;
@@ -384,23 +386,31 @@ class TestXSLFBugs {
 
             // Check the relations from this
             Collection<RelationPart> rels = slide.getRelationParts();
+            Collection<ReferenceRelationship> referenceRelationships = slide.getReferenceRelationships();
 
             // Should have 6 relations:
             //   1 external hyperlink (skipped from list)
             //   4 internal hyperlinks
             //   1 slide layout
-            assertEquals(5, rels.size());
+            assertEquals(1, rels.size());
+            assertEquals(5, referenceRelationships.size());
             int layouts = 0;
             int hyperlinks = 0;
+            int extHyperLinks = 0;
             for (RelationPart p : rels) {
-                if (p.getRelationship().getRelationshipType().equals(XSLFRelation.HYPERLINK.getRelation())) {
-                    hyperlinks++;
-                } else if (p.getDocumentPart() instanceof XSLFSlideLayout) {
+                if (p.getDocumentPart() instanceof XSLFSlideLayout) {
                     layouts++;
+                }
+            }
+            for (ReferenceRelationship ref : referenceRelationships) {
+                if (ref instanceof HyperlinkRelationship) {
+                    if (ref.isExternal()) extHyperLinks++;
+                    else hyperlinks++;
                 }
             }
             assertEquals(1, layouts);
             assertEquals(4, hyperlinks);
+            assertEquals(1, extHyperLinks);
 
             // Hyperlinks should all be to #_ftn1 or #ftnref1
             for (RelationPart p : rels) {

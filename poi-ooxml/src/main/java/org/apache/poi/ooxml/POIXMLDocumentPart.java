@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +39,6 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -59,6 +59,7 @@ public class POIXMLDocumentPart {
     private PackagePart packagePart;
     private POIXMLDocumentPart parent;
     private final Map<String, RelationPart> relations = new LinkedHashMap<>();
+    private final Map<String, ReferenceRelationship> referenceRelationships = new LinkedHashMap<>();
     private boolean isCommitted = false;
 
     /**
@@ -640,38 +641,42 @@ public class POIXMLDocumentPart {
 
         // scan breadth-first, so parent-relations are hopefully the shallowest element
         for (PackageRelationship rel : rels) {
-            if (rel.getTargetMode() == TargetMode.INTERNAL) {
-                URI uri = rel.getTargetURI();
+            if (Objects.equals(rel.getRelationshipType(), HyperlinkRelationship.HYPERLINK_REL_TYPE)) {
+                referenceRelationships.put(rel.getId(), new HyperlinkRelationship(this, rel.getTargetURI(), rel.getTargetMode() == TargetMode.EXTERNAL, rel.getId()));
+            } else {
+                if (rel.getTargetMode() == TargetMode.INTERNAL) {
+                    URI uri = rel.getTargetURI();
 
-                // check for internal references (e.g. '#Sheet1!A1')
-                PackagePartName relName;
-                if (uri.getRawFragment() != null) {
-                    relName = PackagingURIHelper.createPartName(uri.getPath());
-                } else {
-                    relName = PackagingURIHelper.createPartName(uri);
-                }
-
-                final PackagePart p = packagePart.getPackage().getPart(relName);
-                if (p == null) {
-                    LOG.atError().log("Skipped invalid entry {}", rel.getTargetURI());
-                    continue;
-                }
-
-                POIXMLDocumentPart childPart = context.get(p);
-                if (childPart == null) {
-                    childPart = factory.createDocumentPart(this, p);
-                    //here we are checking if part if embedded and excel then set it to chart class
-                    //so that at the time to writing we can also write updated embedded part
-                    if (this instanceof XDDFChart && childPart instanceof XSSFWorkbook) {
-                        ((XDDFChart) this).setWorkbook((XSSFWorkbook) childPart);
+                    // check for internal references (e.g. '#Sheet1!A1')
+                    PackagePartName relName;
+                    if (uri.getRawFragment() != null) {
+                        relName = PackagingURIHelper.createPartName(uri.getPath());
+                    } else {
+                        relName = PackagingURIHelper.createPartName(uri);
                     }
-                    childPart.parent = this;
-                    // already add child to context, so other children can reference it
-                    context.put(p, childPart);
-                    readLater.add(childPart);
-                }
 
-                addRelation(rel, childPart);
+                    final PackagePart p = packagePart.getPackage().getPart(relName);
+                    if (p == null) {
+                        LOG.atError().log("Skipped invalid entry {}", rel.getTargetURI());
+                        continue;
+                    }
+
+                    POIXMLDocumentPart childPart = context.get(p);
+                    if (childPart == null) {
+                        childPart = factory.createDocumentPart(this, p);
+                        //here we are checking if part if embedded and excel then set it to chart class
+                        //so that at the time to writing we can also write updated embedded part
+                        if (this instanceof XDDFChart && childPart instanceof XSSFWorkbook) {
+                            ((XDDFChart) this).setWorkbook((XSSFWorkbook) childPart);
+                        }
+                        childPart.parent = this;
+                        // already add child to context, so other children can reference it
+                        context.put(p, childPart);
+                        readLater.add(childPart);
+                    }
+
+                    addRelation(rel, childPart);
+                }
             }
         }
 
@@ -766,5 +771,32 @@ public class POIXMLDocumentPart {
             pkg.revert();
             throw new POIXMLException("OOXML file structure broken/invalid", e);
         }
+    }
+
+    public boolean removeReferenceRelationship(String relId) {
+        ReferenceRelationship existing = referenceRelationships.remove(relId);
+        if (existing != null) {
+            packagePart.removeRelationship(relId);
+            return true;
+        }
+
+        return false;
+    }
+
+    public ReferenceRelationship getReferenceRelationship(String relId) {
+        return referenceRelationships.get(relId);
+    }
+
+    public HyperlinkRelationship createHyperlink(URI uri, boolean isExternal, String relId) {
+        PackageRelationship pr = packagePart.addRelationship(uri, isExternal ? TargetMode.EXTERNAL : TargetMode.INTERNAL,
+                HyperlinkRelationship.HYPERLINK_REL_TYPE, relId);
+        HyperlinkRelationship hyperlink = new HyperlinkRelationship(this, uri, isExternal, relId);
+        referenceRelationships.put(relId, hyperlink);
+        return hyperlink;
+    }
+
+    public List<ReferenceRelationship> getReferenceRelationships() {
+        List<ReferenceRelationship> list = new ArrayList<>(referenceRelationships.values());
+        return Collections.unmodifiableList(list);
     }
 }
