@@ -740,6 +740,62 @@ public class POIXMLDocumentPart {
     }
 
     /**
+     * Remove the reference relationship to the specified part in this package.
+     *
+     * @param relId the part which is to be removed
+     * @return true, if the relation was removed
+     * @since POI 5.2.6
+     */
+    public boolean removeReferenceRelationship(String relId) {
+        ReferenceRelationship existing = referenceRelationships.remove(relId);
+        if (existing != null) {
+            packagePart.removeRelationship(relId);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the reference relationship with the specified id.
+     *
+     * @param relId the relation id
+     * @return the reference relationship or {@code null} if not found
+     * @since POI 5.2.6
+     */
+    public ReferenceRelationship getReferenceRelationship(String relId) {
+        return referenceRelationships.get(relId);
+    }
+
+    /**
+     * Create a new reference relationship for this POIXMLDocumentPart.
+     *
+     * @param uri        the URI of the target part
+     * @param isExternal true, if the target is an external resource
+     * @param relId      the relation id
+     * @return the created reference relationship
+     * @since POI 5.2.6
+     */
+    public HyperlinkRelationship createHyperlink(URI uri, boolean isExternal, String relId) {
+        PackageRelationship pr = packagePart.addRelationship(uri, isExternal ? TargetMode.EXTERNAL : TargetMode.INTERNAL,
+            PackageRelationshipTypes.HYPERLINK_PART, relId);
+        HyperlinkRelationship hyperlink = new HyperlinkRelationship(this, uri, isExternal, relId);
+        referenceRelationships.put(relId, hyperlink);
+        return hyperlink;
+    }
+
+    /**
+     * Returns an unmodifiable list of reference relationships for this POIXMLDocumentPart.
+     *
+     * @return reference relationships
+     * @since POI 5.2.6
+     */
+    public List<ReferenceRelationship> getReferenceRelationships() {
+        List<ReferenceRelationship> list = new ArrayList<>(referenceRelationships.values());
+        return Collections.unmodifiableList(list);
+    }
+
+    /**
      * Retrieves the core document part
      *
      * Since POI 4.1.2 - pkg is closed if this method throws an exception
@@ -771,32 +827,5 @@ public class POIXMLDocumentPart {
             pkg.revert();
             throw new POIXMLException("OOXML file structure broken/invalid", e);
         }
-    }
-
-    public boolean removeReferenceRelationship(String relId) {
-        ReferenceRelationship existing = referenceRelationships.remove(relId);
-        if (existing != null) {
-            packagePart.removeRelationship(relId);
-            return true;
-        }
-
-        return false;
-    }
-
-    public ReferenceRelationship getReferenceRelationship(String relId) {
-        return referenceRelationships.get(relId);
-    }
-
-    public HyperlinkRelationship createHyperlink(URI uri, boolean isExternal, String relId) {
-        PackageRelationship pr = packagePart.addRelationship(uri, isExternal ? TargetMode.EXTERNAL : TargetMode.INTERNAL,
-            PackageRelationshipTypes.HYPERLINK_PART, relId);
-        HyperlinkRelationship hyperlink = new HyperlinkRelationship(this, uri, isExternal, relId);
-        referenceRelationships.put(relId, hyperlink);
-        return hyperlink;
-    }
-
-    public List<ReferenceRelationship> getReferenceRelationships() {
-        List<ReferenceRelationship> list = new ArrayList<>(referenceRelationships.values());
-        return Collections.unmodifiableList(list);
     }
 }
