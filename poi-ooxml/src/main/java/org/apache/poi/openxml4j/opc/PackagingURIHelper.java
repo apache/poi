@@ -165,7 +165,9 @@ public final class PackagingURIHelper {
         if (partUri == null)
             throw new IllegalArgumentException("partUri");
 
-        return partUri.getPath().matches(
+        final String path = partUri.getPath();
+
+        return path != null && path.matches(
                 ".*" + RELATIONSHIP_PART_SEGMENT_NAME + ".*"
                         + RELATIONSHIP_PART_EXTENSION_NAME + "$");
     }
