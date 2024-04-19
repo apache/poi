@@ -17,13 +17,6 @@
 
 package org.apache.poi.xssf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import org.apache.poi.ooxml.ReferenceRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
@@ -46,6 +39,8 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTPictureNonVisual;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 class TestXSSFCloneSheet  extends BaseTestCloneSheet {
     public TestXSSFCloneSheet() {
@@ -208,6 +203,10 @@ class TestXSSFCloneSheet  extends BaseTestCloneSheet {
             PackageRelationship imageRel2 = drawing2.getRelationPartById(imageRelId2).getRelationship();
             assertEquals(imageRelationType, imageRel2.getRelationshipType());
             assertEquals(imageTargetUrl, imageRel2.getTargetURI().toString());
+
+            assertTrue(drawing2.removeReferenceRelationship(linkRelId2));
+            assertFalse(drawing2.removeReferenceRelationship(linkRelId2));
+            assertNull(drawing2.getReferenceRelationship(linkRelId2));
         }
     }
 }

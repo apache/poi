@@ -232,9 +232,14 @@ public class POIXMLDocumentPart {
     }
 
     /**
-     * Returns the list of child relations for this POIXMLDocumentPart
+     * Returns the list of child relations for this POIXMLDocumentPart.
+     *
+     * <p>
+     *   Since POI 5.2.6, Reference Relationships are stored separately from other child relations.
+     * </p>
      *
      * @return child relations
+     * @see #getReferenceRelationships() for reference relationships (e.g. hyperlinks)
      */
     public final List<RelationPart> getRelationParts() {
         List<RelationPart> l = new ArrayList<>(relations.values());
@@ -746,7 +751,7 @@ public class POIXMLDocumentPart {
      * @return true, if the relation was removed
      * @since POI 5.2.6
      */
-    public boolean removeReferenceRelationship(String relId) {
+    public final boolean removeReferenceRelationship(String relId) {
         ReferenceRelationship existing = referenceRelationships.remove(relId);
         if (existing != null) {
             packagePart.removeRelationship(relId);
@@ -763,7 +768,7 @@ public class POIXMLDocumentPart {
      * @return the reference relationship or {@code null} if not found
      * @since POI 5.2.6
      */
-    public ReferenceRelationship getReferenceRelationship(String relId) {
+    public final ReferenceRelationship getReferenceRelationship(String relId) {
         return referenceRelationships.get(relId);
     }
 
@@ -776,7 +781,7 @@ public class POIXMLDocumentPart {
      * @return the created reference relationship
      * @since POI 5.2.6
      */
-    public HyperlinkRelationship createHyperlink(URI uri, boolean isExternal, String relId) {
+    public final HyperlinkRelationship createHyperlink(URI uri, boolean isExternal, String relId) {
         PackageRelationship pr = packagePart.addRelationship(uri, isExternal ? TargetMode.EXTERNAL : TargetMode.INTERNAL,
             PackageRelationshipTypes.HYPERLINK_PART, relId);
         HyperlinkRelationship hyperlink = new HyperlinkRelationship(this, uri, isExternal, relId);
@@ -789,8 +794,9 @@ public class POIXMLDocumentPart {
      *
      * @return reference relationships
      * @since POI 5.2.6
+     * @see #getRelationParts() for child relations
      */
-    public List<ReferenceRelationship> getReferenceRelationships() {
+    public final List<ReferenceRelationship> getReferenceRelationships() {
         List<ReferenceRelationship> list = new ArrayList<>(referenceRelationships.values());
         return Collections.unmodifiableList(list);
     }

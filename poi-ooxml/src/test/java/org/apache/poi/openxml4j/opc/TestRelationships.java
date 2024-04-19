@@ -326,10 +326,12 @@ class TestRelationships {
         assertNotNull(rId1);
         URI parent = drawingPart.getPartName().getURI();
         // Hyperlink is not a target of relativize() because it is not resolved based on sourceURI in getTargetURI()
-//        URI rel1 = parent.relativize(rId1.getTargetURI());
-//        URI rel11 = PackagingURIHelper.relativizeURI(drawingPart.getPartName().getURI(), rId1.getTargetURI());
-//        assertEquals("'Another Sheet'!A1", rel1.getFragment());
-//        assertEquals("'Another Sheet'!A1", rel11.getFragment());
+        URI rel1 = parent.relativize(rId1.getTargetURI());
+        assertEquals("'Another Sheet'!A1", rel1.getFragment());
+        URI rel11 = PackagingURIHelper.relativizeURI(drawingPart.getPartName().getURI(), rId1.getTargetURI());
+        // the following changed with https://github.com/apache/poi/pull/617
+        //assertEquals("'Another Sheet'!A1", rel11.getFragment());
+        assertNull(rel11.getFragment());
 
         PackageRelationship rId2 = drawingPart.getRelationship("rId2");
         URI rel2 = PackagingURIHelper.relativizeURI(drawingPart.getPartName().getURI(), rId2.getTargetURI());
