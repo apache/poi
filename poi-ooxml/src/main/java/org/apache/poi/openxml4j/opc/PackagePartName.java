@@ -139,7 +139,8 @@ public final class PackagePartName implements Comparable<PackagePartName> {
             throw new IllegalArgumentException("partUri");
         }
 
-        return partUri.getPath().matches(
+        final String uriPath = partUri.getPath();
+        return uriPath != null && uriPath.matches(
                 "^.*/" + PackagingURIHelper.RELATIONSHIP_PART_SEGMENT_NAME + "/.*\\"
                         + PackagingURIHelper.RELATIONSHIP_PART_EXTENSION_NAME
                         + "$");
