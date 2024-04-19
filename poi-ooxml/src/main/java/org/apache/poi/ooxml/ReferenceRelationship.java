@@ -47,7 +47,7 @@ public abstract class ReferenceRelationship {
 
     protected ReferenceRelationship(POIXMLDocumentPart container, URI targetUri, boolean isExternal, String relationshipType, String id) {
         if (targetUri == null) {
-            throw new IllegalArgumentException("targetUri");
+            throw new NullPointerException("targetUri cannot be null");
         }
 
         this.container = container;

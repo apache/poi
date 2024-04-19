@@ -1025,7 +1025,6 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
         if (this.partList.containsKey(partName)) {
             this.partList.get(partName).setDeleted(true);
             this.removePartImpl(partName);
-            this.partList.remove(partName);
         } else {
             this.removePartImpl(partName);
         }
@@ -1551,8 +1550,16 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      *
      * @param partName
      *            The URI of the part to delete.
+     * @throws IllegalArgumentException if the partName is null.
+     * @throws InvalidOperationException if the package is in read-only mode.
      */
-    protected abstract void removePartImpl(PackagePartName partName);
+    protected void removePartImpl(PackagePartName partName) {
+        if (partName == null) {
+            throw new IllegalArgumentException("partName cannot be null");
+        }
+        throwExceptionIfReadOnly();
+        this.partList.remove(partName);
+    }
 
     /**
      * Flush the package but not save.

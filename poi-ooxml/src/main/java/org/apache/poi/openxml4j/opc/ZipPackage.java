@@ -401,11 +401,11 @@ public final class ZipPackage extends OPCPackage {
     protected PackagePart createPartImpl(PackagePartName partName,
             String contentType, boolean loadRelationships) {
         if (contentType == null) {
-            throw new IllegalArgumentException("contentType");
+            throw new IllegalArgumentException("contentType cannot be null");
         }
 
         if (partName == null) {
-            throw new IllegalArgumentException("partName");
+            throw new IllegalArgumentException("partName cannot be null");
         }
 
         try {
@@ -421,19 +421,6 @@ public final class ZipPackage extends OPCPackage {
         } catch (Exception e) {
             LOG.atWarn().withThrowable(e).log("Failed to create part {}", partName);
             return null;
-        }
-    }
-
-    /**
-     * Delete a part from the package
-     *
-     * @throws IllegalArgumentException
-     *             Throws if the part URI is null or invalid.
-     */
-    @Override
-    protected void removePartImpl(PackagePartName partName) {
-        if (partName == null) {
-            throw new IllegalArgumentException("partUri");
         }
     }
 
