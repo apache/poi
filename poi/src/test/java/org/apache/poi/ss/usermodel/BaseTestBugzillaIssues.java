@@ -1846,6 +1846,7 @@ public abstract class BaseTestBugzillaIssues {
             bytes[390] = 0;
             bytes[391] = 0;
             bytes[674] = 0;
+            bytes[676] = 0;
             bytes[883] = 0;
             bytes[1207] = 0;
             bytes[1208] = 0;
