@@ -180,7 +180,7 @@ class TestExtractorFactory {
             testExtractor(ext, testcase, extractor, count);
             pkg.revert();
         } catch (Exception e) {
-            throw new Exception("While handling " + testcase + " - " + testFile + " - " + extractor);
+            throw new Exception("While handling " + testcase + " - " + testFile + " - " + extractor, e);
         }
     }
 
