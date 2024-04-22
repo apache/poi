@@ -53,7 +53,7 @@ class TestXLS2CSVmra {
 
         outStream.flush();
 
-        assertEquals("\n"
+        assertEquals(sanitize("\n"
                 + "First Sheet [1]:\n"
                 + "\"Test spreadsheet\"\n"
                 + "\"2nd row\",\"2nd row 2nd column\"\n"
@@ -69,7 +69,7 @@ class TestXLS2CSVmra {
                 + "\"cb=1\",\"cb=10\",\"cb=2\",\"cb=sum\"\n"
                 + "1,10,2,13\n"
                 + "\n"
-                + "Sheet3 [3]:\n", new String(outStream.toByteArray(), StandardCharsets.UTF_8));
+                + "Sheet3 [3]:\n"), sanitize(new String(outStream.toByteArray(), StandardCharsets.UTF_8)));
     }
 
     @Test
@@ -85,12 +85,12 @@ class TestXLS2CSVmra {
 
         outStream.flush();
 
-        assertEquals("\n"
+        assertEquals(sanitize("\n"
                 + "Лист1 [1]:\n"
                 + "\n"
                 + "Лист2 [2]:\n"
                 + "\n"
-                + "Лист3 [3]:\n", new String(outStream.toByteArray(), StandardCharsets.UTF_8));
+                + "Лист3 [3]:\n"), sanitize(new String(outStream.toByteArray(), StandardCharsets.UTF_8)));
 
 
         NumberRecord record = new NumberRecord();
@@ -100,12 +100,16 @@ class TestXLS2CSVmra {
 
         outStream.flush();
 
-        assertEquals("\n"
+        assertEquals(sanitize("\n"
                 + "Лист1 [1]:\n"
                 + "\n"
                 + "Лист2 [2]:\n"
                 + "\n"
                 + "Лист3 [3]:\n"
-                + "1.243", new String(outStream.toByteArray(), StandardCharsets.UTF_8));
+                + "1.243"), sanitize(new String(outStream.toByteArray(), StandardCharsets.UTF_8)));
+    }
+
+    private String sanitize(String str) {
+        return str.replace("\r\n", "\n");
     }
 }
