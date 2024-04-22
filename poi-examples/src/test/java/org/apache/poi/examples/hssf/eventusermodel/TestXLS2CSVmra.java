@@ -44,7 +44,7 @@ class TestXLS2CSVmra {
     @Test
     void testProcess() throws IOException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream(outStream);
+        PrintStream out = new PrintStream(outStream, false, StandardCharsets.UTF_8.name());
         XLS2CSVmra cvs = new XLS2CSVmra(
                 new POIFSFileSystem(new FileInputStream(HSSFTestDataSamples.getSampleFile("SampleSS.xls").getAbsolutePath())),
                 out, -1);
@@ -75,7 +75,7 @@ class TestXLS2CSVmra {
     @Test
     void testProcessNumberRecord() throws IOException {
         ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-        PrintStream out = new PrintStream(outStream);
+        PrintStream out = new PrintStream(outStream, false, StandardCharsets.UTF_8.name());
         XLS2CSVmra cvs = new XLS2CSVmra(
                 new POIFSFileSystem(new FileInputStream(HSSFTestDataSamples.getSampleFile("empty.xls").getAbsolutePath())),
                 out, -1);
