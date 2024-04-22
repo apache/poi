@@ -767,7 +767,7 @@ public class DocumentSummaryInformation extends PropertySet {
                 final long id = p.getID();
                 if (id == PropertyIDMap.PID_CODEPAGE) {
                     cps.setCodepage((Integer)p.getValue());
-                } else if (id > PropertyIDMap.PID_CODEPAGE) {
+                } else if (id > PropertyIDMap.PID_CODEPAGE && dictionary != null) {
                     propertyCount++;
                     final CustomProperty cp = new CustomProperty(p, dictionary.get(id));
                     cps.put(cp.getName(), cp);
