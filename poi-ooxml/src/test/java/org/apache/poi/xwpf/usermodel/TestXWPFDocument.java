@@ -17,6 +17,7 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -25,13 +26,16 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Arrays;
+import java.io.*;
+import java.nio.file.Files;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import org.apache.commons.collections4.ListUtils;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
@@ -43,11 +47,18 @@ import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 
@@ -56,7 +67,7 @@ public final class TestXWPFDocument {
     @Test
     void testContainsMainContentType() throws Exception {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
-            OPCPackage pack = doc.getPackage()) {
+             OPCPackage pack = doc.getPackage()) {
             String ct = XWPFRelation.DOCUMENT.getContentType();
             boolean found = pack.getParts().stream().anyMatch(p -> ct.equals(p.getContentType()));
             assertTrue(found);
@@ -482,6 +493,103 @@ public final class TestXWPFDocument {
         }
     }
 
+    @ParameterizedTest(name = "insert {0} pictures into document with {1} shapes")
+    @MethodSource("documentsAndNumberOfPictures")
+    void testInsertImagesIntoDocumentWithExistingShapes(int numberOfPictures, int numberOfShapes) throws Exception {
+        String pathToDocument = String.format("/bugfixing/shape in footer/document with shapes %d.docx", numberOfShapes);
+
+        InputStream docxContents = getClass().getResourceAsStream(pathToDocument);
+        XWPFDocument document = new XWPFDocument(docxContents);
+        workaround(document);
+
+        IntStream.rangeClosed(1, numberOfPictures).forEach(
+                i -> addImage(document.createParagraph(), "/bugfixing/" + i + ".png"));
+
+/*
+        document.write(Files.newOutputStream(new File(
+                System.getProperty("user.home"),
+                String.format("/Desktop/out/%d_%d-out.docx", numberOfPictures, numberOfShapes)).toPath()));
+*/
+
+        Set<String> docPrIds = new HashSet<>();
+        XWPFParagraph p = document.getParagraphs().get(0);
+        XmlCursor paragraphCursor = p.getCTP().newCursor();
+        paragraphCursor.selectPath("//*:docPr");
+        while (paragraphCursor.hasNextSelection()) {
+            paragraphCursor.toNextSelection();
+            paragraphCursor.toFirstAttribute();
+            boolean newItem = docPrIds.add(paragraphCursor.getTextValue());
+            assertTrue(newItem);
+        }
+    }
+
+    private XWPFDocument workaround(XWPFDocument document) {
+        try {
+            for (XWPFParagraph paragraph : bodyAndFooterParagraphs(document)) {
+                for (XWPFRun run : paragraph.getRuns()) {
+                    XmlCursor cursor = run.getCTR().newCursor();
+                    cursor.selectPath(
+                            "declare namespace w='http://schemas.openxmlformats.org/wordprocessingml/2006/main' " +
+                            "declare namespace mc='http://schemas.openxmlformats.org/markup-compatibility/2006' " +
+                            "declare namespace wp='http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing' " +
+                            ".//wp:docPr");
+
+                    while (cursor.hasNextSelection()) {
+                        cursor.toNextSelection();
+                        XmlObject obj = cursor.getObject();
+
+                        CTNonVisualDrawingProps docPr = CTNonVisualDrawingProps.Factory.parse(obj.xmlText());
+
+                        document.getDrawingIdManager().reserve(docPr.getId());
+                    }
+                }
+            }
+
+            ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+            document.write(outStream);
+            byte[] byteArray = outStream.toByteArray();
+            return new XWPFDocument(new ByteArrayInputStream(byteArray));
+
+        } catch (XmlException | IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private List<XWPFParagraph> bodyAndFooterParagraphs(XWPFDocument document) {
+
+        List<XWPFParagraph> footerParagraphs = document.getFooterList().stream()
+                .flatMap(f -> f.getParagraphs().stream())
+                .collect(Collectors.toList());
+
+        return ListUtils.union(document.getParagraphs(), footerParagraphs);
+    }
+
+    private void addImage(XWPFParagraph paragraph, String path) {
+        XWPFRun run = paragraph.getRuns().stream().findFirst().orElse(paragraph.createRun());
+
+        try {
+            run.addPicture(
+                    getClass().getResourceAsStream(path),
+                    Document.PICTURE_TYPE_PNG,
+                    "some image.png",
+                    10 * Units.EMU_PER_PIXEL,
+                    10 * Units.EMU_PER_PIXEL
+            );
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static List<Arguments> documentsAndNumberOfPictures() {
+        return IntStream.rangeClosed(0, 10)
+                .boxed()
+                .flatMap(files ->
+                        IntStream.rangeClosed(0, 10)
+                                .mapToObj(shapes -> arguments(files, shapes)))
+                .collect(Collectors.toList());
+    }
+
     @Test
     void testInputStreamClosed() throws IOException {
         try (TrackingInputStream stream = new TrackingInputStream(
@@ -510,14 +618,14 @@ public final class TestXWPFDocument {
         try (OPCPackage opc = OPCPackage.open(
                 POIDataSamples.getDocumentInstance().getFile("SampleDoc.docx"),
                 PackageAccess.READ
-            );
-            XWPFDocument doc = new XWPFDocument(opc);
-            XWPFWordExtractor ext = new XWPFWordExtractor(doc)
+        );
+             XWPFDocument doc = new XWPFDocument(opc);
+             XWPFWordExtractor ext = new XWPFWordExtractor(doc)
         ) {
             final String origText = ext.getText();
 
             try (XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc);
-                XWPFWordExtractor ext2 = new XWPFWordExtractor(doc2)) {
+                 XWPFWordExtractor ext2 = new XWPFWordExtractor(doc2)) {
                 assertEquals(origText, ext2.getText());
             }
         }

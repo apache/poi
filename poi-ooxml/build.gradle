@@ -114,6 +114,9 @@ dependencies {
     testImplementation project(path:':poi', configuration:'tests')
     testImplementation project(path:':poi-ooxml-lite-agent', configuration: 'archives')
     testRuntimeOnly "org.apiguardian:apiguardian-api:${apiGuardianVersion}"
+    testRuntimeOnly("net.sf.saxon:Saxon-HE:${saxonVersion}") {
+        exclude group: 'xml-apis', module: 'xml-apis'
+    }
     testImplementation 'org.xmlunit:xmlunit-core:2.9.1'
     testImplementation 'org.reflections:reflections:0.10.2'
     testImplementation 'org.openjdk.jmh:jmh-core:1.36'
@@ -134,6 +137,7 @@ dependencies {
 
     javadocs project(':poi')
     javadocs project(':poi-scratchpad')
+
 }
 
 final String MODULE_NAME = 'org.apache.poi.ooxml'
