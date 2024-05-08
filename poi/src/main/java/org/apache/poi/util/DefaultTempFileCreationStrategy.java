@@ -77,15 +77,23 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
         // Create our temp dir only once by double-checked locking
         // The directory is not deleted, even if it was created by this TempFileCreationStrategy
         if (dir == null) {
+            final String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
+            if (tmpDir == null) {
+                throw new IOException("System's temporary directory not defined - set the -D" + JAVA_IO_TMPDIR + " jvm property!");
+            }
             dirLock.lock();
             try {
                 if (dir == null) {
-                    String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
-                    if (tmpDir == null) {
-                        throw new IOException("System's temporary directory not defined - set the -D" + JAVA_IO_TMPDIR + " jvm property!");
-                    }
                     Path dirPath = Paths.get(tmpDir, POIFILES);
-                    dir = Files.createDirectories(dirPath).toFile();
+                    File fileDir = dirPath.toFile();
+                    if (fileDir.exists()) {
+                        if (!fileDir.isDirectory()) {
+                            throw new IOException("Could not create temporary directory. '" + fileDir + "' exists but is not a directory.");
+                        }
+                        dir = fileDir;
+                    } else {
+                        dir = Files.createDirectories(dirPath).toFile();
+                    }
                 }
             } finally {
                 dirLock.unlock();
