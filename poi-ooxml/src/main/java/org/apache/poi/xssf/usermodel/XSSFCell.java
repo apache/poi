@@ -609,7 +609,7 @@ public final class XSSFCell extends CellBase {
      * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, java.util.Map)}</p>
      *
      * @param style  reference contained in the workbook.
-     * If the value is null then the style information is removed causing the cell to used the default workbook style.
+     * If the value is null then the style information is removed causing the cell to use the default workbook style.
      * @throws IllegalArgumentException if style belongs to a different styles source (most likely because style is from a different Workbook)
      */
     @Override

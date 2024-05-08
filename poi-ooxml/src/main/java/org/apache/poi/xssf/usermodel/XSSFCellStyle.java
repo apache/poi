@@ -116,7 +116,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * This is normally called when trying to assign a style to a
      *  cell, to ensure the cell and the style are from the same
      *  workbook (if they're not, it won't work)
-     * @throws IllegalArgumentException if there's a workbook mis-match
+     * @throws IllegalArgumentException if there's a workbook mismatch
      */
     public void verifyBelongsToStylesSource(StylesTable src) {
         if(this._stylesSource != src) {
@@ -883,7 +883,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * <br>
     * <i>Note: Ensure Foreground color is set prior to background color.</i>
     * @param color the color to use
-    * @see #setFillBackgroundColor(org.apache.poi.xssf.usermodel.XSSFColor) )
+    * @see #setFillBackgroundColor(org.apache.poi.xssf.usermodel.XSSFColor)
     */
     public void setFillForegroundColor(XSSFColor color) {
         CTFill ct = getCTFill();
@@ -982,7 +982,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
     /**
      * This element is used to specify cell fill information for pattern and solid color cell fills. For solid cell fills (no pattern),
-     * foreground color is used is used. For cell fills with patterns specified, then the cell fill color is specified by the background color element.
+     * foreground color is used. For cell fills with patterns specified, then the cell fill color is specified by the background color element.
      *
      * @param pattern the fill pattern to use
      * @see #setFillBackgroundColor(XSSFColor)
