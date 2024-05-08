@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -189,7 +190,8 @@ public final class ZipHelper {
 
         final InputStream processStream = closeStream ? checkedStream : new NoCloseInputStream(checkedStream);
         // Open as a proper zip stream
-        return new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(processStream));
+        return new ZipArchiveThresholdInputStream(new ZipArchiveInputStream(
+                processStream, StandardCharsets.UTF_8.name(), false, true));
     }
 
     /**
