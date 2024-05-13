@@ -328,7 +328,7 @@ under the License.
     <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:3.0.2" usage="ooxml-provided"/>
     <dependency prefix="pdf.pdfbox.io" artifact="org.apache.pdfbox:pdfbox-io:3.0.2" usage="ooxml-provided"/>
     <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:3.0.2" usage="ooxml-provided"/>
-    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:3.0.1" usage="ooxml-provided"/>
+    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:3.0.2" usage="ooxml-provided"/>
 
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.curvesapi" artifact="com.github.virtuald:curvesapi:1.08" usage="ooxml"/>
