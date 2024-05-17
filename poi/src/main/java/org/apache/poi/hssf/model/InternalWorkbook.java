@@ -1071,13 +1071,16 @@ public final class InternalWorkbook {
      *
      * Include in it ant code that modifies the workbook record stream and affects its size.
      */
-    public void preSerialize(){
+    public void preSerialize() {
         // Ensure we have enough tab IDs
         // Can be a few short if new sheets were added
-        if(records.getTabpos() > 0) {
-            TabIdRecord tir = ( TabIdRecord ) records.get(records.getTabpos());
-            if(tir.getTabIdSize() < boundsheets.size()) {
-                fixTabIdRecord();
+        if (records.getTabpos() > 0) {
+            Record rec = records.get(records.getTabpos());
+            if (rec instanceof TabIdRecord) {
+                TabIdRecord tir = ( TabIdRecord ) rec;
+                if(tir.getTabIdSize() < boundsheets.size()) {
+                    fixTabIdRecord();
+                }
             }
         }
     }
