@@ -24,7 +24,7 @@ import java.net.URI;
 /**
  * Defines a reference relationship. A reference relationship can be internal or external.
  *
- * @since POI 5.2.6
+ * @since POI 5.3.0
  */
 public abstract class ReferenceRelationship {
     private POIXMLDocumentPart container;

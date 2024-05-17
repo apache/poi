@@ -26,7 +26,7 @@ import com.microsoft.schemas.office.visio.x2012.main.RowType;
 
 /**
  * Represents a polyline vertex in a shape's geometry.
- * Until POI 5.2.6, this class not was not properly implemented and was throwing an exception.
+ * Until POI 5.3.0, this class not was not properly implemented and was throwing an exception.
  */
 public class PolyLineTo implements GeometryRow {
 
