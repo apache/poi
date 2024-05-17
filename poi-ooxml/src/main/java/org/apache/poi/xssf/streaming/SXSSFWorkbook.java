@@ -100,6 +100,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * Carefully review your memory budget and compatibility needs before deciding
  * whether to enable shared strings or not.
+ *
+ * <p>To release resources used by this workbook (including disposing of the temporary
+ * files backing this workbook on disk) {@link #close} should be called directly or a
+ * try-with-resources statement should be used.</p>
  */
 public class SXSSFWorkbook implements Workbook {
     /**
@@ -904,8 +908,9 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Closes the underlying {@link XSSFWorkbook} and {@link OPCPackage}
-     *  on which this Workbook is based, if any.
+     * Disposes of the temporary files backing this workbook on disk and closes the
+     * underlying {@link XSSFWorkbook} and {@link OPCPackage} on which this Workbook is
+     * based, if any.
      *
      * <p>Once this has been called, no further
      *  operations, updates or reads should be performed on the
@@ -923,6 +928,8 @@ public class SXSSFWorkbook implements Workbook {
             }
         }
 
+        // Dispose of any temporary files backing this workbook on disk
+        dispose();
 
         // Tell the base workbook to close, does nothing if
         //  it's a newly created one
@@ -1001,8 +1008,14 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * Dispose of temporary files backing this workbook on disk.
      * Calling this method will render the workbook unusable.
+     *
+     * <p>The {@link #close()} method will also dispose of the temporary files so
+     * explicitly calling this method is unnecessary if the workbook will get closed.</p>
+     *
      * @return true if all temporary files were deleted successfully.
+     * @deprecated use {@link #close()} to close the workbook instead which also disposes of the temporary files
      */
+    @Deprecated
     public boolean dispose() {
         boolean success = true;
         for (SXSSFSheet sheet : _sxFromXHash.keySet()) {
