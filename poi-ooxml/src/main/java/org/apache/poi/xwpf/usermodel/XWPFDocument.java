@@ -88,6 +88,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.NumberingDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.impl.CTHdrFtrImpl;
 
 /**
  * High(ish) level class for working with .docx files.
@@ -768,10 +769,17 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
                 insertIntoTablesAndElements((XWPFTable) iBodyElement, tables, bodyElements);
             }
         } else {
-            CTTbl ctTbl = (CTTbl) path.pop(); //first object is always the body, we want the second one
-            for (XWPFTable xwpfTable : tables) {
-                if (ctTbl == xwpfTable.getCTTbl()) {
-                    insertElementIntoTable(xwpfTable, iBodyElement, path);
+            XmlObject secondObject = path.pop(); //first object is always the body, we want the second one
+            if (secondObject instanceof CTTbl) {
+                CTTbl ctTbl = (CTTbl) secondObject;
+                insertIntoTables(iBodyElement, path, ctTbl, tables);
+            } else if (secondObject instanceof CTHdrFtrImpl) {
+                CTHdrFtrImpl ctHdrFtrImpl = (CTHdrFtrImpl) secondObject;
+                if (path.isEmpty()) {
+                    insertIntoHeadersFooters(iBodyElement, ctHdrFtrImpl);
+                } else {
+                    XmlObject thirdObject = path.pop();
+                    insertIntoNestedElementInHeaderFooters(iBodyElement, path, thirdObject, ctHdrFtrImpl);
                 }
             }
         }
@@ -886,6 +894,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         for (XWPFTableRow tableRow : xwpfTable.getRows()) {
             if (tableRow.getCtRow() == row) {
                 insertElementIntoRow(tableRow, iBodyElement, path);
+                break;
             }
         }
     }
@@ -895,6 +904,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         for (XWPFTableCell tableCell : tableRow.getTableCells()) {
             if (tableCell.getCTTc() == cell) {
                 insertElementIntoCell(tableCell, iBodyElement, path);
+                break;
             }
         }
     }
@@ -909,6 +919,58 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         } else {
             // another table
             insertElementIntoTable((XWPFTable) path.pop(), iBodyElement, path);
+        }
+    }
+
+    private void insertIntoTables(IBodyElement iBodyElement, Deque<XmlObject> path, CTTbl ctTbl, List<XWPFTable> tables) {
+        for (XWPFTable xwpfTable : tables) {
+            if (ctTbl == xwpfTable.getCTTbl()) {
+                insertElementIntoTable(xwpfTable, iBodyElement, path);
+                break;
+            }
+        }
+    }
+
+    private void insertIntoHeadersFooters(IBodyElement iBodyElement, CTHdrFtrImpl ctHdrFtrImpl) {
+        for (XWPFHeader header : headers) {
+            if (ctHdrFtrImpl == header._getHdrFtr()) {
+                insertIntoHeaderFooter(iBodyElement, header);
+                return;
+            }
+        }
+        for (XWPFFooter footer : footers) {
+            if (ctHdrFtrImpl == footer._getHdrFtr()) {
+                insertIntoHeaderFooter(iBodyElement, footer);
+                return;
+            }
+        }
+    }
+
+    private void insertIntoHeaderFooter(IBodyElement iBodyElement, XWPFHeaderFooter headerFooter) {
+        if (iBodyElement instanceof XWPFParagraph) {
+            insertIntoParagraphs((XWPFParagraph) iBodyElement, headerFooter.paragraphs);
+        } else if (iBodyElement instanceof XWPFTable) {
+            insertIntoTables((XWPFTable) iBodyElement, headerFooter.tables);
+        }
+    }
+
+    private void insertIntoNestedElementInHeaderFooters(IBodyElement iBodyElement, Deque<XmlObject> path, XmlObject thirdObject,
+                                                        CTHdrFtrImpl ctHdrFtrImpl) {
+        if (thirdObject instanceof CTTbl) {
+            CTTbl ctTbl = (CTTbl) thirdObject;
+            for (XWPFHeader header : headers) {
+                if (ctHdrFtrImpl == header._getHdrFtr()) {
+                    insertIntoTables(iBodyElement, path, ctTbl, header.getTables());
+                    return;
+                }
+            }
+            for (XWPFFooter footer : footers) {
+                if (ctHdrFtrImpl == footer._getHdrFtr()) {
+                    insertIntoTables(iBodyElement, path, ctTbl, footer.getTables());
+                    return;
+                }
+            }
+
         }
     }
 

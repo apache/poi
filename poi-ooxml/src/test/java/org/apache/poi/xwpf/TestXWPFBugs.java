@@ -229,6 +229,46 @@ class TestXWPFBugs {
         }
     }
 
+    @Test
+    void insertParagraphIntoHeader() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug69042.docx"))) {
+            XWPFParagraph paragraph = document.getHeaderArray(0).getParagraphArray(0);
+            insertParagraph(paragraph, document);
+            assertEquals("Hello", document.getHeaderArray(0).getParagraphArray(0).getText());
+            assertEquals("World", document.getHeaderArray(1).getParagraphArray(0).getText());
+        }
+    }
+
+    @Test
+    void insertParagraphIntoFooter() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug69042.docx"))) {
+            XWPFParagraph paragraph = document.getFooterArray(0).getParagraphArray(0);
+            insertParagraph(paragraph, document);
+            assertEquals("Hello", document.getFooterArray(0).getParagraphArray(0).getText());
+            assertEquals("World", document.getFooterArray(1).getParagraphArray(0).getText());
+        }
+    }
+
+    @Test
+    void insertParagraphIntoTableInHeader() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug69042.docx"))) {
+            XWPFTableCell cell = document.getHeaderArray(1).getTableArray(0).getRow(0).getCell(0);
+            XWPFParagraph paragraph = cell.getParagraphArray(0);
+            insertParagraph(paragraph, document);
+            assertEquals("Hello", cell.getParagraphArray(0).getText());
+            assertEquals("World", cell.getParagraphArray(1).getText());
+        }
+    }
+
+    @Test
+    void insertTableIntoFooter() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug69042.docx"))) {
+            XWPFParagraph paragraph = document.getFooterArray(0).getParagraphArray(0);
+            insertTable(paragraph, document);
+            assertEquals("Hello", document.getFooterArray(0).getTableArray(0).getRow(0).getCell(0).getText());
+            assertEquals("World", document.getFooterArray(1).getParagraphArray(0).getText());
+        }
+    }
 
     public static void insertParagraph(XWPFParagraph xwpfParagraph, XWPFDocument document) {
         XmlCursor xmlCursor = xwpfParagraph.getCTP().newCursor();
