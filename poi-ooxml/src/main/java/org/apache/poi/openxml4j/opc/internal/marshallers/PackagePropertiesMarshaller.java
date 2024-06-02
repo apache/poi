@@ -89,7 +89,8 @@ public class PackagePropertiesMarshaller implements PartMarshaller {
             throws OpenXML4JException {
         if (!(part instanceof PackagePropertiesPart))
             throw new IllegalArgumentException(
-                    "'part' must be a PackagePropertiesPart instance.");
+                    "'part' must be a PackagePropertiesPart instance, but had: " + part.getClass() +
+                            ", check logs while reading.");
         propsPart = (PackagePropertiesPart) part;
 
         // Configure the document

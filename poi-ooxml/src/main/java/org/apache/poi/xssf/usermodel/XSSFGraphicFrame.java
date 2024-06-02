@@ -63,13 +63,15 @@ public final class XSSFGraphicFrame extends XSSFShape {
             for (int i = 0; i < nodes.getLength(); i++) {
                 final Node node = nodes.item(i);
                 // if the frame references a chart, associate the chart with this instance
-                Node namedItem = node.getAttributes().getNamedItem("r:id");
-                if (node.getNodeName().equals("c:chart") && namedItem != null) {
-                    // this better succeed or the document is invalid
-                    POIXMLDocumentPart relation = drawing.getRelationById(namedItem.getNodeValue());
-                    // Do XWPF charts need similar treatment?
-                    if (relation instanceof XSSFChart) {
-                        ((XSSFChart) relation).setGraphicFrame(this);
+                if (node.getAttributes() != null) {
+                    Node namedItem = node.getAttributes().getNamedItem("r:id");
+                    if (node.getNodeName().equals("c:chart") && namedItem != null) {
+                        // this better succeed or the document is invalid
+                        POIXMLDocumentPart relation = drawing.getRelationById(namedItem.getNodeValue());
+                        // Do XWPF charts need similar treatment?
+                        if (relation instanceof XSSFChart) {
+                            ((XSSFChart) relation).setGraphicFrame(this);
+                        }
                     }
                 }
             }
