@@ -32,6 +32,7 @@ import java.io.IOException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -114,6 +115,7 @@ final class TestSheetUtil {
             Cell cell = row.createCell(0);
 
             // no contents: cell.setCellValue("sometext");
+            //noinspection deprecation
             assertEquals(-1.0, SheetUtil.getCellWidth(cell, 1, null, true), 0.01);
             assertEquals(-1.0, SheetUtil.getCellWidth(cell, 1.0f, null, true), 0.01);
 
@@ -132,6 +134,7 @@ final class TestSheetUtil {
 
             final double width = SheetUtil.getCellWidth(cell, 1.0f, null, true);
             assertTrue(width > 0);
+            //noinspection deprecation
             assertEquals(width, SheetUtil.getCellWidth(cell, 1, null, true));
         }
     }
@@ -145,7 +148,9 @@ final class TestSheetUtil {
 
             cell.setCellValue(88.234);
 
+            //noinspection deprecation
             assertTrue(SheetUtil.getCellWidth(cell, 1, null, true) > 0);
+            assertTrue(SheetUtil.getCellWidth(cell, 1.0f, null, true) > 0);
         }
     }
 
@@ -158,7 +163,9 @@ final class TestSheetUtil {
 
             cell.setCellValue(false);
 
+            //noinspection deprecation
             assertTrue(SheetUtil.getCellWidth(cell, 1, null, false) > 0);
+            assertTrue(SheetUtil.getCellWidth(cell, 1.0f, null, false) > 0);
         }
     }
 
@@ -255,11 +262,22 @@ final class TestSheetUtil {
         // verify that a call with an unknown font-name returns a useful value
         // (likely the font-system falls back to a default font here)
         // (may fail if font-system is missing, but then many other tests fail as well)
-
         try (Workbook wb = new HSSFWorkbook()) {
             wb.getFontAt(0).setFontName("invalid font");
 
-            final float width = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            float width = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertTrue(width > 0,
+                    "Should get some useful char width, but had: " + width);
+
+            wb.getFontAt(0).setFontName("");
+
+            width = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertTrue(width > 0,
+                    "Should get some useful char width, but had: " + width);
+
+            wb.getFontAt(0).setFontName(null);
+
+            width = SheetUtil.getDefaultCharWidthAsFloat(wb);
             assertTrue(width > 0,
                     "Should get some useful char width, but had: " + width);
         }
@@ -384,6 +402,36 @@ final class TestSheetUtil {
             // restore values
             SheetUtil.setFontRenderContext(prevCtx);
             SheetUtil.setIgnoreMissingFontSystem(previous);
+        }
+    }
+
+    @Test
+    void testGetDefaultCharWidthAsFloat() throws IOException {
+        try (Workbook wb = new HSSFWorkbook()) {
+            float width = SheetUtil.getDefaultCharWidthAsFloat(new HSSFWorkbook());
+            assertTrue(width > 0,
+                    "Expected a non-zero and positive font width");
+
+            //Font font = wb.createFont();
+            Font font = wb.getFontAt(0);
+            assertNotNull(font);
+
+            // verify that the system falls back to some default font for unknown/incorrect font-families
+
+            font.setFontName("not-existing");
+            float range = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertTrue(range > 5.5);
+            assertTrue(range < 6.7);
+
+            font.setFontName("");
+            range = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertTrue(range > 5.5);
+            assertTrue(range < 6.7);
+
+            font.setFontName(null);
+            range = SheetUtil.getDefaultCharWidthAsFloat(wb);
+            assertTrue(range > 5.5);
+            assertTrue(range < 6.7);
         }
     }
 }
