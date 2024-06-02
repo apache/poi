@@ -16,8 +16,6 @@
 ==================================================================== */
 package org.apache.poi.hssf.dev;
 
-import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -39,6 +37,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.StringUtil;
+import org.apache.tools.ant.util.NullOutputStream;
 
 class TestBiffDrawingToXml extends BaseTestIteratingXLS {
 
@@ -74,7 +73,7 @@ class TestBiffDrawingToXml extends BaseTestIteratingXLS {
     @Override
     void runOneFile(File pFile) throws Exception {
         try (InputStream inp = new FileInputStream(pFile);
-             OutputStream outputStream = NULL_OUTPUT_STREAM) {
+             OutputStream outputStream = NullOutputStream.INSTANCE) {
             writeToFile(outputStream, inp);
         }
     }

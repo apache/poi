@@ -92,7 +92,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
     enum LoadSavePhase {
         INIT, LOADED
     }
-    private static final ThreadLocal<LoadSavePhase> loadSavePhase = new ThreadLocal<>();
+    private static final ThreadLocal<LoadSavePhase> loadSavePhase = new ThreadLocal<>();    // NOSONAR
     static {
         // allow to clear all thread-locals via ThreadLocalUtil
         ThreadLocalUtil.registerCleaner(loadSavePhase::remove);

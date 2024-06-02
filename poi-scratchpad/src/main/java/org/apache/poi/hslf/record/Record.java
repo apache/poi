@@ -169,7 +169,7 @@ public abstract class Record implements GenericRecord
         // From there, we instanciate the class
         // Any special record handling occurs once we have the class
         RecordTypes recordType = RecordTypes.forTypeID((short) type);
-        RecordConstructor c = recordType.recordConstructor;
+        RecordConstructor<?> c = recordType.recordConstructor;
         if (c == null) {
             // How odd. RecordTypes normally substitutes in
             //  a default handler class if it has heard of the record

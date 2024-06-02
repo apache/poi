@@ -26,7 +26,6 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -136,7 +135,7 @@ public class CellFormatPart {
                 "|\\[h{1,2}]                     # Elapsed time: hour spec\n" +
                 "|\\[m{1,2}]                     # Elapsed time: minute spec\n" +
                 "|\\[s{1,2}]                     # Elapsed time: second spec\n" +
-                "|[^;]                           # A character\n" + "";
+                "|[^;]                           # A character\n";
 
         String format = "(?:" + color + ")?                 # Text color\n" +
                 "(?:\\[" + condition + "])?               # Condition\n" +

@@ -198,7 +198,7 @@ public final class BiffViewer {
 
         if (os == null) {
             cs = Charset.defaultCharset();
-            osOut = NullOutputStream.NULL_OUTPUT_STREAM;
+            osOut = NullOutputStream.INSTANCE;
         } else if (os == System.out) {
             // Use the system default encoding when sending to System Out
             cs = Charset.defaultCharset();
