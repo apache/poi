@@ -61,7 +61,6 @@ public class TestWordToConverterSuite {
         "clusterfuzz-testcase-minimized-POIHWPFFuzzer-4947285593948160.doc",
         "clusterfuzz-testcase-minimized-POIHWPFFuzzer-5440721166139392.doc",
         "clusterfuzz-testcase-minimized-POIHWPFFuzzer-5050208641482752.doc",
-        "clusterfuzz-testcase-minimized-POIHWPFFuzzer-4892412469968896.doc",
         "clusterfuzz-testcase-minimized-POIHWPFFuzzer-6610789829836800.doc"
     );
 
