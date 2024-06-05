@@ -135,7 +135,7 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
              ZipArchiveOutputStream zos = new ZipArchiveOutputStream(fos)) {
 
             ZipArchiveEntry ze;
-            while ((ze = zis.getNextZipEntry()) != null) {
+            while ((ze = zis.getNextEntry()) != null) {
                 // the cipher output stream pads the data, therefore we can't reuse the ZipEntry with set sizes
                 // as those will be validated upon close()
                 ZipArchiveEntry zeNew = new ZipArchiveEntry(ze.getName());

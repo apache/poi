@@ -1496,7 +1496,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             int count = 0;
             try (ZipArchiveInputStream zis = new ZipArchiveInputStream(Files.newInputStream(tempFile.toPath()))) {
                 ZipArchiveEntry entry;
-                while ((entry = zis.getNextZipEntry()) != null) {
+                while ((entry = zis.getNextEntry()) != null) {
                     // Since POI 5.2.5, you can stop XSSFWorkbook closing the InputStream by using this new constructor
                     XSSFWorkbook wb = new XSSFWorkbook(zis, false);
                     assertNotNull(wb);
