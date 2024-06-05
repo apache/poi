@@ -878,8 +878,8 @@ var srcDep = [
     ':poi-ooxml-lite:generateModuleInfo'
 ]
 
-srcDistTar.setArchiveFileName("poi-src-${subprojects[0].version}-${dateSuffix}.tgz")
-srcDistZip.setArchiveFileName("poi-src-${subprojects[0].version}-${dateSuffix}.zip")
+srcDistTar.setArchiveFileName("apache-poi-src-${subprojects[0].version}-${dateSuffix}.tgz")
+srcDistZip.setArchiveFileName("apache-poi-src-${subprojects[0].version}-${dateSuffix}.zip")
 srcDistTar.dependsOn srcDep
 srcDistZip.dependsOn srcDep
 soLinkCheck.dependsOn srcDep
