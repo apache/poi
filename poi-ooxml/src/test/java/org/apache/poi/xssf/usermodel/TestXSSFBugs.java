@@ -1887,7 +1887,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     @Test
     void test54764WithSAXHelper() throws Exception {
         File testFile = XSSFTestDataSamples.getSampleFile("54764.xlsx");
-        try (ZipFile zip = new ZipFile(testFile)) {
+        try (ZipFile zip = ZipFile.builder().setFile(testFile).get()) {
             ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
             XMLReader reader = XMLHelper.newXMLReader();
             SAXParseException e = assertThrows(SAXParseException.class,
@@ -1900,7 +1900,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     @Test
     void test54764WithDocumentHelper() throws Exception {
         File testFile = XSSFTestDataSamples.getSampleFile("54764.xlsx");
-        try (ZipFile zip = new ZipFile(testFile)) {
+        try (ZipFile zip = ZipFile.builder().setFile(testFile).get()) {
             ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
             SAXParseException e = assertThrows(SAXParseException.class,
                 () -> DocumentHelper.readDocument(zip.getInputStream(ze)));
@@ -3908,7 +3908,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     private static void readByCommonsCompress(File temp_excel_poi) throws IOException {
         /* read by commons-compress*/
-        try (ZipFile zipFile = new ZipFile(temp_excel_poi)) {
+        try (ZipFile zipFile = ZipFile.builder().setFile(temp_excel_poi).get()) {
             ZipArchiveEntry entry = zipFile.getEntry("xl/workbook.xml");
             InputStream inputStream = zipFile.getInputStream(entry);
 

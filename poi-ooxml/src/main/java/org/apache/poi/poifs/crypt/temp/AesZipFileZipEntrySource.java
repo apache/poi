@@ -64,7 +64,7 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
 
     private AesZipFileZipEntrySource(File tmpFile, Cipher ci) throws IOException {
         this.tmpFile = tmpFile;
-        this.zipFile = new ZipFile(tmpFile);
+        this.zipFile = ZipFile.builder().setFile(tmpFile).get();
         this.ci = ci;
         this.closed = false;
     }

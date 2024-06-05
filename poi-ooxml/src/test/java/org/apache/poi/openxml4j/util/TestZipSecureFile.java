@@ -34,7 +34,8 @@ class TestZipSecureFile {
         // ClassCastException in ZipFile now
         // The relevant change in the JDK is http://hg.openjdk.java.net/jdk/jdk10/rev/85ea7e83af30#l5.66
 
-        try (ZipFile thresholdInputStream = new ZipFile(XSSFTestDataSamples.getSampleFile("template.xlsx"))) {
+        try (ZipFile thresholdInputStream =
+                 ZipFile.builder().setFile(XSSFTestDataSamples.getSampleFile("template.xlsx")).get()) {
             try (ZipSecureFile secureFile = new ZipSecureFile(XSSFTestDataSamples.getSampleFile("template.xlsx"))) {
                 Enumeration<? extends ZipArchiveEntry> entries = thresholdInputStream.getEntries();
                 while (entries.hasMoreElements()) {
