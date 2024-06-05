@@ -142,7 +142,7 @@ public final class IOUtils {
 
         stream.mark(limit);
         try (UnsynchronizedByteArrayOutputStream bos = UnsynchronizedByteArrayOutputStream.builder().setBufferSize(limit).get()) {
-            copy(new BoundedInputStream(stream, limit), bos);
+            copy(BoundedInputStream.builder().setInputStream(stream).setMaxCount(limit).get(), bos);
 
             int readBytes = bos.size();
             if (readBytes == 0) {

@@ -205,7 +205,7 @@ public class CryptoAPIDecryptor extends Decryptor {
             for (StreamDescriptorEntry entry : entries) {
                 sbis.seek(entry.streamOffset);
                 sbis.setBlock(entry.block);
-                try (InputStream is = new BoundedInputStream(sbis, entry.streamSize)) {
+                try (InputStream is = BoundedInputStream.builder().setInputStream(sbis).setMaxCount(entry.streamSize).get()) {
                     fsOut.createDocument(is, entry.streamName);
                 }
             }

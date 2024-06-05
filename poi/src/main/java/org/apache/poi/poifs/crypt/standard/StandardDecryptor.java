@@ -140,8 +140,14 @@ public class StandardDecryptor extends Decryptor {
         long cipherLen = (_length/blockSize + 1) * blockSize;
         Cipher cipher = getCipher(getSecretKey());
 
-        InputStream boundedDis = new BoundedInputStream(dis, cipherLen);
-        return new BoundedInputStream(new CipherInputStream(boundedDis, cipher), _length);
+        final InputStream boundedDis = BoundedInputStream.builder()
+            .setInputStream(dis)
+            .setMaxCount(cipherLen)
+            .get();
+        return BoundedInputStream.builder()
+            .setInputStream(new CipherInputStream(boundedDis, cipher))
+            .setMaxCount(_length)
+            .get();
     }
 
     /**

@@ -21,6 +21,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -102,13 +103,21 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
      * Opens an input stream which will decompress the data on the fly.
      *
      * @return the data input stream.
+     * @throws UncheckedIOException if the data size exceeds the expected size.
      */
     public InputStream getData() {
         if (isCompressed()) {
             int size = LittleEndian.getInt(_data);
 
             InputStream compressedStream = new ByteArrayInputStream(_data, 4, _data.length);
-            return new BoundedInputStream(new InflaterInputStream(compressedStream), size);
+            try {
+                return BoundedInputStream.builder()
+                    .setInputStream(new InflaterInputStream(compressedStream))
+                    .setMaxCount(size)
+                    .get();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
         } else {
             return new ByteArrayInputStream(_data, 0, _data.length);
         }
