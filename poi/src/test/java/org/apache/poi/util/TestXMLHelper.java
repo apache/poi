@@ -36,6 +36,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXNotRecognizedException;
@@ -136,12 +137,12 @@ class TestXMLHelper {
     @Test
     void testNewXMLInputFactory() {
         XMLInputFactory factory = XMLHelper.newXMLInputFactory();
-        if (!System.getProperty("java.version").startsWith("22")) {
-            assertEquals(Boolean.TRUE, factory.getProperty(XMLInputFactory.IS_NAMESPACE_AWARE));
-            assertEquals(Boolean.FALSE, factory.getProperty(XMLInputFactory.IS_VALIDATING));
-            assertEquals(Boolean.FALSE, factory.getProperty(XMLInputFactory.SUPPORT_DTD));
-            assertEquals(Boolean.FALSE, factory.getProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES));
-        }
+        Assumptions.assumeFalse(System.getProperty("java.version").startsWith("22"),
+            "test ignored for Java 22");
+        assertEquals(Boolean.TRUE, factory.getProperty(XMLInputFactory.IS_NAMESPACE_AWARE));
+        assertEquals(Boolean.FALSE, factory.getProperty(XMLInputFactory.IS_VALIDATING));
+        assertEquals(Boolean.FALSE, factory.getProperty(XMLInputFactory.SUPPORT_DTD));
+        assertEquals(Boolean.FALSE, factory.getProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES));
     }
 
     /**
@@ -150,9 +151,9 @@ class TestXMLHelper {
     @Test
     void testNewXMLOutputFactory() {
         XMLOutputFactory factory = XMLHelper.newXMLOutputFactory();
-        if (!System.getProperty("java.version").startsWith("22")) {
-            assertEquals(Boolean.TRUE, factory.getProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES));
-        }
+        Assumptions.assumeFalse(System.getProperty("java.version").startsWith("22"),
+            "test ignored for Java 22");
+        assertEquals(Boolean.TRUE, factory.getProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES));
     }
 
     /**
