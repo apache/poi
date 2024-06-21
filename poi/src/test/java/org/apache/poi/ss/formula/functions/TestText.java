@@ -23,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
@@ -33,6 +34,7 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.Test;
 
@@ -276,6 +278,12 @@ final class TestText {
     void testTextBooleanWithNumberFormat() {
         testText(BoolEval.TRUE, new StringEval("#0.000"), BoolEval.TRUE.getStringValue());
         testText(BoolEval.FALSE, new StringEval("#0.000"), BoolEval.FALSE.getStringValue());
+    }
+
+    @Test
+    void testTextMMM() {
+        LocalDate ld = LocalDate.parse("2022-02-28");
+        testText(new NumberEval(DateUtil.getExcelDate(ld)), new StringEval("MMM"), "Feb");
     }
 
     private void testText(ValueEval valueArg, ValueEval formatArg, String expectedResult) {
