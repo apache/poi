@@ -286,6 +286,13 @@ final class TestText {
         testText(new NumberEval(DateUtil.getExcelDate(ld)), new StringEval("MMM"), "Feb");
     }
 
+    @Test
+    void testTextMMMStringInput() {
+        //  https://bz.apache.org/bugzilla/show_bug.cgi?id=67475
+        String dateInput = "02/28/2022";
+        testText(new StringEval(dateInput), new StringEval("MMM"), "Feb");
+    }
+
     private void testText(ValueEval valueArg, ValueEval formatArg, String expectedResult) {
         ValueEval[] args = { valueArg, formatArg };
         ValueEval result = TextFunction.TEXT.evaluate(args, -1, -1);

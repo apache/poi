@@ -31,6 +31,7 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.StringValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DataFormatter;
+import org.apache.poi.ss.usermodel.DateUtil;
 
 public abstract class TextFunction implements Function {
     protected static final DataFormatter formatter = new DataFormatter();
@@ -39,6 +40,7 @@ public abstract class TextFunction implements Function {
         ValueEval ve = OperandResolver.getSingleValue(eval, srcRow, srcCol);
         return OperandResolver.coerceValueToString(ve);
     }
+
     protected static int evaluateIntArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
         ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
         return OperandResolver.coerceValueToInt(ve);
@@ -363,8 +365,14 @@ public abstract class TextFunction implements Function {
                     } else if (valueVe instanceof StringEval) {
                         evaluated = ((StringEval) valueVe).getStringValue();
                         valueDouble = OperandResolver.parseDouble(evaluated);
+                        if (valueDouble == null) {
+                            try {
+                                valueDouble = DateUtil.parseDateTime(evaluated);
+                            } catch (Exception ignored) {
+                                valueDouble = null;
+                            }
+                        }
                     }
-
                     if (valueDouble != null) {
                         String format = formatPatternValueEval2String(formatVe);
                         evaluated = formatter.formatRawCellContents(valueDouble, -1, format);
