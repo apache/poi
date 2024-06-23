@@ -48,7 +48,7 @@ Before running this, you should execute the "jar" target in the main build.gradl
                     <date xmlns="antlib:org.apache.tools.ant.types.resources.comparators"/>
                     <resources>
                         <fileset dir="${dist}">
-                            <include name="poi-src-*.zip"/>
+                            <include name="apache-poi-src-*.zip"/>
                         </fileset>
                     </resources>
                 </sort>
