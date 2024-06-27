@@ -425,7 +425,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
                     //System.gc();
                 }
 
-                    wb.write(outSteam);
+                wb.write(outSteam);
                 // assertTrue(wb.dispose());
                 outSteam.close();
             } finally {
