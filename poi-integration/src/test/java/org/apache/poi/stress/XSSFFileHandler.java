@@ -188,6 +188,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/sample-beta.xlsx");
 
         // corrupt/invalid
+        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/duplicate-filename.xlsx");
         EXPECTED_ADDITIONAL_FAILURES.add("openxml4j/invalid.xlsx");
     }
 

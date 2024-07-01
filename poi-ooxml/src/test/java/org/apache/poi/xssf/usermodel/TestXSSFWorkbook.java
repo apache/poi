@@ -1451,7 +1451,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     @Test
     void testDuplicateFileReadAsOPCFile() {
         assertThrows(InvalidFormatException.class, () -> {
-            try (OPCPackage pkg = OPCPackage.open(getSampleFile("duplicate-file.xlsx"), PackageAccess.READ)) {
+            try (OPCPackage pkg = OPCPackage.open(getSampleFile("duplicate-filename.xlsx"), PackageAccess.READ)) {
                 // expect exception here
             }
         });
@@ -1460,7 +1460,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     @Test
     void testDuplicateFileReadAsFile() {
         assertThrows(InvalidFormatException.class, () -> {
-            try (XSSFWorkbook wb = new XSSFWorkbook(getSampleFile("duplicate-file.xlsx"))) {
+            try (XSSFWorkbook wb = new XSSFWorkbook(getSampleFile("duplicate-filename.xlsx"))) {
                 // expect exception here
             }
         });
@@ -1469,7 +1469,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     @Test
     void testDuplicateFileReadAsStream() {
         assertThrows(InvalidZipException.class, () -> {
-            try (XSSFWorkbook wb = new XSSFWorkbook(openSampleFileStream("duplicate-file.xlsx"))) {
+            try (XSSFWorkbook wb = new XSSFWorkbook(openSampleFileStream("duplicate-filename.xlsx"))) {
                 // expect exception here
             }
         });
