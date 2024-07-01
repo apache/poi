@@ -823,6 +823,14 @@ public class DataFormatter {
         @Override
         public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
             obj = scaleInput(obj);
+           // Resolve the current issue with the DecimalFormat class when the incoming obj is of type Double or Float
+           // For example, if a Double type value of 1.005 is passed in, and the corresponding cell in Excel is of numeric type 
+           // and set to keep two decimal places
+           // Formatting the Double value 1.005 will be problematic; it will be formatted as 1.00, which is inconsistent with 
+           // the behavior of Excel and does not perform rounding correctly
+           if (obj instanceof Double || obj instanceof Float) {
+              return df.format(new BigDecimal(obj.toString()), toAppendTo, pos);
+           }
             return df.format(obj, toAppendTo, pos);
         }
 
