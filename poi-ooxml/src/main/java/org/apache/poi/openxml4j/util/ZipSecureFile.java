@@ -254,8 +254,8 @@ public class ZipSecureFile extends ZipFile {
     }
 
     private void validateEntryNames() throws IOException {
-        Enumeration<ZipArchiveEntry> en = getEntries();
-        Set<String> filenames = new HashSet<>();
+        final Enumeration<ZipArchiveEntry> en = getEntries();
+        final Set<String> filenames = new HashSet<>();
         while (en.hasMoreElements()) {
             String name = en.nextElement().getName();
             if (filenames.contains(name)) {

@@ -27,7 +27,6 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ooxml.TrackingInputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -38,6 +37,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.ZipPackage;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
+import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
@@ -1449,12 +1449,27 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
+    void testDuplicateFileReadAsOPCFile() {
+        assertThrows(InvalidFormatException.class, () -> {
+            try (OPCPackage pkg = OPCPackage.open(getSampleFile("duplicate-file.xlsx"), PackageAccess.READ)) {
+                // expect exception here
+            }
+        });
+    }
+
+    @Test
     void testDuplicateFileReadAsFile() {
-        assertThrows(InvalidOperationException.class, () -> {
-            try (
-                    OPCPackage pkg = OPCPackage.open(getSampleFile("duplicate-file.xlsx"), PackageAccess.READ);
-                    XSSFWorkbook wb = new XSSFWorkbook(pkg)
-            ) {
+        assertThrows(InvalidFormatException.class, () -> {
+            try (XSSFWorkbook wb = new XSSFWorkbook(getSampleFile("duplicate-file.xlsx"))) {
+                // expect exception here
+            }
+        });
+    }
+
+    @Test
+    void testDuplicateFileReadAsStream() {
+        assertThrows(InvalidZipException.class, () -> {
+            try (XSSFWorkbook wb = new XSSFWorkbook(openSampleFileStream("duplicate-file.xlsx"))) {
                 // expect exception here
             }
         });

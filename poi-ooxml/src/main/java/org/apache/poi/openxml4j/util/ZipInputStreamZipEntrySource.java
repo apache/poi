@@ -21,9 +21,12 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
 
 /**
  * Provides a way to get at all the ZipEntries
@@ -90,12 +93,18 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
      * @see #setThresholdBytesForTempFiles
      */
     public ZipInputStreamZipEntrySource(ZipArchiveThresholdInputStream inp) throws IOException {
+        final Set<String> filenames = new HashSet<>();
         for (;;) {
             final ZipArchiveEntry zipEntry = inp.getNextEntry();
             if (zipEntry == null) {
                 break;
             }
-            zipEntries.put(zipEntry.getName(), new ZipArchiveFakeEntry(zipEntry, inp));
+            String name = zipEntry.getName();
+            if (filenames.contains(name)) {
+                throw new InvalidZipException("Input file contains more than 1 entry with the name " + name);
+            }
+            filenames.add(name);
+            zipEntries.put(name, new ZipArchiveFakeEntry(zipEntry, inp));
         }
 
         streamToClose = inp;
