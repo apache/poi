@@ -110,6 +110,20 @@ class TestDataFormatter {
         assertFalse(dataFormatter.useCachedValuesForFormulaCells());
     }
 
+    @Test
+    void testDouble() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        assertEquals("1.005", dfUS.formatRawCellContents(1.005d, -1, "@"));
+        assertEquals("-1.005", dfUS.formatRawCellContents(-1.005d, -1, "@"));
+    }
+
+    @Test
+    void testFloat() {
+        DataFormatter dfUS = new DataFormatter(Locale.US);
+        assertEquals("1.005", dfUS.formatRawCellContents(1.005f, -1, "@"));
+        assertEquals("-1.005", dfUS.formatRawCellContents(-1.005f, -1, "@"));
+    }
+
     /**
      * Test that we use the specified locale when deciding
      *   how to format normal numbers
@@ -142,7 +156,6 @@ class TestDataFormatter {
         // Regular numeric style formats
         assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]##"));
         assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]00"));
-
     }
 
 
