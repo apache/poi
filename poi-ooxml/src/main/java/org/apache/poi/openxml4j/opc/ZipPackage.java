@@ -187,6 +187,8 @@ public final class ZipPackage extends OPCPackage {
         try {
             final ZipFile zipFile = ZipHelper.openZipFile(file); // NOSONAR
             ze = new ZipFileZipEntrySource(zipFile);
+        } catch (InvalidZipException e) {
+            throw new InvalidOperationException("Can't open the specified file: '" + file + "'", e);
         } catch (IOException e) {
             // probably not happening with write access - not sure how to handle the default read-write access ...
             if (access == PackageAccess.WRITE) {

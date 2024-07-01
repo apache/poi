@@ -27,6 +27,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ooxml.TrackingInputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -1445,6 +1446,18 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             assertEquals("2.1", dataFormatter.formatCellValue(a4));
             assertEquals("2.1", dataFormatter.formatCellValue(a4, formulaEvaluator));
         }
+    }
+
+    @Test
+    void testDuplicateFileReadAsFile() {
+        assertThrows(InvalidOperationException.class, () -> {
+            try (
+                    OPCPackage pkg = OPCPackage.open(getSampleFile("duplicate-file.xlsx"), PackageAccess.READ);
+                    XSSFWorkbook wb = new XSSFWorkbook(pkg)
+            ) {
+                // expect exception here
+            }
+        });
     }
 
     @Test

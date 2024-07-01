@@ -19,11 +19,15 @@ package org.apache.poi.openxml4j.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 
@@ -205,6 +209,7 @@ public class ZipSecureFile extends ZipFile {
     public ZipSecureFile(File file) throws IOException {
         super(file);
         this.fileName = file.getAbsolutePath();
+        validateEntryNames();
     }
 
     /**
@@ -214,6 +219,7 @@ public class ZipSecureFile extends ZipFile {
     public ZipSecureFile(String name) throws IOException {
         super(name);
         this.fileName = new File(name).getAbsolutePath();
+        validateEntryNames();
     }
 
     /**
@@ -245,5 +251,17 @@ public class ZipSecureFile extends ZipFile {
     @Removal(version = "7.0.0")
     public String getName() {
         return fileName;
+    }
+
+    private void validateEntryNames() throws IOException {
+        Enumeration<ZipArchiveEntry> en = getEntries();
+        Set<String> filenames = new HashSet<>();
+        while (en.hasMoreElements()) {
+            String name = en.nextElement().getName();
+            if (filenames.contains(name)) {
+                throw new InvalidZipException("Input file contains more than 1 entry with the name " + name);
+            }
+            filenames.add(name);
+        }
     }
 }
