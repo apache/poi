@@ -98,15 +98,12 @@ public class TestAllFiles {
         "poifs/protected_sha512.xlsx",
 
         // corrupt file
-        "spreadsheet/duplicate-filename.xlsx"
+        "spreadsheet/duplicate-filename.xlsx",
+        "document/clusterfuzz-testcase-minimized-POIXWPFFuzzer-5166796835258368.docx",
     };
 
     // cheap workaround of skipping the few problematic files
-    public static final String[] SCAN_EXCLUDES_NOSCRATCHPAD = {
-        "**/.svn/**",
-        "lost+found",
-        "**/.git/**",
-        "**/ExternalEntityInText.docx", //the DocType (DTD) declaration causes this to fail
+    public static final String[] SCAN_EXCLUDES_NOSCRATCHPAD = concat(SCAN_EXCLUDES, new String[] {
         "**/right-to-left.xlsx", //the threaded comments in this file cause XSSF clone to fail
         "document/word2.doc",
         "document/cpansearch.perl.org_src_tobyink_acme-rundoc-0.001_word-lib_hello_world.docm",
@@ -141,17 +138,7 @@ public class TestAllFiles {
         "spreadsheet/clusterfuzz-testcase-minimized-POIXSSFFuzzer-5089447305609216.xlsx",
         "spreadsheet/clusterfuzz-testcase-minimized-POIXSSFFuzzer-5089447305609216.xlsx",
         "spreadsheet/clusterfuzz-testcase-minimized-POIXSSFFuzzer-5089447305609216.xlsx",
-
-        // exclude files failing on windows nodes, because of limited JCE policies
-        "document/bug53475-password-is-pass.docx",
-        "poifs/60320-protected.xlsx",
-        "poifs/protected_sha512.xlsx",
-        "poifs/60320-protected.xlsx",
-        "poifs/protected_sha512.xlsx",
-
-        // corrupt file
-        "spreadsheet/duplicate-filename.xlsx"
-    };
+    });
 
     private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
             "document/truncated62886.docx"
@@ -343,5 +330,12 @@ public class TestAllFiles {
 
     private static boolean isJava8() {
         return System.getProperty("java.version").startsWith("1.8");
+    }
+
+    private static String[] concat(String[] a, String[] b) {
+        String[] result = new String[a.length + b.length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
     }
 }
