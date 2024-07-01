@@ -188,7 +188,6 @@ public class XSSFFileHandler extends SpreadsheetHandler {
         EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/sample-beta.xlsx");
 
         // corrupt/invalid
-        EXPECTED_ADDITIONAL_FAILURES.add("spreadsheet/duplicate-filename.xlsx");
         EXPECTED_ADDITIONAL_FAILURES.add("openxml4j/invalid.xlsx");
     }
 
@@ -204,7 +203,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
             XLSX2CSV.main(new String[]{file.getAbsolutePath()});
             ExcelComparator.main(new String[]{file.getAbsolutePath(), file.getAbsolutePath()});
 
-            assertFalse( EXPECTED_ADDITIONAL_FAILURES.contains(testFile), "Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!" );
+            assertFalse(EXPECTED_ADDITIONAL_FAILURES.contains(testFile), "Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!" );
 
         } catch (OLE2NotOfficeXmlFileException e) {
             // we have some files that are not actually OOXML and thus cannot be tested here

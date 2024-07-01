@@ -96,6 +96,9 @@ public class TestAllFiles {
         "poifs/protected_sha512.xlsx",
         "poifs/60320-protected.xlsx",
         "poifs/protected_sha512.xlsx",
+
+        // corrupt file
+        "spreadsheet/duplicate-filename.xlsx"
     };
 
     // cheap workaround of skipping the few problematic files
@@ -145,6 +148,9 @@ public class TestAllFiles {
         "poifs/protected_sha512.xlsx",
         "poifs/60320-protected.xlsx",
         "poifs/protected_sha512.xlsx",
+
+        // corrupt file
+        "spreadsheet/duplicate-filename.xlsx"
     };
 
     private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
