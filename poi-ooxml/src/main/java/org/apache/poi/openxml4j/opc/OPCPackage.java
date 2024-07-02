@@ -326,7 +326,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
             pack = new ZipPackage(in, PackageAccess.READ_WRITE);
         } catch (InvalidZipException e) {
             throw new InvalidFormatException(e.getMessage(), e);
-        }        try {
+        }
+        try {
             if (pack.partList == null) {
                 pack.getParts();
             }
