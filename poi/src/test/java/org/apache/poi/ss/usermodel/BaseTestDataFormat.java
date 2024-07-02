@@ -38,7 +38,7 @@ public abstract class BaseTestDataFormat {
 
     protected static final String POUND_FMT = "\"\u00a3\"#,##0;[Red]\\-\"\u00a3\"#,##0";
 
-    private final ITestDataProvider _testDataProvider;
+    protected final ITestDataProvider _testDataProvider;
 
     protected BaseTestDataFormat(ITestDataProvider testDataProvider) {
         _testDataProvider = testDataProvider;

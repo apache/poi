@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -148,7 +149,7 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
             assertEquals("TRUE", df.formatCellValue(cell));
 
             CellStyle cellStyle = wb.createCellStyle();
-            cellStyle.setDataFormat((short)14);
+            cellStyle.setDataFormat((short) 14);
             cell.setCellStyle(cellStyle);
             cell.setCellValue(new Date(234092383));
             assertEquals("1/3/70", df.formatCellValue(cell));
@@ -159,5 +160,19 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
             */
         }
     }
-    
+
+    @Test
+    public void testGitHub650() throws IOException {
+        // https://github.com/apache/poi/pull/650
+        DataFormatter df = new DataFormatter();
+
+        try (Workbook wb = _testDataProvider.openSampleWorkbook("decimal-format.xlsx")) {
+            Sheet sheet = wb.getSheetAt(0);
+            Cell cell1 = sheet.getRow(0).getCell(0);
+            assertEquals("1.01", df.formatCellValue(cell1));
+            Cell cell2 = sheet.getRow(1).getCell(0);
+            assertEquals("1.00", df.formatCellValue(cell2));
+        }
+    }
+
 }
