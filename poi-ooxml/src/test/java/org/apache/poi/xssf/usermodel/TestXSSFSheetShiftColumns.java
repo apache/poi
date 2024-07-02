@@ -59,7 +59,7 @@ class TestXSSFSheetShiftColumns extends BaseTestSheetShiftColumns {
                     row.createCell(j).setCellValue(value);
                 }
             }
-            final int firstRow = 1; // works with 0, but fails with 1!
+            final int firstRow = 1; // worked with 0, but failed with 1!
             final int secondRow = firstRow + 1;
             sheet.addMergedRegion(new CellRangeAddress(firstRow, secondRow, 0, 0));
             sheet.addMergedRegion(new CellRangeAddress(firstRow, firstRow, 1, 2));
