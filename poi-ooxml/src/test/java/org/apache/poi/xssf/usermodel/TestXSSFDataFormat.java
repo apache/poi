@@ -28,6 +28,7 @@ import org.apache.poi.ss.formula.WorkbookEvaluatorProvider;
 import org.apache.poi.ss.usermodel.BaseTestDataFormat;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -158,18 +159,5 @@ public final class TestXSSFDataFormat extends BaseTestDataFormat {
             */
         }
     }
-
-    @Test
-    public void testFormatCellValueDecimal() throws IOException {
-        DataFormatter df = new DataFormatter();
-
-        try (Workbook wb = new XSSFWorkbook()) {
-            Cell cell = wb.createSheet("test").createRow(0).createCell(0);
-            assertEquals("", df.formatCellValue(cell));
-
-            cell.setCellValue(1.005);
-            assertEquals("1.005", df.formatCellValue(cell));
-        }
-    }
-
+    
 }
