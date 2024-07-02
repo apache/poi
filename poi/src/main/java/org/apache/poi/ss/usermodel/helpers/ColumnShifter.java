@@ -105,16 +105,16 @@ public abstract class ColumnShifter extends BaseRowColShifter {
         // build a range of the columns that are overwritten, i.e. the target-area, but without
         // columns that are moved along
         final CellRangeAddress overwrite;
-        if(n > 0) {
+        if (n > 0) {
             // area is moved down => overwritten area is [endColumn + n - movedColumns, endColumn + n]
             final int firstCol = Math.max(endColumn + 1, endColumn + n - movedColumns);
             final int lastCol = endColumn + n;
-            overwrite = new CellRangeAddress(0, 0, firstCol, lastCol);
+            overwrite = new CellRangeAddress(merged.getFirstRow(), merged.getLastRow(), firstCol, lastCol);
         } else {
             // area is moved up => overwritten area is [startColumn + n, startColumn + n + movedColumns]
             final int firstCol = startColumn + n;
             final int lastCol = Math.min(startColumn - 1, startColumn + n + movedColumns);
-            overwrite = new CellRangeAddress(0, 0, firstCol, lastCol);
+            overwrite = new CellRangeAddress(merged.getFirstRow(), merged.getLastRow(), firstCol, lastCol);
         }
 
         // if the merged-region and the overwritten area intersect, we need to remove it
@@ -122,12 +122,12 @@ public abstract class ColumnShifter extends BaseRowColShifter {
     }
 
     public void shiftColumns(int firstShiftColumnIndex, int lastShiftColumnIndex, int step){
-        if(step > 0){
+        if (step > 0) {
             for (Row row : sheet)
                 if(row != null)
                     row.shiftCellsRight(firstShiftColumnIndex, lastShiftColumnIndex, step);
         }
-        else if(step < 0){
+        else if (step < 0) {
             for (Row row : sheet)
                 if(row != null)
                     row.shiftCellsLeft(firstShiftColumnIndex, lastShiftColumnIndex, -step);
