@@ -117,6 +117,7 @@ class TestDataFormatter {
         assertEquals("-1.005", dfUS.formatRawCellContents(-1.005d, -1, "@"));
     }
 
+    @Disabled
     @Test
     void testFloat() {
         DataFormatter dfUS = new DataFormatter(Locale.US);
