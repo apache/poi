@@ -1070,6 +1070,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
 
             if (sheetname.equalsIgnoreCase(name)) {
                 retval = _sheets.get(k);
+                break;
             }
         }
         return retval;
