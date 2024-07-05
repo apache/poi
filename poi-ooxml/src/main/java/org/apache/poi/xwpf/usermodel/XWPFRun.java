@@ -399,6 +399,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         preserveSpaces(t);
     }
 
+    public void appendText(String value) {
+        setText(value, run.getTList().size());
+    }
     /**
      * Whether the italic property should be applied to all non-complex script
      * characters in the contents of this run when displayed in a document.
@@ -1582,6 +1585,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             text.append(footnoteRef);
         }
     }
+
+
 
     /**
      * @see <a href="http://msdn.microsoft.com/en-us/library/ff533743(v=office.12).aspx">[MS-OI29500] Run Fonts</a>

@@ -784,6 +784,22 @@ public final class TestXWPFParagraph {
         }
     }
 
+    @Test
+    void testSearchText() throws Exception {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFParagraph paragraph = doc.createParagraph();
+        paragraph.createRun().setText("abc");
+        paragraph.createRun().setText("de");
+        paragraph.createRun().setText("f");
+        paragraph.createRun().setText("g");
+        TextSegment result = paragraph.searchText("cdefg", new PositionInParagraph());
+        assertEquals(0, result.getBeginRun());
+        assertEquals(3, result.getEndRun());
+        assertEquals(0, result.getBeginText());
+        assertEquals(0, result.getEndText());
+        assertEquals(2, result.getBeginChar());
+        assertEquals(0, result.getEndChar());
+    }
     /**
      * Tests for numbered lists
      *
@@ -873,5 +889,6 @@ public final class TestXWPFParagraph {
             // TODO Shouldn't we use XWPFNumbering or similar here?
             // TODO Make it easier to change
         }
+
     }
 }
