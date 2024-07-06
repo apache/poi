@@ -539,12 +539,17 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             }
             final int firstCol = 1;
             final int secondCol = firstCol + 1;
+            final int thirdCol = secondCol + 1;
             sheet.addMergedRegion(new CellRangeAddress(0, 0, firstCol, secondCol));
             sheet.addMergedRegion(new CellRangeAddress(1, 2, firstCol, firstCol));
-            sheet.addMergedRegion(new CellRangeAddress(3, 3, firstCol, secondCol));
+            sheet.addMergedRegion(new CellRangeAddress(3, 3, secondCol, thirdCol));
             assertEquals(3, sheet.getNumMergedRegions());
             sheet.shiftColumns(2, 5, -1);
-            // assertEquals(2, sheet.getNumMergedRegions());
+            // only the 3rd merged region should remain
+            assertEquals(1, sheet.getNumMergedRegions());
+            CellRangeAddress mr = sheet.getMergedRegion(0);
+            CellRangeAddress expectedMR = new CellRangeAddress(3, 3, secondCol - 1, thirdCol - 1);
+            assertEquals(expectedMR, mr);
         }
     }
 }
