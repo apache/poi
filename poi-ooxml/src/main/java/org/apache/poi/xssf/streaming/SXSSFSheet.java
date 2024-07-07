@@ -379,7 +379,6 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         _sh.setDefaultRowHeightInPoints(height);
     }
 
-
     /**
      * Get VML drawing for this sheet (aka 'legacy' drawing).
      *
@@ -1452,6 +1451,33 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         _sh.setDefaultColumnStyle(column, style);
     }
 
+    /**
+     * Set the extra width added to the best-fit column width (default 0.0).
+     *
+     * @param arbitraryExtraWidth the extra width added to the best-fit column width
+     * @throws IllegalStateException if autoSizeColumnTracker failed to initialize (possibly due to fonts not being installed in your OS)
+     * @since 5.3.1
+     */
+    public void setArbitraryExtraWidth(final double arbitraryExtraWidth) {
+        if (_autoSizeColumnTracker == null) {
+            throw new IllegalStateException("Cannot trackColumnForAutoSizing because autoSizeColumnTracker failed to initialize (possibly due to fonts not being installed in your OS)");
+        }
+        _autoSizeColumnTracker.setArbitraryExtraWidth(arbitraryExtraWidth);
+    }
+
+    /**
+     * Get the extra width added to the best-fit column width.
+     *
+     * @return the extra width added to the best-fit column width
+     * @throws IllegalStateException if autoSizeColumnTracker failed to initialize (possibly due to fonts not being installed in your OS)
+     * @since 5.3.1
+     */
+    public double getArbitraryExtraWidth() {
+        if (_autoSizeColumnTracker == null) {
+            throw new IllegalStateException("Cannot trackColumnForAutoSizing because autoSizeColumnTracker failed to initialize (possibly due to fonts not being installed in your OS)");
+        }
+        return _autoSizeColumnTracker.getArbitraryExtraWidth();
+    }
 
     /**
      * Track a column in the sheet for auto-sizing.

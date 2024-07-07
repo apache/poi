@@ -60,6 +60,8 @@ import org.apache.poi.util.Internal;
     // Using a HashSet instead of a TreeSet because we don't care about order.
     private final Set<Integer> untrackedColumns = new HashSet<>();
     private boolean trackAllColumns;
+    // arbitraryExtraWidth is the extra width added to the best-fit column width (since POI 5.3.1)
+    private double arbitraryExtraWidth = 0.0d;
 
     /**
      * Tuple to store the column widths considering and not considering merged cells
@@ -116,7 +118,27 @@ import org.apache.poi.util.Internal;
         // If sheet needs to be saved, use a java.lang.ref.WeakReference to avoid garbage collector gridlock.
         defaultCharWidth = SheetUtil.getDefaultCharWidthAsFloat(sheet.getWorkbook());
     }
-    
+
+    /**
+     * Set the extra width added to the best-fit column width (default 0.0).
+     *
+     * @param arbitraryExtraWidth the extra width added to the best-fit column width
+     * @since 5.3.1
+     */
+    public void setArbitraryExtraWidth(final double arbitraryExtraWidth) {
+        this.arbitraryExtraWidth = arbitraryExtraWidth;
+    }
+
+    /**
+     * Get the extra width added to the best-fit column width.
+     *
+     * @return the extra width added to the best-fit column width
+     * @since 5.3.1
+     */
+    public double getArbitraryExtraWidth() {
+        return arbitraryExtraWidth;
+    }
+
     /**
      * Get the currently tracked columns, naturally ordered.
      * Note if all columns are tracked, this will only return the columns that have been explicitly or implicitly tracked,
@@ -369,8 +391,10 @@ import org.apache.poi.util.Internal;
      * @since 3.14beta1
      */
     private void updateColumnWidth(final Cell cell, final ColumnWidthPair pair) {
-        final double unmergedWidth = SheetUtil.getCellWidth(cell, defaultCharWidth, dataFormatter, false);
-        final double mergedWidth = SheetUtil.getCellWidth(cell, defaultCharWidth, dataFormatter, true);
+        final double unmergedWidth =
+                SheetUtil.getCellWidth(cell, defaultCharWidth, dataFormatter, false) + arbitraryExtraWidth;
+        final double mergedWidth =
+                SheetUtil.getCellWidth(cell, defaultCharWidth, dataFormatter, true) + arbitraryExtraWidth;
         pair.setMaxColumnWidths(unmergedWidth, mergedWidth);
     }
 }
