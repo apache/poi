@@ -19,6 +19,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -444,34 +445,34 @@ public final class TestXWPFParagraph {
         assertEquals(4, paragraph.getRuns().size());
         assertEquals(5, paragraph.getIRuns().size());
 
-        assertTrue(paragraph.getRuns().get(1) instanceof XWPFHyperlinkRun);
-        assertTrue(paragraph.getRuns().get(2) instanceof XWPFHyperlinkRun);
-        assertTrue(paragraph.getRuns().get(3) instanceof XWPFFieldRun);
+        assertInstanceOf(XWPFHyperlinkRun.class, paragraph.getRuns().get(1));
+        assertInstanceOf(XWPFHyperlinkRun.class, paragraph.getRuns().get(2));
+        assertInstanceOf(XWPFFieldRun.class, paragraph.getRuns().get(3));
 
-        assertTrue(paragraph.getIRuns().get(1) instanceof XWPFSDT);
-        assertTrue(paragraph.getIRuns().get(2) instanceof XWPFHyperlinkRun);
+        assertInstanceOf(XWPFSDT.class, paragraph.getIRuns().get(1));
+        assertInstanceOf(XWPFHyperlinkRun.class, paragraph.getIRuns().get(2));
 
         paragraph.removeRun(1);
         assertEquals(3, paragraph.getRuns().size());
-        assertTrue(paragraph.getRuns().get(1) instanceof XWPFHyperlinkRun);
-        assertTrue(paragraph.getRuns().get(2) instanceof XWPFFieldRun);
+        assertInstanceOf(XWPFHyperlinkRun.class, paragraph.getRuns().get(1));
+        assertInstanceOf(XWPFFieldRun.class, paragraph.getRuns().get(2));
 
-        assertTrue(paragraph.getIRuns().get(1) instanceof XWPFSDT);
-        assertTrue(paragraph.getIRuns().get(2) instanceof XWPFHyperlinkRun);
+        assertInstanceOf(XWPFSDT.class, paragraph.getIRuns().get(1));
+        assertInstanceOf(XWPFHyperlinkRun.class, paragraph.getIRuns().get(2));
 
         paragraph.removeRun(1);
         assertEquals(2, paragraph.getRuns().size());
-        assertTrue(paragraph.getRuns().get(1) instanceof XWPFFieldRun);
+        assertInstanceOf(XWPFFieldRun.class, paragraph.getRuns().get(1));
 
-        assertTrue(paragraph.getIRuns().get(1) instanceof XWPFSDT);
-        assertTrue(paragraph.getIRuns().get(2) instanceof XWPFFieldRun);
+        assertInstanceOf(XWPFSDT.class, paragraph.getIRuns().get(1));
+        assertInstanceOf(XWPFFieldRun.class, paragraph.getIRuns().get(2));
 
         paragraph.removeRun(0);
         assertEquals(1, paragraph.getRuns().size());
-        assertTrue(paragraph.getRuns().get(0) instanceof XWPFFieldRun);
+        assertInstanceOf(XWPFFieldRun.class, paragraph.getRuns().get(0));
 
-        assertTrue(paragraph.getIRuns().get(0) instanceof XWPFSDT);
-        assertTrue(paragraph.getIRuns().get(1) instanceof XWPFFieldRun);
+        assertInstanceOf(XWPFSDT.class, paragraph.getIRuns().get(0));
+        assertInstanceOf(XWPFFieldRun.class, paragraph.getIRuns().get(1));
 
         XWPFRun newRun = paragraph.insertNewRun(0);
         assertEquals(2, paragraph.getRuns().size());
@@ -873,5 +874,54 @@ public final class TestXWPFParagraph {
             // TODO Shouldn't we use XWPFNumbering or similar here?
             // TODO Make it easier to change
         }
+    }
+
+    @Test
+    void testRunIsEmpty() throws Exception {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFParagraph p = doc.createParagraph();
+            assertTrue(p.runsIsEmpty());
+            p.createRun().setText("abc");
+            assertFalse(p.runsIsEmpty());
+        }
+    }
+
+    @Test
+    void testSearchText() throws Exception {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFParagraph paragraph = doc.createParagraph();
+            paragraph.createRun().setText("abc");
+            paragraph.createRun().setText("de");
+            paragraph.createRun().setText("f");
+            paragraph.createRun().setText("g");
+            checkSearchText(paragraph, "a", 0, 0, 0, 0, 0, 0);
+            checkSearchText(paragraph, "b", 0, 0, 0, 0, 1, 1);
+            checkSearchText(paragraph, "ab", 0, 0, 0, 0, 0, 1);
+            checkSearchText(paragraph, "abc", 0, 0, 0, 0, 0, 2);
+            checkSearchText(paragraph, "abcd", 0, 1, 0, 0, 0, 0);
+            checkSearchText(paragraph, "abcde", 0, 1, 0, 0, 0, 1);
+            checkSearchText(paragraph, "bcde", 0, 1, 0, 0, 1, 1);
+            checkSearchText(paragraph, "bcdef", 0, 2, 0, 0, 1, 0);
+            checkSearchText(paragraph, "bcdefg", 0, 3, 0, 0, 1, 0);
+            checkSearchText(paragraph, "cdefg", 0, 3, 0, 0, 2, 0);
+            checkSearchText(paragraph, "defg", 1, 3, 0, 0, 0, 0);
+            checkSearchText(paragraph, "d", 1, 1, 0, 0, 0, 0);
+            checkSearchText(paragraph, "de", 1, 1, 0, 0, 0, 1);
+            checkSearchText(paragraph, "ef", 1, 2, 0, 0, 1, 0);
+            checkSearchText(paragraph, "f", 2, 2, 0, 0, 0, 0);
+            checkSearchText(paragraph, "fg", 2, 3, 0, 0, 0, 0);
+            checkSearchText(paragraph, "g", 3, 3, 0, 0, 0, 0);
+        }
+    }
+
+    private static void checkSearchText(XWPFParagraph paragraph, String search, int beginRun, int endRun, int beginText, int endText,
+            int beginChar, int endChar) {
+        TextSegment result = paragraph.searchText(search, new PositionInParagraph());
+        assertEquals(beginRun, result.getBeginRun(), "beginRun");
+        assertEquals(endRun, result.getEndRun(), "endRun");
+        assertEquals(beginText, result.getBeginText(), "beginText");
+        assertEquals(endText, result.getEndText(), "endText");
+        assertEquals(beginChar, result.getBeginChar(), "beginChar");
+        assertEquals(endChar, result.getEndChar(), "endChar");
     }
 }
