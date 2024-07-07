@@ -1055,24 +1055,25 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
     }
 
     /**
-     * Get sheet with the given name (case insensitive match)
+     * Get sheet with the given name (case insensitive match).
+     *
+     * If there are multiple matches, the first sheet from the list
+     * of sheets is returned.
      *
      * @param name of the sheet
      * @return HSSFSheet with the name provided or {@code null} if it does not exist
      */
-
     @Override
     public HSSFSheet getSheet(String name) {
-        HSSFSheet retval = null;
-
         for (int k = 0; k < _sheets.size(); k++) {
             String sheetname = workbook.getSheetName(k);
 
             if (sheetname.equalsIgnoreCase(name)) {
-                retval = _sheets.get(k);
+                return _sheets.get(k);
             }
         }
-        return retval;
+
+        return null;
     }
 
     /**

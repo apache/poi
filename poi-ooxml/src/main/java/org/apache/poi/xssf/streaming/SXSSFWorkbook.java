@@ -808,6 +808,9 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * Get sheet with the given name
      *
+     * If there are multiple matches, the first sheet from the list
+     * of sheets is returned.
+     *
      * @param name of the sheet
      * @return Sheet with the name provided or <code>null</code> if it does not exist
      */

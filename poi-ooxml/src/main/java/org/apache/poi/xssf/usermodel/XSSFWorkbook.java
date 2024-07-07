@@ -1208,6 +1208,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     /**
      * Get sheet with the given name (case insensitive match)
      *
+     * If there are multiple matches, the first sheet from the list
+     * of sheets is returned.
+     *
      * @param name of the sheet
      * @return XSSFSheet with the name provided or {@code null} if it does not exist
      */
