@@ -1476,6 +1476,15 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
+    void testDuplicateFileCaseInsensitiveReadAsStream() {
+        assertThrows(InvalidZipException.class, () -> {
+            try (XSSFWorkbook wb = new XSSFWorkbook(openSampleFileStream("duplicate-filename-case-insensitive.xlsx"))) {
+                // expect exception here
+            }
+        });
+    }
+
+    @Test
     void testWorkbookCloseClosesInputStream() throws Exception {
         try (TrackingInputStream stream = new TrackingInputStream(
                 HSSFTestDataSamples.openSampleFileStream("github-321.xlsx"))) {

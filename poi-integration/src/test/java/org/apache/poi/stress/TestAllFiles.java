@@ -99,6 +99,7 @@ public class TestAllFiles {
 
         // corrupt file
         "spreadsheet/duplicate-filename.xlsx",
+        "spreadsheet/duplicate-filename-case-insensitive.xlsx",
         "document/clusterfuzz-testcase-minimized-POIXWPFFuzzer-5166796835258368.docx",
     };
 
