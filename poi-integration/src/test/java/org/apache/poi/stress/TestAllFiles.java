@@ -98,6 +98,7 @@ public class TestAllFiles {
         "poifs/protected_sha512.xlsx",
 
         // corrupt file
+        "document/unicode-path.docx",
         "spreadsheet/duplicate-filename.xlsx",
         "spreadsheet/duplicate-filename-case-insensitive.xlsx",
         "document/clusterfuzz-testcase-minimized-POIXWPFFuzzer-5166796835258368.docx",

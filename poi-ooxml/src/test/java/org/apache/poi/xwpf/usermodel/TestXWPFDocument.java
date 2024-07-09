@@ -35,6 +35,7 @@ import java.util.Optional;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.PictureType;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ooxml.TrackingInputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -502,6 +503,18 @@ public final class TestXWPFDocument {
             }
             assertFalse(stream.isClosed(), "stream was not closed?");
         }
+    }
+
+    @Test
+    void testUnicodePathDocWithCorruptZipEntry() {
+        // this is a file that we do not want to be able to parse, as it contains a corrupt zip entry
+        POIXMLException ex = assertThrows(POIXMLException.class, () -> {
+            try (XWPFDocument doc = new XWPFDocument(
+                    POIDataSamples.getDocumentInstance().openResourceAsStream("unicode-path.docx"))) {
+                // expect exception here
+            }
+        });
+        assertEquals("InvalidFormatException", ex.getCause().getClass().getSimpleName());
     }
 
     @Test
