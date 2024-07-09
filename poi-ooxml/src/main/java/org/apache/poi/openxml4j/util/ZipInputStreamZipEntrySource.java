@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -90,6 +91,8 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
      *  into memory, and don't close (since POI 4.0.1) the source stream.
      * We'll then eat lots of memory, but be able to
      *  work with the entries at-will.
+     * @throws IOException if an error occurs while reading the zip entries
+     * @throws InvalidZipException if the input file contains an entry with an empty name or more than 1 entry with the same name
      * @see #setThresholdBytesForTempFiles
      */
     public ZipInputStreamZipEntrySource(ZipArchiveThresholdInputStream inp) throws IOException {
@@ -100,8 +103,12 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
                 break;
             }
             String name = zipEntry.getName();
+            if (name == null || name.isEmpty()) {
+                throw new InvalidZipException("Input file contains an entry with an empty name");
+            }
+            name = name.toLowerCase(Locale.ROOT);
             if (filenames.contains(name)) {
-                throw new InvalidZipException("Input file contains more than 1 entry with the name " + name);
+                throw new InvalidZipException("Input file contains more than 1 entry with the name " + zipEntry.getName());
             }
             filenames.add(name);
             zipEntries.put(name, new ZipArchiveFakeEntry(zipEntry, inp));

@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -257,9 +258,14 @@ public class ZipSecureFile extends ZipFile {
         final Enumeration<ZipArchiveEntry> en = getEntries();
         final Set<String> filenames = new HashSet<>();
         while (en.hasMoreElements()) {
-            String name = en.nextElement().getName();
+            final ZipArchiveEntry entry = en.nextElement();
+            String name = entry.getName();
+            if (name == null || name.isEmpty()) {
+                throw new InvalidZipException("Input file contains an entry with an empty name");
+            }
+            name = name.toLowerCase(Locale.ROOT);
             if (filenames.contains(name)) {
-                throw new InvalidZipException("Input file contains more than 1 entry with the name " + name);
+                throw new InvalidZipException("Input file contains more than 1 entry with the name " + entry.getName());
             }
             filenames.add(name);
         }
