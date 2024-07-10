@@ -67,7 +67,7 @@ public final class ZipPartMarshaller implements PartMarshaller {
             throws OpenXML4JException {
         if (!(os instanceof ZipArchiveOutputStream)) {
             LOG.atError().log("Unexpected class {}", os.getClass().getName());
-            throw new OpenXML4JException("ZipOutputStream expected !");
+            throw new OpenXML4JException("ZipArchiveOutputStream expected !");
             // Normally should happen only in development phase, so just throw
             // exception
         }
