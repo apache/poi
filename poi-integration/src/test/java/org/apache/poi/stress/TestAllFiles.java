@@ -97,11 +97,8 @@ public class TestAllFiles {
         "poifs/60320-protected.xlsx",
         "poifs/protected_sha512.xlsx",
 
-        // corrupt file
-        "document/unicode-path.docx",
-        "spreadsheet/duplicate-filename.xlsx",
-        "spreadsheet/duplicate-filename-case-insensitive.xlsx",
-        "document/clusterfuzz-testcase-minimized-POIXWPFFuzzer-5166796835258368.docx",
+        // NOTE: Expected failures should usually be added in file "stress.xls" instead
+        // of being listed here in order to also verify the expected exception details!
     };
 
     // cheap workaround of skipping the few problematic files
