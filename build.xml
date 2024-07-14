@@ -383,7 +383,7 @@ under the License.
     <property name="rat.report" value="${rat.reportdir}/report.txt"/>
 
     <!-- build and distro settings -->
-    <property name="jar.name" value="poi"/>
+    <property name="jar.name" value="apache-poi"/>
     <property name="build.site" location="build/site"/>
     <property name="javadocs.report.dir" location="${build.site}/apidocs/dev"/>
     <property name="dist.dir" location="build/dist"/>
