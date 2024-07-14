@@ -73,9 +73,9 @@ public abstract class XDGFSheet {
 
             for (SectionType section: sheet.getSectionArray()) {
                 String name = section.getN();
-                if (name.equals("Geometry")) {
+                if ("Geometry".equals(name)) {
                     _geometry.put(section.getIX(), new GeometrySection(section, this));
-                } else if (name.equals("Character")) {
+                } else if ("Character".equals(name)) {
                     _character = new CharacterSection(section, this);
                 } else {
                     _sections.put(name, XDGFSection.load(section, this));
