@@ -516,6 +516,9 @@ public final class RecordInputStream implements LittleEndianInput {
      */
     @Internal
     public void mark(int readlimit) {
+        if (!(_dataInput instanceof InputStream)) {
+            throw new IllegalStateException("Cannot use mark for dataInput of type " + _dataInput.getClass() + ", need an InputStream");
+        }
         ((InputStream)_dataInput).mark(readlimit);
         _markedDataOffset = _currentDataOffset;
     }
