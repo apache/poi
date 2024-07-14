@@ -17,8 +17,10 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.usermodel.XSSFVMLDrawing.QNAME_VMLDRAWING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -60,13 +62,13 @@ class TestXSSFVMLDrawing {
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         List<XmlObject> items = vml.getItems();
         assertEquals(2, items.size());
-        assertTrue(items.get(0) instanceof CTShapeLayout);
+        assertInstanceOf(CTShapeLayout.class, items.get(0));
         CTShapeLayout layout = (CTShapeLayout)items.get(0);
         assertSame(STExt.EDIT, layout.getExt());
         assertSame(STExt.EDIT, layout.getIdmap().getExt());
         assertEquals("1", layout.getIdmap().getData());
 
-        assertTrue(items.get(1) instanceof CTShapetype);
+        assertInstanceOf(CTShapetype.class, items.get(1));
         CTShapetype type = (CTShapetype)items.get(1);
         assertEquals("21600,21600", type.getCoordsize());
         assertEquals(202.0f, type.getSpt(), 0);
@@ -110,9 +112,9 @@ class TestXSSFVMLDrawing {
         vml2.read(out.toInputStream());
         List<XmlObject> items2 = vml2.getItems();
         assertEquals(3, items2.size());
-        assertTrue(items2.get(0) instanceof CTShapeLayout);
-        assertTrue(items2.get(1) instanceof CTShapetype);
-        assertTrue(items2.get(2) instanceof CTShape);
+        assertInstanceOf(CTShapeLayout.class, items2.get(0));
+        assertInstanceOf(CTShapetype.class, items2.get(1));
+        assertInstanceOf(CTShape.class, items2.get(2));
     }
 
     @Test
@@ -187,7 +189,8 @@ class TestXSSFVMLDrawing {
 
     @Test
     void bug65061_InvalidXmlns() throws IOException, XmlException {
-        // input hasn't no <?xml... declaration - as in the sample file
+        // input has no <?xml... declaration - as in the sample file
+        //noinspection HttpUrlsUsage
         String input =
             "<xml xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:x=\"urn:schemas-microsoft-com:office:excel\">\n" +
             "<v:shapetype id=\"_x0000_t202\" coordsize=\"21600,21600\" path=\"m,l,21600r21600,l21600,xe\" o:spt=\"202\">\n" +
@@ -206,8 +209,15 @@ class TestXSSFVMLDrawing {
         List<XmlObject> objs = vml.getItems();
         assertEquals(1, objs.size());
         XmlObject xst = objs.get(0);
-        assertTrue(xst instanceof CTShapetypeImpl);
+        assertInstanceOf(CTShapetypeImpl.class, xst);
         CTShapetype st = (CTShapetype)xst;
         assertSame(STStrokeJoinStyle.MITER, st.getStrokeArray(0).getJoinstyle());
+    }
+
+    @Test
+    void testInvalidFile() throws IOException {
+        try (XSSFWorkbook workbook = openSampleWorkbook("clusterfuzz-testcase-minimized-POIXSSFFuzzer-5089447305609216.xlsx")) {
+            assertNotNull(workbook);
+        }
     }
 }

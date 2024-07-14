@@ -151,6 +151,11 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
             " xmlns=\""+NS_SPREADSHEETML+"\"", "")
             , xopt);
 
+        // ignore empty XML content in the stream which indicates severely broken parts in the workbook-file
+        if (root.getXml() == null) {
+            return;
+        }
+
         try (XmlCursor cur = root.getXml().newCursor()) {
             for (boolean found = cur.toFirstChild(); found; found = cur.toNextSibling()) {
                 XmlObject xo = cur.getObject();
