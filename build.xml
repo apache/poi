@@ -2038,6 +2038,13 @@ under the License.
             unless="main.docs.notRequired" description="Builds the HTML pages of the POI website">
         <echo message="Using Apache Forrest from ${env.FORREST_HOME}"/>
 
+        <echo message="Adjusting http -> https in forrset itself"/>
+        <replace dir="${env.FORREST_HOME}"
+                 token="'http://'"
+                 value="'https://'"
+                 summary="true"
+                 includes="**/*.xsl"/>
+
         <exec executable="${env.FORREST_HOME}/bin/forrest" osfamily="unix"/>
         <exec executable="cmd" osfamily="windows">
             <arg value="/c"/>
