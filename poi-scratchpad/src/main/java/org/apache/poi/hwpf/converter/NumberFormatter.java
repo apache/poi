@@ -41,22 +41,20 @@ public final class NumberFormatter {
     private static final int T_UPPER_LETTER = 3;
     private static final int T_UPPER_ROMAN = 1;
 
-    public static String getNumber( int num, int style )
-    {
-        switch ( style )
-        {
-        case T_UPPER_ROMAN:
-            return toRoman( num ).toUpperCase(Locale.ROOT);
-        case T_LOWER_ROMAN:
-            return toRoman( num );
-        case T_UPPER_LETTER:
-            return toLetters( num ).toUpperCase(Locale.ROOT);
-        case T_LOWER_LETTER:
-            return toLetters( num );
-        case T_ARABIC:
-        case T_ORDINAL:
-        default:
-            return String.valueOf( num );
+    public static String getNumber( int num, int style ) {
+        switch ( style ) {
+            case T_UPPER_ROMAN:
+                return toRoman( num ).toUpperCase(Locale.ROOT);
+            case T_LOWER_ROMAN:
+                return toRoman( num );
+            case T_UPPER_LETTER:
+                return toLetters( num ).toUpperCase(Locale.ROOT);
+            case T_LOWER_LETTER:
+                return toLetters( num );
+            case T_ARABIC:
+            case T_ORDINAL:
+            default:
+                return String.valueOf( num );
         }
     }
 
@@ -81,19 +79,16 @@ public final class NumberFormatter {
         return new String(buf, charPos, (buf.length - charPos));
     }
 
-    private static String toRoman( int number )
-    {
+    private static String toRoman( int number ) {
         if ( number <= 0 )
             throw new IllegalArgumentException( "Unsupported number: " + number );
 
         StringBuilder result = new StringBuilder();
 
-        for ( int i = 0; i < ROMAN_LETTERS.length; i++ )
-        {
+        for ( int i = 0; i < ROMAN_LETTERS.length; i++ ) {
             String letter = ROMAN_LETTERS[i];
             int value = ROMAN_VALUES[i];
-            while ( number >= value )
-            {
+            while ( number >= value ) {
                 number -= value;
                 result.append( letter );
             }
