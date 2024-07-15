@@ -40,6 +40,7 @@ import org.apache.poi.hwpf.usermodel.TableRow;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.IOUtils;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -49,14 +50,24 @@ import org.w3c.dom.NodeList;
 import static org.apache.logging.log4j.util.Unbox.box;
 
 @Beta
-public class AbstractWordUtils
-{
+public class AbstractWordUtils {
     static final String EMPTY = "";
 
     private static final Logger LOG = LogManager.getLogger(AbstractWordUtils.class);
 
     public static final float TWIPS_PER_INCH = 1440.0f;
     public static final int TWIPS_PER_PT = 20;
+
+    /**
+     * Limit the amount of main memory which can be used for bullet-information
+     *
+     * if this is too small it can be raised via IOUtils.setByteArrayMaxOverride()
+     *
+     * the chosen limit is fairly arbitrarily, but should allow almost all valid
+     * documents to be processed, but should prevent from causing unexpected high
+     * memory allocation with malicious files.
+     */
+    private static final int MAX_BULLET_BUFFER_SIZE = 1_000_000;
 
     /**
      * Creates array of all possible cell edges. In HTML (and FO) cells from
@@ -67,15 +78,12 @@ public class AbstractWordUtils
      *            table to build cell edges array from
      * @return array of cell edges (including leftest one) in twips
      */
-    static int[] buildTableCellEdgesArray( Table table )
-    {
+    static int[] buildTableCellEdgesArray( Table table ) {
         Set<Integer> edges = new TreeSet<>();
 
-        for ( int r = 0; r < table.numRows(); r++ )
-        {
+        for ( int r = 0; r < table.numRows(); r++ ) {
             TableRow tableRow = table.getRow( r );
-            for ( int c = 0; c < tableRow.numCells(); c++ )
-            {
+            for ( int c = 0; c < tableRow.numCells(); c++ ) {
                 TableCell tableCell = tableRow.getCell( c );
 
                 edges.add(tableCell.getLeftEdge());
@@ -85,16 +93,14 @@ public class AbstractWordUtils
 
         Integer[] sorted = edges.toArray(new Integer[0]);
         int[] result = new int[sorted.length];
-        for ( int i = 0; i < sorted.length; i++ )
-        {
+        for ( int i = 0; i < sorted.length; i++ ) {
             result[i] = sorted[i];
         }
 
         return result;
     }
 
-    static boolean canBeMerged( Node node1, Node node2, String requiredTagName )
-    {
+    static boolean canBeMerged( Node node1, Node node2, String requiredTagName ) {
         if ( node1.getNodeType() != Node.ELEMENT_NODE
                 || node2.getNodeType() != Node.ELEMENT_NODE )
             return false;
@@ -112,8 +118,7 @@ public class AbstractWordUtils
         if ( attributes1.getLength() != attributes2.getLength() )
             return false;
 
-        for ( int i = 0; i < attributes1.getLength(); i++ )
-        {
+        for ( int i = 0; i < attributes1.getLength(); i++ ) {
             final Attr attr1 = (Attr) attributes1.item( i );
             final Attr attr2;
             if ( isNotEmpty( attr1.getNamespaceURI() ) )
@@ -130,11 +135,9 @@ public class AbstractWordUtils
         return true;
     }
 
-    static void compactChildNodesR( Element parentElement, String childTagName )
-    {
+    static void compactChildNodesR( Element parentElement, String childTagName ) {
         NodeList childNodes = parentElement.getChildNodes();
-        for ( int i = 0; i < childNodes.getLength() - 1; i++ )
-        {
+        for ( int i = 0; i < childNodes.getLength() - 1; i++ ) {
             Node child1 = childNodes.item( i );
             Node child2 = childNodes.item( i + 1 );
             if ( !AbstractWordUtils.canBeMerged( child1, child2, childTagName ) )
@@ -148,23 +151,19 @@ public class AbstractWordUtils
         }
 
         childNodes = parentElement.getChildNodes();
-        for ( int i = 0; i < childNodes.getLength() - 1; i++ )
-        {
+        for ( int i = 0; i < childNodes.getLength() - 1; i++ ) {
             Node child = childNodes.item( i );
-            if ( child instanceof Element )
-            {
+            if ( child instanceof Element ) {
                 compactChildNodesR( (Element) child, childTagName );
             }
         }
     }
 
-    public static String getBorderType( BorderCode borderCode )
-    {
+    public static String getBorderType( BorderCode borderCode ) {
         if ( borderCode == null )
             throw new IllegalArgumentException( "borderCode is null" );
 
-        switch ( borderCode.getBorderType() )
-        {
+        switch ( borderCode.getBorderType() ) {
             case 3:
             case 10:
             case 11:
@@ -199,8 +198,7 @@ public class AbstractWordUtils
         }
     }
 
-    public static String getBorderWidth( BorderCode borderCode )
-    {
+    public static String getBorderWidth( BorderCode borderCode ) {
         int lineWidth = borderCode.getLineWidth();
         int pt = lineWidth / 8;
         int pte = lineWidth - pt * 8;
@@ -208,47 +206,35 @@ public class AbstractWordUtils
         return pt + "." + 1000 / 8 * pte + "pt";
     }
 
-    public static class NumberingState
-    {
-
+    public static class NumberingState {
         private final Map<String, Integer> levels = new HashMap<>();
-
     }
 
     public static String getBulletText( NumberingState numberingState,
-            HWPFList list, char level )
-    {
+            HWPFList list, char level ) {
         StringBuilder bulletBuffer = new StringBuilder();
         char[] xst = list.getNumberText( level ).toCharArray();
-        for ( char element : xst )
-        {
-            if ( element < 9 )
-            {
+        for ( char element : xst ) {
+            if ( element < 9 ) {
                 int lsid = list.getLsid();
                 final String key = lsid + "#" + ( (int) element );
                 int num;
 
                 if ( !list.isStartAtOverridden( element )
-                        && numberingState.levels.containsKey( key ) )
-                {
+                        && numberingState.levels.containsKey( key ) ) {
                     num = numberingState.levels.get( key );
-                    if ( level == element )
-                    {
+                    if ( level == element ) {
                         num++;
                         numberingState.levels.put( key, num );
                     }
-                }
-                else
-                {
+                } else {
                     num = list.getStartAt( element );
                     numberingState.levels.put( key, num );
                 }
 
-                if ( level == element )
-                {
+                if ( level == element ) {
                     // cleaning states of nested levels to reset numbering
-                    for ( int i = element + 1; i < 9; i++ )
-                    {
+                    for ( int i = element + 1; i < 9; i++ ) {
                         final String childKey = lsid + "#" + i;
                         numberingState.levels.remove( childKey );
                     }
@@ -256,31 +242,32 @@ public class AbstractWordUtils
 
                 bulletBuffer.append( NumberFormatter.getNumber( num,
                         list.getNumberFormat( level ) ) );
-            }
-            else
-            {
+            } else {
                 bulletBuffer.append( element );
             }
+
+            // ensure this buffer does not grow to much, this should avoid cases where
+            // this can "explode", i.e. small input file consumes huge amounts of
+            // main memory
+            IOUtils.safelyAllocateCheck(bulletBuffer.length(), MAX_BULLET_BUFFER_SIZE);
         }
 
         byte follow = list.getTypeOfCharFollowingTheNumber( level );
-        switch ( follow )
-        {
-        case 0:
-            bulletBuffer.append( "\t" );
-            break;
-        case 1:
-            bulletBuffer.append( " " );
-            break;
-        default:
-            break;
+        switch ( follow ) {
+            case 0:
+                bulletBuffer.append( "\t" );
+                break;
+            case 1:
+                bulletBuffer.append( " " );
+                break;
+            default:
+                break;
         }
 
         return bulletBuffer.toString();
     }
 
-    public static String getColor( int ico )
-    {
+    public static String getColor( int ico ) {
         switch ( ico ) {
             case 2:
                 return "blue";
@@ -318,8 +305,7 @@ public class AbstractWordUtils
         }
     }
 
-    public static String getOpacity( int argbValue )
-    {
+    public static String getOpacity( int argbValue ) {
         int opacity = (int) ( ( argbValue & 0xFF000000L) >>> 24 );
         if ( opacity == 0 || opacity == 0xFF )
             return ".0";
@@ -327,8 +313,7 @@ public class AbstractWordUtils
         return "" + ( opacity / (float) 0xFF );
     }
 
-    public static String getColor24( int argbValue )
-    {
+    public static String getColor24( int argbValue ) {
         if ( argbValue == -1 )
             throw new IllegalArgumentException( "This colorref is empty" );
 
@@ -337,96 +322,88 @@ public class AbstractWordUtils
                 | ( bgrValue & 0xFF0000 ) >> 16;
 
         // http://www.w3.org/TR/REC-html40/types.html#h-6.5
-        switch ( rgbValue )
-        {
-        case 0xFFFFFF:
-            return "white";
-        case 0xC0C0C0:
-            return "silver";
-        case 0x808080:
-            return "gray";
-        case 0x000000:
-            return "black";
-        case 0xFF0000:
-            return "red";
-        case 0x800000:
-            return "maroon";
-        case 0xFFFF00:
-            return "yellow";
-        case 0x808000:
-            return "olive";
-        case 0x00FF00:
-            return "lime";
-        case 0x008000:
-            return "green";
-        case 0x00FFFF:
-            return "aqua";
-        case 0x008080:
-            return "teal";
-        case 0x0000FF:
-            return "blue";
-        case 0x000080:
-            return "navy";
-        case 0xFF00FF:
-            return "fuchsia";
-        case 0x800080:
-            return "purple";
+        switch ( rgbValue ) {
+            case 0xFFFFFF:
+                return "white";
+            case 0xC0C0C0:
+                return "silver";
+            case 0x808080:
+                return "gray";
+            case 0x000000:
+                return "black";
+            case 0xFF0000:
+                return "red";
+            case 0x800000:
+                return "maroon";
+            case 0xFFFF00:
+                return "yellow";
+            case 0x808000:
+                return "olive";
+            case 0x00FF00:
+                return "lime";
+            case 0x008000:
+                return "green";
+            case 0x00FFFF:
+                return "aqua";
+            case 0x008080:
+                return "teal";
+            case 0x0000FF:
+                return "blue";
+            case 0x000080:
+                return "navy";
+            case 0xFF00FF:
+                return "fuchsia";
+            case 0x800080:
+                return "purple";
         }
 
         StringBuilder result = new StringBuilder( "#" );
         String hex = Integer.toHexString( rgbValue );
-        for ( int i = hex.length(); i < 6; i++ )
-        {
+        for ( int i = hex.length(); i < 6; i++ ) {
             result.append( '0' );
         }
         result.append( hex );
         return result.toString();
     }
 
-    public static String getJustification( int js )
-    {
-        switch ( js )
-        {
-        case 0:
-        case 7:
-            return "start";
-        case 1:
-        case 5:
-            return "center";
-        case 2:
-        case 8:
-            return "end";
-        case 3:
-        case 4:
-        case 9:
-            return "justify";
-        case 6:
-            return "left";
+    public static String getJustification( int js ) {
+        switch ( js ) {
+            case 0:
+            case 7:
+                return "start";
+            case 1:
+            case 5:
+                return "center";
+            case 2:
+            case 8:
+                return "end";
+            case 3:
+            case 4:
+            case 9:
+                return "justify";
+            case 6:
+                return "left";
         }
         return "";
     }
 
-    public static String getLanguage( int languageCode )
-    {
-        switch ( languageCode )
-        {
-        case 1024:
-            return EMPTY;
-        case 1033:
-            return "en-us";
-        case 1049:
-            return "ru-ru";
-        case 2057:
-            return "en-uk";
-        default:
-            LOG.atWarn().log("Unknown or unmapped language code: {}", box(languageCode));
-            return EMPTY;
+    public static String getLanguage( int languageCode ) {
+        switch ( languageCode ) {
+            case 1024:
+                return EMPTY;
+            case 1033:
+                return "en-us";
+            case 1049:
+                return "ru-ru";
+            case 2057:
+                return "en-uk";
+            default:
+                LOG.atWarn().log("Unknown or unmapped language code: {}", box(languageCode));
+                return EMPTY;
         }
     }
 
-    public static String getListItemNumberLabel( int number, int format )
-    {
-
+    public static String getListItemNumberLabel( int number, int format ) {
         if ( format != 0 )
             LOG.atInfo().log("NYI: toListItemNumberLabel(): {}", box(format));
 
@@ -444,35 +421,27 @@ public class AbstractWordUtils
     }
 
     public static HWPFDocumentCore loadDoc( final DirectoryNode root )
-            throws IOException
-    {
-        try
-        {
+            throws IOException {
+        try {
             return new HWPFDocument( root );
-        }
-        catch ( OldWordFileFormatException exc )
-        {
+        } catch ( OldWordFileFormatException exc ) {
             return new HWPFOldDocument( root );
         }
     }
 
-    public static HWPFDocumentCore loadDoc( File docFile ) throws IOException
-    {
+    public static HWPFDocumentCore loadDoc( File docFile ) throws IOException {
         try (InputStream istream = Files.newInputStream(docFile.toPath())) {
             return loadDoc(istream);
         }
     }
 
     public static HWPFDocumentCore loadDoc( InputStream inputStream )
-            throws IOException
-    {
+            throws IOException {
         return loadDoc( HWPFDocumentCore.verifyAndBuildPOIFS( inputStream ) );
     }
 
     public static HWPFDocumentCore loadDoc(
-            final POIFSFileSystem poifsFileSystem ) throws IOException
-    {
+            final POIFSFileSystem poifsFileSystem ) throws IOException {
         return loadDoc( poifsFileSystem.getRoot() );
     }
-
 }
