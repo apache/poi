@@ -84,6 +84,31 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
     public abstract int fillFields( byte[] data, int offset, EscherRecordFactory recordFactory );
 
     /**
+     * Internal method to prevent too deep nesting/using too much memory.
+     *
+     * This is done by counting the level of "nesting" via the parameter.
+     *
+     * The default method just forwards to fillFields() so it does not properly
+     * handle nesting. Subclasses which do recursive calls need to pass
+     * around the nesting-level properly.
+     *
+     * Usually both fillFields() methods should be overwritten by subclasses,
+     * the one without the "nesting"-parameter should routes to this one in
+     * classes which overwrite this method and this method should be overwritten
+     * with the actual functionality to fill fields.
+     *
+     * @param data      The byte array containing the serialized escher
+     *                  records.
+     * @param offset    The offset into the byte array.
+     * @param recordFactory     A factory for creating new escher records.
+     * @param nesting   The current nesting factor, usually increased by one on each recursive call
+     * @return          The number of bytes written.
+     */
+    protected int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory, int nesting) {
+        return fillFields(data, offset, recordFactory);
+    }
+
+    /**
      * Reads the 8 byte header information and populates the <code>options</code>
      * and <code>recordId</code> records.
      *

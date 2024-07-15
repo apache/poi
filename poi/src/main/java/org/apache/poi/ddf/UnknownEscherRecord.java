@@ -70,7 +70,8 @@ public final class UnknownEscherRecord extends EscherRecord {
         return fillFields(data, offset, recordFactory, 0);
     }
 
-    int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory, int nesting) {
+    @Override
+    protected int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory, int nesting) {
         if (nesting > MAX_NESTED_CHILD_NODES) {
             throw new IllegalStateException("Had more than the limit of " + MAX_NESTED_CHILD_NODES + " nested child notes");
         }
@@ -97,7 +98,7 @@ public final class UnknownEscherRecord extends EscherRecord {
                 if (child instanceof EscherContainerRecord) {
                     childBytesWritten = ((EscherContainerRecord)child).fillFields(data, offset, recordFactory, nesting + 1);
                 } else {
-                    childBytesWritten = child.fillFields(data, offset, recordFactory);
+                    childBytesWritten = child.fillFields(data, offset, recordFactory, nesting + 1);
                 }
                 bytesWritten += childBytesWritten;
                 offset += childBytesWritten;
