@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Spliterator;
 
-import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.zip.Zip64Mode;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
@@ -424,7 +423,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     protected void injectData(ZipEntrySource zipEntrySource, OutputStream out) throws IOException {
-        ArchiveOutputStream zos = createArchiveOutputStream(out);
+        ZipArchiveOutputStream zos = createArchiveOutputStream(out);
         try {
             Enumeration<? extends ZipArchiveEntry> en = zipEntrySource.getEntries();
             while (en.hasMoreElements()) {
@@ -785,7 +784,7 @@ public class SXSSFWorkbook implements Workbook {
          * has been created. Support for the remove method may be added in the future
          * if someone can figure out a reliable implementation.
          *
-         * @throws UnsupportedOperationException
+         * @throws UnsupportedOperationException Always thrown in this implementation
          */
         @Override
         public void remove() throws IllegalStateException {

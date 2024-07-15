@@ -45,6 +45,8 @@ public final class ZipPackagePropertiesMarshaller extends PackagePropertiesMarsh
                 .getZipItemNameFromOPCName(part.getPartName().getURI()
                         .toString()));
         try {
+            ZipHelper.adjustEntryTime(ctEntry);
+
             // Save in ZIP
             zos.putArchiveEntry(ctEntry); // Add entry in ZIP
             try {

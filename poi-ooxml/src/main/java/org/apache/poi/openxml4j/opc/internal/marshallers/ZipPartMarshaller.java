@@ -83,6 +83,8 @@ public final class ZipPartMarshaller implements PartMarshaller {
                 .getZipItemNameFromOPCName(part.getPartName().getURI()
                         .getPath()));
         try {
+            ZipHelper.adjustEntryTime(partEntry);
+
             // Create next zip entry
             zos.putArchiveEntry(partEntry);
 
@@ -187,6 +189,8 @@ public final class ZipPartMarshaller implements PartMarshaller {
         ZipArchiveEntry ctEntry = new ZipArchiveEntry(ZipHelper.getZipURIFromOPCName(
                 relPartName.getURI().toASCIIString()).getPath());
         try {
+            ZipHelper.adjustEntryTime(ctEntry);
+
             zos.putArchiveEntry(ctEntry);
             try {
                 return StreamHelper.saveXmlInStream(xmlOutDoc, zos);

@@ -18,7 +18,6 @@
 package org.apache.poi.openxml4j.opc.internal;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,6 +37,7 @@ import org.apache.poi.openxml4j.util.ZipArchiveThresholdInputStream;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Reproducibility;
 
 @Internal
 public final class ZipHelper {
@@ -69,7 +69,9 @@ public final class ZipHelper {
             return null;
         }
 
-        return new ZipArchiveEntry(corePropsRel.getTargetURI().getPath());
+        ZipArchiveEntry entry = new ZipArchiveEntry(corePropsRel.getTargetURI().getPath());
+        ZipHelper.adjustEntryTime(entry);
+        return entry;
     }
 
     /**
@@ -133,10 +135,10 @@ public final class ZipHelper {
             return null;
         }
     }
-    
+
     /**
      * Verifies that the given stream starts with a Zip structure.
-     * 
+     *
      * Warning - this will consume the first few bytes of the stream,
      *  you should push-back or reset the stream after use!
      */
@@ -195,7 +197,7 @@ public final class ZipHelper {
     }
 
     /**
-     * Opens the specified file as a secure zip, or returns null if no 
+     * Opens the specified file as a secure zip, or returns null if no
      *  such file exists
      *
      * @param file
@@ -211,7 +213,7 @@ public final class ZipHelper {
         if (file.isDirectory()) {
             throw new IOException("File is a directory");
         }
-        
+
         // Peek at the first few bytes to sanity check
         try (InputStream input = Files.newInputStream(file.toPath())) {
             verifyZipHeader(input);
@@ -230,5 +232,18 @@ public final class ZipHelper {
      */
     public static ZipSecureFile openZipFile(String path) throws IOException {
         return openZipFile(new File(path));
+    }
+
+    /**
+     * If environment-variable SOURCE_DATE_EPOCH is set, we use "0" for the
+     * time of the entry.
+     *
+     * @param entry The zip-entry to adjust
+     */
+    public static void adjustEntryTime(ZipArchiveEntry entry) {
+        // if SOURCE_DATE_EPOCH is set, we set the time-field to zero
+        if (Reproducibility.isSourceDateEpoch()) {
+            entry.setTime(0);
+        }
     }
 }

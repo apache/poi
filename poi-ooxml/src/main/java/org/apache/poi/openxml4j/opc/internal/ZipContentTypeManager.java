@@ -61,6 +61,8 @@ public class ZipContentTypeManager extends ContentTypeManager {
 
         ZipArchiveEntry partEntry = new ZipArchiveEntry(CONTENT_TYPES_PART_NAME);
         try {
+            ZipHelper.adjustEntryTime(partEntry);
+
             // Referenced in ZIP
             zos.putArchiveEntry(partEntry);
             try {

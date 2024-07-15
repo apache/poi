@@ -42,7 +42,6 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParseException;
@@ -51,6 +50,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.PaneInformation;
 import org.apache.poi.ss.util.SheetUtil;
+import org.apache.poi.util.Reproducibility;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
@@ -1815,70 +1815,23 @@ public abstract class BaseTestBugzillaIssues {
             cell.setCellValue("Ernie & Bert are cool!");
             cell.setCellFormula("A1 & \" are cool!\"");
 
-            try (UnsynchronizedByteArrayOutputStream out1 = UnsynchronizedByteArrayOutputStream.builder().get();
-                 UnsynchronizedByteArrayOutputStream out2 = UnsynchronizedByteArrayOutputStream.builder().get()) {
-                wb.write(out1);
-                wb.write(out2);
+            Reproducibility.runWithSourceDateEpoch(
+                    () -> {
+                        try (UnsynchronizedByteArrayOutputStream out1 = UnsynchronizedByteArrayOutputStream.builder().get();
+                                UnsynchronizedByteArrayOutputStream out2 = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                            wb.write(out1);
+                            wb.write(out2);
 
-                out1.flush();
-                out2.flush();
+                            out1.flush();
+                            out2.flush();
 
-                // to avoid flaky tests if the documents are written at slightly different timestamps
-                // we clear some bytes which contain timestamps
-                assertArrayEquals(
-                        removeTimestamp(out1.toByteArray()),
-                        removeTimestamp(out2.toByteArray()));
-            }
+                            // to avoid flaky tests if the documents are written at slightly different timestamps
+                            // we clear some bytes which contain timestamps
+                            assertArrayEquals(
+                                    out1.toByteArray(),
+                                    out2.toByteArray());
+                        }
+                    });
         }
-    }
-
-    private byte[] removeTimestamp(byte[] bytes) {
-        if (FileMagic.valueOf(bytes) == FileMagic.OOXML) {
-            // This removes the timestamp in the header of the ZIP-Format
-            // see "Local file header" at https://pkware.cachefly.net/webdocs/casestudies/APPNOTE.TXT
-            bytes[10] = 0;
-            bytes[11] = 0;
-            bytes[12] = 0;
-            bytes[13] = 0;
-
-            // there is a timestamp for every entry, so try to replace a few more byte-positions
-            // to reduce flakiness of this test, however we likely do not yet cover all entries
-            bytes[390] = 0;
-            bytes[391] = 0;
-            bytes[674] = 0;
-            bytes[676] = 0;
-            bytes[883] = 0;
-            bytes[1207] = 0;
-            bytes[1208] = 0;
-            bytes[1432] = 0;
-            bytes[1433] = 0;
-            bytes[1434] = 0;
-            bytes[1817] = 0;
-            bytes[1818] = 0;
-            bytes[2098] = 0;
-            bytes[2099] = 0;
-            bytes[2762] = 0;
-            bytes[2763] = 0;
-            bytes[2382] = 0;
-            bytes[2383] = 0;
-            bytes[2827] = 0;
-            bytes[2828] = 0;
-            bytes[2884] = 0;
-            bytes[2885] = 0;
-            bytes[2946] = 0;
-            bytes[2947] = 0;
-            bytes[3009] = 0;
-            bytes[3010] = 0;
-            bytes[3075] = 0;
-            bytes[3076] = 0;
-            bytes[3134] = 0;
-            bytes[3135] = 0;
-            bytes[3195] = 0;
-            bytes[3196] = 0;
-            bytes[3267] = 0;
-            bytes[3268] = 0;
-        }
-
-        return bytes;
     }
 }
