@@ -19,6 +19,7 @@
 
 package org.apache.poi.hwpf.converter;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 import org.apache.poi.util.Beta;
@@ -28,8 +29,12 @@ import org.apache.poi.util.Beta;
  */
 @Beta
 public final class NumberFormatter {
-    private static final String[] ROMAN_LETTERS = { "m", "cm", "d", "cd", "c",
-            "xc", "l", "xl", "x", "ix", "v", "iv", "i" };
+    // use char[] instead of String to speed up StringBuilder.append(), especially in JDK 11+
+    // where StringBuilder internally switched from char[] to byte[]
+    private static final char[][] ROMAN_LETTERS = Arrays.stream(
+            new String[] { "m", "cm", "d", "cd", "c", "xc", "l", "xl", "x", "ix", "v", "iv", "i" }).
+                map(String::toCharArray).
+                toArray(char[][]::new);
 
     private static final int[] ROMAN_VALUES = { 1000, 900, 500, 400, 100, 90,
             50, 40, 10, 9, 5, 4, 1 };
@@ -86,7 +91,7 @@ public final class NumberFormatter {
         StringBuilder result = new StringBuilder();
 
         for ( int i = 0; i < ROMAN_LETTERS.length; i++ ) {
-            String letter = ROMAN_LETTERS[i];
+            char[] letter = ROMAN_LETTERS[i];
             int value = ROMAN_VALUES[i];
             while ( number >= value ) {
                 number -= value;
