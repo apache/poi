@@ -405,7 +405,7 @@ public abstract class BaseTestBugzillaIssues {
 //            assertTrue("Had zero length starting at length " + i, computeCellWidthFixed(font, b.toString()) > 0);
 //        }
             double widthManual = computeCellWidthManually(cell0, font);
-            double widthBeforeCell = SheetUtil.getCellWidth(cell0, 8, null, false);
+            double widthBeforeCell = SheetUtil.getCellWidth(cell0, 8.0f, null, false);
             double widthBeforeCol = SheetUtil.getColumnWidth(sheet, 0, false);
 
             String info = widthManual + "/" + widthBeforeCell + "/" + widthBeforeCol + "/" +
@@ -419,7 +419,7 @@ public abstract class BaseTestBugzillaIssues {
 
             double width = SheetUtil.getColumnWidth(sheet, 0, false);
             assertTrue(width > 0, "Expected to have column width > 0 AFTER auto-size, but had " + width);
-            width = SheetUtil.getCellWidth(cell0, 8, null, false);
+            width = SheetUtil.getCellWidth(cell0, 8.0f, null, false);
             assertTrue(width > 0, "Expected to have cell width > 0 AFTER auto-size, but had " + width);
 
             assertEquals(255 * 256, sheet.getColumnWidth(0)); // maximum column width is 255 characters
@@ -1156,7 +1156,7 @@ public abstract class BaseTestBugzillaIssues {
             // verify that null-values can be set, this was possible up to 3.11, but broken in 3.12
             cell.setCellValue((String) null);
             String value = cell.getStringCellValue();
-            assertTrue(value == null || value.length() == 0,
+            assertTrue(value == null || value.isEmpty(),
                 "HSSF will currently return empty string, XSSF/SXSSF will return null, but had: " + value);
 
             cell = row.createCell(1);
@@ -1166,7 +1166,7 @@ public abstract class BaseTestBugzillaIssues {
             wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
 
             value = cell.getStringCellValue();
-            assertTrue(value == null || value.length() == 0,
+            assertTrue(value == null || value.isEmpty(),
                 "HSSF will currently return empty string, XSSF/SXSSF will return null, but had: " + value);
 
             // set some value
@@ -1178,7 +1178,7 @@ public abstract class BaseTestBugzillaIssues {
             // verify that the null-value is actually set even if there was some value in the cell before
             cell.setCellValue((String) null);
             value = cell.getStringCellValue();
-            assertTrue(value == null || value.length() == 0,
+            assertTrue(value == null || value.isEmpty(),
                 "HSSF will currently return empty string, XSSF/SXSSF will return null, but had: " + value);
         }
     }

@@ -1875,6 +1875,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         }
 
         // Try with one with the entities in the Content Types
+        //noinspection resource
         assertThrows(Exception.class, () -> XSSFTestDataSamples.openSamplePackage("54764-2.xlsx"),
             "Should fail as too much expansion occurs");
 
@@ -1943,6 +1944,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // Workbook Factory gives helpful error on file
         File xlsbFile = HSSFTestDataSamples.getSampleFile("Simple.xlsb");
+        //noinspection resource
         assertThrows(XLSBUnsupportedException.class, () -> WorkbookFactory.create(xlsbFile), ".xlsb files not supported");
     }
 
@@ -2292,7 +2294,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
             List<XSSFShape> shapes = drawing.getShapes();
             assertEquals(1, shapes.size());
-            assertTrue(shapes.get(0) instanceof XSSFSimpleShape);
+            assertInstanceOf(XSSFSimpleShape.class, shapes.get(0));
 
             XSSFSimpleShape shape = (XSSFSimpleShape) shapes.get(0);
 
@@ -2524,6 +2526,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Disabled("this test is only for manual verification, as we can't test if the cell is visible in Excel")
+    @Test
     void test51451() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sh = wb.createSheet();
@@ -3302,6 +3305,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     @Test
     void test64045() {
         File file = XSSFTestDataSamples.getSampleFile("xlsx-corrupted.xlsx");
+        //noinspection resource
         assertThrows(POIXMLException.class, () -> new XSSFWorkbook(file), "Should catch exception as the file is corrupted");
     }
 
@@ -3642,6 +3646,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             IOException ie = assertThrows(IOException.class, () -> WorkbookFactory.create(fis));
             assertEquals("Can't open workbook - unsupported file type: XML", ie.getMessage());
         }
+        //noinspection resource
         IOException ie = assertThrows(IOException.class, () -> WorkbookFactory.create(file));
         assertEquals("Can't open workbook - unsupported file type: XML", ie.getMessage());
     }
@@ -3899,7 +3904,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 if (row != null) {
                     XSSFCell cellSymbol = row.getCell(0);
                     if (cellSymbol != null) {
-                        XSSFComment comment = cellSymbol.getCellComment();
+                        cellSymbol.getCellComment();
                     }
                 }
             }
