@@ -134,9 +134,6 @@ public class TestAllFiles {
         "diagram/clusterfuzz-testcase-minimized-POIVisioFuzzer-4537225637134336.vsd",
         "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-6537773940867072.xls",
         "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-4977868385681408.xls",
-        "spreadsheet/clusterfuzz-testcase-minimized-POIXSSFFuzzer-5089447305609216.xlsx",
-        "spreadsheet/clusterfuzz-testcase-minimized-POIXSSFFuzzer-5089447305609216.xlsx",
-        "spreadsheet/clusterfuzz-testcase-minimized-POIXSSFFuzzer-5089447305609216.xlsx",
         "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-4651309315719168.xls",
         "document/clusterfuzz-testcase-POIHWPFFuzzer-5696094627495936.doc",
     });
