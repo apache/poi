@@ -248,7 +248,10 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
             String uniqueCount = attributes.getValue("uniqueCount");
             if(uniqueCount != null) this.uniqueCount = (int) Long.parseLong(uniqueCount);
 
-            this.strings = new ArrayList<>(this.uniqueCount);
+            this.strings = new ArrayList<>(
+                    // corrupted files may have a very large number here, so only use it
+                    // up to some size as guideline for pre-allocating the list
+                    Math.min(this.uniqueCount, 100_000));
             characters = new StringBuilder(64);
         } else if ("si".equals(localName)) {
             if (characters != null) {

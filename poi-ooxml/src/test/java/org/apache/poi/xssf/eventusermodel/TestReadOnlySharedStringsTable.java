@@ -20,10 +20,14 @@
 package org.apache.poi.xssf.eventusermodel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -159,5 +163,40 @@ public final class TestReadOnlySharedStringsTable {
         ReadOnlySharedStringsTable sst = new ReadOnlySharedStringsTable(pkg);
         assertEquals(0, sst.getCount());
         assertEquals(0, sst.getUniqueCount());
+    }
+
+    private static final String MINIMAL_XML = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+            "<sst xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" count=\"55\" uniqueCount=\"49\">" +
+            "<si>" +
+            "<t>bla</t>" +
+            "<phoneticPr fontId=\"1\"/>" +
+            "</si>" +
+            "</sst>";
+
+    @Test
+    void testMinimalTable() throws IOException, SAXException {
+        ReadOnlySharedStringsTable tbl = new ReadOnlySharedStringsTable(
+                new ByteArrayInputStream(MINIMAL_XML.getBytes(StandardCharsets.UTF_8)));
+        assertNotNull(tbl);
+        assertEquals(49, tbl.getUniqueCount());
+        assertEquals(55, tbl.getCount());
+        assertTrue(tbl.includePhoneticRuns);
+        assertEquals("bla", tbl.getItemAt(0).getString());
+        assertThrows(IllegalStateException.class,
+                () -> tbl.getItemAt(1).getString());
+    }
+
+    @Test
+    void testHugeUniqueCount() throws IOException, SAXException {
+        ReadOnlySharedStringsTable tbl = new ReadOnlySharedStringsTable(
+                new ByteArrayInputStream(MINIMAL_XML.replace("49", "99999999999999999").
+                        getBytes(StandardCharsets.UTF_8)));
+        assertNotNull(tbl);
+        assertEquals(1569325055, tbl.getUniqueCount());
+        assertEquals(55, tbl.getCount());
+        assertTrue(tbl.includePhoneticRuns);
+        assertEquals("bla", tbl.getItemAt(0).getString());
+        assertThrows(IllegalStateException.class,
+                () -> tbl.getItemAt(1).getString());
     }
 }
