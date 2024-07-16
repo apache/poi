@@ -263,7 +263,7 @@ under the License.
 
 
     <!-- jars in the /lib directory, see the fetch-jars target-->
-    <dependency prefix="main.commons-codec" artifact="commons-codec:commons-codec:1.17.0" usage="main"/>
+    <dependency prefix="main.commons-codec" artifact="commons-codec:commons-codec:1.17.1" usage="main"/>
     <dependency prefix="main.commons-collections4" artifact="org.apache.commons:commons-collections4:4.4" usage="main"/>
     <dependency prefix="main.commons-math3" artifact="org.apache.commons:commons-math3:3.6.1" usage="main"/>
     <dependency prefix="main.commons-io" artifact="commons-io:commons-io:2.16.1" usage="main"/>
@@ -2578,7 +2578,7 @@ under the License.
         <dependency prefix="spotbugs.bcel" artifact="org.apache.bcel:bcel:6.5.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.slf4j-api" artifact="org.slf4j:slf4j-api:2.0.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.commons-text" artifact="org.apache.commons:commons-text:1.11.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.commons-codec" artifact="commons-codec:commons-codec:1.17.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.commons-codec" artifact="commons-codec:commons-codec:1.17.1" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.jcip-annotations" artifact="net.jcip:jcip-annotations:1.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.icu4j" artifact="com.ibm.icu:icu4j:68.2" usage="${spotbugs.lib}" target="icu4j-68.2.jar"/>
