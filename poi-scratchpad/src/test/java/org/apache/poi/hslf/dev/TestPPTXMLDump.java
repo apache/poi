@@ -36,6 +36,7 @@ public class TestPPTXMLDump extends BaseTestPPTIterating {
         LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6032591399288832.ppt");
         LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6360479850954752.ppt");
         LOCAL_EXCLUDED.add("ppt_with_png_encrypted.ppt");
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6614960949821440.ppt");
     }
 
     @Test

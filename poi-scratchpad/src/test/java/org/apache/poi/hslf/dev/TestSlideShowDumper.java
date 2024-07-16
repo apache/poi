@@ -41,6 +41,11 @@ public class TestSlideShowDumper extends BaseTestPPTIterating {
         FAILING.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6360479850954752.ppt");
     }
 
+    static final Set<String> LOCAL_EXCLUDED = new HashSet<>();
+    static {
+        LOCAL_EXCLUDED.add("clusterfuzz-testcase-minimized-POIHSLFFuzzer-6614960949821440.ppt");
+    }
+
     @Test
     void testMain() throws IOException {
         // SlideShowDumper calls IOUtils.toByteArray(is), which would fail if a different size is defined
@@ -70,6 +75,11 @@ public class TestSlideShowDumper extends BaseTestPPTIterating {
             if(!FAILING.contains(pFile.getName()) && !OLD_FILES.contains(pFile.getName())) {
                 throw e;
             }
+        }
+
+        // these fail everywhere else, so also should fail here
+        if (LOCAL_EXCLUDED.contains(pFile.getName())) {
+            throw new RuntimeException();
         }
     }
 

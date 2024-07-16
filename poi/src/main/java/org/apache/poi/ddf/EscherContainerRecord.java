@@ -208,6 +208,12 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
         if (childRecords == _childRecords) {
             throw new IllegalStateException("Child records private data member has escaped");
         }
+
+        if (childRecords.size() > MAX_NUMBER_OF_CHILDREN) {
+            throw new IllegalStateException("Cannot add more than " + MAX_NUMBER_OF_CHILDREN +
+                    " child records, you can use 'EscherRecord.setMaxNumberOfChildren()' to increase the allow size");
+        }
+
         _childRecords.clear();
         _childRecords.addAll(childRecords);
     }
@@ -261,6 +267,11 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
      * @param record the record to be added
      */
     public void addChildRecord(EscherRecord record) {
+        if (_childRecords.size() >= MAX_NUMBER_OF_CHILDREN) {
+            throw new IllegalStateException("Cannot add more than " + MAX_NUMBER_OF_CHILDREN +
+                    " child records, you can use 'EscherRecord.setMaxNumberOfChildren()' to increase the allow size");
+        }
+
         _childRecords.add(record);
     }
 

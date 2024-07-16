@@ -45,6 +45,10 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
     private short _options;
     private short _recordId;
 
+    // arbitrarily selected; may need to increase
+    private static final int DEFAULT_MAX_NUMBER_OF_CHILDREN = 100_000;
+    protected static int MAX_NUMBER_OF_CHILDREN = DEFAULT_MAX_NUMBER_OF_CHILDREN;
+
     /**
      * Create a new instance
      */
@@ -367,4 +371,18 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
 
     @Override
     public abstract EscherRecord copy();
+
+    /**
+     * @param length the max record length allowed for EscherArrayProperty
+     */
+    public static void setMaxNumberOfChildren(int length) {
+        MAX_NUMBER_OF_CHILDREN = length;
+    }
+
+    /**
+     * @return the max record length allowed for EscherArrayProperty
+     */
+    public static int getMaxNumberOfChildren() {
+        return MAX_NUMBER_OF_CHILDREN;
+    }
 }
