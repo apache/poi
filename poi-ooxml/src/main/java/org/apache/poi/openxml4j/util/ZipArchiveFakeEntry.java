@@ -69,8 +69,8 @@ import org.apache.poi.util.TempFile;
                 }
             } else {
                 tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
-                LOG.atInfo().log("created for temp file {} for zip entry {} of size {} bytes",
-                        () -> tempFile.getAbsolutePath(), entry::getName, () -> entrySize);
+                LOG.atInfo().log("Creating temp file {} for zip entry {} of size {} bytes",
+                        tempFile.getAbsolutePath(), entry.getName(), entrySize);
                 IOUtils.copy(inp, tempFile);
             }
         } else {

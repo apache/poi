@@ -59,6 +59,11 @@ public class XmlVisioDocument extends POIXMLDocument {
     protected XDGFMasters _masters;
     protected XDGFDocument _document;
 
+    /**
+     * Construct a VisioDocument from the given OPCPackage
+     * @param pkg The xml-base input for the Visio document
+     * @throws IOException If parsing the document fails
+     */
     public XmlVisioDocument(OPCPackage pkg) throws IOException {
         super(pkg, PackageRelationshipTypes.VISIO_CORE_DOCUMENT);
 
@@ -78,7 +83,7 @@ public class XmlVisioDocument extends POIXMLDocument {
 
     /**
      * @param stream InputStream - closed when it is read
-     * @throws IOException
+     * @throws IOException If parsing the document fails
      */
     public XmlVisioDocument(InputStream stream) throws IOException {
         this(stream, true);
@@ -87,7 +92,7 @@ public class XmlVisioDocument extends POIXMLDocument {
     /**
      * @param stream InputStream
      * @param closeStream Whether to close the InputStream
-     * @throws IOException
+     * @throws IOException If parsing the document fails
      * @since POI 5.2.5
      */
     public XmlVisioDocument(InputStream stream, boolean closeStream) throws IOException {

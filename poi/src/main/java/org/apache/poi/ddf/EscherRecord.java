@@ -373,14 +373,14 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
     public abstract EscherRecord copy();
 
     /**
-     * @param length the max record length allowed for EscherArrayProperty
+     * @param length the max number of children allowed for EscherRecords which support nesting
      */
     public static void setMaxNumberOfChildren(int length) {
         MAX_NUMBER_OF_CHILDREN = length;
     }
 
     /**
-     * @return the max record length allowed for EscherArrayProperty
+     * @return the max number of children allowed for EscherRecords which support nesting
      */
     public static int getMaxNumberOfChildren() {
         return MAX_NUMBER_OF_CHILDREN;
