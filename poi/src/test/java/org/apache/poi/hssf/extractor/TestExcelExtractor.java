@@ -382,4 +382,16 @@ final class TestExcelExtractor {
             assertContains(txt, "Macro2");
         }
     }
+
+    @Test
+    void testStackOverflowInRegex() throws IOException {
+        try (ExcelExtractor extractor = createExtractor("clusterfuzz-testcase-minimized-POIHSSFFuzzer-4657005060816896.xls")) {
+            extractor.getText();
+        } catch (IllegalStateException e) {
+            // we either get a StackOverflow or a parsing error depending on the stack-size of the current JVM,
+            // so we expect both here
+            assertTrue(e.getMessage().contains("Provided formula is too complex") ||
+                    e.getMessage().contains("Did not have a ExtendedFormatRecord"));
+        }
+    }
 }

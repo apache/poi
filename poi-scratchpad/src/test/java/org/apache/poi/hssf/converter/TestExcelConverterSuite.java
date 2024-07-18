@@ -46,7 +46,8 @@ public class TestExcelConverterSuite {
             // not failing, but requires more memory
             "ex45698-22488.xls",
             // broken documents
-            "clusterfuzz-testcase-minimized-POIHSSFFuzzer-5436547081830400.xls"
+            "clusterfuzz-testcase-minimized-POIHSSFFuzzer-5436547081830400.xls",
+            "clusterfuzz-testcase-minimized-POIHSSFFuzzer-4657005060816896.xls"
     );
 
     public static Stream<Arguments> files() {
