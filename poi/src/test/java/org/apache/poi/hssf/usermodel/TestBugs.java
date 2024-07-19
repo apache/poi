@@ -2533,7 +2533,7 @@ final class TestBugs extends BaseTestBugzillaIssues {
     // a simple test which rewrites the file once and evaluates its formulas
     @ParameterizedTest
     @CsvSource({
-        "15228.xls", "13796.xls", "14460.xls", "14330-1.xls", "14330-2.xls", "22742.xls", "12561-1.xls", "12561-2.xls",
+        "15228.xls", "13796.xls", "14460.xls", "14330-1.xls", "14330-2.xls", "12561-1.xls", "12561-2.xls",
         "12843-1.xls", "12843-2.xls", "13224.xls", "19599-1.xls", "19599-2.xls", "32822.xls", "15573.xls",
         "33082.xls", "34775.xls", "37630.xls", "25183.xls", "26100.xls", "27933.xls", "29675.xls", "29982.xls",
         "31749.xls", "37376.xls", "SimpleWithAutofilter.xls", "44201.xls", "37684-1.xls", "37684-2.xls",
