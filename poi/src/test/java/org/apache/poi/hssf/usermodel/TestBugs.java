@@ -2540,7 +2540,8 @@ final class TestBugs extends BaseTestBugzillaIssues {
         "41139.xls", "ex42564-21435.xls", "ex42564-21503.xls", "28774.xls", "44891.xls", "44235.xls", "36947.xls",
         "39634.xls", "47701.xls", "48026.xls", "47251.xls", "47251_1.xls", "50020.xls", "50426.xls", "50779_1.xls",
         "50779_2.xls", "51670.xls", "54016.xls", "57456.xls", "53109.xls", "com.aida-tour.www_SPO_files_maldives%20august%20october.xls",
-        "named-cell-in-formula-test.xls", "named-cell-test.xls", "bug55505.xls", "SUBSTITUTE.xls", "64261.xls"
+        "named-cell-in-formula-test.xls", "named-cell-test.xls", "bug55505.xls", "chinese-provinces.xls",
+        "SUBSTITUTE.xls", "64261.xls"
     })
     void simpleTest(String fileName) throws IOException {
         simpleTest(fileName, null);
