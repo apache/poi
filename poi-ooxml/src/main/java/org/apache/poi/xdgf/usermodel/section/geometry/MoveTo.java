@@ -48,9 +48,9 @@ public class MoveTo implements GeometryRow {
         for (CellType cell : row.getCellArray()) {
             String cellName = cell.getN();
 
-            if (cellName.equals("X")) {
+            if ("X".equals(cellName)) {
                 x = XDGFCell.parseDoubleValue(cell);
-            } else if (cellName.equals("Y")) {
+            } else if ("Y".equals(cellName)) {
                 y = XDGFCell.parseDoubleValue(cell);
             } else {
                 throw new POIXMLException("Invalid cell '" + cellName
