@@ -126,7 +126,7 @@ subprojects {
         junitVersion = '5.10.3'
         log4jVersion = '2.23.1'
         mockitoVersion = '4.11.0'
-        hamcrestVersion = '2.2'
+        hamcrestVersion = '3.0'
         xmlbeansVersion = '5.2.1'
         batikVersion = '1.17'
         graphics2dVersion = '3.0.2'
