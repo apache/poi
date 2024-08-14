@@ -1521,10 +1521,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
         if (o instanceof CTText) {
             final Node node = o.getDomNode();
-            // Field Codes (w:instrText, defined in spec sec. 17.16.23)
+            // Field Codes (w:instrText, defined in spec sec. 17.16.23 and w:delInstrText, defined in spec sec. 17.16.13)
             //  come up as instances of CTText, but we don't want them
             //  in the normal text output
-            if (!("instrText".equals(node.getLocalName()) && XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI()))) {
+            if (!(("instrText".equals(node.getLocalName()) || "delInstrText".equals(node.getLocalName())) && XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI()))) {
                 String textValue = ((CTText) o).getStringValue();
                 if (textValue != null) {
                     if (isCapitalized() || isSmallCaps()) {
@@ -1564,6 +1564,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             final Node node = o.getDomNode();
             if (XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI())) {
                 switch (node.getLocalName()) {
+                    case "noBreakHyphen":
+                        text.append('‑');
+                        break;
                     case "tab":
                         text.append('\t');
                         break;

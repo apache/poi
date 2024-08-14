@@ -99,6 +99,17 @@ class TestXWPFRun {
         //fail("Position wrong");
     }
 
+    @Test
+    void testGetTextWithNoBreakHyphen() {
+        ctRun.addNewT().setStringValue("TEST STRING 1");
+        ctRun.addNewInstrText().setStringValue("InstrText");
+        ctRun.addNewNoBreakHyphen();
+        ctRun.addNewDelInstrText().setStringValue("DelInstrText");
+        ctRun.addNewT().setStringValue("1");
+        XWPFRun run = new XWPFRun(ctRun, irb);
+        assertEquals("TEST STRING 1‑1", run.text());
+    }
+
     /*
      * bug 59208
      * Purpose: test all valid boolean-like values
