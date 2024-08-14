@@ -1524,7 +1524,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             // Field Codes (w:instrText, defined in spec sec. 17.16.23 and w:delInstrText, defined in spec sec. 17.16.13)
             //  come up as instances of CTText, but we don't want them
             //  in the normal text output
-            if (!("instrText".equals(node.getLocalName()) && !("delInstrText".equals(node.getLocalName()) && XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI()))) {
+            if (!("instrText".equals(node.getLocalName())) && !("delInstrText".equals(node.getLocalName())) && XSSFRelation.NS_WORDPROCESSINGML.equals(node.getNamespaceURI())) {
                 String textValue = ((CTText) o).getStringValue();
                 if (textValue != null) {
                     if (isCapitalized() || isSmallCaps()) {
