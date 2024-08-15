@@ -17,12 +17,6 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +29,8 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLsdException;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyle;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STStyleType;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public final class TestXWPFStyles {
     @Test
@@ -72,6 +68,24 @@ public final class TestXWPFStyles {
 
             styles = docIn.getStyles();
             assertTrue(styles.styleExist(strStyleId));
+        }
+    }
+
+    @Test
+    void testRemoveStyle() throws IOException {
+        try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("Styles.docx")) {
+            XWPFStyles styles = sampleDoc.getStyles();
+            assertEquals(12, styles.getStyles().size());
+            // styles.getStyles() returns an unmodifiable list
+            assertThrows(UnsupportedOperationException.class, () -> styles.getStyles().remove(0));
+
+            XWPFStyle styleToRemove = styles.getStyle("Standard");
+            assertTrue(styles.removeStyle(styles.getStyles().indexOf(styleToRemove)));
+            assertEquals(11, styles.getStyles().size());
+
+            XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(sampleDoc);
+            assertEquals(11, docIn.getStyles().getStyles().size());
+            assertNull(docIn.getStyles().getStyle("Standard"));
         }
     }
 
