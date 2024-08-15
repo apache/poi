@@ -68,6 +68,8 @@ public class POIXMLTypeLoader {
         map.put(MS_EXCEL_URN, "x");
         map.put(MS_WORD_URN, "w10");
         map.put(MS_VML_URN, "v");
+        map.put("http://schemas.microsoft.com/office/word/2010/wordml", "w14");
+        map.put("http://schemas.microsoft.com/office/word/2012/wordml", "w15");
         map.put("http://schemas.microsoft.com/office/drawing/2012/chart", "c15");
         DEFAULT_XML_OPTIONS.setSaveSuggestedPrefixes(Collections.unmodifiableMap(map));
     }
