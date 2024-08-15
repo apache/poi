@@ -75,6 +75,20 @@ public final class TestXWPFStyles {
         }
     }
 
+    @Test
+    void testRemoveStyle() throws IOException {
+        try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("Styles.docx")) {
+            XWPFStyles styles = sampleDoc.getStyles();
+            assertEquals(12, styles.getStyles().size());
+            XWPFStyle removedStyle = styles.getStyle("Standard");
+            styles.removeStyle(styles.getStyles().indexOf(removedStyle));
+
+            XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(sampleDoc);
+            assertEquals(11, docIn.getStyles().getStyles().size());
+            assertNull(docIn.getStyles().getStyle("Standard"));
+        }
+    }
+
     /**
      * Bug #52449 - We should be able to write a file containing
      * both regular and glossary styles without error
