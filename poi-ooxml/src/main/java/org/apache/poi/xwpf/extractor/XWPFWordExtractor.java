@@ -34,8 +34,10 @@ import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
-import org.apache.poi.xwpf.usermodel.XWPFSDT;
+import org.apache.poi.xwpf.usermodel.XWPFSDTBlock;
 import org.apache.poi.xwpf.usermodel.XWPFSDTCell;
+import org.apache.poi.xwpf.usermodel.XWPFSDTRow;
+import org.apache.poi.xwpf.usermodel.XWPFSDTRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
@@ -108,8 +110,8 @@ public class XWPFWordExtractor implements POIXMLTextExtractor {
             appendParagraphText(text, (XWPFParagraph) e);
         } else if (e instanceof XWPFTable) {
             appendTableText(text, (XWPFTable) e);
-        } else if (e instanceof XWPFSDT) {
-            text.append(((XWPFSDT) e).getContent().getText());
+        } else if (e instanceof XWPFSDTBlock) {
+            text.append(((XWPFSDTBlock) e).getContent().getText());
         }
     }
 
@@ -127,8 +129,8 @@ public class XWPFWordExtractor implements POIXMLTextExtractor {
         }
 
         for (IRunElement run : paragraph.getIRuns()) {
-            if (run instanceof XWPFSDT) {
-                text.append(((XWPFSDT) run).getContent().getText());
+            if (run instanceof XWPFSDTRun) {
+                text.append(((XWPFSDTRun) run).getContent().getText());
             } else if (! concatenatePhoneticRuns && run instanceof XWPFRun) {
                 text.append(((XWPFRun)run).text());
             } else {

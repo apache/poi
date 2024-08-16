@@ -18,6 +18,7 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.ooxml.util.POIXMLUnits;
@@ -40,15 +41,29 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
  * sizings and stylings, the interesting content lives inside
  * the child {@link XWPFTableCell}s
  */
-public class XWPFTableRow {
+public class XWPFTableRow implements IRow{
     private final CTRow ctRow;
     private final XWPFTable table;
-    private List<XWPFTableCell> tableCells;
+    private final List<XWPFTableCell> tableCells;
+    private final List<ICell> iCells;
 
     public XWPFTableRow(CTRow row, XWPFTable table) {
         this.table = table;
         this.ctRow = row;
-        getTableCells();
+        this.tableCells = new ArrayList<>();
+        this.iCells = new ArrayList<>();
+        try (XmlCursor cursor = row.newCursor()) {
+            cursor.selectPath("./*");
+            while (cursor.toNextSelection()) {
+                XmlObject o = cursor.getObject();
+                if (o instanceof CTTc) {
+                    tableCells.add(new XWPFTableCell((CTTc) o, this, table.getBody()));
+                    iCells.add(new XWPFTableCell((CTTc) o, this, table.getBody()));
+                } else if (o instanceof CTSdtCell) {
+                    iCells.add(new XWPFSDTCell((CTSdtCell) o, this, table.getBody()));
+                }
+            }
+        }
     }
 
     @Internal
@@ -169,49 +184,12 @@ public class XWPFTableRow {
         return table;
     }
 
-    /**
-     * create and return a list of all XWPFTableCell
-     * who belongs to this row
-     *
-     * @return a list of {@link XWPFTableCell}
-     */
     public List<ICell> getTableICells() {
-
-        List<ICell> cells = new ArrayList<>();
-        //Can't use ctRow.getTcList because that only gets table cells
-        //Can't use ctRow.getSdtList because that only gets sdts that are at cell level
-        try (XmlCursor cursor = ctRow.newCursor()) {
-            cursor.selectPath("./*");
-            while (cursor.toNextSelection()) {
-                XmlObject o = cursor.getObject();
-                if (o instanceof CTTc) {
-                    cells.add(new XWPFTableCell((CTTc) o, this, table.getBody()));
-                } else if (o instanceof CTSdtCell) {
-                    cells.add(new XWPFSDTCell((CTSdtCell) o, this, table.getBody()));
-                }
-            }
-        }
-        return cells;
+        return Collections.unmodifiableList(iCells);
     }
 
-    /**
-     * create and return a list of all XWPFTableCell
-     * who belongs to this row
-     *
-     * @return a list of {@link XWPFTableCell}
-     */
     public List<XWPFTableCell> getTableCells() {
-        if (tableCells == null) {
-            List<XWPFTableCell> cells = new ArrayList<>();
-            for (CTTc tableCell : ctRow.getTcArray()) {
-                cells.add(new XWPFTableCell(tableCell, this, table.getBody()));
-            }
-            //TODO: it is possible to have an SDT that contains a cell in within a row
-            //need to modify this code so that it pulls out SDT wrappers around cells, too.
-
-            this.tableCells = cells;
-        }
-        return tableCells;
+        return Collections.unmodifiableList(tableCells);
     }
 
     /**

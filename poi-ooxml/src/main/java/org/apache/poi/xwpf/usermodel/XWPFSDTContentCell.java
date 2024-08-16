@@ -17,95 +17,95 @@
 package org.apache.poi.xwpf.usermodel;
 
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlCursor.TokenType;
+import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentCell;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 
 
 /**
  * Experimental class to offer rudimentary read-only processing of
- * of the XWPFSDTCellContent.
+ * the CTSdtContentCell.
  * <p>
  * WARNING - APIs expected to change rapidly
  */
 public class XWPFSDTContentCell implements ISDTContent {
-
+    private final CTSdtContentCell sdtContentCell;
+    private final XWPFSDTCell xwpfsdtCell;
     //A full implementation would grab the icells
     //that a content cell can contain.  This would require
     //significant changes, including changing the notion that the
     //parent of a cell can be not just a row, but an sdt.
     //For now we are just grabbing the text out of the text tokentypes.
 
-    //private List<ICell> cells = new ArrayList<ICell>().
+    private List<XWPFTableCell> tableCells;
+    private List<ICell> iCells;
 
-    private String text = "";
-
-    public XWPFSDTContentCell(CTSdtContentCell sdtContentCell,
-                              XWPFTableRow xwpfTableRow, IBody part) {
+    public XWPFSDTContentCell(CTSdtContentCell sdtContentCell, XWPFSDTCell xwpfsdtCell) {
         super();
+        this.sdtContentCell = sdtContentCell;
+        this.xwpfsdtCell = xwpfsdtCell;
+        tableCells = new ArrayList<>();
+        iCells = new ArrayList<>();
         //sdtContentCell is allowed to be null:  minOccurs="0" maxOccurs="1"
         if (sdtContentCell == null) {
             return;
         }
-        StringBuilder sb = new StringBuilder();
-        try (final XmlCursor cursor = sdtContentCell.newCursor()) {
-            //keep track of the following,
-            //and add "\n" only before the start of a body
-            //element if it is not the first body element.
 
-            //index of cell in row
-            int tcCnt = 0;
-            //count of body objects
-            int iBodyCnt = 0;
-            int depth = 1;
-
-            while (cursor.hasNextToken() && depth > 0) {
-                TokenType t = cursor.toNextToken();
-                if (t.isText()) {
-                    sb.append(cursor.getTextValue());
-                } else if (isStartToken(cursor, "tr")) {
-                    tcCnt = 0;
-                    iBodyCnt = 0;
-                } else if (isStartToken(cursor, "tc")) {
-                    if (tcCnt++ > 0) {
-                        sb.append("\t");
-                    }
-                    iBodyCnt = 0;
-                } else if (isStartToken(cursor, "p") ||
-                        isStartToken(cursor, "tbl") ||
-                        isStartToken(cursor, "sdt")) {
-                    if (iBodyCnt > 0) {
-                        sb.append("\n");
-                    }
-                    iBodyCnt++;
-                }
-                if (cursor.isStart()) {
-                    depth++;
-                } else if (cursor.isEnd()) {
-                    depth--;
+        //Can't use ctRow.getTcList because that only gets table cells
+        //Can't use ctRow.getSdtList because that only gets sdts that are at cell level
+        try (XmlCursor cursor = sdtContentCell.newCursor()) {
+            cursor.selectPath("./*");
+            while (cursor.toNextSelection()) {
+                XmlObject o = cursor.getObject();
+                if (o instanceof CTTc) {
+                    tableCells.add(new XWPFTableCell((CTTc) o, xwpfsdtCell.getXwpfTableRow(), xwpfsdtCell.getXwpfTableRow().getTable().getBody()));
+                    iCells.add(new XWPFTableCell((CTTc) o, xwpfsdtCell.getXwpfTableRow(), xwpfsdtCell.getXwpfTableRow().getTable().getBody()));
+                } else if (o instanceof CTSdtCell) {
+                    iCells.add(new XWPFSDTCell((CTSdtCell) o, xwpfsdtCell.getXwpfTableRow(), xwpfsdtCell.getXwpfTableRow().getTable().getBody()));
                 }
             }
-            text = sb.toString();
         }
     }
 
-    private boolean isStartToken(XmlCursor cursor, String string) {
-        if (!cursor.isStart()) {
-            return false;
-        }
-        QName qName = cursor.getName();
-        if (qName != null && qName.getLocalPart() != null &&
-                qName.getLocalPart().equals(string)) {
-            return true;
-        }
-        return false;
+    public CTSdtContentCell getCTSdtContentCell() {
+        return sdtContentCell;
     }
 
+    public XWPFSDTCell getSDT() {
+        return xwpfsdtCell;
+    }
 
+  public List<ICell> getTableICells() {
+    return Collections.unmodifiableList(iCells);
+  }
+
+  public List<XWPFTableCell> getTableCells() {
+    return Collections.unmodifiableList(tableCells);
+  }
+
+    @Override
     public String getText() {
-        return text;
+        StringBuilder text = new StringBuilder();
+        for (ICell cell : iCells) {
+            if (cell instanceof XWPFTableCell) {
+                text.append(((XWPFTableCell) cell).getText());
+            } else if (cell instanceof XWPFSDTCell) {
+              if(((XWPFSDTCell) cell).getContent() != null){
+                text.append(((XWPFSDTCell) cell).getContent().getText());
+              }
+            }
+        }
+        return text.toString();
     }
 
     public String toString() {

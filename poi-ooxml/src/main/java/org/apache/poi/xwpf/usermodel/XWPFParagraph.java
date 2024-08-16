@@ -136,12 +136,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                         iruns.add(fr);
                     }
                 }
-                if (o instanceof CTSdtBlock) {
-                    XWPFSDT cc = new XWPFSDT((CTSdtBlock) o, part);
-                    iruns.add(cc);
-                }
                 if (o instanceof CTSdtRun) {
-                    XWPFSDT cc = new XWPFSDT((CTSdtRun) o, part);
+                    XWPFSDTRun cc = new XWPFSDTRun((CTSdtRun) o, this);
                     iruns.add(cc);
                 }
                 if (o instanceof CTRunTrackChange) {
@@ -208,8 +204,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 if (xRun.getCTR().getDelTextArray().length == 0) {
                     out.append(xRun);
                 }
-            } else if (run instanceof XWPFSDT) {
-                out.append(((XWPFSDT) run).getContent().getText());
+            } else if (run instanceof XWPFSDTRun) {
+                out.append(((XWPFSDTRun) run).getContent().getText());
             } else {
                 out.append(run);
             }

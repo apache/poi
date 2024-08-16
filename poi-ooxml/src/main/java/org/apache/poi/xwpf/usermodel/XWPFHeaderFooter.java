@@ -152,8 +152,8 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         }
 
         for (IBodyElement bodyElement : getBodyElements()) {
-            if (bodyElement instanceof XWPFSDT) {
-                t.append(((XWPFSDT) bodyElement).getContent().getText()).append('\n');
+            if (bodyElement instanceof XWPFSDTBlock) {
+                t.append(((XWPFSDTBlock) bodyElement).getContent().getText()).append('\n');
             }
         }
         return t.toString();

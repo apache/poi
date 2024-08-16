@@ -110,7 +110,7 @@ public class XWPFFooter extends XWPFHeaderFooter {
                         bodyElements.add(t);
                     }
                     if (o instanceof CTSdtBlock) {
-                        XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
+                        XWPFSDTBlock c = new XWPFSDTBlock((CTSdtBlock) o, this);
                         bodyElements.add(c);
                     }
                 }

@@ -60,7 +60,7 @@ public class XWPFComment implements IBody {
                     bodyElements.add(t);
                     tables.add(t);
                 } else if (o instanceof CTSdtBlock) {
-                    XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
+                    XWPFSDTBlock c = new XWPFSDTBlock((CTSdtBlock) o, this);
                     bodyElements.add(c);
                 }
 

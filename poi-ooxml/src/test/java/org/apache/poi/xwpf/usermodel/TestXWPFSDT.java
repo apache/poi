@@ -202,15 +202,15 @@ public final class TestXWPFSDT {
     private List<XWPFAbstractSDT> extractSDTsFromBodyElements(List<IBodyElement> elements) {
         List<XWPFAbstractSDT> sdts = new ArrayList<>();
         for (IBodyElement e : elements) {
-            if (e instanceof XWPFSDT) {
-                XWPFSDT sdt = (XWPFSDT) e;
+            if (e instanceof XWPFSDTBlock) {
+                XWPFSDTBlock sdt = (XWPFSDTBlock) e;
                 sdts.add(sdt);
             } else if (e instanceof XWPFParagraph) {
 
                 XWPFParagraph p = (XWPFParagraph) e;
                 for (IRunElement e2 : p.getIRuns()) {
-                    if (e2 instanceof XWPFSDT) {
-                        XWPFSDT sdt = (XWPFSDT) e2;
+                    if (e2 instanceof XWPFSDTRun) {
+                        XWPFSDTRun sdt = (XWPFSDTRun) e2;
                         sdts.add(sdt);
                     }
                 }

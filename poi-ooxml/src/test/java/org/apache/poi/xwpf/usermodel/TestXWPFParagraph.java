@@ -449,7 +449,7 @@ public final class TestXWPFParagraph {
         assertInstanceOf(XWPFHyperlinkRun.class, paragraph.getRuns().get(2));
         assertInstanceOf(XWPFFieldRun.class, paragraph.getRuns().get(3));
 
-        assertInstanceOf(XWPFSDT.class, paragraph.getIRuns().get(1));
+        assertInstanceOf(XWPFSDTRun.class, paragraph.getIRuns().get(1));
         assertInstanceOf(XWPFHyperlinkRun.class, paragraph.getIRuns().get(2));
 
         paragraph.removeRun(1);
@@ -457,21 +457,21 @@ public final class TestXWPFParagraph {
         assertInstanceOf(XWPFHyperlinkRun.class, paragraph.getRuns().get(1));
         assertInstanceOf(XWPFFieldRun.class, paragraph.getRuns().get(2));
 
-        assertInstanceOf(XWPFSDT.class, paragraph.getIRuns().get(1));
+        assertInstanceOf(XWPFSDTRun.class, paragraph.getIRuns().get(1));
         assertInstanceOf(XWPFHyperlinkRun.class, paragraph.getIRuns().get(2));
 
         paragraph.removeRun(1);
         assertEquals(2, paragraph.getRuns().size());
         assertInstanceOf(XWPFFieldRun.class, paragraph.getRuns().get(1));
 
-        assertInstanceOf(XWPFSDT.class, paragraph.getIRuns().get(1));
+        assertInstanceOf(XWPFSDTRun.class, paragraph.getIRuns().get(1));
         assertInstanceOf(XWPFFieldRun.class, paragraph.getIRuns().get(2));
 
         paragraph.removeRun(0);
         assertEquals(1, paragraph.getRuns().size());
         assertInstanceOf(XWPFFieldRun.class, paragraph.getRuns().get(0));
 
-        assertInstanceOf(XWPFSDT.class, paragraph.getIRuns().get(0));
+        assertInstanceOf(XWPFSDTRun.class, paragraph.getIRuns().get(0));
         assertInstanceOf(XWPFFieldRun.class, paragraph.getIRuns().get(1));
 
         XWPFRun newRun = paragraph.insertNewRun(0);

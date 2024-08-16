@@ -29,11 +29,15 @@ import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJcTable;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblBorders;
@@ -136,6 +140,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
 
     protected StringBuilder text = new StringBuilder(64);
     protected final List<XWPFTableRow> tableRows = new ArrayList<>();
+    protected final List<IRow> iRows = new ArrayList<>();
 
     // Unused: UUF_UNUSED_PUBLIC_OR_PROTECTED_FIELD
     //protected List<String> styleIDs;
@@ -168,22 +173,37 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             createEmptyTable(table);
         }
 
-        for (CTRow row : table.getTrList()) {
-            StringBuilder rowText = new StringBuilder();
-            XWPFTableRow tabRow = new XWPFTableRow(row, this);
-            tableRows.add(tabRow);
-            for (CTTc cell : row.getTcList()) {
-                for (CTP ctp : cell.getPList()) {
-                    XWPFParagraph p = new XWPFParagraph(ctp, part);
-                    if (rowText.length() > 0) {
-                        rowText.append('\t');
-                    }
-                    rowText.append(p.getText());
+//        for (CTRow row : table.getTrList()) {
+//            StringBuilder rowText = new StringBuilder();
+//            XWPFTableRow tabRow = new XWPFTableRow(row, this);
+//            tableRows.add(tabRow);
+//            for (CTTc cell : row.getTcList()) {
+//                for (CTP ctp : cell.getPList()) {
+//                    XWPFParagraph p = new XWPFParagraph(ctp, part);
+//                    if (rowText.length() > 0) {
+//                        rowText.append('\t');
+//                    }
+//                    rowText.append(p.getText());
+//                }
+//            }
+//            if (rowText.length() > 0) {
+//                this.text.append(rowText);
+//                this.text.append('\n');
+//            }
+//        }
+        try (XmlCursor cursor = table.newCursor()) {
+            cursor.selectPath("./*");
+            while (cursor.toNextSelection()) {
+                XmlObject o = cursor.getObject();
+                if (o instanceof CTRow) {
+                    XWPFTableRow p = new XWPFTableRow((CTRow) o, this);
+                    tableRows.add(p);
+                    iRows.add(p);
                 }
-            }
-            if (rowText.length() > 0) {
-                this.text.append(rowText);
-                this.text.append('\n');
+                if (o instanceof CTSdtRow) {
+                    XWPFSDTRow t = new XWPFSDTRow((CTSdtRow) o, this);
+                    iRows.add(t);
+                }
             }
         }
     }

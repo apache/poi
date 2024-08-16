@@ -17,36 +17,45 @@
 package org.apache.poi.xwpf.usermodel;
 
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRow;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 
 /**
  * Experimental class to offer rudimentary read-only processing of
- * of StructuredDocumentTags/ContentControl
+ * of StructuredDocumentTags/ContentControl that can appear
+ * in a table row as if a table cell.
+ * <p>
+ * These can contain one or more cells or other SDTs within them.
  * <p>
  * WARNING - APIs expected to change rapidly
  */
-public class XWPFSDT extends XWPFAbstractSDT
-        implements IBodyElement, IRunBody, ISDTContents, IRunElement {
-    private final ISDTContent content;
+public class XWPFSDTRun extends XWPFAbstractSDT implements IRunElement {
+    private final XWPFSDTContentRun xwpfsdtContentRun;
+    private final CTSdtRun sdtRun;
+    private final IRunBody parent;
 
-    public XWPFSDT(CTSdtRun sdtRun, IBody part) {
-        super(sdtRun.getSdtPr(), part);
-        this.content = new XWPFSDTContent(sdtRun.getSdtContent(), part, this);
+    public XWPFSDTRun(CTSdtRun sdtRun, IRunBody parent) {
+        super(sdtRun.getSdtPr());
+        this.sdtRun = sdtRun;
+        this.parent = parent;
+        xwpfsdtContentRun = new XWPFSDTContentRun(sdtRun.getSdtContent(), this);
     }
 
-    public XWPFSDT(CTSdtBlock block, IBody part) {
-        super(block.getSdtPr(), part);
-        this.content = new XWPFSDTContent(block.getSdtContent(), part, this);
+    public CTSdtRun getSdt() {
+        return sdtRun;
     }
 
-    public XWPFSDT(CTSdtRow row, IBody part) {
-        super(row.getSdtPr(), part);
-        this.content = new XWPFSDTContent(row.getSdtContent(), part, this);
+    public IRunBody getParent() {
+        return parent;
     }
 
-    public ISDTContent getContent() {
-        return content;
+    @Override
+    public XWPFSDTContentRun getContent() {
+        return xwpfsdtContentRun;
     }
 
+    @Override
+    public XWPFDocument getDocument() {
+        return parent.getDocument();
+    }
 }

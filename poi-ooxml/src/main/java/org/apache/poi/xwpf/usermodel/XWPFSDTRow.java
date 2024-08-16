@@ -17,6 +17,7 @@
 package org.apache.poi.xwpf.usermodel;
 
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRow;
 
 /**
  * Experimental class to offer rudimentary read-only processing of
@@ -27,34 +28,28 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
  * <p>
  * WARNING - APIs expected to change rapidly
  */
-public class XWPFSDTCell extends XWPFAbstractSDT implements ICell {
-    private final XWPFSDTContentCell cellContent;
-    private final XWPFTableRow xwpfTableRow;
-    private final IBody part;
+public class XWPFSDTRow extends XWPFAbstractSDT implements IRow {
+    private final XWPFSDTContentRow cellContent;
+    private final XWPFTable xwpfTable;
 
-    public XWPFSDTCell(CTSdtCell sdtCell, XWPFTableRow xwpfTableRow, IBody part) {
-        super(sdtCell.getSdtPr());
-        this.xwpfTableRow = xwpfTableRow;
-        this.part = part;
-        cellContent = new XWPFSDTContentCell(sdtCell.getSdtContent(), this);
+    public XWPFSDTRow(CTSdtRow sdtRow, XWPFTable xwpfTable) {
+        super(sdtRow.getSdtPr());
+        this.xwpfTable = xwpfTable;
+        cellContent = new XWPFSDTContentRow(sdtRow.getSdtContent(), this);
     }
 
-    public XWPFTableRow getXwpfTableRow() {
-        return xwpfTableRow;
-    }
-
-    public IBody getPart() {
-        return part;
+    public XWPFTable getTable() {
+        return xwpfTable;
     }
 
     @Override
-    public XWPFSDTContentCell getContent() {
+    public ISDTContent getContent() {
         return cellContent;
     }
 
     @Override
     public XWPFDocument getDocument() {
-        return this.part.getXWPFDocument();
+        return this.xwpfTable.getBody().getXWPFDocument();
     }
 
 }

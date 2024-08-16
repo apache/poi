@@ -27,29 +27,31 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtPr;
  * These classes have so far been built only for read-only processing.
  */
 public abstract class XWPFAbstractSDT implements ISDTContents {
-    private final String title;
-    private final String tag;
-    private final IBody part;
+    private final CTSdtPr pr;
 
-    public XWPFAbstractSDT(CTSdtPr pr, IBody part) {
-        title = (pr != null && pr.isSetAlias()) ? pr.getAlias().getVal() : "";
-        tag = (pr != null && pr.isSetTag()) ? pr.getTag().getVal() : "";
-        this.part = part;
+    public XWPFAbstractSDT(CTSdtPr pr) {
+        this.pr = pr;
+    }
 
+    /**
+     * @return ctSdtPr
+     */
+    public CTSdtPr getCTSdtPr() {
+        return pr;
     }
 
     /**
      * @return first SDT Title
      */
     public String getTitle() {
-        return title;
+        return (pr != null && pr.isSetAlias()) ? pr.getAlias().getVal() : "";
     }
 
     /**
      * @return first SDT Tag
      */
     public String getTag() {
-        return tag;
+        return (pr != null && pr.isSetTag()) ? pr.getTag().getVal() : "";
     }
 
     /**
@@ -57,35 +59,5 @@ public abstract class XWPFAbstractSDT implements ISDTContents {
      */
     public abstract ISDTContent getContent();
 
-    /**
-     * @return null
-     */
-    public IBody getBody() {
-        return null;
-    }
-
-    /**
-     * @return document part
-     */
-    public POIXMLDocumentPart getPart() {
-        return part.getPart();
-    }
-
-    /**
-     * @return partType
-     */
-    public BodyType getPartType() {
-        return BodyType.CONTENTCONTROL;
-    }
-
-    /**
-     * @return element type
-     */
-    public BodyElementType getElementType() {
-        return BodyElementType.CONTENTCONTROL;
-    }
-
-    public XWPFDocument getDocument() {
-        return part.getXWPFDocument();
-    }
+    public abstract XWPFDocument getDocument();
 }

@@ -16,17 +16,12 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import org.apache.poi.ooxml.POIXMLDocumentPart;
-import org.apache.poi.wp.usermodel.Paragraph;
-
 /**
- * Simple interface describing both {@link XWPFParagraph}
- * and {@link XWPFSDTContentRun}
+ * Interface for anything that can be at a table cell level:
+ * {@link XWPFTableRow}, {@link XWPFSDTRow}
  * <p>
- * TODO Should this be based on / extend {@link Paragraph}?
+ * Schematically something like this:
+ * {@code <tbl><tr/><tr/><sdt><tr/></sdt></tbl>}
  */
-public interface IRunBody {
-    public XWPFDocument getDocument();
-
-    public POIXMLDocumentPart getPart();
+public interface IRow {
 }

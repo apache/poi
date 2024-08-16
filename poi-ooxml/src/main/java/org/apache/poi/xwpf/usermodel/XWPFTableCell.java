@@ -101,11 +101,7 @@ public class XWPFTableCell implements IBody, ICell {
                     bodyElements.add(t);
                 }
                 if (o instanceof CTSdtBlock) {
-                    XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
-                    bodyElements.add(c);
-                }
-                if (o instanceof CTSdtRun) {
-                    XWPFSDT c = new XWPFSDT((CTSdtRun) o, this);
+                    XWPFSDTBlock c = new XWPFSDTBlock((CTSdtBlock) o, this);
                     bodyElements.add(c);
                 }
             }
@@ -482,8 +478,8 @@ public class XWPFTableCell implements IBody, ICell {
             if (!isLast) {
                 text.append('\n');
             }
-        } else if (e instanceof XWPFSDT) {
-            text.append(((XWPFSDT) e).getContent().getText());
+        } else if (e instanceof XWPFSDTBlock) {
+            text.append(((XWPFSDTBlock) e).getContent().getText());
             if (!isLast) {
                 text.append('\t');
             }
