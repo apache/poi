@@ -173,36 +173,25 @@ public class XWPFTable implements IBodyElement, ISDTContents {
             createEmptyTable(table);
         }
 
-//        for (CTRow row : table.getTrList()) {
-//            StringBuilder rowText = new StringBuilder();
-//            XWPFTableRow tabRow = new XWPFTableRow(row, this);
-//            tableRows.add(tabRow);
-//            for (CTTc cell : row.getTcList()) {
-//                for (CTP ctp : cell.getPList()) {
-//                    XWPFParagraph p = new XWPFParagraph(ctp, part);
-//                    if (rowText.length() > 0) {
-//                        rowText.append('\t');
-//                    }
-//                    rowText.append(p.getText());
-//                }
-//            }
-//            if (rowText.length() > 0) {
-//                this.text.append(rowText);
-//                this.text.append('\n');
-//            }
-//        }
         try (XmlCursor cursor = table.newCursor()) {
             cursor.selectPath("./*");
             while (cursor.toNextSelection()) {
                 XmlObject o = cursor.getObject();
+                StringBuilder rowText = new StringBuilder();
                 if (o instanceof CTRow) {
-                    XWPFTableRow p = new XWPFTableRow((CTRow) o, this);
-                    tableRows.add(p);
-                    iRows.add(p);
+                    XWPFTableRow row = new XWPFTableRow((CTRow) o, this);
+                    tableRows.add(row);
+                    iRows.add(row);
+                    rowText.append(row.getText());
                 }
                 if (o instanceof CTSdtRow) {
-                    XWPFSDTRow t = new XWPFSDTRow((CTSdtRow) o, this);
-                    iRows.add(t);
+                    XWPFSDTRow row = new XWPFSDTRow((CTSdtRow) o, this);
+                    iRows.add(row);
+                    rowText.append(row.getContent().getText());
+                }
+                if (rowText.length() > 0) {
+                    this.text.append(rowText);
+                    this.text.append('\n');
                 }
             }
         }

@@ -37,7 +37,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSmartTagRun;
 
 /**
  * Experimental class to offer rudimentary read-only processing of
- * of the XWPFSDTCellContent.
+ * the XWPFSDTContentRun.
  * <p>
  * WARNING - APIs expected to change rapidly
  */

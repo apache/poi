@@ -73,7 +73,17 @@ public class XWPFSDTContentRow implements ISDTContent {
     }
 
     public String getText() {
-        return "";
+        StringBuilder text = new StringBuilder();
+        for (IRow row : iRows) {
+            if (row instanceof XWPFTableRow) {
+                text.append(((XWPFTableRow) row).getText());
+            } else if (row instanceof XWPFSDTRow) {
+                if(((XWPFSDTRow) row).getContent() != null){
+                    text.append(((XWPFSDTRow) row).getContent().getText());
+                }
+            }
+        }
+        return text.toString();
     }
 
     public String toString() {

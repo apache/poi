@@ -44,8 +44,8 @@ public class XWPFSDTContentCell implements ISDTContent {
     //A full implementation would grab the icells
     //that a content cell can contain.  This would require
     //significant changes, including changing the notion that the
-    //parent of a cell can be not just a row, but an sdt.
-    //For now we are just grabbing the text out of the text tokentypes.
+    //parent of a cell can be not just a row, but a sdt.
+    //For now, we are just grabbing the text out of the text tokentypes.
 
     private List<XWPFTableCell> tableCells;
     private List<ICell> iCells;
@@ -85,24 +85,27 @@ public class XWPFSDTContentCell implements ISDTContent {
         return xwpfsdtCell;
     }
 
-  public List<ICell> getTableICells() {
-    return Collections.unmodifiableList(iCells);
-  }
+    public List<ICell> getTableICells() {
+        return Collections.unmodifiableList(iCells);
+    }
 
-  public List<XWPFTableCell> getTableCells() {
-    return Collections.unmodifiableList(tableCells);
-  }
+    public List<XWPFTableCell> getTableCells() {
+        return Collections.unmodifiableList(tableCells);
+    }
 
     @Override
     public String getText() {
         StringBuilder text = new StringBuilder();
         for (ICell cell : iCells) {
+            if (text.length() > 0) {
+                text.append('\t');
+            }
             if (cell instanceof XWPFTableCell) {
                 text.append(((XWPFTableCell) cell).getText());
             } else if (cell instanceof XWPFSDTCell) {
-              if(((XWPFSDTCell) cell).getContent() != null){
-                text.append(((XWPFSDTCell) cell).getContent().getText());
-              }
+                if(((XWPFSDTCell) cell).getContent() != null){
+                  text.append(((XWPFSDTCell) cell).getContent().getText());
+                }
             }
         }
         return text.toString();

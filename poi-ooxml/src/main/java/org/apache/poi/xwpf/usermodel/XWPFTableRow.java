@@ -108,6 +108,23 @@ public class XWPFTableRow implements IRow{
         return tableCell;
     }
 
+    public String getText() {
+        StringBuilder text = new StringBuilder();
+        for (ICell cell : iCells) {
+            if (text.length() > 0) {
+                text.append('\t');
+            }
+            if (cell instanceof XWPFTableCell) {
+                text.append(((XWPFTableCell) cell).getText());
+            } else if (cell instanceof XWPFSDTCell) {
+                if(((XWPFSDTCell) cell).getContent() != null){
+                    text.append(((XWPFSDTCell) cell).getContent().getText());
+                }
+            }
+        }
+        return text.toString();
+    }
+
     private void ensureBlockLevelElement(XWPFTableCell tableCell) {
         // If a table cell does not include at least one block-level element,
         // then this document shall be considered corrupt.
