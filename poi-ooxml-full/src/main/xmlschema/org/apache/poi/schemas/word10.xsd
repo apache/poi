@@ -1,9 +1,9 @@
-<xsd:schema targetNamespace="http://schemas.microsoft.com/office/word/2010/wordml"
+<xsd:schema attributeFormDefault="qualified" blockDefault="#all" elementFormDefault="qualified"
+            targetNamespace="http://schemas.microsoft.com/office/word/2010/wordml"
             xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"
             xmlns:w06="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
             xmlns:od06st="http://schemas.openxmlformats.org/officeDocument/2006/sharedTypes"
             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-            elementFormDefault="qualified" attributeFormDefault="qualified" blockDefault="#all"
             xmlns="http://schemas.microsoft.com/office/word/2010/wordml">
     <xsd:complexType name="CT_LongHexNumber">
         <xsd:attribute name="val" type="w06:ST_LongHexNumber" use="required"/>
