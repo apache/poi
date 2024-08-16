@@ -20,14 +20,10 @@ package org.apache.poi.xwpf.usermodel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.xml.namespace.QName;
 
 import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlCursor.TokenType;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentCell;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 

@@ -16,8 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 
 /**

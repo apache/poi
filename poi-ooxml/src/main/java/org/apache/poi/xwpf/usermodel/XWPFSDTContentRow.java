@@ -19,7 +19,6 @@ package org.apache.poi.xwpf.usermodel;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.namespace.QName;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;

@@ -36,7 +36,6 @@ import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFSDTBlock;
 import org.apache.poi.xwpf.usermodel.XWPFSDTCell;
-import org.apache.poi.xwpf.usermodel.XWPFSDTRow;
 import org.apache.poi.xwpf.usermodel.XWPFSDTRun;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;

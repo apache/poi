@@ -28,7 +28,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdnRef;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHyperlink;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRunTrackChange;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSimpleField;
