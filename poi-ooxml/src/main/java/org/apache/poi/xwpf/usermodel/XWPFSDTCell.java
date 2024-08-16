@@ -30,13 +30,19 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
 public class XWPFSDTCell extends XWPFAbstractSDT implements ICell {
     private final XWPFSDTContentCell cellContent;
     private final XWPFTableRow xwpfTableRow;
+    private final CTSdtCell sdtCell;
     private final IBody part;
 
     public XWPFSDTCell(CTSdtCell sdtCell, XWPFTableRow xwpfTableRow, IBody part) {
         super(sdtCell.getSdtPr());
+        this.sdtCell = sdtCell;
         this.xwpfTableRow = xwpfTableRow;
         this.part = part;
         cellContent = new XWPFSDTContentCell(sdtCell.getSdtContent(), this);
+    }
+
+    public CTSdtCell getCTSdt() {
+        return sdtCell;
     }
 
     public XWPFTableRow getXwpfTableRow() {

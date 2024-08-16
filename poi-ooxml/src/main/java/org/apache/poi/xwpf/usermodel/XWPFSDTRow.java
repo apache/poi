@@ -30,12 +30,18 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRow;
  */
 public class XWPFSDTRow extends XWPFAbstractSDT implements IRow {
     private final XWPFSDTContentRow cellContent;
+    private final CTSdtRow sdtRow;
     private final XWPFTable xwpfTable;
 
     public XWPFSDTRow(CTSdtRow sdtRow, XWPFTable xwpfTable) {
         super(sdtRow.getSdtPr());
+        this.sdtRow = sdtRow;
         this.xwpfTable = xwpfTable;
         cellContent = new XWPFSDTContentRow(sdtRow.getSdtContent(), this);
+    }
+
+    public CTSdtRow getCTSdt() {
+        return sdtRow;
     }
 
     public XWPFTable getTable() {

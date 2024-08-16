@@ -157,6 +157,10 @@ public class XWPFSDTContentRun implements ISDTContent, IRunBody {
         return sdtContentRun;
     }
 
+    public XWPFSDTRun getSDT() {
+        return xwpfsdtRun;
+    }
+
     public List<XWPFRun> getRuns() {
         return Collections.unmodifiableList(runs);
     }

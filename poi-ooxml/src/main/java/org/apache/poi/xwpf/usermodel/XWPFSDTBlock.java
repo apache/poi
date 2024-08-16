@@ -37,7 +37,7 @@ public class XWPFSDTBlock extends XWPFAbstractSDT implements IBodyElement {
         xwpfsdtContentBlock = new XWPFSDTContentBlock(sdtBlock.getSdtContent(), this);
     }
 
-    public CTSdtBlock getSdt() {
+    public CTSdtBlock getCTSdt() {
         return sdtBlock;
     }
 

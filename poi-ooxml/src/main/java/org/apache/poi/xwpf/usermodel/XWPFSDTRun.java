@@ -41,7 +41,7 @@ public class XWPFSDTRun extends XWPFAbstractSDT implements IRunElement {
         xwpfsdtContentRun = new XWPFSDTContentRun(sdtRun.getSdtContent(), this);
     }
 
-    public CTSdtRun getSdt() {
+    public CTSdtRun getCTSdt() {
         return sdtRun;
     }
 
