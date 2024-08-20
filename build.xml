@@ -333,7 +333,7 @@ under the License.
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.curvesapi" artifact="com.github.virtuald:curvesapi:1.08" usage="ooxml"/>
     <dependency prefix="ooxml.xmlbeans" artifact="org.apache.xmlbeans:xmlbeans:5.2.0" usage="ooxml"/>
-    <dependency prefix="ooxml.commons-compress" artifact="org.apache.commons:commons-compress:1.27.0" usage="ooxml"/>
+    <dependency prefix="ooxml.commons-compress" artifact="org.apache.commons:commons-compress:1.27.1" usage="ooxml"/>
     <dependency prefix="ooxml.commons-lang3" artifact="org.apache.commons:commons-lang3:3.12.0" usage="ooxml"/>
 
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
