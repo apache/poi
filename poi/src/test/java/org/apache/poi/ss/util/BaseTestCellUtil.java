@@ -30,17 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -64,13 +54,13 @@ public abstract class BaseTestCellUtil {
 
             // Add a border should create a new style
             int styCnt1 = wb.getNumCellStyles();
-            CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+            CellUtil.setCellStyleProperty(c, CellPropertyType.BORDER_BOTTOM, BorderStyle.THIN);
             int styCnt2 = wb.getNumCellStyles();
             assertEquals(styCnt1 + 1, styCnt2);
 
             // Add same border to another cell, should not create another style
             c = r.createCell(1);
-            CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+            CellUtil.setCellStyleProperty(c, CellPropertyType.BORDER_BOTTOM, BorderStyle.THIN);
             int styCnt3 = wb.getNumCellStyles();
             assertEquals(styCnt2, styCnt3);
         }
@@ -84,7 +74,7 @@ public abstract class BaseTestCellUtil {
             Cell c = r.createCell(0);
 
             // An invalid BorderStyle constant
-            assertThrows(RuntimeException.class, () -> CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, 42));
+            assertThrows(RuntimeException.class, () -> CellUtil.setCellStyleProperty(c, CellPropertyType.BORDER_BOTTOM, 42));
         }
     }
 
@@ -96,11 +86,11 @@ public abstract class BaseTestCellUtil {
             Cell c = r.createCell(0);
 
             // A valid BorderStyle constant, as a Short
-            CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, BorderStyle.DASH_DOT.getCode());
+            CellUtil.setCellStyleProperty(c, CellPropertyType.BORDER_BOTTOM, BorderStyle.DASH_DOT.getCode());
             assertEquals(BorderStyle.DASH_DOT, c.getCellStyle().getBorderBottom());
 
             // A valid BorderStyle constant, as an Enum
-            CellUtil.setCellStyleProperty(c, CellUtil.BORDER_TOP, BorderStyle.MEDIUM_DASH_DOT);
+            CellUtil.setCellStyleProperty(c, CellPropertyType.BORDER_TOP, BorderStyle.MEDIUM_DASH_DOT);
             assertEquals(BorderStyle.MEDIUM_DASH_DOT, c.getCellStyle().getBorderTop());
         }
     }
@@ -116,7 +106,7 @@ public abstract class BaseTestCellUtil {
             assertFalse(c.getCellStyle().getShrinkToFit());
 
             // Set shrinkToFit to true
-            CellUtil.setCellStyleProperty(c, CellUtil.SHRINK_TO_FIT, true);
+            CellUtil.setCellStyleProperty(c, CellPropertyType.SHRINK_TO_FIT, true);
             assertTrue(c.getCellStyle().getShrinkToFit());
         }
     }
@@ -132,7 +122,7 @@ public abstract class BaseTestCellUtil {
             assertFalse(c.getCellStyle().getQuotePrefixed());
 
             // Set quotePrefixed to true
-            CellUtil.setCellStyleProperty(c, CellUtil.QUOTE_PREFIXED, true);
+            CellUtil.setCellStyleProperty(c, CellPropertyType.QUOTE_PREFIXED, true);
             assertTrue(c.getCellStyle().getQuotePrefixed());
         }
     }
@@ -197,7 +187,7 @@ public abstract class BaseTestCellUtil {
             c.setCellStyle(cs);
 
             // Set BorderBottom from THIN to DOUBLE with setCellStyleProperty()
-            CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, BorderStyle.DOUBLE);
+            CellUtil.setCellStyleProperty(c, CellPropertyType.BORDER_BOTTOM, BorderStyle.DOUBLE);
 
             // Assert that only BorderBottom has been changed and no others.
             assertEquals(BorderStyle.DOUBLE, c.getCellStyle().getBorderBottom());
@@ -234,13 +224,13 @@ public abstract class BaseTestCellUtil {
 
             // Add multiple border properties to cell should create a single new style
             int styCnt1 = wb.getNumCellStyles();
-            Map<String, Object> props = new HashMap<>();
-            props.put(CellUtil.BORDER_TOP, BorderStyle.THIN);
-            props.put(CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
-            props.put(CellUtil.BORDER_LEFT, BorderStyle.THIN);
-            props.put(CellUtil.BORDER_RIGHT, BorderStyle.THIN);
-            props.put(CellUtil.ALIGNMENT, HorizontalAlignment.CENTER.getCode()); // try it both with a Short (deprecated)
-            props.put(CellUtil.VERTICAL_ALIGNMENT, VerticalAlignment.CENTER); // and with an enum
+            Map<CellPropertyType, Object> props = new HashMap<>();
+            props.put(CellPropertyType.BORDER_TOP, BorderStyle.THIN);
+            props.put(CellPropertyType.BORDER_BOTTOM, BorderStyle.THIN);
+            props.put(CellPropertyType.BORDER_LEFT, BorderStyle.THIN);
+            props.put(CellPropertyType.BORDER_RIGHT, BorderStyle.THIN);
+            props.put(CellPropertyType.ALIGNMENT, HorizontalAlignment.CENTER.getCode()); // try it both with a Short (deprecated)
+            props.put(CellPropertyType.VERTICAL_ALIGNMENT, VerticalAlignment.CENTER); // and with an enum
             CellUtil.setCellStyleProperties(c, props);
             int styCnt2 = wb.getNumCellStyles();
             assertEquals(styCnt1 + 1, styCnt2, "Only one additional style should have been created");
@@ -468,10 +458,10 @@ public abstract class BaseTestCellUtil {
     protected void setFillForegroundColorBeforeFillBackgroundColorEnum() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Cell A1 = wb1.createSheet().createRow(0).createCell(0);
-            Map<String, Object> properties = new HashMap<>();
-            properties.put(CellUtil.FILL_PATTERN, FillPatternType.BRICKS);
-            properties.put(CellUtil.FILL_FOREGROUND_COLOR, IndexedColors.BLUE.index);
-            properties.put(CellUtil.FILL_BACKGROUND_COLOR, IndexedColors.RED.index);
+            Map<CellPropertyType, Object> properties = new HashMap<>();
+            properties.put(CellPropertyType.FILL_PATTERN, FillPatternType.BRICKS);
+            properties.put(CellPropertyType.FILL_FOREGROUND_COLOR, IndexedColors.BLUE.index);
+            properties.put(CellPropertyType.FILL_BACKGROUND_COLOR, IndexedColors.RED.index);
 
             CellUtil.setCellStyleProperties(A1, properties);
             CellStyle style = A1.getCellStyle();

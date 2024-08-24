@@ -39,14 +39,7 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
@@ -209,9 +202,9 @@ public final class TestUnfixedBugs {
             row2.getCell(1).getCellStyle().setBorderBottom(BorderStyle.THIN);
 
             Cell cell0 = CellUtil.getCell(row3, 0);
-            CellUtil.setCellStyleProperty(cell0, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+            CellUtil.setCellStyleProperty(cell0, CellPropertyType.BORDER_BOTTOM, BorderStyle.THIN);
             Cell cell1 = CellUtil.getCell(row3, 1);
-            CellUtil.setCellStyleProperty(cell1, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+            CellUtil.setCellStyleProperty(cell1, CellPropertyType.BORDER_BOTTOM, BorderStyle.THIN);
 
             RegionUtil.setBorderBottom(BorderStyle.THIN, range4, sheet);
 
