@@ -2795,8 +2795,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertNotNull(actual);
             assertEquals(color.getARGBHex(), actual.getARGBHex());
 
-            Map<String, Object> properties = new HashMap<>();
-            properties.put(CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+            Map<CellPropertyType, Object> properties = new HashMap<>();
+            properties.put(CellPropertyType.BORDER_BOTTOM, BorderStyle.THIN);
             CellUtil.setCellStyleProperties(cell, properties);
 
             // Now the cell is all black
