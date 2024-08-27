@@ -19,7 +19,13 @@ package org.apache.poi.ss.tests.util;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellPropertyType;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.BaseTestCellUtil;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -31,7 +37,10 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class TestXSSFCellUtil extends BaseTestCellUtil {
     public TestXSSFCellUtil() {
@@ -57,7 +66,6 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
     }
 
     @Test
-    @Deprecated
     public void testSetForegroundColorCellStyleProperty() throws IOException, DecoderException {
         try (Workbook workbook = new XSSFWorkbook()) {
 
@@ -101,7 +109,6 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
     }
 
     @Test
-    @Deprecated
     public void testSetForegroundColorCellStylePropertyToNull() throws IOException, DecoderException {
         try (Workbook workbook = new XSSFWorkbook()) {
 
@@ -162,7 +169,6 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
     }
 
     @Test
-    @Deprecated
     public void testSetForegroundColorCellStylePropertiesToNull() throws IOException, DecoderException {
 
         try (Workbook workbook = new XSSFWorkbook()) {
@@ -239,7 +245,6 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
     }
 
     @Test
-    @Deprecated
     public void testBug66052WithWorkaround() throws IOException, DecoderException {
         try (Workbook workbook = new XSSFWorkbook()) {
 
@@ -321,7 +326,6 @@ class TestXSSFCellUtil extends BaseTestCellUtil {
     }
 
     @Test
-    @Deprecated
     public void testBug66052WithoutWorkaround() throws IOException, DecoderException {
 
         try (Workbook workbook = new XSSFWorkbook()) {

@@ -250,7 +250,7 @@ public final class CellUtil {
      * Get a row from the spreadsheet, and create it if it doesn't exist.
      *
      * @param rowIndex The 0 based row number
-     * @param sheet    The sheet that the row is part of.
+     * @param sheet The sheet that the row is part of.
      * @return The row indicated by the rowCounter
      */
     public static Row getRow(int rowIndex, Sheet sheet) {
@@ -265,7 +265,7 @@ public final class CellUtil {
     /**
      * Get a specific cell from a row. If the cell doesn't exist, then create it.
      *
-     * @param row         The row that the cell is part of
+     * @param row The row that the cell is part of
      * @param columnIndex The column index that the cell is in.
      * @return The cell indicated by the column.
      */
@@ -282,11 +282,11 @@ public final class CellUtil {
     /**
      * Creates a cell, gives it a value, and applies a style if provided
      *
-     * @param row    the row to create the cell in
-     * @param column the column index to create the cell in
-     * @param value  The value of the cell
-     * @param style  If the style is not null, then set
-     * @return A new Cell
+     * @param  row     the row to create the cell in
+     * @param  column  the column index to create the cell in
+     * @param  value   The value of the cell
+     * @param  style   If the style is not null, then set
+     * @return         A new Cell
      */
     public static Cell createCell(Row row, int column, String value, CellStyle style) {
         Cell cell = getCell(row, column);
@@ -303,10 +303,10 @@ public final class CellUtil {
     /**
      * Create a cell, and give it a value.
      *
-     * @param row    the row to create the cell in
-     * @param column the column index to create the cell in
-     * @param value  The value of the cell
-     * @return A new Cell.
+     *@param  row     the row to create the cell in
+     *@param  column  the column index to create the cell in
+     *@param  value   The value of the cell
+     *@return         A new Cell.
      */
     public static Cell createCell(Row row, int column, String value) {
         return createCell(row, column, value, null);
@@ -315,19 +315,19 @@ public final class CellUtil {
     /**
      * Copy cell value, formula and style, from srcCell per cell copy policy
      * If srcCell is null, clears the cell value and cell style per cell copy policy.
-     * <p>
+     *
      * Note that if you are copying from a source cell from a different type of then you may need to disable style copying
      * in the {@link CellCopyPolicy} (HSSF styles are not compatible with XSSF styles, for instance).
-     * <p>
+     *
      * This does not shift references in formulas. The <code>copyRowFrom</code> method on <code>XSSFRow</code>
      * and <code>HSSFRow</code> does attempt to shift references in formulas.
      *
-     * @param srcCell  The cell to take value, formula and style from
+     * @param srcCell The cell to take value, formula and style from
      * @param destCell The cell to copy to
-     * @param policy   The policy for copying the information, see {@link CellCopyPolicy}
-     * @param context  The context for copying, see {@link CellCopyContext}
+     * @param policy The policy for copying the information, see {@link CellCopyPolicy}
+     * @param context The context for copying, see {@link CellCopyContext}
      * @throws IllegalArgumentException if copy cell style and srcCell is from a different workbook
-     * @throws IllegalStateException    if srcCell hyperlink is not an instance of {@link Duplicatable}
+     * @throws IllegalStateException if srcCell hyperlink is not an instance of {@link Duplicatable}
      * @since POI 5.2.0
      */
     @Beta
@@ -426,8 +426,9 @@ public final class CellUtil {
      * that match the desired CellStyle, creating a new CellStyle with the desired
      * style if no match exists.
      *
-     * @param cell  the cell to set the alignment for
+     * @param cell the cell to set the alignment for
      * @param align the horizontal alignment to use.
+     *
      * @see HorizontalAlignment for alignment options
      * @since POI 3.15 beta 3
      */
@@ -437,15 +438,16 @@ public final class CellUtil {
 
     /**
      * Take a cell, and vertically align it.
-     * <p>
+     *
      * This is superior to cell.getCellStyle().setVerticalAlignment(align) because
      * this method will not modify the CellStyle object that may be referenced
      * by multiple cells. Instead, this method will search for existing CellStyles
      * that match the desired CellStyle, creating a new CellStyle with the desired
      * style if no match exists.
      *
-     * @param cell  the cell to set the alignment for
+     * @param cell the cell to set the alignment for
      * @param align the vertical alignment to use.
+     *
      * @see VerticalAlignment for alignment options
      * @since POI 3.15 beta 3
      */
@@ -495,8 +497,8 @@ public final class CellUtil {
      * [@link #removeStyleFromWorkbookIfUnused(CellStyle, Workbook)]. -->
      * </p>
      *
-     * @param cell       The cell to change the style of
-     * @param properties The properties to be added to a cell style, as {property (String, CellPropertyType): propertyValue}.
+     * @param cell The cell to change the style of
+     * @param properties The properties to be added to a cell style, as {property: propertyValue}.
      * @since POI 3.14 beta 2
      * @deprecated See {@link #setCellStylePropertiesEnum(Cell, Map)}
      */
@@ -612,8 +614,8 @@ public final class CellUtil {
      * {@link #setCellStylePropertiesEnum(Cell, Map)},
      * which is faster and does not add unnecessary intermediate CellStyles to the workbook.</p>
      *
-     * @param cell          The cell that is to be changed.
-     * @param property      The property that is to be changed.
+     * @param cell The cell that is to be changed.
+     * @param property The name of the property that is to be changed.
      * @param propertyValue The value of the property that is to be changed.
      */
     public static void setCellStyleProperty(Cell cell, CellPropertyType property, Object propertyValue) {
@@ -648,8 +650,8 @@ public final class CellUtil {
      * {@link #setCellStylePropertiesEnum(Cell, Map)},
      * which is faster and does not add unnecessary intermediate CellStyles to the workbook.</p>
      *
-     * @param cell          The cell that is to be changed.
-     * @param propertyName  The name of the property that is to be changed.
+     * @param cell The cell that is to be changed.
+     * @param propertyName The name of the property that is to be changed.
      * @param propertyValue The value of the property that is to be changed.
      * @deprecated see {@link #setCellStyleProperty(Cell, CellPropertyType, Object)}
      */
@@ -703,7 +705,7 @@ public final class CellUtil {
      * Copies the entries in src to dest, using the preferential data type
      * so that maps can be compared for equality
      *
-     * @param src  the property map to copy from (read-only)
+     * @param src the property map to copy from (read-only)
      * @param dest the property map to copy into
      * @since POI 3.15 beta 3
      */
@@ -761,8 +763,8 @@ public final class CellUtil {
     /**
      * Sets the format properties of the given style based on the given map.
      *
-     * @param style      cell style
-     * @param workbook   parent workbook
+     * @param style cell style
+     * @param workbook parent workbook
      * @param properties map of format properties (CellPropertyType -> Object)
      * @see #getFormatProperties(CellStyle)
      */
@@ -821,9 +823,9 @@ public final class CellUtil {
      * Utility method that returns the named short value from the given map.
      *
      * @param properties map of named properties (CellPropertyType -> Object)
-     * @param property   property
+     * @param property property
      * @return zero if the property does not exist, or is not a {@link Short}
-     * otherwise the property value
+     *         otherwise the property value
      */
     private static short getShort(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
@@ -848,9 +850,9 @@ public final class CellUtil {
      * Utility method that returns the named Color value from the given map.
      *
      * @param properties map of named properties (CellPropertyType -> Object)
-     * @param property   property
+     * @param property property
      * @return null if the property does not exist, or is not a {@link Color}
-     * otherwise the property value
+     *         otherwise the property value
      */
     private static Color getColor(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
@@ -865,9 +867,9 @@ public final class CellUtil {
      * Utility method that returns the named int value from the given map.
      *
      * @param properties map of named properties (CellPropertyType -> Object)
-     * @param property   property
+     * @param property property
      * @return zero if the property does not exist, or is not a {@link Integer}
-     * otherwise the property value
+     *         otherwise the property value
      */
     private static int getInt(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
@@ -881,7 +883,7 @@ public final class CellUtil {
      * Utility method that returns the named BorderStyle value from the given map.
      *
      * @param properties map of named properties (CellPropertyType -> Object)
-     * @param property   property
+     * @param property property
      * @return Border style if set, otherwise {@link BorderStyle#NONE}
      */
     private static BorderStyle getBorderStyle(Map<CellPropertyType, Object> properties, CellPropertyType property) {
@@ -907,7 +909,7 @@ public final class CellUtil {
      * Utility method that returns the named FillPatternType value from the given map.
      *
      * @param properties map of named properties (CellPropertyType -> Object)
-     * @param property   property
+     * @param property property
      * @return FillPatternType style if set, otherwise {@link FillPatternType#NO_FILL}
      * @since POI 3.15 beta 3
      */
@@ -934,7 +936,7 @@ public final class CellUtil {
      * Utility method that returns the named HorizontalAlignment value from the given map.
      *
      * @param properties map of named properties (CellPropertyType -> Object)
-     * @param property   property
+     * @param property property
      * @return HorizontalAlignment style if set, otherwise {@link HorizontalAlignment#GENERAL}
      * @since POI 3.15 beta 3
      */
@@ -961,7 +963,7 @@ public final class CellUtil {
      * Utility method that returns the named VerticalAlignment value from the given map.
      *
      * @param properties map of named properties (CellPropertyType -> Object)
-     * @param property   property
+     * @param property property
      * @return VerticalAlignment style if set, otherwise {@link VerticalAlignment#BOTTOM}
      * @since POI 3.15 beta 3
      */
@@ -988,9 +990,9 @@ public final class CellUtil {
      * Utility method that returns the named boolean value from the given map.
      *
      * @param properties map of properties (CellPropertyType -> Object)
-     * @param property   property
+     * @param property property
      * @return false if the property does not exist, or is not a {@link Boolean},
-     * true otherwise
+     *         true otherwise
      */
     private static boolean getBoolean(Map<CellPropertyType, Object> properties, CellPropertyType property) {
         Object value = properties.get(property);
@@ -1004,20 +1006,20 @@ public final class CellUtil {
     /**
      * Utility method that puts the given value to the given map.
      *
-     * @param properties map of properties (String -> Object)
-     * @param property   property
-     * @param value      property value
+     * @param properties map of properties (CellPropertyType -> Object)
+     * @param property property
+     * @param value property value
      */
     private static void put(Map<CellPropertyType, Object> properties, CellPropertyType property, Object value) {
         properties.put(property, value);
     }
 
     /**
-     * Looks for text in the cell that should be unicode, like &alpha; and provides the
-     * unicode version of it.
+     *  Looks for text in the cell that should be unicode, like &alpha; and provides the
+     *  unicode version of it.
      *
-     * @param cell The cell to check for unicode values
-     * @return translated to unicode
+     *@param  cell  The cell to check for unicode values
+     *@return       translated to unicode
      */
     public static Cell translateUnicodeValues(Cell cell) {
 
@@ -1040,24 +1042,25 @@ public final class CellUtil {
     }
 
     static {
-        unicodeMappings = new UnicodeMapping[]{
-                um("alpha", "\u03B1"),
-                um("beta", "\u03B2"),
-                um("gamma", "\u03B3"),
-                um("delta", "\u03B4"),
-                um("epsilon", "\u03B5"),
-                um("zeta", "\u03B6"),
-                um("eta", "\u03B7"),
-                um("theta", "\u03B8"),
-                um("iota", "\u03B9"),
-                um("kappa", "\u03BA"),
-                um("lambda", "\u03BB"),
-                um("mu", "\u03BC"),
-                um("nu", "\u03BD"),
-                um("xi", "\u03BE"),
-                um("omicron", "\u03BF"),
+        unicodeMappings = new UnicodeMapping[] {
+                um("alpha",   "\u03B1" ),
+                um("beta",    "\u03B2" ),
+                um("gamma",   "\u03B3" ),
+                um("delta",   "\u03B4" ),
+                um("epsilon", "\u03B5" ),
+                um("zeta",    "\u03B6" ),
+                um("eta",     "\u03B7" ),
+                um("theta",   "\u03B8" ),
+                um("iota",    "\u03B9" ),
+                um("kappa",   "\u03BA" ),
+                um("lambda",  "\u03BB" ),
+                um("mu",      "\u03BC" ),
+                um("nu",      "\u03BD" ),
+                um("xi",      "\u03BE" ),
+                um("omicron", "\u03BF" ),
         };
     }
+
 
     private static UnicodeMapping um(String entityName, String resolvedValue) {
         return new UnicodeMapping(entityName, resolvedValue);

@@ -18,7 +18,15 @@
 package org.apache.poi.ss.util;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BorderExtent;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellPropertyType;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -75,7 +83,6 @@ final class TestPropertyTemplate {
     }
 
     @Test
-    @Deprecated
     void getTemplateProperties() throws IOException {
         CellRangeAddress a1 = new CellRangeAddress(0, 0, 0, 0);
         PropertyTemplate pt = new PropertyTemplate();
@@ -421,7 +428,6 @@ final class TestPropertyTemplate {
     }
 
     @Test
-    @Deprecated
     void drawBorders() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
         PropertyTemplate pt = new PropertyTemplate();
@@ -1141,7 +1147,6 @@ final class TestPropertyTemplate {
     }
 
     @Test
-    @Deprecated
     void drawBorderColors() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
         PropertyTemplate pt = new PropertyTemplate();
@@ -1534,7 +1539,6 @@ final class TestPropertyTemplate {
     }
 
     @Test
-    @Deprecated
     void drawBordersWithColors() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
         PropertyTemplate pt = new PropertyTemplate();

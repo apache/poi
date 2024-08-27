@@ -25,7 +25,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests Spreadsheet CellUtil
@@ -61,7 +67,6 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    @Deprecated
     void setCellStyleProperty() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
@@ -96,7 +101,6 @@ public abstract class BaseTestCellUtil {
 
 
     @Test
-    @Deprecated
     void setCellStylePropertyWithInvalidValue() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
@@ -109,7 +113,6 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test()
-    @Deprecated
     void setCellStylePropertyBorderWithShortAndEnum() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
@@ -160,7 +163,6 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test()
-    @Deprecated
     void setCellStylePropertyWithShrinkToFit() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
@@ -193,7 +195,6 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test()
-    @Deprecated
     void setCellStylePropertyWithQuotePrefixed() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
@@ -302,7 +303,6 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    @Deprecated
     void setCellStyleProperties() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
@@ -593,7 +593,6 @@ public abstract class BaseTestCellUtil {
      * @since POI 3.15 beta 3
      */
     @Test
-    @Deprecated
     protected void setFillForegroundColorBeforeFillBackgroundColorEnum() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Cell A1 = wb1.createSheet().createRow(0).createCell(0);

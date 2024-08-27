@@ -69,7 +69,7 @@ public final class RegionUtil {
      *
      * @param border The new border
      * @param region The region that should have the border
-     * @param sheet  The sheet that the region is on.
+     * @param sheet The sheet that the region is on.
      * @since POI 3.16 beta 1
      */
     public static void setBorderLeft(BorderStyle border, CellRangeAddress region, Sheet sheet) {
@@ -87,9 +87,9 @@ public final class RegionUtil {
      * Sets the left border color for a region of cells by manipulating the cell style of the individual
      * cells on the left
      *
-     * @param color  The color of the border
+     * @param color The color of the border
      * @param region The region that should have the border
-     * @param sheet  The sheet that the region is on.
+     * @param sheet The sheet that the region is on.
      * @since POI 3.15 beta 2
      */
     public static void setLeftBorderColor(int color, CellRangeAddress region, Sheet sheet) {
@@ -109,7 +109,7 @@ public final class RegionUtil {
      *
      * @param border The new border
      * @param region The region that should have the border
-     * @param sheet  The sheet that the region is on.
+     * @param sheet The sheet that the region is on.
      * @since POI 3.16 beta 1
      */
     public static void setBorderRight(BorderStyle border, CellRangeAddress region, Sheet sheet) {
@@ -127,9 +127,9 @@ public final class RegionUtil {
      * Sets the right border color for a region of cells by manipulating the cell style of the individual
      * cells on the right
      *
-     * @param color  The color of the border
+     * @param color The color of the border
      * @param region The region that should have the border
-     * @param sheet  The sheet that the region is on.
+     * @param sheet The sheet that the region is on.
      * @since POI 3.15 beta 2
      */
     public static void setRightBorderColor(int color, CellRangeAddress region, Sheet sheet) {
@@ -149,7 +149,7 @@ public final class RegionUtil {
      *
      * @param border The new border
      * @param region The region that should have the border
-     * @param sheet  The sheet that the region is on.
+     * @param sheet The sheet that the region is on.
      * @since POI 3.16 beta 1
      */
     public static void setBorderBottom(BorderStyle border, CellRangeAddress region, Sheet sheet) {
@@ -167,9 +167,9 @@ public final class RegionUtil {
      * Sets the bottom border color for a region of cells by manipulating the cell style of the individual
      * cells on the bottom
      *
-     * @param color  The color of the border
+     * @param color The color of the border
      * @param region The region that should have the border
-     * @param sheet  The sheet that the region is on.
+     * @param sheet The sheet that the region is on.
      * @since POI 3.15 beta 2
      */
     public static void setBottomBorderColor(int color, CellRangeAddress region, Sheet sheet) {
@@ -189,7 +189,7 @@ public final class RegionUtil {
      *
      * @param border The new border
      * @param region The region that should have the border
-     * @param sheet  The sheet that the region is on.
+     * @param sheet The sheet that the region is on.
      * @since POI 3.16 beta 1
      */
     public static void setBorderTop(BorderStyle border, CellRangeAddress region, Sheet sheet) {
@@ -207,9 +207,9 @@ public final class RegionUtil {
      * Sets the top border color for a region of cells by manipulating the cell style of the individual
      * cells on the top
      *
-     * @param color  The color of the border
+     * @param color The color of the border
      * @param region The region that should have the border
-     * @param sheet  The sheet that the region is on.
+     * @param sheet The sheet that the region is on.
      * @since POI 3.15 beta 2
      */
     public static void setTopBorderColor(int color, CellRangeAddress region, Sheet sheet) {
