@@ -42,6 +42,7 @@ public final class RegionUtil {
         private final Object _propertyValue;
 
         @Deprecated
+        @Removal(version = "7.0.0")
         public CellPropertySetter(String propertyName, int value) {
             this(CellUtil.namePropertyMap.get(propertyName), value);
         }
@@ -62,6 +63,11 @@ public final class RegionUtil {
             _propertyValue = Integer.valueOf(value);
         }
 
+        /**
+         * @param property The property to set
+         * @param value The value to set the property to
+         * @since POI 5.3.1
+         */
         public CellPropertySetter(CellPropertyType property, BorderStyle value) {
             this.property = property;
             _propertyValue = value;
