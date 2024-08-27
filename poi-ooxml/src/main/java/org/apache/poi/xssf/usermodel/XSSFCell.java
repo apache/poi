@@ -606,7 +606,7 @@ public final class XSSFCell extends CellBase {
      * the XSSFWorkbook.</p>
      *
      * <p>To change the style of a cell without affecting other cells that use the same style,
-     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, java.util.Map)}</p>
+     * use {@link org.apache.poi.ss.util.CellUtil#setCellStylePropertiesEnum(Cell, java.util.Map)}</p>
      *
      * @param style  reference contained in the workbook.
      * If the value is null then the style information is removed causing the cell to use the default workbook style.

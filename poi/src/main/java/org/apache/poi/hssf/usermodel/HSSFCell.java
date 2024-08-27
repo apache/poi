@@ -946,7 +946,7 @@ public class HSSFCell extends CellBase {
      * the HSSFWorkbook.</p>
      *
      * <p>To change the style of a cell without affecting other cells that use the same style,
-     * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(org.apache.poi.ss.usermodel.Cell, java.util.Map)}</p>
+     * use {@link org.apache.poi.ss.util.CellUtil#setCellStylePropertiesEnum(org.apache.poi.ss.usermodel.Cell, java.util.Map)}</p>
      *
      * @param style  reference contained in the workbook
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createCellStyle()
