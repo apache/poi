@@ -425,7 +425,7 @@ public final class CellUtil {
      * by multiple cells. Instead, this method will search for existing CellStyles
      * that match the desired CellStyle, creating a new CellStyle with the desired
      * style if no match exists.
-     *
+     * </p>
      * @param cell the cell to set the alignment for
      * @param align the horizontal alignment to use.
      *
