@@ -409,7 +409,7 @@ public final class PropertyTemplate {
                 Map<CellPropertyType, Object> properties = entry.getValue();
                 Row row = CellUtil.getRow(cellAddress.getRow(), sheet);
                 Cell cell = CellUtil.getCell(row, cellAddress.getColumn());
-                CellUtil.setCellStyleProperties(cell, properties);
+                CellUtil.setCellStylePropertiesEnum(cell, properties);
             }
         }
     }
