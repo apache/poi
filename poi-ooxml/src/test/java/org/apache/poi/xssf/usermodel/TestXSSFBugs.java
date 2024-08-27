@@ -2778,7 +2778,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Disabled("bug 59442")
     @Test
-    void testSetRGBBackgroundColor() throws IOException {
+    void testSetRGBBackgroundColorByEnum() throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFCell cell = workbook.createSheet().createRow(0).createCell(0);
 
@@ -2797,6 +2797,51 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
             Map<CellPropertyType, Object> properties = new HashMap<>();
             properties.put(CellPropertyType.BORDER_BOTTOM, BorderStyle.THIN);
+            CellUtil.setCellStylePropertiesEnum(cell, properties);
+
+            // Now the cell is all black
+            actual = cell.getCellStyle().getFillBackgroundColorColor();
+            assertNotNull(actual);
+            assertNull(actual.getARGBHex());
+            actual = cell.getCellStyle().getFillForegroundColorColor();
+            assertNotNull(actual);
+            assertEquals(color.getARGBHex(), actual.getARGBHex());
+
+            try (XSSFWorkbook nwb = writeOutAndReadBack(workbook)) {
+                XSSFCell ncell = nwb.getSheetAt(0).getRow(0).getCell(0);
+                XSSFColor ncolor = new XSSFColor(java.awt.Color.RED, workbook.getStylesSource().getIndexedColors());
+
+                // Now the cell is all black
+                XSSFColor nactual = ncell.getCellStyle().getFillBackgroundColorColor();
+                assertNotNull(nactual);
+                assertEquals(ncolor.getARGBHex(), nactual.getARGBHex());
+
+            }
+        }
+    }
+
+    @Disabled("bug 59442")
+    @Test
+    @Deprecated
+    void testSetRGBBackgroundColor() throws IOException {
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFCell cell = workbook.createSheet().createRow(0).createCell(0);
+
+            XSSFColor color = new XSSFColor(java.awt.Color.RED, workbook.getStylesSource().getIndexedColors());
+            XSSFCellStyle style = workbook.createCellStyle();
+            style.setFillForegroundColor(color);
+            style.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            cell.setCellStyle(style);
+
+            // Everything is fine at this point, cell is red
+            XSSFColor actual = cell.getCellStyle().getFillBackgroundColorColor();
+            assertNull(actual);
+            actual = cell.getCellStyle().getFillForegroundColorColor();
+            assertNotNull(actual);
+            assertEquals(color.getARGBHex(), actual.getARGBHex());
+
+            Map<String, Object> properties = new HashMap<>();
+            properties.put(CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
             CellUtil.setCellStyleProperties(cell, properties);
 
             // Now the cell is all black

@@ -160,7 +160,7 @@ public final class TestUnfixedBugs {
     // This test will run green, but the resulting file is formatted incorrectly,
     // see the bug at https://bz.apache.org/bugzilla/show_bug.cgi?id=55752
     @Test
-    void testBug55752() throws IOException {
+    void testBug55752ByEnum() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("test");
 
@@ -205,6 +205,65 @@ public final class TestUnfixedBugs {
             CellUtil.setCellStyleProperty(cell0, CellPropertyType.BORDER_BOTTOM, BorderStyle.THIN);
             Cell cell1 = CellUtil.getCell(row3, 1);
             CellUtil.setCellStyleProperty(cell1, CellPropertyType.BORDER_BOTTOM, BorderStyle.THIN);
+
+            RegionUtil.setBorderBottom(BorderStyle.THIN, range4, sheet);
+
+            // write to file for manual inspection
+            XSSFTestDataSamples.writeOut(wb, "bug 55752 for review");
+        }
+
+        fail("Test runs ok, but the resulting file is incorrectly formatted");
+    }
+
+    // This test will run green, but the resulting file is formatted incorrectly,
+    // see the bug at https://bz.apache.org/bugzilla/show_bug.cgi?id=55752
+    @Test
+    @Deprecated
+    void testBug55752() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("test");
+
+            for (int i = 0; i < 4; i++) {
+                Row row = sheet.createRow(i);
+                for (int j = 0; j < 2; j++) {
+                    Cell cell = row.createCell(j);
+                    cell.setCellStyle(wb.createCellStyle());
+                }
+            }
+
+            // set content
+            Row row1 = sheet.getRow(0);
+            row1.getCell(0).setCellValue("AAA");
+            Row row2 = sheet.getRow(1);
+            row2.getCell(0).setCellValue("BBB");
+            Row row3 = sheet.getRow(2);
+            row3.getCell(0).setCellValue("CCC");
+            Row row4 = sheet.getRow(3);
+            row4.getCell(0).setCellValue("DDD");
+
+            // merge cells
+            CellRangeAddress range1 = new CellRangeAddress(0, 0, 0, 1);
+            assertEquals(0, sheet.addMergedRegion(range1));
+            CellRangeAddress range2 = new CellRangeAddress(1, 1, 0, 1);
+            assertEquals(1, sheet.addMergedRegion(range2));
+            CellRangeAddress range3 = new CellRangeAddress(2, 2, 0, 1);
+            assertEquals(2, sheet.addMergedRegion(range3));
+            assertEquals(0, range3.getFirstColumn());
+            assertEquals(1, range3.getLastColumn());
+            assertEquals(2, range3.getLastRow());
+            CellRangeAddress range4 = new CellRangeAddress(3, 3, 0, 1);
+            assertEquals(3, sheet.addMergedRegion(range4));
+
+            // set border
+            RegionUtil.setBorderBottom(BorderStyle.THIN, range1, sheet);
+
+            row2.getCell(0).getCellStyle().setBorderBottom(BorderStyle.THIN);
+            row2.getCell(1).getCellStyle().setBorderBottom(BorderStyle.THIN);
+
+            Cell cell0 = CellUtil.getCell(row3, 0);
+            CellUtil.setCellStyleProperty(cell0, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+            Cell cell1 = CellUtil.getCell(row3, 1);
+            CellUtil.setCellStyleProperty(cell1, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
 
             RegionUtil.setBorderBottom(BorderStyle.THIN, range4, sheet);
 

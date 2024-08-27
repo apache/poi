@@ -17,21 +17,15 @@
 
 package org.apache.poi.ss.util;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.usermodel.*;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.ss.usermodel.*;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests Spreadsheet CellUtil
@@ -46,7 +40,7 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    void setCellStyleProperty() throws IOException {
+    void setCellStylePropertyByEnum() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
@@ -67,7 +61,29 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
-    void setCellStylePropertyWithInvalidValue() throws IOException {
+    @Deprecated
+    void setCellStyleProperty() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet s = wb.createSheet();
+            Row r = s.createRow(0);
+            Cell c = r.createCell(0);
+
+            // Add a border should create a new style
+            int styCnt1 = wb.getNumCellStyles();
+            CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+            int styCnt2 = wb.getNumCellStyles();
+            assertEquals(styCnt1 + 1, styCnt2);
+
+            // Add same border to another cell, should not create another style
+            c = r.createCell(1);
+            CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+            int styCnt3 = wb.getNumCellStyles();
+            assertEquals(styCnt2, styCnt3);
+        }
+    }
+
+    @Test
+    void setCellStylePropertyWithInvalidValueByEnum() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
@@ -78,8 +94,40 @@ public abstract class BaseTestCellUtil {
         }
     }
 
+
+    @Test
+    @Deprecated
+    void setCellStylePropertyWithInvalidValue() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet s = wb.createSheet();
+            Row r = s.createRow(0);
+            Cell c = r.createCell(0);
+
+            // An invalid BorderStyle constant
+            assertThrows(RuntimeException.class, () -> CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, 42));
+        }
+    }
+
     @Test()
+    @Deprecated
     void setCellStylePropertyBorderWithShortAndEnum() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet s = wb.createSheet();
+            Row r = s.createRow(0);
+            Cell c = r.createCell(0);
+
+            // A valid BorderStyle constant, as a Short
+            CellUtil.setCellStyleProperty(c, CellUtil.BORDER_BOTTOM, BorderStyle.DASH_DOT.getCode());
+            assertEquals(BorderStyle.DASH_DOT, c.getCellStyle().getBorderBottom());
+
+            // A valid BorderStyle constant, as an Enum
+            CellUtil.setCellStyleProperty(c, CellUtil.BORDER_TOP, BorderStyle.MEDIUM_DASH_DOT);
+            assertEquals(BorderStyle.MEDIUM_DASH_DOT, c.getCellStyle().getBorderTop());
+        }
+    }
+
+    @Test()
+    void setCellStylePropertyBorderWithShortAndEnumByEnum() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
@@ -96,7 +144,7 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test()
-    void setCellStylePropertyWithShrinkToFit() throws IOException {
+    void setCellStylePropertyWithShrinkToFitByEnum() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
@@ -112,7 +160,24 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test()
-    void setCellStylePropertyWithQuotePrefixed() throws IOException {
+    @Deprecated
+    void setCellStylePropertyWithShrinkToFit() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet s = wb.createSheet();
+            Row r = s.createRow(0);
+            Cell c = r.createCell(0);
+
+            // Assert that the default shrinkToFit is false
+            assertFalse(c.getCellStyle().getShrinkToFit());
+
+            // Set shrinkToFit to true
+            CellUtil.setCellStyleProperty(c, CellUtil.SHRINK_TO_FIT, true);
+            assertTrue(c.getCellStyle().getShrinkToFit());
+        }
+    }
+
+    @Test()
+    void setCellStylePropertyWithQuotePrefixedByEnum() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
@@ -128,11 +193,29 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test()
+    @Deprecated
+    void setCellStylePropertyWithQuotePrefixed() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet s = wb.createSheet();
+            Row r = s.createRow(0);
+            Cell c = r.createCell(0);
+
+            // Assert that the default quotePrefixed is false
+            assertFalse(c.getCellStyle().getQuotePrefixed());
+
+            // Set quotePrefixed to true
+            CellUtil.setCellStyleProperty(c, CellUtil.QUOTE_PREFIXED, true);
+            assertTrue(c.getCellStyle().getQuotePrefixed());
+        }
+    }
+
+    @Test()
     void setCellStylePropertyWithExistingStyles() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
             Cell c = r.createCell(0);
+            Cell c2 = r.createCell(1);
             Font f = wb.createFont();
             f.setBold(true);
 
@@ -185,12 +268,15 @@ public abstract class BaseTestCellUtil {
             cs.setShrinkToFit(true);
             cs.setQuotePrefixed(true);
             c.setCellStyle(cs);
+            c2.setCellStyle(cs);
 
             // Set BorderBottom from THIN to DOUBLE with setCellStyleProperty()
             CellUtil.setCellStyleProperty(c, CellPropertyType.BORDER_BOTTOM, BorderStyle.DOUBLE);
+            CellUtil.setCellStyleProperty(c2, CellUtil.BORDER_BOTTOM, BorderStyle.DOUBLE);
 
             // Assert that only BorderBottom has been changed and no others.
             assertEquals(BorderStyle.DOUBLE, c.getCellStyle().getBorderBottom());
+            assertEquals(BorderStyle.DOUBLE, c2.getCellStyle().getBorderBottom());
             assertEquals(HorizontalAlignment.CENTER, c.getCellStyle().getAlignment());
             assertEquals(BorderStyle.THIN, c.getCellStyle().getBorderLeft());
             assertEquals(BorderStyle.THIN, c.getCellStyle().getBorderRight());
@@ -216,7 +302,36 @@ public abstract class BaseTestCellUtil {
     }
 
     @Test
+    @Deprecated
     void setCellStyleProperties() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet s = wb.createSheet();
+            Row r = s.createRow(0);
+            Cell c = r.createCell(0);
+
+            // Add multiple border properties to cell should create a single new style
+            int styCnt1 = wb.getNumCellStyles();
+            Map<String, Object> props = new HashMap<>();
+            props.put(CellUtil.BORDER_TOP, BorderStyle.THIN);
+            props.put(CellUtil.BORDER_BOTTOM, BorderStyle.THIN);
+            props.put(CellUtil.BORDER_LEFT, BorderStyle.THIN);
+            props.put(CellUtil.BORDER_RIGHT, BorderStyle.THIN);
+            props.put(CellUtil.ALIGNMENT, HorizontalAlignment.CENTER.getCode()); // try it both with a Short (deprecated)
+            props.put(CellUtil.VERTICAL_ALIGNMENT, VerticalAlignment.CENTER); // and with an enum
+            CellUtil.setCellStyleProperties(c, props);
+            int styCnt2 = wb.getNumCellStyles();
+            assertEquals(styCnt1 + 1, styCnt2, "Only one additional style should have been created");
+
+            // Add same border another to same cell, should not create another style
+            c = r.createCell(1);
+            CellUtil.setCellStyleProperties(c, props);
+            int styCnt3 = wb.getNumCellStyles();
+            assertEquals(styCnt2, styCnt3, "No additional styles should have been created");
+        }
+    }
+
+    @Test
+    void setCellStylePropertiesEnum() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet s = wb.createSheet();
             Row r = s.createRow(0);
@@ -231,13 +346,13 @@ public abstract class BaseTestCellUtil {
             props.put(CellPropertyType.BORDER_RIGHT, BorderStyle.THIN);
             props.put(CellPropertyType.ALIGNMENT, HorizontalAlignment.CENTER.getCode()); // try it both with a Short (deprecated)
             props.put(CellPropertyType.VERTICAL_ALIGNMENT, VerticalAlignment.CENTER); // and with an enum
-            CellUtil.setCellStyleProperties(c, props);
+            CellUtil.setCellStylePropertiesEnum(c, props);
             int styCnt2 = wb.getNumCellStyles();
             assertEquals(styCnt1 + 1, styCnt2, "Only one additional style should have been created");
 
             // Add same border another to same cell, should not create another style
             c = r.createCell(1);
-            CellUtil.setCellStyleProperties(c, props);
+            CellUtil.setCellStylePropertiesEnum(c, props);
             int styCnt3 = wb.getNumCellStyles();
             assertEquals(styCnt2, styCnt3, "No additional styles should have been created");
         }
@@ -433,7 +548,7 @@ public abstract class BaseTestCellUtil {
     @Test
     void setFontFromDifferentWorkbook() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook();
-            Workbook wb2 = _testDataProvider.createWorkbook()) {
+             Workbook wb2 = _testDataProvider.createWorkbook()) {
             Font font1 = wb1.createFont();
             Font font2 = wb2.createFont();
             // do something to make font1 and font2 different
@@ -452,16 +567,40 @@ public abstract class BaseTestCellUtil {
 
     /**
      * bug 55555
+     *
      * @since POI 3.15 beta 3
      */
     @Test
-    protected void setFillForegroundColorBeforeFillBackgroundColorEnum() throws IOException {
+    protected void setFillForegroundColorBeforeFillBackgroundColorEnumByEnum() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Cell A1 = wb1.createSheet().createRow(0).createCell(0);
             Map<CellPropertyType, Object> properties = new HashMap<>();
             properties.put(CellPropertyType.FILL_PATTERN, FillPatternType.BRICKS);
             properties.put(CellPropertyType.FILL_FOREGROUND_COLOR, IndexedColors.BLUE.index);
             properties.put(CellPropertyType.FILL_BACKGROUND_COLOR, IndexedColors.RED.index);
+
+            CellUtil.setCellStylePropertiesEnum(A1, properties);
+            CellStyle style = A1.getCellStyle();
+            assertEquals(FillPatternType.BRICKS, style.getFillPattern(), "fill pattern");
+            assertEquals(IndexedColors.BLUE, IndexedColors.fromInt(style.getFillForegroundColor()), "fill foreground color");
+            assertEquals(IndexedColors.RED, IndexedColors.fromInt(style.getFillBackgroundColor()), "fill background color");
+        }
+    }
+
+    /**
+     * bug 55555
+     *
+     * @since POI 3.15 beta 3
+     */
+    @Test
+    @Deprecated
+    protected void setFillForegroundColorBeforeFillBackgroundColorEnum() throws IOException {
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            Cell A1 = wb1.createSheet().createRow(0).createCell(0);
+            Map<String, Object> properties = new HashMap<>();
+            properties.put(CellUtil.FILL_PATTERN, FillPatternType.BRICKS);
+            properties.put(CellUtil.FILL_FOREGROUND_COLOR, IndexedColors.BLUE.index);
+            properties.put(CellUtil.FILL_BACKGROUND_COLOR, IndexedColors.RED.index);
 
             CellUtil.setCellStyleProperties(A1, properties);
             CellStyle style = A1.getCellStyle();
@@ -473,6 +612,7 @@ public abstract class BaseTestCellUtil {
 
     /**
      * bug 63268
+     *
      * @since POI 4.1.0
      */
     @Test
