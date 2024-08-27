@@ -17,14 +17,14 @@
 
 package org.apache.poi.ss.util;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.usermodel.*;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.*;
 
 /**
  * <p>
@@ -32,7 +32,7 @@ import org.apache.poi.ss.usermodel.*;
  * a project. It contains all the border type and color attributes needed to
  * draw all the borders for a single sheet. That template can be applied to any
  * sheet in any workbook.
- *
+ * <p>
  * This class requires the full spreadsheet to be in memory, so
  * {@link org.apache.poi.xssf.streaming.SXSSFWorkbook} Spreadsheets are not
  * supported. The same PropertyTemplate can, however, be applied to both
@@ -67,12 +67,12 @@ public final class PropertyTemplate {
      */
     public PropertyTemplate(PropertyTemplate template) {
         this();
-        for(Map.Entry<CellAddress, Map<CellPropertyType, Object>> entry : template.getTemplate().entrySet()) {
+        for (Map.Entry<CellAddress, Map<CellPropertyType, Object>> entry : template.getTemplate().entrySet()) {
             _propertyTemplate.put(new CellAddress(entry.getKey()), cloneCellProperties(entry.getValue()));
         }
     }
 
-    private Map<CellAddress,Map<CellPropertyType, Object>> getTemplate() {
+    private Map<CellAddress, Map<CellPropertyType, Object>> getTemplate() {
         return _propertyTemplate;
     }
 
@@ -85,62 +85,59 @@ public final class PropertyTemplate {
      * applied to the cells at this time, just the template is drawn. To apply
      * the drawn borders to a sheet, use {@link #applyBorders}.
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which borders are
-     *            drawn.
-     * @param borderType
-     *            - Type of border to draw. {@link BorderStyle}.
-     * @param extent
-     *            - {@link BorderExtent} of the borders to be
-     *            applied.
+     * @param range      - {@link CellRangeAddress} range of cells on which borders are
+     *                   drawn.
+     * @param borderType - Type of border to draw. {@link BorderStyle}.
+     * @param extent     - {@link BorderExtent} of the borders to be
+     *                   applied.
      */
     public void drawBorders(CellRangeAddress range, BorderStyle borderType,
-            BorderExtent extent) {
+                            BorderExtent extent) {
         switch (extent) {
-        case NONE:
-            removeBorders(range);
-            break;
-        case ALL:
-            drawHorizontalBorders(range, borderType, BorderExtent.ALL);
-            drawVerticalBorders(range, borderType, BorderExtent.ALL);
-            break;
-        case INSIDE:
-            drawHorizontalBorders(range, borderType, BorderExtent.INSIDE);
-            drawVerticalBorders(range, borderType, BorderExtent.INSIDE);
-            break;
-        case OUTSIDE:
-            drawOutsideBorders(range, borderType, BorderExtent.ALL);
-            break;
-        case TOP:
-            drawTopBorder(range, borderType);
-            break;
-        case BOTTOM:
-            drawBottomBorder(range, borderType);
-            break;
-        case LEFT:
-            drawLeftBorder(range, borderType);
-            break;
-        case RIGHT:
-            drawRightBorder(range, borderType);
-            break;
-        case HORIZONTAL:
-            drawHorizontalBorders(range, borderType, BorderExtent.ALL);
-            break;
-        case INSIDE_HORIZONTAL:
-            drawHorizontalBorders(range, borderType, BorderExtent.INSIDE);
-            break;
-        case OUTSIDE_HORIZONTAL:
-            drawOutsideBorders(range, borderType, BorderExtent.HORIZONTAL);
-            break;
-        case VERTICAL:
-            drawVerticalBorders(range, borderType, BorderExtent.ALL);
-            break;
-        case INSIDE_VERTICAL:
-            drawVerticalBorders(range, borderType, BorderExtent.INSIDE);
-            break;
-        case OUTSIDE_VERTICAL:
-            drawOutsideBorders(range, borderType, BorderExtent.VERTICAL);
-            break;
+            case NONE:
+                removeBorders(range);
+                break;
+            case ALL:
+                drawHorizontalBorders(range, borderType, BorderExtent.ALL);
+                drawVerticalBorders(range, borderType, BorderExtent.ALL);
+                break;
+            case INSIDE:
+                drawHorizontalBorders(range, borderType, BorderExtent.INSIDE);
+                drawVerticalBorders(range, borderType, BorderExtent.INSIDE);
+                break;
+            case OUTSIDE:
+                drawOutsideBorders(range, borderType, BorderExtent.ALL);
+                break;
+            case TOP:
+                drawTopBorder(range, borderType);
+                break;
+            case BOTTOM:
+                drawBottomBorder(range, borderType);
+                break;
+            case LEFT:
+                drawLeftBorder(range, borderType);
+                break;
+            case RIGHT:
+                drawRightBorder(range, borderType);
+                break;
+            case HORIZONTAL:
+                drawHorizontalBorders(range, borderType, BorderExtent.ALL);
+                break;
+            case INSIDE_HORIZONTAL:
+                drawHorizontalBorders(range, borderType, BorderExtent.INSIDE);
+                break;
+            case OUTSIDE_HORIZONTAL:
+                drawOutsideBorders(range, borderType, BorderExtent.HORIZONTAL);
+                break;
+            case VERTICAL:
+                drawVerticalBorders(range, borderType, BorderExtent.ALL);
+                break;
+            case INSIDE_VERTICAL:
+                drawVerticalBorders(range, borderType, BorderExtent.INSIDE);
+                break;
+            case OUTSIDE_VERTICAL:
+                drawOutsideBorders(range, borderType, BorderExtent.VERTICAL);
+                break;
         }
     }
 
@@ -149,20 +146,16 @@ public final class PropertyTemplate {
      * applied to the cells at this time, just the template is drawn. To apply
      * the drawn borders to a sheet, use {@link #applyBorders}.
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which borders are
-     *            drawn.
-     * @param borderType
-     *            - Type of border to draw. {@link BorderStyle}.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
-     * @param extent
-     *            - {@link BorderExtent} of the borders to be
-     *            applied.
+     * @param range      - {@link CellRangeAddress} range of cells on which borders are
+     *                   drawn.
+     * @param borderType - Type of border to draw. {@link BorderStyle}.
+     * @param color      - Color index from {@link IndexedColors} used to draw the
+     *                   borders.
+     * @param extent     - {@link BorderExtent} of the borders to be
+     *                   applied.
      */
     public void drawBorders(CellRangeAddress range, BorderStyle borderType,
-            short color, BorderExtent extent) {
+                            short color, BorderExtent extent) {
         drawBorders(range, borderType, extent);
         if (borderType != BorderStyle.NONE) {
             drawBorderColors(range, color, extent);
@@ -174,11 +167,9 @@ public final class PropertyTemplate {
      * Draws the top border for a range of cells
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which borders are
-     *            drawn.
-     * @param borderType
-     *            - Type of border to draw. {@link BorderStyle}.
+     * @param range      - {@link CellRangeAddress} range of cells on which borders are
+     *                   drawn.
+     * @param borderType - Type of border to draw. {@link BorderStyle}.
      */
     private void drawTopBorder(CellRangeAddress range, BorderStyle borderType) {
         int row = range.getFirstRow();
@@ -197,14 +188,12 @@ public final class PropertyTemplate {
      * Draws the bottom border for a range of cells
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which borders are
-     *            drawn.
-     * @param borderType
-     *            - Type of border to draw. {@link BorderStyle}.
+     * @param range      - {@link CellRangeAddress} range of cells on which borders are
+     *                   drawn.
+     * @param borderType - Type of border to draw. {@link BorderStyle}.
      */
     private void drawBottomBorder(CellRangeAddress range,
-            BorderStyle borderType) {
+                                  BorderStyle borderType) {
         int row = range.getLastRow();
         int firstCol = range.getFirstColumn();
         int lastCol = range.getLastColumn();
@@ -222,14 +211,12 @@ public final class PropertyTemplate {
      * Draws the left border for a range of cells
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which borders are
-     *            drawn.
-     * @param borderType
-     *            - Type of border to draw. {@link BorderStyle}.
+     * @param range      - {@link CellRangeAddress} range of cells on which borders are
+     *                   drawn.
+     * @param borderType - Type of border to draw. {@link BorderStyle}.
      */
     private void drawLeftBorder(CellRangeAddress range,
-            BorderStyle borderType) {
+                                BorderStyle borderType) {
         int firstRow = range.getFirstRow();
         int lastRow = range.getLastRow();
         int col = range.getFirstColumn();
@@ -246,14 +233,12 @@ public final class PropertyTemplate {
      * Draws the right border for a range of cells
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which borders are
-     *            drawn.
-     * @param borderType
-     *            - Type of border to draw. {@link BorderStyle}.
+     * @param range      - {@link CellRangeAddress} range of cells on which borders are
+     *                   drawn.
+     * @param borderType - Type of border to draw. {@link BorderStyle}.
      */
     private void drawRightBorder(CellRangeAddress range,
-            BorderStyle borderType) {
+                                 BorderStyle borderType) {
         int firstRow = range.getFirstRow();
         int lastRow = range.getLastRow();
         int col = range.getLastColumn();
@@ -271,38 +256,35 @@ public final class PropertyTemplate {
      * Draws the outside borders for a range of cells.
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which borders are
-     *            drawn.
-     * @param borderType
-     *            - Type of border to draw. {@link BorderStyle}.
-     * @param extent
-     *            - {@link BorderExtent} of the borders to be
-     *            applied. Valid Values are:
-     *            <ul>
-     *            <li>BorderExtent.ALL</li>
-     *            <li>BorderExtent.HORIZONTAL</li>
-     *            <li>BorderExtent.VERTICAL</li>
-     *            </ul>
+     * @param range      - {@link CellRangeAddress} range of cells on which borders are
+     *                   drawn.
+     * @param borderType - Type of border to draw. {@link BorderStyle}.
+     * @param extent     - {@link BorderExtent} of the borders to be
+     *                   applied. Valid Values are:
+     *                   <ul>
+     *                   <li>BorderExtent.ALL</li>
+     *                   <li>BorderExtent.HORIZONTAL</li>
+     *                   <li>BorderExtent.VERTICAL</li>
+     *                   </ul>
      */
     private void drawOutsideBorders(CellRangeAddress range,
-            BorderStyle borderType, BorderExtent extent) {
+                                    BorderStyle borderType, BorderExtent extent) {
         switch (extent) {
-        case ALL:
-        case HORIZONTAL:
-        case VERTICAL:
-            if (extent == BorderExtent.ALL || extent == BorderExtent.HORIZONTAL) {
-                drawTopBorder(range, borderType);
-                drawBottomBorder(range, borderType);
-            }
-            if (extent == BorderExtent.ALL || extent == BorderExtent.VERTICAL) {
-                drawLeftBorder(range, borderType);
-                drawRightBorder(range, borderType);
-            }
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "Unsupported PropertyTemplate.Extent, valid Extents are ALL, HORIZONTAL, and VERTICAL");
+            case ALL:
+            case HORIZONTAL:
+            case VERTICAL:
+                if (extent == BorderExtent.ALL || extent == BorderExtent.HORIZONTAL) {
+                    drawTopBorder(range, borderType);
+                    drawBottomBorder(range, borderType);
+                }
+                if (extent == BorderExtent.ALL || extent == BorderExtent.VERTICAL) {
+                    drawLeftBorder(range, borderType);
+                    drawRightBorder(range, borderType);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Unsupported PropertyTemplate.Extent, valid Extents are ALL, HORIZONTAL, and VERTICAL");
         }
     }
 
@@ -311,42 +293,39 @@ public final class PropertyTemplate {
      * Draws the horizontal borders for a range of cells.
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which borders are
-     *            drawn.
-     * @param borderType
-     *            - Type of border to draw. {@link BorderStyle}.
-     * @param extent
-     *            - {@link BorderExtent} of the borders to be
-     *            applied. Valid Values are:
-     *            <ul>
-     *            <li>BorderExtent.ALL</li>
-     *            <li>BorderExtent.INSIDE</li>
-     *            </ul>
+     * @param range      - {@link CellRangeAddress} range of cells on which borders are
+     *                   drawn.
+     * @param borderType - Type of border to draw. {@link BorderStyle}.
+     * @param extent     - {@link BorderExtent} of the borders to be
+     *                   applied. Valid Values are:
+     *                   <ul>
+     *                   <li>BorderExtent.ALL</li>
+     *                   <li>BorderExtent.INSIDE</li>
+     *                   </ul>
      */
     private void drawHorizontalBorders(CellRangeAddress range,
-            BorderStyle borderType, BorderExtent extent) {
+                                       BorderStyle borderType, BorderExtent extent) {
         switch (extent) {
-        case ALL:
-        case INSIDE:
-            int firstRow = range.getFirstRow();
-            int lastRow = range.getLastRow();
-            int firstCol = range.getFirstColumn();
-            int lastCol = range.getLastColumn();
-            for (int i = firstRow; i <= lastRow; i++) {
-                CellRangeAddress row = new CellRangeAddress(i, i, firstCol,
-                        lastCol);
-                if (extent == BorderExtent.ALL || i > firstRow) {
-                    drawTopBorder(row, borderType);
+            case ALL:
+            case INSIDE:
+                int firstRow = range.getFirstRow();
+                int lastRow = range.getLastRow();
+                int firstCol = range.getFirstColumn();
+                int lastCol = range.getLastColumn();
+                for (int i = firstRow; i <= lastRow; i++) {
+                    CellRangeAddress row = new CellRangeAddress(i, i, firstCol,
+                            lastCol);
+                    if (extent == BorderExtent.ALL || i > firstRow) {
+                        drawTopBorder(row, borderType);
+                    }
+                    if (extent == BorderExtent.ALL || i < lastRow) {
+                        drawBottomBorder(row, borderType);
+                    }
                 }
-                if (extent == BorderExtent.ALL || i < lastRow) {
-                    drawBottomBorder(row, borderType);
-                }
-            }
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "Unsupported PropertyTemplate.Extent, valid Extents are ALL and INSIDE");
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Unsupported PropertyTemplate.Extent, valid Extents are ALL and INSIDE");
         }
     }
 
@@ -355,42 +334,39 @@ public final class PropertyTemplate {
      * Draws the vertical borders for a range of cells.
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which borders are
-     *            drawn.
-     * @param borderType
-     *            - Type of border to draw. {@link BorderStyle}.
-     * @param extent
-     *            - {@link BorderExtent} of the borders to be
-     *            applied. Valid Values are:
-     *            <ul>
-     *            <li>BorderExtent.ALL</li>
-     *            <li>BorderExtent.INSIDE</li>
-     *            </ul>
+     * @param range      - {@link CellRangeAddress} range of cells on which borders are
+     *                   drawn.
+     * @param borderType - Type of border to draw. {@link BorderStyle}.
+     * @param extent     - {@link BorderExtent} of the borders to be
+     *                   applied. Valid Values are:
+     *                   <ul>
+     *                   <li>BorderExtent.ALL</li>
+     *                   <li>BorderExtent.INSIDE</li>
+     *                   </ul>
      */
     private void drawVerticalBorders(CellRangeAddress range,
-            BorderStyle borderType, BorderExtent extent) {
+                                     BorderStyle borderType, BorderExtent extent) {
         switch (extent) {
-        case ALL:
-        case INSIDE:
-            int firstRow = range.getFirstRow();
-            int lastRow = range.getLastRow();
-            int firstCol = range.getFirstColumn();
-            int lastCol = range.getLastColumn();
-            for (int i = firstCol; i <= lastCol; i++) {
-                CellRangeAddress row = new CellRangeAddress(firstRow, lastRow,
-                        i, i);
-                if (extent == BorderExtent.ALL || i > firstCol) {
-                    drawLeftBorder(row, borderType);
+            case ALL:
+            case INSIDE:
+                int firstRow = range.getFirstRow();
+                int lastRow = range.getLastRow();
+                int firstCol = range.getFirstColumn();
+                int lastCol = range.getLastColumn();
+                for (int i = firstCol; i <= lastCol; i++) {
+                    CellRangeAddress row = new CellRangeAddress(firstRow, lastRow,
+                            i, i);
+                    if (extent == BorderExtent.ALL || i > firstCol) {
+                        drawLeftBorder(row, borderType);
+                    }
+                    if (extent == BorderExtent.ALL || i < lastCol) {
+                        drawRightBorder(row, borderType);
+                    }
                 }
-                if (extent == BorderExtent.ALL || i < lastCol) {
-                    drawRightBorder(row, borderType);
-                }
-            }
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "Unsupported PropertyTemplate.Extent, valid Extents are ALL and INSIDE");
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Unsupported PropertyTemplate.Extent, valid Extents are ALL and INSIDE");
         }
     }
 
@@ -420,8 +396,7 @@ public final class PropertyTemplate {
      * the ones that have been drawn by the {@link #drawBorders} and
      * {@link #drawBorderColors} methods.
      *
-     * @param sheet
-     *            - {@link Sheet} on which to apply borders
+     * @param sheet - {@link Sheet} on which to apply borders
      */
     public void applyBorders(Sheet sheet) {
         Workbook wb = sheet.getWorkbook();
@@ -430,7 +405,7 @@ public final class PropertyTemplate {
             CellAddress cellAddress = entry.getKey();
             if (cellAddress.getRow() < wb.getSpreadsheetVersion().getMaxRows()
                     && cellAddress.getColumn() < wb.getSpreadsheetVersion()
-                            .getMaxColumns()) {
+                    .getMaxColumns()) {
                 Map<CellPropertyType, Object> properties = entry.getValue();
                 Row row = CellUtil.getRow(cellAddress.getRow(), sheet);
                 Cell cell = CellUtil.getCell(row, cellAddress.getColumn());
@@ -445,63 +420,60 @@ public final class PropertyTemplate {
      * the borders do not exist, a BORDER_THIN border is used. To apply the
      * drawn borders to a sheet, use {@link #applyBorders}.
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
-     * @param extent
-     *            - {@link BorderExtent} of the borders for which
-     *            colors are set.
+     * @param range  - {@link CellRangeAddress} range of cells on which colors are
+     *               set.
+     * @param color  - Color index from {@link IndexedColors} used to draw the
+     *               borders.
+     * @param extent - {@link BorderExtent} of the borders for which
+     *               colors are set.
      */
     public void drawBorderColors(CellRangeAddress range, short color,
-            BorderExtent extent) {
+                                 BorderExtent extent) {
         switch (extent) {
-        case NONE:
-            removeBorderColors(range);
-            break;
-        case ALL:
-            drawHorizontalBorderColors(range, color, BorderExtent.ALL);
-            drawVerticalBorderColors(range, color, BorderExtent.ALL);
-            break;
-        case INSIDE:
-            drawHorizontalBorderColors(range, color, BorderExtent.INSIDE);
-            drawVerticalBorderColors(range, color, BorderExtent.INSIDE);
-            break;
-        case OUTSIDE:
-            drawOutsideBorderColors(range, color, BorderExtent.ALL);
-            break;
-        case TOP:
-            drawTopBorderColor(range, color);
-            break;
-        case BOTTOM:
-            drawBottomBorderColor(range, color);
-            break;
-        case LEFT:
-            drawLeftBorderColor(range, color);
-            break;
-        case RIGHT:
-            drawRightBorderColor(range, color);
-            break;
-        case HORIZONTAL:
-            drawHorizontalBorderColors(range, color, BorderExtent.ALL);
-            break;
-        case INSIDE_HORIZONTAL:
-            drawHorizontalBorderColors(range, color, BorderExtent.INSIDE);
-            break;
-        case OUTSIDE_HORIZONTAL:
-            drawOutsideBorderColors(range, color, BorderExtent.HORIZONTAL);
-            break;
-        case VERTICAL:
-            drawVerticalBorderColors(range, color, BorderExtent.ALL);
-            break;
-        case INSIDE_VERTICAL:
-            drawVerticalBorderColors(range, color, BorderExtent.INSIDE);
-            break;
-        case OUTSIDE_VERTICAL:
-            drawOutsideBorderColors(range, color, BorderExtent.VERTICAL);
-            break;
+            case NONE:
+                removeBorderColors(range);
+                break;
+            case ALL:
+                drawHorizontalBorderColors(range, color, BorderExtent.ALL);
+                drawVerticalBorderColors(range, color, BorderExtent.ALL);
+                break;
+            case INSIDE:
+                drawHorizontalBorderColors(range, color, BorderExtent.INSIDE);
+                drawVerticalBorderColors(range, color, BorderExtent.INSIDE);
+                break;
+            case OUTSIDE:
+                drawOutsideBorderColors(range, color, BorderExtent.ALL);
+                break;
+            case TOP:
+                drawTopBorderColor(range, color);
+                break;
+            case BOTTOM:
+                drawBottomBorderColor(range, color);
+                break;
+            case LEFT:
+                drawLeftBorderColor(range, color);
+                break;
+            case RIGHT:
+                drawRightBorderColor(range, color);
+                break;
+            case HORIZONTAL:
+                drawHorizontalBorderColors(range, color, BorderExtent.ALL);
+                break;
+            case INSIDE_HORIZONTAL:
+                drawHorizontalBorderColors(range, color, BorderExtent.INSIDE);
+                break;
+            case OUTSIDE_HORIZONTAL:
+                drawOutsideBorderColors(range, color, BorderExtent.HORIZONTAL);
+                break;
+            case VERTICAL:
+                drawVerticalBorderColors(range, color, BorderExtent.ALL);
+                break;
+            case INSIDE_VERTICAL:
+                drawVerticalBorderColors(range, color, BorderExtent.INSIDE);
+                break;
+            case OUTSIDE_VERTICAL:
+                drawOutsideBorderColors(range, color, BorderExtent.VERTICAL);
+                break;
         }
     }
 
@@ -510,12 +482,10 @@ public final class PropertyTemplate {
      * Sets the color of the top border for a range of cells.
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
+     * @param range - {@link CellRangeAddress} range of cells on which colors are
+     *              set.
+     * @param color - Color index from {@link IndexedColors} used to draw the
+     *              borders.
      */
     private void drawTopBorderColor(CellRangeAddress range, short color) {
         int row = range.getFirstRow();
@@ -536,12 +506,10 @@ public final class PropertyTemplate {
      * Sets the color of the bottom border for a range of cells.
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
+     * @param range - {@link CellRangeAddress} range of cells on which colors are
+     *              set.
+     * @param color - Color index from {@link IndexedColors} used to draw the
+     *              borders.
      */
     private void drawBottomBorderColor(CellRangeAddress range, short color) {
         int row = range.getLastRow();
@@ -562,12 +530,10 @@ public final class PropertyTemplate {
      * Sets the color of the left border for a range of cells.
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
+     * @param range - {@link CellRangeAddress} range of cells on which colors are
+     *              set.
+     * @param color - Color index from {@link IndexedColors} used to draw the
+     *              borders.
      */
     private void drawLeftBorderColor(CellRangeAddress range, short color) {
         int firstRow = range.getFirstRow();
@@ -589,12 +555,10 @@ public final class PropertyTemplate {
      * not drawn, it defaults to BORDER_THIN
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
+     * @param range - {@link CellRangeAddress} range of cells on which colors are
+     *              set.
+     * @param color - Color index from {@link IndexedColors} used to draw the
+     *              borders.
      */
     private void drawRightBorderColor(CellRangeAddress range, short color) {
         int firstRow = range.getFirstRow();
@@ -615,39 +579,36 @@ public final class PropertyTemplate {
      * Sets the color of the outside borders for a range of cells.
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
-     * @param extent
-     *            - {@link BorderExtent} of the borders for which
-     *            colors are set. Valid Values are:
-     *            <ul>
-     *            <li>BorderExtent.ALL</li>
-     *            <li>BorderExtent.HORIZONTAL</li>
-     *            <li>BorderExtent.VERTICAL</li>
-     *            </ul>
+     * @param range  - {@link CellRangeAddress} range of cells on which colors are
+     *               set.
+     * @param color  - Color index from {@link IndexedColors} used to draw the
+     *               borders.
+     * @param extent - {@link BorderExtent} of the borders for which
+     *               colors are set. Valid Values are:
+     *               <ul>
+     *               <li>BorderExtent.ALL</li>
+     *               <li>BorderExtent.HORIZONTAL</li>
+     *               <li>BorderExtent.VERTICAL</li>
+     *               </ul>
      */
     private void drawOutsideBorderColors(CellRangeAddress range, short color,
-            BorderExtent extent) {
+                                         BorderExtent extent) {
         switch (extent) {
-        case ALL:
-        case HORIZONTAL:
-        case VERTICAL:
-            if (extent == BorderExtent.ALL || extent == BorderExtent.HORIZONTAL) {
-                drawTopBorderColor(range, color);
-                drawBottomBorderColor(range, color);
-            }
-            if (extent == BorderExtent.ALL || extent == BorderExtent.VERTICAL) {
-                drawLeftBorderColor(range, color);
-                drawRightBorderColor(range, color);
-            }
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "Unsupported PropertyTemplate.Extent, valid Extents are ALL, HORIZONTAL, and VERTICAL");
+            case ALL:
+            case HORIZONTAL:
+            case VERTICAL:
+                if (extent == BorderExtent.ALL || extent == BorderExtent.HORIZONTAL) {
+                    drawTopBorderColor(range, color);
+                    drawBottomBorderColor(range, color);
+                }
+                if (extent == BorderExtent.ALL || extent == BorderExtent.VERTICAL) {
+                    drawLeftBorderColor(range, color);
+                    drawRightBorderColor(range, color);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Unsupported PropertyTemplate.Extent, valid Extents are ALL, HORIZONTAL, and VERTICAL");
         }
     }
 
@@ -656,43 +617,40 @@ public final class PropertyTemplate {
      * Sets the color of the horizontal borders for a range of cells.
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
-     * @param extent
-     *            - {@link BorderExtent} of the borders for which
-     *            colors are set. Valid Values are:
-     *            <ul>
-     *            <li>BorderExtent.ALL</li>
-     *            <li>BorderExtent.INSIDE</li>
-     *            </ul>
+     * @param range  - {@link CellRangeAddress} range of cells on which colors are
+     *               set.
+     * @param color  - Color index from {@link IndexedColors} used to draw the
+     *               borders.
+     * @param extent - {@link BorderExtent} of the borders for which
+     *               colors are set. Valid Values are:
+     *               <ul>
+     *               <li>BorderExtent.ALL</li>
+     *               <li>BorderExtent.INSIDE</li>
+     *               </ul>
      */
     private void drawHorizontalBorderColors(CellRangeAddress range, short color,
-            BorderExtent extent) {
+                                            BorderExtent extent) {
         switch (extent) {
-        case ALL:
-        case INSIDE:
-            int firstRow = range.getFirstRow();
-            int lastRow = range.getLastRow();
-            int firstCol = range.getFirstColumn();
-            int lastCol = range.getLastColumn();
-            for (int i = firstRow; i <= lastRow; i++) {
-                CellRangeAddress row = new CellRangeAddress(i, i, firstCol,
-                        lastCol);
-                if (extent == BorderExtent.ALL || i > firstRow) {
-                    drawTopBorderColor(row, color);
+            case ALL:
+            case INSIDE:
+                int firstRow = range.getFirstRow();
+                int lastRow = range.getLastRow();
+                int firstCol = range.getFirstColumn();
+                int lastCol = range.getLastColumn();
+                for (int i = firstRow; i <= lastRow; i++) {
+                    CellRangeAddress row = new CellRangeAddress(i, i, firstCol,
+                            lastCol);
+                    if (extent == BorderExtent.ALL || i > firstRow) {
+                        drawTopBorderColor(row, color);
+                    }
+                    if (extent == BorderExtent.ALL || i < lastRow) {
+                        drawBottomBorderColor(row, color);
+                    }
                 }
-                if (extent == BorderExtent.ALL || i < lastRow) {
-                    drawBottomBorderColor(row, color);
-                }
-            }
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "Unsupported PropertyTemplate.Extent, valid Extents are ALL and INSIDE");
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Unsupported PropertyTemplate.Extent, valid Extents are ALL and INSIDE");
         }
     }
 
@@ -701,43 +659,40 @@ public final class PropertyTemplate {
      * Sets the color of the vertical borders for a range of cells.
      * </p>
      *
-     * @param range
-     *            - {@link CellRangeAddress} range of cells on which colors are
-     *            set.
-     * @param color
-     *            - Color index from {@link IndexedColors} used to draw the
-     *            borders.
-     * @param extent
-     *            - {@link BorderExtent} of the borders for which
-     *            colors are set. Valid Values are:
-     *            <ul>
-     *            <li>BorderExtent.ALL</li>
-     *            <li>BorderExtent.INSIDE</li>
-     *            </ul>
+     * @param range  - {@link CellRangeAddress} range of cells on which colors are
+     *               set.
+     * @param color  - Color index from {@link IndexedColors} used to draw the
+     *               borders.
+     * @param extent - {@link BorderExtent} of the borders for which
+     *               colors are set. Valid Values are:
+     *               <ul>
+     *               <li>BorderExtent.ALL</li>
+     *               <li>BorderExtent.INSIDE</li>
+     *               </ul>
      */
     private void drawVerticalBorderColors(CellRangeAddress range, short color,
-            BorderExtent extent) {
+                                          BorderExtent extent) {
         switch (extent) {
-        case ALL:
-        case INSIDE:
-            int firstRow = range.getFirstRow();
-            int lastRow = range.getLastRow();
-            int firstCol = range.getFirstColumn();
-            int lastCol = range.getLastColumn();
-            for (int i = firstCol; i <= lastCol; i++) {
-                CellRangeAddress row = new CellRangeAddress(firstRow, lastRow,
-                        i, i);
-                if (extent == BorderExtent.ALL || i > firstCol) {
-                    drawLeftBorderColor(row, color);
+            case ALL:
+            case INSIDE:
+                int firstRow = range.getFirstRow();
+                int lastRow = range.getLastRow();
+                int firstCol = range.getFirstColumn();
+                int lastCol = range.getLastColumn();
+                for (int i = firstCol; i <= lastCol; i++) {
+                    CellRangeAddress row = new CellRangeAddress(firstRow, lastRow,
+                            i, i);
+                    if (extent == BorderExtent.ALL || i > firstCol) {
+                        drawLeftBorderColor(row, color);
+                    }
+                    if (extent == BorderExtent.ALL || i < lastCol) {
+                        drawRightBorderColor(row, color);
+                    }
                 }
-                if (extent == BorderExtent.ALL || i < lastCol) {
-                    drawRightBorderColor(row, color);
-                }
-            }
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "Unsupported PropertyTemplate.Extent, valid Extents are ALL and INSIDE");
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Unsupported PropertyTemplate.Extent, valid Extents are ALL and INSIDE");
         }
     }
 
@@ -875,9 +830,29 @@ public final class PropertyTemplate {
 
     /**
      * Retrieves the border style for a given cell
+     *
+     * @deprecated See {@link #getBorderStyle(CellAddress, CellPropertyType)}
+     */
+    @Deprecated
+    public BorderStyle getBorderStyle(CellAddress cell, String propertyName) {
+        return getBorderStyle(cell, CellUtil.namePropertyMap.get(propertyName));
+    }
+
+    /**
+     * Retrieves the border style for a given cell
      */
     public BorderStyle getBorderStyle(int row, int col, CellPropertyType property) {
         return getBorderStyle(new CellAddress(row, col), property);
+    }
+
+    /**
+     * Retrieves the border style for a given cell
+     *
+     * @deprecated See {@link #getBorderStyle(int, int, CellPropertyType)}
+     */
+    @Deprecated
+    public BorderStyle getBorderStyle(int row, int col, String propertyName) {
+        return getBorderStyle(new CellAddress(row, col), CellUtil.namePropertyMap.get(propertyName));
     }
 
     /**
@@ -897,9 +872,29 @@ public final class PropertyTemplate {
 
     /**
      * Retrieves the border style for a given cell
+     *
+     * @deprecated See {@link #getTemplateProperty(CellAddress, CellPropertyType)}
+     */
+    @Deprecated
+    public short getTemplateProperty(CellAddress cell, String propertyName) {
+        return getTemplateProperty(cell, CellUtil.namePropertyMap.get(propertyName));
+    }
+
+    /**
+     * Retrieves the border style for a given cell
      */
     public short getTemplateProperty(int row, int col, CellPropertyType property) {
         return getTemplateProperty(new CellAddress(row, col), property);
+    }
+
+    /**
+     * Retrieves the border style for a given cell
+     *
+     * @deprecated See {@link #getTemplateProperty(int, int, CellPropertyType)}
+     */
+    @Deprecated
+    public short getTemplateProperty(int row, int col, String propertyName) {
+        return getTemplateProperty(new CellAddress(row, col), CellUtil.namePropertyMap.get(propertyName));
     }
 
     /**

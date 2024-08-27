@@ -36,6 +36,15 @@ public final class RegionUtil {
         private final CellPropertyType property;
         private final Object _propertyValue;
 
+        @Deprecated
+        public CellPropertySetter(String propertyName, int value) {
+            this(CellUtil.namePropertyMap.get(propertyName), value);
+        }
+
+        @Deprecated
+        public CellPropertySetter(String propertyName, BorderStyle value) {
+            this(CellUtil.namePropertyMap.get(propertyName), value);
+        }
 
         public CellPropertySetter(CellPropertyType property, int value) {
             this.property = property;
