@@ -17,6 +17,12 @@
 
 package org.apache.poi.ss.usermodel;
 
+/**
+ * The {@code CellPropertyType} enum represents the different types of cell properties that can be applied to a cell.
+ * Each type is associated with a specific category {@link CellPropertyCategory}, which classifies and organizes the properties based on their characteristics.
+ *
+ * @since POI 5.3.1
+ */
 public enum CellPropertyType {
 
 
