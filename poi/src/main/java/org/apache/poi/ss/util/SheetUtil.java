@@ -100,10 +100,10 @@ public class SheetUtil {
 
     /**
      * A system property which can be enabled to not fail when the
-     * font-system is not available on the current machine
+     * font-system is not available on the current machine.
+     * Since POI 5.3.1, this flag is enabled by default.
      */
-    private static boolean ignoreMissingFontSystem =
-            Boolean.parseBoolean(System.getProperty("org.apache.poi.ss.ignoreMissingFontSystem"));
+    private static boolean ignoreMissingFontSystem = initIgnoreMissingFontSystemFlag();
 
     /**
      * Which default char-width to use if the font-system is unavailable.
@@ -506,5 +506,13 @@ public class SheetUtil {
 
     protected static void setFontRenderContext(FontRenderContext fontRenderContext) {
         SheetUtil.fontRenderContext = fontRenderContext;
+    }
+
+    private static boolean initIgnoreMissingFontSystemFlag() {
+        final String flag = System.getProperty("org.apache.poi.ss.ignoreMissingFontSystem");
+        if (flag != null) {
+            return !flag.trim().equalsIgnoreCase("false");
+        }
+        return true;
     }
 }
