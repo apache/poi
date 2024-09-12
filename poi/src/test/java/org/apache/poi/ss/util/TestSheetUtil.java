@@ -284,6 +284,11 @@ final class TestSheetUtil {
     }
 
     @Test
+    void testDefaultIgnoreMissingFontSystem() {
+        assertTrue(SheetUtil.isIgnoreMissingFontSystem());
+    }
+
+    @Test
     void testGetCharWidthWithIgnoreEnabled() throws IOException {
         boolean previous = SheetUtil.isIgnoreMissingFontSystem();
         SheetUtil.setIgnoreMissingFontSystem(true);
