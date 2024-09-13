@@ -73,9 +73,13 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
         this.dir = dir;
     }
 
-    private void createPOIFilesDirectory() throws IOException {
-        // Create our temp dir only once by double-checked locking
-        // The directory is not deleted, even if it was created by this TempFileCreationStrategy
+    // Create our temp dir only once by double-checked locking
+    // The directory is not deleted, even if it was created by this TempFileCreationStrategy
+    private void createPOIFilesDirectoryIfNecessary() throws IOException {
+        // First make sure we recreate the directory if it was not somehow removed by a third party
+        if (dir != null && !dir.exists()) {
+            dir = null;
+        }
         if (dir == null) {
             final String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
             if (tmpDir == null) {
@@ -104,7 +108,7 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     @Override
     public File createTempFile(String prefix, String suffix) throws IOException {
         // Identify and create our temp dir, if needed
-        createPOIFilesDirectory();
+        createPOIFilesDirectoryIfNecessary();
 
         // Generate a unique new filename
         File newFile = Files.createTempFile(dir.toPath(), prefix, suffix).toFile();
@@ -122,7 +126,7 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     @Override
     public File createTempDirectory(String prefix) throws IOException {
         // Identify and create our temp dir, if needed
-        createPOIFilesDirectory();
+        createPOIFilesDirectoryIfNecessary();
 
         // Generate a unique new filename
         File newDirectory = Files.createTempDirectory(dir.toPath(), prefix).toFile();
