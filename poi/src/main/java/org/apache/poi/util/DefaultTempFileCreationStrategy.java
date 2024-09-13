@@ -76,6 +76,10 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     private void createPOIFilesDirectory() throws IOException {
         // Create our temp dir only once by double-checked locking
         // The directory is not deleted, even if it was created by this TempFileCreationStrategy
+        // First make sure we recreate the directory if it was not somehow removed by a third party
+        if (dir != null && !dir.exists()) {
+            dir = null;
+        }
         if (dir == null) {
             final String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
             if (tmpDir == null) {
