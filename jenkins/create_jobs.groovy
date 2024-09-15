@@ -45,11 +45,7 @@ def poijobs = [
         [ name: 'POI-DSL-1.21', jdk: '1.21', trigger: 'H */12 * * *', skipcigame: true, skipSpotbugs: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
-        [ name: 'POI-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
-          // use Ant for building until Gradle supports JDK 22
-          // see https://docs.gradle.org/current/userguide/compatibility.html
-          // and https://github.com/gradle/gradle/issues/26162
-          useAnt: true
+        [ name: 'POI-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
         [ name: 'POI-DSL-1.23', jdk: '1.23', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
@@ -107,11 +103,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-Windows-1.21', jdk: '1.21', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true
         ],
-        [ name: 'POI-DSL-Windows-1.22', jdk: '1.22', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          // use Ant for building until Gradle supports JDK 22
-          // see https://docs.gradle.org/current/userguide/compatibility.html
-          // and https://github.com/gradle/gradle/issues/26162
-          useAnt: true
+        [ name: 'POI-DSL-Windows-1.22', jdk: '1.22', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.23', jdk: '1.23', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
           // use Ant for building until Gradle supports JDK 22
