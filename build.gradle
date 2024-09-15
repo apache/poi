@@ -67,7 +67,7 @@ configurations {
 }
 
 dependencies {
-    antLibs("org.junit.jupiter:junit-jupiter:5.10.3")
+    antLibs("org.junit.jupiter:junit-jupiter:5.11.0")
     antLibs("org.apache.ant:ant-junitlauncher:1.10.15")
 }
 
@@ -123,7 +123,7 @@ subprojects {
         commonsCompressVersion = '1.27.1'
         commonsIoVersion = '2.16.1'
         commonsMathVersion = '3.6.1'
-        junitVersion = '5.10.3'
+        junitVersion = '5.11.0'
         log4jVersion = '2.23.1'
         mockitoVersion = '4.11.0'
         hamcrestVersion = '3.0'
@@ -432,7 +432,7 @@ subprojects {
                 jvmArgs += [
                     // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
                     // opposed to the recommendation there, it doesn't work to add ... to the dependencies
-                    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.10.1'
+                    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.11.0'
                     // gradles gradle-worker.jar is still not a JPMS module and thus runs as unnamed module
                     '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=org.apache.poi.poi',
                     '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
