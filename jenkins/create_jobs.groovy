@@ -45,7 +45,7 @@ def poijobs = [
         [ name: 'POI-DSL-1.21', jdk: '1.21', trigger: 'H */12 * * *', skipcigame: true, skipSpotbugs: true
         ],
         // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
-        [ name: 'POI-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
+        [ name: 'POI-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
           // issues with jacoco and Gradle and this JDK
           useAnt: true
         ],
