@@ -2549,3 +2549,5 @@ org/openxmlformats/schemas/drawingml/x2006/chart/impl/STAxisUnitImpl
 org/openxmlformats/schemas/drawingml/x2006/chart/STAxisUnit
 org/openxmlformats/schemas/drawingml/x2006/main/impl/CTAudioFileImpl
 org/openxmlformats/schemas/drawingml/x2006/main/CTAudioFile
+org/openxmlformats/schemas/drawingml/x2006/chart/impl/STHoleSizePercentImpl
+org/openxmlformats/schemas/drawingml/x2006/chart/impl/STHoleSizeUByteImpl

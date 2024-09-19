@@ -103,8 +103,19 @@ class TestNecessaryOOXMLClasses {
         assertNotNull(ctArea3DChart);
         CTSurfaceChart ctSurfaceChart = CTSurfaceChart.Factory.newInstance();
         assertNotNull(ctSurfaceChart);
+
         CTDoughnutChart ctDoughnutChart = CTDoughnutChart.Factory.newInstance();
         assertNotNull(ctDoughnutChart);
+        CTHoleSize ctHoleSize = CTHoleSize.Factory.newInstance();
+        assertNotNull(ctHoleSize);
+        STHoleSize stHoleSize = STHoleSize.Factory.newInstance();
+        assertNotNull(stHoleSize);
+        ctHoleSize.xsetVal(stHoleSize);
+        STHoleSizePercent stHoleSizePercent = STHoleSizePercent.Factory.newInstance();
+        assertNotNull(stHoleSizePercent);
+        STHoleSizeUByte stHoleSizeUByte = STHoleSizeUByte.Factory.newInstance();
+        assertNotNull(stHoleSizeUByte);
+
         CTBar3DChart ctBar3DChart = CTBar3DChart.Factory.newInstance();
         assertNotNull(ctBar3DChart);
         CTLine3DChart ctLine3DChart = CTLine3DChart.Factory.newInstance();
@@ -197,8 +208,6 @@ class TestNecessaryOOXMLClasses {
         assertNotNull(stDepthPercent);
         STHPercent sthPercent = STHPercent.Factory.newInstance();
         assertNotNull(sthPercent);
-        STHoleSize stHoleSize = STHoleSize.Factory.newInstance();
-        assertNotNull(stHoleSize);
     }
 
     @Test
