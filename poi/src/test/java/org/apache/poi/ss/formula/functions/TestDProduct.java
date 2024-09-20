@@ -40,6 +40,8 @@ public class TestDProduct {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "DPRODUCT(A5:E11, \"Yield\", A1:F3)", 800, 0.0000000001);
+            assertDouble(fe, cell, "DPRODUCT(A5:E11, \"Yield\", A13:A14)", 720, 0.0000000001);
+            assertDouble(fe, cell, "DPRODUCT(A5:E11, \"Yield\", B13:C14)", 7560, 0.0000000001);
         }
     }
 
@@ -72,6 +74,9 @@ public class TestDProduct {
         addRow(sheet, 8, "Apple", 14, 15, 10, 75);
         addRow(sheet, 9, "Pear", 9, 8, 8, 77);
         addRow(sheet, 10, "Apple", 8, 9, 6, 45);
+        addRow(sheet, 11);
+        addRow(sheet, 12, "Tree", "Height", "Height");
+        addRow(sheet, 13, "<>Apple", "<>12", "<>9");
         return wb;
     }
 }

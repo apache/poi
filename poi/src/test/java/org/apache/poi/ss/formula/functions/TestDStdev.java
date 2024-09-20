@@ -40,6 +40,7 @@ public class TestDStdev {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "DSTDEV(A5:E11, \"Yield\", A1:A3)", 2.96647939483827, 0.0000000001);
+            assertDouble(fe, cell, "DSTDEV(A5:E11, \"Yield\", B12:C14)", 2.66458251889485, 0.0000000001);
         }
     }
 
@@ -50,6 +51,8 @@ public class TestDStdev {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "DSTDEVP(A5:E11, \"Yield\", A1:A3)", 2.65329983228432, 0.0000000001);
+            assertDouble(fe, cell, "DSTDEVP(A5:E11, \"Yield\", A12:A13)", 0.816496580927726, 0.0000000001);
+            assertDouble(fe, cell, "DSTDEVP(A5:E11, \"Yield\", B12:C14)", 2.43241991988774, 0.0000000001);
         }
     }
 
@@ -67,6 +70,9 @@ public class TestDStdev {
         addRow(sheet, 8, "Apple", 14, 15, 10, 75);
         addRow(sheet, 9, "Pear", 9, 8, 8, 77);
         addRow(sheet, 10, "Apple", 8, 9, 6, 45);
+        addRow(sheet, 11);
+        addRow(sheet, 11, "Tree", "Height", "Height");
+        addRow(sheet, 12, "<>Apple", "<>12", "<>9");
         return wb;
     }
 }

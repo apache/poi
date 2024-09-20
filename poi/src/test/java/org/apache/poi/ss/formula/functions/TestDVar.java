@@ -40,6 +40,8 @@ public class TestDVar {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "DVAR(A4:E10, \"Yield\", A1:A3)", 8.8, 0.0000000001);
+            assertDouble(fe, cell, "DVAR(A4:E10, \"Yield\", A12:A13)", 1.0, 0.0000000001);
+            assertDouble(fe, cell, "DVAR(A4:E10, \"Yield\", B12:C13)", 10.9166666667, 0.0000000001);
         }
     }
 
@@ -50,6 +52,8 @@ public class TestDVar {
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             HSSFCell cell = wb.getSheetAt(0).getRow(0).createCell(12);
             assertDouble(fe, cell, "DVARP(A4:E10, \"Yield\", A1:A3)", 7.04, 0.0000000001);
+            assertDouble(fe, cell, "DVARP(A4:E10, \"Yield\", A12:A13)", 0.666666666666667, 0.0000000001);
+            assertDouble(fe, cell, "DVARP(A4:E10, \"Yield\", B12:C13)", 8.1875, 0.0000000001);
         }
     }
 
@@ -66,6 +70,9 @@ public class TestDVar {
         addRow(sheet, 7, "Apple", 14, 15, 10, 75);
         addRow(sheet, 8, "Pear", 9, 8, 8, 77);
         addRow(sheet, 9, "Apple", 8, 9, 6, 45);
+        addRow(sheet, 10);
+        addRow(sheet, 11, "Tree", "Height", "Height");
+        addRow(sheet, 12, "<>Apple", "<>12", "<>9");
         return wb;
     }
 }
