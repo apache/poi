@@ -46,6 +46,8 @@ public class TestDCount {
             assertDouble(fe, cell, "DCOUNT(A5:E11, 2, A1:F3)", 4);
             assertDouble(fe, cell, "DCOUNT(A5:E11, 3, A1:F3)", 3);
             assertDouble(fe, cell, "DCOUNT(A5:E11, 5, A1:F3)", 3);
+            assertDouble(fe, cell, "DCOUNT(A5:E11, 5, A13:A14)", 2);
+            assertDouble(fe, cell, "DCOUNT(A5:E11, 5, B13:B14)", 3);
         }
     }
 
@@ -63,6 +65,9 @@ public class TestDCount {
         addRow(sheet, 8, "Apple", 14, null, 10, 75);
         addRow(sheet, 9, "Pear", 9, 8, 8, "$77");
         addRow(sheet, 10, "Apple", 12, 11, 6, 45);
+        addRow(sheet, 11);
+        addRow(sheet, 12, "Tree", "Height");
+        addRow(sheet, 13, "<>Apple", "<>12");
         return wb;
     }
 }

@@ -175,7 +175,8 @@ public final class DStarRunner implements Function3Arg {
         largerEqualThan,
         smallerThan,
         smallerEqualThan,
-        equal
+        equal,
+        notEqual
     }
 
     /**
@@ -295,7 +296,7 @@ public final class DStarRunner implements Function3Arg {
     }
 
     /**
-     * Test a value against a simple (< > <= >= = starts-with) condition string.
+     * Test a value against a simple (< > <= >= = <> starts-with) condition string.
      *
      * @param value The value to check.
      * @param condition The condition to check for.
@@ -307,11 +308,19 @@ public final class DStarRunner implements Function3Arg {
         if(condition instanceof StringEval) {
             String conditionString = ((StringEval)condition).getStringValue();
 
-            if(conditionString.startsWith("<")) { // It's a </<= condition.
+            if(conditionString.startsWith("<")) { // It's a </<=/<> condition.
                 String number = conditionString.substring(1);
                 if(number.startsWith("=")) {
                     number = number.substring(1);
                     return testNumericCondition(value, operator.smallerEqualThan, number);
+                } else if (number.startsWith(">")) {
+                    number = number.substring(1);
+                    boolean itsANumber = isNumber(number);
+                    if (itsANumber) {
+                        return testNumericCondition(value, operator.notEqual, number);
+                    } else {
+                        return testStringCondition(value, operator.notEqual, number);
+                    }
                 } else {
                     return testNumericCondition(value, operator.smallerThan, number);
                 }
@@ -330,23 +339,11 @@ public final class DStarRunner implements Function3Arg {
                     return value instanceof BlankEval;
                 }
                 // Distinguish between string and number.
-                boolean itsANumber;
-                try {
-                    Integer.parseInt(stringOrNumber);
-                    itsANumber = true;
-                } catch (NumberFormatException e) { // It's not an int.
-                    try {
-                        Double.parseDouble(stringOrNumber);
-                        itsANumber = true;
-                    } catch (NumberFormatException e2) { // It's a string.
-                        itsANumber = false;
-                    }
-                }
+                boolean itsANumber = isNumber(stringOrNumber);
                 if(itsANumber) {
                     return testNumericCondition(value, operator.equal, stringOrNumber);
                 } else { // It's a string.
-                    String valueString = value instanceof BlankEval ? "" : OperandResolver.coerceValueToString(value);
-                    return stringOrNumber.equalsIgnoreCase(valueString);
+                    return testStringCondition(value, operator.equal, stringOrNumber);
                 }
             } else { // It's a text starts-with condition.
                 if(conditionString.isEmpty()) {
@@ -418,6 +415,28 @@ public final class DStarRunner implements Function3Arg {
             return result <= 0;
         case equal:
             return result == 0;
+        case notEqual:
+            return result != 0;
+        }
+        return false; // Can not be reached.
+    }
+
+    /**
+     * Test whether a value matches a text condition.
+     * @param valueEval Value to check.
+     * @param op Comparator to use.
+     * @param condition Value to check against.
+     * @return whether the condition holds.
+     */
+    private static boolean testStringCondition(
+        ValueEval valueEval, operator op, String condition) {
+
+        String valueString = valueEval instanceof BlankEval ? "" : OperandResolver.coerceValueToString(valueEval);
+        switch(op) {
+        case equal:
+            return valueString.equalsIgnoreCase(condition);
+        case notEqual:
+            return !valueString.equalsIgnoreCase(condition);
         }
         return false; // Can not be reached.
     }
@@ -453,5 +472,28 @@ public final class DStarRunner implements Function3Arg {
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
+    }
+
+    /**
+     * Determines whether a given string represents a valid number.
+     *
+     * @param value The string to be checked if it represents a number.
+     * @return {@code true} if the string can be parsed as either an integer or
+     *         a double; {@code false} otherwise.
+     */
+    private static boolean isNumber(String value) {
+        boolean itsANumber;
+        try {
+            Integer.parseInt(value);
+            itsANumber = true;
+        } catch (NumberFormatException e) { // It's not an int.
+            try {
+                Double.parseDouble(value);
+                itsANumber = true;
+            } catch (NumberFormatException e2) { // It's a string.
+                itsANumber = false;
+            }
+        }
+        return itsANumber;
     }
 }
