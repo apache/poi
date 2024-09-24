@@ -118,7 +118,7 @@ dependencies {
     testImplementation 'org.reflections:reflections:0.10.2'
     testImplementation 'org.openjdk.jmh:jmh-core:1.36'
     testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.36'
-    testImplementation 'com.google.guava:guava:33.3.0-jre'
+    testImplementation 'com.google.guava:guava:33.3.1-jre'
     testImplementation 'com.github.rzymek:opczip:1.2.0'
 
     // prevent slf4j warnings coming from xmlsec -> slf4j-api 1.7.x dependency
