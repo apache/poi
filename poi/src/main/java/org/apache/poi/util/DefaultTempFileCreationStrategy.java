@@ -47,6 +47,9 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     /** To use files.deleteOnExit after clean JVM exit, set the <code>-Dpoi.delete.tmp.files.on.exit</code> JVM property */
     public static final String DELETE_FILES_ON_EXIT = "poi.delete.tmp.files.on.exit";
 
+    /** JVM property for the current username. */
+    private static final String JAVA_PROP_USER_NAME = "user.name";
+
     /** The directory where the temporary files will be created (<code>null</code> to use the default directory). */
     private volatile File dir;
 
@@ -85,10 +88,17 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
             if (tmpDir == null) {
                 throw new IOException("System's temporary directory not defined - set the -D" + JAVA_IO_TMPDIR + " jvm property!");
             }
+            String poifilesDir = POIFILES;
+            // Make the default temporary directory contain the username to avoid permission issues
+            // when deploying applications on the same server with multiple users
+            String username = System.getProperty(JAVA_PROP_USER_NAME);
+            if (null != username && !username.isEmpty()) {
+                poifilesDir += "_" + username;
+            }
             dirLock.lock();
             try {
                 if (dir == null) {
-                    Path dirPath = Paths.get(tmpDir, POIFILES);
+                    Path dirPath = Paths.get(tmpDir, poifilesDir);
                     File fileDir = dirPath.toFile();
                     if (fileDir.exists()) {
                         if (!fileDir.isDirectory()) {
