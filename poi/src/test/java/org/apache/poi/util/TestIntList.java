@@ -510,4 +510,30 @@ final class TestIntList {
             assertEquals(a5[j], list.get(j));
         }
     }
+
+    @Test
+    void bug69351() {
+        final int size = 10;
+        final IntList list = new IntList(size);
+        assertEquals(0, list.size());
+        for (int i = 0; i < size; i++) {
+            list.add(i);
+        }
+        assertEquals(size, list.size());
+        assertTrue(list.removeValue(size - 2));
+        assertEquals(size - 1, list.size());
+    }
+
+    @Test
+    void testRemove69351() {
+        final int size = 10;
+        final IntList list = new IntList(size);
+        assertEquals(0, list.size());
+        for (int i = 0; i < size; i++) {
+            list.add(i);
+        }
+        assertEquals(size, list.size());
+        assertEquals(size - 2, list.remove(size - 2));
+        assertEquals(size - 1, list.size());
+    }
 }

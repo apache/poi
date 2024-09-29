@@ -18,9 +18,9 @@
 package org.apache.poi.util;
 
 /**
- * A List of int's; as full an implementation of the java.util.List
+ * A List of `int`s; as full an implementation of the java.util.List
  * interface as possible, with an eye toward minimal creation of
- * objects
+ * objects.
  *
  * the mimicry of List is as follows:
  * <ul>
@@ -40,6 +40,8 @@ package org.apache.poi.util;
  *      remove(int index)
  * <li> subList is not supported
  * </ul>
+ *
+ * This class is only meant for internal use in Apache POI.
  */
 public class IntList
 {
@@ -434,6 +436,9 @@ public class IntList
         }
         int rval = _array[ index ];
 
+        if(_limit == _array.length) {
+            growArray(_limit + 1);
+        }
         System.arraycopy(_array, index + 1, _array, index, _limit - index);
         _limit--;
         return rval;
@@ -458,6 +463,9 @@ public class IntList
             if (o == _array[ j ])
             {
                 if (j+1 < _limit) {
+                    if(_limit == _array.length) {
+                        growArray(_limit + 1);
+                    }
                     System.arraycopy(_array, j + 1, _array, j, _limit - j);
                 }
                 _limit--;
