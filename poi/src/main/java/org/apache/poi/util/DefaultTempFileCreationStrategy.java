@@ -81,14 +81,10 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
             dir = null;
         }
         if (dir == null) {
-            final String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
-            if (tmpDir == null) {
-                throw new IOException("System's temporary directory not defined - set the -D" + JAVA_IO_TMPDIR + " jvm property!");
-            }
             dirLock.lock();
             try {
                 if (dir == null) {
-                    Path dirPath = Paths.get(tmpDir, POIFILES);
+                    final Path dirPath = getPOIFilesDirectoryPath();
                     File fileDir = dirPath.toFile();
                     if (fileDir.exists()) {
                         if (!fileDir.isDirectory()) {
@@ -103,6 +99,14 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
                 dirLock.unlock();
             }
         }
+    }
+
+    protected Path getPOIFilesDirectoryPath() throws IOException {
+        final String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
+        if (tmpDir == null) {
+            throw new IOException("System's temporary directory not defined - set the -D" + JAVA_IO_TMPDIR + " jvm property!");
+        }
+        return Paths.get(tmpDir, POIFILES);
     }
 
     @Override
