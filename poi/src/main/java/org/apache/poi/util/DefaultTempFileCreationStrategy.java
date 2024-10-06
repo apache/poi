@@ -73,38 +73,6 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
         this.dir = dir;
     }
 
-    // Create our temp dir only once by double-checked locking
-    // The directory is not deleted, even if it was created by this TempFileCreationStrategy
-    private void createPOIFilesDirectoryIfNecessary() throws IOException {
-        // First make sure we recreate the directory if it was not somehow removed by a third party
-        if (dir != null && !dir.exists()) {
-            dir = null;
-        }
-        if (dir == null) {
-            final String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
-            if (tmpDir == null) {
-                throw new IOException("System's temporary directory not defined - set the -D" + JAVA_IO_TMPDIR + " jvm property!");
-            }
-            dirLock.lock();
-            try {
-                if (dir == null) {
-                    Path dirPath = Paths.get(tmpDir, POIFILES);
-                    File fileDir = dirPath.toFile();
-                    if (fileDir.exists()) {
-                        if (!fileDir.isDirectory()) {
-                            throw new IOException("Could not create temporary directory. '" + fileDir + "' exists but is not a directory.");
-                        }
-                        dir = fileDir;
-                    } else {
-                        dir = Files.createDirectories(dirPath).toFile();
-                    }
-                }
-            } finally {
-                dirLock.unlock();
-            }
-        }
-    }
-
     @Override
     public File createTempFile(String prefix, String suffix) throws IOException {
         // Identify and create our temp dir, if needed
@@ -137,4 +105,45 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
         // All done
         return newDirectory;
     }
+
+    protected String getJavaIoTmpDir() throws IOException {
+        final String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
+        if (tmpDir == null) {
+            throw new IOException("System's temporary directory not defined - set the -D" + JAVA_IO_TMPDIR + " jvm property!");
+        }
+       return tmpDir;
+    }
+
+    protected Path getPOIFilesDirectoryPath() throws IOException {
+        return Paths.get(getJavaIoTmpDir(), POIFILES);
+    }
+
+    // Create our temp dir only once by double-checked locking
+    // The directory is not deleted, even if it was created by this TempFileCreationStrategy
+    private void createPOIFilesDirectoryIfNecessary() throws IOException {
+        // First make sure we recreate the directory if it was not somehow removed by a third party
+        if (dir != null && !dir.exists()) {
+            dir = null;
+        }
+        if (dir == null) {
+            dirLock.lock();
+            try {
+                if (dir == null) {
+                    final Path dirPath = getPOIFilesDirectoryPath();
+                    File fileDir = dirPath.toFile();
+                    if (fileDir.exists()) {
+                        if (!fileDir.isDirectory()) {
+                            throw new IOException("Could not create temporary directory. '" + fileDir + "' exists but is not a directory.");
+                        }
+                        dir = fileDir;
+                    } else {
+                        dir = Files.createDirectories(dirPath).toFile();
+                    }
+                }
+            } finally {
+                dirLock.unlock();
+            }
+        }
+    }
+
 }
