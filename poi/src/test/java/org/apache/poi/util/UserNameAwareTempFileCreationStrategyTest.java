@@ -8,11 +8,11 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserNameAwareDefaultTempFileCreationStrategyTest {
+class UserNameAwareTempFileCreationStrategyTest {
 
     @Test
     void getPOIFilesDirectoryPath() throws IOException {
-        UserNameAwareDefaultTempFileCreationStrategy strategy = new UserNameAwareDefaultTempFileCreationStrategy();
+        UserNameAwareTempFileCreationStrategy strategy = new UserNameAwareTempFileCreationStrategy();
         String tmpDir = System.getProperty("java.io.tmpdir");
         String username = System.getProperty("user.name");
         String expectedPath = Paths.get(tmpDir, "poifiles_" + username).toString();

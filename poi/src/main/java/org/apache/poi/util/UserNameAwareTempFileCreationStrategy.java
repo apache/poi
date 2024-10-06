@@ -30,7 +30,7 @@ import static org.apache.poi.util.TempFile.JAVA_IO_TMPDIR;
  *
  * @since POI 5.3.1
  */
-public class UserNameAwareDefaultTempFileCreationStrategy extends DefaultTempFileCreationStrategy {
+public class UserNameAwareTempFileCreationStrategy extends DefaultTempFileCreationStrategy {
 
     /**
      * JVM property for the current username.
