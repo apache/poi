@@ -28,8 +28,7 @@ import static org.apache.poi.util.TempFile.JAVA_IO_TMPDIR;
  * that avoids permission issues when deploying applications with multiple users on the same server.
  * Other than adding the username to the temporary directory, all other behavior is the same as the superclass.
  *
- * @author Tiger Zhao
- * @since 2024-10-05 22:41
+ * @since POI 5.3.1
  */
 public class UserNameAwareDefaultTempFileCreationStrategy extends DefaultTempFileCreationStrategy {
 
