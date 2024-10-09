@@ -89,6 +89,10 @@ dependencies {
         exclude group: 'xalan', module: 'xalan'
         exclude group: 'xml-apis', module: 'xml-apis'
     }
+    renderImplementation("org.apache.xmlgraphics:batik-script:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        exclude group: 'xml-apis', module: 'xml-apis'
+    }
 
     rendersignImplementation "org.apache.pdfbox:pdfbox:${pdfboxVersion}"
     rendersignImplementation "de.rototor.pdfbox:graphics2d:${graphics2dVersion}"
@@ -102,6 +106,10 @@ dependencies {
         exclude group: 'xml-apis', module: 'xml-apis'
     }
     rendersignImplementation("org.apache.xmlgraphics:batik-bridge:${batikVersion}") {
+        exclude group: 'xalan', module: 'xalan'
+        exclude group: 'xml-apis', module: 'xml-apis'
+    }
+    rendersignImplementation("org.apache.xmlgraphics:batik-script:${batikVersion}") {
         exclude group: 'xalan', module: 'xalan'
         exclude group: 'xml-apis', module: 'xml-apis'
     }
