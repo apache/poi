@@ -35,7 +35,7 @@ final class TestHeaderBlockReading {
     void testConstructors() throws IOException {
         String[] hexData = {
             "D0 CF 11 E0 A1 B1 1A E1 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 3B 00 03 00 FE FF 09 00",
-            "06 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 FE FF FF FF 00 00 00 00 00 10 00 00 FE FF FF FF",
+            "06 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 FE FF FF FF 00 00 00 00 00 10 00 00 FE FF FF FF",
             "01 00 00 00 FE FF FF FF 00 00 00 00 FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
             "FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
             "FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF",
@@ -54,6 +54,7 @@ final class TestHeaderBlockReading {
         byte[] content = RawDataUtil.decode(hexData);
         HeaderBlock block = new HeaderBlock(new ByteArrayInputStream(content));
 
+        assertEquals(1, block.getPropertyCount());
         assertEquals(-2, block.getPropertyStart());
 
         // verify we can't read a short block

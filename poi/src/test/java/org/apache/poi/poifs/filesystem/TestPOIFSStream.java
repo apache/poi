@@ -2125,6 +2125,7 @@ final class TestPOIFSStream {
                 // Check the header has the right points in it
                 assertEquals(1, header.getBATCount());
                 assertEquals(1, header.getBATArray()[0]);
+                assertEquals(2, header.getPropertyCount());
                 assertEquals(0, header.getPropertyStart());
                 assertEquals(1, header.getSBATCount());
                 assertEquals(21, header.getSBATStart());
@@ -2235,6 +2236,7 @@ final class TestPOIFSStream {
             // Will have fat then properties stream
             assertEquals(1, hdr.getBATCount());
             assertEquals(1, hdr.getBATArray()[0]);
+            assertEquals(1, hdr.getPropertyCount());
             assertEquals(0, hdr.getPropertyStart());
             assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getSBATStart());
             assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getXBATIndex());
@@ -2293,6 +2295,7 @@ final class TestPOIFSStream {
                 assertEquals(1, hdr.getBATCount());
                 assertEquals(1, hdr.getBATArray()[0]);
                 assertEquals(2, hdr.getSBATStart());
+                assertEquals(2, hdr.getPropertyCount());
                 assertEquals(0, hdr.getPropertyStart());
                 assertEquals(POIFSConstants.END_OF_CHAIN, hdr.getXBATIndex());
 
