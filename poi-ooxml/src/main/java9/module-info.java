@@ -93,25 +93,25 @@ module org.apache.poi.ooxml {
     requires static org.bouncycastle.pkix;
 
     /* optional dependencies for slideshow rendering via PPTX2PNG */
-    requires static batik.anim;
-    requires static batik.awt.util;
-    requires static batik.bridge;
-    requires static batik.codec;
-    requires static batik.constants;
-    requires static batik.css;
-    requires static batik.dom;
-    requires static batik.ext;
-    requires static batik.gvt;
-    requires static batik.i18n;
-    requires static batik.parser;
-    requires static batik.script;
-    requires static batik.shared.resources;
-    requires static batik.svg.dom;
-    requires static batik.svggen;
-    requires static batik.svgrasterizer;
-    requires static batik.transcoder;
-    requires static batik.util;
-    requires static batik.xml;
+    requires static org.apache.xmlgraphics.batik.anim;
+    requires static org.apache.xmlgraphics.batik.awt.util;
+    /* this typo appears in Batik 1.18 and will be fixed in a future release */
+    requires static org.apache.xmlgraphics.batik.brdige;
+    requires static org.apache.xmlgraphics.batik.codec;
+    requires static org.apache.xmlgraphics.batik.constants;
+    requires static org.apache.xmlgraphics.batik.css;
+    requires static org.apache.xmlgraphics.batik.dom;
+    requires static org.apache.xmlgraphics.batik.ext;
+    requires static org.apache.xmlgraphics.batik.gvt;
+    requires static org.apache.xmlgraphics.batik.i18n;
+    requires static org.apache.xmlgraphics.batik.parser;
+    requires static org.apache.xmlgraphics.batik.script;
+    requires static org.apache.xmlgraphics.batik.svgdom;
+    requires static org.apache.xmlgraphics.batik.svggen;
+    requires static org.apache.xmlgraphics.batik.svgrasterizer;
+    requires static org.apache.xmlgraphics.batik.transcoder;
+    requires static org.apache.xmlgraphics.batik.util;
+    requires static org.apache.xmlgraphics.batik.xml;
     requires static xmlgraphics.commons;
 
     requires static org.apache.pdfbox;

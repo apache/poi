@@ -176,7 +176,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
-            <version>4.13.1</version>
+            <version>4.13.2</version>
         </dependency>
 
         <!-- Pax Exam -->
