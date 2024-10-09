@@ -166,4 +166,26 @@ final class TestHSSFEventFactory {
             Biff8EncryptionKey.setCurrentUserPassword(null);
         }
     }
+
+    @Test
+    void testXL4Workbook() throws Exception {
+        // This document has a single Excel 4 macro in it
+        openSample("66503.xls");
+        assertEquals(records.stream()
+                .filter(r -> r instanceof BoundSheetRecord)
+                .map(r -> (BoundSheetRecord)r)
+                .filter(BoundSheetRecord::isExcel4Macro)
+                .count(), 1);
+    }
+
+    @Test
+    void testXL4Workbook_false() throws Exception {
+        // This document does not have an Excel 4 macro in it
+        openSample("42844.xls");
+        assertEquals(records.stream()
+                .filter(r -> r instanceof BoundSheetRecord)
+                .map(r -> (BoundSheetRecord)r)
+                .filter(BoundSheetRecord::isExcel4Macro)
+                .count(), 0);
+    }
 }
