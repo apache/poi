@@ -126,28 +126,18 @@ dependencies {
     testImplementation "org.apache.logging.log4j:log4j-slf4j2-impl:${log4jVersion}"
     testImplementation 'org.slf4j:slf4j-simple:2.0.16'
 
-    broken("org.apache.xmlgraphics:batik-script:${batikVersion}"){
-        exclude group: 'xalan', module: 'xalan'
-        exclude group: 'xml-apis', module: 'xml-apis'
-    }
-
     javadocs project(':poi')
     javadocs project(':poi-scratchpad')
 }
 
 final String MODULE_NAME = 'org.apache.poi.ooxml'
-final Pattern MODULE_NOT_REGEX = ~'(poi[/\\\\][^/\\\\]+$|batik-script)'
 final Pattern MODULE_REGEX = ~'\\.jar$'
 final List MAIN_MODULE_PATH = sourceSets.main.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
-final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX && !(it.path =~ MODULE_NOT_REGEX) }.collect{ it.parent }.unique() + files("build/brokenJars")
+final List TEST_MODULE_PATH = sourceSets.test.runtimeClasspath.findAll{ it.path =~ MODULE_REGEX }.collect{ it.parent }.unique()
 
 final String OOXML_LITE_AGENT = "../build/dist/maven/poi-ooxml-lite-agent/poi-ooxml-lite-agent-${project.version}.jar"
 final String OOXML_LITE_REPORT = '../src/resources/ooxml-lite-report'
 final String OOXML_LITE_INCLUDES = "^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"
-
-compileJava {
-    dependsOn 'fixBatik', 'cleanupBatik'
-}
 
 task compileJava9(type: JavaCompile) {
     dependsOn 'compileJava', ':poi:jar'
@@ -205,25 +195,6 @@ task testJar(type: Jar, dependsOn: testClasses) {
 
     manifest {
         attributes('Automatic-Module-Name': MODULE_NAME, 'Multi-Release': 'true')
-    }
-}
-
-// based on https://github.com/moditect/moditect-gradle-plugin/issues/12
-task fixBatik(type: Zip) {
-    ant.mkdir(dir: "${buildDir}/brokenJars")
-    archiveFileName = "batik-script-${batikVersion}.jar"
-    destinationDirectory = file("${buildDir}/brokenJars")
-    from zipTree(configurations.broken.files.find{ f -> f.name.startsWith("batik-script") })
-    filesMatching("**/org.apache.batik.script.InterpreterFactory") {
-        it.filter{ it2 -> it2.contains("Rhino") ? "#" + it2 : it2 }
-    }
-}
-
-task cleanupBatik(type: Delete) {
-    // remove older files to avoid build failures because of duplicate modules
-    delete fileTree("${buildDir}/brokenJars/").matching {
-        include "*.jar"
-        exclude "batik*-${batikVersion}.jar"
     }
 }
 
