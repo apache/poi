@@ -107,7 +107,6 @@ module org.apache.poi.ooxml {
     requires static batik.i18n;
     requires static batik.parser;
     requires static batik.script;
-    requires static batik.shared.resources;
     requires static batik.svg.dom;
     requires static batik.svggen;
     requires static batik.svgrasterizer;
