@@ -117,12 +117,10 @@ public final class FinanceLib {
      */
     public static double npv(double r, double[] cfs) {
         double npv = 0;
-        double r1 = r + 1;
-        double trate = r1;
-        for (double cf : cfs) {
-            npv += cf / trate;
-            trate *= r1;
-        }
+        for (int i=0;i<arr.length;i++)
+	   {
+		   npv+=cfs[i]/Math.pow(1+r,i);
+	   }
         return npv;
     }
 
