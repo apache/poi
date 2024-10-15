@@ -27,7 +27,7 @@ import java.util.Map;
  */
 public final class ExcelAntWorkbookUtilFactory {
 
-    private static Map<String, ExcelAntWorkbookUtil> workbookUtilMap;
+    private static final Map<String, ExcelAntWorkbookUtil> workbookUtilMap = new HashMap<>();
 
     private ExcelAntWorkbookUtilFactory() {
     }
@@ -41,16 +41,14 @@ public final class ExcelAntWorkbookUtilFactory {
      *          a freshly instantiated one if none did exist before.
      */
     public static ExcelAntWorkbookUtil getInstance(String fileName) {
-        if(workbookUtilMap == null) {
-            workbookUtilMap = new HashMap<>();
-        }
+        synchronized (workbookUtilMap) {
+            if(workbookUtilMap.containsKey(fileName)) {
+                return workbookUtilMap.get(fileName);
+            }
 
-        if(workbookUtilMap.containsKey(fileName)) {
-            return workbookUtilMap.get(fileName);
+            ExcelAntWorkbookUtil wbu = new ExcelAntWorkbookUtil(fileName);
+            workbookUtilMap.put(fileName, wbu);
+            return wbu;
         }
-
-        ExcelAntWorkbookUtil wbu = new ExcelAntWorkbookUtil(fileName);
-        workbookUtilMap.put(fileName, wbu);
-        return wbu;
     }
 }
