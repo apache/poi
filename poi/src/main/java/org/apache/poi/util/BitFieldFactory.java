@@ -18,13 +18,13 @@
 
 package org.apache.poi.util;
 
-import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Returns immutable Bitfield instances.
  */
 public class BitFieldFactory {
-    private static Map<Integer, BitField> instances = new HashMap<>();
+    private static final ConcurrentHashMap<Integer, BitField> instances = new ConcurrentHashMap<>();
 
     public static BitField getInstance(int mask) {
         return instances.computeIfAbsent(mask, k -> new BitField(mask));
