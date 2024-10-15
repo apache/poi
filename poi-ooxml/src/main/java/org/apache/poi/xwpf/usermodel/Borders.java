@@ -604,7 +604,7 @@ public enum Borders {
     static {
         final Map<Integer, Borders> tempMap = new HashMap<>();
         for (Borders p : values()) {
-            tempMap.put(Integer.valueOf(p.getValue()), p);
+            tempMap.put(p.getValue(), p);
         }
         imap = Collections.unmodifiableMap(tempMap);
     }

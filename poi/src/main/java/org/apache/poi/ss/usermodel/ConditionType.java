@@ -26,7 +26,7 @@ import java.util.Map;
  * Represents a type of a conditional formatting rule
  */
 public class ConditionType {
-    private static Map<Integer,ConditionType> lookup = new HashMap<>();
+    private static final Map<Integer, ConditionType> lookup = new HashMap<>();
     
     /**
      * This conditional formatting rule compares a cell value

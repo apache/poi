@@ -30,7 +30,7 @@ import java.util.Map;
  *  ones, so we can't just re-use the HSMF ones.
  */
 public final class TNEFProperty {
-   private static Map<Integer, List<TNEFProperty>> properties = new HashMap<>();
+   private static final Map<Integer, List<TNEFProperty>> properties = new HashMap<>();
    
    // Types taken from http://msdn.microsoft.com/en-us/library/microsoft.exchange.data.contenttypes.tnef.tnefattributetype%28v=EXCHG.140%29.aspx
    public static final int TYPE_TRIPLES = 0x0000;
