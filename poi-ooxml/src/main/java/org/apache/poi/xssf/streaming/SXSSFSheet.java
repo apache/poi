@@ -51,6 +51,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     protected SheetDataWriter _writer;
     private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
     protected AutoSizeColumnTracker _autoSizeColumnTracker;
+    private int outlineLevelRow;
     private int lastFlushedRowNumber = -1;
     private boolean allFlushed;
     private int leftMostColumn = SpreadsheetVersion.EXCEL2007.getLastColumnIndex();
@@ -210,13 +211,32 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     /**
      * Returns the logical row (not physical) 0-based.  If you ask for a row that is not
      * defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
+     * If the row is not created in this streaming sheet, instead is part of the XSSFSheet
+     * then this method takes the row from the XSSFSheet.
      *
      * @param rownum  row to get (0-based)
      * @return Row representing the rownumber or null if its not defined on the sheet
      */
     @Override
-    public SXSSFRow getRow(int rownum) {
-        return _rows.get(rownum);
+    public Row getRow(int rownum) {
+    	Row row = _rows.get(rownum);
+    	// BugZilla 67646: allow reading all the content also from template sheet
+    	if (row == null) {
+    		row = _sh.getRow(rownum);
+    	}
+        return row;
+    }
+
+    /**
+     * Returns the logical row (not physical) 0-based.  If you ask for a row that is not
+     * defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
+     *
+     * @param rownum  row to get (0-based)
+     * @return Row representing the rownumber or null if its not defined on the sheet
+     */
+    private SXSSFRow getSXSSFRow(int rownum) {
+    	SXSSFRow row = _rows.get(rownum);
+        return row;
     }
 
     /**
@@ -249,7 +269,8 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      */
     @Override
     public int getLastRowNum() {
-        return _rows.isEmpty() ? -1 : _rows.lastKey();
+    	// BugZilla 67646 allow append
+        return _rows.isEmpty() ? _sh.getLastRowNum() : _rows.lastKey();
     }
 
     /**
@@ -1263,7 +1284,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      */
     @Override
     public void groupColumn(int fromColumn, int toColumn) {
-        _sh.groupColumn(fromColumn, toColumn);
+        _sh.groupColumn(fromColumn,toColumn);
     }
 
     /**
@@ -1316,14 +1337,16 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      */
     @Override
     public void groupRow(int fromRow, int toRow) {
-        int maxLevelRow = -1;
         for(SXSSFRow row : _rows.subMap(fromRow, toRow + 1).values()){
-            final int level = row.getOutlineLevel() + 1;
+            int level = row.getOutlineLevel() + 1;
             row.setOutlineLevel(level);
-            maxLevelRow = Math.max(maxLevelRow, level);
+
+            if(level > outlineLevelRow) {
+                outlineLevelRow = level;
+            }
         }
 
-        setWorksheetOutlineLevelRowIfNecessary((short) Math.min(Short.MAX_VALUE, maxLevelRow));
+        setWorksheetOutlineLevelRow();
     }
 
     /**
@@ -1343,16 +1366,19 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     public void setRowOutlineLevel(int rownum, int level) {
         SXSSFRow row = _rows.get(rownum);
         row.setOutlineLevel(level);
-        setWorksheetOutlineLevelRowIfNecessary((short) Math.min(Short.MAX_VALUE, level));
+        if(level > 0 && level > outlineLevelRow) {
+            outlineLevelRow = level;
+            setWorksheetOutlineLevelRow();
+        }
     }
 
-    private void setWorksheetOutlineLevelRowIfNecessary(final short levelRow) {
+    private void setWorksheetOutlineLevelRow() {
         CTWorksheet ct = _sh.getCTWorksheet();
         CTSheetFormatPr pr = ct.isSetSheetFormatPr() ?
                 ct.getSheetFormatPr() :
                 ct.addNewSheetFormatPr();
-        if(levelRow > _sh.getSheetFormatPrOutlineLevelRow()) {
-            pr.setOutlineLevelRow(levelRow);
+        if(outlineLevelRow > 0) {
+            pr.setOutlineLevelRow((short)outlineLevelRow);
         }
     }
 
@@ -1390,7 +1416,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
      * @param rowIndex the zero based row index to collapse
      */
     private void collapseRow(int rowIndex) {
-        SXSSFRow row = getRow(rowIndex);
+    	SXSSFRow row = getSXSSFRow(rowIndex);
         if(row == null) {
             throw new IllegalArgumentException("Invalid row number("+ rowIndex + "). Row does not exist.");
         } else {
@@ -1398,11 +1424,11 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
 
             // Hide all the columns until the end of the group
             int lastRow = writeHidden(row, startRow);
-            SXSSFRow lastRowObj = getRow(lastRow);
+            SXSSFRow lastRowObj = getSXSSFRow(lastRow);
             if (lastRowObj != null) {
                 lastRowObj.setCollapsed(true);
             } else {
-                SXSSFRow newRow = createRow(lastRow);
+            	SXSSFRow newRow = createRow(lastRow);
                 newRow.setCollapsed(true);
             }
         }
@@ -1428,14 +1454,13 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
         return currentRow + 1;
     }
 
-    private int writeHidden(SXSSFRow xRow, int rowIndex) {
+    private int writeHidden(Row xRow, int rowIndex) {
         int level = xRow.getOutlineLevel();
-        SXSSFRow currRow = getRow(rowIndex);
-
+        SXSSFRow currRow = getSXSSFRow(rowIndex);
         while (currRow != null && currRow.getOutlineLevel() >= level) {
             currRow.setHidden(true);
             rowIndex++;
-            currRow = getRow(rowIndex);
+            currRow = getSXSSFRow(rowIndex);
         }
         return rowIndex;
     }
