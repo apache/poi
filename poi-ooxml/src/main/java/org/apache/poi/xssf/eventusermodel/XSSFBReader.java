@@ -104,12 +104,12 @@ public class XSSFBReader extends XSSFReader {
      *  from the Iterator. It's up to you to close the
      *  InputStreams when done with each one.
      *
-     * @return iterator of {@link InputStream}s
+     * @return iterator {@link SheetIterator}
      * @throws InvalidFormatException if the sheet data format is invalid
      * @throws IOException if there is an I/O issue reading the data
      */
     @Override
-    public Iterator<InputStream> getSheetsData() throws IOException, InvalidFormatException {
+    public SheetIterator getSheetsData() throws IOException, InvalidFormatException {
         return new SheetIterator(workbookPart);
     }
 

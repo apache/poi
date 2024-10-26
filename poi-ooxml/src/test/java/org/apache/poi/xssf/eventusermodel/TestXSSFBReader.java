@@ -136,7 +136,7 @@ class TestXSSFBReader {
             assertNotNull(r.getXSSFBStylesTable());
             XSSFBSharedStringsTable sst = new XSSFBSharedStringsTable(pkg);
             XSSFBStylesTable xssfbStylesTable = r.getXSSFBStylesTable();
-            XSSFBReader.SheetIterator it = (XSSFBReader.SheetIterator) r.getSheetsData();
+            XSSFBReader.SheetIterator it = r.getSheetsData();
 
             while (it.hasNext()) {
                 InputStream is = it.next();

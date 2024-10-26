@@ -227,7 +227,7 @@ public class XLSX2CSV {
         ReadOnlySharedStringsTable strings = new ReadOnlySharedStringsTable(this.xlsxPackage);
         XSSFReader xssfReader = new XSSFReader(this.xlsxPackage);
         StylesTable styles = xssfReader.getStylesTable();
-        XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
+        XSSFReader.SheetIterator iter = xssfReader.getSheetsData();
         int index = 0;
         while (iter.hasNext()) {
             try (InputStream stream = iter.next()) {

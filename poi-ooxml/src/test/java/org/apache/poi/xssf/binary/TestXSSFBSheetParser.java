@@ -47,7 +47,7 @@ class TestXSSFBSheetParser {
     void test66682() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("bug66682.xlsb"))) {
             XSSFBReader reader = new XSSFBReader(pkg);
-            XSSFBReader.SheetIterator it = (XSSFBReader.SheetIterator) reader.getSheetsData();
+            XSSFBReader.SheetIterator it = reader.getSheetsData();
 
             while (it.hasNext()) {
                 try (InputStream is = it.next()) {

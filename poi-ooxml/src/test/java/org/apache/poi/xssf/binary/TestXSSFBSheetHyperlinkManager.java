@@ -36,7 +36,7 @@ class TestXSSFBSheetHyperlinkManager {
     void testBasic() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("hyperlink.xlsb"))) {
             XSSFBReader reader = new XSSFBReader(pkg);
-            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) reader.getSheetsData();
+            XSSFReader.SheetIterator it = reader.getSheetsData();
             it.next();
             XSSFBHyperlinksTable manager = new XSSFBHyperlinksTable(it.getSheetPart());
             List<XSSFHyperlinkRecord> records = manager.getHyperLinks().get(new CellAddress(0, 0));

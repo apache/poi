@@ -262,7 +262,7 @@ public class XSSFEventBasedExcelExtractor
             XSSFReader xssfReader = new XSSFReader(container);
             SharedStrings strings = createSharedStringsTable(xssfReader, container);
             StylesTable styles = xssfReader.getStylesTable();
-            XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) xssfReader.getSheetsData();
+            XSSFReader.SheetIterator iter = xssfReader.getSheetsData();
             StringBuilder text = new StringBuilder(64);
             SheetTextExtractor sheetExtractor = new SheetTextExtractor();
 

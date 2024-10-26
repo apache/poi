@@ -156,7 +156,7 @@ public final class TestXSSFReader {
             XSSFReader r = new XSSFReader(pkg);
 
             String[] sheetNames = {"Sheet4", "Sheet2", "Sheet3", "Sheet1"};
-            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+            XSSFReader.SheetIterator it = r.getSheetsData();
 
             int count = 0;
             while (it.hasNext()) {
@@ -175,7 +175,7 @@ public final class TestXSSFReader {
     void testComments() throws Exception {
       try (OPCPackage pkg =  XSSFTestDataSamples.openSamplePackage("comments.xlsx")) {
           XSSFReader r = new XSSFReader(pkg);
-          XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+          XSSFReader.SheetIterator it = r.getSheetsData();
 
           int count = 0;
           while (it.hasNext()) {
@@ -215,7 +215,7 @@ public final class TestXSSFReader {
     void testShapes() throws Exception {
         try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("WithTextBox.xlsx")) {
             XSSFReader r = new XSSFReader(pkg);
-            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+            XSSFReader.SheetIterator it = r.getSheetsData();
 
             String text = getShapesString(it);
             assertContains(text, "Line 1");
@@ -249,7 +249,7 @@ public final class TestXSSFReader {
             POIXMLException e = assertThrows(POIXMLException.class, () -> {
                 final XSSFReader r = new XSSFReader(pkg);
 
-                XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+                XSSFReader.SheetIterator it = r.getSheetsData();
 
                 String text = getShapesString(it);
                 assertContains(text, "Line 1");
@@ -273,7 +273,7 @@ public final class TestXSSFReader {
             StylesTable styles = reader.getStylesTable();
             assertNotNull(styles);
 
-            XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
+            XSSFReader.SheetIterator iter = reader.getSheetsData();
             assertTrue(iter.hasNext());
             assertNotNull(iter.next());
 
@@ -295,7 +295,7 @@ public final class TestXSSFReader {
             StylesTable styles = reader.getStylesTable();
             assertNotNull(styles);
 
-            XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
+            XSSFReader.SheetIterator iter = reader.getSheetsData();
             assertNotNull(iter.next());
             assertFalse(iter.hasNext());
         }
@@ -317,7 +317,7 @@ public final class TestXSSFReader {
     void test61034() throws Exception {
         try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("61034.xlsx")) {
             XSSFReader reader = new XSSFReader(pkg);
-            XSSFReader.SheetIterator iter = (XSSFReader.SheetIterator) reader.getSheetsData();
+            XSSFReader.SheetIterator iter = reader.getSheetsData();
             Set<String> seen = new HashSet<>();
             while (iter.hasNext()) {
                 InputStream stream = iter.next();

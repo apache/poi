@@ -109,7 +109,7 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor 
             XSSFBSharedStringsTable strings = new XSSFBSharedStringsTable(getPackage());
             XSSFBReader xssfbReader = new XSSFBReader(getPackage());
             XSSFBStylesTable styles = xssfbReader.getXSSFBStylesTable();
-            XSSFBReader.SheetIterator iter = (XSSFBReader.SheetIterator) xssfbReader.getSheetsData();
+            XSSFBReader.SheetIterator iter = xssfbReader.getSheetsData();
 
             StringBuilder text = new StringBuilder(64);
             SheetTextExtractor sheetExtractor = new SheetTextExtractor();
