@@ -22,8 +22,8 @@ sourceSets {
 }
 
 dependencies {
-    api 'net.bytebuddy:byte-buddy:1.15.7'
-    api 'net.bytebuddy:byte-buddy-agent:1.15.7'
+    api 'net.bytebuddy:byte-buddy:1.15.10'
+    api 'net.bytebuddy:byte-buddy-agent:1.15.10'
     api "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
 }
 
