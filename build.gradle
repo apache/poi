@@ -37,7 +37,7 @@ plugins {
     id "com.github.spotbugs" version '6.0.27'
     id 'de.thetaphi.forbiddenapis' version '3.8'
     id 'org.sonarqube' version '4.0.0.2929'
-    id 'org.cyclonedx.bom' version '2.0.0'
+    id 'org.cyclonedx.bom' version '2.1.0'
     id 'com.adarshr.test-logger' version '3.2.0'
 }
 
