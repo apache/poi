@@ -103,7 +103,16 @@ public final class ZipPackage extends OPCPackage {
      * Constructor. Creates a new, empty ZipPackage.
      */
     public ZipPackage() {
-        super(defaultPackageAccess);
+        this(OPCComplianceFlags.enforceAll());
+    }
+
+    /**
+     * Constructor. Creates a new, empty ZipPackage.
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     */
+    public ZipPackage(OPCComplianceFlags opcComplianceFlags) {
+        super(defaultPackageAccess, opcComplianceFlags);
         this.zipArchive = null;
 
         try {
@@ -128,7 +137,27 @@ public final class ZipPackage extends OPCPackage {
      *            if input stream cannot be opened, read, or closed
      */
     ZipPackage(InputStream in, PackageAccess access) throws IOException {
-        super(access);
+        this(in, access, OPCComplianceFlags.enforceAll());
+    }
+
+    /**
+     * Constructor. Opens a Zip based Open XML document from
+     *  an InputStream. The InputStream is closed.
+     *
+     * @param in
+     *            Zip input stream to load.
+     * @param access
+     *            The package access mode.
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     * @throws IllegalArgumentException
+     *             If the specified input stream is not an instance of
+     *             ZipInputStream.
+     * @throws IOException
+     *            if input stream cannot be opened, read, or closed
+     */
+    ZipPackage(InputStream in, PackageAccess access, OPCComplianceFlags opcComplianceFlags) throws IOException {
+        super(access, opcComplianceFlags);
         try (ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(in)) {
             this.zipArchive = new ZipInputStreamZipEntrySource(zis);
         }
@@ -152,7 +181,30 @@ public final class ZipPackage extends OPCPackage {
      * @since POI 5.2.5
      */
     ZipPackage(InputStream in, PackageAccess access, boolean closeStream) throws IOException {
-        super(access);
+        this(in, access, closeStream, OPCComplianceFlags.enforceAll());
+    }
+
+    /**
+     * Constructor. Opens a Zip based Open XML document from
+     *  an InputStream.
+     *
+     * @param in
+     *            Zip input stream to load.
+     * @param access
+     *            The package access mode.
+     * @param closeStream
+     *            Whether to close the input stream.
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     * @throws IllegalArgumentException
+     *             If the specified input stream is not an instance of
+     *             ZipInputStream.
+     * @throws IOException
+     *            if input stream cannot be opened, read, or closed
+     * @since POI 5.2.5
+     */
+    ZipPackage(InputStream in, PackageAccess access, boolean closeStream, OPCComplianceFlags opcComplianceFlags) throws IOException {
+        super(access, opcComplianceFlags);
         try (ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(in, closeStream)) {
             this.zipArchive = new ZipInputStreamZipEntrySource(zis);
         }
@@ -168,7 +220,22 @@ public final class ZipPackage extends OPCPackage {
      * @throws InvalidOperationException If the zip file cannot be opened.
      */
     ZipPackage(String path, PackageAccess access) throws InvalidOperationException {
-        this(new File(path), access);
+        this(path, access, OPCComplianceFlags.enforceAll());
+    }
+
+    /**
+     * Constructor. Opens a Zip based Open XML document from a file.
+     *
+     * @param path
+     *            The path of the file to open or create.
+     * @param access
+     *            The package access mode.
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     * @throws InvalidOperationException If the zip file cannot be opened.
+     */
+    ZipPackage(String path, PackageAccess access, OPCComplianceFlags opcComplianceFlags) throws InvalidOperationException {
+        this(new File(path), access, opcComplianceFlags);
     }
 
     /**
@@ -181,7 +248,22 @@ public final class ZipPackage extends OPCPackage {
      * @throws InvalidOperationException If the zip file cannot be opened.
      */
     ZipPackage(File file, PackageAccess access) throws InvalidOperationException {
-        super(access);
+        this(file, access, OPCComplianceFlags.enforceAll());
+    }
+
+    /**
+     * Constructor. Opens a Zip based Open XML document from a File.
+     *
+     * @param file
+     *            The file to open or create.
+     * @param access
+     *            The package access mode.
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     * @throws InvalidOperationException If the zip file cannot be opened.
+     */
+    ZipPackage(File file, PackageAccess access, OPCComplianceFlags opcComplianceFlags) throws InvalidOperationException {
+        super(access, opcComplianceFlags);
 
         ZipEntrySource ze;
         try {
@@ -248,7 +330,23 @@ public final class ZipPackage extends OPCPackage {
      *            The package access mode.
      */
     ZipPackage(ZipEntrySource zipEntry, PackageAccess access) {
-        super(access);
+        this(zipEntry, access, OPCComplianceFlags.enforceAll());
+    }
+
+    /**
+     * Constructor. Opens a Zip based Open XML document from
+     *  a custom ZipEntrySource, typically an open archive
+     *  from another system
+     *
+     * @param zipEntry
+     *            Zip data to load.
+     * @param access
+     *            The package access mode.
+     * @param access
+     *            The package access mode.
+     */
+    ZipPackage(ZipEntrySource zipEntry, PackageAccess access, OPCComplianceFlags opcComplianceFlags) {
+        super(access, opcComplianceFlags);
         this.zipArchive = zipEntry;
     }
 

@@ -38,6 +38,7 @@ import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.opc.ContentTypes;
+import org.apache.poi.openxml4j.opc.OPCComplianceFlags;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
@@ -87,8 +88,17 @@ public final class TestOPCComplianceCoreProperties {
     private static String extractInvalidFormatMessage(String sampleNameSuffix) throws IOException {
         try (InputStream is = openSampleStream("OPCCompliance_CoreProperties_" + sampleNameSuffix)) {
             InvalidFormatException e = assertThrows(InvalidFormatException.class,
-                () -> OPCPackage.open(is).revert(), "expected OPC compliance exception was not thrown");
+                    () -> OPCPackage.open(is).revert(), "expected OPC compliance exception was not thrown");
             return e.getMessage();
+        }
+    }
+
+    private static void testComplianceFlagOverridePreventsException(
+            String sampleNameSuffix,
+            OPCComplianceFlags opcComplianceFlags
+    ) throws IOException {
+        try (InputStream is = openSampleStream("OPCCompliance_CoreProperties_" + sampleNameSuffix)) {
+            assertDoesNotThrow(() -> OPCPackage.open(is, opcComplianceFlags).revert(), "Unexpected compliance related exception thrown");
         }
     }
 
@@ -97,7 +107,7 @@ public final class TestOPCComplianceCoreProperties {
      */
     @Test
     void testOnlyOneCorePropertiesPart() throws Exception {
-       // We have relaxed this check, so we can read the file anyway
+        // We have relaxed this check, so we can read the file anyway
         assertDoesNotThrow(() -> {
             try (InputStream is = openSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPartFAIL.docx");
                  OPCPackage pkg = OPCPackage.open(is)) {
@@ -105,21 +115,21 @@ public final class TestOPCComplianceCoreProperties {
             }
         }, "M4.1 should be being relaxed");
 
-       // We will use the first core properties, and ignore the others
+        // We will use the first core properties, and ignore the others
 
-      try (InputStream is = openSampleStream("MultipleCoreProperties.docx");
-           OPCPackage pkg = OPCPackage.open(is)) {
+        try (InputStream is = openSampleStream("MultipleCoreProperties.docx");
+             OPCPackage pkg = OPCPackage.open(is)) {
 
-          // We can see 2 by type
-          assertEquals(2, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
-          // But only the first one by relationship
-          assertEquals(1, pkg.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size());
-          // It should be core.xml not the older core1.xml
-          assertEquals(
-                  "/docProps/core.xml",
-                  pkg.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).get(0).getPartName().toString()
-          );
-      }
+            // We can see 2 by type
+            assertEquals(2, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+            // But only the first one by relationship
+            assertEquals(1, pkg.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size());
+            // It should be core.xml not the older core1.xml
+            assertEquals(
+                    "/docProps/core.xml",
+                    pkg.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).get(0).getPartName().toString()
+            );
+        }
     }
 
     private static URI createURI(String text) {
@@ -139,8 +149,8 @@ public final class TestOPCComplianceCoreProperties {
             OPCPackage pkg = OPCPackage.open(is);
             URI partUri = createURI("/docProps/core2.xml");
             InvalidOperationException e = assertThrows(InvalidOperationException.class, () ->
-                    pkg.addRelationship(PackagingURIHelper.createPartName(partUri), TargetMode.INTERNAL, PackageRelationshipTypes.CORE_PROPERTIES),
-                "expected OPC compliance exception was not thrown"
+                            pkg.addRelationship(PackagingURIHelper.createPartName(partUri), TargetMode.INTERNAL, PackageRelationshipTypes.CORE_PROPERTIES),
+                    "expected OPC compliance exception was not thrown"
             );
             assertEquals("OPC Compliance error [M4.1]: can't add another core properties part ! Use the built-in package method instead.", e.getMessage());
             pkg.revert();
@@ -157,8 +167,8 @@ public final class TestOPCComplianceCoreProperties {
 
             URI partUri = createURI("/docProps/core2.xml");
             InvalidOperationException e = assertThrows(InvalidOperationException.class, () ->
-                    pkg.createPart(PackagingURIHelper.createPartName(partUri), ContentTypes.CORE_PROPERTIES_PART),
-                "expected OPC compliance exception was not thrown");
+                            pkg.createPart(PackagingURIHelper.createPartName(partUri), ContentTypes.CORE_PROPERTIES_PART),
+                    "expected OPC compliance exception was not thrown");
             assertEquals("OPC Compliance error [M4.1]: you try to add more than one core properties relationship in the package !", e.getMessage());
             pkg.revert();
         }
@@ -211,7 +221,7 @@ public final class TestOPCComplianceCoreProperties {
 
     /**
      * Document with no core properties - testing at the OPC level,
-     *  saving into a new stream
+     * saving into a new stream
      */
     @Test
     void testNoCoreProperties_saveNew() throws Exception {
@@ -257,7 +267,7 @@ public final class TestOPCComplianceCoreProperties {
 
     /**
      * Document with no core properties - testing at the OPC level,
-     *  from a temp-file, saving in-place
+     * from a temp-file, saving in-place
      */
     @Test
     void testNoCoreProperties_saveInPlace() throws Exception {
@@ -266,7 +276,7 @@ public final class TestOPCComplianceCoreProperties {
         // Copy this into a temp file, so we can play with it
         File tmp = getOutputFile("poi-test.opc");
         try (FileOutputStream out = new FileOutputStream(tmp);
-            InputStream in = openSampleStream(sampleFileName)) {
+             InputStream in = openSampleStream(sampleFileName)) {
             IOUtils.copy(in, out);
         }
 
@@ -294,5 +304,51 @@ public final class TestOPCComplianceCoreProperties {
             pkg.revert();
         }
         assertTrue(tmp.delete());
+    }
+
+    /**
+     * Test M4.2 rule not enforced when appropriate OPCComplianceFlag is set.
+     */
+    @Test
+    void testDisableEnforceCompatibilityMarkup() throws IOException {
+        testComplianceFlagOverridePreventsException(
+                "DoNotUseCompatibilityMarkupFAIL.docx",
+                OPCComplianceFlags.enforceAll().setForbidMarkupCompatibilityNamespace(false)
+        );
+    }
+
+    /**
+     * Test M4.3 and M4.5 rules not enforced when appropriate OPCComplianceFlag is set.
+     */
+    @Test
+    void testDisableEnforceDublinCoreAndLimitedXSI() throws IOException {
+        testComplianceFlagOverridePreventsException(
+                "DCTermsNamespaceLimitedUseFAIL.docx",
+                OPCComplianceFlags.enforceAll() // This test document violates both M4.3 and M4.5
+                        .setRestrictXsiTypeAttribute(false)
+                        .setForbidRefiningDublinCoreElements(false)
+        );
+    }
+
+    /**
+     * Test M4.4 rule not enforced when appropriate OPCComplianceFlag is set.
+     */
+    @Test
+    void testDisableEnforceUnauthorizedXMLLangAttribute() throws IOException {
+        testComplianceFlagOverridePreventsException(
+                "UnauthorizedXMLLangAttributeFAIL.docx",
+                OPCComplianceFlags.enforceAll().setForbidXmlLangAttribute(false)
+        );
+    }
+
+    /**
+     * Test M4.5 rule not enforced when appropriate OPCComplianceFlag is set.
+     */
+    @Test
+    void testDisableEnforceLimitedXSITypeAttribute_NotPresent() throws IOException {
+        testComplianceFlagOverridePreventsException(
+                "LimitedXSITypeAttribute_NotPresentFAIL.docx",
+                OPCComplianceFlags.enforceAll().setRestrictXsiTypeAttribute(false)
+        );
     }
 }
