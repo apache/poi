@@ -24,6 +24,7 @@ package org.apache.poi.openxml4j.opc;
  *
  * Consumers may disable these compliance checks individually or as a whole at their
  * own discretion to allow certain non-compliant documents to be parsed.
+ * @since POI 5.4.1
  */
 public class OPCComplianceFlags {
 

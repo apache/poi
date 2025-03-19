@@ -151,6 +151,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * @param opcComplianceFlags Enable or disable specific OPC compliance flags.
      *                           This is useful to allow parsing of certain non-compliant documents.
      * @throws OpenXML4JRuntimeException if there are issues creating properties part
+     * @since POI 5.4.1
      */
     OPCPackage(PackageAccess access, OPCComplianceFlags opcComplianceFlags) {
         if (getClass() != ZipPackage.class) {
@@ -202,6 +203,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * @throws InvalidFormatException
      *             If the specified file doesn't exist, and a parsing error
      *             occur.
+     * @since POI 5.4.1
      */
     public static OPCPackage open(String path, OPCComplianceFlags opcComplianceFlags) throws InvalidFormatException {
         return open(path, defaultPackageAccess, opcComplianceFlags);
@@ -232,6 +234,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * @throws InvalidFormatException
      *             If the specified file doesn't exist, and a parsing error
      *             occur.
+     * @since POI 5.4.1
      */
     public static OPCPackage open(File file, OPCComplianceFlags opcComplianceFlags) throws InvalidFormatException {
         return open(file, defaultPackageAccess, opcComplianceFlags);
@@ -262,6 +265,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      *            The level of OPC compliance to enforce when reading the package
      * @return A Package object
      * @throws InvalidFormatException if a parsing error occur.
+     * @since POI 5.4.1
      */
     public static OPCPackage open(ZipEntrySource zipEntry, OPCComplianceFlags opcComplianceFlags) throws InvalidFormatException {
         OPCPackage pack = new ZipPackage(zipEntry, PackageAccess.READ, opcComplianceFlags);
@@ -313,6 +317,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      *             occur.
      * @throws InvalidOperationException If the zip file cannot be opened.
      * @throws InvalidFormatException if the package is not valid.
+     * @since POI 5.4.1
      */
     public static OPCPackage open(String path, PackageAccess access, OPCComplianceFlags opcComplianceFlags)
             throws InvalidFormatException, InvalidOperationException {
@@ -372,6 +377,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * @throws InvalidFormatException
      *             If the specified file doesn't exist, and a parsing error
      *             occur.
+     * @since POI 5.4.1
      */
     public static OPCPackage open(File file, PackageAccess access, OPCComplianceFlags opcComplianceFlags)
             throws InvalidFormatException {
@@ -440,6 +446,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * @throws InvalidFormatException
      *              Throws if the specified file exist and is not valid.
      * @throws IOException If reading the stream fails
+     * @since POI 5.4.1
      */
     public static OPCPackage open(InputStream in, OPCComplianceFlags opcComplianceFlags) throws InvalidFormatException,
             IOException {
@@ -501,7 +508,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * @throws InvalidFormatException
      *              Throws if the specified file exist and is not valid.
      * @throws IOException If reading the stream fails
-     * @since POI 5.2.5
+     * @since POI 5.4.1
      */
     public static OPCPackage open(InputStream in, boolean closeStream, OPCComplianceFlags opcComplianceFlags) throws InvalidFormatException,
             IOException {

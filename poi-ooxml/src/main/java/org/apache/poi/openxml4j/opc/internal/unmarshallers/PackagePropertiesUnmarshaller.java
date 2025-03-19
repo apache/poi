@@ -54,6 +54,10 @@ public final class PackagePropertiesUnmarshaller implements PartUnmarshaller {
         this(OPCComplianceFlags.enforceAll());
     }
 
+    /**
+     * @param opcComplianceFlags Overrides the default OPC compliance settings
+     * @since POI 5.4.1
+     */
     public PackagePropertiesUnmarshaller(OPCComplianceFlags opcComplianceFlags) {
         this.opcComplianceFlags = opcComplianceFlags;
     }
