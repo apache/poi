@@ -89,7 +89,7 @@ allprojects {
 //    apply plugin: 'eclipse'
     apply plugin: 'idea'
 
-    version = '5.4.1'
+    version = '5.4.2-SNAPSHOT'
 }
 
 /**
