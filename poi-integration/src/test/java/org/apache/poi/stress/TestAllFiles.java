@@ -136,7 +136,9 @@ public class TestAllFiles {
         "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-4977868385681408.xls",
         "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-4651309315719168.xls",
         "document/clusterfuzz-testcase-POIHWPFFuzzer-5696094627495936.doc",
-        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-4657005060816896.xls"
+        "spreadsheet/clusterfuzz-testcase-minimized-POIHSSFFuzzer-4657005060816896.xls",
+        "diagram/clusterfuzz-testcase-minimized-POIHDGFFuzzer-4913778037489664.vsd",
+        "diagram/clusterfuzz-testcase-minimized-POIHDGFFuzzer-6478389109981184.vsd"
     });
 
     private static final Set<String> EXPECTED_FAILURES = StressTestUtils.unmodifiableHashSet(
