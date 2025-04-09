@@ -463,7 +463,7 @@ public class SheetDataWriter implements Closeable {
         try {
             _out.close();
         } finally {
-            ret = _fd.delete();
+            ret = _fd != null && _fd.delete();
         }
         return ret;
     }
