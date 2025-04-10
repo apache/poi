@@ -53,8 +53,8 @@ public class XWPFEventBasedWordExtractor implements POIXMLTextExtractor {
 
     private static final Logger LOG = PoiLogManager.getLogger(XWPFEventBasedWordExtractor.class);
 
-    private OPCPackage container;
-    private POIXMLProperties properties;
+    private final OPCPackage container;
+    private final POIXMLProperties properties;
 
     public XWPFEventBasedWordExtractor(OPCPackage container)
             throws XmlException, OpenXML4JException, IOException {
@@ -83,7 +83,6 @@ public class XWPFEventBasedWordExtractor implements POIXMLTextExtractor {
         return null;
     }
 
-
     @Override
     public String getText() {
         StringBuilder sb = new StringBuilder();
@@ -100,8 +99,6 @@ public class XWPFEventBasedWordExtractor implements POIXMLTextExtractor {
                 } catch (SAXException e) {
                     //swallow this because we don't actually call it
                     LOG.warn("SAXException handling document part", e);
-                } catch (ExtractorException e) {
-                    LOG.warn("ParseException handling document part", e);
                 }
             }
         }
@@ -118,8 +115,6 @@ public class XWPFEventBasedWordExtractor implements POIXMLTextExtractor {
                 } catch (SAXException e) {
                     //swallow this because we don't actually call it
                     LOG.warn("SAXException handling glossary document part", e);
-                } catch (ExtractorException e) {
-                    LOG.warn("ParseException handling document part", e);
                 }
             }
         }
@@ -144,7 +139,7 @@ public class XWPFEventBasedWordExtractor implements POIXMLTextExtractor {
 
 
     private void handleDocumentPart(PackagePart documentPart, StringBuilder sb)
-            throws IOException, SAXException, ExtractorException {
+            throws IOException, SAXException {
         //load the numbering/list manager and styles from the main document part
         XWPFNumbering numbering = loadNumbering(documentPart);
         XWPFListManager xwpfListManager = new XWPFListManager(numbering);

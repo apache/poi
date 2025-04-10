@@ -113,6 +113,9 @@ public class OOXMLWordAndPowerPointTextHandler extends DefaultHandler {
     private final static String MOVE_TO = "moveTo";
     private final static String ENDNOTE_REFERENCE = "endnoteReference";
     private static final String TEXTBOX = "textbox";
+    private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
+    private static final TimeZone MIDDAY = TimeZone.getTimeZone("GMT-12:00");
+
     private final XWPFBodyContentsHandler bodyContentsHandler;
     private final Map<String, String> linkedRelationships;
     private final RunProperties currRunProperties = new RunProperties();
@@ -152,6 +155,7 @@ public class OOXMLWordAndPowerPointTextHandler extends DefaultHandler {
     private boolean inV = false; //in c:v in chart file
     private OOXMLWordAndPowerPointTextHandler.EditType editType =
             OOXMLWordAndPowerPointTextHandler.EditType.NONE;
+    private final List<DateFormat> dateFormats;
 
     public OOXMLWordAndPowerPointTextHandler(XWPFBodyContentsHandler bodyContentsHandler,
                                              Map<String, String> hyperlinks) {
@@ -165,6 +169,7 @@ public class OOXMLWordAndPowerPointTextHandler extends DefaultHandler {
         this.linkedRelationships = hyperlinks;
         this.includeTextBox = includeTextBox;
         this.concatenatePhoneticRuns = concatenatePhoneticRuns;
+        this.dateFormats = loadDateFormats();
     }
 
     @Override
@@ -535,7 +540,7 @@ public class OOXMLWordAndPowerPointTextHandler extends DefaultHandler {
             dateString = dateString.substring(0, n - 3) + dateString.substring(n - 2);
         }
 
-        for (DateFormat df : loadDateFormats()) {
+        for (DateFormat df : dateFormats) {
             try {
                 return df.parse(dateString);
             } catch (java.text.ParseException e) {
@@ -545,11 +550,7 @@ public class OOXMLWordAndPowerPointTextHandler extends DefaultHandler {
         return null;
     }
 
-    private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
-
-    private static final TimeZone MIDDAY = TimeZone.getTimeZone("GMT-12:00");
-
-    private List<DateFormat> loadDateFormats() {
+    private static List<DateFormat> loadDateFormats() {
         List<DateFormat> dateFormats = new ArrayList<>();
         // yyyy-mm-ddThh...
         dateFormats.add(createDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", UTC));   // UTC/Zulu
