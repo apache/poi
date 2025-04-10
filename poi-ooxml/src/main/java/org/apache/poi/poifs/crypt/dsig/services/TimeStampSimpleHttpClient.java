@@ -72,7 +72,8 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
      * @return the max timestamp response size allowed
      */
     public static int getMaxTimestampResponseSize() {
-        return MAX_TIMESTAMP_RESPONSE_SIZE;
+        final int ioMaxSize = IOUtils.getByteArrayMaxOverride();
+        return ioMaxSize < 0 ? MAX_TIMESTAMP_RESPONSE_SIZE : Math.min(MAX_TIMESTAMP_RESPONSE_SIZE, ioMaxSize);
     }
 
 

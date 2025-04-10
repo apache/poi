@@ -58,7 +58,8 @@ public final class XSLFPictureData extends POIXMLDocumentPart implements Picture
      * @return the max image size allowed for XSLF pictures
      */
     public static int getMaxImageSize() {
-        return MAX_IMAGE_SIZE;
+        final int ioMaxSize = IOUtils.getByteArrayMaxOverride();
+        return ioMaxSize < 0 ? MAX_IMAGE_SIZE : Math.min(MAX_IMAGE_SIZE, ioMaxSize);
     }
 
     private Long checksum;
