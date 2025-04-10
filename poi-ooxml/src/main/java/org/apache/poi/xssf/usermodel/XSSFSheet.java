@@ -4644,7 +4644,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
 
         StringBuilder rng = new StringBuilder();
         rng.append(c);
-        if(rng.length() > 0 && r.length() > 0) {
+        if(rng.length() > 0 && !r.isEmpty()) {
             rng.append(',');
         }
         rng.append(r);

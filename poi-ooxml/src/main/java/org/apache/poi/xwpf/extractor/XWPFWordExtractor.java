@@ -144,13 +144,13 @@ public class XWPFWordExtractor implements POIXMLTextExtractor {
         // Add comments
         XWPFCommentsDecorator decorator = new XWPFCommentsDecorator(paragraph, null);
         String commentText = decorator.getCommentText();
-        if (commentText.length() > 0) {
+        if (!commentText.isEmpty()) {
             text.append(commentText).append('\n');
         }
 
         // Do endnotes and footnotes
         String footnameText = paragraph.getFootnoteText();
-        if (footnameText != null && footnameText.length() > 0) {
+        if (footnameText != null && !footnameText.isEmpty()) {
             text.append(footnameText).append('\n');
         }
 

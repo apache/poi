@@ -112,7 +112,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                 NodeList kids = t.getDomNode().getChildNodes();
                 for (int n = 0; n < kids.getLength(); n++) {
                     if (kids.item(n) instanceof Text) {
-                        if (text.length() > 0) {
+                        if (!text.isEmpty()) {
                             text.append("\n");
                         }
                         text.append(kids.item(n).getNodeValue());
@@ -148,7 +148,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     static void preserveSpaces(XmlString xs) {
         String text = xs.getStringValue();
-        if (text != null && text.length() >= 1
+        if (text != null && !text.isEmpty()
                 && (Character.isWhitespace(text.charAt(0)) || Character.isWhitespace(text.charAt(text.length()-1)))) {
             try (XmlCursor c = xs.newCursor()) {
                 c.toNextToken();
