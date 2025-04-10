@@ -38,21 +38,21 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  * @since POI 5.4.2
  */
-final class XWPFStylesShim {
+class XWPFStylesShim {
 
     /**
      * Empty singleton to be used when there is no style info
      */
-    public static XWPFStylesShim EMPTY_STYLES = new EmptyXWPFStyles();
+    public static final XWPFStylesShim EMPTY_STYLES = new EmptyXWPFStyles();
 
-    private Map<String, String> styles = new HashMap<>();
+    private final Map<String, String> styles = new HashMap<>();
 
     private XWPFStylesShim() {
 
     }
 
     public XWPFStylesShim(PackagePart part, ParseContext parseContext)
-            throws IOException, ExtractorException, SAXException {
+            throws IOException, SAXException {
 
         try (InputStream is = part.getInputStream()) {
             onDocumentLoad(parseContext, is);
@@ -60,9 +60,9 @@ final class XWPFStylesShim {
     }
 
     private void onDocumentLoad(ParseContext parseContext, InputStream stream)
-            throws ExtractorException, IOException, SAXException {
+            throws IOException, SAXException {
         XMLReaderUtils
-                .parseSAX(stream, new StylesStripper(), parseContext);
+                .parseSAX(stream, new StylesStripper());
     }
 
     /**

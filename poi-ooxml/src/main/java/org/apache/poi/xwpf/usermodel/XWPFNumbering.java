@@ -67,7 +67,7 @@ public class XWPFNumbering extends POIXMLDocumentPart {
      * read numbering form an existing package
      */
     @Override
-    public void onDocumentRead() throws IOException {
+    protected void onDocumentRead() throws IOException {
         NumberingDocument numberingDoc;
         InputStream is;
         is = getPackagePart().getInputStream();

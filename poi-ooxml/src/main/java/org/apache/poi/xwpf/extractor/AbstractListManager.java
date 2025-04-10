@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.hwpf.converter.NumberFormatter;
+import org.apache.poi.util.NumberFormatter;
 
 /**
  * <p>

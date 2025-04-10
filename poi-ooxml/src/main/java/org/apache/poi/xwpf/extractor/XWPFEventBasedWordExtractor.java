@@ -41,9 +41,6 @@ import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.xmlbeans.XmlException;
 import org.xml.sax.SAXException;
 
-import org.apache.tika.exception.RuntimeSAXException;
-import org.apache.tika.exception.WriteLimitReachedException;
-
 /**
  * Experimental class that is based on POI's XSSFEventBasedExcelExtractor
  * <p>
@@ -101,9 +98,6 @@ public class XWPFEventBasedWordExtractor implements POIXMLTextExtractor {
                 } catch (IOException e) {
                     LOG.warn("IOException handling document part", e);
                 } catch (SAXException e) {
-                    if (WriteLimitReachedException.isWriteLimitReached(e)) {
-                        throw new RuntimeSAXException(e);
-                    }
                     //swallow this because we don't actually call it
                     LOG.warn("SAXException handling document part", e);
                 } catch (ExtractorException e) {
@@ -122,9 +116,6 @@ public class XWPFEventBasedWordExtractor implements POIXMLTextExtractor {
                 } catch (IOException e) {
                     LOG.warn("IOException handling glossary document part", e);
                 } catch (SAXException e) {
-                    if (WriteLimitReachedException.isWriteLimitReached(e)) {
-                        throw new RuntimeSAXException(e);
-                    }
                     //swallow this because we don't actually call it
                     LOG.warn("SAXException handling glossary document part", e);
                 } catch (ExtractorException e) {
@@ -233,7 +224,7 @@ public class XWPFEventBasedWordExtractor implements POIXMLTextExtractor {
         try {
             PackageRelationshipCollection numberingParts =
                     packagePart.getRelationshipsByType(XWPFRelation.NUMBERING.getRelation());
-            if (numberingParts.size() > 0) {
+            if (!numberingParts.isEmpty()) {
                 PackageRelationship numberingRelationShip = numberingParts.getRelationship(0);
                 if (numberingRelationShip == null) {
                     return null;
