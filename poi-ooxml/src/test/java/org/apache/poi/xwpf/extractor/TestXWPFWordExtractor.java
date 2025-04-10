@@ -467,8 +467,23 @@ class TestXWPFWordExtractor {
 
     @Test
     void testPartsInTemplate() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("60316b.dotx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (
+                XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("60316b.dotx");
+                XWPFWordExtractor extractor = new XWPFWordExtractor(doc)
+        ) {
+            String txt = extractor.getText();
+            assertContains(txt, "header 2");
+            assertContains(txt, "footer 1");
+        }
+    }
+
+    @Disabled // parts in template not supported in event based
+    @Test
+    void testPartsInTemplateEventBased() throws Exception {
+        try (
+                OPCPackage pkg = XWPFTestDataSamples.openSampleOPCPackage("60316b.dotx");
+                XWPFEventBasedWordExtractor extractor = new XWPFEventBasedWordExtractor(pkg)
+        ) {
             String txt = extractor.getText();
             assertContains(txt, "header 2");
             assertContains(txt, "footer 1");
@@ -477,17 +492,33 @@ class TestXWPFWordExtractor {
 
     @Test
     void bug55966() throws IOException  {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("55966.docx")) {
+        try (
+                XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("55966.docx");
+                XWPFWordExtractor extractedDoc = new XWPFWordExtractor(doc)
+        ) {
             String expected = "Content control within a paragraph is here text content from within a paragraph second control with a new\n" +
                     "line\n" +
                     "\n" +
                     "Content control that is the entire paragraph\n";
 
-            XWPFWordExtractor extractedDoc = new XWPFWordExtractor(doc);
-
             String actual = extractedDoc.getText();
+            assertEquals(expected, actual);
+        }
+    }
 
-            extractedDoc.close();
+    @Disabled // extra test found in the event based extractor
+    @Test
+    void bug55966EventBased() throws Exception  {
+        try (
+                OPCPackage pkg = XWPFTestDataSamples.openSampleOPCPackage("55966.docx");
+                XWPFEventBasedWordExtractor extractor = new XWPFEventBasedWordExtractor(pkg)
+        ) {
+            String expected = "Content control within a paragraph is here text content from within a paragraph second control with a new\n" +
+                    "line\n" +
+                    "\n" +
+                    "Content control that is the entire paragraph\n";
+
+            String actual = extractor.getText();
             assertEquals(expected, actual);
         }
     }
