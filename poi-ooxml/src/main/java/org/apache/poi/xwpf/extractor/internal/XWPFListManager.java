@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.extractor;
+package org.apache.poi.xwpf.extractor.internal;
 
 import java.math.BigInteger;
 
@@ -35,7 +35,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumLvl;
  *
  * @since POI 5.4.2
  */
-class XWPFListManager extends AbstractListManager {
+public class XWPFListManager extends AbstractListManager {
 
     /**
      * Empty singleton to be used when there is no list manager.

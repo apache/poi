@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
@@ -40,6 +41,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFSDT;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtRow;
@@ -499,10 +501,32 @@ class TestXWPFWordExtractor {
         }
     }
 
+    @Disabled // capitalized flag not supported in event based
+    @Test
+    void testCapitalizedFlagEventBased() throws Exception {
+        try (OPCPackage pkg = XWPFTestDataSamples.openSampleOPCPackage("capitalized.docx");
+             XWPFEventBasedWordExtractor extractor = new XWPFEventBasedWordExtractor(pkg)) {
+            String txt = extractor.getText();
+            assertEquals( "The following word is: CAPITALIZED.", txt.trim());
+        }
+    }
+
     @Test
     void testTika2163() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ChronologicalResume.dotx");
              XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+            String txt = extractor.getText();
+            assertContains(txt, "but a great-looking résumé doesn’t have to be!");
+        }
+    }
+
+    @Test
+    void testTika2163EventBased() throws Exception {
+        final String filename = "ChronologicalResume.dotx";
+        try (
+                OPCPackage pkg = XWPFTestDataSamples.openSampleOPCPackage(filename);
+                XWPFEventBasedWordExtractor extractor = new XWPFEventBasedWordExtractor(pkg)
+        ) {
             String txt = extractor.getText();
             assertContains(txt, "but a great-looking résumé doesn’t have to be!");
         }
@@ -516,6 +540,19 @@ class TestXWPFWordExtractor {
             assertContains(txt, "Note\tDetails");
             List<XWPFSDT> sdts = extractSDTsFromBody(doc);
             assertEquals(3, sdts.size());
+        }
+    }
+
+    @Disabled // whitespace issue in text
+    @Test
+    void testTika3816EventBased() throws Exception {
+        final String filename = "tika-3816.docx";
+        try (
+                OPCPackage pkg = XWPFTestDataSamples.openSampleOPCPackage(filename);
+                XWPFEventBasedWordExtractor extractor = new XWPFEventBasedWordExtractor(pkg)
+        ) {
+            String txt = extractor.getText();
+            assertContains(txt, "Note\tDetails");
         }
     }
 

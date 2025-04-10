@@ -21,6 +21,8 @@ import java.io.InputStream;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
@@ -29,6 +31,11 @@ public class XWPFTestDataSamples {
     public static XWPFDocument openSampleDocument(String sampleName) throws IOException {
         InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream(sampleName);
         return new XWPFDocument(is);
+    }
+
+    public static OPCPackage openSampleOPCPackage(String sampleName) throws IOException, InvalidFormatException {
+        InputStream is = POIDataSamples.getDocumentInstance().openResourceAsStream(sampleName);
+        return OPCPackage.open(is);
     }
 
     public static XWPFDocument writeOutAndReadBack(XWPFDocument doc) throws IOException {

@@ -14,7 +14,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xwpf.extractor;
+package org.apache.poi.xwpf.extractor.internal;
 
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 
@@ -27,7 +27,7 @@ import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
  *
  * @since POI 5.4.2
  */
-final class RunProperties {
+public final class RunProperties {
     boolean italics = false;
     boolean bold = false;
     boolean strikeThrough = false;
