@@ -16,46 +16,35 @@
 ==================================================================== */
 package org.apache.poi.xwpf.extractor;
 
+import org.apache.commons.io.input.ClosedInputStream;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.InputSource;
+
 /**
+ * Content handler decorator that always returns an empty stream from the
+ * {@link #resolveEntity(String, String)} method to prevent potential
+ * network or other external resources from being accessed by an XML parser.
  * <p>
  * This is copied from Apache Tika.
  * </p>
  *
+ * @see <a href="https://issues.apache.org/jira/browse/TIKA-185">TIKA-185</a>
  * @since POI 5.4.2
  */
-public class ParagraphProperties {
+final class OfflineContentHandler extends ContentHandlerDecorator {
 
-    private String styleId;
-    private int ilvl = -1;
-    private int numId = -1;
-
-    public String getStyleID() {
-        return styleId;
+    public OfflineContentHandler(ContentHandler handler) {
+        super(handler);
     }
 
-    public void setStyleID(String styleId) {
-        this.styleId = styleId;
+    /**
+     * Returns an empty stream. This will make an XML parser silently
+     * ignore any external entities.
+     */
+    @Override
+    public InputSource resolveEntity(String publicId, String systemId) {
+        return new InputSource(new ClosedInputStream());
     }
 
-    public void reset() {
-        styleId = null;
-        ilvl = -1;
-        numId = -1;
-    }
-
-    public int getIlvl() {
-        return ilvl;
-    }
-
-    public void setIlvl(int ilvl) {
-        this.ilvl = ilvl;
-    }
-
-    public int getNumId() {
-        return numId;
-    }
-
-    public void setNumId(int numId) {
-        this.numId = numId;
-    }
 }
+

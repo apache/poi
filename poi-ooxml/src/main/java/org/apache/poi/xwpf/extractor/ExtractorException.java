@@ -16,46 +16,18 @@
 ==================================================================== */
 package org.apache.poi.xwpf.extractor;
 
-/**
- * <p>
- * This is copied from Apache Tika.
- * </p>
- *
- * @since POI 5.4.2
- */
-public class ParagraphProperties {
+public class ExtractorException extends Exception {
+    private static final long serialVersionUID = 1L;
 
-    private String styleId;
-    private int ilvl = -1;
-    private int numId = -1;
-
-    public String getStyleID() {
-        return styleId;
+    ExtractorException() {
+        super();
     }
 
-    public void setStyleID(String styleId) {
-        this.styleId = styleId;
+    ExtractorException(String message) {
+        super(message);
     }
 
-    public void reset() {
-        styleId = null;
-        ilvl = -1;
-        numId = -1;
-    }
-
-    public int getIlvl() {
-        return ilvl;
-    }
-
-    public void setIlvl(int ilvl) {
-        this.ilvl = ilvl;
-    }
-
-    public int getNumId() {
-        return numId;
-    }
-
-    public void setNumId(int numId) {
-        this.numId = numId;
+    ExtractorException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

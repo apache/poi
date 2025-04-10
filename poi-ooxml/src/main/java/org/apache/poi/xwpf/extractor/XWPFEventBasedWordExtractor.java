@@ -1,20 +1,19 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+/* ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
 
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+==================================================================== */
 package org.apache.poi.xwpf.extractor;
 
 import java.io.Closeable;
@@ -43,10 +42,7 @@ import org.apache.xmlbeans.XmlException;
 import org.xml.sax.SAXException;
 
 import org.apache.tika.exception.RuntimeSAXException;
-import org.apache.tika.exception.TikaException;
 import org.apache.tika.exception.WriteLimitReachedException;
-import org.apache.tika.parser.ParseContext;
-import org.apache.tika.utils.XMLReaderUtils;
 
 /**
  * Experimental class that is based on POI's XSSFEventBasedExcelExtractor
@@ -110,7 +106,7 @@ public class XWPFEventBasedWordExtractor implements POIXMLTextExtractor {
                     }
                     //swallow this because we don't actually call it
                     LOG.warn("SAXException handling document part", e);
-                } catch (TikaException e) {
+                } catch (ExtractorException e) {
                     LOG.warn("ParseException handling document part", e);
                 }
             }
@@ -131,7 +127,7 @@ public class XWPFEventBasedWordExtractor implements POIXMLTextExtractor {
                     }
                     //swallow this because we don't actually call it
                     LOG.warn("SAXException handling glossary document part", e);
-                } catch (TikaException e) {
+                } catch (ExtractorException e) {
                     LOG.warn("ParseException handling document part", e);
                 }
             }
@@ -157,7 +153,7 @@ public class XWPFEventBasedWordExtractor implements POIXMLTextExtractor {
 
 
     private void handleDocumentPart(PackagePart documentPart, StringBuilder sb)
-            throws IOException, SAXException, TikaException {
+            throws IOException, SAXException, ExtractorException {
         //load the numbering/list manager and styles from the main document part
         XWPFNumbering numbering = loadNumbering(documentPart);
         XWPFListManager xwpfListManager = new XWPFListManager(numbering);
@@ -200,13 +196,13 @@ public class XWPFEventBasedWordExtractor implements POIXMLTextExtractor {
     }
 
     private void handlePart(PackagePart packagePart, XWPFListManager xwpfListManager,
-                            StringBuilder buffer) throws IOException, SAXException, TikaException {
+                            StringBuilder buffer) throws IOException, SAXException {
 
         Map<String, String> hyperlinks = loadHyperlinkRelationships(packagePart);
         try (InputStream stream = packagePart.getInputStream()) {
             XMLReaderUtils.parseSAX(CloseShieldInputStream.wrap(stream),
                     new OOXMLWordAndPowerPointTextHandler(new XWPFToTextContentHandler(buffer),
-                            hyperlinks), new ParseContext());
+                            hyperlinks));
         }
 
     }
