@@ -229,7 +229,7 @@ public class XWPFEventBasedWordExtractor implements POIXMLTextExtractor {
         return hyperlinks;
     }
 
-    private XWPFNumbering loadNumbering(PackagePart packagePart) throws IOException {
+    private XWPFNumbering loadNumbering(PackagePart packagePart) {
         try {
             PackageRelationshipCollection numberingParts =
                     packagePart.getRelationshipsByType(XWPFRelation.NUMBERING.getRelation());

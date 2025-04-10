@@ -291,7 +291,7 @@ public class SXWPFWordExtractorDecorator extends AbstractOOXMLExtractor {
 
         for (String contentType : MAIN_STORY_PART_RELATIONS) {
             List<PackagePart> pps = opcPackage.getPartsByContentType(contentType);
-            if (pps.size() > 0) {
+            if (!pps.isEmpty()) {
                 return pps;
             }
         }
