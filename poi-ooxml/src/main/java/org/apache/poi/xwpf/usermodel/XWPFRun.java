@@ -112,7 +112,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                 NodeList kids = t.getDomNode().getChildNodes();
                 for (int n = 0; n < kids.getLength(); n++) {
                     if (kids.item(n) instanceof Text) {
-                        if (!text.isEmpty()) {
+                        if (text.length() > 0) {
                             text.append("\n");
                         }
                         text.append(kids.item(n).getNodeValue());
