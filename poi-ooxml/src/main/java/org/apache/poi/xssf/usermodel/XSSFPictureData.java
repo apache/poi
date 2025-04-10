@@ -48,7 +48,8 @@ public class XSSFPictureData extends POIXMLDocumentPart implements PictureData {
      * @return the max image size allowed for XSSF pictures
      */
     public static int getMaxImageSize() {
-        return MAX_IMAGE_SIZE;
+        final int ioMaxSize = IOUtils.getByteArrayMaxOverride();
+        return ioMaxSize < 0 ? MAX_IMAGE_SIZE : Math.min(MAX_IMAGE_SIZE, ioMaxSize);
     }
 
     /**
