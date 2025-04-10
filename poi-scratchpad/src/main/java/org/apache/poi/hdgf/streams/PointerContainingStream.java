@@ -17,8 +17,6 @@
 
 package org.apache.poi.hdgf.streams;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.hdgf.chunks.ChunkFactory;
 import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
@@ -28,8 +26,6 @@ import org.apache.poi.hdgf.pointers.PointerFactory;
  *  other data too.
  */
 public class PointerContainingStream extends Stream { // TODO - instantiable superclass
-    private static final Logger LOG = PoiLogManager.getLogger(PointerContainingStream.class);
-
     private static int MAX_CHILDREN_NESTING = 500;
 
     private final Pointer[] childPointers;
@@ -68,9 +64,9 @@ public class PointerContainingStream extends Stream { // TODO - instantiable sup
     }
 
     private void findChildren(byte[] documentData, int nesting) {
-        if (nesting > MAX_CHILDREN_NESTING) {
+        if (nesting > getMaxChildrenNesting()) {
             throw new IllegalArgumentException("Encountered too deep nesting, cannot process stream " +
-                    "with more than " + MAX_CHILDREN_NESTING + " nested children. " +
+                    "with more than " + getMaxChildrenNesting() + " nested children. " +
                     "Some data could not be parsed. You can call setMaxChildrenNesting() to adjust " +
                     "this limit.");
         }

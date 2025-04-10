@@ -155,7 +155,7 @@ final class FunctionMetadataReader {
             // (all unspecified params are assumed to be the same as the last)
             nItems --;
         }
-        byte[] result = IOUtils.safelyAllocate(nItems, MAX_RECORD_LENGTH);
+        byte[] result = IOUtils.safelyAllocate(nItems, getMaxRecordLength());
         for (int i = 0; i < nItems; i++) {
             result[i] = parseOperandTypeCode(array[i]);
         }

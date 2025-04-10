@@ -107,7 +107,7 @@ public abstract class XSSFBParser {
 
         }
         if (records == null || records.get(recordId)) {
-            byte[] buff = IOUtils.safelyAllocate(recordLength, MAX_RECORD_LENGTH);
+            byte[] buff = IOUtils.safelyAllocate(recordLength, getMaxRecordLength());
             is.readFully(buff);
             handleRecord(recordId, buff);
         } else {

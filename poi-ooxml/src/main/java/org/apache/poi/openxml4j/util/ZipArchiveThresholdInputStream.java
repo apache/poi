@@ -123,8 +123,8 @@ public class ZipArchiveThresholdInputStream extends FilterInputStream {
         final String entryName = entry == null ? "not set" : entry.getName();
 
         // check the file size first, in case we are working on uncompressed streams
-        if (payloadSize > MAX_ENTRY_SIZE) {
-            throw new IOException(String.format(Locale.ROOT, MAX_ENTRY_SIZE_MSG, payloadSize, rawSize, MAX_ENTRY_SIZE, entryName));
+        if (payloadSize > getMaxEntrySize()) {
+            throw new IOException(String.format(Locale.ROOT, MAX_ENTRY_SIZE_MSG, payloadSize, rawSize, getMaxEntrySize(), entryName));
         }
 
         // don't alert for small expanded size

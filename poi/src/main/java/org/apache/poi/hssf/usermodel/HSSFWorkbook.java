@@ -234,7 +234,8 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
      * @return the max image length allowed for HSSFWorkbook
      */
     public static int getMaxImageLength() {
-        return MAX_IMAGE_LENGTH;
+        final int ioMaxSize = IOUtils.getByteArrayMaxOverride();
+        return ioMaxSize < 0 ? MAX_IMAGE_LENGTH : Math.min(MAX_IMAGE_LENGTH, ioMaxSize);
     }
 
     /**
@@ -1978,7 +1979,7 @@ public final class HSSFWorkbook extends POIDocument implements Workbook {
             case PICTURE_TYPE_WMF:
                 // remove first 22 bytes if file starts with the WMF placeable header
                 if (FileMagic.valueOf(pictureData) == FileMagic.WMF) {
-                    pictureData = IOUtils.safelyClone(pictureData, 22, pictureData.length - 22, MAX_IMAGE_LENGTH);
+                    pictureData = IOUtils.safelyClone(pictureData, 22, pictureData.length - 22, getMaxImageLength());
                 }
                 // fall through
             case PICTURE_TYPE_EMF:
