@@ -59,11 +59,36 @@ class TestXWPFWordExtractor {
      */
     @Test
     void testGetSimpleText() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
-
+        try (
+                XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
+                XWPFWordExtractor extractor = new XWPFWordExtractor(doc)
+        ) {
             String text = extractor.getText();
-            assertTrue(text.length() > 0);
+            assertFalse(text.isEmpty());
+
+            // Check contents
+            assertStartsWith(text,
+                    "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc at risus vel erat tempus posuere. Aenean non ante. Suspendisse vehicula dolor sit amet odio."
+            );
+            assertEndsWith(text,
+                    "Phasellus ultricies mi nec leo. Sed tempus. In sit amet lorem at velit faucibus vestibulum.\n"
+            );
+
+            // Check number of paragraphs by counting number of newlines
+            int numberOfParagraphs = StringUtil.countMatches(text, '\n');
+            assertEquals(3, numberOfParagraphs);
+        }
+    }
+
+    @Disabled // doesn't match
+    @Test
+    void testGetSimpleTextEventBased() throws Exception {
+        try (
+                OPCPackage pkg = XWPFTestDataSamples.openSampleOPCPackage("sample.docx");
+                XWPFEventBasedWordExtractor extractor = new XWPFEventBasedWordExtractor(pkg)
+        ) {
+            String text = extractor.getText();
+            assertFalse(text.isEmpty());
 
             // Check contents
             assertStartsWith(text,
@@ -88,7 +113,35 @@ class TestXWPFWordExtractor {
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             String text = extractor.getText();
-            assertTrue(text.length() > 0);
+            assertFalse(text.isEmpty());
+
+            char euro = '\u20ac';
+
+            // Check contents
+            assertStartsWith(text,
+                    "  \n(V) ILLUSTRATIVE CASES\n\n"
+            );
+            assertContains(text,
+                    "As well as gaining " + euro + "90 from child benefit increases, he will also receive the early childhood supplement of " + euro + "250 per quarter for Vincent for the full four quarters of the year.\n\n\n\n"// \n\n\n"
+            );
+            assertEndsWith(text,
+                    "11.4%\t\t90\t\t\t\t\t250\t\t1,310\t\n\n \n\n\n"
+            );
+
+            // Check number of paragraphs by counting number of newlines
+            int numberOfParagraphs = StringUtil.countMatches(text, '\n');
+            assertEquals(134, numberOfParagraphs);
+        }
+    }
+
+    @Disabled // doesn't match
+    @Test
+    void testGetComplexTextEventBased() throws Exception {
+        try (OPCPackage pkg = XWPFTestDataSamples.openSampleOPCPackage("IllustrativeCases.docx");
+             XWPFEventBasedWordExtractor extractor = new XWPFEventBasedWordExtractor(pkg)) {
+
+            String text = extractor.getText();
+            assertFalse(text.isEmpty());
 
             char euro = '\u20ac';
 
@@ -237,9 +290,30 @@ class TestXWPFWordExtractor {
     }
 
     @Test
+    void testInsertedDeletedTextEventBased() throws Exception {
+        try (OPCPackage pkg = XWPFTestDataSamples.openSampleOPCPackage("delins.docx");
+             XWPFEventBasedWordExtractor extractor = new XWPFEventBasedWordExtractor(pkg)) {
+
+            assertContains(extractor.getText(), "pendant worn");
+            assertContains(extractor.getText(), "extremely well");
+        }
+    }
+
+    @Test
     void testParagraphHeader() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Headers.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+
+            assertContains(extractor.getText(), "Section 1");
+            assertContains(extractor.getText(), "Section 2");
+            assertContains(extractor.getText(), "Section 3");
+        }
+    }
+
+    @Test
+    void testParagraphHeaderEventBased() throws Exception {
+        try (OPCPackage pkg = XWPFTestDataSamples.openSampleOPCPackage("Headers.docx");
+             XWPFEventBasedWordExtractor extractor = new XWPFEventBasedWordExtractor(pkg)) {
 
             assertContains(extractor.getText(), "Section 1");
             assertContains(extractor.getText(), "Section 2");
@@ -255,6 +329,18 @@ class TestXWPFWordExtractor {
     void testDOCMFiles() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("45690.docm");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+
+            assertContains(extractor.getText(), "2004");
+            assertContains(extractor.getText(), "2008");
+            assertContains(extractor.getText(), "(120 ");
+        }
+    }
+
+    @Disabled
+    @Test
+    void testDOCMFilesEventBased() throws Exception {
+        try (OPCPackage pkg = XWPFTestDataSamples.openSampleOPCPackage("45690.docm");
+             XWPFEventBasedWordExtractor extractor = new XWPFEventBasedWordExtractor(pkg)) {
 
             assertContains(extractor.getText(), "2004");
             assertContains(extractor.getText(), "2008");
@@ -291,7 +377,18 @@ class TestXWPFWordExtractor {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("FieldCodes.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
-            assertTrue(text.length() > 0);
+            assertFalse(text.isEmpty());
+            assertFalse(text.contains("AUTHOR"));
+            assertFalse(text.contains("CREATEDATE"));
+        }
+    }
+
+    @Test
+    void testNoFieldCodesEventBased() throws Exception {
+        try (OPCPackage pkg = XWPFTestDataSamples.openSampleOPCPackage("FieldCodes.docx");
+             XWPFEventBasedWordExtractor extractor = new XWPFEventBasedWordExtractor(pkg)) {
+            String text = extractor.getText();
+            assertFalse(text.isEmpty());
             assertFalse(text.contains("AUTHOR"));
             assertFalse(text.contains("CREATEDATE"));
         }
@@ -306,7 +403,7 @@ class TestXWPFWordExtractor {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("FldSimple.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
-            assertTrue(text.length() > 0);
+            assertFalse(text.isEmpty());
             assertContains(text, "FldSimple.docx");
         }
     }
@@ -320,7 +417,7 @@ class TestXWPFWordExtractor {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("drawing.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
-            assertTrue(text.length() > 0);
+            assertFalse(text.isEmpty());
         }
     }
 
