@@ -42,11 +42,7 @@ class TestEscherRecordFactory {
         UnsynchronizedByteArrayOutputStream out = UnsynchronizedByteArrayOutputStream.builder().get();
         for (RecordBase rb : records) {
             Record r = (org.apache.poi.hssf.record.Record) rb;
-            try {
-                out.write(r.serialize());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            out.write(r.serialize());
         }
         return out.toByteArray();
     }

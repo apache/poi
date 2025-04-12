@@ -211,11 +211,7 @@ final class TestRecordFactory {
         };
         UnsynchronizedByteArrayOutputStream baos = UnsynchronizedByteArrayOutputStream.builder().get();
         for (org.apache.poi.hssf.record.Record rec : recs) {
-            try {
-                baos.write(rec.serialize());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            baos.write(rec.serialize());
         }
         //simulate the bad padding at the end of the workbook stream in attachment 23483 of bug 46987
         baos.write(0x00);
