@@ -121,7 +121,7 @@ public class XWPFTableCell implements IBody, ICell {
      */
     @Override
     public List<IBodyElement> getBodyElements() {
-        return Collections.unmodifiableList(bodyElements);
+        return bodyElements;
     }
 
     public void setParagraph(XWPFParagraph p) {
@@ -141,7 +141,7 @@ public class XWPFTableCell implements IBody, ICell {
      */
     @Override
     public List<XWPFParagraph> getParagraphs() {
-        return Collections.unmodifiableList(paragraphs);
+        return paragraphs;
     }
 
     /**
@@ -395,7 +395,7 @@ public class XWPFTableCell implements IBody, ICell {
 
     @Override
     public List<XWPFSDTBlock> getSdtBlocks() {
-        return Collections.unmodifiableList(sdtBlocks);
+        return sdtBlocks;
     }
 
     /**
@@ -474,7 +474,7 @@ public class XWPFTableCell implements IBody, ICell {
 
     @Override
     public List<XWPFTable> getTables() {
-        return Collections.unmodifiableList(tables);
+        return tables;
     }
 
     /**

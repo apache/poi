@@ -99,7 +99,7 @@ public class XWPFComment implements IBody {
      */
     @Override
     public List<IBodyElement> getBodyElements() {
-        return Collections.unmodifiableList(bodyElements);
+        return bodyElements;
     }
 
     /**
@@ -107,7 +107,7 @@ public class XWPFComment implements IBody {
      */
     @Override
     public List<XWPFParagraph> getParagraphs() {
-        return Collections.unmodifiableList(paragraphs);
+        return paragraphs;
     }
 
     /**
@@ -117,7 +117,7 @@ public class XWPFComment implements IBody {
      */
     @Override
     public List<XWPFTable> getTables() {
-        return Collections.unmodifiableList(tables);
+        return tables;
     }
 
     @Override
