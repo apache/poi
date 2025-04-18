@@ -64,22 +64,22 @@ public class XWPFSDTContentBlock implements ISDTContent, IBody {
 
     @Override
     public List<IBodyElement> getBodyElements() {
-        return Collections.unmodifiableList(bodyElements);
+        return bodyElements;
     }
 
     @Override
     public List<XWPFParagraph> getParagraphs() {
-        return Collections.unmodifiableList(paragraphs);
+        return paragraphs;
     }
 
     @Override
     public List<XWPFTable> getTables() {
-        return Collections.unmodifiableList(tables);
+        return tables;
     }
 
     @Override
     public List<XWPFSDTBlock> getSdtBlocks() {
-        return Collections.unmodifiableList(contentControls);
+        return contentControls;
     }
 
     @Override

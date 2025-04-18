@@ -93,7 +93,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 
     @Override
     public List<IBodyElement> getBodyElements() {
-        return Collections.unmodifiableList(bodyElements);
+        return bodyElements;
     }
 
     /**
@@ -105,12 +105,12 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      */
     @Override
     public List<XWPFParagraph> getParagraphs() {
-        return Collections.unmodifiableList(paragraphs);
+        return paragraphs;
     }
 
     @Override
     public List<XWPFSDTBlock> getSdtBlocks() {
-        return Collections.unmodifiableList(sdtBlocks);
+        return sdtBlocks;
     }
 
     @Override
@@ -186,7 +186,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
      */
     @Override
     public List<XWPFTable> getTables() throws ArrayIndexOutOfBoundsException {
-        return Collections.unmodifiableList(tables);
+        return tables;
     }
 
 

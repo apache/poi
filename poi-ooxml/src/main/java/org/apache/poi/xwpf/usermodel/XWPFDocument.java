@@ -345,7 +345,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     @Override
     public List<IBodyElement> getBodyElements() {
-        return Collections.unmodifiableList(bodyElements);
+        return bodyElements;
     }
 
     public Iterator<IBodyElement> getBodyElementsIterator() {
@@ -357,7 +357,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     @Override
     public List<XWPFSDTBlock> getSdtBlocks() {
-        return Collections.unmodifiableList(contentControls);
+        return contentControls;
     }
 
     /**
@@ -371,19 +371,19 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
     @Override
     public List<XWPFParagraph> getParagraphs() {
-        return Collections.unmodifiableList(paragraphs);
+        return paragraphs;
     }
 
     @Override
     public List<XWPFTable> getTables() {
-        return Collections.unmodifiableList(tables);
+        return tables;
     }
 
     /**
      * @return list of XWPFCharts in this document
      */
     public List<XWPFChart> getCharts() {
-        return Collections.unmodifiableList(charts);
+        return charts;
     }
 
     @Override
