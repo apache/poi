@@ -28,16 +28,15 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true
         ],
-        // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
-        [ name: 'POI-DSL-1.21', jdk: '1.21', trigger: 'H */12 * * *', skipcigame: true, skipSpotbugs: true
+        [ name: 'POI-DSL-1.21', jdk: '1.21', trigger: 'H */12 * * *', skipcigame: true
         ],
-        // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
-        [ name: 'POI-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
+        [ name: 'POI-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 22 is not an LTS and JDK 23/24 is out
+          disabled: true
         ],
-        // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
-        [ name: 'POI-DSL-1.23', jdk: '1.23', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true
+        [ name: 'POI-DSL-1.23', jdk: '1.23', trigger: triggerSundays, skipcigame: true,
         ],
-        // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java18+
+        // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java24+
         [ name: 'POI-DSL-1.24', jdk: '1.24', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
           // use Ant for building until Gradle supports JDK 24
           // see https://docs.gradle.org/current/userguide/compatibility.html
@@ -84,7 +83,9 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-Windows-1.21', jdk: '1.21', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true
         ],
-        [ name: 'POI-DSL-Windows-1.22', jdk: '1.22', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
+        [ name: 'POI-DSL-Windows-1.22', jdk: '1.22', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
+          // let's save some CPU cycles here, 22 is not an LTS and JDK 23/24 is out
+          disabled: true
         ],
         [ name: 'POI-DSL-Windows-1.23', jdk: '1.23', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
         ],
@@ -105,23 +106,15 @@ def xmlbeansjobs = [
         ],
         [ name: 'POI-XMLBeans-DSL-1.17', jdk: '1.17', trigger: 'H */12 * * *', skipcigame: true,
         ],
-        [ name: 'POI-XMLBeans-DSL-1.18', jdk: '1.18', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 18 is not an LTS and JDK 20 is out
-          disabled: true
-        ],
-        [ name: 'POI-XMLBeans-DSL-1.19', jdk: '1.19', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 19 is not an LTS
-          disabled: true
-        ],
-        [ name: 'POI-XMLBeans-DSL-1.20', jdk: '1.20', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 20 is not an LTS and JDK 21 is out
-          disabled: true
-        ],
         [ name: 'POI-XMLBeans-DSL-1.21', jdk: '1.21', trigger: 'H */12 * * *', skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 22 is not an LTS and JDK 23/24 is out
+          disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.23', jdk: '1.23', trigger: triggerSundays, skipcigame: true,
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.24', jdk: '1.24', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.17', trigger: triggerSundays, skipcigame: true,
           sonar: true
