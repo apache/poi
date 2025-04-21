@@ -26,6 +26,8 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -2316,12 +2318,12 @@ final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    void test46515() throws IOException {
+    void test46515() throws IOException, URISyntaxException {
         try (Workbook wb = openSampleWorkbook("46515.xls")) {
 
             // Get structure from webservice
             String urlString = "https://poi.apache.org/components/spreadsheet/images/calendar.jpg";
-            URL structURL = new URL(urlString);
+            URL structURL = new URI(urlString).toURL();
             BufferedImage bimage;
             try {
                 bimage = ImageIO.read(structURL);

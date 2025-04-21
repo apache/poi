@@ -42,7 +42,7 @@ class ExceptionUtilTest {
         assertTrue(ExceptionUtil.isFatal(new VirtualMachineError(){}));
     }
 
-
+    @SuppressForbidden("Test with ThreadDeath on purpose here")
     @Test
     void testThreadDeath() {
         assertTrue(ExceptionUtil.isFatal(new ThreadDeath()));

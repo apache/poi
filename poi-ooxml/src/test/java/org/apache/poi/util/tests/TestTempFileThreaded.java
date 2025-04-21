@@ -33,6 +33,7 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.util.SuppressForbidden;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
@@ -51,6 +52,7 @@ class TestTempFileThreaded {
     // the actual thread-safe temp-file strategy
     private static TempFileCreationStrategy createTempFileCreationStrategy(File poiTempFileDirectory) {
         return new TempFileCreationStrategy() {
+            @SuppressForbidden("Thread.getId() is deprecated and replaced with threadId() in JDK 19+")
             @Override
             public File createTempFile(String prefix, String suffix) throws IOException {
                 long threadId = Thread.currentThread().getId();

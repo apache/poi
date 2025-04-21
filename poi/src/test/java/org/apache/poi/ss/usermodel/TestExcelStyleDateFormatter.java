@@ -103,15 +103,15 @@ class TestExcelStyleDateFormatter {
     public static Stream<Arguments> initializeLocales() throws ParseException {
         Object[][] locExps = {
             { Locale.GERMAN, "JFMAMJJASOND" },
-            { new Locale("de", "AT"), "JFMAMJJASOND" },
+            { new Locale.Builder().setLanguage("de").setRegion("AT").build(), "JFMAMJJASOND" },
             { Locale.UK, "JFMAMJJASOND" },
-            { new Locale("en", "IN"), "JFMAMJJASOND" },
-            { new Locale("in", "ID"), "JFMAMJJASOND" },
+            { new Locale.Builder().setLanguage("en").setRegion("IN").build(), "JFMAMJJASOND" },
+            { new Locale.Builder().setLanguage("in").setRegion("ID").build(), "JFMAMJJASOND" },
             { Locale.FRENCH, "jfmamjjasond" },
-            { new Locale("ru", "RU"), "\u044f\u0444\u043c\u0430\u043c\u0438\u0438\u0430\u0441\u043e\u043d\u0434" },
+            { new Locale.Builder().setLanguage("ru").setRegion("RU").build(), "\u044f\u0444\u043c\u0430\u043c\u0438\u0438\u0430\u0441\u043e\u043d\u0434" },
             { Locale.CHINESE, localeIndex(Locale.CHINESE) == 0 ? "\u4e00\u4e8c\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341\u5341\u5341" : "123456789111" },
-            { new Locale("tr", "TR"), "\u004f\u015e\u004d\u004e\u004d\u0048\u0054\u0041\u0045\u0045\u004b\u0041" },
-            { new Locale("hu", "HU"), "\u006a\u0066\u006d\u00e1\u006d\u006a\u006a\u0061\u0073\u006f\u006e\u0064" }
+            { new Locale.Builder().setLanguage("tr").setRegion("TR").build(), "\u004f\u015e\u004d\u004e\u004d\u0048\u0054\u0041\u0045\u0045\u004b\u0041" },
+            { new Locale.Builder().setLanguage("hu").setRegion("HU").build(), "\u006a\u0066\u006d\u00e1\u006d\u006a\u006a\u0061\u0073\u006f\u006e\u0064" }
         };
 
         String[] dates = {

@@ -26,6 +26,8 @@ import java.io.UncheckedIOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -171,7 +173,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
                                 String returnClass, String paramClasses, String volatileFlagStr) {
             boolean isVolatile = volatileFlagStr.length() > 0;
 
-            Integer funcIxKey = Integer.valueOf(funcIx);
+            Integer funcIxKey = funcIx;
             if(!_groupFunctionIndexes.add(funcIxKey)) {
                 throw new RuntimeException("Duplicate function index (" + funcIx + ")");
             }
@@ -209,7 +211,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
                     throw new RuntimeException("changing function '"
                             + funcName + "' definition without foot-note");
                 }
-                _allFunctionsByIndex.remove(Integer.valueOf(fdPrev.getIndex()));
+                _allFunctionsByIndex.remove(fdPrev.getIndex());
             }
         }
 
@@ -326,7 +328,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
                     processTableRow(cellData, noteFlags);
                 } else if(matchesRelPath(TABLE_CELL_RELPATH_NAMES)) {
                     _rowData.add(_textNodeBuffer.toString().trim());
-                    _rowNoteFlags.add(Boolean.valueOf(_cellHasNote));
+                    _rowNoteFlags.add(_cellHasNote);
                     _textNodeBuffer.setLength(0);
                 }
             }
@@ -350,7 +352,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
             }
             int funcIx = parseInt(funcIxStr);
 
-            boolean hasFootnote = noteFlags[i + 1].booleanValue();
+            boolean hasFootnote = noteFlags[i + 1];
             String funcName = cellData[i + 1];
             int minParams = parseInt(cellData[i + 2]);
             int maxParams = parseInt(cellData[i + 3]);
@@ -577,8 +579,8 @@ public final class ExcelFileFormatDocFunctionExtractor {
     private static File downloadSourceFile() {
         URL url;
         try {
-            url = new URL("http://sc.openoffice.org/" + SOURCE_DOC_FILE_NAME);
-        } catch (MalformedURLException e) {
+            url = new URI("http://sc.openoffice.org/" + SOURCE_DOC_FILE_NAME).toURL();
+        } catch (MalformedURLException | URISyntaxException e) {
             throw new RuntimeException(e);
         }
 

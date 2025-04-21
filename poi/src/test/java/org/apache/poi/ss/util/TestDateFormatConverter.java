@@ -130,7 +130,7 @@ final class TestDateFormatConverter {
     void testJDK8EmptyLocale() {
         // JDK 8 seems to add an empty locale-string to the list returned via DateFormat.getAvailableLocales()
         // therefore we now cater for this special locale as well
-        String prefix = getPrefixForLocale(new Locale(""));
+        String prefix = getPrefixForLocale(new Locale.Builder().build());
         assertEquals("", prefix);
     }
 

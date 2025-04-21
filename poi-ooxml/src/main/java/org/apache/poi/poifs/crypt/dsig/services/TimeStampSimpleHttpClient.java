@@ -24,6 +24,8 @@ import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -127,11 +129,11 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
             proxy = Proxy.NO_PROXY;
         } else {
             try {
-                URL pUrl = new URL(proxyUrl);
+                URL pUrl = new URI(proxyUrl).toURL();
                 String host = pUrl.getHost();
                 int port = pUrl.getPort();
                 proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(InetAddress.getByName(host), (port == -1 ? 80 : port)));
-            } catch (IOException ignored) {
+            } catch (IOException | URISyntaxException ignored) {
             }
         }
     }
@@ -205,7 +207,12 @@ public class TimeStampSimpleHttpClient implements TimeStampHttpClient {
     }
 
     protected TimeStampHttpClientResponse handleRedirect(String url, MethodHandler handler, boolean followRedirect) throws IOException {
-        HttpURLConnection huc = (HttpURLConnection)new URL(url).openConnection(proxy);
+        final HttpURLConnection huc;
+        try {
+            huc = (HttpURLConnection)new URI(url).toURL().openConnection(proxy);
+        } catch (URISyntaxException e) {
+            throw new IOException(e);
+        }
         if (ignoreHttpsCertificates) {
             recklessConnection(huc);
         }

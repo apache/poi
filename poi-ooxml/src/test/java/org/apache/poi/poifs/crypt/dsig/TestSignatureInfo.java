@@ -41,6 +41,8 @@ import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.security.KeyStoreException;
@@ -597,8 +599,8 @@ class TestSignatureInfo {
     public static String getAccessError(String destinationUrl, boolean fireRequest, int timeout) {
         URL url;
         try {
-            url = new URL(destinationUrl);
-        } catch (MalformedURLException e) {
+            url = new URI(destinationUrl).toURL();
+        } catch (MalformedURLException | URISyntaxException e) {
             throw new IllegalArgumentException("Invalid destination URL", e);
         }
 

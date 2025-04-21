@@ -937,7 +937,7 @@ class TestDataFormatter {
         // 2017-12-01 09:54:33 which is 42747.412892397523 as double
         DataFormatter dfDE = new DataFormatter(Locale.GERMANY);
         DataFormatter dfZH = new DataFormatter(Locale.PRC);
-        DataFormatter dfIE = new DataFormatter(new Locale("GA", "IE"));
+        DataFormatter dfIE = new DataFormatter(new Locale.Builder().setLanguage("GA").setRegion("IE").build());
         double date = 42747.412892397523;
         String format = "dd MMMM yyyy HH:mm:ss";
         assertEquals("12 Januar 2017 09:54:33", dfDE.formatRawCellContents(date, -1, format));

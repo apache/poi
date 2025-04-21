@@ -69,7 +69,7 @@ final class TestNumericFunction {
     void testDOLLAR() {
         Locale defaultLocale = LocaleUtil.getUserLocale();
         try {
-            LocaleUtil.setUserLocale(new Locale("en", "US"));
+            LocaleUtil.setUserLocale(new Locale.Builder().setLanguage("en").setRegion("US").build());
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
@@ -89,7 +89,7 @@ final class TestNumericFunction {
     void testDOLLARIreland() {
         Locale defaultLocale = LocaleUtil.getUserLocale();
         try {
-            LocaleUtil.setUserLocale(new Locale("en", "IE"));
+            LocaleUtil.setUserLocale(new Locale.Builder().setLanguage("en").setRegion("IE").build());
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
@@ -104,7 +104,7 @@ final class TestNumericFunction {
     void testDOLLARSpain() {
         Locale defaultLocale = LocaleUtil.getUserLocale();
         try {
-            LocaleUtil.setUserLocale(new Locale("es", "ES"));
+            LocaleUtil.setUserLocale(new Locale.Builder().setLanguage("es").setRegion("ES").build());
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
@@ -119,7 +119,7 @@ final class TestNumericFunction {
     void testDOLLARJapan() {
         Locale defaultLocale = LocaleUtil.getUserLocale();
         try {
-            LocaleUtil.setUserLocale(new Locale("ja", "JP"));
+            LocaleUtil.setUserLocale(new Locale.Builder().setLanguage("ja").setRegion("JP").build());
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
@@ -135,7 +135,7 @@ final class TestNumericFunction {
     void testDOLLARDenmark() {
         Locale defaultLocale = LocaleUtil.getUserLocale();
         try {
-            LocaleUtil.setUserLocale(new Locale("da", "DK"));
+            LocaleUtil.setUserLocale(new Locale.Builder().setLanguage("da").setRegion("DK").build());
             HSSFWorkbook wb = new HSSFWorkbook();
             HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
             HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
