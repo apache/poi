@@ -698,6 +698,7 @@ under the License.
                 <include name="batik*.jar"/>
                 <include name="slf4j*-1.*.jar"/>
                 <include name="xmlsec-2*.jar"/>
+                <include name="xmlgraphics-commons-*.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml-tests">
                 <include name="guava-20.0.jar"/>
