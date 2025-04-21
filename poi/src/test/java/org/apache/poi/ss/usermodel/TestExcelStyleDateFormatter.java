@@ -58,10 +58,11 @@ class TestExcelStyleDateFormatter {
 
         formatter.setDateFormatSymbols(DateFormatSymbols.getInstance(locale));
         String result = formatter.format(d, sb, fp).toString();
-        String msg = "Failed testDates for locale " + locale + ", provider: " + provider +
-                " and date " + d + ", having: " + result;
 
         int actIdx = localeIndex(locale);
+
+        String msg = "Failed testDates for locale " + locale + ", provider: " + provider +
+                " and date " + d + ", having actIdx: " + actIdx + " and result '" + result + "' (" + result.length() + ")";
 
         assertNotNull(result, msg);
         assertTrue(result.length() > actIdx, msg);
