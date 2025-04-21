@@ -30,7 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
- * An variant of SXSSFWorkbook that avoids generating a temporary file and writes data directly to
+ * A variant of SXSSFWorkbook that avoids generating a temporary file and writes data directly to
  * the provided OutputStream.
  *
  * This variant is experimental and APIs may change at short notice.
@@ -57,7 +57,7 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
 
     @NotImplemented
     @Override
-    protected SheetDataWriter createSheetDataWriter() throws IOException {
+    protected SheetDataWriter createSheetDataWriter() {
         throw new IllegalStateException("Not supported by DeferredSXSSFWorkbook");
     }
 
@@ -66,11 +66,9 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
     }
 
     @Override
-    protected ISheetInjector createSheetInjector(SXSSFSheet sxSheet) throws IOException {
+    protected ISheetInjector createSheetInjector(SXSSFSheet sxSheet) {
         DeferredSXSSFSheet ssxSheet = (DeferredSXSSFSheet) sxSheet;
-        return (output) -> {
-            ssxSheet.writeRows(output);
-        };
+        return ssxSheet::writeRows;
     }
 
     @Override
