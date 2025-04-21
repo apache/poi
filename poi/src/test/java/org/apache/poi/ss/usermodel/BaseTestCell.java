@@ -1473,6 +1473,36 @@ public abstract class BaseTestCell {
         verify(cell).setBlank();
     }
 
+    @Test
+    protected void setCellNullString() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
+
+            cell.setCellValue((String)null);
+
+            // setting string "null" leads to a BLANK cell
+            assertEquals(CellType.BLANK, cell.getCellType());
+            assertEquals("", cell.getStringCellValue());
+            assertEquals("", cell.toString());
+
+            cell.setCellType(CellType.STRING);
+
+            // forcing to string type leads to STRING cell, but still empty strings
+            assertEquals(CellType.STRING, cell.getCellType());
+            assertEquals("", cell.getStringCellValue());
+            assertEquals("", cell.toString());
+
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb)) {
+                // read first sheet, first row, first cell
+                Cell cellBack = wb2.iterator().next().iterator().next().iterator().next();
+
+                assertEquals(CellType.STRING, cell.getCellType());
+                assertEquals("", cell.getStringCellValue());
+                assertEquals("", cell.toString());
+            }
+        }
+    }
+
     private Cell getInstance(Workbook wb) {
         return wb.createSheet().createRow(0).createCell(0);
     }
