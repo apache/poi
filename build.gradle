@@ -141,7 +141,7 @@ subprojects {
     apply plugin: 'de.thetaphi.forbiddenapis'
     apply plugin: 'com.github.spotbugs'
 
-    version = '5.2.3-AIRSLATE-44'
+    version = '5.2.3-AIRSLATE-46'
     ext {
         bouncyCastleVersion = '1.70'
         commonsCodecVersion = '1.15'
@@ -261,6 +261,43 @@ subprojects {
                     withXml {
                         def r = asElement()
                         def doc = r.getOwnerDocument()
+/*
+                        // manually add deps
+                        def depsNode = r.appendChild(doc.createElement("dependencies"))
+
+                        def runtimeDeps = configurations.runtimeClasspath.allDependencies.findAll {
+                            it.group && it.name && it.version
+                        }
+
+                        runtimeDeps.each { dep ->
+                            def depNode = doc.createElement("dependency")
+                            def groupIdText = dep.group
+                            def artifactIdText = dep.name
+
+                            if ((artifactIdText == "poi-ooxml-full" || artifactIdText == "poi") && groupIdText == "poi") {
+                                groupIdText = "org.apache.poi"
+                            }
+
+
+                            def groupId = doc.createElement("groupId")
+                            groupId.setTextContent(groupIdText)
+
+                            def artifactId = doc.createElement("artifactId")
+                            artifactId.setTextContent(dep.name)
+
+                            def version = doc.createElement("version")
+                            version.setTextContent(dep.version)
+
+                            def scope = doc.createElement("scope")
+                            scope.setTextContent("compile")
+
+                            depNode.appendChild(groupId)
+                            depNode.appendChild(artifactId)
+                            depNode.appendChild(version)
+                            depNode.appendChild(scope)
+
+                            depsNode.appendChild(depNode)
+                        }*/
 
                         // remove duplicate entries
                         XPath xpath = XPathFactory.newInstance().newXPath()
