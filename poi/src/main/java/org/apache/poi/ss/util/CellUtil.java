@@ -571,7 +571,7 @@ public final class CellUtil {
     @Deprecated
     @Removal(version = "7.0.0")
     public static void setCellStyleProperties(Cell cell, Map<String, Object> properties) {
-        Map<CellPropertyType, Object> strPropMap = new HashMap<>(properties.size());
+        EnumMap<CellPropertyType, Object> strPropMap = new EnumMap<>(CellPropertyType.class);
         properties.forEach((k, v) -> strPropMap.put(namePropertyMap.get(k), v));
         setCellStyleProperties(cell, strPropMap, false);
     }
@@ -611,7 +611,7 @@ public final class CellUtil {
         CellStyle originalStyle = cell.getCellStyle();
 
         CellStyle newStyle = null;
-        Map<CellPropertyType, Object> values = getFormatProperties(originalStyle);
+        EnumMap<CellPropertyType, Object> values = getFormatProperties(originalStyle);
         if (properties.containsKey(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR) && properties.get(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR) == null) {
             values.remove(CellPropertyType.FILL_FOREGROUND_COLOR);
         }
@@ -777,7 +777,6 @@ public final class CellUtil {
      *
      * @param src the property map to copy from (read-only)
      * @param dest the property map to copy into
-     * @since POI 3.15 beta 3
      */
     private static void putAll(final Map<CellPropertyType, Object> src, Map<CellPropertyType, Object> dest) {
         for (final CellPropertyType key : src.keySet()) {

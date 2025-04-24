@@ -22,6 +22,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -339,7 +340,7 @@ public abstract class BaseTestCellUtil {
 
             // Add multiple border properties to cell should create a single new style
             int styCnt1 = wb.getNumCellStyles();
-            Map<CellPropertyType, Object> props = new HashMap<>();
+            EnumMap<CellPropertyType, Object> props = new EnumMap<>(CellPropertyType.class);
             props.put(CellPropertyType.BORDER_TOP, BorderStyle.THIN);
             props.put(CellPropertyType.BORDER_BOTTOM, BorderStyle.THIN);
             props.put(CellPropertyType.BORDER_LEFT, BorderStyle.THIN);
@@ -574,7 +575,7 @@ public abstract class BaseTestCellUtil {
     protected void setFillForegroundColorBeforeFillBackgroundColorEnumByEnum() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Cell A1 = wb1.createSheet().createRow(0).createCell(0);
-            Map<CellPropertyType, Object> properties = new HashMap<>();
+            EnumMap<CellPropertyType, Object> properties = new EnumMap<>(CellPropertyType.class);
             properties.put(CellPropertyType.FILL_PATTERN, FillPatternType.BRICKS);
             properties.put(CellPropertyType.FILL_FOREGROUND_COLOR, IndexedColors.BLUE.index);
             properties.put(CellPropertyType.FILL_BACKGROUND_COLOR, IndexedColors.RED.index);

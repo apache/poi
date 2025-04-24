@@ -28,7 +28,10 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.Removal;
 
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -42,9 +45,9 @@ import java.util.Set;
  * sheet in any workbook.
  *
  * This class requires the full spreadsheet to be in memory, so
- * {@link org.apache.poi.xssf.streaming.SXSSFWorkbook} Spreadsheets are not
+ * <code>SXSSFWorkbook</code> Spreadsheets are not
  * supported. The same PropertyTemplate can, however, be applied to both
- * {@link HSSFWorkbook} and {@link org.apache.poi.xssf.usermodel.XSSFWorkbook}
+ * {@link HSSFWorkbook} and <code>XSSFWorkbook</code>
  * objects if necessary. Portions of the border that fall outside the max range
  * of the {@link Workbook} sheet are ignored.
  * </p>
@@ -59,7 +62,7 @@ public final class PropertyTemplate {
      * This is a list of cell properties for one shot application to a range of
      * cells at a later time.
      */
-    private final Map<CellAddress, Map<CellPropertyType, Object>> _propertyTemplate;
+    private final Map<CellAddress, EnumMap<CellPropertyType, Object>> _propertyTemplate;
 
     /**
      * Create a PropertyTemplate object
@@ -75,17 +78,17 @@ public final class PropertyTemplate {
      */
     public PropertyTemplate(PropertyTemplate template) {
         this();
-        for (Map.Entry<CellAddress, Map<CellPropertyType, Object>> entry : template.getTemplate().entrySet()) {
+        for (Map.Entry<CellAddress, EnumMap<CellPropertyType, Object>> entry : template.getTemplate().entrySet()) {
             _propertyTemplate.put(new CellAddress(entry.getKey()), cloneCellProperties(entry.getValue()));
         }
     }
 
-    private Map<CellAddress, Map<CellPropertyType, Object>> getTemplate() {
+    private Map<CellAddress, EnumMap<CellPropertyType, Object>> getTemplate() {
         return _propertyTemplate;
     }
 
-    private static Map<CellPropertyType, Object> cloneCellProperties(Map<CellPropertyType, Object> properties) {
-        return new HashMap<>(properties);
+    private static EnumMap<CellPropertyType, Object> cloneCellProperties(EnumMap<CellPropertyType, Object> properties) {
+        return new EnumMap<>(properties);
     }
 
     /**
@@ -433,7 +436,7 @@ public final class PropertyTemplate {
      */
     public void applyBorders(Sheet sheet) {
         Workbook wb = sheet.getWorkbook();
-        for (Map.Entry<CellAddress, Map<CellPropertyType, Object>> entry : _propertyTemplate
+        for (Map.Entry<CellAddress, EnumMap<CellPropertyType, Object>> entry : _propertyTemplate
                 .entrySet()) {
             CellAddress cellAddress = entry.getKey();
             if (cellAddress.getRow() < wb.getSpreadsheetVersion().getMaxRows()
@@ -756,11 +759,11 @@ public final class PropertyTemplate {
      * @param range - {@link CellRangeAddress} range of cells to remove borders.
      */
     private void removeBorderColors(CellRangeAddress range) {
-        Set<CellPropertyType> properties = new HashSet<>();
-        properties.add(CellPropertyType.TOP_BORDER_COLOR);
-        properties.add(CellPropertyType.BOTTOM_BORDER_COLOR);
-        properties.add(CellPropertyType.LEFT_BORDER_COLOR);
-        properties.add(CellPropertyType.RIGHT_BORDER_COLOR);
+        Set<CellPropertyType> properties = EnumSet.of(
+                CellPropertyType.TOP_BORDER_COLOR,
+                CellPropertyType.BOTTOM_BORDER_COLOR,
+                CellPropertyType.LEFT_BORDER_COLOR,
+                CellPropertyType.RIGHT_BORDER_COLOR);
         for (int row = range.getFirstRow(); row <= range.getLastRow(); row++) {
             for (int col = range.getFirstColumn(); col <= range
                     .getLastColumn(); col++) {
@@ -781,9 +784,9 @@ public final class PropertyTemplate {
      */
     private void addProperty(int row, int col, CellPropertyType property, Object value) {
         CellAddress cell = new CellAddress(row, col);
-        Map<CellPropertyType, Object> cellProperties = _propertyTemplate.get(cell);
+        EnumMap<CellPropertyType, Object> cellProperties = _propertyTemplate.get(cell);
         if (cellProperties == null) {
-            cellProperties = new HashMap<>();
+            cellProperties = new EnumMap<>(CellPropertyType.class);
         }
         cellProperties.put(property, value);
         _propertyTemplate.put(cell, cellProperties);
@@ -795,7 +798,7 @@ public final class PropertyTemplate {
      */
     private void removeProperties(int row, int col, Set<CellPropertyType> properties) {
         CellAddress cell = new CellAddress(row, col);
-        Map<CellPropertyType, Object> cellProperties = _propertyTemplate.get(cell);
+        EnumMap<CellPropertyType, Object> cellProperties = _propertyTemplate.get(cell);
         if (cellProperties != null) {
             cellProperties.keySet().removeAll(properties);
             if (cellProperties.isEmpty()) {
@@ -946,6 +949,7 @@ public final class PropertyTemplate {
      * @deprecated See {@link #getTemplateProperty(int, int, CellPropertyType)}
      */
     @Deprecated
+    @Removal(version = "7.0.0")
     public short getTemplateProperty(int row, int col, String propertyName) {
         return getTemplateProperty(new CellAddress(row, col), CellUtil.namePropertyMap.get(propertyName));
     }
