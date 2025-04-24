@@ -18,6 +18,7 @@
 package org.apache.poi.ss.util;
 
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Locale;
@@ -631,7 +632,7 @@ public final class CellUtil {
 
         for (int i = 0; i < numberCellStyles; i++) {
             CellStyle wbStyle = workbook.getCellStyleAt(i);
-            Map<CellPropertyType, Object> wbStyleMap = getFormatProperties(wbStyle);
+            EnumMap<CellPropertyType, Object> wbStyleMap = getFormatProperties(wbStyle);
 
             // the desired style already exists in the workbook. Use the existing style.
             if (styleMapsMatch(wbStyleMap, values, disableNullColorCheck)) {
@@ -651,8 +652,8 @@ public final class CellUtil {
 
     private static boolean styleMapsMatch(final Map<CellPropertyType, Object> newProps,
                                           final Map<CellPropertyType, Object> storedProps, final boolean disableNullColorCheck) {
-        final Map<CellPropertyType, Object> map1Copy = new HashMap<>(newProps);
-        final Map<CellPropertyType, Object> map2Copy = new HashMap<>(storedProps);
+        final EnumMap<CellPropertyType, Object> map1Copy = new EnumMap<>(newProps);
+        final EnumMap<CellPropertyType, Object> map2Copy = new EnumMap<>(storedProps);
         final Object backColor1 = map1Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR_COLOR);
         final Object backColor2 = map2Copy.remove(CellPropertyType.FILL_BACKGROUND_COLOR_COLOR);
         final Object foreColor1 = map1Copy.remove(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR);
@@ -691,12 +692,12 @@ public final class CellUtil {
         final Map<CellPropertyType, Object> propMap;
         if (CellPropertyType.FILL_FOREGROUND_COLOR_COLOR.equals(property) && propertyValue == null) {
             disableNullColorCheck = true;
-            propMap = new HashMap<>();
+            propMap = new EnumMap<>(CellPropertyType.class);
             propMap.put(CellPropertyType.FILL_FOREGROUND_COLOR_COLOR, null);
             propMap.put(CellPropertyType.FILL_FOREGROUND_COLOR, null);
         } else if (CellPropertyType.FILL_BACKGROUND_COLOR_COLOR.equals(property) && propertyValue == null) {
             disableNullColorCheck = true;
-            propMap = new HashMap<>();
+            propMap = new EnumMap<>(CellPropertyType.class);
             propMap.put(CellPropertyType.FILL_BACKGROUND_COLOR_COLOR, null);
             propMap.put(CellPropertyType.FILL_BACKGROUND_COLOR, null);
         } else {
@@ -739,8 +740,8 @@ public final class CellUtil {
      * @return map of format properties (CellPropertyType -> Object)
      * @see #setFormatProperties(CellStyle, Workbook, Map)
      */
-    private static Map<CellPropertyType, Object> getFormatProperties(CellStyle style) {
-        Map<CellPropertyType, Object> properties = new HashMap<>();
+    private static EnumMap<CellPropertyType, Object> getFormatProperties(CellStyle style) {
+        EnumMap<CellPropertyType, Object> properties = new EnumMap<>(CellPropertyType.class);
         put(properties, CellPropertyType.ALIGNMENT, style.getAlignment());
         put(properties, CellPropertyType.VERTICAL_ALIGNMENT, style.getVerticalAlignment());
         put(properties, CellPropertyType.BORDER_BOTTOM, style.getBorderBottom());
