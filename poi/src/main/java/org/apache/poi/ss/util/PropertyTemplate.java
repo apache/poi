@@ -33,7 +33,6 @@ import org.apache.poi.util.Removal;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -412,11 +411,11 @@ public final class PropertyTemplate {
      * @param range - {@link CellRangeAddress} range of cells to remove borders.
      */
     private void removeBorders(CellRangeAddress range) {
-        Set<CellPropertyType> properties = new HashSet<>();
-        properties.add(CellPropertyType.BORDER_TOP);
-        properties.add(CellPropertyType.BORDER_BOTTOM);
-        properties.add(CellPropertyType.BORDER_LEFT);
-        properties.add(CellPropertyType.BORDER_RIGHT);
+        EnumSet<CellPropertyType> properties = EnumSet.of(
+                CellPropertyType.BORDER_TOP,
+                CellPropertyType.BORDER_BOTTOM,
+                CellPropertyType.BORDER_LEFT,
+                CellPropertyType.BORDER_RIGHT);
         for (int row = range.getFirstRow(); row <= range.getLastRow(); row++) {
             for (int col = range.getFirstColumn(); col <= range
                     .getLastColumn(); col++) {
