@@ -26,6 +26,7 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,6 +51,7 @@ public class CellFormatPart {
     private static final Logger LOG = PoiLogManager.getLogger(CellFormatPart.class);
 
     static final Map<String, Color> NAMED_COLORS;
+    static final List<Color> INDEXED_COLORS;
 
     private final Color color;
     private final CellFormatCondition condition;
@@ -57,6 +59,64 @@ public class CellFormatPart {
     private final CellFormatType type;
 
     static {
+        INDEXED_COLORS = new ArrayList<Color>(56);
+        INDEXED_COLORS.add(new Color(0x000000));      // Color 1 / black
+        INDEXED_COLORS.add(new Color(0xFFFFFF));      // Color 2 / white
+        INDEXED_COLORS.add(new Color(0xFF0000));      // Color 3 / red
+        INDEXED_COLORS.add(new Color(0x00FF00));      // Color 4 / green
+        INDEXED_COLORS.add(new Color(0x0000FF));      // Color 5 / blue
+        INDEXED_COLORS.add(new Color(0xFFFF00));      // Color 6 / yellow
+        INDEXED_COLORS.add(new Color(0xFF00FF));      // Color 7 / magenta
+        INDEXED_COLORS.add(new Color(0x00FFFF));      // Color 8 / cyan
+        INDEXED_COLORS.add(new Color(0x800000));      // Color 9
+        INDEXED_COLORS.add(new Color(0x008000));      // Color 10
+        INDEXED_COLORS.add(new Color(0x000080));      // Color 11
+        INDEXED_COLORS.add(new Color(0x808000));      // Color 12
+        INDEXED_COLORS.add(new Color(0x800080));      // Color 13
+        INDEXED_COLORS.add(new Color(0x008080));      // Color 14
+        INDEXED_COLORS.add(new Color(0xC0C0C0));      // Color 15
+        INDEXED_COLORS.add(new Color(0x808080));      // Color 16
+        INDEXED_COLORS.add(new Color(0x9999FF));      // Color 17
+        INDEXED_COLORS.add(new Color(0x993366));      // Color 18
+        INDEXED_COLORS.add(new Color(0xFFFFCC));      // Color 19
+        INDEXED_COLORS.add(new Color(0xCCFFFF));      // Color 20
+        INDEXED_COLORS.add(new Color(0x660066));      // Color 21
+        INDEXED_COLORS.add(new Color(0xFF8080));      // Color 22
+        INDEXED_COLORS.add(new Color(0x0066CC));      // Color 23
+        INDEXED_COLORS.add(new Color(0xCCCCFF));      // Color 24
+        INDEXED_COLORS.add(new Color(0x000080));      // Color 25
+        INDEXED_COLORS.add(new Color(0xFF00FF));      // Color 26
+        INDEXED_COLORS.add(new Color(0xFFFF00));      // Color 27
+        INDEXED_COLORS.add(new Color(0x00FFFF));      // Color 28
+        INDEXED_COLORS.add(new Color(0x800080));      // Color 29
+        INDEXED_COLORS.add(new Color(0x800000));      // Color 30
+        INDEXED_COLORS.add(new Color(0x008080));      // Color 31
+        INDEXED_COLORS.add(new Color(0x0000FF));      // Color 32
+        INDEXED_COLORS.add(new Color(0x00CCFF));      // Color 33
+        INDEXED_COLORS.add(new Color(0xCCFFFF));      // Color 34
+        INDEXED_COLORS.add(new Color(0xCCFFCC));      // Color 35
+        INDEXED_COLORS.add(new Color(0xFFFF99));      // Color 36
+        INDEXED_COLORS.add(new Color(0x99CCFF));      // Color 37
+        INDEXED_COLORS.add(new Color(0xFF99CC));      // Color 38
+        INDEXED_COLORS.add(new Color(0xCC99FF));      // Color 39
+        INDEXED_COLORS.add(new Color(0xFFCC99));      // Color 40
+        INDEXED_COLORS.add(new Color(0x3366FF));      // Color 41
+        INDEXED_COLORS.add(new Color(0x33CCCC));      // Color 42
+        INDEXED_COLORS.add(new Color(0x99CC00));      // Color 43
+        INDEXED_COLORS.add(new Color(0xFFCC00));      // Color 44
+        INDEXED_COLORS.add(new Color(0xFF9900));      // Color 45
+        INDEXED_COLORS.add(new Color(0xFF6600));      // Color 46
+        INDEXED_COLORS.add(new Color(0x666699));      // Color 47
+        INDEXED_COLORS.add(new Color(0x969696));      // Color 48
+        INDEXED_COLORS.add(new Color(0x003366));      // Color 49
+        INDEXED_COLORS.add(new Color(0x339966));      // Color 50
+        INDEXED_COLORS.add(new Color(0x003300));      // Color 51
+        INDEXED_COLORS.add(new Color(0x333300));      // Color 52
+        INDEXED_COLORS.add(new Color(0x993300));      // Color 53
+        INDEXED_COLORS.add(new Color(0x993366));      // Color 54
+        INDEXED_COLORS.add(new Color(0x333399));      // Color 55
+        INDEXED_COLORS.add(new Color(0x333333));      // Color 56
+
         NAMED_COLORS = new TreeMap<>(
                 String.CASE_INSENSITIVE_ORDER);
 
@@ -71,6 +131,18 @@ public class CellFormatPart {
                 NAMED_COLORS.put(name.replace("_PERCENT", "%").replace('_',
                         ' '), c);
         }
+
+        // Add missing color values and replace incorrectly defined standard color 
+        // used in Excel, Google Sheets, etc. The first eight indexed colors
+        // correspond exactly to named colors.
+        NAMED_COLORS.put("black", INDEXED_COLORS.get(0));
+        NAMED_COLORS.put("white", INDEXED_COLORS.get(1));
+        NAMED_COLORS.put("red", INDEXED_COLORS.get(2));
+        NAMED_COLORS.put("green", INDEXED_COLORS.get(3));
+        NAMED_COLORS.put("blue", INDEXED_COLORS.get(4));
+        NAMED_COLORS.put("yellow", INDEXED_COLORS.get(5));
+        NAMED_COLORS.put("magenta", INDEXED_COLORS.get(6));
+        NAMED_COLORS.put("cyan", INDEXED_COLORS.get(7));
     }
 
     /** Pattern for the color part of a cell format part. */
@@ -110,8 +182,15 @@ public class CellFormatPart {
         // A currency symbol / string, in a specific locale
         String currency = "(\\[\\$.{0,3}(-[0-9a-f]{3,4})?])";
 
-        String color =
-                "\\[(black|blue|cyan|green|magenta|red|white|yellow|color [0-9]+)]";
+        // Build the color code matching expression. We should match any named color
+        // in the set as well as a string in the form of "Color 8" or "Color 15".
+        String color = "\\[(";
+        for (String key : NAMED_COLORS.keySet()) {
+            // Escape special characters in the color name
+            color += key.replaceAll("([^a-zA-Z0-9])", "\\\\$1") + "|";
+        }
+        // Match the indexed color table
+        color += "color\\ [0-9]+)\\]";
 
         // A number specification
         // Note: careful that in something like ##, that the trailing comma is not caught up in the integer part
@@ -159,6 +238,12 @@ public class CellFormatPart {
         CONDITION_OPERATOR_GROUP = findGroup(FORMAT_PAT, "[>=1]@", ">=");
         CONDITION_VALUE_GROUP = findGroup(FORMAT_PAT, "[>=1]@", "1");
         SPECIFICATION_GROUP = findGroup(FORMAT_PAT, "[Blue][>1]\\a ?", "\\a ?");
+
+        // Once patterns have been compiled, add indexed colors to
+        // NAMED_COLORS so they can be easily picked up by getColor().
+        for (int i = 0; i < INDEXED_COLORS.size(); ++i) {
+            NAMED_COLORS.put("color " + (i + 1), INDEXED_COLORS.get(i));
+        }
     }
 
     interface PartHandler {
