@@ -628,7 +628,7 @@ public final class CellUtil {
 
         // index seems like what index the cellstyle is in the list of styles for a workbook.
         // not good to compare on!
-        int numberCellStyles = workbook.getNumCellStyles();
+        final int numberCellStyles = workbook.getNumCellStyles();
 
         for (int i = 0; i < numberCellStyles; i++) {
             CellStyle wbStyle = workbook.getCellStyleAt(i);
