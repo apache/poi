@@ -120,7 +120,7 @@ subprojects {
         batikVersion = '1.18'
         graphics2dVersion = '3.0.3'
         pdfboxVersion = '3.0.5'
-        saxonVersion = '12.5'
+        saxonVersion = '12.6'
         xmlSecVersion = '3.0.5'
         apiGuardianVersion = '1.1.2'
 
