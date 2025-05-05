@@ -266,7 +266,7 @@ public final class AnalysisToolPak implements UDFFinder {
      * @throws IllegalArgumentException if the function is unknown or already registered.
      * @since 3.8 beta6
      */
-    public static void registerFunction(String name, FreeRefFunction func){
+    public static void registerFunction(String name, FreeRefFunction func) {
         AnalysisToolPak inst = (AnalysisToolPak)instance;
         if(!isATPFunction(name)) {
             FunctionMetadata metaData = FunctionMetadataRegistry.getFunctionByName(name);

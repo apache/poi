@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.hssf.record.CountryRecord;
 import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.record.RecalcIdRecord;
@@ -169,5 +170,21 @@ final class TestWorkbook {
 
         int newRecordsCount = iwb.getNumRecords();
         assertEquals(oldRecordsCount, newRecordsCount, "records count after getWriteAccess");
+    }
+
+    @Test
+    void testSetUserName() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            InternalWorkbook iwb = wb.getInternalWorkbook();
+            iwb.getWriteAccess().setUsername("username");
+            assertEquals("username", iwb.getWriteAccess().getUsername());
+            try (UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get()) {
+                wb.write(os);
+                try (HSSFWorkbook wb2 = new HSSFWorkbook(os.toInputStream())) {
+                    InternalWorkbook iwb2 = wb2.getInternalWorkbook();
+                    assertEquals("username", iwb2.getWriteAccess().getUsername());
+                }
+            }
+        }
     }
 }
