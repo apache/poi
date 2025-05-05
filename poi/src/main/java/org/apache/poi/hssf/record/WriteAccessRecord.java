@@ -108,10 +108,19 @@ public final class WriteAccessRecord extends StandardRecord {
             data = IOUtils.safelyAllocate(in.remaining(), STRING_SIZE);
             in.readFully(data);
             if (UTF16FLAG.isSet(is16BitFlag)) {
-                byteCnt = Math.min(nChars * 2, data.length);
+                // the spec only allows up to 109 bytes for the string in this record, but it seems some broken
+                // software out there will generate invalid records
+                int min = Math.min(nChars * 2, data.length);
+
+                // make sure byteCnt is divisible by 2 as we read UTF-16LE
+                byteCnt = min - (min % 2);
+
                 charset = StandardCharsets.UTF_16LE;
             } else {
+                // the spec only allows up to 109 bytes for the string in this record, but it seems some broken
+                // software out there will generate invalid records
                 byteCnt = Math.min(nChars, data.length);
+
                 charset = StandardCharsets.ISO_8859_1;
             }
         }
@@ -130,7 +139,8 @@ public final class WriteAccessRecord extends StandardRecord {
         boolean is16bit = StringUtil.hasMultibyte(username);
         int encodedByteCount = username.length() * (is16bit ? 2 : 1);
         if (encodedByteCount > STRING_SIZE) {
-            throw new IllegalArgumentException("Name is too long: " + username);
+            throw new IllegalArgumentException("Name is too long, expecting up to " + STRING_SIZE +
+                    " bytes, but had: " + encodedByteCount + " bytes: " + username);
         }
 
         field_1_username = username;

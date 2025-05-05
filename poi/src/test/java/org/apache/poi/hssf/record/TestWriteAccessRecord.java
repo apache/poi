@@ -93,4 +93,47 @@ final class TestWriteAccessRecord {
 
         confirmRecordEncoding(WriteAccessRecord.sid, expectedEncoding, rec.serialize());
     }
+
+    @Test
+    void testUTF16LE() {
+        byte[] data = HexRead.readFromString(""
+                + "5c 00 70 00 1C 00 01 "
+                + "44 00 61 00 74 00 61 00 20 00 44 00 79 00 6e 00 "
+                + "61 00 6d 00 69 00 63 00 73 00 27 00 20 00 53 00 "
+                + "70 00 72 00 65 00 61 00 64 00 42 00 75 00 69 00 "
+                + "6c 00 64 00 65 00 72 00 20 00 20 00 20 00 20 00 "
+                + "20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 "
+                + "20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 "
+                + "20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 "
+                + "20 00 20 00 20 00"
+        );
+        RecordInputStream in = TestcaseRecordInputStream.create(data);
+
+        WriteAccessRecord rec = new WriteAccessRecord(in);
+
+        assertEquals("Data Dynamics' SpreadBuilder", rec.getUsername());
+    }
+
+    @Test
+    void testUTF16LE_wrong_size() {
+        // "0x51" on position 5 is an incorrect size, as it would require 162 bytes to encode as UTF-16LE
+        // the spec only allows up to 109 bytes for the string in this record, but it seems some broken
+        // software out there will generate such a file
+        byte[] data = HexRead.readFromString(""
+                + "5c 00 70 00 51 00 01 "
+                + "44 00 61 00 74 00 61 00 20 00 44 00 79 00 6e 00 "
+                + "61 00 6d 00 69 00 63 00 73 00 27 00 20 00 53 00 "
+                + "70 00 72 00 65 00 61 00 64 00 42 00 75 00 69 00 "
+                + "6c 00 64 00 65 00 72 00 20 00 20 00 20 00 20 00 "
+                + "20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 "
+                + "20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 "
+                + "20 00 20 00 20 00 20 00 20 00 20 00 20 00 20 00 "
+                + "20 00 20 00 20 00"
+        );
+        RecordInputStream in = TestcaseRecordInputStream.create(data);
+
+        WriteAccessRecord rec = new WriteAccessRecord(in);
+
+        assertEquals("Data Dynamics' SpreadBuilder", rec.getUsername());
+    }
 }
