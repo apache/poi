@@ -268,7 +268,7 @@ public final class AnalysisToolPak implements UDFFinder {
      * @param name  the function name
      * @param func  the function to register
      * @throws IllegalArgumentException if the function is unknown or already registered.
-     * @since since 3.8 beta6
+     * @since 3.8 beta6
      */
     public static void registerFunction(String name, FreeRefFunction func) {
         registerFunction(name, func, false);
