@@ -451,7 +451,7 @@ public class CellReference implements GenericRecord {
     }
 
     /**
-     * Takes in a 0-based base-10 column and returns a ALPHA-26
+     * Takes in a 0-based base-10 column and returns an ALPHA-26
      *  representation.
      * eg {@code convertNumToColString(3)} returns {@code "D"}
      */

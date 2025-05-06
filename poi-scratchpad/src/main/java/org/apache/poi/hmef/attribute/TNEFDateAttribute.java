@@ -85,7 +85,7 @@ public final class TNEFDateAttribute extends TNEFAttribute {
    }
 
    /**
-    * Returns the Date of a Attribute, converting as appropriate
+    * Returns the Date of an Attribute, converting as appropriate
     */
    public static Date getAsDate(TNEFAttribute attr) {
       if(attr == null) {

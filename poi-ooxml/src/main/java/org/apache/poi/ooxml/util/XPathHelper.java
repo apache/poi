@@ -80,8 +80,8 @@ public final class XPathHelper {
      * It returns the first element found - the search order is:
      * <ul>
      *     <li>searching for a direct child</li>
-     *     <li>searching for a AlternateContent.Choice child</li>
-     *     <li>searching for a AlternateContent.Fallback child</li>
+     *     <li>searching for an AlternateContent.Choice child</li>
+     *     <li>searching for an AlternateContent.Fallback child</li>
      * </ul>
      * The factory flag is
      * a workaround to process files based on a later edition. But it comes with the drawback:

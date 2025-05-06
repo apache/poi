@@ -971,7 +971,7 @@ public final class WorkbookEvaluator {
     }
 
     /**
-     * Register a ATP function in runtime.
+     * Register an ATP function in runtime.
      *
      * @param name the function name
      * @param func the function to register

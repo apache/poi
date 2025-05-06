@@ -70,7 +70,7 @@ public final class MAPIDateAttribute extends MAPIAttribute {
    }
 
    /**
-    * Returns the Date of a Attribute, converting as appropriate
+    * Returns the Date of an Attribute, converting as appropriate
     */
    public static Date getAsDate(MAPIAttribute attr) {
       if(attr == null) {

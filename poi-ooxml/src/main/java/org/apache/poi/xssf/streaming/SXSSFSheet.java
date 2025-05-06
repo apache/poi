@@ -1814,7 +1814,7 @@ public class SXSSFSheet implements Sheet, OoxmlSheetExtensions {
     }
 
     /**
-     * Remove a Array Formula from this sheet.  All cells contained in the Array Formula range are removed as well
+     * Remove an Array Formula from this sheet.  All cells contained in the Array Formula range are removed as well
      *
      * @param cell   any cell within Array Formula range
      * @return the {@link CellRange} of cells affected by this change

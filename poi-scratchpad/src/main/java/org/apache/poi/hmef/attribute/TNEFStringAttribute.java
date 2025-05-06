@@ -68,7 +68,7 @@ public final class TNEFStringAttribute extends TNEFAttribute {
    }
 
    /**
-    * Returns the string of a Attribute, converting as appropriate
+    * Returns the string of an Attribute, converting as appropriate
     */
    public static String getAsString(TNEFAttribute attr) {
       if(attr == null) {

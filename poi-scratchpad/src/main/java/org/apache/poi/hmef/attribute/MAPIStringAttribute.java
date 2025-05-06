@@ -64,7 +64,7 @@ public final class MAPIStringAttribute extends MAPIAttribute {
    }
 
    /**
-    * Returns the string of a Attribute, converting as appropriate
+    * Returns the string of an Attribute, converting as appropriate
     */
    public static String getAsString(MAPIAttribute attr) {
       if(attr == null) {
