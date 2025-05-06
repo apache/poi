@@ -22,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -174,15 +175,51 @@ final class TestWorkbook {
 
     @Test
     void testSetUserName() throws IOException {
+        // normal username
+        setAndReadUserName("username", false);
+
+        // 109 characters max if no "multibyte" character
+        setAndReadUserName("1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789", false);
+
+        // 54 max if there is at least one "multibyte" character
+        setAndReadUserName("€23456789012345678901234567890123456789012345678901234", false);
+
+        // also works for very strange characters
+        setAndReadUserName("\uD801\uDC37\uD852\uDF62€$ⵃⵥꭓꭃꭦ﹄４Ｕｶ\uD800\uDFB1\uD800\uDFC9\uD834\uDF45\uD834\uDF4B\uD83E\uDF22\uD83E\uDF53\uD83E\uDFB5\uD83E\uDFF6\uD801\uDC37\uD852\uDF62€$ⵃⵥꭓꭃꭦ﹄４Ｕｶ\uD800\uDFB1\uD800\uDFC9\uD834\uDF45\uD834\uDF4B", false);
+
+        // fails with longer strings
+        setAndReadUserName("12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890",
+                true);
+        setAndReadUserName("€234567890123456789012345678901234567890123456789012345", true);
+        setAndReadUserName("\uD801\uDC37\uD852\uDF62€$ⵃⵥꭓꭃꭦ﹄４Ｕｶ\uD800\uDFB1\uD800\uDFC9\uD834\uDF45\uD834\uDF4B\uD83E\uDF22\uD83E\uDF53\uD83E\uDFB5\uD83E\uDFF6\uD801\uDC37\uD852\uDF62€$ⵃⵥꭓꭃꭦ﹄４Ｕｶ\uD800\uDFB1\uD800\uDFC9\uD834\uDF45\uD834\uDF4B\uDF4B",
+                true);
+    }
+
+    private static void setAndReadUserName(String username, boolean fails) throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             InternalWorkbook iwb = wb.getInternalWorkbook();
-            iwb.getWriteAccess().setUsername("username");
-            assertEquals("username", iwb.getWriteAccess().getUsername());
+
+            String prev = iwb.getWriteAccess().getUsername();
+            if (fails) {
+                assertThrows(IllegalArgumentException.class,
+                        () -> iwb.getWriteAccess().setUsername(username),
+                        "Expected to fail with username " + username);
+                assertEquals(prev, iwb.getWriteAccess().getUsername(),
+                        "Username should not have been changed, but had: " + prev + " and " +
+                                iwb.getWriteAccess().getUsername());
+
+                // cannot test more if username is too long
+                return;
+            } else {
+                iwb.getWriteAccess().setUsername(username);
+            }
+
+            assertEquals(username, iwb.getWriteAccess().getUsername());
             try (UnsynchronizedByteArrayOutputStream os = UnsynchronizedByteArrayOutputStream.builder().get()) {
                 wb.write(os);
                 try (HSSFWorkbook wb2 = new HSSFWorkbook(os.toInputStream())) {
                     InternalWorkbook iwb2 = wb2.getInternalWorkbook();
-                    assertEquals("username", iwb2.getWriteAccess().getUsername());
+                    assertEquals(username, iwb2.getWriteAccess().getUsername());
                 }
             }
         }

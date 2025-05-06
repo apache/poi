@@ -63,6 +63,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     @Override
     @Test
     protected void cloneSheet() {
+        //noinspection Convert2MethodRef
         RuntimeException ex = assertThrows(RuntimeException.class, () -> super.cloneSheet());
         assertEquals("Not Implemented", ex.getMessage());
     }
@@ -70,6 +71,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     @Override
     @Test
     protected void cloneSheetMultipleTimes() {
+        //noinspection Convert2MethodRef
         RuntimeException ex = assertThrows(RuntimeException.class, () -> super.cloneSheetMultipleTimes());
         assertEquals("Not Implemented", ex.getMessage());
     }
@@ -80,6 +82,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     @Override
     @Test
     protected void shiftMerged() {
+        //noinspection Convert2MethodRef
         RuntimeException ex = assertThrows(RuntimeException.class, () -> super.shiftMerged());
         assertEquals("Not Implemented", ex.getMessage());
     }
@@ -92,6 +95,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     @Override
     @Test
     protected void bug35084() {
+        //noinspection Convert2MethodRef
         RuntimeException ex = assertThrows(RuntimeException.class, () -> super.bug35084());
         assertEquals("Not Implemented", ex.getMessage());
     }
