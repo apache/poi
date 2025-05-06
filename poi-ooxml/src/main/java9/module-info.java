@@ -111,7 +111,7 @@ module org.apache.poi.ooxml {
     requires static org.apache.xmlgraphics.batik.transcoder;
     requires static org.apache.xmlgraphics.batik.util;
     requires static org.apache.xmlgraphics.batik.xml;
-    requires static xmlgraphics.commons;
+    requires static org.apache.xmlgraphics.commons;
 
     requires static org.apache.pdfbox;
     requires static org.apache.fontbox;
