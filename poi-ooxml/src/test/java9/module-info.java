@@ -96,8 +96,7 @@ module org.apache.poi.ooxml {
     /* optional dependencies for slideshow rendering via PPTX2PNG */
     requires static org.apache.xmlgraphics.batik.anim;
     requires static org.apache.xmlgraphics.batik.awt.util;
-    /* this typo appears in Batik 1.18 and will be fixed in a future release */
-    requires static org.apache.xmlgraphics.batik.brdige;
+    requires static org.apache.xmlgraphics.batik.bridge;
     requires static org.apache.xmlgraphics.batik.codec;
     requires static org.apache.xmlgraphics.batik.constants;
     requires static org.apache.xmlgraphics.batik.css;
