@@ -17,6 +17,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.eval.NotImplementedFunctionException;
 import org.apache.poi.ss.formula.eval.ValueEval;
@@ -31,6 +33,8 @@ import org.apache.poi.ss.formula.udf.UDFFinder;
 public final class AnalysisToolPak implements UDFFinder {
 
     public static final UDFFinder instance = new AnalysisToolPak();
+
+    private static final Logger LOG = PoiLogManager.getLogger(AnalysisToolPak.class);
 
     private static final class NotImplemented implements FreeRefFunction {
         private final String _functionName;
@@ -264,11 +268,28 @@ public final class AnalysisToolPak implements UDFFinder {
      * @param name  the function name
      * @param func  the function to register
      * @throws IllegalArgumentException if the function is unknown or already registered.
-     * @since 3.8 beta6
+     * @since since 3.8 beta6
      */
     public static void registerFunction(String name, FreeRefFunction func) {
+        registerFunction(name, func, false);
+    }
+
+    /**
+     * Register an ATP function in runtime.
+     *
+     * @param name  the function name
+     * @param func  the function to register
+     * @param force force registration even if the function is already registered or unknown to POI
+     * @throws IllegalArgumentException if the function is unknown or already registered (and `force` is not true).
+     * @since POI 5.4.2
+     */
+    public static void registerFunction(String name, FreeRefFunction func, boolean force) {
         AnalysisToolPak inst = (AnalysisToolPak)instance;
-        if(!isATPFunction(name)) {
+        if (force) {
+            // Excel regularly adds new functions, so the ones registered in POI
+            // can be well out of date - allow users who know what they are doing
+            // to force their update
+        } else if(!isATPFunction(name)) {
             FunctionMetadata metaData = FunctionMetadataRegistry.getFunctionByName(name);
             if(metaData != null) {
                 throw new IllegalArgumentException(name + " is a built-in Excel function. " +
@@ -277,13 +298,20 @@ public final class AnalysisToolPak implements UDFFinder {
 
             throw new IllegalArgumentException(name + " is not a function from the Excel Analysis Toolpack.");
         }
+
         FreeRefFunction f = inst.findFunction(name);
         if(f != null && !(f instanceof NotImplemented)) {
-            throw new IllegalArgumentException("POI already implements " + name +
-                    ". You cannot override POI's implementations of Excel functions");
+            if (force) {
+                LOG.info("POI already implements " + name +
+                        ". You are overriding the implementation.");
+            } else {
+                throw new IllegalArgumentException("POI already implements " + name +
+                        ". You cannot override POI's implementations of Excel functions");
+            }
         }
 
         // FIXME: inconsistent case-sensitivity
         inst._functionsByName.put(name, func);
     }
+
 }
