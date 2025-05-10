@@ -353,16 +353,15 @@ public class HSSFColor implements Color {
                Integer.toHexString(getBlue()*0x101)).toUpperCase(Locale.ROOT);
     }
 
-    final short getBlue() {
+    private final short getBlue() {
         return (short) (rgb & 0xff);
     }
-    final short getGreen() {
+    private final short getGreen() {
         return (short) ((rgb >> 8) & 0xff);
     }
-    final short getRed() {
+    private final short getRed() {
         return (short) ((rgb >> 16) & 0xff);
     }
-
 
     @Override
     public boolean equals(Object o) {
