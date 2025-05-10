@@ -42,7 +42,7 @@ public class HSSFColor implements Color {
     private static Map<Integer,HSSFColor> indexHash;
     private static Map<HSSFColorPredefined,HSSFColor> enumList;
 
-    private final java.awt.Color color;
+    private final int rgb;
     private final int index;
     private final int index2;
 
@@ -110,7 +110,7 @@ public class HSSFColor implements Color {
         private final HSSFColor color;
 
         HSSFColorPredefined(int index, int index2, int rgb) {
-            this.color = new HSSFColor(index, index2, new java.awt.Color(rgb));
+            this.color = new HSSFColor(index, index2, rgb);
         }
 
         /**
@@ -145,7 +145,7 @@ public class HSSFColor implements Color {
          * @return (a copy of) the HSSFColor assigned to the enum
          */
         public HSSFColor getColor() {
-            return new HSSFColor(getIndex(), getIndex2(), color.color);
+            return new HSSFColor(getIndex(), getIndex2(), color.rgb);
         }
     }
 
@@ -153,13 +153,37 @@ public class HSSFColor implements Color {
     /** Creates a new instance of HSSFColor */
     public HSSFColor() {
         // automatic index
-        this(0x40, -1, java.awt.Color.BLACK);
+        this(0x40, -1, 0x00);
     }
 
+    /** Deprecated constructor. Adds dependency on {@code java.desktop} module
+     * just to extract RGB from {@link java.awt.Color}. Replace usage of
+     * this constructor by:
+     * <pre>
+     * new HSSFColor(index, index2, color.getRGB());
+     * </pre>
+     * or specify RGB directly.
+     *
+     * @param index
+     * @param index2
+     * @param color
+     * @deprecated prefer constructor that specifies RGB directly as a value
+     */
+    @Deprecated
     public HSSFColor(int index, int index2, java.awt.Color color) {
+        this(index, index2, color.getRGB());
+    }
+
+    /* Creates new instance of HSSFColor by specifying RGB as an {@code int}
+    * value.
+    * @param index
+    * @param index2
+    *
+    */
+    public HSSFColor(int index, int index2, int rgb) {
         this.index = index;
         this.index2 = index2;
-        this.color = color;
+        this.rgb = 0xff000000 | rgb;
     }
 
     /**
@@ -315,7 +339,7 @@ public class HSSFColor implements Color {
      */
 
     public short [] getTriplet() {
-        return new short[] { (short)color.getRed(), (short)color.getGreen(), (short)color.getBlue() };
+        return new short[] { getRed(), getGreen(), getBlue() };
     }
 
     /**
@@ -324,10 +348,21 @@ public class HSSFColor implements Color {
      */
 
     public String getHexString() {
-        return (Integer.toHexString(color.getRed()*0x101) + ":" +
-               Integer.toHexString(color.getGreen()*0x101) + ":" +
-               Integer.toHexString(color.getBlue()*0x101)).toUpperCase(Locale.ROOT);
+        return (Integer.toHexString(getRed()*0x101) + ":" +
+               Integer.toHexString(getGreen()*0x101) + ":" +
+               Integer.toHexString(getBlue()*0x101)).toUpperCase(Locale.ROOT);
     }
+
+    final short getBlue() {
+        return (short) (rgb & 0xff);
+    }
+    final short getGreen() {
+        return (short) ((rgb >> 8) & 0xff);
+    }
+    final short getRed() {
+        return (short) ((rgb >> 16) & 0xff);
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -338,12 +373,12 @@ public class HSSFColor implements Color {
 
         if (index != hssfColor.index) return false;
         if (index2 != hssfColor.index2) return false;
-        return Objects.equals(color, hssfColor.color);
+        return Objects.equals(rgb, hssfColor.rgb);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(color,index,index2);
+        return Objects.hash(rgb,index,index2);
     }
 
     /**
