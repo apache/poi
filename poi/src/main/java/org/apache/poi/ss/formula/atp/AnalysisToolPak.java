@@ -191,7 +191,7 @@ public final class AnalysisToolPak implements UDFFinder {
         r(m, "RECEIVED", null);
         r(m, "RTD", null);
         r(m, "SERIESSUM", null);
-        r(m, "SHEET", null);
+        r(m, "SHEET", Sheet.instance);
         r(m, "SINGLE", Single.instance);
         r(m, "SQRTPI", Sqrtpi.instance);
         r(m, "STDEV.S", Stdevs.instance);
