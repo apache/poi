@@ -252,14 +252,30 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * @return the color of bullet characters within a given paragraph.
      * A <code>null</code> value means to use the text font color.
      */
-    public Color getBulletFontColor(){
-        ParagraphPropertyFetcher<Color> fetcher = new ParagraphPropertyFetcher<Color>(getLevel()){
+    public Color getBulletFontColor() {
+        byte[] bytes = getBulletFontColorAsBytes();
+        if (bytes == null) {
+            return null;
+        } else if (bytes.length == 3) {
+            return new Color(bytes[0] & 0xFF, bytes[1] & 0xFF, bytes[2] & 0xFF);
+        } else {
+            return new Color(0xFF & bytes[1], 0xFF & bytes[2], 0xFF & bytes[3], 0xFF & bytes[0]);
+        }
+    }
+
+    /**
+     *
+     * @return the color of bullet characters within a given paragraph.
+     * A <code>null</code> value means to use the text font color.
+     * @since POI 5.4.2
+     */
+    public byte[] getBulletFontColorAsBytes() {
+        ParagraphPropertyFetcher<byte[]> fetcher = new ParagraphPropertyFetcher<byte[]>(getLevel()) {
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetBuClr()){
                     if(props.getBuClr().isSetSrgbClr()){
                         CTSRgbColor clr = props.getBuClr().getSrgbClr();
-                        byte[] rgb = clr.getVal();
-                        setValue(new Color(0xFF & rgb[0], 0xFF & rgb[1], 0xFF & rgb[2]));
+                        setValue(clr.getVal());
                         return true;
                     }
                 }
@@ -275,11 +291,21 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      *
      * @param color the bullet color
      */
-    public void setBulletFontColor(Color color){
+    public void setBulletFontColor(Color color) {
+        setBulletFontColor(new byte[]{(byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue()});
+    }
+
+    /**
+     * Set the color to be used on bullet characters within a given paragraph.
+     *
+     * @param colorArray the bullet color (as byte array)
+     * @since POI 5.4.2
+     */
+    public void setBulletFontColor(byte[] colorArray) {
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTColor c = pr.isSetBuClr() ? pr.getBuClr() : pr.addNewBuClr();
         CTSRgbColor clr = c.isSetSrgbClr() ? c.getSrgbClr() : c.addNewSrgbClr();
-        clr.setVal(new byte[]{(byte) color.getRed(), (byte) color.getGreen(), (byte) color.getBlue()});
+        clr.setVal(colorArray);
     }
 
     /**
