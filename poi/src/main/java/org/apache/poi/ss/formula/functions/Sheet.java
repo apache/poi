@@ -31,13 +31,13 @@ import org.apache.poi.ss.formula.eval.*;
  * </p>
  * <p>
  * Examples:
+ * </p>
  * <ul>
  *     <li><code>=SHEET()</code> → returns the current sheet number (1-based)</li>
  *     <li><code>=SHEET(A1)</code> → returns the sheet number of the reference A1</li>
  *     <li><code>=SHEET(A1:B5)</code> → returns the sheet number of the range A1:B5</li>
  *     <li><code>=SHEET("Sheet3")</code> → returns the sheet number of the sheet named "Sheet3"</li>
  * </ul>
- * </p>
  * <p>
  * See <a href="https://support.microsoft.com/en-us/office/sheet-function-44718b6f-8b87-47a1-a9d6-b701c06cff24">Microsoft Documentation</a>
  * </p>
