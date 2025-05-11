@@ -90,6 +90,10 @@ class TestXSSFTextParagraph {
             text.setBulletFontColor(color);
             assertEquals(color, text.getBulletFontColor());
 
+            final byte[] colorBytes = new byte[] { (byte) 255, 127, 0 };
+            text.setBulletFontColor(colorBytes);
+            assertArrayEquals(colorBytes, text.getBulletFontColorAsBytes());
+
             assertEquals(100.0, text.getBulletFontSize(), 0.01);
             text.setBulletFontSize(1.0);
             assertEquals(1.0, text.getBulletFontSize(), 0.01);
