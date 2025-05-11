@@ -59,17 +59,7 @@ public class XSSFTextRun {
     }
 
     public void setFontColor(Color color) {
-        CTTextCharacterProperties rPr = getRPr();
-        CTSolidColorFillProperties fill = rPr.isSetSolidFill() ? rPr.getSolidFill() : rPr.addNewSolidFill();
-        CTSRgbColor clr = fill.isSetSrgbClr() ? fill.getSrgbClr() : fill.addNewSrgbClr();
-        clr.setVal(new byte[]{(byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue()});
-
-        if(fill.isSetHslClr()) fill.unsetHslClr();
-        if(fill.isSetPrstClr()) fill.unsetPrstClr();
-        if(fill.isSetSchemeClr()) fill.unsetSchemeClr();
-        if(fill.isSetScrgbClr()) fill.unsetScrgbClr();
-        if(fill.isSetSysClr()) fill.unsetSysClr();
-
+        setFontColor(new byte[]{(byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue()});
     }
 
     /**
