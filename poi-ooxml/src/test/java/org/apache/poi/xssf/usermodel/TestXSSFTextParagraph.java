@@ -90,7 +90,7 @@ class TestXSSFTextParagraph {
             text.setBulletFontColor(color);
             assertEquals(color, text.getBulletFontColor());
 
-            final byte[] colorBytes = new byte[] { (byte) 255, 127, 0 };
+            final byte[] colorBytes = new byte[]{(byte) 255, 127, 0};
             text.setBulletFontColor(colorBytes);
             assertArrayEquals(colorBytes, text.getBulletFontColorAsBytes());
 
@@ -194,6 +194,34 @@ class TestXSSFTextParagraph {
             assertNotNull(text.toString());
 
             new XSSFTextParagraph(text.getXmlObject(), shape.getCTShape());
+        }
+    }
+
+    @Test
+    void testXSSFTextParagraph2() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+
+            XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4));
+            XSSFTextRun run = shape.getTextParagraphs().get(0).getTextRuns().get(0);
+            final byte[] colorBytes = new byte[]{0, (byte) 255, (byte) 255};
+            run.setFont("Arial");
+            run.setFontColor(colorBytes);
+            run.setText("Test String");
+
+            List<XSSFTextParagraph> paras = shape.getTextParagraphs();
+            assertEquals(1, paras.size());
+
+            XSSFTextParagraph text = paras.get(0);
+            assertEquals("Test String", text.getText());
+
+            List<XSSFTextRun> runs = text.getTextRuns();
+            assertEquals(1, runs.size());
+            XSSFTextRun run2 = runs.get(0);
+            assertEquals(run.getText(), run2.getText());
+            assertEquals(run.getFontFamily(), run2.getFontFamily());
+            assertArrayEquals(run.getFontColorAsBytes(), run2.getFontColorAsBytes());
         }
     }
 }

@@ -390,7 +390,7 @@ public class XSSFRichTextString implements RichTextString {
      * Return a copy of the font in use at a particular index.
      *
      * @param index         The index.
-     * @return              A copy of the  font that's currently being applied at that
+     * @return              A copy of the font that's currently being applied at that
      *                      index or null if no font is being applied or the
      *                      index is out of range.
      */
