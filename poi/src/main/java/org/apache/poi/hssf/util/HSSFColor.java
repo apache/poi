@@ -156,29 +156,29 @@ public class HSSFColor implements Color {
         this(0x40, -1, 0x00);
     }
 
-    /** Deprecated constructor. Adds dependency on {@code java.desktop} module
-     * just to extract RGB from {@link java.awt.Color}. Replace usage of
-     * this constructor by:
+    /** Constructs new instance of {@code HSSFColor} by
+     * extracting RGB from {@link java.awt.Color}. The code is equivalent
+     * to calling:
      * <pre>
      * new HSSFColor(index, index2, color.getRGB());
      * </pre>
-     * or specify RGB directly.
+     * or specifying {@link #HSSFColor(int, int, int) RGB directly}.
      *
      * @param index
      * @param index2
-     * @param color
-     * @deprecated prefer constructor that specifies RGB directly as a value
+     * @param color color to extract RGB from
      */
-    @Deprecated
     public HSSFColor(int index, int index2, java.awt.Color color) {
         this(index, index2, color.getRGB());
     }
 
-    /* Creates new instance of HSSFColor by specifying RGB as an {@code int}
-    * value.
+    /** Constructs new instance of {@code HSSFColor} by
+    * specifying RGB as an {@code int} value. Given {@code blue}, {@code green} and
+    * {@code blue} being byte values between {@code 0x00 to 0xff}, then
+    * {@code rgb = blue + (green >> 8) + (red >> 16)}.
     * @param index
     * @param index2
-    *
+    * @param rgb combined value of RGB
     */
     public HSSFColor(int index, int index2, int rgb) {
         this.index = index;
