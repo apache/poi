@@ -34,7 +34,7 @@ import org.apache.poi.ss.usermodel.Color;
  * Each color has an index (for the standard palette in Excel (tm) ),
  * native (RGB) triplet and string triplet.  The string triplet is as the
  * color would be represented by Gnumeric.  Having (string) this here is a bit of a
- * collision of function between HSSF and the HSSFSerializer but I think its
+ * collision of function between HSSF and the HSSFSerializer but I think it's
  * a reasonable one in this case.
  */
 public class HSSFColor implements Color {
