@@ -16,8 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import java.awt.Color;
-
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
@@ -58,7 +56,7 @@ public class XSSFTextRun {
         return _r;
     }
 
-    public void setFontColor(Color color) {
+    public void setFontColor(java.awt.Color color) {
         setFontColor(new byte[]{(byte)color.getRed(), (byte)color.getGreen(), (byte)color.getBlue()});
     }
 
@@ -79,12 +77,12 @@ public class XSSFTextRun {
         if(fill.isSetSysClr()) fill.unsetSysClr();
     }
 
-    public Color getFontColor() {
+    public java.awt.Color getFontColor() {
         final byte[] rgb = getFontColorAsBytes();
         if (rgb.length == 3) {
-            return new Color(0xFF & rgb[0], 0xFF & rgb[1], 0xFF & rgb[2]);
+            return new java.awt.Color(0xFF & rgb[0], 0xFF & rgb[1], 0xFF & rgb[2]);
         } else {
-            return new Color(0xFF & rgb[1], 0xFF & rgb[2], 0xFF & rgb[3], 0xFF & rgb[0]);
+            return new java.awt.Color(0xFF & rgb[1], 0xFF & rgb[2], 0xFF & rgb[3], 0xFF & rgb[0]);
         }
     }
 
