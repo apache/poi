@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.ooxml.util.NumberHelper;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
@@ -579,15 +580,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
             // check if the percentage value is scaled
             CTTextNormalAutofit normAutofit = _shape.getTxBody().getBodyPr().getNormAutofit();
             if(normAutofit != null && normAutofit.isSetLnSpcReduction()) {
-                final Object lnSpcReduction = normAutofit.getLnSpcReduction();
-                final int divisor = 100000;
-                if (lnSpcReduction instanceof Number) {
-                    double scale = 1 - ((Number) lnSpcReduction).doubleValue() / divisor;
-                    lnSpc *= scale;
-                } else if (lnSpcReduction instanceof String) {
-                    double scale = 1 - Double.parseDouble((String) lnSpcReduction) / divisor;
-                    lnSpc *= scale;
-                }
+                double scale = 1 - NumberHelper.toDouble(normAutofit.getLnSpcReduction()) / 100000;
+                lnSpc *= scale;
             }
         }
 

@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.ooxml.util.NumberHelper;
 import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
@@ -131,13 +132,7 @@ public class XSSFTextRun {
         double size = XSSFFont.DEFAULT_FONT_SIZE;   // default font size
         CTTextNormalAutofit afit = getParentParagraph().getParentShape().getTxBody().getBodyPr().getNormAutofit();
         if (afit != null && afit.isSetFontScale()) {
-            final Object fs = afit.getFontScale();
-            final int divisor = 100000;
-            if (fs instanceof Number) {
-                scale = ((Number) fs).doubleValue() / divisor;
-            } else if (fs instanceof String) {
-                scale = Double.parseDouble((String) fs) / divisor;
-            }
+            scale = NumberHelper.toDouble(afit.getFontScale()) / 100000;
         }
 
         CTTextCharacterProperties rPr = getRPrOrNull();
