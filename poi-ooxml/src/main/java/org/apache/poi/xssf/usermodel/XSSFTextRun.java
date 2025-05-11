@@ -130,7 +130,15 @@ public class XSSFTextRun {
         double scale = 1;
         double size = XSSFFont.DEFAULT_FONT_SIZE;   // default font size
         CTTextNormalAutofit afit = getParentParagraph().getParentShape().getTxBody().getBodyPr().getNormAutofit();
-        if(afit != null) scale = (double)afit.getFontScale() / 100000;
+        if (afit != null && afit.isSetFontScale()) {
+            final Object fs = afit.getFontScale();
+            final int divisor = 100000;
+            if (fs instanceof Number) {
+                scale = ((Number) fs).doubleValue() / divisor;
+            } else if (fs instanceof String) {
+                scale = Double.parseDouble((String) fs) / divisor;
+            }
+        }
 
         CTTextCharacterProperties rPr = getRPrOrNull();
         if(rPr != null && rPr.isSetSz()){

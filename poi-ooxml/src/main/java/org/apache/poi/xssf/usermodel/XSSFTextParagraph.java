@@ -578,9 +578,16 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         if(lnSpc > 0) {
             // check if the percentage value is scaled
             CTTextNormalAutofit normAutofit = _shape.getTxBody().getBodyPr().getNormAutofit();
-            if(normAutofit != null) {
-                double scale = 1 - (double)normAutofit.getLnSpcReduction() / 100000;
-                lnSpc *= scale;
+            if(normAutofit != null && normAutofit.isSetLnSpcReduction()) {
+                final Object lnSpcReduction = normAutofit.getLnSpcReduction();
+                final int divisor = 100000;
+                if (lnSpcReduction instanceof Number) {
+                    double scale = 1 - ((Number) lnSpcReduction).doubleValue() / divisor;
+                    lnSpc *= scale;
+                } else if (lnSpcReduction instanceof String) {
+                    double scale = 1 - Double.parseDouble((String) lnSpcReduction) / divisor;
+                    lnSpc *= scale;
+                }
             }
         }
 
