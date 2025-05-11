@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.util.Removal;
 
 
 /**
@@ -167,7 +168,9 @@ public class HSSFColor implements Color {
      * @param index
      * @param index2
      * @param color color to extract RGB from
+     * @deprecated use {@link #HSSFColor(int, int, int)} instead
      */
+    @Removal(version = "7.0.0")
     public HSSFColor(int index, int index2, java.awt.Color color) {
         this(index, index2, color.getRGB());
     }
