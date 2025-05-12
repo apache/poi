@@ -47,6 +47,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 
 /**
@@ -806,7 +807,7 @@ public final class CellUtil {
      * Sets the format properties of the given style based on the given map.
      *
      * @param style cell style
-     * @param workbook parent workbook
+     * @param workbook parent workbook (can be null but some fomt info will not be copied if null is passed)
      * @param properties map of format properties (CellPropertyType -> Object)
      * @see #getFormatProperties(CellStyle)
      */
@@ -848,7 +849,9 @@ public final class CellUtil {
             }
         }
 
-        style.setFont(workbook.getFontAt(getInt(properties, CellPropertyType.FONT)));
+        if (workbook != null) {
+            style.setFont(workbook.getFontAt(getInt(properties, CellPropertyType.FONT)));
+        }
         style.setHidden(getBoolean(properties, CellPropertyType.HIDDEN));
         style.setIndention(getShort(properties, CellPropertyType.INDENTION));
         style.setLeftBorderColor(getShort(properties, CellPropertyType.LEFT_BORDER_COLOR));
@@ -859,6 +862,25 @@ public final class CellUtil {
         style.setWrapText(getBoolean(properties, CellPropertyType.WRAP_TEXT));
         style.setShrinkToFit(getBoolean(properties, CellPropertyType.SHRINK_TO_FIT));
         style.setQuotePrefixed(getBoolean(properties, CellPropertyType.QUOTE_PREFIXED));
+    }
+
+    /**
+     * Clones the style from one cell to another. For internal use only.
+     * Users should use the cloneStyleFrom method on CellStyle instead.
+     *
+     * @param src source cell style
+     * @param dest destination cell style
+     * @param destWorkbook destination workbook (can be null but some font info will not be copied if null is passed)
+     * @throws IllegalArgumentException if source or destination styles are null
+     * @since POI 5.4.2
+     */
+    @Internal
+    public static void cloneStyle(CellStyle src, CellStyle dest, Workbook destWorkbook) {
+        if (src == null || dest == null) {
+            throw new IllegalArgumentException("Source and destination styles must not be null");
+        }
+        EnumMap<CellPropertyType, Object> properties = getFormatProperties(src);
+        setFormatProperties(dest, destWorkbook, properties);
     }
 
     /**

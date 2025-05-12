@@ -29,6 +29,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.ReadingOrder;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.StylesTable;
@@ -202,7 +203,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
             _font = null;
             _cellAlignment = null;
         } else {
-            throw new IllegalArgumentException("Can only clone from one XSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
+            CellUtil.cloneStyle(source, this, null);
         }
     }
 

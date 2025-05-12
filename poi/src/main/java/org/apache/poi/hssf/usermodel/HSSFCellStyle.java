@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.ThreadLocalUtil;
 
@@ -49,22 +50,29 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     private final ExtendedFormatRecord _format;
     private final short                _index;
     private final InternalWorkbook     _workbook;
+    private final HSSFWorkbook         _hssfWorkbook;
 
-
-    /** Creates new HSSFCellStyle why would you want to do this?? */
     protected HSSFCellStyle(short index, ExtendedFormatRecord rec, HSSFWorkbook workbook)
     {
-        this(index, rec, workbook.getWorkbook());
+        _workbook = workbook.getInternalWorkbook();
+        _hssfWorkbook = workbook;
+        _index = index;
+        _format = rec;
     }
+
+    @Deprecated
+    @Removal(version = "7.0.0")
     protected HSSFCellStyle(short index, ExtendedFormatRecord rec, InternalWorkbook workbook)
     {
         _workbook = workbook;
+        _hssfWorkbook = null;
         _index = index;
-        _format     = rec;
+        _format = rec;
     }
 
     protected HSSFCellStyle(HSSFCellStyle other) {
         _workbook = other._workbook;
+        _hssfWorkbook = other._hssfWorkbook;
         _index = other._index;
         _format = other._format;
     }
@@ -850,8 +858,8 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     public void cloneStyleFrom(CellStyle source) {
         if(source instanceof HSSFCellStyle) {
             this.cloneStyleFrom((HSSFCellStyle)source);
-        } else {
-            throw new IllegalArgumentException("Can only clone from one HSSFCellStyle to another, not between HSSFCellStyle and XSSFCellStyle");
+        } else if (_hssfWorkbook != null) {
+            CellUtil.cloneStyle(source, this, _hssfWorkbook);
         }
     }
     public void cloneStyleFrom(HSSFCellStyle source) {
