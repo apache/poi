@@ -862,7 +862,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
             CellUtil.cloneStyle(source, this, _hssfWorkbook);
         }
     }
-    
+
     public void cloneStyleFrom(HSSFCellStyle source) {
         // First we need to clone the extended format
         //  record

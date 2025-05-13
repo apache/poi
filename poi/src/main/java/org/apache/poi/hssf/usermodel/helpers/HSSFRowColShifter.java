@@ -62,19 +62,19 @@ import static org.apache.logging.log4j.util.Unbox.box;
     }
 
     /**
-     * Update the formulas in specified row using the formula shifting policy specified by shifter
+     * Update the formulas in the specified row using the formula shifting policy specified by shifter
      *
      * @param row the row to update the formulas on
      * @param formulaShifter the formula shifting policy
      */
     /*package*/ static void updateRowFormulas(HSSFRow row, FormulaShifter formulaShifter) {
-        HSSFSheet sheet = row.getSheet();
-        for (Cell c : row) {
-            HSSFCell cell = (HSSFCell) c;
-            String formula = cell.getCellFormula();
-            if (formula.length() > 0) {
-                String shiftedFormula = shiftFormula(row, formula, formulaShifter);
-                cell.setCellFormula(shiftedFormula);
+        for (Cell cell : row) {
+            if (cell.getCellType() == CellType.FORMULA) {
+                String formula = cell.getCellFormula();
+                if (formula != null && !formula.isEmpty()) {
+                    String shiftedFormula = shiftFormula(row, formula, formulaShifter);
+                    cell.setCellFormula(shiftedFormula);
+                }
             }
         }
     }
