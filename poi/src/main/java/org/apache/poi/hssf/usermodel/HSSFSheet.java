@@ -645,7 +645,7 @@ public final class HSSFSheet implements Sheet {
         }
 
         ExtendedFormatRecord xf = _book.getExFormatAt(styleIndex);
-        return new HSSFCellStyle(styleIndex, xf, _book);
+        return new HSSFCellStyle(styleIndex, xf, _workbook);
     }
 
     /**
