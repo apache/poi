@@ -53,6 +53,17 @@ public class XWPFSDTContent implements ISDTContent {
                 } else if (o instanceof CTSdtRun) {
                     XWPFSDT c = new XWPFSDT(((CTSdtRun) o), part);
                     bodyElements.add(c);
+                } else if (o instanceof CTTrackChange) {
+                    try (final XmlCursor trackChangeCursor = o.newCursor()) {
+                        trackChangeCursor.selectPath("child::*");
+                        while (trackChangeCursor.toNextSelection()) {
+                            XmlObject trackChangeChild = trackChangeCursor.getObject();
+                            if (trackChangeChild instanceof CTR){
+                                XWPFRun run = new XWPFRun((CTR) trackChangeChild, parent);
+                                bodyElements.add(run);
+                            }
+                        }
+                    }
                 }
             }
         }
