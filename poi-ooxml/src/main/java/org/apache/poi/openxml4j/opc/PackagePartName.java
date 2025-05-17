@@ -356,7 +356,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
     private static void throwExceptionIfPartNameNotStartsWithForwardSlashChar(
             URI partUri) throws InvalidFormatException {
         String uriPath = partUri.getPath();
-        if (uriPath.length() > 0
+        if (!uriPath.isEmpty()
                 && uriPath.charAt(0) != PackagingURIHelper.FORWARD_SLASH_CHAR) {
             throw new InvalidFormatException(
                     "A part name shall start with a forward slash ('/') character [M1.4]: "
@@ -377,7 +377,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
     private static void throwExceptionIfPartNameEndsWithForwardSlashChar(
             URI partUri) throws InvalidFormatException {
         String uriPath = partUri.getPath();
-        if (uriPath.length() > 0
+        if (!uriPath.isEmpty()
                 && uriPath.charAt(uriPath.length() - 1) == PackagingURIHelper.FORWARD_SLASH_CHAR) {
             throw new InvalidFormatException(
                     "A part name shall not have a forward slash as the last character [M1.5]: "
@@ -422,7 +422,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
      */
     public String getExtension() {
         String fragment = this.partNameURI.getPath();
-        if (fragment.length() > 0) {
+        if (!fragment.isEmpty()) {
             int i = fragment.lastIndexOf('.');
             if (i > -1) {
                 return fragment.substring(i + 1);

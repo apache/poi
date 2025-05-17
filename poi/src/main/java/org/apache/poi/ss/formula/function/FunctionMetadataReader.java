@@ -124,7 +124,7 @@ final class FunctionMetadataReader {
         byte returnClassCode = parseReturnTypeCode(parts[4]);
         byte[] parameterClassCodes = parseOperandTypeCodes(parts[5]);
         // 6 isVolatile
-        boolean hasNote = parts[7].length() > 0;
+        boolean hasNote = !parts[7].isEmpty();
 
         validateFunctionName(functionName);
         // TODO - make POI use isVolatile
@@ -134,7 +134,7 @@ final class FunctionMetadataReader {
 
 
     private static byte parseReturnTypeCode(String code) {
-        if(code.length() == 0) {
+        if(code.isEmpty()) {
             return Ptg.CLASS_REF; // happens for GETPIVOTDATA
         }
         return parseOperandTypeCode(code);

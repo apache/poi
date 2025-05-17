@@ -302,7 +302,7 @@ public class XSSFEventBasedExcelExtractor
         for (XSSFShape shape : shapes) {
             if (shape instanceof XSSFSimpleShape) {
                 String sText = ((XSSFSimpleShape) shape).getText();
-                if (sText != null && sText.length() > 0) {
+                if (sText != null && !sText.isEmpty()) {
                     text.append(sText).append('\n');
                 }
             }
@@ -384,7 +384,7 @@ public class XSSFEventBasedExcelExtractor
          */
         private void appendHeaderFooterText(StringBuilder buffer, String name) {
             String text = headerFooterMap.get(name);
-            if (text != null && text.length() > 0) {
+            if (text != null && !text.isEmpty()) {
                 // this is a naive way of handling the left, center, and right
                 // header and footer delimiters, but it seems to be as good as
                 // the method used by XSSFExcelExtractor

@@ -382,7 +382,7 @@ public class SheetDataWriter implements Closeable {
      *  need to be preserved with the xml:space=\"preserve\" attribute
      */
     boolean hasLeadingTrailingSpaces(String str) {
-        if (str != null && str.length() > 0) {
+        if (str != null && !str.isEmpty()) {
             char firstChar = str.charAt(0);
             char lastChar  = str.charAt(str.length() - 1);
             return Character.isWhitespace(firstChar) || Character.isWhitespace(lastChar) ;

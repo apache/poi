@@ -287,7 +287,7 @@ public final class PackagingURIHelper {
         //  form must actually be an absolute URI
         if(sourceURI.toString().equals("/")) {
             String path = targetURI.getPath();
-            if(msCompatible && path.length() > 0 && path.charAt(0) == '/') {
+            if(msCompatible && !path.isEmpty() && path.charAt(0) == '/') {
                 try {
                     targetURI = new URI(path.substring(1));
                 } catch (Exception e) {
@@ -701,7 +701,7 @@ public final class PackagingURIHelper {
         }
 
         // trailing white spaces must be url-encoded, see Bugzilla 53282
-        if(value.length() > 0 ){
+        if(!value.isEmpty()){
             StringBuilder b = new StringBuilder();
             int idx = value.length() - 1;
             for(; idx >= 0; idx--){

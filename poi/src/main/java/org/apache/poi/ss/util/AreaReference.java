@@ -326,7 +326,7 @@ public class AreaReference {
         String currentSegment = "";
         StringTokenizer st = new StringTokenizer(reference, ",");
         while(st.hasMoreTokens()) {
-            if (currentSegment.length() > 0) {
+            if (!currentSegment.isEmpty()) {
                 currentSegment += ",";
             }
             currentSegment += st.nextToken();
@@ -336,7 +336,7 @@ public class AreaReference {
                 currentSegment = "";
             }
         }
-        if (currentSegment.length() > 0) {
+        if (!currentSegment.isEmpty()) {
             results.add(currentSegment);
         }
         return results.toArray(new String[0]);

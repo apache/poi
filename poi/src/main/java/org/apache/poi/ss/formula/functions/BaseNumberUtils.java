@@ -23,7 +23,7 @@ public class BaseNumberUtils {
 
 
     public static double convertToDecimal(String value, int base, int maxNumberOfPlaces) throws IllegalArgumentException {
-        if (value == null || value.length() == 0) {
+        if (value == null || value.isEmpty()) {
             return 0.0;
         }
 

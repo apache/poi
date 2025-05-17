@@ -169,7 +169,7 @@ public final class POIDataSamples {
                     + "' not found in data dir '" + _resolvedDataDir.getAbsolutePath() + "'");
         }
         try {
-            if(sampleFileName.length() > 0) {
+            if(!sampleFileName.isEmpty()) {
                String fn = sampleFileName;
                if(fn.indexOf('/') > 0) {
                   fn = fn.substring(fn.indexOf('/')+1);

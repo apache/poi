@@ -192,7 +192,7 @@ public class XSSFExcelExtractor
                     for (XSSFShape shape : drawing.getShapes()){
                         if (shape instanceof XSSFSimpleShape){
                             String boxText = ((XSSFSimpleShape)shape).getText();
-                            if (boxText.length() > 0){
+                            if (!boxText.isEmpty()){
                                 text.append(boxText);
                                 text.append('\n');
                             }

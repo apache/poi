@@ -428,7 +428,7 @@ public abstract class BaseXSSFEvaluationWorkbook implements FormulaRenderingWork
             // TODO - no idea if this is right
             CTDefinedName ctn = _nameRecord.getCTName();
             String strVal = ctn.getStringValue();
-            return !ctn.getFunction() && strVal != null && strVal.length() > 0;
+            return !ctn.getFunction() && strVal != null && !strVal.isEmpty();
         }
 
         @Override

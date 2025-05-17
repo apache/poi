@@ -171,7 +171,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 
         public void addFunction(int funcIx, boolean hasFootnote, String funcName, int minParams, int maxParams,
                                 String returnClass, String paramClasses, String volatileFlagStr) {
-            boolean isVolatile = volatileFlagStr.length() > 0;
+            boolean isVolatile = !volatileFlagStr.isEmpty();
 
             Integer funcIxKey = funcIx;
             if(!_groupFunctionIndexes.add(funcIxKey)) {

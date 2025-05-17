@@ -116,22 +116,22 @@ public class CellReference implements GenericRecord {
         _sheetName = parts.sheetName;
 
         String colRef = parts.colRef;
-        _isColAbs = (colRef.length() > 0) && colRef.charAt(0) == '$';
+        _isColAbs = (!colRef.isEmpty()) && colRef.charAt(0) == '$';
         if (_isColAbs) {
             colRef = colRef.substring(1);
         }
-        if (colRef.length() == 0) {
+        if (colRef.isEmpty()) {
             _colIndex = -1;
         } else {
             _colIndex = convertColStringToIndex(colRef);
         }
 
         String rowRef=parts.rowRef;
-        _isRowAbs = (rowRef.length() > 0) && rowRef.charAt(0) == '$';
+        _isRowAbs = (!rowRef.isEmpty()) && rowRef.charAt(0) == '$';
         if (_isRowAbs) {
             rowRef = rowRef.substring(1);
         }
-        if (rowRef.length() == 0) {
+        if (rowRef.isEmpty()) {
             _rowIndex = -1;
         } else {
             // throws NumberFormatException if rowRef is not convertible to an int

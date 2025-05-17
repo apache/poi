@@ -51,16 +51,16 @@ class XSSFBHeaderFooter {
         String left = HEADER_FOOTER_HELPER.getLeftSection(rawString);
         String center = HEADER_FOOTER_HELPER.getCenterSection(rawString);
         String right = HEADER_FOOTER_HELPER.getRightSection(rawString);
-        if (left != null && left.length() > 0) {
+        if (left != null && !left.isEmpty()) {
             sb.append(left);
         }
-        if (center != null && center.length() > 0) {
+        if (center != null && !center.isEmpty()) {
             if (sb.length() > 0) {
                 sb.append(' ');
             }
             sb.append(center);
         }
-        if (right != null && right.length() > 0) {
+        if (right != null && !right.isEmpty()) {
             if (sb.length() > 0) {
                 sb.append(' ');
             }

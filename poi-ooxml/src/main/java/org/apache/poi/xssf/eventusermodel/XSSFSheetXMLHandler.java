@@ -417,7 +417,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
 
                 case SST_STRING:
                     String sstIndex = value.toString();
-                    if (sstIndex.length() > 0) {
+                    if (!sstIndex.isEmpty()) {
                         try {
                             int idx = Integer.parseInt(sstIndex);
                             RichTextString rtss = sharedStringsTable.getItemAt(idx);
@@ -430,7 +430,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
 
                 case NUMBER:
                     String n = value.toString();
-                    if (this.formatString != null && n.length() > 0) {
+                    if (this.formatString != null && !n.isEmpty()) {
                         try {
                             thisStr = formatter.formatRawCellContents(
                                     Double.parseDouble(n), this.formatIndex, this.formatString);

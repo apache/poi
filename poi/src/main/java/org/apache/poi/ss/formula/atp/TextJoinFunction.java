@@ -86,7 +86,7 @@ final class TextJoinFunction implements FreeRefFunction {
                     String textValue = OperandResolver.coerceValueToString(textArg);
 
                     // If we're not ignoring empty values or if our value is not empty, add it to the list
-                    if (!ignoreEmpty || (textValue != null && textValue.length() > 0)) {
+                    if (!ignoreEmpty || (textValue != null && !textValue.isEmpty())) {
                         textValues.add(textValue);
                     }
                 }

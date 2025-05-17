@@ -483,7 +483,7 @@ public final class FormulaParser {
                 } else {
                     // Is it a named range?
                     String name = parseAsName();
-                    if (name.length() == 0) {
+                    if (name.isEmpty()) {
                         throw new FormulaParseException("Cell reference or Named Range "
                                 + "expected after sheet name at index " + _pointer + ".");
                     }

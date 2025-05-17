@@ -65,7 +65,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         }
     }
 
-    public String getText(){
+    public String getText() {
         StringBuilder out = new StringBuilder();
         for (XSSFTextRun r : _runs) {
             out.append(r.getText());

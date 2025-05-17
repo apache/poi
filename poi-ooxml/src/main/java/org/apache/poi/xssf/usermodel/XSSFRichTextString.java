@@ -485,7 +485,7 @@ public class XSSFRichTextString implements RichTextString {
      */
     protected static void preserveSpaces(STXstring xs) {
         String text = xs.getStringValue();
-        if (text != null && text.length() > 0) {
+        if (text != null && !text.isEmpty()) {
             char firstChar = text.charAt(0);
             char lastChar  = text.charAt(text.length() - 1);
             if(Character.isWhitespace(firstChar) || Character.isWhitespace(lastChar)) {

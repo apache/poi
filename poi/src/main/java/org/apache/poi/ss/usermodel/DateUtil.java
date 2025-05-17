@@ -624,7 +624,7 @@ public class DateUtil {
         }
 
         // If we didn't get a real string, don't even cache it as we can always find this out quickly
-        if(formatString == null || formatString.length() == 0) {
+        if(formatString == null || formatString.isEmpty()) {
             return false;
         }
 

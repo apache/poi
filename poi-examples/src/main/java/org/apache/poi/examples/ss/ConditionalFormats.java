@@ -203,7 +203,7 @@ public final class ConditionalFormats {
             if (rn%10 == 0) {
                 str = str + "x10 ";
             }
-            if (str.length() == 0) {
+            if (str.isEmpty()) {
                 str = "nothing special...";
             }
             r.createCell(1).setCellValue("It is " + str);

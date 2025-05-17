@@ -152,7 +152,7 @@ public final class Value extends Fixed1ArgFunction implements ArrayFunction {
                         foundPercentage = true;
                         break;
                     }
-                    if (remainingTextTrimmed.length() > 0) {
+                    if (!remainingTextTrimmed.isEmpty()) {
                         // intervening spaces not allowed once the digits start
                         return null;
                     }

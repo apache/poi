@@ -359,7 +359,7 @@ public class XSSFReader {
             for (XSSFSheetRef xssfSheetRef : xmlSheetRefReader.getSheetRefs()) {
                 //if there's no relationship id, silently skip the sheet
                 String sheetId = xssfSheetRef.getId();
-                if (sheetId != null && sheetId.length() > 0) {
+                if (sheetId != null && !sheetId.isEmpty()) {
                     validSheets.add(xssfSheetRef);
                 }
             }
