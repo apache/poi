@@ -137,6 +137,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @deprecated Use {@link XWPFRun#XWPFRun(CTR, IRunBody)}
      */
     @Deprecated
+    @Removal(version = "7.0.0")
     public XWPFRun(CTR r, XWPFParagraph p) {
         this(r, (IRunBody) p);
     }

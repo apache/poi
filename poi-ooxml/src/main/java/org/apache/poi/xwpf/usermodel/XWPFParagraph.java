@@ -109,14 +109,13 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * sub-paragraph that correspond to character text
      * runs, and builds the appropriate runs for these.
      */
-    @SuppressWarnings("deprecation")
     private void buildRunsInOrderFromXml(XmlObject object) {
         try (XmlCursor c = object.newCursor()) {
             c.selectPath("child::*");
             while (c.toNextSelection()) {
                 XmlObject o = c.getObject();
                 if (o instanceof CTR) {
-                    XWPFRun r = new XWPFRun((CTR) o, this);
+                    XWPFRun r = new XWPFRun((CTR) o, (IRunBody) this);
                     runs.add(r);
                     iruns.add(r);
                 }
@@ -147,7 +146,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                 if (o instanceof CTRunTrackChange) {
                     final CTRunTrackChange parentRecord = (CTRunTrackChange) o;
                     for (CTR r : parentRecord.getRArray()) {
-                        XWPFRun cr = new XWPFRun(r, this);
+                        XWPFRun cr = new XWPFRun(r, (IRunBody) this);
                         runs.add(cr);
                         iruns.add(cr);
                     }
