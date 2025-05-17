@@ -212,7 +212,7 @@ public final class TextObjectRecord extends ContinuableRecord {
     protected void serialize(ContinuableRecordOutput out) {
 
         serializeTXORecord(out);
-        if (_text.getString().length() > 0) {
+        if (_text.length() == 0) {
             serializeTrailingRecords(out);
         }
     }
