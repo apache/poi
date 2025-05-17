@@ -391,7 +391,7 @@ public class SheetDataWriter implements Closeable {
     }
 
     protected void outputEscapedString(String s) throws IOException {
-        if (s == null || s.length() == 0) {
+        if (s == null || s.isEmpty()) {
             return;
         }
 

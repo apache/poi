@@ -110,7 +110,7 @@ public class XDGFText {
     public void draw(Graphics2D graphics) {
 
         String textContent = getTextContent();
-        if (textContent.length() == 0) {
+        if (textContent.isEmpty()) {
             return;
         }
 
@@ -148,7 +148,7 @@ public class XDGFText {
         float nextY = 0;
         for (String line : lines) {
 
-            if (line.length() == 0) {
+            if (line.isEmpty()) {
                 continue;
             }
 

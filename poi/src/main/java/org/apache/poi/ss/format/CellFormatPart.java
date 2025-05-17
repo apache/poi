@@ -251,7 +251,7 @@ public class CellFormatPart {
      */
     private static Color getColor(Matcher m) {
         String cdesc = m.group(COLOR_GROUP);
-        if (cdesc == null || cdesc.length() == 0)
+        if (cdesc == null || cdesc.isEmpty())
             return null;
         Color c = NAMED_COLORS.get(cdesc);
         if (c == null) {
@@ -270,7 +270,7 @@ public class CellFormatPart {
      */
     private CellFormatCondition getCondition(Matcher m) {
         String mdesc = m.group(CONDITION_OPERATOR_GROUP);
-        if (mdesc == null || mdesc.length() == 0)
+        if (mdesc == null || mdesc.isEmpty())
             return null;
         return CellFormatCondition.getInstance(m.group(
                 CONDITION_OPERATOR_GROUP), m.group(CONDITION_VALUE_GROUP));
@@ -509,7 +509,7 @@ public class CellFormatPart {
         StringBuffer fmt = new StringBuffer();
         while (m.find()) {
             String part = group(m, 0);
-            if (part.length() > 0) {
+            if (!part.isEmpty()) {
                 String repl = partHandler.handlePart(m, part, type, fmt);
                 if (repl == null) {
                     switch (part.charAt(0)) {

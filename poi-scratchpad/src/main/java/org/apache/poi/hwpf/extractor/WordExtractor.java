@@ -139,7 +139,7 @@ public final class WordExtractor implements POIOLE2TextExtractor {
      * Add the header/footer text, if it's not empty
      */
     private void appendHeaderFooter( String text, StringBuilder out ) {
-        if ( text == null || text.length() == 0 )
+        if ( text == null || text.isEmpty())
             return;
 
         text = text.replace( '\r', '\n' );

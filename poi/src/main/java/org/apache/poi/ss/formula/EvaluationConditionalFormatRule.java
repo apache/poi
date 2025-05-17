@@ -357,7 +357,7 @@ public class EvaluationConditionalFormatRule implements Comparable<EvaluationCon
 
         String f2 = rule.getFormula2();
         ValueEval eval2 = BlankEval.instance;
-        if (f2 != null && f2.length() > 0) {
+        if (f2 != null && !f2.isEmpty()) {
             eval2 = unwrapEval(workbookEvaluator.evaluate(f2, ConditionalFormattingEvaluator.getRef(cell), region));
         }
 

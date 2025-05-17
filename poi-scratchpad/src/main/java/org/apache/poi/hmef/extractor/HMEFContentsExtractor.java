@@ -141,10 +141,10 @@ public final class HMEFContentsExtractor {
             
             // Decide what to call it
             String filename = att.getLongFilename();
-            if(filename == null || filename.length() == 0) {
+            if(filename == null || filename.isEmpty()) {
                 filename = att.getFilename();
             }
-            if(filename == null || filename.length() == 0) {
+            if(filename == null || filename.isEmpty()) {
                 filename = "attachment" + count;
                 if(att.getExtension() != null) {
                     filename += att.getExtension();

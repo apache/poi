@@ -141,22 +141,23 @@ public class POIFSReader
      *             assumed
      * @param name the document name
      *
-     * @throws NullPointerException if listener is null or name is
-     *                                 null or empty
+     * @throws NullPointerException if listener is null or name is null
      * @throws IllegalStateException if read() has already been
-     *                                  called
+     *                                  called or name is empty
      */
-
     public void registerListener(final POIFSReaderListener listener,
                                  final POIFSDocumentPath path,
                                  final String name) {
-        if ((listener == null) || (name == null) || (name.length() == 0)) {
-            throw new NullPointerException();
+        if (listener == null || name == null) {
+            throw new NullPointerException("invalid null parameter");
+        }
+        if (name.isEmpty()) {
+            throw new IllegalStateException("name must not be empty");
         }
         if (registryClosed) {
-            throw new IllegalStateException();
+            throw new IllegalStateException("registry closed");
         }
-        registry.registerListener(listener, (path == null) ? new POIFSDocumentPath() : path, name);
+        registry.registerListener(listener, path == null ? new POIFSDocumentPath() : path, name);
     }
 
     /**

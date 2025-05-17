@@ -152,7 +152,7 @@ public class XSSFBHyperlinksTable {
             CellRangeAddress cellRangeAddress = new CellRangeAddress(hyperlinkCellRange.firstRow, hyperlinkCellRange.lastRow, hyperlinkCellRange.firstCol, hyperlinkCellRange.lastCol);
 
             String url = relIdToHyperlink.get(relId);
-            if (location.length() == 0) {
+            if (location.isEmpty()) {
                 location = url;
             }
 

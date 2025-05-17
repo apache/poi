@@ -1438,7 +1438,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     @Override
     public String toString() {
         String phonetic = getPhonetic();
-        if (phonetic.length() > 0) {
+        if (!phonetic.isEmpty()) {
             return text() + " (" + phonetic + ")";
         } else {
             return text();
@@ -1486,7 +1486,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
                 }
             }
             // Any picture text?
-            if (pictureText != null && pictureText.length() > 0) {
+            if (pictureText != null && !pictureText.isEmpty()) {
                 text.append("\n").append(pictureText).append("\n");
             }
         }

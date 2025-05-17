@@ -310,8 +310,7 @@ public abstract class AbstractWordConverter {
                     continue;
                 }
                 String text = characterRun.text();
-                if (text == null || text.length() == 0
-                    || text.charAt(0) != FIELD_BEGIN_MARK) {
+                if (text == null || text.isEmpty() || text.charAt(0) != FIELD_BEGIN_MARK) {
                     continue;
                 }
 

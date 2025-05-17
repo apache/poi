@@ -177,7 +177,7 @@ public class OutlookTextExtractor implements POIOLE2TextExtractor {
      * {@code "Nick <nick@example.com>; Jim <jim@example.com>"}
      */
     protected void handleEmails(StringBuilder s, String type, String displayText, Iterator<String> emails) {
-        if (displayText == null || displayText.length() == 0) {
+        if (displayText == null || displayText.isEmpty()) {
             return;
         }
 
