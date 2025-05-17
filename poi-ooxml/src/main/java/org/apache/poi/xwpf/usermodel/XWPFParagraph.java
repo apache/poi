@@ -145,22 +145,21 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                     iruns.add(cc);
                 }
                 if (o instanceof CTRunTrackChange) {
-                    for (CTR r : ((CTRunTrackChange) o).getRArray()) {
+                    final CTRunTrackChange parentRecord = (CTRunTrackChange) o;
+                    for (CTR r : parentRecord.getRArray()) {
                         XWPFRun cr = new XWPFRun(r, this);
                         runs.add(cr);
                         iruns.add(cr);
+                    }
+                    // add all the insertions as text
+                    for (CTRunTrackChange change : parentRecord.getInsArray()) {
+                        buildRunsInOrderFromXml(change);
                     }
                 }
                 if (o instanceof CTSmartTagRun) {
                     // Smart Tags can be nested many times.
                     // This implementation does not preserve the tagging information
                     buildRunsInOrderFromXml(o);
-                }
-                if (o instanceof CTRunTrackChange) {
-                    // add all the insertions as text
-                    for (CTRunTrackChange change : ((CTRunTrackChange) o).getInsArray()) {
-                        buildRunsInOrderFromXml(change);
-                    }
                 }
             }
         }
