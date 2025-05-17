@@ -83,11 +83,14 @@ public final class PropertyTable implements BATManaged {
 
         for (ByteBuffer bb : dataSource) {
             // Turn it into an array
-            byte[] data;
-            if (bb.hasArray() && bb.arrayOffset() == 0 &&
-                    bb.array().length == _bigBigBlockSize.getBigBlockSize()) {
-                data = bb.array();
-            } else {
+            byte[] data = null;
+            if (bb.hasArray() && bb.arrayOffset() == 0) {
+                final byte[] array = bb.array();
+                if (array.length == _bigBigBlockSize.getBigBlockSize()) {
+                    data = array;
+                }
+            }
+            if (data == null) {
                 data = IOUtils.safelyAllocate(_bigBigBlockSize.getBigBlockSize(), POIFSFileSystem.getMaxRecordLength());
 
                 int toRead = data.length;

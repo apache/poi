@@ -1155,7 +1155,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @return the LastParagraph of the document
      */
     public XWPFParagraph getLastParagraph() {
-        int lastPos = paragraphs.toArray().length - 1;
+        final int lastPos = paragraphs.size() - 1;
         return paragraphs.get(lastPos);
     }
 

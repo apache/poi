@@ -203,7 +203,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             if (run instanceof XWPFRun) {
                 XWPFRun xRun = (XWPFRun) run;
                 // don't include the text if reviewing is enabled and this is a deleted run
-                if (xRun.getCTR().getDelTextArray().length == 0) {
+                if (xRun.getCTR().sizeOfDelTextArray() == 0) {
                     out.append(xRun);
                 }
             } else if (run instanceof XWPFSDT) {
