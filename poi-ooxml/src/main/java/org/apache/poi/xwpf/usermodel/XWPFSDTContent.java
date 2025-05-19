@@ -134,8 +134,12 @@ public class XWPFSDTContent implements ISDTContent {
                 text.append(((XWPFSDT) o).getContent().getText());
                 addNewLine = true;
             } else if (o instanceof XWPFRun) {
-                text.append(o);
-                addNewLine = false;
+                XWPFRun xRun = (XWPFRun) o;
+                // don't include the text if reviewing is enabled and this is a deleted run
+                if (xRun.getCTR().getDelTextArray().length == 0) {
+                    text.append(o);
+                    addNewLine = false;
+                }
             }
             if (addNewLine && i < bodyElements.size() - 1) {
                 text.append("\n");

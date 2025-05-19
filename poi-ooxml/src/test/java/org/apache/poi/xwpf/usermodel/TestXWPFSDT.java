@@ -176,6 +176,18 @@ public final class TestXWPFSDT {
         }
     }
 
+     @Test
+    void testTrackChangeInSDT() throws IOException {
+        try (XWPFDocument doc =XWPFTestDataSamples.openSampleDocument("trackChangeInSDT.docx")) {
+            List<IBodyElement> bodyElements = doc.getBodyElements();
+            IBodyElement bodyElement = bodyElements.get(0);
+            if (bodyElement instanceof XWPFParagraph) {
+                XWPFParagraph p = (XWPFParagraph) bodyElement;
+                assertEquals("not in track change insert in track change ", p.getText());
+            }
+        }
+    }
+
     private List<XWPFAbstractSDT> extractAllSDTs(XWPFDocument doc) {
         List<XWPFAbstractSDT> sdts = new ArrayList<>();
 
