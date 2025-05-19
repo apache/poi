@@ -283,7 +283,7 @@ under the License.
     <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.35" usage="main-tests"/>
     <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.35" usage="main-tests"/>
     <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest:3.0" usage="main-tests"/>
-    <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.10.0" usage="main-tests"/>
+    <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.10.1" usage="main-tests"/>
     <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:4.11.0" usage="main-tests"/>
     <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.17.5" usage="main-tests"/>
     <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.17.5" usage="main-tests"/>
@@ -338,7 +338,7 @@ under the License.
 
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.10.2" usage="ooxml-tests"/>
-    <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:33.3.0-jre" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:33.4.8-jre" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:2.0.17" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.opczip" artifact="com.github.rzymek:opczip:1.2.0" usage="ooxml-tests"/>
