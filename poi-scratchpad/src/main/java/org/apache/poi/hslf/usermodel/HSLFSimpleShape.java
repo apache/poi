@@ -20,6 +20,9 @@ package org.apache.poi.hslf.usermodel;
 import java.awt.Color;
 
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
+import org.apache.poi.hslf.record.OEPlaceholderAtom;
+import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherChildAnchorRecord;
@@ -579,7 +582,99 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
     @Override
     public void setPlaceholder(Placeholder placeholder) {
-        getPlaceholderDetails().setPlaceholder(placeholder);
+        EscherSpRecord spRecord = getEscherChild(EscherSpRecord.RECORD_ID);
+        int flags = spRecord.getFlags();
+        if (placeholder == null) {
+            flags ^= EscherSpRecord.FLAG_HAVEMASTER;
+        } else {
+            flags |= EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HAVEMASTER;
+        }
+        spRecord.setFlags(flags);
+
+        // Placeholders can't be grouped
+        setEscherProperty(EscherPropertyTypes.PROTECTION__LOCKAGAINSTGROUPING, (placeholder == null ? -1 : 262144));
+
+        HSLFEscherClientDataRecord clientData = getClientData(false);
+        if (placeholder == null) {
+            if (clientData != null) {
+                clientData.removeChild(OEPlaceholderAtom.class);
+                clientData.removeChild(RoundTripHFPlaceholder12.class);
+                // remove client data if the placeholder was the only child to be carried
+                if (clientData.getChildRecords().isEmpty()) {
+                    getSpContainer().removeChildRecord(clientData);
+                }
+            }
+            return;
+        }
+
+        if (clientData == null) {
+            clientData = getClientData(true);
+        }
+
+        // OEPlaceholderAtom tells powerpoint that this shape is a placeholder
+        OEPlaceholderAtom oep = null;
+        RoundTripHFPlaceholder12 rtp = null;
+        for (org.apache.poi.hslf.record.Record r : clientData.getHSLFChildRecords()) {
+            if (r instanceof OEPlaceholderAtom) {
+                oep = (OEPlaceholderAtom)r;
+                break;
+            }
+            if (r instanceof RoundTripHFPlaceholder12) {
+                rtp = (RoundTripHFPlaceholder12)r;
+                break;
+            }
+        }
+
+        /**
+         * Extract from MSDN:
+         *
+         * There is a special case when the placeholder does not have a position in the layout.
+         * This occurs when the user has moved the placeholder from its original position.
+         * In this case the placeholder ID is -1.
+         */
+        byte phId;
+        HSLFSheet sheet = getSheet();
+        // TODO: implement/switch NotesMaster
+        if (sheet instanceof HSLFSlideMaster) {
+            phId = (byte)placeholder.nativeSlideMasterId;
+        } else if (sheet instanceof HSLFNotes) {
+            phId = (byte)placeholder.nativeNotesId;
+        } else {
+            phId = (byte)placeholder.nativeSlideId;
+        }
+
+        if (phId == -2) {
+            throw new HSLFException("Placeholder "+placeholder.name()+" not supported for this sheet type ("+sheet.getClass()+")");
+        }
+
+        switch (placeholder) {
+            case HEADER:
+            case FOOTER:
+                if (rtp == null) {
+                    rtp = new RoundTripHFPlaceholder12();
+                    rtp.setPlaceholderId(phId);
+                    clientData.addChild(rtp);
+                }
+                if (oep != null) {
+                    clientData.removeChild(OEPlaceholderAtom.class);
+                }
+                break;
+            default:
+                if (rtp != null) {
+                    clientData.removeChild(RoundTripHFPlaceholder12.class);
+                }
+                if (oep == null) {
+                    oep = new OEPlaceholderAtom();
+                    oep.setPlaceholderSize((byte)OEPlaceholderAtom.PLACEHOLDER_FULLSIZE);
+                    // TODO: placement id only "SHOULD" be unique ... check other placeholders on sheet for unique id
+                    oep.setPlacementId(-1);
+                    oep.setPlaceholderId(phId);
+                    clientData.addChild(oep);
+                }
+                break;
+        }
+        // reverted this call because of https://bz.apache.org/bugzilla/show_bug.cgi?id=69669
+        //getPlaceholderDetails().setPlaceholder(placeholder);
     }
 
 
