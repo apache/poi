@@ -62,9 +62,10 @@ public final class TestLine {
     @Test
     void testCreateLines() throws IOException {
 
+        final String title = "Lines tester";
         try (HSLFSlideShow ppt1 = new HSLFSlideShow()) {
             HSLFSlide slide1 = ppt1.createSlide();
-            slide1.addTitle().setText("Lines tester");
+            slide1.addTitle().setText(title);
 
             for (Object[] line : lines) {
                 HSLFLine hslfLine = new HSLFLine();
@@ -85,6 +86,7 @@ public final class TestLine {
 
             try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1)) {
                 HSLFSlide slide2 = ppt2.getSlides().get(0);
+                assertEquals(title, slide2.getTitle());
 
                 int idx = 0;
                 for (HSLFShape shape : slide2.getShapes().subList(1,14)) {
