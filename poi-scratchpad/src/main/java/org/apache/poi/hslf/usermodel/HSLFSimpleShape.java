@@ -80,6 +80,8 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      */
     protected HSLFHyperlink _hyperlink;
 
+    protected HSLFShapePlaceholderDetails _placeholderDetails;
+
     /**
      * Create a SimpleShape object and initialize it from the supplied Record container.
      *
@@ -564,9 +566,11 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
     @Override
     public HSLFShapePlaceholderDetails getPlaceholderDetails() {
-        return new HSLFShapePlaceholderDetails(this);
+        if (_placeholderDetails == null) {
+            _placeholderDetails = new HSLFShapePlaceholderDetails(this);
+        }
+        return _placeholderDetails;
     }
-
 
     @Override
     public Placeholder getPlaceholder() {
