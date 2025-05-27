@@ -3926,7 +3926,15 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet, OoxmlSheetEx
             if(minCell != Integer.MAX_VALUE) {
                 cellRangeAddress = new CellRangeAddress(getFirstRowNum(), getLastRowNum(), minCell, maxCell);
             }
+        } else {
+        	// sort columns
+            for(Map.Entry<Integer, XSSFRow> entry : _rows.entrySet()) {
+                XSSFRow row = entry.getValue();
+                // sorting happens in XSSFRow.fixupCTCells
+                row.onDocumentWrite();
+            }
         }
+
         if (cellRangeAddress != null) {
             if (worksheet.isSetDimension()) {
                 worksheet.getDimension().setRef(cellRangeAddress.formatAsString());
