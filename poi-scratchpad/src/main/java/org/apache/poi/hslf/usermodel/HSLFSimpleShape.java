@@ -587,6 +587,8 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
     @Override
     public void setPlaceholder(Placeholder placeholder) {
+        // reset the placeholder details so that the next call to getPlaceholderDetails() will reinitialize it
+        _placeholderDetails = null;
         updateSPRecord(this, placeholder);
 
         if (placeholder == null) {
@@ -640,11 +642,6 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
                 }
                 break;
         }
-        // reverted this call because of https://bz.apache.org/bugzilla/show_bug.cgi?id=69669
-        //getPlaceholderDetails().setPlaceholder(placeholder);
-
-        // reset the placeholder details so that the next call to getPlaceholderDetails() will reinitialize it
-        _placeholderDetails = null;
     }
 
     @Override
