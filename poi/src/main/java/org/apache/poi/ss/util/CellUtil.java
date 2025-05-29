@@ -574,7 +574,7 @@ public final class CellUtil {
     @Deprecated
     @Removal(version = "7.0.0")
     public static void setCellStyleProperties(Cell cell, Map<String, Object> properties) {
-        EnumMap<CellPropertyType, Object> strPropMap = new EnumMap<>(CellPropertyType.class);
+        final EnumMap<CellPropertyType, Object> strPropMap = new EnumMap<>(CellPropertyType.class);
         properties.forEach((k, v) -> strPropMap.put(namePropertyMap.get(k), v));
         setCellStyleProperties(cell, strPropMap, false);
     }
@@ -687,10 +687,16 @@ public final class CellUtil {
      * @param cell The cell that is to be changed.
      * @param property The name of the property that is to be changed.
      * @param propertyValue The value of the property that is to be changed.
-     *
+     * @throws NullPointerException if {@code cell} or {@code property} is null
      * @since POI 5.4.0
      */
     public static void setCellStyleProperty(Cell cell, CellPropertyType property, Object propertyValue) {
+        if (cell == null) {
+            throw new NullPointerException("Cell must not be null");
+        }
+        if (property == null) {
+            throw new NullPointerException("CellPropertyType must not be null");
+        }
         boolean disableNullColorCheck = false;
         final Map<CellPropertyType, Object> propMap;
         if (CellPropertyType.FILL_FOREGROUND_COLOR_COLOR.equals(property) && propertyValue == null) {
