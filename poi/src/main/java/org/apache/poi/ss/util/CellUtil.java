@@ -277,6 +277,7 @@ public final class CellUtil {
         map.put(BORDER_RIGHT, CellPropertyType.BORDER_RIGHT);
         map.put(BORDER_TOP, CellPropertyType.BORDER_TOP);
         map.put(BOTTOM_BORDER_COLOR, CellPropertyType.BOTTOM_BORDER_COLOR);
+        map.put(DATA_FORMAT, CellPropertyType.DATA_FORMAT);
         map.put(LEFT_BORDER_COLOR, CellPropertyType.LEFT_BORDER_COLOR);
         map.put(RIGHT_BORDER_COLOR, CellPropertyType.RIGHT_BORDER_COLOR);
         map.put(TOP_BORDER_COLOR, CellPropertyType.TOP_BORDER_COLOR);
@@ -290,9 +291,10 @@ public final class CellUtil {
         map.put(INDENTION, CellPropertyType.INDENTION);
         map.put(LOCKED, CellPropertyType.LOCKED);
         map.put(ROTATION, CellPropertyType.ROTATION);
-        map.put(VERTICAL_ALIGNMENT, CellPropertyType.VERTICAL_ALIGNMENT);
         map.put(SHRINK_TO_FIT, CellPropertyType.SHRINK_TO_FIT);
         map.put(QUOTE_PREFIXED, CellPropertyType.QUOTE_PREFIXED);
+        map.put(VERTICAL_ALIGNMENT, CellPropertyType.VERTICAL_ALIGNMENT);
+        map.put(WRAP_TEXT, CellPropertyType.WRAP_TEXT);
         namePropertyMap = Collections.unmodifiableMap(map);
     }
 
