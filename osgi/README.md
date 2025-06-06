@@ -25,11 +25,11 @@ Available in Maven Central: https://mvnrepository.com/artifact/net.sf.saxon/Saxo
 3. Apache XML Security for Java, Bouncy Castle and XML Commons Resolver 
 These are required to sign or validate signed Office documents. The OSGi bundles are available in Maven Central:
 
-    - Apache XML Security for Java: https://mvnrepository.com/artifact/org.apache.santuario/xmlsec/3.0.5
+    - Apache XML Security for Java: https://mvnrepository.com/artifact/org.apache.santuario/xmlsec/3.0.6
     
     - XML Commons Resolver: https://mvnrepository.com/artifact/xml-resolver/xml-resolver/1.2-osgi
     
-    - Bouncy Castle: https://mvnrepository.com/artifact/org.bouncycastle/bcprov-ext-jdk18on/1.77, https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk18on/1.77
+    - Bouncy Castle: https://mvnrepository.com/artifact/org.bouncycastle/bcprov-ext-jdk18on/1.81, https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk18on/1.81
 4. PDFBox and PDFBox Graphics2D  
 Required to render to PDF documents.
 The required jars can be downloaded from:
