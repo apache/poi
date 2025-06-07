@@ -18,6 +18,7 @@ package org.apache.poi.xslf;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
@@ -25,6 +26,7 @@ import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.xslf.usermodel.*;
 import org.apache.xmlbeans.XmlException;
@@ -166,5 +168,35 @@ class TestXSLFSlideShow {
             XmlObject copyTextRunXmlObject = copyTextShape.getTextParagraphs().get(0).getTextRuns().get(0).getXmlObject();
             assertNotEquals(templateTextRunXmlObject, copyTextRunXmlObject);
         }
+    }
+
+    @Test
+    void testBulletStyle_DoesNotThrowException() throws IOException {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+        XSLFAutoShape shape = slide.createAutoShape();
+        shape.setAnchor(new Rectangle2D.Double(50., 50., 300., 50.));
+        XSLFTextParagraph p = shape.addNewTextParagraph();
+        p.addNewTextRun().setText("Text bullet style bug");
+        assertDoesNotThrow(() -> p.setBulletStyle(20., Color.RED, "Calibri", AutoNumberingScheme.arabicParenRight));
+        ppt.close();
+    }
+
+    @Test
+    void testBulletStyle_setsCorrectValue() throws IOException {
+        XMLSlideShow ppt = new XMLSlideShow();
+        XSLFSlide slide = ppt.createSlide();
+        XSLFAutoShape shape = slide.createAutoShape();
+        shape.setAnchor(new Rectangle2D.Double(50., 50., 300., 50.));
+        XSLFTextParagraph p = shape.addNewTextParagraph();
+        p.addNewTextRun().setText("Text bullet style bug");
+        double fontSize = 20.;
+        AutoNumberingScheme scheme = AutoNumberingScheme.arabicParenRight;
+
+        p.setBulletStyle(fontSize, scheme);
+
+        assertEquals(fontSize, p.getBulletFontSize());
+        assertEquals(scheme, p.getAutoNumberingScheme());
+        ppt.close();
     }
 }
