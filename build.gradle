@@ -67,7 +67,7 @@ configurations {
 }
 
 dependencies {
-    antLibs("org.junit.jupiter:junit-jupiter:5.13.0")
+    antLibs("org.junit.jupiter:junit-jupiter:5.13.1")
     antLibs("org.apache.ant:ant-junitlauncher:1.10.15")
 }
 
@@ -77,7 +77,7 @@ ant.taskdef(name: "junit",
 
 
 wrapper {
-    gradleVersion = '8.14.1'
+    gradleVersion = '8.14.2'
 }
 
 group = 'org.apache.poi'
@@ -112,7 +112,7 @@ subprojects {
         commonsCompressVersion = '1.27.1'
         commonsIoVersion = '2.19.0'
         commonsMathVersion = '3.6.1'
-        junitVersion = '5.13.0'
+        junitVersion = '5.13.1'
         log4jVersion = '2.24.3'
         mockitoVersion = '4.11.0'
         hamcrestVersion = '3.0'
@@ -172,7 +172,7 @@ subprojects {
 
     dependencies {
         testImplementation "org.junit.jupiter:junit-jupiter:${junitVersion}"
-        testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.0'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.1'
         testImplementation "org.mockito:mockito-core:${mockitoVersion}"
         testImplementation "org.hamcrest:hamcrest:${hamcrestVersion}"
         testImplementation "org.apache.logging.log4j:log4j-core:${log4jVersion}"
@@ -422,7 +422,7 @@ subprojects {
                 jvmArgs += [
                     // see https://github.com/java9-modularity/gradle-modules-plugin/issues/97
                     // opposed to the recommendation there, it doesn't work to add ... to the dependencies
-                    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.0'
+                    // testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.13.1'
                     // gradles gradle-worker.jar is still not a JPMS module and thus runs as unnamed module
                     '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=org.apache.poi.poi',
                     '--add-exports','org.junit.platform.commons/org.junit.platform.commons.util=ALL-UNNAMED',
