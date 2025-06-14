@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.logging.log4j.Logger;
@@ -110,7 +111,9 @@ public class POIFSFileSystem extends BlockStore
         return MAX_RECORD_LENGTH;
     }
 
-    private POIFSFileSystem(boolean newFS) {
+    private POIFSFileSystem(Void unused, Consumer<? super POIFSFileSystem> initializer) {
+        // The unused argument is only to allow us to declare a protected constructor
+        // with initializer only.
         _header = new HeaderBlock(bigBlockSize);
         _property_table = new PropertyTable(_header);
         _mini_store = new POIFSMiniStore(this, _property_table.getRoot(), new ArrayList<>(), _header);
@@ -118,9 +121,7 @@ public class POIFSFileSystem extends BlockStore
         _bat_blocks = new ArrayList<>();
         _root = null;
 
-        if (newFS) {
-            createNewDataSource();
-        }
+        initializer.accept(this);
     }
 
     protected void createNewDataSource() {
@@ -134,7 +135,16 @@ public class POIFSFileSystem extends BlockStore
      * Constructor, intended for writing
      */
     public POIFSFileSystem() {
-        this(true);
+        this(POIFSFileSystem::createNewDataSource);
+    }
+
+    /**
+     * Constructor, intended for writing
+     *
+     * @since POI 5.5.0
+     */
+    protected POIFSFileSystem(Consumer<? super POIFSFileSystem> initializer) {
+        this(null, initializer);
 
         // Reserve block 0 for the start of the Properties Table
         // Create a single empty BAT, at pop that at offset 1
@@ -247,7 +257,7 @@ public class POIFSFileSystem extends BlockStore
     @SuppressWarnings("java:S2095")
     private POIFSFileSystem(FileChannel channel, File srcFile, boolean readOnly, boolean closeChannelOnError,
                             boolean closeChannelOnClose) throws IOException {
-        this(false);
+        this(null, fs -> { });
 
         try {
             // Initialize the datasource
@@ -312,7 +322,7 @@ public class POIFSFileSystem extends BlockStore
 
     public POIFSFileSystem(InputStream stream)
             throws IOException {
-        this(false);
+        this(null, fs -> { });
 
         boolean success = false;
         try (ReadableByteChannel channel = Channels.newChannel(stream)) {

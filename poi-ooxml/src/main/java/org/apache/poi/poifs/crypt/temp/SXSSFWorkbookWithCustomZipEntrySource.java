@@ -41,11 +41,11 @@ public class SXSSFWorkbookWithCustomZipEntrySource extends SXSSFWorkbook {
         super(20);
         setCompressTempFiles(true);
     }
-    
+
     @Override
     public void write(OutputStream stream) throws IOException {
         flushSheets();
-        EncryptedTempData tempData = new EncryptedTempData();
+        EncryptedTempData tempData = new EncryptedTempData(getTempFileCreationStrategy());
         ZipEntrySource source = null;
         try {
             try (OutputStream os = tempData.getOutputStream()) {
@@ -53,7 +53,7 @@ public class SXSSFWorkbookWithCustomZipEntrySource extends SXSSFWorkbook {
             }
             // provide ZipEntrySource to poi which decrypts on the fly
             try (InputStream tempStream = tempData.getInputStream()) {
-                source = AesZipFileZipEntrySource.createZipEntrySource(tempStream);
+                source = AesZipFileZipEntrySource.createZipEntrySource(tempStream, getTempFileCreationStrategy());
             }
             injectData(source, stream);
         } finally {
@@ -61,12 +61,12 @@ public class SXSSFWorkbookWithCustomZipEntrySource extends SXSSFWorkbook {
             IOUtils.closeQuietly(source);
         }
     }
-    
+
     @Override
     protected SheetDataWriter createSheetDataWriter() throws IOException {
         //log values to ensure these values are accessible to subclasses
         LOG.atInfo().log("isCompressTempFiles: {}", box(isCompressTempFiles()));
         LOG.atInfo().log("SharedStringSource: {}", getSharedStringSource());
-        return new SheetDataWriterWithDecorator();
+        return new SheetDataWriterWithDecorator(getTempFileCreationStrategy());
     }
 }

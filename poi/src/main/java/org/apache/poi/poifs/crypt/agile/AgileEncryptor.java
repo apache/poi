@@ -62,6 +62,7 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.RandomSingleton;
+import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 
@@ -207,10 +208,10 @@ public class AgileEncryptor extends Encryptor {
     }
 
     @Override
-    public OutputStream getDataStream(DirectoryNode dir)
+    public OutputStream getDataStream(DirectoryNode dir, TempFileCreationStrategy tmpStrategy)
             throws IOException, GeneralSecurityException {
         // TODO: initialize headers
-        return new AgileCipherOutputStream(dir);
+        return new AgileCipherOutputStream(dir, tmpStrategy);
     }
 
     /**
@@ -342,8 +343,8 @@ public class AgileEncryptor extends Encryptor {
      * unencrypted data as specified in section 2.3.4.4.
      */
     private class AgileCipherOutputStream extends ChunkedCipherOutputStream {
-        public AgileCipherOutputStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
-            super(dir, 4096);
+        public AgileCipherOutputStream(DirectoryNode dir, TempFileCreationStrategy tmpStrategy) throws IOException, GeneralSecurityException {
+            super(dir, 4096, tmpStrategy);
         }
 
         @Override

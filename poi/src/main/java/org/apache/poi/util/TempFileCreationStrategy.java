@@ -62,6 +62,19 @@ import java.io.IOException;
  */
 public interface TempFileCreationStrategy {
     /**
+     * Returns the strategy relying on the
+     * {@link TempFile#setTempFileCreationStrategy(TempFileCreationStrategy) currently set} temporary
+     * file creation strategy. That is, using the returned strategy is equivalent to
+     * directly using the {@link TempFile#createTempFile(String, String)} and
+     * {@link TempFile#createTempDirectory(String)} methods.
+     *
+     * @since POI 5.5.0
+     */
+    static TempFileCreationStrategy getDefaultStrategy() {
+        return GlobalTempFileCreationStrategy.GLOBAL_TEMP_FILE_CREATION_STRATEGY;
+    }
+
+    /**
      * Creates a new and empty temporary file.
      *
      * @param prefix The prefix to be used to generate the name of the temporary file.

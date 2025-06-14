@@ -39,6 +39,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 
 @Internal
 public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
@@ -64,13 +65,17 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     private boolean isClosed;
 
     public ChunkedCipherOutputStream(DirectoryNode dir, int chunkSize) throws IOException, GeneralSecurityException {
+        this(dir, chunkSize, TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    public ChunkedCipherOutputStream(DirectoryNode dir, int chunkSize, TempFileCreationStrategy tmpStrategy) throws IOException, GeneralSecurityException {
         super(null);
         this.chunkSize = chunkSize;
         int cs = chunkSize == STREAMING ? 4096 : chunkSize;
         this.chunk = IOUtils.safelyAllocate(cs, CryptoFunctions.MAX_RECORD_LENGTH);
         this.plainByteFlags = new SparseBitSet(cs);
         this.chunkBits = Integer.bitCount(cs-1);
-        this.fileOut = TempFile.createTempFile("encrypted_package", "crypt");
+        this.fileOut = tmpStrategy.createTempFile("encrypted_package", "crypt");
         this.out = Files.newOutputStream(fileOut.toPath());
         this.dir = dir;
         this.cipher = initCipherForBlock(null, 0, false);

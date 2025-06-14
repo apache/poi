@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
+import org.apache.poi.util.TempFileCreationStrategy;
 
 /**
  * Provides a way to get at all the ZipEntries
@@ -87,7 +88,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
     }
 
     /**
-     * Reads all the entries from the ZipInputStream 
+     * Reads all the entries from the ZipInputStream
      *  into memory, and don't close (since POI 4.0.1) the source stream.
      * We'll then eat lots of memory, but be able to
      *  work with the entries at-will.
@@ -96,6 +97,21 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
      * @see #setThresholdBytesForTempFiles
      */
     public ZipInputStreamZipEntrySource(ZipArchiveThresholdInputStream inp) throws IOException {
+        this(inp, TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    /**
+     * Reads all the entries from the ZipInputStream
+     *  into memory, and don't close (since POI 4.0.1) the source stream.
+     * We'll then eat lots of memory, but be able to
+     *  work with the entries at-will.
+     * @throws IOException if an error occurs while reading the zip entries
+     * @throws InvalidZipException if the input file contains an entry with an empty name or more than 1 entry with the same name
+     * @see #setThresholdBytesForTempFiles
+     *
+     * @since POI 5.5.0
+     */
+    public ZipInputStreamZipEntrySource(ZipArchiveThresholdInputStream inp, TempFileCreationStrategy tmpStrategy) throws IOException {
         final Set<String> filenames = new HashSet<>();
         for (;;) {
             final ZipArchiveEntry zipEntry = inp.getNextEntry();
@@ -111,7 +127,7 @@ public class ZipInputStreamZipEntrySource implements ZipEntrySource {
                 throw new InvalidZipException("Input file contains more than 1 entry with the name " + zipEntry.getName());
             }
             filenames.add(name);
-            zipEntries.put(name, new ZipArchiveFakeEntry(zipEntry, inp));
+            zipEntries.put(name, new ZipArchiveFakeEntry(zipEntry, inp, tmpStrategy));
         }
 
         streamToClose = inp;

@@ -83,6 +83,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -1051,8 +1052,8 @@ public final class TestPackage {
         try (final InputStream is = (useStream) ? xlsSamples.openResourceAsStream(name) : null) {
             assertThrows(NotOfficeXmlFileException.class, () -> {
                 try (final ZipPackage pkg = (useStream)
-                    ? new ZipPackage(is, PackageAccess.READ)
-                    : new ZipPackage(xlsSamples.getFile(name), PackageAccess.READ)) {
+                    ? new ZipPackage(is, PackageAccess.READ, TempFileCreationStrategy.getDefaultStrategy())
+                    : new ZipPackage(xlsSamples.getFile(name), PackageAccess.READ, TempFileCreationStrategy.getDefaultStrategy())) {
                     pkgTest[0] = pkg;
                     assertNotNull(pkg.getZipArchive());
                     assertFalse(pkg.getZipArchive().isClosed());

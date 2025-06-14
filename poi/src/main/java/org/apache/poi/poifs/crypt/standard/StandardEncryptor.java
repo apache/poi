@@ -50,7 +50,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutputStream;
 import org.apache.poi.util.RandomSingleton;
-import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 
 public class StandardEncryptor extends Encryptor {
     private static final Logger LOG = PoiLogManager.getLogger(StandardEncryptor.class);
@@ -119,11 +119,11 @@ public class StandardEncryptor extends Encryptor {
     }
 
     @Override
-    public OutputStream getDataStream(final DirectoryNode dir)
+    public OutputStream getDataStream(final DirectoryNode dir, TempFileCreationStrategy tmpStrategy)
     throws IOException, GeneralSecurityException {
         createEncryptionInfoEntry(dir);
         DataSpaceMapUtils.addDefaultDataSpace(dir);
-        return new StandardCipherOutputStream(dir);
+        return new StandardCipherOutputStream(dir, tmpStrategy);
     }
 
     protected class StandardCipherOutputStream extends FilterOutputStream implements POIFSWriterListener {
@@ -153,7 +153,11 @@ public class StandardEncryptor extends Encryptor {
         }
 
         protected StandardCipherOutputStream(DirectoryNode dir) throws IOException {
-            this(dir, TempFile.createTempFile("encrypted_package", "crypt"), true);
+            this(dir, TempFileCreationStrategy.getDefaultStrategy());
+        }
+
+        protected StandardCipherOutputStream(DirectoryNode dir, TempFileCreationStrategy tmpStrategy) throws IOException {
+            this(dir, tmpStrategy.createTempFile("encrypted_package", "crypt"), true);
         }
 
         @Override

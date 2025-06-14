@@ -31,6 +31,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.PrimitiveIterator;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -42,6 +43,7 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.CodepointsUtil;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
@@ -67,18 +69,39 @@ public class SheetDataWriter implements Closeable {
      */
     private SharedStringsTable _sharedStringSource;
 
+    // We are only creating a field for this to maintain backwards compatibility
+    // with code overriding the createTempFile method. Once that method is
+    // unavailable in POI 6.0.0, this field can be removed.
+    private final TempFileCreationStrategy _tmpStrategy;
+
     public SheetDataWriter() throws IOException {
+        this(TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    /**
+     * @since POI 5.5.0
+     */
+    public SheetDataWriter(TempFileCreationStrategy tmpStrategy) throws IOException {
+        _tmpStrategy = Objects.requireNonNull(tmpStrategy, "tmpStrategy");
         _fd = createTempFile();
         _out = createWriter(_fd);
     }
 
     public SheetDataWriter(Writer writer) throws IOException {
+        _tmpStrategy = TempFileCreationStrategy.getDefaultStrategy();
         _fd = null;
         _out = writer;
     }
 
     public SheetDataWriter(SharedStringsTable sharedStringsTable) throws IOException {
-        this();
+        this(sharedStringsTable, TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    /**
+     * @since POI 5.5.0
+     */
+    public SheetDataWriter(SharedStringsTable sharedStringsTable, TempFileCreationStrategy tmpStrategy) throws IOException {
+        this(tmpStrategy);
         this._sharedStringSource = sharedStringsTable;
     }
 
@@ -94,7 +117,7 @@ public class SheetDataWriter implements Closeable {
     @Removal(version = "6.0.0")
     //make this protected or private in POI 6.0.0 - no need for this to be public
     public File createTempFile() throws IOException {
-        return TempFile.createTempFile("poi-sxssf-sheet", ".xml");
+        return _tmpStrategy.createTempFile("poi-sxssf-sheet", ".xml");
     }
 
     /**

@@ -46,6 +46,7 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 
 /**
  * An example {@code ZipEntrySource} that has encrypted temp files to ensure that
@@ -106,12 +107,19 @@ public final class AesZipFileZipEntrySource implements ZipEntrySource {
     }
 
     public static AesZipFileZipEntrySource createZipEntrySource(InputStream is) throws IOException {
+        return createZipEntrySource(is, TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    /**
+     * @since POI 5.5.0
+     */
+    public static AesZipFileZipEntrySource createZipEntrySource(InputStream is, TempFileCreationStrategy tmpStrategy) throws IOException {
         try {
             // generate session key
             byte[] ivBytes = new byte[16], keyBytes = new byte[16];
             RandomSingleton.getInstance().nextBytes(ivBytes);
             RandomSingleton.getInstance().nextBytes(keyBytes);
-            final File tmpFile = TempFile.createTempFile("protectedXlsx", ".zip");
+            final File tmpFile = tmpStrategy.createTempFile("protectedXlsx", ".zip");
             try {
                 copyToFile(is, tmpFile, keyBytes, ivBytes);
                 return fileToSource(tmpFile, keyBytes, ivBytes);

@@ -28,6 +28,7 @@ import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPartMarshaller;
 import org.apache.poi.poifs.crypt.temp.EncryptedTempData;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.TempFileCreationStrategy;
 
 import java.io.*;
 
@@ -61,7 +62,33 @@ public final class EncryptedTempFilePackagePart extends PackagePart {
      */
     public EncryptedTempFilePackagePart(OPCPackage pack, PackagePartName partName,
                                         String contentType) throws InvalidFormatException, IOException {
-        this(pack, partName, contentType, true);
+        this(pack, partName, contentType, TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param pack
+     *            The owner package.
+     * @param partName
+     *            The part name.
+     * @param contentType
+     *            The content type.
+     * @param tmpStrategy
+     *            The strategy to create temporary files (if needed), may not be null.
+     * @throws InvalidFormatException
+     *             If the specified URI is not OPC compliant.
+     * @throws IOException
+     *             If temp file cannot be created.
+     * @since POI 5.5.0
+     */
+    public EncryptedTempFilePackagePart(
+            OPCPackage pack,
+            PackagePartName partName,
+            String contentType,
+            TempFileCreationStrategy tmpStrategy
+    ) throws InvalidFormatException, IOException {
+        this(pack, partName, contentType, true, tmpStrategy);
     }
 
     /**
@@ -83,8 +110,37 @@ public final class EncryptedTempFilePackagePart extends PackagePart {
     public EncryptedTempFilePackagePart(OPCPackage pack, PackagePartName partName,
                                         String contentType, boolean loadRelationships)
             throws InvalidFormatException, IOException {
+        this(pack, partName, contentType, loadRelationships, TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param pack
+     *            The owner package.
+     * @param partName
+     *            The part name.
+     * @param contentType
+     *            The content type.
+     * @param loadRelationships
+     *            Specify if the relationships will be loaded.
+     * @param tmpStrategy
+     *            The strategy to create temporary files (if needed), may not be null.
+     * @throws InvalidFormatException
+     *             If the specified URI is not OPC compliant.
+     * @throws IOException
+     *             If temp file cannot be created.
+     * @since POI 5.5.0
+     */
+    public EncryptedTempFilePackagePart(
+            OPCPackage pack,
+            PackagePartName partName,
+            String contentType,
+            boolean loadRelationships,
+            TempFileCreationStrategy tmpStrategy
+    ) throws InvalidFormatException, IOException {
         super(pack, partName, new ContentType(contentType), loadRelationships);
-        tempFile = new EncryptedTempData();
+        tempFile = new EncryptedTempData(tmpStrategy);
     }
 
     @Override

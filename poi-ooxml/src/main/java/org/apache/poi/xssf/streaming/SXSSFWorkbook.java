@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Spliterator;
 
 import org.apache.commons.compress.archivers.zip.Zip64Mode;
@@ -68,7 +69,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.Removal;
-import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFChartSheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -130,6 +131,8 @@ public class SXSSFWorkbook implements Workbook {
      * whether temp files should be compressed.
      */
     private boolean _compressTmpFiles;
+
+    private TempFileCreationStrategy _tmpStrategy;
 
     /**
      * shared string table - a cache of strings in this workbook
@@ -264,6 +267,8 @@ public class SXSSFWorkbook implements Workbook {
      * @param useSharedStringsTable whether to use a shared strings table
      */
     public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles, boolean useSharedStringsTable) {
+        _tmpStrategy = TempFileCreationStrategy.getDefaultStrategy();
+
         setRandomAccessWindowSize(rowAccessWindowSize);
         setCompressTempFiles(compressTmpFiles);
         if (workbook == null) {
@@ -360,6 +365,31 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
+     * Sets the strategy to create temporary files required for this workbook. Setting the
+     * strategy will not affect already created sheets, so it is highly recommended to set
+     * this strategy right after creating the workbook.
+     * <p>
+     * The default strategy is {@link TempFileCreationStrategy#getDefaultStrategy()}.
+     *
+     * @param tmpStrategy the strategy to create temporary files, may not be null
+     *
+     * @since POI 5.5.0
+     */
+    public void setTempFileCreationStrategy(TempFileCreationStrategy tmpStrategy) {
+        _tmpStrategy = Objects.requireNonNull(tmpStrategy, "tmpStrategy");
+    }
+
+    /**
+     * Returns the currently set strategy to create temporary files.
+     * See {@link #setTempFileCreationStrategy(TempFileCreationStrategy)}.
+     *
+     * @return the currently set strategy to create temporary files. This method never returns {@code null}.
+     */
+    public TempFileCreationStrategy getTempFileCreationStrategy() {
+        return _tmpStrategy;
+    }
+
+    /**
      * @param shouldCalculateSheetDimensions defaults to <code>true</code>, set to <code>false</code> if
      *                                       the calculated dimensions are causing trouble
      * @since POI 5.2.3
@@ -384,10 +414,10 @@ public class SXSSFWorkbook implements Workbook {
 
     protected SheetDataWriter createSheetDataWriter() throws IOException {
         if(_compressTmpFiles) {
-            return new GZIPSheetDataWriter(_sharedStringSource);
+            return new GZIPSheetDataWriter(_sharedStringSource, _tmpStrategy);
         }
 
-        return new SheetDataWriter(_sharedStringSource);
+        return new SheetDataWriter(_sharedStringSource, _tmpStrategy);
     }
 
     XSSFSheet getXSSFSheet(SXSSFSheet sheet) {
@@ -949,7 +979,7 @@ public class SXSSFWorkbook implements Workbook {
         flushSheets();
 
         //Save the template
-        File tmplFile = TempFile.createTempFile("poi-sxssf-template", ".xlsx");
+        File tmplFile = _tmpStrategy.createTempFile("poi-sxssf-template", ".xlsx");
         boolean deleted;
         try {
             try (OutputStream os = Files.newOutputStream(tmplFile.toPath())) {
@@ -993,7 +1023,7 @@ public class SXSSFWorkbook implements Workbook {
                     InputStream is = bos.toInputStream();
                     ZipArchiveInputStream zis = new ZipArchiveInputStream(is);
                     ZipInputStreamZipEntrySource source = new ZipInputStreamZipEntrySource(
-                        new ZipArchiveThresholdInputStream(zis))
+                        new ZipArchiveThresholdInputStream(zis), _tmpStrategy)
             ) {
                 injectData(source, stream);
             }

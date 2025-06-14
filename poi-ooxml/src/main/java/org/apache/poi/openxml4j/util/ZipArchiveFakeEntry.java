@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.crypt.temp.EncryptedTempData;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 
 /**
  * So we can close the real zip entry and still
@@ -65,7 +65,7 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
     private File tempFile;
     private EncryptedTempData encryptedTempData;
 
-    ZipArchiveFakeEntry(ZipArchiveEntry entry, InputStream inp) throws IOException {
+    ZipArchiveFakeEntry(ZipArchiveEntry entry, InputStream inp, TempFileCreationStrategy tmpStrategy) throws IOException {
         super(entry.getName());
 
         final long entrySize = entry.getSize();
@@ -73,12 +73,12 @@ public final class ZipArchiveFakeEntry extends ZipArchiveEntry implements Closea
         final int threshold = ZipInputStreamZipEntrySource.getThresholdBytesForTempFiles();
         if (threshold >= 0 && (entrySize >= threshold || entrySize == -1)) {
             if (ZipInputStreamZipEntrySource.shouldEncryptTempFiles()) {
-                encryptedTempData = new EncryptedTempData();
+                encryptedTempData = new EncryptedTempData(tmpStrategy);
                 try (OutputStream os = encryptedTempData.getOutputStream()) {
                     IOUtils.copy(inp, os);
                 }
             } else {
-                tempFile = TempFile.createTempFile("poi-zip-entry", ".tmp");
+                tempFile = tmpStrategy.createTempFile("poi-zip-entry", ".tmp");
                 LOG.atInfo().log("Creating temp file {} for zip entry {} of size {} bytes",
                         tempFile.getAbsolutePath(), entry.getName(), entrySize);
                 IOUtils.copy(inp, tempFile);

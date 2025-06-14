@@ -44,6 +44,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.TempFileCreationStrategy;
 
 public class CryptoAPIEncryptor extends Encryptor {
 
@@ -105,7 +106,7 @@ public class CryptoAPIEncryptor extends Encryptor {
     }
 
     @Override
-    public ChunkedCipherOutputStream getDataStream(DirectoryNode dir) throws IOException {
+    public ChunkedCipherOutputStream getDataStream(DirectoryNode dir, TempFileCreationStrategy tmpStrategy) throws IOException {
         throw new IOException("not supported");
     }
 

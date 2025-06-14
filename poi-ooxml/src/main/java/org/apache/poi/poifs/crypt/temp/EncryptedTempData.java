@@ -39,6 +39,7 @@ import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.RandomSingleton;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 
 /**
  * EncryptedTempData can be used to buffer binary data in a secure way, by using encrypted temp files.
@@ -55,12 +56,19 @@ public class EncryptedTempData {
     private CountingOutputStream outputStream;
 
     public EncryptedTempData() throws IOException {
+        this(TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    /**
+     * @since POI 5.5.0
+     */
+    public EncryptedTempData(TempFileCreationStrategy tmpStrategy) throws IOException {
         ivBytes = new byte[16];
         byte[] keyBytes = new byte[16];
         RandomSingleton.getInstance().nextBytes(ivBytes);
         RandomSingleton.getInstance().nextBytes(keyBytes);
         skeySpec = new SecretKeySpec(keyBytes, cipherAlgorithm.jceId);
-        tempFile = TempFile.createTempFile("poi-temp-data", ".tmp");
+        tempFile = tmpStrategy.createTempFile("poi-temp-data", ".tmp");
     }
 
     /**

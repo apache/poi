@@ -37,6 +37,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.util.RandomSingleton;
+import org.apache.poi.util.TempFileCreationStrategy;
 
 public class BinaryRC4Encryptor extends Encryptor {
 
@@ -85,9 +86,9 @@ public class BinaryRC4Encryptor extends Encryptor {
     }
 
     @Override
-    public OutputStream getDataStream(DirectoryNode dir)
+    public OutputStream getDataStream(DirectoryNode dir, TempFileCreationStrategy tmpStrategy)
     throws IOException, GeneralSecurityException {
-        return new BinaryRC4CipherOutputStream(dir);
+        return new BinaryRC4CipherOutputStream(dir, tmpStrategy);
     }
 
     @Override
@@ -132,8 +133,13 @@ public class BinaryRC4Encryptor extends Encryptor {
         }
 
         public BinaryRC4CipherOutputStream(DirectoryNode dir)
+                throws IOException, GeneralSecurityException {
+            this(dir, TempFileCreationStrategy.getDefaultStrategy());
+        }
+
+        public BinaryRC4CipherOutputStream(DirectoryNode dir, TempFileCreationStrategy tmpStrategy)
         throws IOException, GeneralSecurityException {
-            super(dir, BinaryRC4Encryptor.this.chunkSize);
+            super(dir, BinaryRC4Encryptor.this.chunkSize, tmpStrategy);
         }
 
         @Override

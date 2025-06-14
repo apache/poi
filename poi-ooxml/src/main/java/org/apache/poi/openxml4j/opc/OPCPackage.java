@@ -34,11 +34,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,17 +48,14 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.exceptions.PartAlreadyExistsException;
 import org.apache.poi.openxml4j.opc.internal.ContentType;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
-import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
 import org.apache.poi.openxml4j.opc.internal.PartUnmarshaller;
-import org.apache.poi.openxml4j.opc.internal.ZipContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.marshallers.DefaultMarshaller;
 import org.apache.poi.openxml4j.opc.internal.marshallers.ZipPackagePropertiesMarshaller;
 import org.apache.poi.openxml4j.opc.internal.unmarshallers.PackagePropertiesUnmarshaller;
 import org.apache.poi.openxml4j.opc.internal.unmarshallers.UnmarshallContext;
 import org.apache.poi.openxml4j.util.ZipEntrySource;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.StringUtil;
 
@@ -85,9 +80,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
     private final PackageAccess packageAccess;
 
     /**
-     * Package parts collection.
+     * Package parts collection. Package-private for OPCPackageOpener.
      */
-    private PackagePartCollection partList;
+    PackagePartCollection partList;
 
     /**
      * Package relationships.
@@ -268,19 +263,10 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * @since POI 5.4.1
      */
     public static OPCPackage open(ZipEntrySource zipEntry, OPCComplianceFlags opcComplianceFlags) throws InvalidFormatException {
-        OPCPackage pack = new ZipPackage(zipEntry, PackageAccess.READ, opcComplianceFlags);
-        try {
-            if (pack.partList == null) {
-                pack.getParts();
-            }
-            // pack.originalPackagePath = file.getAbsolutePath();
-            return pack;
-        } catch (InvalidFormatException | RuntimeException e) {
-            // use revert() to free resources when the package is opened read-only
-            pack.revert();
-
-            throw e;
-        }
+        return withOpener(opener -> {
+            opener.setOpcComplianceFlags(opcComplianceFlags);
+            return opener.open(zipEntry);
+        });
     }
 
     /**
@@ -321,30 +307,11 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      */
     public static OPCPackage open(String path, PackageAccess access, OPCComplianceFlags opcComplianceFlags)
             throws InvalidFormatException, InvalidOperationException {
-        if (StringUtil.isBlank(path)) {
-            throw new IllegalArgumentException("'path' must be given");
-        }
 
-        File file = new File(path);
-        if (file.exists() && file.isDirectory()) {
-            throw new IllegalArgumentException("path must not be a directory");
-        }
-
-        OPCPackage pack = new ZipPackage(path, access, opcComplianceFlags); // NOSONAR
-        boolean success = false;
-        if (pack.partList == null && access != PackageAccess.WRITE) {
-            try {
-                pack.getParts();
-                success = true;
-            } finally {
-                if (! success) {
-                    IOUtils.closeQuietly(pack);
-                }
-            }
-        }
-
-        pack.originalPackagePath = new File(path).getAbsolutePath();
-        return pack;
+        OPCPackageOpener opener = new OPCPackageOpener();
+        opener.setPackageAccess(access);
+        opener.setOpcComplianceFlags(opcComplianceFlags);
+        return opener.open(path);
     }
 
    /**
@@ -381,33 +348,11 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      */
     public static OPCPackage open(File file, PackageAccess access, OPCComplianceFlags opcComplianceFlags)
             throws InvalidFormatException {
-        if (file == null) {
-            throw new IllegalArgumentException("'file' must be given");
-        }
-        if (file.exists() && file.isDirectory()) {
-            throw new IllegalArgumentException("file must not be a directory");
-        }
-
-        final OPCPackage pack;
-        try {
-            pack = new ZipPackage(file, access, opcComplianceFlags); //NOSONAR
-        } catch (InvalidOperationException e) {
-            throw new InvalidFormatException(e.getMessage(), e);
-        }
-        try {
-            if (pack.partList == null && access != PackageAccess.WRITE) {
-                pack.getParts();
-            }
-            pack.originalPackagePath = file.getAbsolutePath();
-            return pack;
-        } catch (InvalidFormatException | RuntimeException e) {
-            if (access == PackageAccess.READ) {
-                pack.revert();
-            } else {
-                IOUtils.closeQuietly(pack);
-            }
-            throw e;
-        }
+        return withOpener(opener -> {
+            opener.setPackageAccess(access);
+            opener.setOpcComplianceFlags(opcComplianceFlags);
+            return opener.open(file);
+        });
     }
 
     /**
@@ -450,21 +395,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      */
     public static OPCPackage open(InputStream in, OPCComplianceFlags opcComplianceFlags) throws InvalidFormatException,
             IOException {
-        final OPCPackage pack;
-        try {
-            pack = new ZipPackage(in, PackageAccess.READ_WRITE, opcComplianceFlags);
-        } catch (InvalidZipException e) {
-            throw new InvalidFormatException(e.getMessage(), e);
-        }
-        try {
-            if (pack.partList == null) {
-                pack.getParts();
-            }
-        } catch (InvalidFormatException | RuntimeException e) {
-            IOUtils.closeQuietly(pack);
-            throw e;
-        }
-        return pack;
+        OPCPackageOpener opener = new OPCPackageOpener();
+        opener.setOpcComplianceFlags(opcComplianceFlags);
+        return opener.open(in);
     }
 
     /**
@@ -512,21 +445,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      */
     public static OPCPackage open(InputStream in, boolean closeStream, OPCComplianceFlags opcComplianceFlags) throws InvalidFormatException,
             IOException {
-        final OPCPackage pack;
-        try {
-            pack = new ZipPackage(in, PackageAccess.READ_WRITE, closeStream, opcComplianceFlags);
-        } catch (InvalidZipException e) {
-            throw new InvalidFormatException(e.getMessage(), e);
-        }
-        try {
-            if (pack.partList == null) {
-                pack.getParts();
-            }
-        } catch (InvalidFormatException | RuntimeException e) {
-            IOUtils.closeQuietly(pack);
-            throw e;
-        }
-        return pack;
+        OPCPackageOpener opener = new OPCPackageOpener();
+        opener.setOpcComplianceFlags(opcComplianceFlags);
+        return opener.open(in, closeStream);
     }
 
     /**
@@ -540,11 +461,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      *             Throws if the specified file exist and is not valid.
      */
     public static OPCPackage openOrCreate(File file) throws InvalidFormatException {
-        if (file.exists()) {
-            return open(file.getAbsolutePath());
-        } else {
-            return create(file);
-        }
+        return withOpener(opener -> opener.openOrCreate(file));
     }
 
     /**
@@ -566,55 +483,15 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      * @return A newly created PackageBase ready to use.
      */
     public static OPCPackage create(File file) {
-        if (file == null || (file.exists() && file.isDirectory())) {
-            throw new IllegalArgumentException("file");
-        }
-
-        if (file.exists()) {
-            throw new InvalidOperationException(
-                    "This package (or file) already exists : use the open() method or delete the file.");
-        }
-
-        // Creates a new package
-        OPCPackage pkg = new ZipPackage();
-        pkg.originalPackagePath = file.getAbsolutePath();
-
-        configurePackage(pkg);
-        return pkg;
+        return withOpener(opener -> opener.create(file));
     }
 
     public static OPCPackage create(OutputStream output) {
-        OPCPackage pkg = new ZipPackage();
-        pkg.originalPackagePath = null;
-        pkg.output = output;
-
-        configurePackage(pkg);
-        return pkg;
+        return withOpener(opener -> opener.create(output));
     }
 
-    private static void configurePackage(OPCPackage pkg) {
-        try {
-            // Content type manager
-            pkg.contentTypeManager = new ZipContentTypeManager(null, pkg);
-
-            // Add default content types for .xml and .rels
-            pkg.contentTypeManager.addContentType(
-                    PackagingURIHelper.createPartName(
-                            PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_URI),
-                    RELATIONSHIPS_PART);
-            pkg.contentTypeManager.addContentType(
-                    PackagingURIHelper.createPartName("/default.xml"),
-                    PLAIN_OLD_XML);
-
-            // Initialise some PackageBase properties
-            pkg.packageProperties = new PackagePropertiesPart(pkg,
-                    PackagingURIHelper.CORE_PROPERTIES_PART_NAME);
-            pkg.packageProperties.setCreatorProperty("Generated by Apache POI OpenXML4J");
-            pkg.packageProperties.setCreatedProperty(Optional.of(new Date()));
-        } catch (InvalidFormatException e) {
-            // Should never happen
-            throw new IllegalStateException(e);
-        }
+    private static <R, E extends Exception> R withOpener(OPCPackageOpenerConfigurer<R, E> config) throws E {
+        return config.configure(new OPCPackageOpener());
     }
 
     /**
@@ -1879,5 +1756,9 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
                 ", isDirty=" + isDirty +
                 //", originalPackagePath='" + originalPackagePath + '\'' +
                 '}';
+    }
+
+    private interface OPCPackageOpenerConfigurer<R, E extends Exception> {
+        R configure(OPCPackageOpener opener) throws E;
     }
 }

@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -52,7 +53,7 @@ import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 
 /**
  * Physical zip package.
@@ -70,6 +71,11 @@ public final class ZipPackage extends OPCPackage {
      *  or a stream
      */
     private final ZipEntrySource zipArchive;
+
+    /**
+     * Strategy to create temporary files.
+     */
+    private final TempFileCreationStrategy tmpStrategy;
 
     /**
      * @param tempFilePackageParts whether to save package part data in temp files to save memory
@@ -110,10 +116,35 @@ public final class ZipPackage extends OPCPackage {
      * Constructor. Creates a new, empty ZipPackage.
      * @param opcComplianceFlags
      *            The level of OPC compliance to enforce when reading the package
-     * @since POI 5.4.1
      */
     public ZipPackage(OPCComplianceFlags opcComplianceFlags) {
-        super(defaultPackageAccess, opcComplianceFlags);
+        this(opcComplianceFlags, TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    /**
+     * Constructor. Creates a new, empty ZipPackage.
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     * @param tmpStrategy
+     *            The strategy to create temporary files, may not be null
+     * @since POI 5.5.0
+     */
+    public ZipPackage(OPCComplianceFlags opcComplianceFlags, TempFileCreationStrategy tmpStrategy) {
+        this(defaultPackageAccess, opcComplianceFlags, tmpStrategy);
+    }
+
+    /**
+     * Constructor. Creates a new, empty ZipPackage.
+     * @param access
+     *            The package access mode.
+     * @param opcComplianceFlags
+     *            The level of OPC compliance to enforce when reading the package
+     * @param tmpStrategy
+     *            The strategy to create temporary files, may not be null
+     */
+    ZipPackage(PackageAccess access, OPCComplianceFlags opcComplianceFlags, TempFileCreationStrategy tmpStrategy) {
+        super(access, opcComplianceFlags);
+        this.tmpStrategy = Objects.requireNonNull(tmpStrategy, "tmpStrategy");
         this.zipArchive = null;
 
         try {
@@ -131,14 +162,16 @@ public final class ZipPackage extends OPCPackage {
      *            Zip input stream to load.
      * @param access
      *            The package access mode.
+     * @param tmpStrategy
+     *            The strategy to create temporary files, may not be null
      * @throws IllegalArgumentException
      *             If the specified input stream is not an instance of
      *             ZipInputStream.
      * @throws IOException
      *            if input stream cannot be opened, read, or closed
      */
-    ZipPackage(InputStream in, PackageAccess access) throws IOException {
-        this(in, access, OPCComplianceFlags.enforceAll());
+    ZipPackage(InputStream in, PackageAccess access, TempFileCreationStrategy tmpStrategy) throws IOException {
+        this(in, access, OPCComplianceFlags.enforceAll(), tmpStrategy);
     }
 
     /**
@@ -151,6 +184,8 @@ public final class ZipPackage extends OPCPackage {
      *            The package access mode.
      * @param opcComplianceFlags
      *            The level of OPC compliance to enforce when reading the package
+     * @param tmpStrategy
+     *            The strategy to create temporary files, may not be null
      * @throws IllegalArgumentException
      *             If the specified input stream is not an instance of
      *             ZipInputStream.
@@ -158,10 +193,11 @@ public final class ZipPackage extends OPCPackage {
      *            if input stream cannot be opened, read, or closed
      * @since POI 5.4.1
      */
-    ZipPackage(InputStream in, PackageAccess access, OPCComplianceFlags opcComplianceFlags) throws IOException {
+    ZipPackage(InputStream in, PackageAccess access, OPCComplianceFlags opcComplianceFlags, TempFileCreationStrategy tmpStrategy) throws IOException {
         super(access, opcComplianceFlags);
+        this.tmpStrategy = Objects.requireNonNull(tmpStrategy, "tmpStrategy");
         try (ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(in)) {
-            this.zipArchive = new ZipInputStreamZipEntrySource(zis);
+            this.zipArchive = new ZipInputStreamZipEntrySource(zis, tmpStrategy);
         }
     }
 
@@ -175,6 +211,8 @@ public final class ZipPackage extends OPCPackage {
      *            The package access mode.
      * @param closeStream
      *            Whether to close the input stream.
+     * @param tmpStrategy
+     *            The strategy to create temporary files, may not be null
      * @throws IllegalArgumentException
      *             If the specified input stream is not an instance of
      *             ZipInputStream.
@@ -182,8 +220,8 @@ public final class ZipPackage extends OPCPackage {
      *            if input stream cannot be opened, read, or closed
      * @since POI 5.2.5
      */
-    ZipPackage(InputStream in, PackageAccess access, boolean closeStream) throws IOException {
-        this(in, access, closeStream, OPCComplianceFlags.enforceAll());
+    ZipPackage(InputStream in, PackageAccess access, boolean closeStream, TempFileCreationStrategy tmpStrategy) throws IOException {
+        this(in, access, closeStream, OPCComplianceFlags.enforceAll(), tmpStrategy);
     }
 
     /**
@@ -198,6 +236,8 @@ public final class ZipPackage extends OPCPackage {
      *            Whether to close the input stream.
      * @param opcComplianceFlags
      *            The level of OPC compliance to enforce when reading the package
+     * @param tmpStrategy
+     *            The strategy to create temporary files, may not be null
      * @throws IllegalArgumentException
      *             If the specified input stream is not an instance of
      *             ZipInputStream.
@@ -205,10 +245,11 @@ public final class ZipPackage extends OPCPackage {
      *            if input stream cannot be opened, read, or closed
      * @since POI 5.4.1
      */
-    ZipPackage(InputStream in, PackageAccess access, boolean closeStream, OPCComplianceFlags opcComplianceFlags) throws IOException {
+    ZipPackage(InputStream in, PackageAccess access, boolean closeStream, OPCComplianceFlags opcComplianceFlags, TempFileCreationStrategy tmpStrategy) throws IOException {
         super(access, opcComplianceFlags);
+        this.tmpStrategy = Objects.requireNonNull(tmpStrategy, "tmpStrategy");
         try (ZipArchiveThresholdInputStream zis = ZipHelper.openZipStream(in, closeStream)) {
-            this.zipArchive = new ZipInputStreamZipEntrySource(zis);
+            this.zipArchive = new ZipInputStreamZipEntrySource(zis, tmpStrategy);
         }
     }
 
@@ -219,10 +260,12 @@ public final class ZipPackage extends OPCPackage {
      *            The path of the file to open or create.
      * @param access
      *            The package access mode.
+     * @param tmpStrategy
+     *            The strategy to create temporary files, may not be null
      * @throws InvalidOperationException If the zip file cannot be opened.
      */
-    ZipPackage(String path, PackageAccess access) throws InvalidOperationException {
-        this(path, access, OPCComplianceFlags.enforceAll());
+    ZipPackage(String path, PackageAccess access, TempFileCreationStrategy tmpStrategy) throws InvalidOperationException {
+        this(path, access, OPCComplianceFlags.enforceAll(), tmpStrategy);
     }
 
     /**
@@ -234,11 +277,13 @@ public final class ZipPackage extends OPCPackage {
      *            The package access mode.
      * @param opcComplianceFlags
      *            The level of OPC compliance to enforce when reading the package
+     * @param tmpStrategy
+     *            The strategy to create temporary files, may not be null
      * @throws InvalidOperationException If the zip file cannot be opened.
      * @since POI 5.4.1
      */
-    ZipPackage(String path, PackageAccess access, OPCComplianceFlags opcComplianceFlags) throws InvalidOperationException {
-        this(new File(path), access, opcComplianceFlags);
+    ZipPackage(String path, PackageAccess access, OPCComplianceFlags opcComplianceFlags, TempFileCreationStrategy tmpStrategy) throws InvalidOperationException {
+        this(new File(path), access, opcComplianceFlags, tmpStrategy);
     }
 
     /**
@@ -248,10 +293,12 @@ public final class ZipPackage extends OPCPackage {
      *            The file to open or create.
      * @param access
      *            The package access mode.
+     * @param tmpStrategy
+     *            The strategy to create temporary files, may not be null
      * @throws InvalidOperationException If the zip file cannot be opened.
      */
-    ZipPackage(File file, PackageAccess access) throws InvalidOperationException {
-        this(file, access, OPCComplianceFlags.enforceAll());
+    ZipPackage(File file, PackageAccess access, TempFileCreationStrategy tmpStrategy) throws InvalidOperationException {
+        this(file, access, OPCComplianceFlags.enforceAll(), tmpStrategy);
     }
 
     /**
@@ -263,11 +310,14 @@ public final class ZipPackage extends OPCPackage {
      *            The package access mode.
      * @param opcComplianceFlags
      *            The level of OPC compliance to enforce when reading the package
+     * @param tmpStrategy
+     *            The strategy to create temporary files, may not be null
      * @throws InvalidOperationException If the zip file cannot be opened.
      * @since POI 5.4.1
      */
-    ZipPackage(File file, PackageAccess access, OPCComplianceFlags opcComplianceFlags) throws InvalidOperationException {
+    ZipPackage(File file, PackageAccess access, OPCComplianceFlags opcComplianceFlags, TempFileCreationStrategy tmpStrategy) throws InvalidOperationException {
         super(access, opcComplianceFlags);
+        this.tmpStrategy = Objects.requireNonNull(tmpStrategy, "tmpStrategy");
 
         ZipEntrySource ze;
         try {
@@ -282,12 +332,12 @@ public final class ZipPackage extends OPCPackage {
             }
 
             LOG.atWarn().log("Error in zip file {} - falling back to stream processing (i.e. ignoring zip central directory)", file);
-            ze = openZipEntrySourceStream(file);
+            ze = openZipEntrySourceStream(file, tmpStrategy);
         }
         this.zipArchive = ze;
     }
 
-    private static ZipEntrySource openZipEntrySourceStream(File file) throws InvalidOperationException {
+    private static ZipEntrySource openZipEntrySourceStream(File file, TempFileCreationStrategy tmpStrategy) throws InvalidOperationException {
         final InputStream fis;
         // Acquire a resource that is needed to read the next level of openZipEntrySourceStream
         try {
@@ -309,7 +359,7 @@ public final class ZipPackage extends OPCPackage {
             // read from the zip input stream
 
             // Acquire the final level resource. If this is acquired successfully, the zip package was read successfully from the input stream
-            return new ZipInputStreamZipEntrySource(zis);
+            return new ZipInputStreamZipEntrySource(zis, tmpStrategy);
         } catch (final InvalidOperationException|UnsupportedFileFormatException e) {
             // abort: close the zip input stream
             IOUtils.closeQuietly(fis);
@@ -333,8 +383,8 @@ public final class ZipPackage extends OPCPackage {
      * @param access
      *            The package access mode.
      */
-    ZipPackage(ZipEntrySource zipEntry, PackageAccess access) {
-        this(zipEntry, access, OPCComplianceFlags.enforceAll());
+    ZipPackage(ZipEntrySource zipEntry, PackageAccess access, TempFileCreationStrategy tmpStrategy) {
+        this(zipEntry, access, OPCComplianceFlags.enforceAll(), tmpStrategy);
     }
 
     /**
@@ -350,9 +400,10 @@ public final class ZipPackage extends OPCPackage {
      *            The package access mode.
      * @since POI 5.4.1
      */
-    ZipPackage(ZipEntrySource zipEntry, PackageAccess access, OPCComplianceFlags opcComplianceFlags) {
+    ZipPackage(ZipEntrySource zipEntry, PackageAccess access, OPCComplianceFlags opcComplianceFlags, TempFileCreationStrategy tmpStrategy) {
         super(access, opcComplianceFlags);
         this.zipArchive = zipEntry;
+        this.tmpStrategy = Objects.requireNonNull(tmpStrategy, "tmpStrategy");
     }
 
     /**
@@ -516,9 +567,9 @@ public final class ZipPackage extends OPCPackage {
         try {
             if (useTempFilePackageParts) {
                 if (encryptTempFilePackageParts) {
-                    return new EncryptedTempFilePackagePart(this, partName, contentType, loadRelationships);
+                    return new EncryptedTempFilePackagePart(this, partName, contentType, loadRelationships, tmpStrategy);
                 } else {
-                    return new TempFilePackagePart(this, partName, contentType, loadRelationships);
+                    return new TempFilePackagePart(this, partName, contentType, loadRelationships, tmpStrategy);
                 }
             } else {
                 return new MemoryPackagePart(this, partName, contentType, loadRelationships);
@@ -569,7 +620,7 @@ public final class ZipPackage extends OPCPackage {
         File tempFile;
         try {
             String tempFileName = generateTempFileName(FileHelper.getDirectory(targetFile));
-            tempFile = TempFile.createTempFile(tempFileName, ".tmp");
+            tempFile = tmpStrategy.createTempFile(tempFileName, ".tmp");
         } catch (IOException|RuntimeException|Error e) {
             IOUtils.closeQuietly(zipArchive);
             throw e;

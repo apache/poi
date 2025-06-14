@@ -41,10 +41,12 @@ import org.apache.poi.openxml4j.opc.internal.InvalidZipException;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.util.ZipInputStreamZipEntrySource;
+import org.apache.poi.ss.tests.TestWorkbookFactory;
 import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellReferenceType;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Font;
@@ -59,16 +61,23 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.DefaultTempFileCreationStrategy;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.model.StylesTable;
+import org.apache.poi.xssf.streaming.DeferredSXSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalLink;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTExternalSheetData;
@@ -77,18 +86,24 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.CRC32;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
@@ -1544,6 +1559,98 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         } finally {
             assertTrue(tempFile.delete());
         }
+    }
+
+    private static TempFileCreationStrategy newTempFileCreationStrategy(Path tmpDir) throws IOException {
+        Files.createDirectories(tmpDir);
+        return new DefaultTempFileCreationStrategy(tmpDir.toFile());
+    }
+
+    private static void createDummySheet(
+            Workbook workbook,
+            String sheetName,
+            int rows,
+            int columns
+    ) {
+        Sheet sheet = workbook.createSheet(sheetName);
+        for (int i = 0; i < rows; i++) {
+            Row row = sheet.createRow(i);
+            for (int j = 0; j < columns; j++) {
+                Cell cell = row.createCell(j + 1, CellType.STRING);
+                cell.setCellValue("Dummy " + sheetName + "-" + i + "," + j);
+            }
+        }
+    }
+
+    private static void populateDummyWorkbook(Workbook workbook) {
+        createDummySheet(workbook, "sheet1", 3, 5);
+        createDummySheet(workbook, "sheet2", 7, 2);
+    }
+
+    private static void assertEmptyDir(Path dir) throws IOException {
+        if (!Files.exists(dir)) {
+            return;
+        }
+
+        try (Stream<Path> childrenStream = Files.list(dir)) {
+            List<Path> children = childrenStream.collect(Collectors.toList());
+            assertEquals(Collections.emptyList(), children);
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource
+    public void testOverriddenTempDirectory(
+            TestWorkbookFactory workbookFactory,
+            @TempDir Path tmpDir
+    ) throws IOException {
+        try {
+            Path globalTmpDir = tmpDir.resolve("global-test-tmp");
+            TempFile.setTempFileCreationStrategy(newTempFileCreationStrategy(globalTmpDir));
+
+            Path localTmpDir = tmpDir.resolve("local-test-tmp");
+
+            Path outputDir = Files.createDirectories(tmpDir.resolve("test-output-dir"));
+            Path outputFile = outputDir.resolve("test.xlsx");
+
+            try (OutputStream output = Files.newOutputStream(outputFile);
+                 BufferedOutputStream bufferedOutput = new BufferedOutputStream(output);
+                 Workbook workbook = workbookFactory.createWorkbook(newTempFileCreationStrategy(localTmpDir))
+            ) {
+                assertEmptyDir(globalTmpDir);
+                populateDummyWorkbook(workbook);
+                assertEmptyDir(globalTmpDir);
+                workbook.write(bufferedOutput);
+                assertEmptyDir(globalTmpDir);
+            }
+            assertTrue(Files.isRegularFile(outputFile));
+            assertEmptyDir(globalTmpDir);
+            assertEmptyDir(localTmpDir);
+        } finally {
+            // Restore the default temp directory.
+            TempFile.setTempFileCreationStrategy(new DefaultTempFileCreationStrategy());
+        }
+    }
+
+    public enum TestWorkbookFactory {
+        SXSSF {
+            @Override
+            public Workbook createWorkbook(TempFileCreationStrategy tmpStrategy) {
+                SXSSFWorkbook workbook = new SXSSFWorkbook();
+                workbook.setTempFileCreationStrategy(tmpStrategy);
+                return workbook;
+            }
+        },
+        DEFERRED_SXSSF {
+            @Override
+            public Workbook createWorkbook(TempFileCreationStrategy tmpStrategy) {
+                SXSSFWorkbook workbook = new DeferredSXSSFWorkbook();
+                workbook.setTempFileCreationStrategy(tmpStrategy);
+                return workbook;
+            }
+        };
+
+        public abstract Workbook createWorkbook(TempFileCreationStrategy tmpStrategy);
     }
 
     private static void expectFormattedContent(Cell cell, String value) {

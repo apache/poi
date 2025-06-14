@@ -30,22 +30,39 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.model.SharedStringsTable;
 
 /**
  * Sheet writer that supports gzip compression of the temp files.
  */
 public class GZIPSheetDataWriter extends SheetDataWriter {
-
     public GZIPSheetDataWriter() throws IOException {
-        super();
+        this(TempFileCreationStrategy.getDefaultStrategy());
     }
-    
+
+    /**
+     * @since POI 5.5.0
+     */
+    public GZIPSheetDataWriter(TempFileCreationStrategy tmpStrategy) throws IOException {
+        super(tmpStrategy);
+    }
+
     /**
      * @param sharedStringsTable the shared strings table, or null if inline text is used
      */
     public GZIPSheetDataWriter(SharedStringsTable sharedStringsTable) throws IOException {
-        super(sharedStringsTable);
+        this(sharedStringsTable, TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    /**
+     * @param sharedStringsTable the shared strings table, or null if inline text is used
+     * @param tmpStrategy the strategy to create temporary files, may not be null
+     *
+     * @since POI 5.5.0
+     */
+    public GZIPSheetDataWriter(SharedStringsTable sharedStringsTable, TempFileCreationStrategy tmpStrategy) throws IOException {
+        super(sharedStringsTable, tmpStrategy);
     }
 
     /**

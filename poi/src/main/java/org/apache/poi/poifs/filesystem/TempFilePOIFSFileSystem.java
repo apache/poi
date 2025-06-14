@@ -20,10 +20,11 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.logging.PoiLogManager;
 import org.apache.poi.poifs.nio.FileBackedDataSource;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.TempFile;
+import org.apache.poi.util.TempFileCreationStrategy;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * An experimental POIFSFileSystem to support the encryption of large files
@@ -33,16 +34,38 @@ import java.io.IOException;
 @Beta
 public class TempFilePOIFSFileSystem extends POIFSFileSystem {
     private static final Logger LOG = PoiLogManager.getLogger(TempFilePOIFSFileSystem.class);
+
+    private final TempFileCreationStrategy tmpStrategy;
+
     File tempFile;
 
-    @Override
-    protected void createNewDataSource() {
+    public TempFilePOIFSFileSystem() {
+        this(TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    /**
+     * @since POI 5.5.0
+     */
+    public TempFilePOIFSFileSystem(TempFileCreationStrategy tmpStrategy) {
+        super(fs -> init((TempFilePOIFSFileSystem) fs, tmpStrategy));
+        this.tmpStrategy = Objects.requireNonNull(tmpStrategy, "tmpStrategy");
+    }
+
+    private static void init(
+            TempFilePOIFSFileSystem fs,
+            TempFileCreationStrategy tmpStrategy
+    ) {
         try {
-            tempFile = TempFile.createTempFile("poifs", ".tmp");
-            _data = new FileBackedDataSource(tempFile, false);
+            fs.tempFile = tmpStrategy.createTempFile("poifs", ".tmp");
+            fs._data = new FileBackedDataSource(fs.tempFile, false);
         } catch (IOException e) {
             throw new IllegalStateException("Failed to create data source", e);
         }
+    }
+
+    @Override
+    protected void createNewDataSource() {
+        init(this, tmpStrategy);
     }
 
     @Override

@@ -32,6 +32,7 @@ import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.TempFileCreationStrategy;
 
 public class XOREncryptor extends Encryptor {
     protected XOREncryptor() {}
@@ -63,9 +64,9 @@ public class XOREncryptor extends Encryptor {
     }
 
     @Override
-    public OutputStream getDataStream(DirectoryNode dir)
+    public OutputStream getDataStream(DirectoryNode dir, TempFileCreationStrategy tmpStrategy)
     throws IOException, GeneralSecurityException {
-        return new XORCipherOutputStream(dir);
+        return new XORCipherOutputStream(dir, tmpStrategy);
     }
 
     @Override
@@ -96,8 +97,8 @@ public class XOREncryptor extends Encryptor {
             super(stream, -1);
         }
 
-        public XORCipherOutputStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
-            super(dir, -1);
+        public XORCipherOutputStream(DirectoryNode dir, TempFileCreationStrategy tmpStrategy) throws IOException, GeneralSecurityException {
+            super(dir, -1, tmpStrategy);
         }
 
         @Override

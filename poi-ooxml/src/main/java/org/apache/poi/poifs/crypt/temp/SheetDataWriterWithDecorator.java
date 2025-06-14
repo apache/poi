@@ -35,6 +35,7 @@ import org.apache.poi.poifs.crypt.CipherAlgorithm;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.RandomSingleton;
+import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.streaming.SheetDataWriter;
 
 @Beta
@@ -44,7 +45,11 @@ public class SheetDataWriterWithDecorator extends SheetDataWriter {
     byte[] ivBytes;
 
     public SheetDataWriterWithDecorator() throws IOException {
-        super();
+        this(TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    public SheetDataWriterWithDecorator(TempFileCreationStrategy tmpStrategy) throws IOException {
+        super(tmpStrategy);
     }
 
     void init() {

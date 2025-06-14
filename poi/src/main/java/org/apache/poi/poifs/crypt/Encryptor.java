@@ -29,6 +29,7 @@ import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.GenericRecordUtil;
+import org.apache.poi.util.TempFileCreationStrategy;
 
 public abstract class Encryptor implements GenericRecord {
 
@@ -46,12 +47,34 @@ public abstract class Encryptor implements GenericRecord {
 
     /**
      * Return an output stream for encrypted data.
+     * <p>
+     * Note for implementors: Implementations must override {@link #getDataStream(DirectoryNode, TempFileCreationStrategy)}
      *
      * @param dir the node to write to
      * @return encrypted stream
      */
-    public abstract OutputStream getDataStream(DirectoryNode dir)
-        throws IOException, GeneralSecurityException;
+    public OutputStream getDataStream(DirectoryNode dir)
+        throws IOException, GeneralSecurityException {
+        return getDataStream(dir, TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    /**
+     * Return an output stream for encrypted data.
+     * <p>
+     * Note for implementors: Implementations of {@code Encryptor} must treat this method as abstract. This
+     * method has a default implementation for backwards compatibility only. The default implementation ignores
+     * the {@code tmpStrategy} parameter and calls {@link #getDataStream(DirectoryNode)}.
+     *
+     * @param dir the node to write to
+     * @param tmpStrategy the strategy to create temporary files (if needed), may not be null
+     * @return encrypted stream
+     *
+     * @since POI 5.5.0
+     */
+    public OutputStream getDataStream(DirectoryNode dir, TempFileCreationStrategy tmpStrategy)
+            throws IOException, GeneralSecurityException {
+        return getDataStream(dir);
+    }
 
     // for tests
     public abstract void confirmPassword(String password, byte[] keySpec, byte[] keySalt, byte[] verifier, byte[] verifierSalt, byte[] integritySalt);
@@ -63,7 +86,11 @@ public abstract class Encryptor implements GenericRecord {
     }
 
     public OutputStream getDataStream(POIFSFileSystem fs) throws IOException, GeneralSecurityException {
-        return getDataStream(fs.getRoot());
+        return getDataStream(fs, TempFileCreationStrategy.getDefaultStrategy());
+    }
+
+    public OutputStream getDataStream(POIFSFileSystem fs, TempFileCreationStrategy tmpStrategy) throws IOException, GeneralSecurityException {
+        return getDataStream(fs.getRoot(), tmpStrategy);
     }
 
     public ChunkedCipherOutputStream getDataStream(OutputStream stream, int initialOffset)
