@@ -27,11 +27,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.file.PathUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class DefaultTempFileCreationStrategyTest {
 
@@ -73,27 +76,6 @@ class DefaultTempFileCreationStrategyTest {
         } finally {
             // Clean up the directory after the test
             FileUtils.deleteDirectory(dir);
-        }
-    }
-
-    @Test
-    void testProvidedDirNotExists() throws IOException {
-        DefaultTempFileCreationStrategy parentStrategy = new DefaultTempFileCreationStrategy();
-        File dir = parentStrategy.createTempDirectory("testProvidedDir");
-        assertNotNull(dir, "Failed to create temp directory");
-        assertTrue(dir.delete(), "directory not deleted: " + dir);
-        assertThrows(IllegalArgumentException.class, () -> new DefaultTempFileCreationStrategy(dir));
-    }
-
-    @Test
-    void testProvidedDirIsActuallyAPlainFile() throws IOException {
-        DefaultTempFileCreationStrategy parentStrategy = new DefaultTempFileCreationStrategy();
-        File dir = parentStrategy.createTempFile("test123", ".tmp");
-        assertNotNull(dir, "Failed to create temp file");
-        try {
-            assertThrows(IllegalArgumentException.class, () -> new DefaultTempFileCreationStrategy(dir));
-        } finally {
-            dir.delete();
         }
     }
 
@@ -170,5 +152,20 @@ class DefaultTempFileCreationStrategyTest {
         } finally {
             FileUtils.deleteDirectory(dirTest);
         }
+    }
+
+    @Test
+    void testExplicitDirectoryDoesntChangeAfterDisappearing(@TempDir Path tmpDir) throws IOException {
+        Path customTmpDir = Files.createDirectories(tmpDir.resolve("orig-tmp")).toAbsolutePath().normalize();
+
+        DefaultTempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy(customTmpDir.toFile());
+
+        Path tmpFile1 = strategy.createTempFile("poitest1", ".tmp").toPath();
+        assertTrue(tmpFile1.startsWith(customTmpDir), tmpFile1.toString());
+
+        PathUtils.deleteDirectory(customTmpDir);
+
+        Path tmpFile2 = strategy.createTempFile("poitest2", ".tmp").toPath();
+        assertTrue(tmpFile2.startsWith(customTmpDir), tmpFile2.toString());
     }
 }

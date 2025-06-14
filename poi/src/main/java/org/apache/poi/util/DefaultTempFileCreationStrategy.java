@@ -25,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.FileAttribute;
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -49,11 +50,8 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     /** To use files.deleteOnExit after clean JVM exit, set the <code>-Dpoi.delete.tmp.files.on.exit</code> JVM property */
     public static final String DELETE_FILES_ON_EXIT = "poi.delete.tmp.files.on.exit";
 
-    /** The directory where the temporary files will be created (<code>null</code> to use the default directory). */
-    private volatile File dir;
-
-    /** The lock to make dir initialized only once. */
-    private final Lock dirLock = new ReentrantLock();
+    /** A reference to the directory where the temporary files will be created. */
+    private final DirectoryRef directoryRef;
 
     /**
      * Creates the strategy so that it creates the temporary files in the default directory.
@@ -61,40 +59,33 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
      * @see File#createTempFile(String, String)
      */
     public DefaultTempFileCreationStrategy() {
-        this(null);
+        this((Path) null);
     }
 
     /**
      * Creates the strategy allowing to set a custom directory for the temporary files.
-     * <p>
-     *     If you provide a non-null dir as input, it must be a directory and must already exist.
-     *     Since POI 5.4.2, this is checked at construction time. In previous versions, it was checked
-     *     at the first call to {@link #createTempFile(String, String)} or {@link #createTempDirectory(String)}.
-     * </p>
      *
      * @param dir The directory where the temporary files will be created (<code>null</code> to use the default directory).
-     * @throws IllegalArgumentException if the provided directory does not exist or is not a directory
-     * @see Files#createTempFile(Path, String, String, FileAttribute[]) 
+     *
+     * @see Files#createTempFile(Path, String, String, FileAttribute[])
      */
     public DefaultTempFileCreationStrategy(File dir) {
-        this.dir = dir;
-        if (dir != null) {
-            if (!dir.exists()) {
-                throw new IllegalArgumentException("The provided directory does not exist: " + dir);
-            }
-            if (!dir.isDirectory()) {
-                throw new IllegalArgumentException("The provided file is not a directory: " + dir);
-            }
-        }
+        this(dir != null ? dir.toPath() : null);
+    }
+
+    private DefaultTempFileCreationStrategy(Path dir) {
+        this.directoryRef = dir == null
+                ? new DirectoryRef(this::getPOIFilesDirectoryPath)
+                : new DirectoryRef(() -> dir);
     }
 
     @Override
     public File createTempFile(String prefix, String suffix) throws IOException {
         // Identify and create our temp dir, if needed
-        createPOIFilesDirectoryIfNecessary();
+        Path dir = directoryRef.ensureAndGetDirectory();
 
         // Generate a unique new filename
-        File newFile = Files.createTempFile(dir.toPath(), prefix, suffix).toFile();
+        File newFile = Files.createTempFile(dir, prefix, suffix).toFile();
 
         // Set the delete on exit flag if sys prop is set
         if (System.getProperty(DELETE_FILES_ON_EXIT) != null) {
@@ -109,10 +100,10 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     @Override
     public File createTempDirectory(String prefix) throws IOException {
         // Identify and create our temp dir, if needed
-        createPOIFilesDirectoryIfNecessary();
+        Path dir = directoryRef.ensureAndGetDirectory();
 
         // Generate a unique new filename
-        File newDirectory = Files.createTempDirectory(dir.toPath(), prefix).toFile();
+        File newDirectory = Files.createTempDirectory(dir, prefix).toFile();
 
         //this method appears to be only used in tests, so it is probably ok to use deleteOnExit
         newDirectory.deleteOnExit();
@@ -133,32 +124,57 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
         return Paths.get(getJavaIoTmpDir(), POIFILES);
     }
 
-    // Create our temp dir only once by double-checked locking
-    // The directory is not deleted, even if it was created by this TempFileCreationStrategy
-    private void createPOIFilesDirectoryIfNecessary() throws IOException {
-        // First make sure we recreate the directory if it was not somehow removed by a third party
-        if (dir != null && !dir.exists()) {
-            dir = null;
+    private interface DirectoryProvider {
+        Path get() throws IOException;
+    }
+
+    private static final class DirectoryRef {
+        private final DirectoryProvider directoryProvider;
+        // We are using a lock to ensure that the directory is created only once.
+        private final Lock dirLock;
+        private volatile Path cachedDir;
+
+        public DirectoryRef(DirectoryProvider directoryProvider) {
+            this.directoryProvider = Objects.requireNonNull(directoryProvider, "directoryProvider");
+            this.dirLock = new ReentrantLock();
+            this.cachedDir = null;
         }
-        if (dir == null) {
+
+        private static boolean checkExistingDirectory(Path dir) throws IOException {
+            if (dir != null && Files.exists(dir)) {
+                if (!Files.isDirectory(dir)) {
+                    throw new IOException("Could not create temporary directory. '" + dir + "' exists but is not a directory.");
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        public Path ensureAndGetDirectory() throws IOException {
+            // Create our temp dir only once by double-checked locking
+            // The directory is not deleted, even if it was created by this TempFileCreationStrategy
+            Path result = cachedDir;
+            if (result != null && Files.exists(result)) {
+                return result;
+            }
+
             dirLock.lock();
             try {
-                if (dir == null) {
-                    final Path dirPath = getPOIFilesDirectoryPath();
-                    File fileDir = dirPath.toFile();
-                    if (fileDir.exists()) {
-                        if (!fileDir.isDirectory()) {
-                            throw new IOException("Could not create temporary directory. '" + fileDir + "' exists but is not a directory.");
-                        }
-                        dir = fileDir;
-                    } else {
-                        dir = Files.createDirectories(dirPath).toFile();
-                    }
+                result = cachedDir;
+                if (checkExistingDirectory(result)) {
+                    return result;
                 }
+
+                result = directoryProvider.get();
+                if (!checkExistingDirectory(result)) {
+                    Files.createDirectories(result);
+                }
+                cachedDir = result;
+                return result;
             } finally {
                 dirLock.unlock();
             }
         }
     }
-
 }
