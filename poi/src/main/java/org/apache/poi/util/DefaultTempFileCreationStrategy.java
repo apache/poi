@@ -65,14 +65,27 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     }
 
     /**
-     * Creates the strategy allowing to set the
+     * Creates the strategy allowing to set a custom directory for the temporary files.
+     * <p>
+     *     If you provide a non-null dir as input, it must be a directory and must already exist.
+     *     Since POI 5.4.2, this is checked at construction time. In previous versions, it was checked
+     *     at the first call to {@link #createTempFile(String, String)} or {@link #createTempDirectory(String)}.
+     * </p>
      *
      * @param dir The directory where the temporary files will be created (<code>null</code> to use the default directory).
-     *
+     * @throws IllegalArgumentException if the provided directory does not exist or is not a directory
      * @see Files#createTempFile(Path, String, String, FileAttribute[]) 
      */
     public DefaultTempFileCreationStrategy(File dir) {
         this.dir = dir;
+        if (dir != null) {
+            if (!dir.exists()) {
+                throw new IllegalArgumentException("The provided directory does not exist: " + dir);
+            }
+            if (!dir.isDirectory()) {
+                throw new IllegalArgumentException("The provided file is not a directory: " + dir);
+            }
+        }
     }
 
     @Override
