@@ -47,7 +47,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
