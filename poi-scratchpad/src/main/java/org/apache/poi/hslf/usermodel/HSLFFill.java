@@ -576,9 +576,7 @@ public final class HSLFFill {
         } else {
             EscherBSERecord bse = (EscherBSERecord) bstore.getChild(idx - 1);
             for (HSLFPictureData pd : pict) {
-
-                // Reference equals is safe because these BSE belong to the same slideshow
-                if (pd.bse == bse) {
+                if (pd.getOffset() == bse.getOffset()) {
                     return pd;
                 }
             }

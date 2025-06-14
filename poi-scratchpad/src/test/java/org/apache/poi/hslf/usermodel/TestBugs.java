@@ -47,6 +47,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.output.UnsynchronizedByteArrayOutputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
@@ -68,19 +69,10 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.macros.VBAMacroReader;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
-import org.apache.poi.sl.usermodel.ColorStyle;
-import org.apache.poi.sl.usermodel.PaintStyle;
+import org.apache.poi.sl.usermodel.*;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
-import org.apache.poi.sl.usermodel.Placeholder;
-import org.apache.poi.sl.usermodel.ShapeType;
-import org.apache.poi.sl.usermodel.Slide;
-import org.apache.poi.sl.usermodel.SlideShow;
-import org.apache.poi.sl.usermodel.SlideShowFactory;
-import org.apache.poi.sl.usermodel.TextBox;
-import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
-import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
@@ -902,6 +894,24 @@ public final class TestBugs {
         try (HSLFSlideShow ppt = open("23884_defense_FINAL_OOimport_edit.ppt")) {
             List<HSLFShape> shList = ppt.getSlides().get(0).getShapes();
             assertEquals(ShapeType.NOT_PRIMITIVE, shList.get(2).getShapeType());
+        }
+    }
+
+    @Test
+    void test69697() throws Exception {
+        try (HSLFSlideShow ppt = open("bug69697.ppt")) {
+            HSLFSlide slide = ppt.getSlides().get(0);
+            for (HSLFShape sh : slide.getShapes()) {
+                if (sh instanceof HSLFPictureShape) {
+                    HSLFPictureShape pict = (HSLFPictureShape) sh;
+                    HSLFPictureData pictData = pict.getPictureData();
+                    assertNotNull(pictData, "PictureData should not be null for shape: " + pict.getShapeName());
+                    byte[] data = pictData.getData();
+                    assertNotNull(data, "Picture data should not be null for shape: " + pict.getShapeName());
+                    PictureData.PictureType type = pictData.getType();
+                    assertNotNull(type, "Picture type should not be null for shape: " + pict.getShapeName());
+                }
+            }
         }
     }
 }
