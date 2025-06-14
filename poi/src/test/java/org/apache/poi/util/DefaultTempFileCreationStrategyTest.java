@@ -20,11 +20,13 @@ package org.apache.poi.util;
 import static org.apache.poi.util.DefaultTempFileCreationStrategy.DELETE_FILES_ON_EXIT;
 import static org.apache.poi.util.DefaultTempFileCreationStrategy.POIFILES;
 import static org.apache.poi.util.TempFile.JAVA_IO_TMPDIR;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -57,6 +59,42 @@ class DefaultTempFileCreationStrategyTest {
     void testDefaultFile() throws IOException {
         DefaultTempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy();
         checkGetFile(strategy);
+    }
+
+    @Test
+    void testProvidedDir() throws IOException {
+        DefaultTempFileCreationStrategy parentStrategy = new DefaultTempFileCreationStrategy();
+        File dir = parentStrategy.createTempDirectory("testProvidedDir");
+        assertNotNull(dir, "Failed to create temp directory");
+        try {
+            assertTrue(Files.isDirectory(dir.toPath()), "File is not a directory: " + dir);
+            DefaultTempFileCreationStrategy testStrategy = new DefaultTempFileCreationStrategy(dir);
+            checkGetFile(testStrategy);
+        } finally {
+            // Clean up the directory after the test
+            FileUtils.deleteDirectory(dir);
+        }
+    }
+
+    @Test
+    void testProvidedDirNotExists() throws IOException {
+        DefaultTempFileCreationStrategy parentStrategy = new DefaultTempFileCreationStrategy();
+        File dir = parentStrategy.createTempDirectory("testProvidedDir");
+        assertNotNull(dir, "Failed to create temp directory");
+        assertTrue(dir.delete(), "directory not deleted: " + dir);
+        assertThrows(IllegalArgumentException.class, () -> new DefaultTempFileCreationStrategy(dir));
+    }
+
+    @Test
+    void testProvidedDirIsActuallyAPlainFile() throws IOException {
+        DefaultTempFileCreationStrategy parentStrategy = new DefaultTempFileCreationStrategy();
+        File dir = parentStrategy.createTempFile("test123", ".tmp");
+        assertNotNull(dir, "Failed to create temp file");
+        try {
+            assertThrows(IllegalArgumentException.class, () -> new DefaultTempFileCreationStrategy(dir));
+        } finally {
+            dir.delete();
+        }
     }
 
     private static void checkGetFile(DefaultTempFileCreationStrategy strategy) throws IOException {
@@ -103,19 +141,6 @@ class DefaultTempFileCreationStrategyTest {
         DefaultTempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy();
         assertThrows(IOException.class,
                 () -> strategy.createTempDirectory("POITest"));
-    }
-
-    @Test
-    void testCustomDir() throws IOException {
-        File dirTest = File.createTempFile("POITest", ".dir");
-        try {
-            assertTrue(dirTest.delete());
-
-            DefaultTempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy(dirTest);
-            checkGetFile(strategy);
-        } finally {
-            FileUtils.deleteDirectory(dirTest);
-        }
     }
 
     @Test
