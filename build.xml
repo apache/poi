@@ -339,6 +339,7 @@ under the License.
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.10.2" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:33.4.8-jre" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.guava.failureaccess" artifact="com.google.guava:failureaccess:1.0.3" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.slf4j-api" artifact="org.slf4j:slf4j-api:2.0.17" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.opczip" artifact="com.github.rzymek:opczip:1.2.0" usage="ooxml-tests"/>
@@ -463,6 +464,7 @@ under the License.
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${ooxml.test.guava.jar}"/>
+        <pathelement location="${ooxml.test.guava.failureaccess.jar}"/>
         <pathelement location="${ooxml.test.opczip.jar}"/>
         <!-- classes are omitted on test cases outside the xml-dsign area to avoid classpath poisoning -->
         <!--path refid="ooxml.xmlsec.classpath"/-->
@@ -516,6 +518,7 @@ under the License.
     <path id="test.ooxml.reflections.classpath">
         <pathelement location="${ooxml.test.reflections.jar}"/>
         <pathelement location="${ooxml.test.guava.jar}"/>
+        <pathelement location="${ooxml.test.guava.failureaccess.jar}"/>
         <pathelement location="${ooxml.test.javassist.jar}"/>
     </path>
 
@@ -834,6 +837,7 @@ under the License.
                     <available file="${ooxml.commons-lang3.jar}"/>
                     <available file="${ooxml.test.reflections.jar}"/>
                     <available file="${ooxml.test.guava.jar}"/>
+                    <available file="${ooxml.test.guava.failureaccess.jar}"/>
                     <available file="${ooxml.test.javassist.jar}"/>
                     <available file="${ooxml.test.slf4j-api.jar}"/>
                     <available file="${ooxml.test.opczip.jar}"/>
@@ -877,6 +881,7 @@ under the License.
         <downloadfile src="${ooxml.commons-lang3.url}" dest="${ooxml.commons-lang3.jar}"/>
         <downloadfile src="${ooxml.test.reflections.url}" dest="${ooxml.test.reflections.jar}"/>
         <downloadfile src="${ooxml.test.guava.url}" dest="${ooxml.test.guava.jar}"/>
+        <downloadfile src="${ooxml.test.guava.failureaccess.url}" dest="${ooxml.test.guava.failureaccess.jar}"/>
         <downloadfile src="${ooxml.test.javassist.url}" dest="${ooxml.test.javassist.jar}"/>
         <downloadfile src="${ooxml.test.slf4j-api.url}" dest="${ooxml.test.slf4j-api.jar}"/>
         <downloadfile src="${ooxml.test.opczip.url}" dest="${ooxml.test.opczip.jar}"/>
