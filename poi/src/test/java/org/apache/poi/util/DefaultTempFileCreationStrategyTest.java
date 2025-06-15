@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -69,7 +70,7 @@ class DefaultTempFileCreationStrategyTest {
         try {
             assertTrue(Files.isDirectory(dir.toPath()), "File is not a directory: " + dir);
             DefaultTempFileCreationStrategy testStrategy = new DefaultTempFileCreationStrategy(dir);
-            checkGetFile(testStrategy);
+            checkGetFileAndPath(testStrategy, dir.toPath());
         } finally {
             // Clean up the directory after the test
             FileUtils.deleteDirectory(dir);
@@ -84,7 +85,7 @@ class DefaultTempFileCreationStrategyTest {
         assertTrue(dir.delete(), "directory not deleted: " + dir);
         try {
             DefaultTempFileCreationStrategy testStrategy = new DefaultTempFileCreationStrategy(dir);
-            checkGetFile(testStrategy);
+            checkGetFileAndPath(testStrategy, dir.toPath());
         } finally {
             // Clean up the directory after the test
             FileUtils.deleteDirectory(dir);
@@ -104,8 +105,18 @@ class DefaultTempFileCreationStrategyTest {
     }
 
     private static void checkGetFile(DefaultTempFileCreationStrategy strategy) throws IOException {
+        checkGetFileAndPath(strategy, null);
+    }
+
+    private static void checkGetFileAndPath(DefaultTempFileCreationStrategy strategy,
+                                           Path path) throws IOException {
         File file = strategy.createTempFile("POITest", ".tmp");
         try {
+            if (path != null) {
+                assertTrue(file.toPath().startsWith(path),
+                        "File path does not start with expected path: " + path);
+            }
+
             assertTrue(file.getParentFile().exists(),
                     "Failed for " + file.getParentFile());
 
