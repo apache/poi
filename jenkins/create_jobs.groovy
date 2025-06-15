@@ -30,12 +30,8 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-1.21', jdk: '1.21', trigger: 'H */12 * * *', skipcigame: true
         ],
-        [ name: 'POI-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 22 is not an LTS and JDK 23/24 is out
-          disabled: true
-        ],
         [ name: 'POI-DSL-1.23', jdk: '1.23', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 22 is not an LTS and JDK 23/24 is out
+          // let's save some CPU cycles here, 23 is not an LTS and JDK 24 is out
           disabled: true
         ],
         [ name: 'POI-DSL-1.24', jdk: '1.24', trigger: triggerSundays, skipcigame: true,
@@ -86,12 +82,8 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-Windows-1.21', jdk: '1.21', trigger: 'H */12 * * *', windows: true, slaves: 'Windows', skipcigame: true
         ],
-        [ name: 'POI-DSL-Windows-1.22', jdk: '1.22', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          // let's save some CPU cycles here, 22 is not an LTS and JDK 23/24 is out
-          disabled: true
-        ],
         [ name: 'POI-DSL-Windows-1.23', jdk: '1.23', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
-          // let's save some CPU cycles here, 22 is not an LTS and JDK 23/24 is out
+          // let's save some CPU cycles here, 23 is not an LTS and JDK 24 is out
           disabled: true
         ],
         [ name: 'POI-DSL-Windows-1.24', jdk: '1.24', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
@@ -116,11 +108,8 @@ def xmlbeansjobs = [
         ],
         [ name: 'POI-XMLBeans-DSL-1.21', jdk: '1.21', trigger: 'H */12 * * *', skipcigame: true,
         ],
-        [ name: 'POI-XMLBeans-DSL-1.22', jdk: '1.22', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 22 is not an LTS and JDK 23/24 is out
-          disabled: true
-        ],
         [ name: 'POI-XMLBeans-DSL-1.23', jdk: '1.23', trigger: triggerSundays, skipcigame: true,
+          disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.24', jdk: '1.24', trigger: triggerSundays, skipcigame: true,
         ],
@@ -147,11 +136,7 @@ def jdkMapping = [
         '1.8': [ jenkinsJdk: 'jdk_1.8_latest', jdkVersion: 8, jdkVendor: '' ],
         '1.11': [ jenkinsJdk: 'jdk_11_latest', jdkVersion: 11, jdkVendor: '' ],
         '1.17': [ jenkinsJdk: 'jdk_17_latest', jdkVersion: 17, jdkVendor: '' ],
-        '1.18': [ jenkinsJdk: 'jdk_18_latest', jdkVersion: 18, jdkVendor: '' ],
-        '1.19': [ jenkinsJdk: 'jdk_19_latest', jdkVersion: 19, jdkVendor: '' ],
-        '1.20': [ jenkinsJdk: 'jdk_20_latest', jdkVersion: 20, jdkVendor: '' ],
         '1.21': [ jenkinsJdk: 'jdk_21_latest', jdkVersion: 21, jdkVendor: '' ],
-        '1.22': [ jenkinsJdk: 'jdk_22_latest', jdkVersion: 22, jdkVendor: '' ],
         '1.23': [ jenkinsJdk: 'jdk_23_latest', jdkVersion: 23, jdkVendor: '' ],
         '1.24': [ jenkinsJdk: 'jdk_24_latest', jdkVersion: 24, jdkVendor: '' ],
         '1.25': [ jenkinsJdk: 'jdk_25_latest', jdkVersion: 25, jdkVendor: '' ],
@@ -621,7 +606,6 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'jdk_11_latest',
                 'jdk_17_latest',
                 'jdk_21_latest',
-                'jdk_22_latest',
                 'jdk_23_latest',
                 'jdk_24_latest',
                 'jdk_25_latest',
