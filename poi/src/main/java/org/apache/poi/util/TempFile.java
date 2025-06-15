@@ -27,7 +27,7 @@ public final class TempFile {
     /** The strategy used by {@link #createTempFile(String, String)} to create the temporary files. */
     private static TempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy();
 
-    /** Define a constant for this property as it is sometimes mistypes as "tempdir" otherwise */
+    /** Define a constant for this property as it is sometimes mistyped as "tempdir" otherwise */
     public static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
     
     private TempFile() {
