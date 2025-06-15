@@ -35,10 +35,13 @@ def poijobs = [
           disabled: true
         ],
         [ name: 'POI-DSL-1.23', jdk: '1.23', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 22 is not an LTS and JDK 23/24 is out
+          disabled: true
         ],
-        // Jenkins on ci-builds.apache.org does not support spotbugs with a new enough version of asm for Java24+
-        [ name: 'POI-DSL-1.24', jdk: '1.24', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
-          // use Ant for building until Gradle supports JDK 24
+        [ name: 'POI-DSL-1.24', jdk: '1.24', trigger: triggerSundays, skipcigame: true,
+        ],
+        [ name: 'POI-DSL-1.25', jdk: '1.25', trigger: triggerSundays, skipcigame: true, skipSpotbugs: true,
+          // use Ant for building until Gradle supports JDK 25
           // see https://docs.gradle.org/current/userguide/compatibility.html
           // and https://github.com/gradle/gradle/issues/31625
           useAnt: true
@@ -87,9 +90,14 @@ def poijobs = [
           // let's save some CPU cycles here, 22 is not an LTS and JDK 23/24 is out
           disabled: true
         ],
-        [ name: 'POI-DSL-Windows-1.23', jdk: '1.23', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
+        [ name: 'POI-DSL-Windows-1.23', jdk: '1.23', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
+          // let's save some CPU cycles here, 22 is not an LTS and JDK 23/24 is out
+          disabled: true
         ],
         [ name: 'POI-DSL-Windows-1.24', jdk: '1.24', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
+        ],
+        [ name: 'POI-DSL-Windows-1.25', jdk: '1.25', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
+          skipSpotbugs: true,
           // use Ant for building until Gradle supports JDK 24
           // see https://docs.gradle.org/current/userguide/compatibility.html
           // and https://github.com/gradle/gradle/issues/31625
@@ -115,6 +123,8 @@ def xmlbeansjobs = [
         [ name: 'POI-XMLBeans-DSL-1.23', jdk: '1.23', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-1.24', jdk: '1.24', trigger: triggerSundays, skipcigame: true,
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.25', jdk: '1.25', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-Sonar', jdk: '1.17', trigger: triggerSundays, skipcigame: true,
           sonar: true
@@ -144,6 +154,7 @@ def jdkMapping = [
         '1.22': [ jenkinsJdk: 'jdk_22_latest', jdkVersion: 22, jdkVendor: '' ],
         '1.23': [ jenkinsJdk: 'jdk_23_latest', jdkVersion: 23, jdkVendor: '' ],
         '1.24': [ jenkinsJdk: 'jdk_24_latest', jdkVersion: 24, jdkVendor: '' ],
+        '1.25': [ jenkinsJdk: 'jdk_25_latest', jdkVersion: 25, jdkVendor: '' ],
         'OpenJDK 1.8': [ jenkinsJdk: 'adoptopenjdk_hotspot_8u282', jdkVersion: 8, jdkVendor: 'adoptopenjdk' ],
         'IBMJDK': [ jenkinsJdk: 'ibmjdk_1.8.0_261', jdkVersion: 8, jdkVendor: 'ibm' ]
 ]
@@ -612,6 +623,8 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'jdk_22_latest',
                 'jdk_23_latest',
                 'jdk_24_latest',
+                'jdk_25_latest',
+                'jdk_26_latest',
                 'adoptopenjdk_hotspot_8u282',
                 'ibmjdk_1.8.0_261'
         )
