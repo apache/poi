@@ -82,7 +82,13 @@ class DefaultTempFileCreationStrategyTest {
         File dir = parentStrategy.createTempDirectory("testProvidedDir");
         assertNotNull(dir, "Failed to create temp directory");
         assertTrue(dir.delete(), "directory not deleted: " + dir);
-        assertThrows(IllegalArgumentException.class, () -> new DefaultTempFileCreationStrategy(dir));
+        try {
+            DefaultTempFileCreationStrategy testStrategy = new DefaultTempFileCreationStrategy(dir);
+            checkGetFile(testStrategy);
+        } finally {
+            // Clean up the directory after the test
+            FileUtils.deleteDirectory(dir);
+        }
     }
 
     @Test

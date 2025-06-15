@@ -52,6 +52,9 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     /** The directory where the temporary files will be created (<code>null</code> to use the default directory). */
     private volatile File dir;
 
+    /** The directory where that was passed to the constructor (<code>null</code> to use the default directory). */
+    private final File initDir;
+
     /** The lock to make dir initialized only once. */
     private final Lock dirLock = new ReentrantLock();
 
@@ -67,7 +70,7 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     /**
      * Creates the strategy allowing to set a custom directory for the temporary files.
      * <p>
-     *     If you provide a non-null dir as input, it must be a directory and must already exist.
+     *     If you provide a non-null dir as input, it must be a directory (if it already exists).
      *     Since POI 5.4.2, this is checked at construction time. In previous versions, it was checked
      *     at the first call to {@link #createTempFile(String, String)} or {@link #createTempDirectory(String)}.
      * </p>
@@ -77,14 +80,10 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
      * @see Files#createTempFile(Path, String, String, FileAttribute[]) 
      */
     public DefaultTempFileCreationStrategy(File dir) {
+        this.initDir = dir;
         this.dir = dir;
-        if (dir != null) {
-            if (!dir.exists()) {
-                throw new IllegalArgumentException("The provided directory does not exist: " + dir);
-            }
-            if (!dir.isDirectory()) {
-                throw new IllegalArgumentException("The provided file is not a directory: " + dir);
-            }
+        if (dir != null && dir.exists() && !dir.isDirectory()) {
+            throw new IllegalArgumentException("The provided file is not a directory: " + dir);
         }
     }
 
@@ -130,7 +129,11 @@ public class DefaultTempFileCreationStrategy implements TempFileCreationStrategy
     }
 
     protected Path getPOIFilesDirectoryPath() throws IOException {
-        return Paths.get(getJavaIoTmpDir(), POIFILES);
+        if (initDir == null) {
+            return Paths.get(getJavaIoTmpDir(), POIFILES);
+        } else {
+            return initDir.toPath();
+        }
     }
 
     // Create our temp dir only once by double-checked locking
