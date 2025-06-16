@@ -19,6 +19,8 @@ package org.apache.poi.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Interface for creating temporary files. Collects them all into one directory by default.
@@ -27,18 +29,66 @@ public final class TempFile {
     /** The strategy used by {@link #createTempFile(String, String)} to create the temporary files. */
     private static TempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy();
 
+    /** Exists as an optimization to not penalize users not using thread local strategies. */
+    private static volatile boolean threadLocalMightBeUsed = false;
+
+    /** The strategy to use by the current thread. If not set, the global strategy is to be used. */
+    private static final ThreadLocal<TempFileCreationStrategy> threadLocalStrategy = new ThreadLocal<>();
+
     /** Define a constant for this property as it is sometimes mistyped as "tempdir" otherwise */
     public static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
-    
+
     private TempFile() {
         // no instances of this class
+    }
+
+    private static TempFileCreationStrategy getStrategy() {
+        if (!threadLocalMightBeUsed) {
+            return strategy;
+        }
+
+        TempFileCreationStrategy result = threadLocalStrategy.get();
+        if (result == null) {
+            threadLocalStrategy.remove();
+            return strategy;
+        }
+        return result;
+    }
+
+    /**
+     * Executes the given task ensuring that POI will use the given temp file creation strategy
+     * within the scope of the given task. The change of strategy is not visible to other threads,
+     * and the previous strategy is restored after the task completed (normally or exceptionally).
+     *
+     * @param newStrategy the temp file strategy to be used in the scope of the given task
+     * @param task the task to be executed with the given temp file strategy
+     * @return the result of the given task
+     *
+     * @since POI 5.5.0
+     */
+    public static <R> R withStrategy(TempFileCreationStrategy newStrategy, Supplier<? extends R> task) {
+        Objects.requireNonNull(newStrategy, "newStrategy");
+        Objects.requireNonNull(task, "task");
+
+        threadLocalMightBeUsed = true;
+        TempFileCreationStrategy oldStrategy = threadLocalStrategy.get();
+        try {
+            threadLocalStrategy.set(newStrategy);
+            return task.get();
+        } finally {
+            if (oldStrategy != null) {
+                threadLocalStrategy.set(oldStrategy);
+            } else {
+                threadLocalStrategy.remove();
+            }
+        }
     }
 
     /**
      * Configures the strategy used by {@link #createTempFile(String, String)} to create the temporary files.
      *
      * @param strategy The new strategy to be used to create the temporary files.
-     * 
+     *
      * @throws IllegalArgumentException When the given strategy is <code>null</code>.
      */
     public static void setTempFileCreationStrategy(TempFileCreationStrategy strategy) {
@@ -47,7 +97,7 @@ public final class TempFile {
         }
         TempFile.strategy = strategy;
     }
-    
+
     /**
      * Creates a new and empty temporary file. By default, files are collected into one directory and are not
      * deleted on exit from the VM, although they can be deleted by defining the system property
@@ -58,16 +108,16 @@ public final class TempFile {
      *
      * @param prefix The prefix to be used to generate the name of the temporary file.
      * @param suffix The suffix to be used to generate the name of the temporary file.
-     * 
+     *
      * @return The path to the newly created and empty temporary file.
-     * 
+     *
      * @throws IOException If no temporary file could be created.
      */
     public static File createTempFile(String prefix, String suffix) throws IOException {
-        return strategy.createTempFile(prefix, suffix);
+        return getStrategy().createTempFile(prefix, suffix);
     }
-    
+
     public static File createTempDirectory(String name) throws IOException {
-        return strategy.createTempDirectory(name);
+        return getStrategy().createTempDirectory(name);
     }
 }
