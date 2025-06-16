@@ -59,14 +59,9 @@ public final class TempFile {
      * Configures the strategy used by {@link #createTempFile(String, String)} to create the temporary files.
      *
      * @param strategy The new strategy to be used to create the temporary files.
-     *
-     * @throws IllegalArgumentException When the given strategy is <code>null</code>.
      * @since POI 5.4.2
      */
     public static void setThreadLocalTempFileCreationStrategy(TempFileCreationStrategy strategy) {
-        if (strategy == null) {
-            throw new IllegalArgumentException("strategy == null");
-        }
         threadLocalStrategy.set(strategy);
     }
     
@@ -95,6 +90,6 @@ public final class TempFile {
 
     private static TempFileCreationStrategy getStrategy() {
         TempFileCreationStrategy s = threadLocalStrategy.get();
-        return s == null ? strategy: s;
+        return s == null ? strategy : s;
     }
 }

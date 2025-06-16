@@ -78,6 +78,23 @@ class DefaultTempFileCreationStrategyTest {
     }
 
     @Test
+    void testProvidedDirThreadLocal() throws IOException {
+        DefaultTempFileCreationStrategy parentStrategy = new DefaultTempFileCreationStrategy();
+        File dir = parentStrategy.createTempDirectory("testProvidedDir");
+        assertNotNull(dir, "Failed to create temp directory");
+        try {
+            assertTrue(Files.isDirectory(dir.toPath()), "File is not a directory: " + dir);
+            DefaultTempFileCreationStrategy testStrategy = new DefaultTempFileCreationStrategy(dir);
+            TempFile.setThreadLocalTempFileCreationStrategy(testStrategy);
+            checkGetFileAndPath(dir.toPath());
+        } finally {
+            // Clean up the directory after the test
+            FileUtils.deleteDirectory(dir);
+            TempFile.setThreadLocalTempFileCreationStrategy(null);
+        }
+    }
+
+    @Test
     void testProvidedDirNotExists() throws IOException {
         DefaultTempFileCreationStrategy parentStrategy = new DefaultTempFileCreationStrategy();
         File dir = parentStrategy.createTempDirectory("testProvidedDir");
@@ -126,6 +143,25 @@ class DefaultTempFileCreationStrategyTest {
             assertTrue(file.delete());
         }
     }
+
+    private static void checkGetFileAndPath(Path path) throws IOException {
+        File file = TempFile.createTempFile("POITest", ".tmp");
+        try {
+            if (path != null) {
+                assertTrue(file.toPath().startsWith(path),
+                        "File path does not start with expected path: " + path);
+            }
+
+            assertTrue(file.getParentFile().exists(),
+                    "Failed for " + file.getParentFile());
+
+            assertTrue(file.exists(),
+                    "Failed for " + file);
+        } finally {
+            assertTrue(file.delete());
+        }
+    }
+
 
     @Test
     void testDefaultDir() throws IOException {
