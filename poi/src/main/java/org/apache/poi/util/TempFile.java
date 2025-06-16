@@ -19,6 +19,8 @@ package org.apache.poi.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 /**
  * Interface for creating temporary files. Collects them all into one directory by default.
@@ -91,6 +93,30 @@ public final class TempFile {
     
     public static File createTempDirectory(String name) throws IOException {
         return getStrategy().createTempDirectory(name);
+    }
+
+    /**
+     * Executes the given task ensuring that POI will use the given temp file creation strategy
+     * within the scope of the given task. The change of strategy is not visible to other threads,
+     * and the previous strategy is restored after the task completed (normally or exceptionally).
+     *
+     * @param newStrategy the temp file strategy to be used in the scope of the given task
+     * @param task the task to be executed with the given temp file strategy
+     * @return the result of the given task
+     *
+     * @since POI 5.4.2
+     */
+    public static <R> R withStrategy(TempFileCreationStrategy newStrategy, Supplier<? extends R> task) {
+        Objects.requireNonNull(newStrategy, "newStrategy");
+        Objects.requireNonNull(task, "task");
+
+        TempFileCreationStrategy oldStrategy = threadLocalStrategy.get();
+        try {
+            threadLocalStrategy.set(newStrategy);
+            return task.get();
+        } finally {
+            setThreadLocalTempFileCreationStrategy(oldStrategy);
+        }
     }
 
     private static TempFileCreationStrategy getStrategy() {
