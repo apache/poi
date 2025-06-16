@@ -27,6 +27,13 @@ public final class TempFile {
     /** The strategy used by {@link #createTempFile(String, String)} to create the temporary files. */
     private static TempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy();
 
+    /** If set for the thread, this is used instead of the strategy variable above. */
+    private static final ThreadLocal<TempFileCreationStrategy> threadLocalStrategy = new ThreadLocal<>();
+    static {
+        // allow to clear all thread-locals via ThreadLocalUtil
+        ThreadLocalUtil.registerCleaner(threadLocalStrategy::remove);
+    }
+
     /** Define a constant for this property as it is sometimes mistyped as "tempdir" otherwise */
     public static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
     
@@ -47,6 +54,21 @@ public final class TempFile {
         }
         TempFile.strategy = strategy;
     }
+
+    /**
+     * Configures the strategy used by {@link #createTempFile(String, String)} to create the temporary files.
+     *
+     * @param strategy The new strategy to be used to create the temporary files.
+     *
+     * @throws IllegalArgumentException When the given strategy is <code>null</code>.
+     * @since POI 5.4.2
+     */
+    public static void setThreadLocalTempFileCreationStrategy(TempFileCreationStrategy strategy) {
+        if (strategy == null) {
+            throw new IllegalArgumentException("strategy == null");
+        }
+        threadLocalStrategy.set(strategy);
+    }
     
     /**
      * Creates a new and empty temporary file. By default, files are collected into one directory and are not
@@ -64,10 +86,15 @@ public final class TempFile {
      * @throws IOException If no temporary file could be created.
      */
     public static File createTempFile(String prefix, String suffix) throws IOException {
-        return strategy.createTempFile(prefix, suffix);
+        return getStrategy().createTempFile(prefix, suffix);
     }
     
     public static File createTempDirectory(String name) throws IOException {
-        return strategy.createTempDirectory(name);
+        return getStrategy().createTempDirectory(name);
+    }
+
+    private static TempFileCreationStrategy getStrategy() {
+        TempFileCreationStrategy s = threadLocalStrategy.get();
+        return s == null ? strategy: s;
     }
 }
