@@ -58,7 +58,8 @@ public final class TempFile {
     /**
      * Configures the strategy used by {@link #createTempFile(String, String)} to create the temporary files.
      *
-     * @param strategy The new strategy to be used to create the temporary files.
+     * @param strategy The new strategy to be used to create the temporary files for this thread.
+     *                 <code>null</code> can be used to reset the strategy for this thread to the default one.
      * @since POI 5.4.2
      */
     public static void setThreadLocalTempFileCreationStrategy(TempFileCreationStrategy strategy) {

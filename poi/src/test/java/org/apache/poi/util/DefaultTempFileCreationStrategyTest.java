@@ -121,48 +121,6 @@ class DefaultTempFileCreationStrategyTest {
         }
     }
 
-    private static void checkGetFile(DefaultTempFileCreationStrategy strategy) throws IOException {
-        checkGetFileAndPath(strategy, null);
-    }
-
-    private static void checkGetFileAndPath(DefaultTempFileCreationStrategy strategy,
-                                           Path path) throws IOException {
-        File file = strategy.createTempFile("POITest", ".tmp");
-        try {
-            if (path != null) {
-                assertTrue(file.toPath().startsWith(path),
-                        "File path does not start with expected path: " + path);
-            }
-
-            assertTrue(file.getParentFile().exists(),
-                    "Failed for " + file.getParentFile());
-
-            assertTrue(file.exists(),
-                    "Failed for " + file);
-        } finally {
-            assertTrue(file.delete());
-        }
-    }
-
-    private static void checkGetFileAndPath(Path path) throws IOException {
-        File file = TempFile.createTempFile("POITest", ".tmp");
-        try {
-            if (path != null) {
-                assertTrue(file.toPath().startsWith(path),
-                        "File path does not start with expected path: " + path);
-            }
-
-            assertTrue(file.getParentFile().exists(),
-                    "Failed for " + file.getParentFile());
-
-            assertTrue(file.exists(),
-                    "Failed for " + file);
-        } finally {
-            assertTrue(file.delete());
-        }
-    }
-
-
     @Test
     void testDefaultDir() throws IOException {
         DefaultTempFileCreationStrategy strategy = new DefaultTempFileCreationStrategy();
@@ -222,6 +180,38 @@ class DefaultTempFileCreationStrategyTest {
             checkGetFile(strategy);
         } finally {
             FileUtils.deleteDirectory(dirTest);
+        }
+    }
+
+    private static void checkGetFile(DefaultTempFileCreationStrategy strategy) throws IOException {
+        checkGetFileAndPath(strategy, null);
+    }
+
+    private static void checkGetFileAndPath(DefaultTempFileCreationStrategy strategy,
+                                            Path path) throws IOException {
+        File file = strategy.createTempFile("POITest", ".tmp");
+        testFileAndPath(file, path);
+    }
+
+    private static void checkGetFileAndPath(Path path) throws IOException {
+        File file = TempFile.createTempFile("POITest", ".tmp");
+        testFileAndPath(file, path);
+    }
+
+    private static void testFileAndPath(File file, Path path) throws IOException {
+        try {
+            if (path != null) {
+                assertTrue(file.toPath().startsWith(path),
+                        "File path does not start with expected path: " + path);
+            }
+
+            assertTrue(file.getParentFile().exists(),
+                    "Failed for " + file.getParentFile());
+
+            assertTrue(file.exists(),
+                    "Failed for " + file);
+        } finally {
+            assertTrue(file.delete());
         }
     }
 }
