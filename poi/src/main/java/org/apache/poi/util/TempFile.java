@@ -120,7 +120,12 @@ public final class TempFile {
     }
 
     private static TempFileCreationStrategy getStrategy() {
-        TempFileCreationStrategy s = threadLocalStrategy.get();
-        return s == null ? strategy : s;
+        final TempFileCreationStrategy s = threadLocalStrategy.get();
+        if (s == null) {
+            threadLocalStrategy.remove();
+            return strategy;
+        } else {
+            return s;
+        }
     }
 }
