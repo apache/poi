@@ -63,7 +63,11 @@ public final class TempFile {
      * @since POI 5.4.2
      */
     public static void setThreadLocalTempFileCreationStrategy(TempFileCreationStrategy strategy) {
-        threadLocalStrategy.set(strategy);
+        if (strategy == null) {
+            threadLocalStrategy.remove();
+        } else {
+            threadLocalStrategy.set(strategy);
+        }
     }
     
     /**
