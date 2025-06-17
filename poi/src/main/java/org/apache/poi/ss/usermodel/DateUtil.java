@@ -70,7 +70,7 @@ public class DateUtil {
     private static final Pattern date_ptrn2 = Pattern.compile("^\\[[a-zA-Z]+]");
     private static final Pattern date_ptrn3a = Pattern.compile("[yYmMdDhHsS]");
     // add "\u5e74 \u6708 \u65e5" for Chinese/Japanese date format:2017 \u5e74 2 \u6708 7 \u65e5
-    private static final Pattern date_ptrn3b = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-T/\u5e74\u6708\u65e5,. :\"\\\\]+0*[ampAMP/]*$");
+    private static final Pattern date_ptrn3b = Pattern.compile("^[\\[\\]yYmMdDhHsS\\-T/\u5e74\u6708\u65e5,. :\"\\\\]+0* ?[ampAMP/]*$");
     //  elapsed time patterns: [h],[m] and [s]
     private static final Pattern date_ptrn4 = Pattern.compile("^\\[([hH]+|[mM]+|[sS]+)]");
 
@@ -548,6 +548,7 @@ public class DateUtil {
     // avoid re-checking DateUtil.isADateFormat(int, String) if a given format
     // string represents a date format if the same string is passed multiple times.
     // see https://issues.apache.org/bugzilla/show_bug.cgi?id=55611
+    private static boolean maintainCache = true;
     private static final ThreadLocal<Integer> lastFormatIndex = ThreadLocal.withInitial(() -> -1);
     private static final ThreadLocal<String> lastFormatString = new ThreadLocal<>();
     private static final ThreadLocal<Boolean> lastCachedResult = new ThreadLocal<>();
@@ -561,22 +562,24 @@ public class DateUtil {
     }
 
     private static boolean isCached(String formatString, int formatIndex) {
-        return formatIndex == lastFormatIndex.get()
+        return maintainCache && formatIndex == lastFormatIndex.get()
                 && formatString.equals(lastFormatString.get());
     }
 
     private static void cache(String formatString, int formatIndex, boolean cached) {
-        if (formatString == null || "".equals(formatString)) {
-            lastFormatString.remove();
-        } else {
-            lastFormatString.set(formatString);
+        if (maintainCache) {
+            if (formatString == null || "".equals(formatString)) {
+                lastFormatString.remove();
+            } else {
+                lastFormatString.set(formatString);
+            }
+            if (formatIndex == -1) {
+                lastFormatIndex.remove();
+            } else {
+                lastFormatIndex.set(formatIndex);
+            }
+            lastCachedResult.set(cached);
         }
-        if (formatIndex == -1) {
-            lastFormatIndex.remove();
-        } else {
-            lastFormatIndex.set(formatIndex);
-        }
-        lastCachedResult.set(cached);
     }
 
     /**
@@ -996,5 +999,19 @@ public class DateUtil {
         if(time != null) tm += 1.0*time.toSecondOfDay()/SECONDS_PER_DAY;
 
         return tm;
+    }
+
+    /**
+     * Enable or disable the thread-local cache for date format checking.
+     * If enabled, the date format checking will be cached per thread,
+     * which can improve performance when checking the same format multiple times.
+     * If disabled, the cache will not be used and each check will be performed independently.
+     *
+     * @param enable true to enable the cache, false to disable it (enabled, by default)
+     * @since POI 5.4.2
+     */
+    public static void enableThreadLocalCache(final boolean enable) {
+        // enable thread-local cache for date format checking
+        maintainCache = enable;
     }
 }

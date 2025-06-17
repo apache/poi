@@ -27,6 +27,7 @@ import java.util.TimeZone;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalWorkbook;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.jupiter.api.AfterAll;
@@ -60,7 +61,7 @@ class TestHSSFDateUtil {
 
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("DateFormats.xls");
         HSSFSheet sheet       = workbook.getSheetAt(0);
-        InternalWorkbook wb           = workbook.getWorkbook();
+        InternalWorkbook wb   = workbook.getWorkbook();
         assertNotNull(wb);
 
         HSSFRow  row;
@@ -115,4 +116,27 @@ class TestHSSFDateUtil {
 
         workbook.close();
     }
+
+    @Test
+    void testIsADateFormat() throws IOException {
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            HSSFSheet sheet = workbook.createSheet();
+            HSSFRow row = sheet.createRow(0);
+            HSSFCell cell = row.createCell(0);
+            cell.setCellValue(45825.5); // 2025-06-17 (midday)
+            HSSFCellStyle style = workbook.createCellStyle();
+            style.setDataFormat(workbook.createDataFormat().getFormat("DD MMMM, YYYY hh:mm:ss.000 AM/PM"));
+            cell.setCellStyle(style);
+            DateUtil.enableThreadLocalCache(false);
+            try {
+                assertTrue(DateUtil.isCellDateFormatted(cell), "cell is date formatted?");
+                DataFormatter formatter = new DataFormatter();
+                String formattedValue = formatter.formatCellValue(cell);
+                assertEquals("17 June, 2025 12:00:00.000 PM", formattedValue);
+            } finally {
+                DateUtil.enableThreadLocalCache(true);
+            }
+        }
+    }
+
 }
