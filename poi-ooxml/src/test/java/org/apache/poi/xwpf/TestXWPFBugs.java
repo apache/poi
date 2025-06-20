@@ -16,10 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xwpf;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
@@ -50,6 +47,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 
 class TestXWPFBugs {
     private static final POIDataSamples samples = POIDataSamples.getDocumentInstance();
@@ -240,5 +238,15 @@ class TestXWPFBugs {
         XmlCursor xmlCursor = xwpfParagraph.getCTP().newCursor();
         XWPFTable xwpfTable = document.insertNewTbl(xmlCursor);
         xwpfTable.getRow(0).getCell(0).setText("Hello");
+    }
+
+    @Test
+    void correctParagraphAlignment() throws IOException {
+        try (XWPFDocument document = new XWPFDocument(samples.openResourceAsStream("bug-paragraph-alignment.docx"))) {
+            XWPFParagraph centeredParagraph = document.getParagraphArray(0);
+            XWPFParagraph leftParagraph = document.getParagraphArray(1);
+            assertNull(centeredParagraph.getAlignment());
+            assertEquals(STJc.START.intValue(), leftParagraph.getAlignment().getValue());
+        }
     }
 }

@@ -488,11 +488,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * specified in the style hierarchy, then no alignment is applied to the
      * paragraph.
      *
-     * @return the paragraph alignment of this paragraph.
+     * @return the paragraph alignment of this paragraph. Can be null if not set.
      */
     public ParagraphAlignment getAlignment() {
         CTPPr pr = getCTPPr();
-        return pr == null || !pr.isSetJc() ? ParagraphAlignment.LEFT
+        return pr == null || !pr.isSetJc() ? null
                 : ParagraphAlignment.valueOf(pr.getJc().getVal().intValue());
     }
 
@@ -506,13 +506,18 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * specified in the style hierarchy, then no alignment is applied to the
      * paragraph.
      *
-     * @param align the paragraph alignment to apply to this paragraph.
+     * @param align the paragraph alignment to apply to this paragraph. It can
+     *              be null to unset it and fall back to the style hierarchy.
      */
     public void setAlignment(ParagraphAlignment align) {
         CTPPr pr = getCTPPr();
-        CTJc jc = pr.isSetJc() ? pr.getJc() : pr.addNewJc();
-        STJc.Enum en = STJc.Enum.forInt(align.getValue());
-        jc.setVal(en);
+        if (align == null) {
+            pr.unsetJc();
+        } else {
+            CTJc jc = pr.isSetJc() ? pr.getJc() : pr.addNewJc();
+            STJc.Enum en = STJc.Enum.forInt(align.getValue());
+            jc.setVal(en);
+        }
     }
 
     /**
