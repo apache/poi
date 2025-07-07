@@ -253,6 +253,60 @@ POIJOBSHELL
 :: ignore any error message
 exit /b 0'''
 
+def xbShellCmdsUnix =
+        '''# remove some outdated directories that should not be there any more
+rm -rf examples excelant integrationtest main ooxml ooxml-schema scratchpad build.javacheck.xml
+
+# show which files are currently modified in the working copy
+svn status || true
+# make sure no changed module-class-files or ooxml-lite-report-files are lingering on
+svn revert . -R || true
+
+# print out information about which exact version of java we are using
+echo Java-Home: $JAVA_HOME
+ls -al $JAVA_HOME/
+ls -al $JAVA_HOME/bin
+$JAVA_HOME/bin/java -version
+
+echo which java
+which java
+java -version
+
+echo which javac
+which javac
+javac -version
+
+echo Ant-Home: $ANT_HOME
+ls -al $ANT_HOME
+echo which ant
+which ant || true
+ant -version
+
+echo '<project default="test"><target name="test"><echo>Java ${ant.java.version}/${java.version}</echo><exec executable="javac"><arg value="-version"/></exec></target></project>' > build.javacheck.xml
+ant -f build.javacheck.xml -v
+
+POIJOBSHELL
+
+# ignore any error message
+exit 0'''
+
+def xbShellCmdsWin =
+        '''@echo off
+:: show which files are currently modified in the working copy
+svn status
+:: make sure no changed module-class-files are lingering on
+svn revert . -R
+
+:: print out information about which exact version of java we are using
+echo Java-Home: %JAVA_HOME%
+dir "%JAVA_HOME:\\\\=\\%"
+"%JAVA_HOME%/bin/java" -version
+
+POIJOBSHELL
+
+:: ignore any error message
+exit /b 0'''
+
 poijobs.each { poijob ->
     def jdkKey = poijob.jdk ?: defaultJdk
     def trigger = poijob.trigger ?: defaultTrigger
@@ -496,8 +550,8 @@ xmlbeansjobs.each { xjob ->
         label(slaves)
         environmentVariables {
             env('LANG', 'en_US.UTF-8')
-            if (jdkKey == '1.11' || jdkKey == '1.17'
-                    || jdkKey == '1.18' || jdkKey == '1.19' || jdkKey == '1.20' || jdkKey == '1.21') {
+            if (jdkKey == '1.11' || jdkKey == '1.17' || jdkKey == '1.21'
+                    || jdkKey == '1.23' || jdkKey == '1.24' || jdkKey == '1.25') {
                 env('ANT_OPTS', '--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
             }
             // will be needed for forbidden-apis-check: env('ANT_HOME', xjob.windows ? 'f:\\jenkins\\tools\\ant\\latest' : '/usr/share/ant')
@@ -531,7 +585,7 @@ xmlbeansjobs.each { xjob ->
             scm(trigger)
         }
 
-        def shellcmds = (xjob.windows ? shellCmdsWin : shellCmdsUnix).replace('POIJOBSHELL', xjob.shell ?: '')
+        def shellcmds = (xjob.windows ? xbShellCmdsWin : xbShellCmdsUnix).replace('POIJOBSHELL', xjob.shell ?: '')
 
         // Create steps and publishers depending on the type of Job that is selected
         steps {
