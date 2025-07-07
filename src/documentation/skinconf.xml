@@ -1,0 +1,549 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!--
+Skin configuration file. This file contains details of your project,
+which will be used to configure the chosen Forrest skin.
+-->
+<!DOCTYPE skinconfig PUBLIC "-//APACHE//DTD Skin Configuration V0.8-2//EN"
+        "http://forrest.apache.org/dtd/skinconfig-v08-2.dtd">
+
+<skinconfig>
+    <!-- To enable lucene search add provider="lucene" (default is google).
+        Add box-location="alt" to move the search box to an alternate location
+        (if the skin supports it) and box-location="all" to show it in all
+        available locations on the page.  Remove the <search> element to show
+        no search box. @domain will enable sitesearch for the specific domain with google.
+        In other words google will search the @domain for the query string.
+      -->
+    <search name="Apache POI" domain="poi.apache.org" provider="google" box-location="default"/>
+    <!-- Disable the print link? If enabled, invalid HTML 4.0.1 -->
+    <disable-print-link>true</disable-print-link>
+    <!-- Disable the PDF link? -->
+    <disable-pdf-link>true</disable-pdf-link>
+    <!-- Disable the POD link? -->
+    <disable-pod-link>true</disable-pod-link>
+    <!-- Disable the Text link? FIXME: NOT YET IMPLEMENETED. -->
+    <disable-txt-link>true</disable-txt-link>
+    <!-- Disable the xml source link? -->
+    <!-- The xml source link makes it possible to access the xml rendition
+        of the source frim the html page, and to have it generated statically.
+        This can be used to enable other sites and services to reuse the
+        xml format for their uses. Keep this disabled if you don't want other
+        sites to easily reuse your pages.-->
+    <disable-xml-link>true</disable-xml-link>
+    <!-- Disable navigation icons on all external links? -->
+    <disable-external-link-image>true</disable-external-link-image>
+    <!-- Disable w3c compliance links?
+        Use e.g. align="center" to move the compliance links logos to
+        an alternate location default is left.
+        (if the skin supports it) -->
+    <disable-compliance-links>false</disable-compliance-links>
+    <!-- Render mailto: links unrecognisable by spam harvesters? -->
+    <obfuscate-mail-links>true</obfuscate-mail-links>
+    <obfuscate-mail-value>.at.</obfuscate-mail-value>
+    <!-- Disable the javascript facility to change the font size -->
+    <disable-font-script>true</disable-font-script>
+    <!-- mandatory project logo
+           default skin: renders it at the top -->
+    <project-name>Apache POI</project-name>
+    <project-description>Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats.</project-description>
+    <project-url>https://poi.apache.org</project-url>
+    <project-logo>images/project-header.png</project-logo>
+    <!-- optional group logo
+           default skin: renders it at the top-left corner -->
+    <group-name>Apache Software Foundation</group-name>
+    <group-description>The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem – supporting some of the most widely used and important software solutions powering today's Internet economy.</group-description>
+    <group-url>https://www.apache.org</group-url>
+    <group-logo>images/group-logo.png</group-logo>
+    <!-- optional host logo (e.g. sourceforge logo)
+           default skin: renders it at the bottom-left corner -->
+    <host-url></host-url>
+    <host-logo></host-logo>
+    <!-- relative url of a favicon file, normally favicon.ico -->
+    <favicon-url>images/favicon.ico</favicon-url>
+    <!-- The following are used to construct a copyright statement -->
+    <disable-copyright-footer>false</disable-copyright-footer>
+    <!-- @inception enable automatic generation of a date-range to current date -->
+    <year inception="true">2001</year>
+    <vendor>The Apache Software Foundation</vendor>
+    <!-- The optional copyright-link URL will be used as a link in the
+        copyright statement -->
+    <copyright-link>https://www.apache.org/</copyright-link>
+    <!-- Optional text trademark statement below the copyright statement -->
+    <trademark-statement>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </trademark-statement>
+    <!-- Some skins use this to form a 'breadcrumb trail' of links.
+        Use location="alt" to move the trail to an alternate location
+        (if the skin supports it).
+        Omit the location attribute to display the trail in the default location.
+        Use location="none" to not display the trail (if the skin supports it).
+        For some skins just set the attributes to blank.
+
+        NOTE: If a breadcrumb entry points at a local file the href must
+        be complete, that is it must point to the file itself, not to a
+        directory.
+      -->
+    <trail>
+        <link1 name="Apache Software Foundation" href="https://www.apache.org"/>
+        <link2 name="Apache POI" href="https://poi.apache.org"/>
+        <link3 name="" href=""/>
+    </trail>
+    <!-- Configure the TOC, i.e. the Table of Contents.
+      @max-depth
+       how many "section" levels need to be included in the
+       generated Table of Contents (TOC).
+      @min-sections
+       Minimum required to create a TOC.
+      @location ("page","menu","page,menu", "none")
+       Where to show the TOC.
+      -->
+    <toc max-depth="2" min-sections="1" location="none"/>
+    <!-- Heading types can be clean|underlined|boxed  -->
+    <headings type="boxed"/>
+    <!-- The optional feedback element will be used to construct a
+        feedback link in the footer with the page pathname appended:
+        <a href="@href">{@to}</a>
+        -->
+    <feedback to="dev@poi.apache.org"
+              href="mailto:dev@poi.apache.org?subject=Feedback&#160;">
+        Send feedback about the website to:
+    </feedback>
+    <!-- Optional message of the day (MOTD).
+        Note: This is only implemented in the pelt skin.
+        Note: Beware issue FOR-677 if you use an absolute path uri.
+        If the optional <motd> element is used, then messages will be appended
+        depending on the URI string pattern.
+        motd-option : Each option will match a pattern and apply its text.
+          The "pattern" attribute specifies the pattern to be matched.
+          This can be a specific page, or a general pattern to match a set of pages,
+          e.g. everything in the "samples" directory.
+          The @starts-with=true anchors the string to the start, otherwise contains
+        motd-title : This text will be added in brackets after the <html><title>
+          and this can be empty.
+        motd-page : This text will be added in a panel on the face of the page,
+          with the "motd-page-url" being the hyperlink "More".
+        Values for the "location" attribute are:
+          page : on the face of the page, e.g. in the spare space of the toc
+          alt : at the bottom of the left-hand navigation panel
+          both : both
+        -->
+    <!--
+      <motd>
+        <motd-option pattern="samples/sample.html">
+          <motd-title>sample</motd-title>
+          <motd-page location="both">
+            This is an example of a Message of the day (MOTD).
+          </motd-page>
+          <motd-page-url>faq.html</motd-page-url>
+        </motd-option>
+        <motd-option pattern="samples/faq.html">
+          <motd-page location="page">
+            How to enable this MOTD is on this page.
+          </motd-page>
+          <motd-page-url>http://forrest.apache.org/docs/faq.html</motd-page-url>
+        </motd-option>
+      </motd>
+    -->
+    <!--
+        extra-css - here you can define custom css-elements that are
+        A) overriding the fallback elements or
+        B) adding the css definition from new elements that you may have
+           used in your documentation.
+        -->
+    <extra-css>
+        <!--Example of reason B:
+                To define the css definition of a new element that you may have used
+                in the class attribute of a <p> node.
+                e.g. <p class="quote"/>
+            -->
+        p.quote {
+        margin-left: 2em;
+        padding: .5em;
+        background-color: #f0f0f0;
+        font-family: monospace;
+        }
+        <!--Example:
+            To override the colours of links only in the footer.
+        -->
+        #footer a { color: #0F3660; }
+        #footer a:visited { color: #009999; }
+        #top .projectlogo { float: none; text-align: center; width: auto; }
+        #menu { width: 200px }
+        #content { padding-left: 230px }
+        #content table.autosize { width: auto; }
+        #credit2 img { margin-top: 20px }
+
+        .boxed { padding-left: 10px; border-radius: 10px 0px; }
+        h2.boxed { color: white; background-color: #036; }
+        h3.boxed { color: white; background-color: #888; }
+        table.POITable th  { background-color: #bbb !important }
+        table.POITable tr:nth-child(even) { background-color: #ddd }
+        table.POITable tr:nth-child(odd) { background-color: #efefef }
+        .feature-yes { background-color: #9f9 }
+        .feature-na { background-color: #ddf }
+        .feature-no { background-color: #f99 }
+
+        li.pro, li.con {
+            list-style: none;
+            padding-left: 0.7em;
+            text-indent: -0.3em;
+        }
+
+        li.pro::before, li.con::before {
+            content: "\00a0";
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+            margin-right: 0.3em;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        li.pro::before {
+            background-image: url("data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>&lt;path fill='green' d='M16.59 7.58L10 14.17l-3.59-3.58L5 12l5 5 8-8zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z'/>&lt;/svg>");
+        }
+
+
+        li.con::before {
+            background-image: url("data:image/svg+xml;utf8,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'>&lt;path fill='red' d='M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.59-13L12 10.59 8.41 7 7 8.41 10.59 12 7 15.59 8.41 17 12 13.41 15.59 17 17 15.59 13.41 12 17 8.41z'>&lt;/path>&lt;/svg>");
+        }
+
+        /* Bare bones style for the desired effect */
+        div.code {
+            display: table;
+            white-space: pre-wrap;
+            border: solid 1px black;
+            font-family: monospace;
+        }
+
+        div.code::before {
+            counter-reset: linenum;
+        }
+
+        div.codeline {
+            display: table-row;
+            counter-increment: linenum;
+        }
+
+        span.lineno {
+            display: table-cell;
+            user-select: none;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            width: 4em;
+            background: #f0f0f0;
+            padding: 3px;
+            padding-top: 0px;
+            border-right: solid 1px silver;
+            border-top: solid 1px silver;
+        }
+
+        span.lineno::before {
+            content: counter(linenum) ".";
+            text-align: right;
+            display: block;
+            font-size: 90%;
+            color: #999;
+        }
+
+        span.codebody {
+            display: table-cell;
+            padding: 3px 5em 3px 1em;
+            background: white;
+        }
+
+        div.code div.codeline:nth-child(odd) .codebody {
+            background: #f0f8ff;
+        }
+
+        dd {
+            margin-bottom: 1em;
+        }
+
+        tr.action td:nth-child(1), tr.action td:nth-child(2), tr.action td:nth-child(3) {
+            text-align: center;
+        }
+
+        .sebb, a.sebb:link, a.sebb:visited {
+            color: white;
+        }
+    </extra-css>
+    <colors>
+        <!-- These values are used for the generated CSS files.
+            They essentially "override" the default colors defined in the chosen skin.
+            There are four duplicate "groups" of colors below, denoted by comments:
+              Color group: Forrest, Krysalis, Collabnet, and Lenya using Pelt.
+            They are provided for example only. To customize the colors of any skin,
+            uncomment one of these groups of color elements and change the values
+            of the particular color elements that you wish to change.
+            Note that by default, all color groups are commented-out which means that
+            the default colors provided by the skin are being used.
+          -->
+        <!-- Color group: Forrest: example colors similar to forrest.apache.org
+            Some of the element names are obscure, so comments are added to show how
+            the "pelt" skin uses them, other skins might use these elements in a different way.
+            Tip: temporarily change the value of an element to red (#ff0000) and see the effect.
+             pelt: breadtrail: the strip at the top of the page and the second strip under the tabs
+             pelt: header: top strip containing project and group logos
+             pelt: heading|subheading: section headings within the content
+             pelt: navstrip: the strip under the tabs which contains the published date
+             pelt: menu: the left-hand navigation panel
+             pelt: toolbox: the selected menu item
+             pelt: searchbox: the background of the searchbox
+             pelt: border: line border around selected menu item
+             pelt: body: any remaining parts, e.g. the bottom of the page
+             pelt: footer: the second from bottom strip containing credit logos and published date
+             pelt: feedback: the optional bottom strip containing feedback link
+          -->
+        <!--
+            <color name="breadtrail" value="#cedfef" font="#0F3660" link="#0F3660" vlink="#0F3660" hlink="#000066"/>
+            <color name="header" value="#294563"/>
+            <color name="tab-selected" value="#4a6d8c" link="#0F3660" vlink="#0F3660" hlink="#000066"/>
+            <color name="tab-unselected" value="#b5c7e7" link="#0F3660" vlink="#0F3660" hlink="#000066"/>
+            <color name="subtab-selected" value="#4a6d8c" link="#0F3660" vlink="#0F3660" hlink="#000066"/>
+            <color name="subtab-unselected" value="#4a6d8c" link="#0F3660" vlink="#0F3660" hlink="#000066"/>
+            <color name="heading" value="#294563"/>
+            <color name="subheading" value="#4a6d8c"/>
+            <color name="published" value="#4C6C8F" font="#FFFFFF"/>
+            <color name="feedback" value="#4C6C8F" font="#FFFFFF" align="center"/>
+            <color name="navstrip" value="#4a6d8c" font="#ffffff" link="#0F3660" vlink="#0F3660" hlink="#000066"/>
+            <color name="menu" value="#4a6d8c" font="#cedfef" link="#ffffff" vlink="#ffffff" hlink="#ffcf00"/>
+            <color name="toolbox" value="#4a6d8c"/>
+            <color name="border" value="#294563"/>
+            <color name="dialog" value="#4a6d8c"/>
+            <color name="searchbox" value="#4a6d8c" font="#000000"/>
+            <color name="body" value="#ffffff" link="#0F3660" vlink="#009999" hlink="#000066"/>
+            <color name="table" value="#7099C5"/>
+            <color name="table-cell" value="#f0f0ff"/>
+            <color name="highlight" value="#ffff00"/>
+            <color name="fixme" value="#cc6600"/>
+            <color name="note" value="#006699"/>
+            <color name="warning" value="#990000"/>
+            <color name="code" value="#CFDCED"/>
+            <color name="footer" value="#cedfef"/>
+        -->
+        <!-- Color group: Krysalis -->
+        <!--
+            <color name="header"    value="#FFFFFF"/>
+
+            <color name="tab-selected" value="#a5b6c6" link="#000000" vlink="#000000" hlink="#000000"/>
+            <color name="tab-unselected" value="#F7F7F7"  link="#000000" vlink="#000000" hlink="#000000"/>
+            <color name="subtab-selected" value="#a5b6c6"  link="#000000" vlink="#000000" hlink="#000000"/>
+            <color name="subtab-unselected" value="#a5b6c6"  link="#000000" vlink="#000000" hlink="#000000"/>
+
+            <color name="heading" value="#a5b6c6"/>
+            <color name="subheading" value="#CFDCED"/>
+
+            <color name="navstrip" value="#CFDCED" font="#000000" link="#000000" vlink="#000000" hlink="#000000"/>
+            <color name="toolbox" value="#a5b6c6"/>
+            <color name="border" value="#a5b6c6"/>
+
+            <color name="menu" value="#F7F7F7" link="#000000" vlink="#000000" hlink="#000000"/>
+            <color name="dialog" value="#F7F7F7"/>
+
+            <color name="body"    value="#ffffff" link="#0F3660" vlink="#009999" hlink="#000066"/>
+
+            <color name="table" value="#a5b6c6"/>
+            <color name="table-cell" value="#ffffff"/>
+            <color name="highlight" value="#ffff00"/>
+            <color name="fixme" value="#cc6600"/>
+            <color name="note" value="#006699"/>
+            <color name="warning" value="#990000"/>
+            <color name="code" value="#a5b6c6"/>
+
+            <color name="footer" value="#a5b6c6"/>
+        -->
+        <!-- Color group: Collabnet -->
+        <!--
+            <color name="header"    value="#003366"/>
+
+            <color name="tab-selected" value="#dddddd" link="#555555" vlink="#555555" hlink="#555555"/>
+            <color name="tab-unselected" value="#999999" link="#ffffff" vlink="#ffffff" hlink="#ffffff"/>
+            <color name="subtab-selected" value="#cccccc" link="#000000" vlink="#000000" hlink="#000000"/>
+            <color name="subtab-unselected" value="#cccccc" link="#555555" vlink="#555555" hlink="#555555"/>
+
+            <color name="heading" value="#003366"/>
+            <color name="subheading" value="#888888"/>
+
+            <color name="navstrip" value="#dddddd" font="#555555"/>
+            <color name="toolbox" value="#dddddd" font="#555555"/>
+            <color name="border" value="#999999"/>
+
+            <color name="menu" value="#ffffff"/>
+            <color name="dialog" value="#eeeeee"/>
+
+            <color name="body"      value="#ffffff"/>
+
+            <color name="table" value="#ccc"/>
+            <color name="table-cell" value="#ffffff"/>
+            <color name="highlight" value="#ffff00"/>
+            <color name="fixme" value="#cc6600"/>
+            <color name="note" value="#006699"/>
+            <color name="warning" value="#990000"/>
+            <color name="code" value="#003366"/>
+
+            <color name="footer" value="#ffffff"/>
+        -->
+        <!-- Color group: Lenya using pelt-->
+        <!--
+
+            <color name="header" value="#ffffff"/>
+
+            <color name="tab-selected" value="#E5E4D9" link="#000000" vlink="#000000" hlink="#000000"/>
+            <color name="tab-unselected" value="#F5F4E9" link="#000000" vlink="#000000" hlink="#000000"/>
+            <color name="subtab-selected" value="#000000" link="#000000" vlink="#000000" hlink="#000000"/>
+            <color name="subtab-unselected" value="#E5E4D9" link="#000000" vlink="#000000" hlink="#000000"/>
+
+            <color name="heading" value="#E5E4D9"/>
+            <color name="subheading" value="#000000"/>
+            <color name="published" value="#000000"/>
+            <color name="navstrip" value="#E5E4D9" font="#000000"/>
+            <color name="toolbox" value="#CFDCED" font="#000000"/>
+            <color name="border" value="#999999"/>
+
+            <color name="menu" value="#E5E4D9" font="#000000" link="#000000" vlink="#000000" hlink="#000000"/>
+            <color name="dialog" value="#CFDCED"/>
+            <color name="body" value="#ffffff" />
+
+            <color name="table" value="#ccc"/>
+            <color name="table-cell" value="#ffffff"/>
+            <color name="highlight" value="#ffff00"/>
+            <color name="fixme" value="#cc6600"/>
+            <color name="note" value="#006699"/>
+            <color name="warning" value="#990000"/>
+            <color name="code" value="#003366"/>
+
+            <color name="footer" value="#E5E4D9"/>
+        -->
+    </colors>
+    <!-- Settings specific to PDF output. -->
+    <pdf>
+        <!--
+               Supported page sizes are a0, a1, a2, a3, a4, a5, executive,
+               folio, legal, ledger, letter, quarto, tabloid (default letter).
+               Supported page orientations are portrait, landscape (default
+               portrait).
+               Supported text alignments are left, right, justify (default left).
+            -->
+        <page size="letter" orientation="portrait" text-align="left"/>
+        <!--
+               Pattern of the page numbering in the footer - Default is "Page x".
+               first occurrence of '1' digit represents the current page number,
+               second occurrence of '1' digit represents the total page number,
+               anything else is considered as the static part of the numbering pattern.
+               Examples : x is the current page number, y the total page number.
+               <page-numbering-format>none</page-numbering-format> Do not displays the page numbering
+               <page-numbering-format>1</page-numbering-format> Displays "x"
+               <page-numbering-format>p1.</page-numbering-format> Displays "px."
+               <page-numbering-format>Page 1/1</page-numbering-format> Displays "Page x/y"
+               <page-numbering-format>(1-1)</page-numbering-format> Displays "(x-y)"
+            -->
+        <page-numbering-format>Page 1</page-numbering-format>
+        <!--
+               Margins can be specified for top, bottom, inner, and outer
+               edges. If double-sided="false", the inner edge is always left
+               and the outer is always right. If double-sided="true", the
+               inner edge will be left on odd pages, right on even pages,
+               the outer edge vice versa.
+               Specified below are the default settings.
+            -->
+        <margins double-sided="false">
+            <top>1in</top>
+            <bottom>1in</bottom>
+            <inner>1.25in</inner>
+            <outer>1in</outer>
+        </margins>
+        <!--
+              Print the URL text next to all links going outside the file
+            -->
+        <show-external-urls>false</show-external-urls>
+        <!--
+              Normally all links inside a Forrest site are relative. This
+              does not work well in PDFs which are typically viewed outside of
+              the web site. Setting this option adds the given prefix to all
+              relative URLs, both to the link as well as the optional, additional text.
+            -->
+        <url-prefix></url-prefix>
+        <!--
+              Disable the copyright footer on each page of the PDF.
+              A footer is composed for each page. By default, a "credit" with role=pdf
+              will be used, as explained below. Otherwise a copyright statement
+              will be generated. This latter can be disabled.
+            -->
+        <disable-copyright-footer>false</disable-copyright-footer>
+
+        <!--
+        Disable the generation of the table of content on the first page
+        of the PDF. By default the TOC is generated.
+        -->
+        <disable-toc>false</disable-toc>
+    </pdf>
+    <!--
+        Credits are typically rendered as a set of small clickable
+        images in the page footer.
+
+        Use box-location="alt" to move the credits to an alternate location
+        (if the skin supports it).
+
+        For example, pelt skin:
+        - box-location="alt" will place the logo at the end of the
+          left-hand coloured menu panel.
+        - box-location="alt2" will place them underneath that panel
+          in the left-hand whitespace.
+        - Otherwise they are placed next to the compatibility icons
+          at the bottom of the screen.
+
+        Comment out the whole <credit>-element if you want no credits in the
+        web pages
+       -->
+    <credits>
+        <credit box-location="alt">
+          <name>Apache Event</name>
+          <url>https://www.apache.org/events/current-event.html</url>
+          <image>https://www.apache.org/events/current-event-125x125.png</image>
+          <width>125</width>
+          <height>125</height>
+        </credit>
+        <credit box-location="alt2">
+            <name>Support Apache</name>
+            <url>https://donate.apache.org/</url>
+            <image>images/support-asf.png</image>
+            <width>125</width>
+            <height>125</height>
+        </credit>
+        <credit box-location="alt2">
+            <name>powered by POI</name>
+            <url>https://www.apache.org/foundation/press/kit/#poweredby</url>
+            <image>images/poweredby-poi-logo.png</image>
+            <width>125</width>
+            <height>125</height>
+        </credit>
+        <!-- A credit with @role="pdf" will be used to compose a footer
+             for each page in the PDF, using either "name" or "url" or both.
+            -->
+        <!--
+            <credit role="pdf">
+              <name>Built with Apache Forrest</name>
+              <url>http://forrest.apache.org/</url>
+            </credit>
+            -->
+    </credits>
+</skinconfig>

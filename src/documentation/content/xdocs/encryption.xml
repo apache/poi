@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+
+<document>
+    <header>
+        <title>Apache POI™ - Encryption support</title>
+        <authors>
+            <person id="maxcom" name="Maxim Valyanskiy" email="maxcom@apache.org"/>
+            <person id="AB" name="Andreas Beeker" email="kiwiwings@apache.org"/>
+        </authors>
+    </header>
+
+    <body>
+    <section>
+        <title>Overview</title>
+
+        <p>Apache POI contains support for reading few variants of encrypted office files: </p>
+        <ul>
+            <li>Binary formats (.xls, .ppt, .doc, ...)<br/>
+            encryption is format-dependent and needs to be implemented per format differently.<br/>
+            Use <a href="apidocs/dev/org/apache/poi/hssf/record/crypto/Biff8EncryptionKey.html">
+            Biff8EncryptionKey</a>.<a href="apidocs/dev/org/apache/poi/hssf/record/crypto/Biff8EncryptionKey.html#setCurrentUserPassword(java.lang.String)">setCurrentUserPassword</a>(String password)
+            to specify the decryption password before opening the file or (where applicable) before saving.
+            Setting a null password before saving removes the password protection.<br/>
+            The password is set in a thread local variable. Do not forget to reset it to null after text extraction.
+            </li>
+            <li>XML-based formats (.xlsx, .pptx, .docx, ...)<br/>
+            use the same encryption logic over all formats. When encrypted, the zipped files will be
+            stored within an OLE file in the EncryptedPackage stream.<br/>
+            If you plan to use POI to actually generate encrypted documents, be aware not to use anything less than
+            agile encryption, because <a href="https://eprint.iacr.org/2005/007.pdf">RC4 is not really secure</a> and
+            <a href="https://blog.cryptographyengineering.com/2011/12/01/how-not-to-use-symmetric-encryption/">ECB chaining is problematic too</a>.
+            Of course you'll need to make sure, that your clients can read the documents,
+            i.e. the various free Excel, Powerpoint, Word viewers have limitations in the cipher or hashing parameters.<br/>
+            If you want to use high encryption parameters, you need to install the "Java Cryptography Extension (JCE) Unlimited
+            Strength Jurisdiction Policy Files" for your JRE version
+            (Oracle <a href="http://www.oracle.com/technetwork/java/javase/downloads/jce-6-download-429243.html">JDK6</a>,
+            <a href="http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html">JDK7</a>,
+            <a href="http://www.oracle.com/technetwork/java/javase/downloads/jce8-download-2133166.html">JDK8</a>,
+            IBM <a href="https://www.ibm.com/support/knowledgecenter/en/SSYKE2_8.0.0/com.ibm.java.security.component.80.doc/security-component/sdkpolicyfiles.html">JDK8</a>).
+            </li>
+        </ul>
+
+        <p>Some "write-protected" files are encrypted with the built-in password "VelvetSweatshop", POI can read that files too.</p>
+    </section>
+
+    <section>
+        <title>Supported feature matrix</title>
+
+        <table class="autosize POITable">
+            <tr>
+                <th>Encryption</th>
+                <th>HSSF</th>
+                <th>HSLF</th>
+                <th>HWPF</th>
+            </tr>
+            <tr>
+                <td><a href="https://msdn.microsoft.com/en-us/library/dd949802(v=office.12).aspx">XOR obfuscation *)</a></td>
+                <td class="feature-yes">Yes (Writing since 3.16)</td>
+                <td class="feature-na">N/A</td>
+                <td class="feature-no">No</td>
+            </tr>
+            <tr>
+                <td><a href="https://msdn.microsoft.com/en-us/library/dd909583(v=office.12).aspx">40-bit RC4 encryption</a></td>
+                <td class="feature-yes">Yes (Writing since 3.16)</td>
+                <td class="feature-na">N/A</td>
+                <td class="feature-yes">Yes (since 3.17)</td>
+            </tr>
+            <tr>
+                <td><a href="https://msdn.microsoft.com/en-us/library/dd910113(v=office.12).aspx">Office Binary Document RC4 CryptoAPI Encryption</a></td>
+                <td class="feature-yes">Yes (Since 3.16)</td>
+                <td class="feature-yes">Yes</td>
+                <td class="feature-yes">Yes (since 3.17)</td>
+            </tr>
+            <tr>
+                <th/>
+                <th>XSSF</th>
+                <th>XSLF</th>
+                <th>XWPF</th>
+            </tr>
+            <tr>
+                <td><a href="https://msdn.microsoft.com/en-us/library/dd907466(v=office.12).aspx">Office Binary Document RC4 Encryption **)</a></td>
+                <td class="feature-yes">Yes</td>
+                <td class="feature-yes">Yes</td>
+                <td class="feature-yes">Yes</td>
+            </tr>
+            <tr>
+                <td><a href="https://msdn.microsoft.com/en-us/library/dd906131(v=office.12).aspx">ECMA-376 Standard Encryption</a></td>
+                <td class="feature-yes">Yes</td>
+                <td class="feature-yes">Yes</td>
+                <td class="feature-yes">Yes</td>
+            </tr>
+            <tr>
+                <td><a href="https://msdn.microsoft.com/en-us/library/dd906131(v=office.12).aspx">ECMA-376 Agile Encryption</a></td>
+                <td class="feature-yes">Yes</td>
+                <td class="feature-yes">Yes</td>
+                <td class="feature-yes">Yes</td>
+            </tr>
+            <tr>
+                <td><a href="https://msdn.microsoft.com/en-us/library/ms757845(v=vs.85).aspx">ECMA-376 XML Signature</a></td>
+                <td class="feature-yes">Yes</td>
+                <td class="feature-yes">Yes</td>
+                <td class="feature-yes">Yes</td>
+            </tr>
+        </table>
+
+        <p>*) the xor encryption is flawed and works only for very small files - see <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=59857">#59857</a>.
+        </p>
+
+        <p>**) the <a href="https://msdn.microsoft.com/en-us/library/cc313071(v=office.12).aspx">MS-OFFCRYPTO</a>
+        documentation only mentions the RC4 (without CryptoAPI) encryption as a "in place" encryption, but
+        apparently there's also a container based method with that key generation logic.
+        </p>
+    </section>
+
+    <section><title>Binary formats</title>
+        <p>As mentioned above, use
+        <a href="apidocs/dev/org/apache/poi/hssf/record/crypto/Biff8EncryptionKey.html">
+        Biff8EncryptionKey</a>.<a href="apidocs/dev/org/apache/poi/hssf/record/crypto/Biff8EncryptionKey.html#setCurrentUserPassword(java.lang.String)">setCurrentUserPassword</a>(String password)
+        to specify the password.</p>
+
+        <section>
+            <title>XOR/RC4 decryption for xls</title>
+            <source><![CDATA[
+                Biff8EncryptionKey.setCurrentUserPassword("pass");
+                POIFSFileSystem fs = new POIFSFileSystem(new File("file.xls"), true);
+                HSSFWorkbook hwb = new HSSFWorkbook(fs.getRoot(), true);
+                Biff8EncryptionKey.setCurrentUserPassword(null);
+            ]]></source>
+        </section>
+
+        <section>
+            <title>RC4 CryptoApi support ppt - decryption</title>
+            <source><![CDATA[
+                Biff8EncryptionKey.setCurrentUserPassword("pass");
+                POIFSFileSystem fs = new POIFSFileSystem(new File("file.ppt"), true);
+                HSLFSlideShow hss = new HSLFSlideShow(fs);
+                ...
+                // Option 1: remove password
+                Biff8EncryptionKey.setCurrentUserPassword(null);
+                OutputStream os = new FileOutputStream("decrypted.ppt");
+                hss.write(os);
+                os.close();
+                ...
+                // Option 2: change encryption settings (experimental)
+                // need to cache data (i.e. read all data) before changing the key size
+                PictureData picsExpected[] = hss.getPictures();
+                hss.getDocumentSummaryInformation();
+                EncryptionInfo ei = hss.getDocumentEncryptionAtom().getEncryptionInfo();
+                ((CryptoAPIEncryptionHeader)ei.getHeader()).setKeySize(0x78);
+                OutputStream os = new FileOutputStream("file_120bit.ppt");
+                hss.write(os);
+                os.close();
+            ]]></source>
+        </section>
+    </section>
+
+    <section>
+        <title>XML-based formats - Decryption</title>
+
+        <p>XML-based formats are stored in OLE-package stream "EncryptedPackage". Use org.apache.poi.poifs.crypt.Decryptor
+        to decode file:</p>
+
+        <source><![CDATA[
+            EncryptionInfo info = new EncryptionInfo(filesystem);
+            Decryptor d = Decryptor.getInstance(info);
+
+            try {
+                if (!d.verifyPassword(password)) {
+                    throw new RuntimeException("Unable to process: document is encrypted");
+                }
+
+                InputStream dataStream = d.getDataStream(filesystem);
+
+                // parse dataStream
+
+            } catch (GeneralSecurityException ex) {
+                throw new RuntimeException("Unable to process encrypted document", ex);
+            }
+        ]]></source>
+
+        <p>If you want to read file encrypted with build-in password, use Decryptor.DEFAULT_PASSWORD.</p>
+    </section>
+
+    <section>
+        <title>XML-based formats - Encryption</title>
+
+        <p>Encrypting a file is similar to the above decryption process. Basically you'll need to choose between
+        <a href="apidocs/dev/org/apache/poi/poifs/crypt/EncryptionMode.html">binaryRC4, standard and agile encryption</a>,
+        the cryptoAPI mode is used internally and its direct use would result in an incomplete file.
+        Apart of the CipherMode, the EncryptionInfo class provides further parameters to specify the cipher and
+        hashing algorithm to be used.</p>
+        <source><![CDATA[
+            try (POIFSFileSystem fs = new POIFSFileSystem()) {
+                EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile);
+                // EncryptionInfo info = new EncryptionInfo(EncryptionMode.agile, CipherAlgorithm.aes192, HashAlgorithm.sha384, -1, -1, null);
+
+                Encryptor enc = info.getEncryptor();
+                enc.confirmPassword("foobaa");
+
+                // Read in an existing OOXML file and write to encrypted output stream
+                // don't forget to close the output stream otherwise the padding bytes aren't added
+                try (OPCPackage opc = OPCPackage.open(new File("..."), PackageAccess.READ_WRITE);
+                    OutputStream os = enc.getDataStream(fs)) {
+                    opc.save(os);
+                }
+
+                // Write out the encrypted version
+                try (FileOutputStream fos = new FileOutputStream("...")) {
+                    fs.writeFilesystem(fos);
+                }
+            }
+        ]]></source>
+    </section>
+
+    <section>
+        <title>XML-based formats - Signing (XML Signature)</title>
+
+        <note>As of <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=64186">#64186</a> the configuration of the
+        OPCPackage has changed, the examples below have been adopted and reflect the POI 5.0.0 API</note>
+
+        <p>An Office document can be digital signed by a <a href="https://en.wikipedia.org/wiki/XML_Signature">XML Signature</a>
+        to protect it from unauthorized modifications, i.e. modifications without having the original certificate.
+        The current implementation is based on the <!--<a href="http://eid-applet.googlecode.com">eID Applet</a>-->
+        <a href="https://github.com/e-Contract/eid-applet">eID Applet</a> which
+        is dual-licensed to
+        <a href="https://github.com/e-Contract/eid-applet/blob/master/README.md#7-license">Apache License 2.0 and LGPL v3.0</a>.
+        Instead of using the internal <a href="http://www.jsourcecode.com/class.php?proj=jdk%5Copenjdk&amp;jar=openjdk-6-b14&amp;class=org.jcp.xml.dsig.internal.dom.DOMXMLSignatureFactory">JDK API</a>
+        this version is based on <a href="https://santuario.apache.org">Apache Santuario</a>.</p>
+        <p>The classes have been tested against the following libraries, which need to be included additionally to the
+        <a href="site:components">default dependencies</a>:</p>
+        <ul>
+            <li>BouncyCastle bcpkix, bcprov and bcutil (tested against 1.81)</li>
+            <li>Apache Santuario "xmlsec" (tested against 3.0.5)</li>
+            <li>and slf4j-api (tested against 2.0.x)</li>
+        </ul>
+        <p>Depending on the <a href="apidocs/dev/org/apache/poi/poifs/crypt/dsig/SignatureConfig.html">configuration</a>
+        and the activated <a href="apidocs/dev/org/apache/poi/poifs/crypt/dsig/facets/package-summary.html">facets</a>
+        various <a href="https://en.wikipedia.org/wiki/XAdES">XAdES levels</a> are supported - the support for higher levels (XAdES-T+)
+        depend on supporting services and although the code is adopted, the integration is not well tested ... please support us on
+        integration (testing) with timestamp and revocation (OCSP) services.
+        </p>
+        <p>Further test examples can be found in the corresponding <a href="https://svn.apache.org/viewvc/poi/trunk/poi-ooxml/src/test/java/org/apache/poi/poifs/crypt/dsig/TestSignatureInfo.java?view=markup">test class</a>.</p>
+
+        <p>If you want to use a hash algorithm with 64 bytes (currently only applies to SHA512),
+        <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=42061">a base64 "feature"</a> in xmlsec
+        leads to line breaks in the digest values, which won't be accepted by Office. To workaround this, you
+        need to set the following system property:<br/>
+        <strong>-Dorg.apache.xml.security.ignoreLineBreaks=true</strong></p>
+    </section>
+
+    <section>
+        <title>Validating a signed office document</title>
+
+        <source><![CDATA[
+           OPCPackage pkg = OPCPackage.open(..., PackageAccess.READ);
+           SignatureConfig sic = new SignatureConfig();
+           SignatureInfo si = new SignatureInfo();
+           si.setOpcPackage(pkg);
+           si.setSignatureConfig(sic);
+           boolean isValid = si.verifySignature();
+           ...
+        ]]></source>
+    </section>
+
+    <section>
+        <title>Signing an office document</title>
+
+        <section>
+            <title>Signing a file</title>
+            <source><![CDATA[
+                 // loading the keystore - pkcs12 is used here, but of course jks & co are also valid
+                 // the keystore needs to contain a private key and it's certificate having a
+                 // 'digitalSignature' key usage
+                 char password[] = "test".toCharArray();
+                 File file = new File("test.pfx");
+                 KeyStore keystore = KeyStore.getInstance("PKCS12");
+                 FileInputStream fis = new FileInputStream(file);
+                 keystore.load(fis, password);
+                 fis.close();
+
+                 // extracting private key and certificate
+                 String alias = "xyz"; // alias of the keystore entry
+                 Key key = keystore.getKey(alias, password);
+                 X509Certificate x509 = (X509Certificate)keystore.getCertificate(alias);
+
+                 // filling the SignatureConfig entries (minimum fields, more options are available ...)
+                 SignatureConfig signatureConfig = new SignatureConfig();
+                 signatureConfig.setKey(keyPair.getPrivate());
+                 signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
+
+                 // adding the signature document to the package
+                 SignatureInfo si = new SignatureInfo();
+                 OPCPackage pkg = OPCPackage.open(..., PackageAccess.READ_WRITE);
+                 si.setOpcPackage(pkg);
+                 si.setSignatureConfig(signatureConfig);
+                 si.confirmSignature();
+                 // optionally verify the generated signature
+                 boolean b = si.verifySignature();
+                 assert (b);
+                 // write the changes back to disc
+                 pkg.close();
+            ]]></source>
+        </section>
+
+        <section>
+            <title>Signing a stream - in-memory</title>
+
+            <p>When saving a OOXML document, POI creates missing relations on the fly. Therefore calling the signing method before
+            would result in an invalid signature. Instead of trying to fix all save invocations, the user is asked to save the stream
+            before in an intermediate byte array (stream) and process this stream instead.</p>
+
+            <source><![CDATA[
+                 // load the key and setup SignatureConfig ... - see "Signing a file"
+
+                 SignatureInfo si = new SignatureInfo();
+                 si.setSignatureConfig(signatureConfig);
+
+                 // populate sample object
+                 XSSFWorkbook wb = new XSSFWorkbook();
+                 wb.createSheet().createRow(1).createCell(1).setCellValue("Test");
+                 ByteArrayOutputStream bos = new ByteArrayOutputStream(100000);
+                 wb.write(bos);
+                 wb.close();
+
+                 // process the
+                 OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(bos.toByteArray()));
+
+                 si.setOpcPackage(pkg);
+                 si.confirmSignature();
+                 bos.reset();
+                 pkg.save(bos);
+                 pkg.close();
+
+                 // bos now contains the signed ooxml document
+            ]]></source>
+        </section>
+    </section>
+
+    <section>
+        <title>Encrypting temporary files created when unzipping an OOXML document</title>
+
+        <p>For security-conscious environments where data at rest must be stored encrypted,
+        the creation of plaintext temporary files is a grey area.</p>
+
+        <p>The code example, written by PJ Fanning, modifies the behavior of SXSSFWorkbook
+        to extract an OOXML spreadsheet zipped container and write the contents to disk using AES
+        encryption.</p>
+
+        <p>See <a href="https://svn.apache.org/viewvc/poi/trunk/poi-ooxml/src/main/java/org/apache/poi/poifs/crypt/temp/SXSSFWorkbookWithCustomZipEntrySource.java?view=markup">SXSSFWorkbookWithCustomZipEntrySource.java</a>
+        and other <a href="https://svn.apache.org/viewvc?view=revision&amp;revision=1768744">files</a>
+        that are needed for this example.</p>
+    </section>
+
+    <section>
+        <title>Debugging XML signature issues</title>
+        <p>Finding the source of a XML signature problem can be sometimes a pain in the ... neck, because
+        the hashing of the canonicalized form is more or less done in the background.</p>
+
+        <!-- TODO: find original source -->
+        <p>One of the tripping hazards are <a href="https://stackoverflow.com/questions/36063375">different
+        linebreaks in Windows/Unix</a>, therefore use the non-indent form of the xmls. Furthermore the
+        elements/ancestors containing namespace definitions and the used prefix might also differ.</p>
+
+        <p>The next thing is to compare successful signed documents from Office vs. POIs generated signature,
+        i.e. unzip both files and look for differences. Usually the package relations (*.rels) will be different,
+        and the sig1.xml, core.xml and [Content_Types].xml due to different order of the references.</p>
+
+        <p>The package relationships (*.rels) will be specially handled, i.e. they will be filtered and only
+        a subset will be processed - see <a href="https://www.ecma-international.org/activities/Office%20Open%20XML%20Formats/Draft%20ECMA-376%203rd%20edition,%20March%202011/Office%20Open%20XML%20Part%202%20-%20Open%20Packaging%20Conventions.pdf">13.2.4.24 Relationships Transform Algorithm</a>.</p>
+
+        <p>POI and Santuario (XmlSec) use <a href="https://logging.apache.org/log4j/2.x">Log4J 2.x</a> and
+            <a href="https://www.slf4j.org/">SLF4J</a> respectively for logging.</p>
+
+        <ul>
+            <li>
+                (Since the change to Log4J 2 in POI 5.1.0, this hasn't been tested, and you need to adapt the
+                logging settings to get all log output of XmlSec and POI)
+            </li>
+            <li>
+                add the following JVM parameters:
+                <source><![CDATA[
+                    -Djava.io.tmpdir=<custom temp directory>
+                    -Xbootclasspath/p:<preload dir, which contains /org/apache/xml/security/utils/UnsyncBufferedOutputStream.class>
+                ]]></source>
+            </li>
+            <li>
+                To check the processed files in the canonicalized form, the below UnsyncBufferedOutputStream class needs
+                to be injected/replaced. Put the .class file in separate directory and add it to the JVM parameters (see above):
+
+                <source><![CDATA[
+                    package org.apache.xml.security.utils;
+
+                    import java.io.File;
+                    import java.io.FileOutputStream;
+                    import java.io.IOException;
+                    import java.io.OutputStream;
+
+                    public class UnsyncBufferedOutputStream extends OutputStream {
+                        static final int size = 8*1024;
+                        static int filecnt = 0;
+
+                        private int pointer = 0;
+                        private final OutputStream out;
+                        private final FileOutputStream out2;
+
+                        private final byte[] buf;
+
+                        public UnsyncBufferedOutputStream(OutputStream out) {
+                            buf = new byte[size];
+                            this.out = out;
+                            synchronized(UnsyncBufferedOutputStream.class) {
+                                try {
+                                    String tmpDir = System.getProperty("java.io.tmpdir");
+                                    if (tmpDir == null) {
+                                        tmpDir = "build";
+                                    }
+                                    File f = new File(tmpDir, "unsync-"+filecnt+".xml");
+                                    out2 = new FileOutputStream(f);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                } finally {
+                                    filecnt++;
+                                }
+                            }
+                        }
+
+                        public void write(byte[] arg0) throws IOException {
+                            write(arg0, 0, arg0.length);
+                        }
+
+                        public void write(byte[] arg0, int arg1, int len) throws IOException {
+                            int newLen = pointer+len;
+                            if (newLen > size) {
+                                flushBuffer();
+                                if (len > size) {
+                                    out.write(arg0, arg1,len);
+                                    out2.write(arg0, arg1,len);
+                                    return;
+                                }
+                                newLen = len;
+                            }
+                            System.arraycopy(arg0, arg1, buf, pointer, len);
+                            pointer = newLen;
+                        }
+
+                        private void flushBuffer() throws IOException {
+                            if (pointer > 0) {
+                                out.write(buf, 0, pointer);
+                                out2.write(buf, 0, pointer);
+                            }
+                            pointer = 0;
+
+                        }
+
+                        public void write(int arg0) throws IOException {
+                            if (pointer >= size) {
+                                flushBuffer();
+                            }
+                            buf[pointer++] = (byte)arg0;
+
+                        }
+
+                        public void flush() throws IOException {
+                            flushBuffer();
+                            out.flush();
+                            out2.flush();
+                        }
+
+                        public void close() throws IOException {
+                            flush();
+                            out.close();
+                            out2.close();
+                        }
+
+                    }
+              ]]></source>
+            </li>
+        </ul>
+    </section>
+    </body>
+
+    <footer>
+        <legal>
+            Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+            <br />
+            Apache POI, POI, Apache, the Apache feather logo, and the Apache
+            POI project logo are trademarks of The Apache Software Foundation.
+        </legal>
+    </footer>
+</document>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+    <header>
+        <title></title>
+        <authors>
+            <person id="AO" name="Andrew C. Oliver" email="acoliver@apache.org"/>
+            <person id="GS" name="Glen Stampoultzis" email="user@poi.apache.org"/>
+        </authors>
+    </header>
+
+    <body>
+        <section><title>POI logos</title>
+            <p>
+                    Here are the current logo submissions.  Thanks to the artists!
+            </p>
+            <section><title>Michael Mosmann</title>
+                <p>
+                    <img alt="logo" src="images/logoMichaelMosmann.png"/>
+                </p>
+            </section>
+            <section><title>Loïc Lefèvre</title>
+                <p>
+                    <img alt="logo" src="images/logoLoicLefevre.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoLoicLefevre2.png"/>
+                </p>
+            </section>
+            <section><title>Glen Stampoultzis</title>
+                <p>
+                    <img alt="logo" src="images/logoGlenStampoutlzis.png"/>
+                </p>
+            </section>
+            <section><title>Marcus Gustafsson</title>
+                <p>
+                    <img alt="logo" src="images/logoGustafsson1.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoGustafsson2.png"/>
+                </p>
+            </section>
+            <section><title>Adrianus Handoyo</title>
+                <p>
+                    <img alt="logo" src="images/logoAdria1.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoAdria2.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoAdria3.png"/>
+                </p>
+            </section>
+            <section><title>RussellBeattie</title>
+                <p>
+                    <img alt="logo" src="images/logoRussellBeattie1.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoRussellBeattie2.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoRussellBeattie3.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRussellBeattie4.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoRussellBeattie5.png"/>
+                </p>
+            </section>
+            <section><title>Daniel Fernandez</title>
+                <p>
+                    <img alt="logo" src="images/logoDanielFernandez.png"/>
+                </p>
+            </section>
+            <section><title>Andrew Clements</title>
+                <p>
+                    <img alt="logo" src="images/logoAndrewClements.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoAndrewClements2.png"/>
+                </p>
+            </section>
+            <section><title>Wendy Wise</title>
+                <p>
+                    <img alt="logo" src="images/logoWendyWise.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoWendyWise2.png"/>
+                </p>
+            </section>
+            <section><title>Nikhil Karmokar</title>
+                <p>
+                    <img alt="logo" src="images/logoKarmokar1.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoKarmokar1s.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoKarmokar2.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoKarmokar2s.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoKarmokar3.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoKarmokar3s.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoKarmokar4.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoKarmokar4s.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoKarmokar5.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoKarmokar5s.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoKarmokar6.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoKarmokar6s.png"/>
+                </p>
+            </section>
+            <section><title>Lieven Janssen</title>
+                <p>
+                    <img alt="logo" src="images/logoJanssen1.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoJanssen2.png"/>
+                </p>
+            </section>
+            <section><title>RaPi GmbH</title>
+                <p>
+                    Contact Person: Fancy at: fancy at my-feiqi.com
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRaPiGmbH1.png"/>&nbsp;&nbsp;&nbsp;
+                    <img alt="logo" src="images/logoRaPiGmbH2.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRaPiGmbH5.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRaPiGmbH6.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRaPiGmbH7.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRaPiGmbH8.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRaPiGmbH9.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRaPiGmbH10.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRaPiGmbH11.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRaPiGmbH12.png"/>
+                </p>
+            </section>
+            <section><title>Randy Stanard</title>
+                <p>
+                    <img alt="logo" src="images/logoRandyStanard01.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRandyStanard02.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRandyStanard03.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRandyStanard04.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRandyStanard05.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRandyStanard06.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRandyStanard07.png"/>
+                </p>
+                <p>
+                    <img alt="logo" src="images/logoRandyStanard08.png"/>
+                </p>
+            </section>
+        </section>
+    </body>
+    <footer>
+        <legal>
+          Copyright (c) @year@ The Apache Software Foundation All rights reserved.
+          <br />
+          Apache POI, POI, Apache, the Apache feather logo, and the Apache 
+          POI project logo are trademarks of The Apache Software Foundation.
+        </legal>
+    </footer>
+</document>

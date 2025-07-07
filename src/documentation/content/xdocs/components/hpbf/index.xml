@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+    <header>
+        <title>POI-HPBF - Java API To Access Microsoft Publisher Format Files</title>
+        <subtitle>Overview</subtitle>
+        <authors>
+            <person name="Nick Burch" email="nick at apache dot org"/>
+        </authors>
+    </header>
+
+    <body>
+        <section>
+            <title>Overview</title>
+
+            <p>HPBF is the POI Project's pure Java implementation of the
+			  Publisher file format.</p>
+            <p>Currently, HPBF is in an early stage, whilst we try to
+              figure out the file format. So far, we have basic text
+              extraction support, and are able to read some parts within
+              the file. Writing is not yet supported, as we are unable
+              to make sense of the Contents stream, which we think has
+              lots of offsets to other parts of the file.</p>
+            <p>Our initial aim is to produce a text extractor for the format
+              (now done), and be able to extract hyperlinks from within
+              the document (partly supported). Additional low level
+              code to process the file format may follow, if there
+              is demand and developer interest warrants it.</p>
+            <p>Text Extraction is available via the
+              <em>org.apache.poi.hpbf.extractor.PublisherTextExtractor</em>
+              class.</p>
+            <p>At this time, there is no <em>usermodel</em> api or similar.
+              There is only low level support for certain parts of
+              the file, but by no means all of it.</p>
+            <p>Our current understanding of the file format is documented
+              <a href="site:hpbformat">here</a>.</p>
+            <p>As of 2017, we are unaware of a public format specification for
+              Microsoft Publisher .pub files. This format was not included in
+              the Microsoft Open Specifications Promise with the rest of the
+              Microsoft Office file formats.
+              As of <a href="https://social.msdn.microsoft.com/Forums/en-US/63dc6c4e-d6b2-4873-97dd-139ddb304e24/what-about-publisher-file-format?forum=os_binaryfile">2009</a> and <a href="https://social.msdn.microsoft.com/Forums/en-US/a5f55c72-5378-4dc9-944a-9973a12bfaa7/reading-viso-vsdfiles-and-publisher-pubfiles-without-office?forum=os_binaryfile">2016</a>, Microsoft had no plans to document the .pub file format.
+              If this changes in the future, perhaps we will see a spec published
+              on the <a href="https://msdn.microsoft.com/en-us/library/cc313105(v=office.12).aspx">Microsoft Office File Format Open Specification Technical Documentation</a>.
+            </p>
+
+         <note>
+            This code currently lives the
+            <a href="https://svn.apache.org/viewvc/poi/trunk/poi-scratchpad/">scratchpad area</a>
+            of the POI SVN repository. To use this component, ensure
+            you have the Scratchpad Jar on your classpath, or a dependency
+            defined on the <em>poi-scratchpad</em> artifact - the main POI
+            jar is not enough! See the
+            <a href="site:components">POI Components Map</a>
+            for more details.
+			</note>
+        </section>
+    </body>
+</document>

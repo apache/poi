@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+  <header>
+    <title>Apache POI™ - Source Code Repository</title>
+    <authors>
+      <person id="NB" name="Nick Burch" email="dev@poi.apache.org"/>
+    </authors>
+  </header>
+
+  <body>
+    <section><title>Download the Source</title>
+      <p>
+         Most users of the source code probably don't need to have day to
+         day access to the source code as it changes. Therefore most users will want
+         to make use of our <a href="site:download">source release</a>
+         packages, which contain the complete source tree for each binary
+         release, suitable for browsing or debugging. These source releases
+         are available from our
+         <a href="site:download">download page.</a>
+      </p>
+      <p>
+         The Apache POI source code is also available as source artifacts
+         in the <a href="https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.apache.poi%22">Maven Central repository</a>,
+         which may be helpful for those users who make use of POI via Maven
+         and wish to inspect the source (eg when debugging in an IDE).
+      </p>
+    </section>
+    <section><title>Access the Version Controlled Source Code</title>
+      <p>
+         For general information on connecting to the ASF Subversion,
+         repositories, see the
+         <a href="https://www.apache.org/dev/version-control.html">version control page.</a>
+      </p>
+
+      <p>Apache POI uses <a href="https://subversion.apache.org">Subversion</a> as its version control system,
+      but also has a read-only git mirror
+      </p>
+
+      <p><strong>NOTE</strong>: When checking out a subproject using
+       subversion, either perform a sparse checkout or check out
+       the trunk or a single branch or tag to avoid filling up
+       your hard-disk and wasting bandwidth.
+      </p>
+
+      <ul>
+       <li>For read only access to the latest Apache POI code, please use
+        <a href="https://svn.apache.org/repos/asf/poi/trunk/">https://svn.apache.org/repos/asf/poi/trunk/</a></li>
+       <li>To browse the svn repository in your web browser, please use
+        <a href="https://svn.apache.org/viewvc/poi/">ViewVC</a></li>
+      </ul>
+
+      <p>If you are not a <em>Committer</em>, but you want to submit patches
+       or even request commit privileges, please see our
+       <a href="site:guidelines">Contribution Guidelines</a> for more
+       information.</p>
+    </section>
+    <section><title>Git access to POI sources</title>
+      <p>
+        The master source repository for Apache POI is the Subversion
+        one listed above. To support those users and developers who prefer
+        to use the Git tooling, read-only access to the POI source tree is
+        also available via Git. The Git mirrors normally track SVN to
+        within a few minutes.
+      </p>
+      <p>
+        The official read-only Git repository for Apache POI is available
+        from <a href="https://git.apache.org/">git.apache.org/</a> .
+        The Git Clone URL is: <a href="git://git.apache.org/poi.git">git://git.apache.org/poi.git</a>
+        and Https Clone URL: <a href="https://git.apache.org/poi.git">https://git.apache.org/poi.git</a> .
+        Please see the <a href="https://git.apache.org/">Git at
+        Apache</a> page for more details on the service.
+      </p>
+      <p>
+        In addition to the <a href="https://git.apache.org/">git.apache.org</a>
+        repository, changes are also mirrored in near-realtime to GitHub.
+        The GitHub repository is available at
+        <a href="https://github.com/apache/poi">https://github.com/apache/poi</a> .
+        Please note that the GitHub repository is read-only, but pull requests sent
+        to it will result in an email being sent to the mailing list. A Git-formatted
+        patch added to Bugzilla is generally preferred though, as it can be tracked
+        along with all the other contributions. Please see the
+        <a href="site:guidelines">contribution guidelines</a> for more
+        information on getting involved in the project.</p>
+    </section>
+    <section><title>Using Git via the SVN-Git bridge</title>
+        <section><title>General information</title>
+      <p>
+        Git provides a nice functionality "git-svn" which allows to read the history
+        of a Subversion repository and convert it into a full Git repository. This
+        will keep information from the SVN revisions so that the Git repository can
+        be updated with newer revisions from Subversion as well as allowing to push
+        commits from Git "upstream" into the Subversion repository. See the
+        <a href="https://www.kernel.org/pub/software/scm/git/docs/git-svn.html">
+        official documentation</a> for more details.
+      </p>
+        </section>
+        <section><title>Set up the repository</title>
+        <p>
+            The git-svn functionality is provided as a set of sub-commands to
+            "git svn". To start retrieving information from SVN and create the
+            initial Git repository run the following command:
+
+        </p>
+            <source>
+            git svn clone https://svn.apache.org/repos/asf/poi/trunk poisvngit --revision <a href="https://svn.apache.org/viewvc?view=revision&amp;revision=1732982">1732982</a>:HEAD
+            </source>
+        <p>
+            Running without <code>--revision from:HEAD</code> will run for a long time and will retrieve the full version history of
+            the Subversion repository. If you need more repository history, change the <code>from</code> revision to an
+            <a href="https://svn.apache.org/viewvc/poi/tags/">earlier release</a> or omit the <code>--revision</code>
+            specifier altogether.
+        </p>
+        <p>
+            When this finishes you have a Git repository whose "master" branch
+            mirrors the SVN "trunk".
+            <br/>
+            From here you can use the full power of Git, i.e. quick branching,
+            rebasing, merging, ...
+            <br/>
+            See below for some common usage hints.
+        </p>
+        </section>
+        <section><title>Fetching newer SVN revisions</title>
+        <p>
+            In order to fetch the latest SVN revisions, you need to "rebase" onto
+                the SVN trunk:
+        </p>
+            <source>
+            git checkout master
+            git svn rebase
+            </source>
+        <p>
+            This will fetch the latest changes from Subversion and will rebase
+            the master-branch onto them.
+        </p>
+        </section>
+        <section><title>Pushing Git commits to Subversion</title>
+        <p>
+            The following command will push all changes on <code>master</code> back to
+            Subversion:
+        </p>
+            <source>
+            git svn dcommit
+            </source>
+        <p>
+            Note that usually all commits on master will be sent to Subversion
+            in one go, so it's similar to a "push" to another Git repository.
+
+            The dcommit may fail if there are newer revisions in Subversion, you
+            will need to run a <code>git svn rebase</code> first in this case.
+        </p>
+        </section>
+        <section><title>General usage guidelines</title>
+        <p>
+            Although you can use the full power of Git, there are a few
+            things that work well and some things that will get you into
+            trouble:
+        </p>
+        <p>
+            You should not develop on master, rather use some branching
+            concept where you do work on sub-branches and only merge/cherry-pick the
+            changes that are ready for being sent upstream.
+            It seems to work better to constantly rebase changes onto the
+            master branch as this will keep the history clean compared to
+            the SVN repository and will avoid sending useless "Merge" commits to
+            Subversion.
+        </p>
+        <p>
+            You can keep some changes that are only useful locally by using
+            two branches that are rebased onto each other. E.g.
+            something like the following has proven to work well:
+        </p>
+            <source>
+            master
+                -> localchanges - commits that should not be sent upstream ->
+                    -> workbranch - place for doing development work
+            </source>
+        <p>
+            When things are ready in the workbranch do a
+        </p>
+            <source>
+            git checkout master
+            git cherry-pick commitid ...
+            </source>
+        <p>
+            to get all the finished commits onto master as preparation for pushing them upstream.
+
+            Then you can <code>git svn dcommit</code> to send the changes upstream
+            and a <code>git svn rebase</code> to get master updated with the newly
+            created SVN revisions.
+
+            Finally do the following to update both branches onto the new SVN head
+        </p>
+            <source>
+            # rebase you local changes onto the latest SVN state
+            git checkout localchanges
+            git rebase master
+
+            # also set the working branch to the latest state from SVN.
+            git checkout workbranch
+            git rebase workbranch
+            </source>
+        <p>
+            Sounds like too much work? Put these steps into a small script and all
+            this will become a simple <code>poiupdate</code> to get all branches
+            rebased onto HEAD from Subversion.
+        </p>
+      </section>
+    </section>
+    <section><title>Code metrics </title>
+      <p>
+        Code quality reports for Apache POI are available on the
+        <a href="https://sonarcloud.io/dashboard?id=poi-parent">Apache Sonar instance</a>.
+      </p>
+      <p>
+        Sonar provides lots of useful numbers and statistics, especially
+        watching the project over time shows how some of the indicators evolve
+        and allows to see which areas need some polishing.
+      </p>
+    </section>
+  </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache
+      POI project logo are trademarks of The Apache Software Foundation.
+    </legal>
+  </footer>
+</document>

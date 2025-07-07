@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+<document>
+    <header>
+        <title>How To Use the POIFS APIs</title>
+        <authors>
+            <person email="mjohnson@apache.org" name="Marc Johnson" id="MJ"/>
+        </authors>
+    </header>
+    <body>
+        <section>
+            <title>How To Use the POIFS APIs</title>
+            <p>This document describes how to use the POIFS APIs to read, write, and modify files that employ a
+                POIFS-compatible data structure to organize their content.
+            </p>
+            <section>
+                <title>Target Audience</title>
+                <p>This document is intended for Java developers who need to use the POIFS APIs to read, write, or
+                    modify files that employ a POIFS-compatible data structure to organize their content. It is not
+                    necessary for developers to understand the POIFS data structures, and an explanation of those data
+                    structures is beyond the scope of this document. It is expected that the members of the target
+                    audience will understand the rudiments of a hierarchical file system, and familiarity with the event
+                    pattern employed by Java APIs such as AWT would be helpful.
+                </p>
+            </section>
+            <section>
+                <title>Glossary</title>
+                <p>This document attempts to be consistent in its terminology, which is defined here:</p>
+                <dl>
+                    <dt>Directory</dt>
+                    <dd>A special file that may contain other directories and documents.</dd>
+                    <dt>DirectoryEntry</dt>
+                    <dd>Representation of a directory within another directory.</dd>
+                    <dt>Document</dt>
+                    <dd>A file containing data, such as word processing data or a spreadsheet workbook.</dd>
+                    <dt>DocumentEntry</dt>
+                    <dd>Representation of a document within a directory.</dd>
+                    <dt>Entry</dt>
+                    <dd>Representation of a file in a directory.</dd>
+                    <dt>File</dt>
+                    <dd>A named entity, managed and contained by the file system.</dd>
+                    <dt>File System</dt>
+                    <dd>The POIFS data structures, plus the contained directories and documents, which are maintained in
+                        a hierarchical directory structure.
+                    </dd>
+                    <dt>Root Directory</dt>
+                    <dd>The directory at the base of a file system. All file systems have a root directory. The POIFS
+                        APIs will not allow the root directory to be removed or renamed, but it can be accessed for the
+                        purpose of reading its contents or adding files (directories and documents) to it.
+                    </dd>
+                </dl>
+            </section>
+        </section>
+
+        <section>
+            <title>The different ways of working with POIFS</title>
+            <p>The POIFS API provides ways to read, modify and write files and streams that employ a POIFS-compatible
+                data structure to organize their content. The following use cases are covered:
+            </p>
+            <ul>
+                <li>
+                    <a href="#reading">Reading a File System</a>
+                </li>
+                <li>
+                    <a href="#reading_poifsfilesystem">Conventional Reading with POIFSFileSystem</a>
+                </li>
+                <li>
+                    <a href="#reading_event">Event-Driven Reading</a>
+                </li>
+                <li>
+                    <a href="#writing">Writing a File System</a>
+                </li>
+                <li>
+                    <a href="#modifying">Modifying a File System</a>
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <title>Reading a File System</title>
+            <anchor id="reading"/>
+            <p>This section covers reading a file system. There are two ways to read a file system; these techniques are
+                sketched out in the following table, and then explained in greater depth in the sections following the
+                table.
+            </p>
+            <dl>
+                <dt>Conventional Reading with POIFSFileSystem</dt>
+                <dd>
+                    <ul>
+                        <li class="pro">Simpler API similar to reading a conventional file system.</li>
+                        <li class="pro">Can read documents in any order.</li>
+                        <li class="pro">Well tested read and write support.</li>
+                        <li class="con">If created from an InputStream, all files are resident in memory. (If created
+                            from a File, only certain key structures are)
+                        </li>
+                    </ul>
+                </dd>
+                <dt>Event-Driven Reading</dt>
+                <dd>
+                    <ul>
+                        <li class="pro">Reduced footprint -- only the documents you care about are processed.</li>
+                        <li class="pro">Improved performance -- no time is wasted reading the documents you're not
+                            interested in.
+                        </li>
+                        <li class="con">More complicated API.</li>
+                        <li class="con">Need to know in advance which documents you want to read.</li>
+                        <li class="con">No control over the order in which the documents are read.</li>
+                        <li class="con">No way to go back and get additional documents except to re-read the file
+                            system, which may not be possible, e.g., if the file system is being read from an input
+                            stream that lacks random access support.
+                        </li>
+                    </ul>
+                </dd>
+            </dl>
+
+            <section>
+                <title>Conventional Reading with POIFSFileSystem</title>
+                <anchor id="reading_poifsfilesystem"/>
+                <p>In this technique for reading, certain key structures are loaded into memory, and the entire
+                    directory tree can be walked by the application, reading specific documents at leisure.
+                </p>
+                <p>If you create a POIFSFileSystem instance from a File, the memory footprint is very small. However, if
+                    you createa a POIFSFileSystem instance from an input stream, then the whole contents must be
+                    buffered into memory to allow random access. As such, you should budget on memory use of up to 20%
+                    of the file size when using a File, or up to 120% of the file size when using an InputStream.
+                </p>
+
+                <section>
+                    <title>Preparation</title>
+                    <p>Before an application can read a file from the file system, the file system needs to be opened
+                        and core parts processed. This is done using the
+                        <code>org.apache.poi.poifs.filesystem.POIFSFileSystem</code>
+                        class. Once the file system has been loaded into memory, the application may need the root
+                        directory. The following code fragment will accomplish this preparation stage:
+                    </p>
+                    <source><![CDATA[
+                        // This is the most memory efficient way to open the FileSystem
+                        try (POIFSFileSystem fs = new POIFSFileSystem(new File(filename))) {
+                            DirectoryEntry root = fs.getRoot();
+                        } catch (IOException e) {
+                            // an I/O error occurred, or the File did not provide a compatible
+                            // POIFS data structure
+                        }
+
+                        // Using an InputStream requires more memory than using a File
+                        try (POIFSFileSystem fs = new POIFSFileSystem(inputStream)) {
+                            DirectoryEntry root = fs.getRoot();
+                        } catch (IOException e) {
+                            // an I/O error occurred, or the InputStream did not provide
+                            // a compatible POIFS data structure
+                        }
+                    ]]></source>
+                    <p>Assuming no exception was thrown, the file system can then be read.</p>
+                </section>
+                <section>
+                    <title>Reading the Directory Tree</title>
+                    <p>Once the file system has been loaded into memory and the root directory has been obtained, the
+                        root directory can be read. The following code fragment shows how to read the entries in an <code>
+                            org.apache.poi.poifs.filesystem.DirectoryEntry
+                        </code> instance:
+                    </p>
+                    <source><![CDATA[
+                        // dir is an instance of DirectoryEntry ...
+                        for (Entry entry : dir) {
+                            System.out.println("found entry: " + entry.getName());
+                            if (entry instanceof DirectoryEntry) {
+                                // .. recurse into this directory
+                            } else if (entry instanceof DocumentEntry) {
+                                // entry is a document, which you can read
+                            } else {
+                                // currently, either an Entry is a DirectoryEntry or a DocumentEntry,
+                                // but in the future, there may be other entry subinterfaces.
+                                // The internal data structure certainly allows for a lot more entry types.
+                            }
+                        }
+                    ]]></source>
+                </section>
+                <section>
+                    <title>Reading a Specific Document</title>
+                    <p>There are a couple of ways to read a document, depending on whether the document resides in the
+                        root directory or in another directory. Either way, you will obtain an <code>
+                            org.apache.poi.poifs.filesystem.DocumentInputStream
+                        </code> instance.
+                    </p>
+                    <section>
+                        <title>DocumentInputStream</title>
+                        <p>The DocumentInputStream class is a simple implementation of InputStream that makes a few
+                            guarantees worth noting:
+                        </p>
+                        <ul>
+                            <li>
+                                <code>available()</code>
+                                always returns the number of bytes in the document from your current position in the
+                                document.
+                            </li>
+                            <li>
+                                <code>markSupported()</code>
+                                returns <code>true</code>.
+                            </li>
+                            <li>
+                                <code>mark(int limit)</code>
+                                ignores the limit parameter; basically the method marks the current position in the
+                                document.
+                            </li>
+                            <li>
+                                <code>reset()</code>
+                                takes you back to the position when <code>mark()</code> was last called, or to the
+                                beginning of the document if <code>mark()</code> has not been called.
+                            </li>
+                            <li>
+                                <code>skip(long n)</code>
+                                will take you to your current position + n (but not past the end of the document).
+                            </li>
+                        </ul>
+                        <p>The behavior of <code>available</code> means you can read in a document in a single read call
+                            like this:
+                        </p>
+                        <source><![CDATA[
+                            byte[] content = new byte[ stream.available() ];
+                            stream.read(content);
+                            stream.close();
+                        ]]></source>
+                        <p>The combination of <code>mark</code>, <code>reset</code>, and <code>skip</code> provide the
+                            basic mechanisms needed for random access of the document contents.
+                        </p>
+                    </section>
+                    <section>
+                        <title>Reading a Document From the Root Directory</title>
+                        <p>If the document resides in the root directory, you can obtain a <code>DocumentInputStream
+                        </code> like this:
+                        </p>
+                        <source><![CDATA[
+                            // load file system
+                            try (DocumentInputStream stream = filesystem.createDocumentInputStream(documentName)) {
+                                // process data from stream
+                            } catch (IOException e) {
+                                // no such document, or the Entry represented by documentName is not a DocumentEntry
+                            }
+                        ]]></source>
+                    </section>
+                    <section>
+                        <title>Reading a Document From an Arbitrary Directory</title>
+                        <p>A more generic technique for reading a document is to obtain an <code>
+                            org.apache.poi.poifs.filesystem.DirectoryEntry
+                        </code> instance for the directory containing the desired document (recall that you can use <code>
+                            getRoot()
+                        </code> to obtain the root directory from its file system). From that DirectoryEntry, you can
+                            then obtain a <code>DocumentInputStream</code> like this:
+                        </p>
+                        <source><![CDATA[
+                            DocumentEntry document = (DocumentEntry)directory.getEntry(documentName);
+                            DocumentInputStream stream = new DocumentInputStream(document);
+                        ]]></source>
+                    </section>
+                </section>
+            </section>
+
+            <section>
+                <title>Event-Driven Reading</title>
+                <anchor id="reading_event"/>
+                <p>The event-driven API for reading documents is a little more complicated and requires that your
+                    application know, in advance, which files it wants to read. The benefit of using this API is that
+                    each document is in memory just long enough for your application to read it, and documents that you
+                    never read at all are not in memory at all. When you're finished reading the documents you wanted,
+                    the file system has no data structures associated with it at all and can be discarded.
+                </p>
+                <section>
+                    <title>Preparation</title>
+                    <p>The preparation phase involves creating an instance of <code>
+                        org.apache.poi.poifs.eventfilesystem.POIFSReader
+                    </code> and to then register one or more <code>
+                        org.apache.poi.poifs.eventfilesystem.POIFSReaderListener
+                    </code> instances with the <code>POIFSReader</code>.
+                    </p>
+                    <source><![CDATA[
+                        POIFSReader reader = new POIFSReader();
+                        // register for everything
+                        reader.registerListener(myOmnivorousListener);
+                        // register for selective files
+                        reader.registerListener(myPickyListener, "foo");
+                        reader.registerListener(myPickyListener, "bar");
+                        // register for selective files
+                        reader.registerListener(myOtherPickyListener, new POIFSDocumentPath(), "fubar");
+                        reader.registerListener(myOtherPickyListener, new POIFSDocumentPath( new String[] { "usr", "bin" ), "fubar");
+                    ]]></source>
+                </section>
+                <section>
+                    <title>POIFSReaderListener</title>
+                    <p>
+                        <code>org.apache.poi.poifs.eventfilesystem.POIFSReaderListener</code>
+                        is an interface used to register for documents. When a matching document is read by the <code>
+                        org.apache.poi.poifs.eventfilesystem.POIFSReader</code>, the <code>POIFSReaderListener</code> instance
+                        receives an <code>org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent</code> instance, which
+                        contains an open <code>DocumentInputStream</code> and information about the document.
+                    </p>
+                    <p>A <code>POIFSReaderListener</code> instance can register for individual documents, or it can
+                        register for all documents; once it has registered for all documents, subsequent (and previous!)
+                        registration requests for individual documents are ignored. There is no way to unregister
+                        a <code>POIFSReaderListener</code>.
+                    </p>
+                    <p>Thus, it is possible to register a single <code>POIFSReaderListener</code> for multiple documents
+                        - one, some, or all documents. It is guaranteed that a single <code>POIFSReaderListener</code> will
+                        receive exactly one notification per registered document. There is no guarantee as to the order
+                        in which it will receive notification of its documents, as future implementations of <code>
+                            POIFSReader
+                        </code> are free to change the algorithm for walking the file system's directory structure.
+                    </p>
+                    <p>It is also permitted to register more than one <code>POIFSReaderListener</code> for the same
+                        document. There is no guarantee of ordering for notification of <code>POIFSReaderListener</code> instances
+                        that have registered for the same document when <code>POIFSReader</code> processes that
+                        document.
+                    </p>
+                    <p>It is guaranteed that all notifications occur in the same thread. A future enhancement may be
+                        made to provide multi-threaded notifications, but such an enhancement would very probably be
+                        made in a new reader class, a <code>ThreadedPOIFSReader</code> perhaps.
+                    </p>
+                    <p>The following describes the three ways to register a <code>POIFSReaderListener</code> for a
+                        document or set of documents:
+                    </p>
+                    <dl>
+                        <dt>registers <em>listener</em> for all documents.
+                        </dt>
+                        <dd>registerListener(POIFSReaderListener <em>listener</em>)
+                        </dd>
+                        <dt>registers <em>listener</em> for a document with the specified <em>name</em> in the root
+                            directory.
+                        </dt>
+                        <dd>registerListener(POIFSReaderListener <em>listener</em>, String <em>name</em>)
+                        </dd>
+                        <dt>registers <em>listener</em> for a document with the specified <em>name</em> in the directory
+                            described by
+                            <em>path</em>
+                        </dt>
+                        <dd>registerListener(POIFSReaderListener <em>listener</em>, POIFSDocumentPath <em>path</em>,
+                            String <em>name</em>)
+                        </dd>
+                    </dl>
+                </section>
+                <section>
+                    <title>POIFSDocumentPath</title>
+                    <p>The <code>org.apache.poi.poifs.filesystem.POIFSDocumentPath</code> class is used to describe a
+                        directory in a POIFS file system. Since there are no reserved characters in the name of a file
+                        in a POIFS file system, a more traditional string-based solution for describing a directory,
+                        with special characters delimiting the components of the directory name, is not feasible. The
+                        constructors for the class are used as follows:
+                    </p>
+                    <table>
+                        <tr>
+                            <td>
+                                <em>Constructor example</em>
+                            </td>
+                            <td>
+                                <em>Directory described</em>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>new POIFSDocumentPath()</td>
+                            <td>The root directory.</td>
+                        </tr>
+                        <tr>
+                            <td>new POIFSDocumentPath(null)</td>
+                            <td>The root directory.</td>
+                        </tr>
+                        <tr>
+                            <td>new POIFSDocumentPath(new String[ 0 ])</td>
+                            <td>The root directory.</td>
+                        </tr>
+                        <tr>
+                            <td>new POIFSDocumentPath(new String[ ] { "foo", "bar"} )</td>
+                            <td>in Unix terminology, "/foo/bar".</td>
+                        </tr>
+                        <tr>
+                            <td>new POIFSDocumentPath(new POIFSDocumentPath(new String[] { "foo" }), new String[ ] {
+                                "fu", "bar"} )
+                            </td>
+                            <td>in Unix terminology, "/foo/fu/bar".</td>
+                        </tr>
+                    </table>
+                </section>
+                <section>
+                    <title>Processing POIFSReaderEvent Events</title>
+                    <p>Processing <code>org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent</code> events is
+                        relatively easy. After all of the <code>POIFSReaderListener</code> instances have been
+                        registered with <code>POIFSReader</code>, the <code>POIFSReader.read(InputStream stream)</code> method
+                        is called.
+                    </p>
+                    <p>Assuming that there are no problems with the data, as the <code>POIFSReader</code> processes the
+                        documents in the specified <code>InputStream</code>'s data, it calls registered <code>
+                            POIFSReaderListener
+                        </code> instances' <code>processPOIFSReaderEvent</code> method with a <code>POIFSReaderEvent
+                        </code> instance.
+                    </p>
+                    <p>The <code>POIFSReaderEvent</code> instance contains information to identify the document (a <code>
+                        POIFSDocumentPath
+                    </code> object to identify the directory that the document is in, and the document name), and an
+                        open <code>DocumentInputStream</code> instance from which to read the document.
+                    </p>
+                </section>
+            </section>
+        </section>
+
+        <section>
+            <title>Writing a File System</title>
+            <anchor id="writing"/>
+            <p>Writing a file system is very much like reading a file system in that there are multiple ways to do so.
+                You can load an existing file system into memory and modify it (removing files, renaming files) and/or
+                add new files to it, and write it, or you can start with a new, empty file system:
+            </p>
+            <source>
+                POIFSFileSystem fs = new POIFSFileSystem();
+            </source>
+            <section>
+                <title>The Naming of Names</title>
+                <p>There are two restrictions on the names of files in a file system that must be considered when
+                    creating files:
+                </p>
+                <ol>
+                    <li>The name of the file must not exceed 31 characters. If it does, the POIFS API will silently
+                        truncate the name to fit.
+                    </li>
+                    <li>The name of the file must be unique within its containing directory. This seems pretty obvious,
+                        but if it isn't spelled out, there'll be hell to pay, to be sure. Uniqueness, of course, is
+                        determined <em>after</em> the name has been truncated, if the original name was too long to
+                        begin with.
+                    </li>
+                </ol>
+            </section>
+            <section>
+                <title>Creating a Document</title>
+                <p>A document can be created by acquiring a <code>DirectoryEntry</code> and calling one of the two <code>
+                    createDocument
+                </code> methods:
+                </p>
+
+                <dl>
+                    <dt>createDocument(String name, InputStream stream)</dt>
+                    <dd>
+                        <ul>
+                            <li class="pro">Simple API</li>
+                            <li class="con">Increased memory footprint (document is in memory until file system is
+                                written).
+                            </li>
+                        </ul>
+                    </dd>
+                    <dt>createDocument(String name, int size, POIFSWriterListener writer)</dt>
+                    <dd>
+                        <ul>
+                            <li class="pro">Decreased memory footprint (only very small documents are held in memory,
+                                and then only for a short time).
+                            </li>
+                            <li class="con">More complex API.</li>
+                            <li class="con">Determining document size in advance may be difficult.</li>
+                            <li class="con">Lose control over when document is to be written.</li>
+                        </ul>
+                    </dd>
+                </dl>
+
+                <p>Unlike reading, you don't have to choose between the in-memory and event-driven writing models; both
+                    can co-exist in the same file system.
+                </p>
+                <p>Writing is initiated when the <code>POIFSFileSystem</code> instance's <code>writeFilesystem()</code> method
+                    is called with an <code>OutputStream</code> to write to.
+                </p>
+                <p>The event-driven model is quite similar to the event-driven model for reading, in that the file
+                    system calls your <code>org.apache.poi.poifs.filesystem.POIFSWriterListener</code> when it's time to
+                    write your document, just as the <code>POIFSReader</code> calls your <code>POIFSReaderListener
+                    </code> when it's time to read your document. Internally, when <code>writeFilesystem()</code> is
+                    called, the final POIFS data structures are created and are written to the specified <code>
+                        OutputStream</code>. When the file system needs to write a document out that was created with
+                    the event-driven model, it calls the <code>POIFSWriterListener</code> back, calling its <code>
+                        processPOIFSWriterEvent()
+                    </code> method, passing an <code>org.apache.poi.poifs.filesystem.POIFSWriterEvent</code> instance.
+                    This object contains the <code>POIFSDocumentPath</code> and name of the document, its size, and an
+                    open <code>org.apache.poi.poifs.filesystem.DocumentOutputStream</code> to which to write. A <code>
+                        DocumentOutputStream
+                    </code> is a wrapper over the <code>OutputStream</code> that was provided to the <code>
+                        POIFSFileSystem
+                    </code> to write to, and has the responsibility of making sure that the document your application
+                    writes fits within the size you specified for it.
+                </p>
+                <p>If you are using a <code>POIFSFileSystem</code> loaded from a
+                    <code>File</code>
+                    with <code>readOnly</code> set to false, it is also possible to do an in-place write. Simply call <code>
+                        writeFilesystem()
+                    </code> to have the (limited) in-memory structures synced with the disk, then <code>close()</code> to
+                    finish.
+                </p>
+            </section>
+            <section>
+                <title>Creating a Directory</title>
+                <p>Creating a directory is similar to creating a document, except that there's only one way to do so:
+                </p>
+                <source>
+                    DirectoryEntry createdDir = existingDir.createDirectory(name);
+                </source>
+            </section>
+            <section>
+                <title>Using POIFSFileSystem Directly To Create a Document Or Directory</title>
+                <p>As with reading documents, it is possible to create a new document or directory in the root directory
+                    by using convenience methods of POIFSFileSystem.
+                </p>
+                <table>
+                    <tr>
+                        <td>
+                            <em>DirectoryEntry Method Signature</em>
+                        </td>
+                        <td>
+                            <em>POIFSFileSystem Method Signature</em>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>createDocument(String name, InputStream stream)</td>
+                        <td>createDocument(InputStream stream, String name)</td>
+                    </tr>
+                    <tr>
+                        <td>createDocument(String name, int size, POIFSWriterListener writer)</td>
+                        <td>createDocument(String name, int size, POIFSWriterListener writer)</td>
+                    </tr>
+                    <tr>
+                        <td>createDirectory(String name)</td>
+                        <td>createDirectory(String name)</td>
+                    </tr>
+                </table>
+            </section>
+        </section>
+
+        <section>
+            <title>Modifying a File System</title>
+            <anchor id="modifying"/>
+            <p>It is possible to modify an existing POIFS file system, whether it's one your application has loaded into
+                memory, or one which you are creating on the fly.
+            </p>
+            <section>
+                <title>Removing a Document</title>
+                <p>Removing a document is simple: you get the <code>Entry</code> corresponding to the document and call
+                    its <code>delete()</code> method. This is a boolean method, but should always return <code>
+                        true</code>, indicating that the operation succeeded.
+                </p>
+            </section>
+            <section>
+                <title>Removing a Directory</title>
+                <p>Removing a directory is also simple: you get the <code>Entry</code> corresponding to the directory
+                    and call its <code>delete()</code> method. This is a boolean method, but, unlike deleting a
+                    document, may not always return <code>true</code>, indicating that the operation succeeded. Here are
+                    the reasons why the operation may fail:
+                </p>
+                <ul>
+                    <li>The directory still has files in it (to check, call <code>isEmpty()</code> on its
+                        DirectoryEntry; is the return value <code>false</code>?)
+                    </li>
+                    <li>The directory is the root directory. You cannot remove the root directory.</li>
+                </ul>
+            </section>
+            <section>
+                <title>Changing a File's contents</title>
+                <p>There are two ways available to change the contents of an existing file within a POIFS file system.
+                    One is using a <code>DocumentOutputStream</code>, the other is with
+                    <code>POIFSDocument.replaceContents</code>
+                </p>
+                <p>If you have available to you an <code>InputStream</code> to read the new File contents from, then the
+                    easiest way is via
+                    <code>POIFSDocument.replaceContents</code>. You would do something like:
+                </p>
+                <source><![CDATA[
+                    // Get the input stream from somewhere
+                    InputStream inp = db.getContentStream();
+
+                    // Open the POIFS File System, and get the entry of interest
+
+                    POIFSFileSystem fs = new POIFSFileSystem(new File(filename), false);
+                    DirectoryEntry root = fs.getRoot();
+                    DocumentEntry myDocE = (DocumentEntry)root.getEntry("ToChange");
+
+                    // Replace the contents
+                    POIFSDocument myDoc = new POIFSDocument(myDocE);
+                    myDoc.replaceContents(inp);
+
+                    // Save the changes to the file in-place
+                    fs.writeFileSystem();
+                    fs.close();
+                ]]></source>
+                <p>Alternately, if you either have a byte array, or you need to write as you go along, then the
+                    OutputStream interface provided by
+                    <code>DocumentOutputStream</code>
+                    will likely be a better bet. Your code would want to look somewhat like:
+                </p>
+                <source><![CDATA[
+                    // Open the POIFS File System, and get the entry of interest
+                    try (POIFSFileSystem fs = new POIFSFileSystem(new File(filename))) {
+                        DirectoryEntry root = fs.getRoot();
+                        DocumentEntry myDoc = (DocumentEntry)root.getEntry("ToChange");
+
+                        // Replace the content with a Write
+                        try (DocumentOutputStream docOut = new DocumentOutputStream(myDoc)) {
+                            myDoc.writeTo(docOut);
+                        }
+
+                        // Save the changes to a new file
+                        try (FileOutputStream out = new FileOutputStream("NewFile.ole2")) {
+                            fs.write(out);
+                        }
+                    }
+                ]]></source>
+                <p>For an example of an in-place change to one stream within a file, you can see the example
+                    <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples/hpsf/ModifyDocumentSummaryInformation.java">
+                        org/apache/poi/hpsf/examples/ModifyDocumentSummaryInformation.java
+                    </a>
+                </p>
+            </section>
+            <section>
+                <title>Renaming a File</title>
+                <p>Regardless of whether the file is a directory or a document, it can be renamed, with one exception -
+                    the root directory has a special name that is expected by the components of a major software
+                    vendor's office suite, and the POIFS API will not let that name be changed. Renaming is done by
+                    acquiring the file's corresponding <code>Entry</code> instance and calling its <code>renameTo</code> method,
+                    passing in the new name.
+                </p>
+                <p>Like <code>delete</code>, <code>renameTo</code> returns <code>true</code> if the operation succeeded,
+                    otherwise <code>false</code>. Reasons for failure include these:
+                </p>
+                <ul>
+                    <li>The new name is the same as another file in the same directory. And don't forget - if the new
+                        name is longer than 31 characters, it <em>will</em> be silently truncated. In its original
+                        length, the new name may have been unique, but truncated to 31 characters, it may not be unique
+                        any longer.
+                    </li>
+                    <li>You tried to rename the root directory.</li>
+                </ul>
+            </section>
+        </section>
+    </body>
+</document>

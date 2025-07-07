@@ -1,0 +1,172 @@
+<?xml version="1.0"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!--
+Forrest site.xml
+
+This file contains an outline of the site's information content.  It is used to:
+- Generate the website menus (though these can be overridden - see docs)
+- Provide semantic, location-independent aliases for internal 'site:' URIs, eg
+<a href="site:changes"> links to changes.html (or ../changes.html if in
+  subdir).
+- Provide aliases for external URLs in the external-refs section.  Eg, <a
+  href="ext:cocoon"> links to https://xml.apache.org/cocoon/
+
+See https://xml.apache.org/forrest/linking.html for more info
+-->
+<site label="POI" xmlns="http://apache.org/forrest/linkmap/1.0">
+    <home label="Overview" tab="home">
+        <index label="Home" href="index.html"/>
+        <download label="Download" href="download.html"/>
+        <changes label="Changelog" href="changes.html"/>
+        <javadocs label="Javadocs" href="apidocs/index.html"/>
+        <extraction label="Text Extraction" href="text-extraction.html"/>
+        <encryption label="Encryption support" href="encryption.html"/>
+        <encryption label="Secure processing" href="security.html"/>
+        <casestudies label="Case Studies" href="casestudies.html"/>
+        <related label="Related projects" href="related-projects.html"/>
+        <legal label="Legal" href="legal.html"/>
+    </home>
+    <apache label="Apache Wide" tab="home">
+        <asf label="Apache Software Foundation" href="https://www.apache.org/"/>
+        <license label="License" href="https://www.apache.org/licenses/"/>
+        <sponsor label="Sponsorship" href="https://www.apache.org/foundation/sponsorship.html"/>
+        <thanks label="Thanks" href="https://www.apache.org/foundation/thanks.html"/>
+        <security label="Security" href="https://www.apache.org/security/"/>
+        <privacy label="Privacy" href="https://privacy.apache.org/policies/privacy-policy-public.html"/>
+    </apache>
+    <components label="Component APIs" href="components/" tab="components">
+        <index label="Overview" href="index.html">
+            <batikpdf href="#components"/>
+        </index>
+        <javadocs label="Javadocs" href="site:javadocs"/>
+        <spreadsheet label="Excel (HSSF/XSSF)" href="spreadsheet/">
+            <index label="Overview" href="index.html"/>
+            <ssquickguide label="Quick Guide" href="quick-guide.html"/>
+            <sshowto label="HOWTO" href="how-to.html"/>
+            <sscommon label="HSSF to SS Converting" href="converting.html"/>
+            <formsupp label="Formula Support" href="formula.html"/>
+            <formeval label="Formula Evaluation" href="eval.html"/>
+            <evalguide label="Eval Dev Guide" href="eval-devguide.html"/>
+            <ssexamples label="Examples" href="examples.html"/>
+            <usecases label="Use Case" href="use-case.html"/>
+            <picdocs label="Pictorial Docs" href="diagrams.html"/>
+            <limits label="Limitations" href="limitations.html"/>
+            <udf label="User Defined Functions" href="user-defined-functions.html"/>
+            <excelant label="ExcelAnt Tests" href="excelant.html"/>
+            <hackhssf label="Hacking HSSF" href="hacking-hssf.html"/>
+            <recordgen label="Record Generator" href="record-generator.html"/>
+            <charts label="Charts" href="chart.html"/>
+        </spreadsheet>
+        <slideshow label="PowerPoint (HSLF/XSLF)" href="slideshow/">
+            <index label="Overview" href="index.html"/>
+            <slquickguide label="Quick Guide" href="quick-guide.html"/>
+            <hslfcook label="HSLF Cookbook" href="how-to-shapes.html"/>
+            <xslfcook label="XSLF Cookbook" href="xslf-cookbook.html"/>
+            <slrender label="Render SL/WMF/EMF" href="ppt-wmf-emf-renderer.html"/>
+            <format label="PPT File Format" href="ppt-file-format.html"/>
+        </slideshow>
+        <document label="Word (HWPF/XWPF)" href="document/">
+            <index label="Overview" href="index.html"/>
+            <hwpfquick label="HWPF Quick Guide" href="quick-guide.html"/>
+            <xwpfquick label="XWPF Quick Guide" href="quick-guide-xwpf.html"/>
+            <docformat label="HWPF Format" href="docoverview.html"/>
+            <hwpfplan label="HWPF Project plan" href="projectplan.html"/>
+        </document>
+        <hsmf label="Outlook (HSMF)" href="hsmf/index.html"/>
+        <diagram label="Visio (HDGF+XDGF)" href="diagram/index.html"/>
+        <hpbf label="Publisher (HPBF)" href="hpbf/">
+            <index label="Overview" href="index.html"/>
+            <hpbformat label="File Format" href="file-format.html"/>
+        </hpbf>
+        <poifs label="OLE2 Filesystem (POIFS)" href="poifs/">
+            <index label="Overview" href="index.html"/>
+            <howto label="How To" href="how-to.html"/>
+            <embedded label="Embedded Documents" href="embeded.html"/>
+            <format label="File System Documentation" href="fileformat.html"/>
+            <usecases label="Use Cases" href="usecases.html"/>
+            <design label="Design" href="design.html"/>
+        </poifs>
+        <hpsf label="OLE2 Document Props (HPSF)" href="hpsf/">
+            <index label="Overview" href="index.html"/>
+            <howto label="How To" href="how-to.html"/>
+            <thumbnails label="Thumbnails" href="thumbnails.html"/>
+            <internals label="Internals" href="internals.html"/>
+            <todo label="To Do" href="todo.html"/>
+        </hpsf>
+        <hmef label="TNEF (HMEF) for winmail.dat" href="hmef/index.html"/>
+        <oxml4j label="OpenXML4J (OOXML)" href="oxml4j/index.html"/>
+        <log label="Logging framework" href="logging.html"/>
+        <config label="Configuration" href="configuration.html"/>
+    </components>
+    <help label="Help" tab="help" href="help/">
+        <mailinglists label="Mailing Lists" href="index.html"/>
+        <faq label="FAQ" href="faq.html"/>
+        <bugs label="Bug Database" href="https://bz.apache.org/bugzilla/buglist.cgi?product=POI"/>
+    </help>
+    <!-- can't use directory "community" because of forrest default rules in sitemap.xmap -> revisions -->
+    <community label="Getting Involved" href="devel/" tab="community">
+        <howtobuild label="How To Build" href="index.html"/>
+        <nightly label="Nightly Builds" href="nightly.html"/>
+        <subversion label="Subversion Repository" href="subversion.html"/>
+        <guidelines label="Contribution Guidelines" href="guidelines.html"/>
+        <whoweare label="Who We Are" href="who.html"/>
+        <plan label="Planning Documents" href="plan/">
+            <planning label="Overview" href="index.html"/>
+            <vision10 label="1.0 Vision" href="vision10.html"/>
+            <vision20 label="2.0 Vision" href="vision20.html"/>
+        </plan>
+        <references label="References" href="references/">
+            <index label="Overview" href="index.html"/>
+            <logocontest label="Logo Submissions" href="logocontest.html"/>
+            <xlsspec label="XLS spec [PDF]" href="https://sc.openoffice.org/excelfileformat.pdf"/>
+            <cocoon label="Apache Cocoon" href="https://xml.apache.org/cocoon/"/>
+        </references>
+        <resolutions label="Resolutions" href="resolutions/">
+            <index label="Overview" href="index.html"/>
+            <res001 label="Minimal Coding Standards" href="res001.html"/>
+        </resolutions>
+        <history label="History" href="history/">
+            <historyfuture label="The early years" href="index.html"/>
+            <changes3x label="Changelog 3.x" href="changes-3x.html"/>
+            <changespre3x label="Changelog 0-2.x" href="changes-pre3x.html"/>
+        </history>
+    </community>
+
+    <external-refs>
+        <forrest href="http://forrest.apache.org/">
+            <aing href="docs/linking.html"/>
+            <validation href="docs/validation.html"/>
+            <webapp href="docs/your-project.html#webapp"/>
+            <dtd-docs href="docs/dtd-docs.html"/>
+        </forrest>
+        <cocoon href="https://cocoon.apache.org/"/>
+        <xml.apache.org href="https://xml.apache.org/"/>
+        <junit href="junit/index.html"/>
+        <jdepend href="jdepend/index.html"/>
+        <download href="https://www.apache.org/dyn/closer.lua/poi/"/>
+        <apidocs href="https://poi.apache.org/apidocs/">
+            <v317 href="3.17/"/>
+            <v40 href="4.0/"/>
+            <v41 href="4.1/"/>
+            <v50 href="5.0/"/>
+            <dev href="dev/"/>
+        </apidocs>
+    </external-refs>
+</site>

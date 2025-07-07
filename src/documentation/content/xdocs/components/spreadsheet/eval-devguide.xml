@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+	<header>
+		<title>Developing Formula Evaluation</title>
+		<authors>
+			<person email="amoweb@yahoo.com" name="Amol Deshmukh" id="AD"/>
+			<person email="yegor@apache.org" name="Yegor Kozlov" id="YK"/>
+		</authors>
+	</header>
+	<body>
+		<section><title>Introduction</title>
+			<p>
+				This document is for developers wishing to contribute to the
+				FormulaEvaluator API functionality.
+			</p>
+			<p>
+				When evaluating workbooks you may encounter an <code>org.apache.poi.ss.formula.eval.NotImplementedException</code>
+				which indicates that a function is not (yet) supported by POI. Is there a workaround?
+				Yes, the POI framework  makes it easy to add implementation of new functions. Prior to POI-3.8
+				you had to checkout the source code from svn and make a custom build with your function implementation.
+				Since POI-3.8 you can register new functions in run-time.
+			</p>
+			<p>
+				Currently, contribution is desired for implementing the standard MS
+				Excel functions. Placeholder classes for these have been created,
+				contributors only need to insert implementation for the
+				individual <code>evaluate()</code> methods that do the actual evaluation.
+			</p>
+		</section>
+		<section><title>Overview of FormulaEvaluator </title>
+			<p>
+				Briefly, a formula string (along with the sheet and workbook that
+				form the context in which the formula is evaluated) is first parsed
+				into Reverse Polish Notation (RPN) tokens using the <code>FormulaParser</code> class.
+				(If you don't know what RPN tokens are, now is a good time to
+				read <a href="http://www-stone.ch.cam.ac.uk/documentation/rrf/rpn.html">
+				Anthony Stone's description of RPN</a>.)
+			</p>
+			<section><title> The big picture</title>
+				<p>
+					RPN tokens are mapped to <code>Eval</code> classes. (The class hierarchy for the <code>Eval</code>s
+					is best understood if you view it in a class diagram
+					viewer.) Depending on the type of RPN token (also called <code>Ptg</code>s
+					henceforth since that is what the <code>FormulaParser</code> calls the classes), a
+					specific type of <code>Eval</code> wrapper is constructed to wrap the RPN token and
+					is pushed on the stack, unless the <code>Ptg</code> is an <code>OperationPtg</code>. If it is an
+					<code>OperationPtg</code>, an <code>OperationEval</code> instance is created for the specific
+					type of <code>OperationPtg</code>. And depending on how many operands it takes,
+					that many <code>Eval</code>s are popped of the stack and passed in an array to
+					the <code>OperationEval</code> instance's evaluate method which returns an <code>Eval</code>
+					of subtype <code>ValueEval</code>. Thus an operation in the formula is evaluated.
+				</p>
+				<note> An <code>Eval</code> is of subinterface <code>ValueEval</code> or <code>OperationEval</code>.
+				Operands are always <code>ValueEval</code>s, and operations are always <code>OperationEval</code>s.</note>
+				<p>
+					<code>OperationEval.evaluate(Eval[])</code> returns an <code>Eval</code> which is supposed
+					to be an instance of one of the implementations of
+					<code>ValueEval</code>. The <code>ValueEval</code> resulting from <code>evaluate()</code> is pushed on the
+					stack and the next RPN token is evaluated. This continues until
+					eventually there are no more RPN tokens, at which point, if the formula
+					string was correctly parsed, there should be just one <code>Eval</code> on the
+					stack &mdash; which contains the result of evaluating the formula.
+				</p>
+				<p>
+					Two special <code>Ptg</code>s &mdash; <code>AreaPtg</code> and <code>ReferencePtg</code> &mdash;
+					are handled a little differently, but the code should be self
+					explanatory for that. Very briefly, the cells included in <code>AreaPtg</code> and
+					<code>RefPtg</code> are examined and their values are populated in individual
+					<code>ValueEval</code> objects which are set into the implementations of
+					<code>AreaEval</code> and <code>RefEval</code>.
+				</p>
+				<p>
+					<code>OperationEval</code>s for the standard operators have been implemented and tested.
+				</p>
+			</section>
+		</section>
+		<section><title>What functions are supported?</title>
+			<p>
+				As of release 5.2.0, POI implements 202 built-in functions,
+				see <a href="#appendixA">Appendix A</a> for the list of supported functions with an implementation.
+				You can programmatically list supported / unsupported functions using the following helper methods:
+			</p>
+<source>import org.apache.poi.ss.formula.ss.formula.WorkbookEvaluator;
+
+// list of functions that POI can evaluate
+Collection&lt;String&gt; supportedFuncs = WorkbookEvaluator.getSupportedFunctionNames();
+
+// list of functions that are not supported by POI
+Collection&lt;String&gt; unsupportedFuncs = WorkbookEvaluator.getNotSupportedFunctionNames();
+</source>
+			<section><title>I need a function that isn't supported!</title>
+				<p>
+					If you need a function that POI doesn't currently support, you have two options.
+					You can create the function yourself, and have your program add it to POI at
+					run-time.  Doing this will help you get the function you need as soon as possible.
+					The other option is to create the function yourself, and build it into the POI library,
+					possibly contributing the code to the POI project.  Doing this will help you get the
+					function you need, but you'll have to build POI from source yourself.  And if you
+					contribute the code, you'll help others who need the function in the future, because
+					it will already be supported in the next release of POI.  The two options require
+					almost identical code, but the process of deploying the function is different.
+					If your function is a User Defined Function, you'll always take the run-time option,
+					as POI doesn't distribute UDFs.
+				</p>
+				<p>
+					In the sections ahead, we'll implement the Excel <code>SQRTPI()</code> function, first
+					at run-time, and then we'll show how change it to a library-based implementation.
+				</p>
+			</section>
+		</section>
+		<section><title>Two base interfaces to start your implementation</title>
+			<p>
+				All Excel formula function classes implement either the
+				<code>org.apache.poi.hssf.record.formula.functions.Function</code> or the
+				<code>org.apache.poi.hssf.record.formula.functions.FreeRefFunction</code> interface.
+				<code>Function</code> is a common interface for the functions defined in the Binary Excel File Format (BIFF8): these are "classic" Excel functions like <code>SUM</code>, <code>COUNT</code>, <code>LOOKUP</code>, <em>etc</em>.
+				<code>FreeRefFunction</code> is a common interface for the functions from the Excel Analysis ToolPak, for User Defined Functions that you create,
+				and for Excel built-in functions that have been defined since BIFF8 was defined.
+				In the future these two interfaces are expected be unified into one, but for now you have to start your implementation from two slightly different roots.
+			</p>
+
+			<section><title>Which interface to start from?</title>
+				<p>
+					You are about to implement a function and don't know which interface to start from: <code>Function</code> or <code>FreeRefFunction</code>.
+					You should use <code>Function</code> if the function is part of the Excel BIFF8
+					definition, and <code>FreeRefFunction</code> for a function that is part of the Excel Analysis ToolPak, was added to Excel after BIFF8, or that you are creating yourself.
+				</p>
+				<p>
+					You can check the list of Analysis ToolPak functions defined in <code>org.apache.poi.ss.formula.atp.AnalysisToolPak.createFunctionsMap()</code>
+					to see if the function is part of the Analysis ToolPak.
+					The list of BIFF8 functions is defined as a text file, in the
+					<code>src/resources/main/org/apache/poi/ss/formula/function/functionMetadata.txt</code> file.
+				</p>
+				<p>
+					You can also use the following code to check which base class your function should implement, if it is not a User Defined function (UDFs must implement <code>FreeRefFunction</code>):
+				</p>
+<source>import org.apache.poi.hssf.record.formula.atp.AnalysisToolPak;
+
+if (!AnalysisToolPak.isATPFunction(functionName)){
+	// the function must implement org.apache.poi.hssf.record.formula.functions.Function
+} else {
+	// the function must implement org.apache.poi.hssf.record.formula.functions.FreeRefFunction
+}
+</source>
+			</section>
+		</section>
+		<section><title>Implementing a function.</title>
+			<p>
+				Here is the fun part: let's walk through the implementation of the Excel function <code>SQRTPI()</code>,
+				which POI doesn not currently support.
+			</p>
+			<p>
+				<code>AnalysisToolPak.isATPFunction("SQRTPI")</code> returns true, so this is an Analysis ToolPak function.
+				Thus the base interface must be <code>FreeRefFunction</code>.  The same would be true if we were implementing
+				a UDF.
+			</p>
+			<p>
+				Because we're taking the run-time deployment option, we'll create this new function in a source
+				file in our own program.  Our function will return an <code>Eval</code> that is either
+				it's proper result, or an <code>ErrorEval</code> that describes the error.  All that work
+				is done in the function's <code>evaluate()</code> method:
+			</p>
+<source>package ...;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
+
+public final class SqrtPi implements FreeRefFunction {
+
+	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
+		ValueEval arg0 = args[0];
+		int srcRowIndex = ec.getRowIndex();
+		int srcColumnIndex = ec.getColumnIndex();
+		try {
+			// Retrieves a single value from a variety of different argument types according to standard
+			// Excel rules.  Does not perform any type conversion.
+			ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+
+			// Applies some conversion rules if the supplied value is not already a number.
+			// Throws EvaluationException(#VALUE!) if the supplied parameter is not a number
+			double arg = OperandResolver.coerceValueToDouble(ve);
+
+			// this where all the heavy-lifting happens
+			double result = Math.sqrt(arg*Math.PI);
+
+			// Excel uses the error code #NUM! instead of IEEE NaN and Infinity,
+			// so when a numeric function evaluates to Double.NaN or Double.Infinity,
+			// be sure to translate the result to the appropriate error code
+			if (Double.isNaN(result) || Double.isInfinite(result)) {
+				throw new EvaluationException(ErrorEval.NUM_ERROR);
+			}
+
+			return new NumberEval(result);
+		} catch (EvaluationException e){
+			return e.getErrorEval();
+		}
+	}
+}
+</source>
+			<p>
+				If our function had been one of the BIFF8 Excel built-ins, it would have been based on
+				the <code>Function</code> interface instead.
+				There are sub-interfaces of <code>Function</code> that make life easier when implementing numeric functions
+				or functions
+				with a small, fixed number of arguments:
+			</p>
+			<ul>
+				<li><code>org.apache.poi.hssf.record.formula.functions.NumericFunction</code></li>
+				<li><code>org.apache.poi.hssf.record.formula.functions.Fixed0ArgFunction</code></li>
+				<li><code>org.apache.poi.hssf.record.formula.functions.Fixed1ArgFunction</code></li>
+				<li><code>org.apache.poi.hssf.record.formula.functions.Fixed2ArgFunction</code></li>
+				<li><code>org.apache.poi.hssf.record.formula.functions.Fixed3ArgFunction</code></li>
+				<li><code>org.apache.poi.hssf.record.formula.functions.Fixed4ArgFunction</code></li>
+			</ul>
+			<p>
+				Since <code>SQRTPI()</code> takes exactly one argument, we would start our implementation from
+				<code>Fixed1ArgFunction</code>.  The differences for a BIFF8 <code>Fixed1ArgFunction</code>
+				are pretty small:
+			</p>
+<source>package ...;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.functions.Fixed1ArgFunction;
+
+public final class SqrtPi extends Fixed1ArgFunction {
+
+	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+		try {
+			...
+	}
+}
+</source>
+			<p>
+				Now when the implementation is ready we need to register it with the formula evaluator.
+				This is the same no matter which kind of function we're creating.  We simply add the
+				following line to the program that is using POI:
+			</p>
+<source>WorkbookEvaluator.registerFunction("SQRTPI", SqrtPi);
+</source>
+			<p>
+				Voila! The formula evaluator now recognizes <code>SQRTPI()</code>!
+			</p>
+			<section><title>Moving the function into the library</title>
+			<p>
+				If we choose instead to implement our function as part of the POI
+				library, the code is nearly identical.  All POI functions
+				are part of one of two Java packages: <code>org.apache.poi.ss.formula.functions</code>
+				for BIFF8 Excel built-in functions, and <code>org.apache.poi.ss.formula.atp</code>
+				for Analysis ToolPak functions.  The function still needs to implement the
+				appropriate base class, just as before.  To implement our <code>SQRTPI()</code>
+				function in the POI library, we need to move the source code to
+				<code>poi/src/main/java/org/apache/poi/ss/formula/atp/SqrtPi.java</code> in
+				the POI source code, change the <code>package</code> statement, and add a
+				singleton instance:
+			</p>
+<source>package org.apache.poi.ss.formula.atp;
+...
+public final class SqrtPi implements FreeRefFunction {
+
+    public static final FreeRefFunction instance = new SqrtPi();
+
+    private SqrtPi() {
+        // Enforce singleton
+    }
+	...
+}
+</source>
+			<p>
+				If our function had been one of the BIFF8 Excel built-ins, we would instead have moved
+				the source code to
+				<code>poi/src/main/java/org/apache/poi/ss/formula/functions/SqrtPi.java</code> in
+				the POI source code, and changed the <code>package</code> statement to:
+			</p>
+<source>package org.apache.poi.ss.formula.functions;
+</source>
+			<p>
+				POI library functions are registered differently from run-time-deployed functions.
+				Again, the techniques differ for the two types of library functions (remembering
+				that POI never releases the third type, UDFs).
+				For our Analysis ToolPak function, we have to update the list of functions in
+				<code>org.apache.poi.ss.formula.atp.AnalysisToolPak.createFunctionsMap()</code>:
+			</p>
+<source>...
+private Map&lt;String, FreeRefFunction&gt; createFunctionsMap() {
+	Map&lt;String, FreeRefFunction&gt; m = new HashMap&lt;&gt;(114);
+	...
+	r(m, "SQRTPI", SqrtPi.instance);
+	...
+}
+...
+</source>
+			<p>
+				If our function had been one of the BIFF8 Excel built-ins,
+				the registration instead would require updating an entry in the formula-function table,
+				<code>poi/src/main/resources/org/apache/poi/ss/formula/function/functionMetadata.txt</code>:
+			</p>
+<source>...
+#Columns: (index, name, minParams, maxParams, returnClass, paramClasses, isVolatile, hasFootnote )
+...
+359	SQRTPI	1	1	V	V
+...
+</source>
+			<p>
+				and also updating the list of function implementation list in
+				<code>org.apache.poi.ss.formula.eval.FunctionEval.produceFunctions()</code>:
+			</p>
+<source>...
+private static Function[] produceFunctions() {
+	...
+	retval[359] = new SqrtPi();
+	...
+}
+...
+</source>
+			</section>
+			<section><title>Floating Point Arithmetic in Excel</title>
+				<p>
+					Excel uses the IEEE Standard for Double Precision Floating Point numbers
+					except two cases where it does not adhere to IEEE 754:
+				</p>
+				<ol>
+					<li>Positive and Negative Infinities: Infinities occur when you divide by 0.
+						Excel does not support infinities, rather, it gives a #DIV/0! error in these cases.
+					</li>
+					<li>Not-a-Number (NaN): NaN is used to represent invalid operations
+						(such as infinity/infinity, infinity-infinity, or the square root of -1).
+						NaNs allow a program to continue past an invalid operation.
+						Excel instead immediately generates an error such as #NUM! or #DIV/0!.
+					</li>
+				</ol>
+				<p>
+					Be aware of these two cases when saving results of your scientific calculations in Excel:
+					“where are my Infinities and NaNs? They are gone!”
+				</p>
+			</section>
+			<section><title>Testing Framework</title>
+				<p>
+					Automated testing of the implemented Function is easy.
+					The source code for this is in the file: <code>org.apache.poi.hssf.record.formula.GenericFormulaTestCase.java</code>.
+					This class has a reference to the test xls file (not <em>a</em> test xls, <em>the</em> test xls :) )
+					which may need to be changed for your environment. Once you do that, in the test xls,
+					locate the entry for the function that you have implemented and enter different tests
+					in a cell in the FORMULA row. Then copy the "value of" the formula that you entered in the
+					cell just below it (this is easily done in excel as:
+					[copy the formula cell] > [go to cell below] > Edit > Paste Special > Values > "ok").
+					You can enter multiple such formulas and paste their values in the cell below and the
+					test framework will automatically test if the formula evaluation matches the expected
+					value (Again, hard to put in words, so if you will, please take time to quickly look
+					at the code and the currently entered tests in the patch attachment "FormulaEvalTestData.xls"
+					file).
+				</p>
+				<note>This style of testing appears to have been abandoned.  This section needs to be completely rewritten.</note>
+			</section>
+		</section>
+		<anchor id="appendixA"/>
+		<section>
+			<title>Appendix A &mdash; Functions supported by POI</title>
+			<p>
+				Functions supported by POI (as of v5.2.0 release)
+			</p>
+<source>ABS
+ACOS
+ACOSH
+ADDRESS
+AND
+AREAS
+ASIN
+ASINH
+ATAN
+ATAN2
+ATANH
+AVEDEV
+AVERAGE
+AVERAGEIFS
+BIN2DEC
+CEILING
+CHAR
+CHOOSE
+CLEAN
+CODE
+COLUMN
+COLUMNS
+COMBIN
+COMPLEX
+CONCAT
+CONCATENATE
+COS
+COSH
+COUNT
+COUNTA
+COUNTBLANK
+COUNTIF
+COUNTIFS
+DATE
+DATEVALUE
+DAY
+DAYS360
+DEC2BIN
+DEC2HEX
+DEGREES
+DELTA
+DEVSQ
+DGET
+DMAX
+DMIN
+DOLLAR
+DSUM
+EDATE
+EOMONTH
+ERROR.TYPE
+EVEN
+EXACT
+EXP
+FACT
+FACTDOUBLE
+FALSE
+FIND
+FIXED
+FLOOR
+FREQUENCY
+FV
+GEOMEAN
+HEX2DEC
+HLOOKUP
+HOUR
+HYPERLINK
+IF
+IFERROR
+IFNA
+IFS
+IMAGINARY
+IMREAL
+INDEX
+INDIRECT
+INT
+INTERCEPT
+IPMT
+IRR
+ISBLANK
+ISERR
+ISERROR
+ISEVEN
+ISLOGICAL
+ISNA
+ISNONTEXT
+ISNUMBER
+ISODD
+ISREF
+ISTEXT
+LARGE
+LEFT
+LEN
+LN
+LOG
+LOG10
+LOOKUP
+LOWER
+MATCH
+MAX
+MAXA
+MAXIFS
+MDETERM
+MEDIAN
+MID
+MIN
+MINA
+MINIFS
+MINUTE
+MINVERSE
+MIRR
+MMULT
+MOD
+MODE
+MONTH
+MROUND
+NA
+NETWORKDAYS
+NOT
+NOW
+NPER
+NPV
+OCT2DEC
+ODD
+OFFSET
+OR
+PERCENTILE
+PERCENTRANK
+PERCENTRANK.EXC
+PERCENTRANK.INC
+PI
+PMT
+POISSON
+POWER
+PPMT
+PRODUCT
+PROPER
+PV
+QUOTIENT
+RADIANS
+RAND
+RANDBETWEEN
+RANK
+RATE
+REPLACE
+REPT
+RIGHT
+ROMAN
+ROUND
+ROUNDDOWN
+ROUNDUP
+ROW
+ROWS
+SEARCH
+SECOND
+SIGN
+SIN
+SINGLE
+SINH
+SLOPE
+SMALL
+SQRT
+STDEV
+SUBSTITUTE
+SUBTOTAL
+SUM
+SUMIF
+SUMIFS
+SUMPRODUCT
+SUMSQ
+SUMX2MY2
+SUMX2PY2
+SUMXMY2
+SWITCH
+T
+T.DIST
+T.DIST.2T
+T.DIST.RT
+TAN
+TANH
+TDIST
+TEXT
+TEXTJOIN
+TIME
+TIMEVALUE
+TODAY
+TRANSPOSE
+TREND
+TRIM
+TRUE
+TRUNC
+UPPER
+VALUE
+VAR
+VARP
+VLOOKUP
+WEEKDAY
+WEEKNUM
+WORKDAY
+XLOOKUP
+XMATCH
+YEAR
+YEARFRAC</source>
+		</section>
+	</body>
+</document>

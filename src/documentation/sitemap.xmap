@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<map:sitemap xmlns:map="http://apache.org/cocoon/sitemap/1.0">
+    <map:components>
+        <map:selectors default="parameter">
+            <map:selector logger="sitemap.selector.parameter"
+                          name="parameter" src="org.apache.cocoon.selection.ParameterSelector"/>
+        </map:selectors>
+        <map:actions>
+            <map:action logger="sitemap.action.sourcetype" name="sourcetype"
+                        src="org.apache.forrest.sourcetype.SourceTypeAction">
+                <sourcetype name="document-v20">
+                    <document-declaration public-id="-//APACHE//DTD Documentation V2.0//EN"/>
+                </sourcetype>
+            </map:action>
+        </map:actions>
+    </map:components>
+
+    <map:pipelines>
+        <map:pipeline>
+            <map:match type="regexp" pattern="(.*/?changes.*)\.xml">
+                <map:generate src="{properties:content.xdocs}{1}.xml"/>
+                <map:transform src="{properties:resources.stylesheets}/changes2document.xsl"/>
+                <map:serialize type="xml"/>
+            </map:match>
+
+            <map:match type="regexp" pattern="(.*/.*|encryption|index|download|legal|news|related-projects|text-extraction)\.xml">
+                <map:generate src="{properties:content.xdocs}{1}.xml"/>
+                <map:act type="sourcetype" src="{properties:content.xdocs}{1}.xml">
+                    <map:select type="parameter">
+                        <map:parameter name="parameter-selector-test" value="{sourcetype}"/>
+                        <map:when test="document-v20">
+                            <map:transform src="{properties:resources.stylesheets}/snipplets2document.xsl"/>
+                        </map:when>
+                    </map:select>
+                </map:act>
+                <map:serialize type="xml"/>
+            </map:match>
+        </map:pipeline>
+    </map:pipelines>
+</map:sitemap>

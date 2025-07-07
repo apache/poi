@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+    <header>
+        <title>POI-XWPF - A Quick Guide</title>
+        <subtitle>Overview</subtitle>
+        <authors>
+            <person name="Nick Burch" email="nick at torchbox dot com"/>
+        </authors>
+    </header>
+
+    <body>
+		<p>XWPF has a fairly stable core API, providing read and write access
+      to the main parts of a Word .docx file, but it isn't complete. For
+      some things, it may be necessary to dive down into the low level XMLBeans
+      objects to manipulate the ooxml structure. If you find yourself having
+      to do this, please consider sending in a patch to enhance that, see the
+      <a href="site:guidelines">"Contribution to POI" page</a>.</p>
+
+        <section><title>Basic Text Extraction</title>
+        <p>For basic text extraction, make use of
+<code>org.apache.poi.xwpf.extractor.XWPFWordExtractor</code>. It accepts an input
+stream or a <code>XWPFDocument</code>. The <code>getText()</code>
+method can be used to
+get the text from all the paragraphs, along with tables, headers etc.
+		</p>
+		</section>
+
+		<section><title>Specific Text Extraction</title>
+		<p>To get specific bits of text, first create a
+<code>org.apache.poi.xwpf.XWPFDocument</code>. Select the <code>IBodyElement</code>
+of interest (Table, Paragraph etc), and from there get a <code>XWPFRun</code>.
+Finally fetch the text and properties from that.
+		</p>
+		</section>
+
+		<section><title>Headers and Footers</title>
+		<p>To get at the headers and footers of a word document, first create a
+<code>org.apache.poi.xwpf.XWPFDocument</code>. Next, you need to create a
+<code>org.apache.poi.xwpf.usermodel.XWPFHeaderFooter</code>, passing it your
+XWPFDocument. Finally, the XWPFHeaderFooter gives you access to the headers and
+footers, including first / even / odd page ones if defined in your
+document.</p>
+		</section>
+
+		<section><title>Changing Text</title>
+		<p>From a <code>XWPFParagraph</code>, it is possible to fetch the existing
+       <code>XWPFRun</code> elements that make up the text. To add new text,
+       the <code>createRun()</code> method will add a new <code>XWPFRun</code>
+       to the end of the list. <code>insertNewRun(int)</code> can instead be
+       used to add a new <code>XWPFRun</code> at a specific point in the
+       paragraph.
+		</p>
+      <p>Once you have a <code>XWPFRun</code>, you can use the
+       <code>setText(String)</code> method to make changes to the text. To add
+       whitespace elements such as tabs and line breaks, it is necessary to use
+       methods like <code>addTab()</code> and <code>addCarriageReturn()</code>.
+		</p>
+		</section>
+
+		<section><title>Further Examples</title>
+		<p>For now, there are a limited number of XWPF examples in the
+      <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples/xwpf">Examples Package</a>.
+      Beyond those, the best source of additional examples is in the unit
+		tests. <a href="https://svn.apache.org/viewvc/poi/trunk/poi-ooxml/src/test/java/org/apache/poi/xwpf/">
+		Browse the XWPF unit tests.</a>
+		</p>
+		</section>
+	</body>
+</document>

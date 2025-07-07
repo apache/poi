@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+    <header>
+        <title>Apache POI™ - HDGF and XDGF - Java API To Access Microsoft Visio Format Files</title>
+        <subtitle>Overview</subtitle>
+        <authors>
+           <person id="pd" name="POI Developers" email="dev@poi.apache.org"/>
+        </authors>
+    </header>
+
+    <body>
+        <section>
+            <title>Overview</title>
+
+            <p>HDGF is the POI Project's pure Java implementation of the
+             Visio binary (VSD) file format. XDGF is the POI Project's
+             pure Java implementation of the Visio XML (VSDX) file format.</p>
+            <!-- TODO More about XDGF here! -->
+            <p>Currently, HDGF provides a low-level, read-only api for
+              accessing Visio documents. It also provides a
+              <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-scratchpad/src/main/java/org/apache/poi/hdgf/extractor/">way</a>
+              to extract the textual content from a file.
+            </p>
+			<p>At this time, there is no <em>usermodel</em> api or similar,
+			 only low level access to the streams, chunks and chunk commands.
+			 Users are advised to check the unit tests to see how everything
+			 works. They are also well advised to read the documentation
+			 supplied with
+			 <a href="https://web.archive.org/web/20071212220759/https://www.gnome.ru/projects/vsdump_en.html">vsdump</a>
+			 to get a feel for how Visio files are structured.</p>
+			<p>To get a feel for the contents of a file, and to track down
+			 where data of interest is stored, HDGF comes with
+			 <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-scratchpad/src/main/java/org/apache/poi/hdgf/dev/">VSDDumper</a>
+			 to print out the contents of the file. Users should also make
+			 use of
+			 <a href="https://web.archive.org/web/20071212220759/https://www.gnome.ru/projects/vsdump_en.html">vsdump</a>
+			 to probe the structure of files.</p>
+
+         <note>
+            This code currently lives the
+            <a href="https://svn.apache.org/viewvc/poi/trunk/poi-scratchpad/">scratchpad area</a>
+            of the POI SVN repository. To use this component, ensure
+            you have the Scratchpad Jar on your classpath, or a dependency
+            defined on the <em>poi-scratchpad</em> artifact - the main POI
+            jar is not enough! See the
+            <a href="site:components">POI Components Map</a>
+            for more details.
+			</note>
+
+			<section>
+				<title>Steps required for write support</title>
+				<p>Currently, HDGF is only able to read visio files, it is
+				 not able to write them back out again. We believe the
+				 following are the steps that would need to be taken to
+				 implement it.</p>
+				<ol>
+				 <li>Re-write the decompression support in LZW4HDGF as
+				  HDGFLZW, which will be much better documented, and also
+				  under the ASL. <strong>Completed October 2007</strong></li>
+				 <li>Add compression support to HDGFLZW.
+				  <strong>In progress - works for small streams but encoding
+               goes wrong on larger ones</strong></li>
+				 <li>Have HDGF just write back the raw bytes it read in, and
+				  have a test to ensure the file is un-changed.</li>
+				 <li>Have HDGF generate the bytes to write out from the
+				  Stream stores, using the compressed data as appropriate,
+				  without re-compressing. Plus test to ensure file is
+				  un-changed.</li>
+				 <li>Have HDGF generate the bytes to write out from the
+				  Stream stores, re-compressing any streams that were
+                  decompressed. Plus test to ensure file is un-changed.</li>
+				 <li>Have HDGF re-generate the offsets in pointers for the
+				  locations of the streams. Plus test to ensure file is
+				  un-changed.</li>
+				 <li>Have HDGF re-generate the bytes for all the chunks, from
+				  the chunk commands. Tests to ensure the chunks are
+				  serialized properly, and then that the file is un-changed</li>
+				 <li>Alter the data of one command, but keep it the same
+				  length, and check visio can open the file when written
+				  out.</li>
+				 <li>Alter the data of one command, to a new length, and
+				  check that visio can open the file when written out.</li>
+				</ol>
+			</section>
+        </section>
+    </body>
+</document>

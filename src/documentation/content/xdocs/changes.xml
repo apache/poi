@@ -1,0 +1,777 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE changes PUBLIC "-//APACHE//DTD Changes POI//EN" "changes-poi.dtd">
+
+<changes>
+    <contexts>
+        <context id="OOXML" title="OOXML"/>
+        <context id="OPC" title="OPC"/>
+        <context id="POI_Overall" title="POI Overall"/>
+        <context id="HSSF" title="Horrible SpreadSheet Format"/>
+        <context id="XSSF" title="ooXml SpreadSheet Format"/>
+        <context id="SXSSF" title="Streaming ooXml SpreadSheet Format"/>
+        <context id="SS_Common" title="SpreadSheet Common"/>
+        <context id="HSLF" title="Horrible SlideShow Format"/>
+        <context id="XSLF" title="ooXml SlideShow Format"/>
+        <context id="SL_Common" title="SlideShow Common"/>
+        <context id="HWPF" title="Horrible WordProcessor Format"/>
+        <context id="XWPF" title="ooXml WordProcessor Format"/>
+        <context id="HDF" title="Horrible Document Format"/>
+        <context id="HPSF" title="Horrible PropertySet Format"/>
+        <context id="HDGF" title="Horrible Dreadful Graph Format"/>
+        <context id="XDGF" title="ooXml Dreadful Graph Format"/>
+        <context id="DDF" title="Dreadful Drawing Format"/>
+        <context id="XDDF" title="ooXml Dreadful Drawing Format"/>
+        <context id="HMEF" title="Horrible Mail Encoder Format"/>
+        <context id="HSMF" title="Horrible Senseless Format"/>
+        <context id="HPBF" title="Horrible Peep Book Format"/>
+        <context id="HWMF" title="Horrible Wannabe Metafile Format"/>
+        <context id="HEMF" title="Horrible Ermahgerd Metafile Format"/>
+        <context id="POIFS" title="Poor Obfuscation Implementation FileSystem"/>
+    </contexts>
+
+    <!--
+      ACTION ATTRIBUTES:
+
+      type: fix, add, remove, update, unknown
+
+      fixes-bug: a comma-separated list of bugzilla bugs or github-##
+
+      breaks-compatibility: used whenever an intentional (or unintentional?) backwards compatibility
+          was introduced without having a deprecation warning for at least 2 final releases.
+          Use a value of "true" to indicate a breakage. Otherwise, omit this attribute.
+
+      context: a space-separated list of modules related to the change. Use POI, OOXML, OPC, etc to refer
+          to changes to core POI code rather than listing all of the modules, or SS Common and SL Common
+          when referring to both H??F and X??F formats.
+    -->
+
+    <section id="previous_releases">
+        <title>Previous releases</title>
+        <p>The change log for <a href="site:changes3x">POI 3.x</a> and
+            <a href="site:changespre3x">older releases</a>
+            can be found in the history section.
+        </p>
+    </section>
+
+    <release version="5.4.2" date="2025-??-??">
+        <summary>
+            <summary-item>Upgrade batik dependency to 1.19</summary-item>
+            <summary-item>Upgrade bouncycastle dependency to 1.80</summary-item>
+            <summary-item>Upgrade commons-collections4 dependency to 4.5.0</summary-item>
+            <summary-item>Upgrade commons-io dependency to 2.19.0</summary-item>
+            <summary-item>Upgrade pdfbox dependency to 3.0.5</summary-item>
+            <summary-item>Upgrade xmlsec dependency to 3.0.6</summary-item>
+            <summary-item>Upgrade JaCoCo code-coverage tooling to 0.8.13</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="69646" context="SXSSF">SXSSF: check for null _fd instance in dispose call</action>
+            <action type="fix" fixes-bug="69667" context="HSSF">Handle slightly broken WriteAccessRecord gracefully</action>
+            <action type="fix" fixes-bug="69669" context="HSLF">Fix issue where Slide addTitle corrupts the ppt file</action>
+            <action type="add" fixes-bug="github-803" context="SS_Common">Add support for SHEET function</action>
+        </actions>
+    </release>
+
+    <release version="5.4.1" date="2025-04-06">
+        <summary>
+            <summary-item>Note: JDK 24 will change behavior of locale providers, some formatting might be different when upgrading</summary-item>
+            <summary-item>Upgrade commons-codec dependency to 1.18.0</summary-item>
+            <summary-item>Upgrade bouncycastle dependency to 1.80</summary-item>
+            <summary-item>Upgrade pdfbox dependency to 3.0.4</summary-item>
+            <summary-item>Upgrade graphics2d dependency to 3.0.3</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="69618" context="OOXML">ZipPackage save should check that intermediate steps succeed</action>
+            <action type="add" fixes-bug="github-775" context="OOXML">Allow some OPC compliance checks to be tuned</action>
+            <action type="fix" fixes-bug="66260" context="XWPF">Add getNumberOfTexts() method</action>
+            <action type="fix" fixes-bug="68094" context="SXSSF">Allow to use SXSSFSheet.setArbitraryExtraWidth() to define an adjustment-factor when auto-sizing columns</action>
+            <action type="fix" fixes-bug="57603" context="HWPF">Fix reading/writing of documents with many columns</action>
+            <action type="fix" fixes-bug="65190" context="SS_Common">Handle decimal format '0#' the same way as Excel</action>
+            <action type="fix" fixes-bug="66425" context="POI_Overall">Multiple fixes found by fuzzing Apache POI via oss-fuzz</action>
+            <action type="add" fixes-bug="66260" context="XWPF">Add getNumberOfTexts method to XWPFRun</action>
+            <action type="fix" fixes-bug="69315" context="HSMF">Continue processing properties after multivalued properties</action>
+            <action type="fix" fixes-bug="69529" context="XSSF">Streamed reading: Log failures to format formulas and numbers instead of stopping processing</action>
+            <action type="fix" fixes-bug="69536" context="SXSSF">Fix arbitrary extra width support</action>
+            <action type="fix" fixes-bug="69555" context="SXSSF">Handle extra issue where FontSystem is missing</action>
+            <action type="fix" fixes-bug="69583" context="SS_Common">Cell copy support does not handle Time only values properly</action>
+            <action type="fix" fixes-bug="69681" context="SS_Common">Issue with date/time formats that leave a space before the AM/PM part</action>
+            <action type="add" fixes-bug="69714" context="POI_Overall">Allow custom TempFileCreationStrategy per thread</action>
+        </actions>
+    </release>
+
+    <release version="5.4.0" date="2025-01-08">
+        <summary>
+            <summary-item>Add support for SOURCE_DATE_EPOCH to allow to create reproducible binary files without creation/modification-timestamp being set</summary-item>
+            <summary-item>Breaking change: Some invalid content in the compressed file-formats for xlsx/docx/pptx/... now fail parsing to prevent handling malicious input incorrectly</summary-item>
+            <summary-item>Upgrade ant dependency to 1.10.15</summary-item>
+            <summary-item>Upgrade batik dependency to 1.18</summary-item>
+            <summary-item>Upgrade commons-codec dependency to 1.17.1</summary-item>
+            <summary-item>Upgrade commons-compress dependency to 1.27.1</summary-item>
+            <summary-item>Upgrade commons-io dependency to 2.18.0</summary-item>
+            <summary-item>Upgrade log4j-api dependency to 2.24.3 and add log4j-bom dependency</summary-item>
+            <summary-item>Upgrade pdfbox dependency to 3.0.3</summary-item>
+            <summary-item>Upgrade xmlbeans dependency to 5.3.0</summary-item>
+            <summary-item>Upgrade xmlsec dependency to 3.0.5</summary-item>
+            <summary-item>Upgrade JaCoCo code-coverage tooling to 0.8.12</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="github-653" context="HSSF">Adjust HSSFWorkbook.getSheet() to return the first case-insensitive match, similar to XSSF</action>
+            <action type="fix" fixes-bug="github-655" context="XWPF">Fix searching text in paragraphs when text is spread across multiple runs</action>
+            <action type="fix" fixes-bug="github-657" context="SXSSF">Support setting an arbitrary extra width value for column widths - not working - fixed in 69536 (5.4.1)</action>
+            <action type="fix" fixes-bug="github-670" context="XWPF">XWPFRun.getText should support delInstrText and noBreakHyphen</action>
+            <action type="fix" fixes-bug="github-672" context="XWPF">Support removing XWPF Styles</action>
+            <action type="fix" fixes-bug="github-673" context="OOXML">Add word10.xsd to poi-ooxml-full</action>
+            <action type="fix" fixes-bug="github-733" context="SS_Common">Fix issue with param order in MIRR function evaluation</action>
+            <action type="fix" fixes-bug="66590" context="POIFS">Number of blocks used by the property table missing from the file header</action>
+            <action type="fix" fixes-bug="69154" context="XSSF">Shifting columns with merged regions generates an error about overlapping regions</action>
+            <action type="fix" fixes-bug="69209" context="SS_Common">default ignoreMissingFontSystem to true</action>
+            <action type="fix" fixes-bug="69323" context="POI_Overall">DefaultTempFileCreationStrategy should worry about OS deleting the temp dir</action>
+            <action type="fix" fixes-bug="69411" context="XSSF">add XSSFReader.getSheetIterator</action>
+            <action type="fix" fixes-bug="69418" context="SS_Common">Issue when evaluating WORKDAY function that has a cell ref as 2nd param</action>
+            <action type="fix" fixes-bug="69620" context="OOXML">Throw exception if xlsx/docx/pptx contains duplicate file names</action>
+        </actions>
+    </release>
+
+    <release version="5.3.0" date="2024-07-02">
+        <summary>
+            <summary-item>Upgrade log4j-api dependency to 2.23.1</summary-item>
+            <summary-item>Upgrade commons-codec dependency to 1.17.0</summary-item>
+            <summary-item>Upgrade commons-compress dependency to 1.26.2</summary-item>
+            <summary-item>Upgrade commons-io dependency to 2.16.1</summary-item>
+            <summary-item>Upgrade pdfbox dependency to 3.0.2 and graphics2d dependency to 3.0.2</summary-item>
+            <summary-item>Upgrade xmlsec dependency to 3.0.4</summary-item>
+            <summary-item>Upgrade bouncycastle dependency to 1.79</summary-item>
+            <summary-item>Upgrade xmlbeans dependency to 5.2.1</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="63189" context="OOXML">Add support for hyperlink based relationships which are stored separately from other relationships</action>
+            <action type="fix" fixes-bug="68237" context="SXSSF">Some boolean attribute values are written as true instead of 1</action>
+            <action type="fix" fixes-bug="68703" context="XSLF">IllegalArgumentException: Unexpected color choice CTFontCollectionImpl when reading font color for a table cell</action>
+            <action type="fix" fixes-bug="68778" context="SXSSF">Fix issue in SXSSF when there are missing fonts</action>
+            <action type="fix" fixes-bug="68183" context="SXSSF">SXSSFWorkbook now removes temp files when closed - removing need for a separate dispose call</action>
+            <action type="add" fixes-bug="68987" context="OOXML">Support allowStoredEntriesWithDataDescriptor=true when reading zip data</action>
+            <action type="add" fixes-bug="69147" context="OOXML">Fix regression in date handling when evaluating TEXT function</action>
+            <action type="fix" fixes-bug="github-578" context="SXSSF">Rework exception handling for missing fonts to make it more robust</action>
+            <action type="fix" fixes-bug="github-601" context="XDGF">handle elliptical arcs that have colinear points</action>
+            <action type="add" fixes-bug="github-604" context="XDGF">Support for polylines</action>
+            <action type="add" fixes-bug="github-607" context="XWPF">Support SVGs in XWPF</action>
+        </actions>
+    </release>
+
+    <release version="5.2.5" date="2023-11-25">
+        <summary>
+            <summary-item>Upgrade commons-io dependency to 2.15.0</summary-item>
+            <summary-item>Upgrade commons-compress dependency to 1.25.0</summary-item>
+            <summary-item>Upgrade log4j-api dependency to 2.21.1</summary-item>
+            <summary-item>Upgrade xmlsec dependency to 3.0.3</summary-item>
+            <summary-item>Upgrade bouncycastle dependency to 1.77</summary-item>
+            <summary-item>Upgrade xmlbeans dependency to 5.2.0</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="67475" context="SS_Common">Better support for edge cases in TEXT function</action>
+            <action type="fix" fixes-bug="67510" context="XDDF">Fix issue where chart axes were defaulting to have blank number formats - which recent versions of Excel treat as corrupted.</action>
+            <action type="add" fixes-bug="67735" context="XWPF">Add Complex scripts support in XWPFRun</action>
+            <action type="fix" fixes-bug="67579" context="OOXML">POI 5.2.4 had a regression where it did not close user-provided InputStreams. In POI 5.2.5, user-provided InputStreams are again closed. There are new constructors that allow you to control whether the streams are closed.</action>
+            <action type="fix" fixes-bug="67785" context="XSSF">XSSFExcelExtractor does not format formula results like the streaming based extractor</action>
+            <action type="fix" fixes-bug="68094" context="XSSF">Improve cell width logic to avoid rounding issues</action>
+            <action type="fix" fixes-bug="github-505" context="SL_Common">DrawTextFragment height should include leading space</action>
+        </actions>
+    </release>
+
+    <release version="5.2.4" date="2023-09-28">
+        <summary>
+            <summary-item>Discontinued the binary packages to reduce maintenance overhead, please rebuild the sources locally or use Maven Central for binary files</summary-item>
+            <summary-item>Upgrade log4j-api dependency to 2.20.0</summary-item>
+            <summary-item>Upgrade xmlsec dependency to 3.0.2</summary-item>
+            <summary-item>Upgrade batik dependency to 1.17</summary-item>
+            <summary-item>Upgrade pdfbox dependency to 2.0.29, graphics2d to 0.43</summary-item>
+            <summary-item>Upgrade commons-codec dependency to 1.16.0</summary-item>
+            <summary-item>Upgrade commons-compress dependency to 1.24.0</summary-item>
+            <summary-item>Upgrade commons-io dependency to 2.13.0</summary-item>
+            <summary-item>Upgrade curvesapi dependency to 1.08</summary-item>
+            <summary-item>Upgrade SparseBitSet dependency to 1.3</summary-item>
+            <summary-item>Use jdk18on versions of bouncycastle jars (v1.76)</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="66598" context="XSSF">Fix invalid loop-condition when cleaning up CTCells</action>
+            <action type="fix" fixes-bug="47950" context="POI_Overall">make stream/directory name lookup in OLE2 case insensitive</action>
+            <action type="fix" fixes-bug="66521" context="POI_Overall">Provide a utility to clear all thread-locals to avoid reports of memory-leaks in web-application containers</action>
+            <action type="fix" fixes-bug="66436" context="POI_Overall">Fix handling padding when decrypting data</action>
+            <action type="fix" fixes-bug="54373" context="XSSF">Include alpha/transparency value when creating an XSSFColor from an AWT Color object</action>
+            <action type="fix" fixes-bug="62272" context="XSSF">Include alpha/transparency value when setting a color-value for a font</action>
+            <action type="fix" fixes-bug="65260" context="SXSSF">Fix graceful handling of missing font-system on the operating system</action>
+            <action type="fix" fixes-bug="65543" context="HSSF">Incomplete Shared String Tables were causing read failures</action>
+            <action type="fix" fixes-bug="66257" context="XSSF">NullPointerException in XSSFReader$SheetIterator.next()</action>
+            <action type="fix" fixes-bug="66278" context="XSLF">Multiple gradient stops at the exact same location causing a rendering failure</action>
+            <action type="add" fixes-bug="66301" context="HSMF">Add a method to properly write the header necessary for a MSG attachment</action>
+            <action type="fix" fixes-bug="66306" context="XSLF">Make XSLFDiagramGroupShape public</action>
+            <action type="fix" fixes-bug="66312" context="XWPF">Inserting paragraph into table from cursor</action>
+            <action type="add" fixes-bug="66347" context="XWPF">Add theme support to XWPF</action>
+            <action type="fix" fixes-bug="66365" context="XSSF">Fix issue where cells with formulas and cached results of string type do not properly support shared strings</action>
+            <action type="fix" fixes-bug="66399" context="XSLF">Text run highlight colors were ignored</action>
+            <action type="fix" fixes-bug="66401" context="SS_Common">Fix parsing formulas with sheet-names which contain single quotes</action>
+            <action type="fix" fixes-bug="66418" context="XSSF">Fix performance issue with XSSFSheet.groupRow</action>
+            <action type="fix" fixes-bug="66433" context="SS_Common">Improve boolean functions empty cell handling</action>
+            <action type="fix" fixes-bug="66473" context="SXSSF">Fix performance issue with SXSSFCell.getColumnIndex()</action>
+            <action type="fix" fixes-bug="66475" context="POI_Overall">SignatureConfig: remove ThreadLocals and deprecated code associated with them</action>
+            <action type="fix" fixes-bug="66514" context="POI_Overall">Remove support for zip/tgz release artifacts</action>
+            <action type="fix" fixes-bug="66532" context="SXSSF">Improve performance of SheetDataWriter outputEscapedString</action>
+            <action type="fix" fixes-bug="66584" context="OOXML">Ensure ZipPackage closes input stream when exceptions happen</action>
+            <action type="fix" fixes-bug="66614" context="SS_Common">Issue where OFFSET function applies limits that should only apply to xls format spreadsheets</action>
+            <action type="fix" fixes-bug="66644" context="POI_Overall">Make jar build reproducible</action>
+            <action type="fix" fixes-bug="66661" context="XSSF">Fix issue with adding table formulas</action>
+            <action type="fix" fixes-bug="66988" context="XWPF">XWPFTableCell: make setText fully replace the text and add appendText method to append</action>
+            <action type="fix" fixes-bug="67005" context="XSLF">Basic for reading audio files in pptx files</action>
+            <action type="fix" fixes-bug="67396" context="OOXML">Set standalone="yes" in XML declarations when writing OOXML format files</action>
+        </actions>
+    </release>
+
+    <release version="5.2.3" date="2022-09-16">
+        <summary>
+            <summary-item>Upgrade graphics2d dependency to 0.40, pdfbox to 2.0.26</summary-item>
+            <summary-item>Upgrade xmlsec dependency to 3.0.0</summary-item>
+            <summary-item>Upgrade xmlbeans dependency to 5.1.1</summary-item>
+            <summary-item>Upgrade log4j-api dependency to 2.18.0</summary-item>
+            <summary-item>Speed up processing of formulas with column-ranges, e.g. VLOOKUP(A4,$D:$E,2,0)</summary-item>
+            <summary-item>Speed up compilation of jar-files-only builds by avoiding direct dependency on test-execution</summary-item>
+            <summary-item>Avoid some more possible overly large memory allocations on certain input documents</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="51037" context="SS_Common">setDefaultColumnStyle() in XSSFSheet/SXSSFSheet was not working as expected</action>
+            <action type="add" fixes-bug="55330" context="SS_Common">add PageMargin enum</action>
+            <action type="add" fixes-bug="56155" context="OOXML">Support version property in CoreProperties</action>
+            <action type="add" fixes-bug="58468" context="SS_Common">Support DAYS function</action>
+            <action type="fix" fixes-bug="63575" context="XWPF">Support capitalized text in XWPFWordExtractor</action>
+            <action type="fix" fixes-bug="63576" context="HWPF">Support capitalized text in WordExtractor</action>
+            <action type="fix" fixes-bug="65562" context="SXSSF">SXSSF doesn't update dimension field</action>
+            <action type="fix" fixes-bug="65473" context="XSLF">When slides were copied, the text shapes were still referencing original slide</action>
+            <action type="fix" fixes-bug="65854" context="OOXML">Use revert() instead of close() when OPCPackage is opened read-only</action>
+            <action type="fix" fixes-bug="65973" context="XSSF">Row shifting does not properly handle hyperlinks that span multiple cells</action>
+            <action type="fix" fixes-bug="65988" context="SS_Common">RATE function fails in some cases</action>
+            <action type="fix" fixes-bug="65993" context="XSSF">change XSSFHyperlink code that copies HSSFWorkbook to respect cell ranges</action>
+            <action type="fix" fixes-bug="66022" context="SS_Common">Fix issue with parsing formulas that have sheet names containing certain chars</action>
+            <action type="fix" fixes-bug="66047" context="SS_Common">Fix rounding issue in MROUND function</action>
+            <action type="fix" fixes-bug="66079" context="XWPF">Fix bug where XWPFNumbering.removeAbstractNum removes by list index, not abstractNumId</action>
+            <action type="fix" fixes-bug="github-321" context="SS_Common">DataFormatter issue with rounding in some use cases</action>
+            <action type="add" fixes-bug="github-330" context="SS_Common">Support AVERAGEIF function</action>
+            <action type="fix" fixes-bug="66052" context="SS_Common">XSSFColor could not be used the same time as org.apache.poi.ss.util classes</action>
+            <action type="add" fixes-bug="66083" context="SS_Common">Support CEILING.MATH and FLOOR.MATH functions</action>
+            <action type="fix" fixes-bug="66087" context="SS_Common">support case insensitive matching in D* functions</action>
+            <action type="add" fixes-bug="66090" context="SS_Common">add support for DCOUNT, DCOUNTA, DAVERAGE, DSTDEV, DSTDEVP, DVAR, DVARP and DPRODUCT functions</action>
+            <action type="add" fixes-bug="66092" context="SS_Common">Add STDEVP, STDEVA, STDEVPA, VARA and VARPA functions</action>
+            <action type="add" fixes-bug="66093" context="SS_Common">add support for unimplemented subfunctions to SUBTOTAL function</action>
+            <action type="add" fixes-bug="66094" context="SS_Common">add support for STDEV.S, STDEV.P, VAR.S and VAR.P functions</action>
+            <action type="add" fixes-bug="66095" context="SS_Common">add support for POISSON.DIST function</action>
+            <action type="add" fixes-bug="66097" context="SS_Common">Support CEILING.PRECISE and FLOOR.PRECISE functions</action>
+            <action type="add" fixes-bug="66098" context="SS_Common">D* functions should support wildcard matches</action>
+            <action type="add" fixes-bug="66105" context="SS_Common">Support excel correl, covar, pearson and forecast functions</action>
+            <action type="fix" fixes-bug="66115" context="HSSF">Some Password protected XLS files are not read</action>
+            <action type="add" fixes-bug="66123" context="XSSF">Support the gte attribute with XSSFConditionalFormattingThreshold</action>
+            <action type="add" fixes-bug="66145" context="OOXML">generate poi-ooxml-full classes for dml-drawing xsd</action>
+            <action type="add" fixes-bug="66146" context="OOXML">generate poi-ooxml-full classes for threaded comment and word12 xsds</action>
+            <action type="fix" fixes-bug="66173" context="SS_Common">add Sheet createSplitPane(int xSplitPos, int ySplitPos, int leftmostColumn, int topRow, PaneType activePane) to eventually replace the existing createSplitPane method (that has a bug in XSSFSheet)</action>
+            <action type="fix" fixes-bug="github-360" context="HSSF">HSSFExtendedColor was not setting RGB colors properly</action>
+            <action type="add" fixes-bug="66176" context="XSLF">Integrate SmartArt diagrams from powerpoint presentations</action>
+            <action type="fix" fixes-bug="66181" context="SS_Common">POI's implementation of VALUE function did not properly handle empty string input</action>
+            <action type="fix" fixes-bug="66187" context="XWPF">Calling getTextHighlightColor() or getEmphasisMark() on XWPFRun can lead to corruption of file</action>
+            <action type="fix" fixes-bug="66211" context="XSSF">XSSFTable.updateHeaders did not work for Worksheets created using current Excel versions</action>
+            <action type="fix" fixes-bug="66212" context="XSSF">XSSFSheet.removeTable did not remove the links to the table part reference from the sheet</action>
+            <action type="fix" fixes-bug="66213" context="XSSF">XSSFWorkbook.cloneSheet does not clone XSSFTables linked from the sheet</action>
+            <action type="fix" fixes-bug="66215" context="XSSF">Shifting rows or columns can damage formulas in tables</action>
+            <action type="fix" fixes-bug="66216" context="XSSF">XSSFPivotTable.getPivotCacheDefinition() does not work properly when XSSFPivotTable was read from an existing *.xlsx file</action>
+            <action type="fix" fixes-bug="66230" context="SXSSF">SXSSFWorkbook should work even when fonts not installed on OS</action>
+            <action type="fix" fixes-bug="66242" context="XSLF">Issue with orphaned (in package) images and notes post slide removal</action>
+        </actions>
+    </release>
+
+    <release version="5.2.2" date="2022-03-19">
+        <summary>
+            <summary-item>Upgrade log4j-api dependency to 2.17.2 and graphics2d dependency to 0.35 as well as some test dependencies</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="65915" context="SS_Common">Fix issue where Boolean functions (AND, OR) do not work properly in array context</action>
+            <action type="add" fixes-bug="65934" context="XSLF">add removeTextParagraph to text box API</action>
+            <action type="add" fixes-bug="65935" context="XSLF">add removeTextRun to paragraph API</action>
+            <action type="fix" fixes-bug="65939" context="XSSF">Fix stackoverflow issue when removing formulas with circular references</action>
+            <action type="add" fixes-bug="65943" context="SXSSF">Support rich text strings in SXSSFWorkbook (only when shared string table is used)</action>
+            <action type="fix" fixes-bug="65946" context="OOXML">POIXMLPropertiesTextExtractor returns duplicate key for Core properties</action>
+            <action type="fix" fixes-bug="65950" context="POI_Overall">POI 5.2.1 can allocate byte arrays that are too big</action>
+        </actions>
+    </release>
+
+    <release version="5.2.1" date="2022-03-03">
+        <summary>
+            <summary-item>Upgrade curvesapi dependency to 1.07</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="65887" context="POI_Overall">IOUtils.toByteArray did not fully take into account value set by IOUtils.setByteArrayMaxOverride</action>
+            <action type="fix" fixes-bug="60541" context="SS_Common">Collapsing a column group was incorrectly implemented</action>
+            <action type="fix" fixes-bug="62857" context="SS_Common">DOLLAR function is not properly implemented</action>
+            <action type="fix" fixes-bug="65792" context="SS_Common">Multiplication in cell formulas can have small rounding issues</action>
+            <action type="fix" fixes-bug="65839" context="SS_Common">Picture resize can lead to infinite loop</action>
+            <action type="add" fixes-bug="65846" context="SS_Common">Add support for NUMBERVALUE function</action>
+            <action type="add" fixes-bug="65850" context="SS_Common">Add support for Normal Distribution functions</action>
+            <action type="add" fixes-bug="65870" context="SS_Common">Add support for BESSELJ function</action>
+            <action type="add" fixes-bug="65871" context="SS_Common">Add support for DOLLARDE and DOLLARFR functions</action>
+            <action type="add" fixes-bug="65879" context="SS_Common">Add support for WORKDAY.INTL functions</action>
+            <action type="fix" fixes-bug="65899" context="HMEF">Fix issue where malformed TNEF file can cause memory issues</action>
+            <action type="fix" fixes-bug="65908" context="OPC">XAdES-XL modifications due to specification check errors</action>
+        </actions>
+    </release>
+
+    <release version="5.2.0" date="2022-01-14">
+        <summary>
+            <summary-item>Refactor to XSSFReader, SharedStringsTable, CommentsTable and ThemesTable to make them more extensible</summary-item>
+            <summary-item>Upgrade log4j-api dependency to 2.17.1</summary-item>
+            <summary-item>Upgrade BouncyCastle dependency to 1.70</summary-item>
+            <summary-item>Upgrade PDFBox Graphics2d dependency to 0.34 and PDFBox dependency to 2.0.25</summary-item>
+        </summary>
+        <actions>
+            <action type="add" fixes-bug="65668" context="OOXML">upgrade to xmlsec 2.3.0 - make secure validation configurable</action>
+            <action type="add" fixes-bug="65672" context="OOXML">Digital Signature - set commitment type and purpose</action>
+            <action type="fix" fixes-bug="65676" context="XSSF">Issue in XSSFReader where string builder is not always cleared between cell reads</action>
+            <action type="add" fixes-bug="65694" context="HSLF">handle date/time fields and formats</action>
+            <action type="fix" fixes-bug="github-281" context="SS_Common">Cell Conditional Formatting: Change regex to account for decimals with no leading digit</action>
+            <action type="fix" fixes-bug="github-273" context="SS_Common">Log warning when long sheet names are trimmed</action>
+            <action type="add" fixes-bug="github-243" context="SS_Common">Add support for XLOOKUP and XMATCH functions</action>
+            <action type="add" fixes-bug="github-290" context="POI_Overall">Customize Spliterator implementations for better parallelism</action>
+            <action type="fix" fixes-bug="63211" context="SS_Common">DataFormatter incorrectly formats data formats with escaped percent character</action>
+            <action type="fix" fixes-bug="64732" context="XSSF">XSSFSheet.createTable generates corrupted file when a header's cell contains a line break</action>
+            <action type="fix" fixes-bug="65701" context="OOXML">Password Protecting a document when Saxon is on classpath can corrupt the output</action>
+            <action type="add" fixes-bug="65703" context="SS_Common">DataFormatter: add setUse4DigitYearsInAllDateFormats(boolean) method with default of false</action>
+            <action type="add" fixes-bug="65730" context="SS_Common">DataFormatter: add setUseCachedValuesForFormulaCells(boolean) method with default of false</action>
+            <action type="fix" fixes-bug="65715" context="OOXML">Fix issue in XSSFSheet getDrawingPatriarch</action>
+            <action type="fix" fixes-bug="65738" context="OOXML">Fix issue with excessive logging of invalid parts in OOXML files</action>
+            <action type="fix" fixes-bug="65766" context="SS_Common">Cell copy does not respect rich text</action>
+            <action type="fix" fixes-bug="65772" context="POI_Overall">stop using file deleteOnExit in DefaultTempFileCreationStrategy</action>
+        </actions>
+    </release>
+
+    <release version="5.1.0" date="2021-11-01">
+        <summary>
+            <summary-item>XDDF - bug fixes</summary-item>
+            <summary-item>Upgrade Batik dependency to 1.14</summary-item>
+            <summary-item>Upgrade BouncyCastle dependency to 1.69 (including adding dependency on bcutil jar)</summary-item>
+            <summary-item>Upgrade Commons-Compress dependency to 1.21</summary-item>
+            <summary-item>Upgrade XMLSec dependency to 2.2.3</summary-item>
+            <summary-item>Upgrade PDFBox Graphics2d dependency to 0.33 (and test with PDFBox 2.0.24)</summary-item>
+            <summary-item>Add commons-io 2.11.0 as a dependency</summary-item>
+            <summary-item>Upgrade XMLBeans to 5.0.2</summary-item>
+            <summary-item>Internal logging in POI now uses Apache Log4J 2</summary-item>
+            <summary-item>Small refactor to XSSFReader to make it more extensible - should not affect most users unless they subclass XSSFReader</summary-item>
+            <summary-item>By default, no DTDs will be accepted in XML files. This can be relaxed by setting POIXMLTypeLoader.DEFAULT_XML_OPTIONS.setDisallowDocTypeDeclaration(false).</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="github-221" context="XSLF">XSLFTable - revert addRow to behaviour before 4.1.2</action>
+            <action type="fix" fixes-bug="65016" context="XDDF">Don't throw exception on empty data source</action>
+            <action type="fix" fixes-bug="64950" context="XDDF">Set hole size for doughnut chart</action>
+            <action type="fix" fixes-bug="63901" context="XSSF">XSSFDrawing - import chart from other drawing</action>
+            <action type="fix" fixes-bug="63902" context="XSSF">XSSFWorkbook - reference cloned sheet in cloned chart data</action>
+            <action type="fix" fixes-bug="54470" context="XSSF">XSSFWorkbook - clone sheet with chart</action>
+            <action type="fix" fixes-bug="57835" context="XSLF">XSLFSlide - import slide notes when importing slide content</action>
+            <action type="add" fixes-bug="github-228" context="XDDF">Manipulate individual data point properties</action>
+            <action type="add" fixes-bug="65192" context="HSSF">Allow change of EncryptionMode</action>
+            <action type="add" fixes-bug="65206" context="POI_Overall">Migrate ant / maven to gradle build</action>
+            <action type="fix" fixes-bug="65228" context="XSLF">the method getCap() does not work correctly in xslf.usermodel.XSLFTextRun</action>
+            <action type="fix" fixes-bug="65214" context="OOXML">Document signed by POI reported as 'partially' signed</action>
+            <action type="fix" fixes-bug="65085" context="HSLF">LineRect shall throw more specific exceptions</action>
+            <action type="fix" fixes-bug="64844" context="SL_Common">Incorrect sizes of images in SVG</action>
+            <action type="add" fixes-bug="65304" context="POI_Overall">Add commons-io as a dependency</action>
+            <action type="fix" fixes-bug="64473" context="OOXML">Handle issue where OOXML file has metadata and metadata.xml</action>
+            <action type="add" fixes-bug="60924" context="SS_Common">Support IFS and SWITCH functions</action>
+            <action type="add" fixes-bug="64633" context="SS_Common">Support TEXTJOIN function</action>
+            <action type="fix" fixes-bug="65230" context="SS_Common">TRIM function should trim extra spaces between words</action>
+            <action type="fix" fixes-bug="65464" context="XSSF">Fix issue with removing parent formula when shared formulas are used</action>
+            <action type="add" fixes-bug="65467" context="SS_Common">Support IFNA function</action>
+            <action type="fix" fixes-bug="65471" context="XSSF">Add support for T literal in DateTime formats</action>
+            <action type="fix" fixes-bug="65475" context="SS_Common">SUMIF and SUMIFS functions do not properly handle #N/A values</action>
+            <action type="fix" fixes-bug="github-242" context="SS_Common">add support for MAXIFS, MINIFS, AVERAGEIFS functions</action>
+            <action type="fix" fixes-bug="65501" context="XSLF">Use viewbox when rendering SVG images</action>
+            <action type="add" fixes-bug="65581" context="OOXML">add optional support in ZipArchiveFakeEntry to use a temp file</action>
+            <action type="fix" fixes-bug="65595" context="SS_Common">Strip color formatting in headers and footers</action>
+            <action type="fix" fixes-bug="65606" context="SS_Common">Fix issues with WEEKNUM function evaluation</action>
+            <action type="fix" fixes-bug="65612" context="XSLF">XSLF CustomGeometry - replace XmlStreamReader access with XmlBeans delegate</action>
+            <action type="fix" fixes-bug="49202" context="SS_Common">Support PERCENTRANK and related functions</action>
+            <action type="fix" fixes-bug="64258" context="SS_Common">Support TDIST and related functions</action>
+            <action type="fix" fixes-bug="65490" context="XSSF">Better support for shared hyperlinks</action>
+            <action type="fix" fixes-bug="65042" context="OPC">Add support to ZipPackage to allow temp files to be used to save memory (useful for writing xlsx/pptx/docx files with pictures, etc.).</action>
+            <action type="fix" fixes-bug="65372" context="OPC">Allow ZipSecureFile.setMaxEntrySize to accept sizes above 4Gb</action>
+            <action type="fix" fixes-bug="65331" context="XWPF">Fix issue in XWPFTable.setTableAlignment(TableRowAlign tra)</action>
+            <action type="fix" fixes-bug="65623" context="OPC">Create XAdES-T signature with XAdESXLSignatureFacet</action>
+            <action type="fix" fixes-bug="62040" context="SS_Common">QUOTIENT function does not support cell references</action>
+            <action type="fix" fixes-bug="64542" context="OPC">Allow creation of POIFSFileSystem instances from FileChannels but with an optional flag to prevent POI from closing the channel</action>
+            <action type="fix" fixes-bug="65452" context="SS_Common">WorkbookFactory.create(File, ...) should throw exception if the input file is not in a supported format</action>
+            <action type="fix" fixes-bug="65551" context="XSLF">Incorrect fetching paragraph and text runs props from master shape</action>
+            <action type="fix" fixes-bug="65634" context="XSLF">SlideShowFactory.create(File, ...) should throw exception if the input file is not in a supported format</action>
+            <action type="fix" fixes-bug="65648" context="SXSSF">Remove finalizer on SXSSF SheetDataWriter</action>
+            <action type="fix" fixes-bug="65650" context="POI_Overall">Use image/x-pict as mime type for pict format pictures (previous versions used a mix of image/pict and image/x-pict)</action>
+            <action type="fix" fixes-bug="65653" context="HSLF">HSLF FillType for texture and background color fills ignored</action>
+        </actions>
+    </release>
+
+    <release version="5.0.0" date="2021-01-20">
+        <summary>
+            <summary-item>Upgrade to ECMA-376 5th edition (transitional) schemas - expect API breaks when using XmlBeans directly<br/>
+                some smaller changes are necessary when code is using the low-level CT... classes </summary-item>
+            <summary-item>Change artifact names of poi-/ooxml-schemas to poi-ooxml-lite/full</summary-item>
+            <summary-item>ooxml-security is part of poi-ooxml-full (known as ooxml-schemas) now and won't be provided separately</summary-item>
+            <summary-item>updated dependencies to XMLSec 2.2.1, Bouncycastle 1.68, Commons-Codec 1.15, Commons-Compress 1.20</summary-item>
+            <summary-item>XWPF - improvements in table and paragraph</summary-item>
+            <summary-item>XSLF - improvements for paragraph</summary-item>
+            <summary-item>provide JigSaw modules - some classes moved between packages for the JDK 9+ support, e.g.
+                ExtractorFactory, so imports need to be adjusted</summary-item>
+            <summary-item>removed dependencies to jaxb</summary-item>
+            <summary-item>removed deprecated code</summary-item>
+            <summary-item>new experimental DeferredSXSSFWorkbook which creates fewer temp files by lazily generating rows (see DeferredGeneration in poi-examples)</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="64494" context="XSSF">Ensure "applyAlignment" in cell-styles is enabled when necessary</action>
+            <action type="fix" fixes-bug="64450" context="OOXML">Allow to parse a file where the relationship-id is an empty string</action>
+            <action type="fix" fixes-bug="64750" context="XSSF">Do not use CTDataValidations.getCount(), instead only rely on getDataValidationArray</action>
+            <action type="fix" fixes-bug="64986" context="SS_Common">Support missing or blank match_type for function Match</action>
+            <action type="fix" fixes-bug="64838" context="XWPF">Do not populate cells with a paragraph when loading an existing document</action>
+            <action type="fix" fixes-bug="65009" context="HSLF">Use correct index for 1-based pictures</action>
+            <action type="fix" fixes-bug="64460" context="XSSF">Fix invalid moving of merged regions</action>
+            <action type="fix" fixes-bug="64791" context="HSSF">Use proper position for the WriteAccessRecord</action>
+            <action type="fix" fixes-bug="64238" context="SS_Common">Make LOOKUP functions deal with empty last arg correctly</action>
+            <action type="fix" fixes-bug="64322" context="POIFS">Improve performance of reading OLE2 files</action>
+            <action type="add" fixes-bug="64393" context="SS_Common">Handle MissingArgEval in relational operators</action>
+            <action type="add" fixes-bug="64420" context="XSSF">Avoid NullPointerException in XSSFReader.SheetIterator.next() if files contain macros</action>
+            <action type="add" fixes-bug="github-177" context="SS_Common">Avoid NullPointerException if RangeCopier encounters empty/missing rows</action>
+            <action type="add" fixes-bug="63294" context="SS_Common">Add some more methods to allow to use CellType everywhere</action>
+            <action type="fix" context="XSSF">Fix regression introduced via Bug 60845: There are more items in CTBorder that need to be handled in equals()</action>
+            <action type="fix" fixes-bug="63845" context="XWPF">Adjust handling of formula-cells to fix regression with missing re-calculation introduced in 4.1.0</action>
+            <action type="fix" fixes-bug="55966" context="XWPF">Include content control text in word extraction also if it is part of a paragraph</action>
+            <action type="fix" fixes-bug="64244" context="XSSF">Take the replacement of RichText strings into account when computing length of strings</action>
+            <action type="add" context="SS_Common">SS method to check if a Named Range is hidden or not</action>
+            <action type="add" context="SS_Common">SS method to check if a Named Range is hidden or not</action>
+            <action type="add" fixes-bug="github-167" context="HSMF">HSMF enhancements - NamedIdChunk, MultiValueChunks, ByteChunkDeferred</action>
+            <action type="fix" context="SS_Common">Fix incorrect handling of format which should not produce any digit for zero</action>
+            <action type="fix" fixes-bug="58896,52834" context="SS_Common">Speed up auto-sizing of columns when the sheet contains merged regions</action>
+            <action type="fix" fixes-bug="64186" context="OPC">Decrease usage of ThreadLocals in XML Signature API</action>
+            <action type="fix" fixes-bug="64213" context="SS_Common">Picture.resize(double scale) scales width wrong for small pictures and when dx1 is set</action>
+            <action type="fix" fixes-bug="63712" context="OPC">upgrading xmlsec causes junit tests to fail</action>
+            <action type="fix" fixes-bug="64241" context="XSLF">XSLF - Wrong scheme colors used when rendering</action>
+            <action type="fix" fixes-bug="63624" context="XWPF">Method setText in XWPFTableCell updates the xml and also updates the runs and iruns</action>
+            <action type="fix" fixes-bug="github-170" context="XWPF">XWPFTableCell does not process bodyElements when handle paragraph</action>
+            <action type="fix" fixes-bug="github-171" context="XWPF">XWPFNumbering.addAbstractNum will definitely throw an exception</action>
+            <action type="fix" fixes-bug="64301" context="OPC">Allow try-with-resources with OPCPackage.revert()</action>
+            <action type="fix" fixes-bug="63745" context="HSSF">Add traversing and debugging interface to HSSF</action>
+            <action type="fix" fixes-bug="64350" context="POI_Overall">Sonar fix - "Iterator.next()" methods should throw "NoSuchElementException"</action>
+            <action type="fix" fixes-bug="57843" context="HWPF">RuntimeException on extracting text from Word 97-2004 Document</action>
+            <action type="fix" fixes-bug="55505" context="HSSF">CountryRecord not found</action>
+            <action type="fix" fixes-bug="64387" context="POIFS">Big POIFS stream result in OOM</action>
+            <action type="add" fixes-bug="64411" context="POI_Overall" breaks-compatibility="true">Provide JigSaw modules</action>
+            <action type="fix" fixes-bug="64441" context="SS_Common">Synchronize code that initialises WorkbookFactory</action>
+            <action type="add" fixes-bug="63819" context="SS_Common">Support DateValue function</action>
+            <action type="add" fixes-bug="github-179" context="SS_Common">Add an option for RangeCopier.copyRange() also clone styles</action>
+            <action type="fix" fixes-bug="63290" context="XSLF">Retrieve default run properties from paragraph</action>
+            <action type="add" fixes-bug="64512" context="POIFS">Ole10Native aka embedded / object packager - handle UTF16 variants</action>
+            <action type="fix" fixes-bug="64561" context="XWPF">XWPFSDTContent.getText() is empty for nested SDT elements</action>
+            <action type="fix" fixes-bug="64595" context="SXSSF">Missing quoting of pre-evaluated string values in formula cells causes corrupt files</action>
+            <action type="fix" fixes-bug="64693" context="HEMF">POI HwmfGraphics cannot read the embedded document title</action>
+            <action type="fix" fixes-bug="64716" context="HWMF">WMF font typeface charset encoding error</action>
+            <action type="fix" fixes-bug="64773" context="POI_Overall">Visual signatures for .xlsx/.docx</action>
+            <action type="fix" fixes-bug="64817" context="POIFS">Fix issue in testXLSXinPPT</action>
+            <action type="fix" fixes-bug="github-193" context="SS_Common">Change TRUNC implementation to use MathX</action>
+            <action type="add" fixes-bug="64867" context="SL_Common">Provide PDF rendering with PPTX2PNG</action>
+            <action type="fix" fixes-bug="64964" context="SS_Common">Converting cell values to boolean should throw IllegalStateException instead of RuntimeException when conversion is not possible</action>
+            <action type="fix" fixes-bug="64971" context="XSSF">XSSFFont setCharset(FontCharset) should use latest class instead of deprecated one</action>
+            <action type="fix" fixes-bug="60397" context="XSSF">Improve performance of cell merge</action>
+            <action type="fix" fixes-bug="github-206" context="SXSSF">Improve performance of SXSSF cell evaluation</action>
+            <action type="fix" fixes-bug="64976" context="SS_Common">Change some methods to return ints instead of shorts (Font and CellStyle)</action>
+            <action type="fix" fixes-bug="56205" context="OOXML" breaks-compatibility="true">Upgrade OOXML schema to 3rd edition (transitional)</action>
+            <action type="fix" fixes-bug="64979" context="OOXML">Change artifact names of poi-/ooxml-schemas</action>
+            <action type="fix" fixes-bug="64981" context="OOXML" breaks-compatibility="true">Upgrade OOXML schema to 5th edition (transitional)</action>
+            <action type="fix" fixes-bug="64876" context="XSLF">Unable to convert pptx to pdf</action>
+            <action type="fix" fixes-bug="65026" context="POI_Overall">Migrate tests to Junit 5</action>
+            <action type="add" fixes-bug="github-207" context="POI_Overall">Use SLF4J instead of commons-logging - use jcl-over-slf4j</action>
+            <action type="fix" fixes-bug="65061" context="XSSF">Handle VmlDrawings containing spreadsheet-ml default namespace</action>
+            <action type="fix" fixes-bug="65063" context="HSLF">WMF parsing failed on closed empty polygon</action>
+            <action type="fix" fixes-bug="github-198" context="POI_Overall">Remove jdk.charset module dependency for spreadsheets generation</action>
+            <action type="fix" fixes-bug="github-196" context="OOXML">Delete unused certificate exceptions</action>
+            <action type="fix" fixes-bug="github-191" context="SS_Common">Fix RuntimeException on array formula referencing blank cell</action>
+            <action type="fix" fixes-bug="github-189" context="SS_Common">Move date parsing logic to DateParser</action>
+            <action type="fix" fixes-bug="github-187" context="XSSF">Add length validation for Excel DataValidations that are list literals</action>
+            <action type="fix" fixes-bug="github-184" context="SXSSF">New EmittingSXSSFWorkbook</action>
+            <action type="fix" fixes-bug="github-176" context="XSSF">Remove limit on number of rules in XSSFSheetConditionalFormatting</action>
+            <action type="fix" fixes-bug="github-177" context="HSSF">Avoid NullPointerException if RangeCopier encounters empty/missing rows</action>
+        </actions>
+    </release>
+
+    <release version="4.1.2" date="2020-02-17">
+        <summary>
+            <summary-item>Removed a lot of internal uses of StringBuffers</summary-item>
+            <summary-item>XDDF - some work on better chart support</summary-item>
+            <summary-item>Common SL / EMF - ongoing rendering fixes</summary-item>
+            <summary-item>XSLF - OOM fixes when parsing arbitrary shape ids + a new dependency to SparseBitSet 1.2</summary-item>
+            <summary-item>updated dependencies to Bouncycastle 1.64</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="64015" context="POI_Overall">Swap zaxxer.com:SparseBitSet for java.util.BitSet</action>
+            <action type="fix" fixes-bug="63788" context="XWPF">When removing AbstractNum match by abstractNumId, not list index</action>
+            <action type="fix" fixes-bug="63940" context="POI_Overall">Avoid endless loop/out of memory on string-replace with empty search string</action>
+            <action type="fix" fixes-bug="63700" context="POI_Overall">Make D* functions work with numeric result column</action>
+            <action type="fix" fixes-bug="63960" context="SXSSF">Write pre-evaluated string-values in formula cells with the correct type</action>
+            <action type="fix" fixes-bug="63984" context="POI_Overall">Function AND / OR should treat missing parameters as FALSE</action>
+            <action type="fix" fixes-bug="63749" context="POI_Overall">Make getFirstRowNum() and getFirstCellNum() return -1 consistently with empty data</action>
+            <action type="fix" fixes-bug="63569" context="POI_Overall">Make IOUtils.setByteArrayMaxOverride() work correctly</action>
+            <action type="add" context="XSLF">Add, insert and remove columns on XSLFTable</action>
+            <action type="fix" fixes-bug="63842" context="POI_Overall">Fix issue with fractions where the whole number part is too large to store as an int</action>
+            <action type="fix" fixes-bug="63889" context="XDDF">Produce valid PPTX file with several chart series</action>
+            <action type="fix" fixes-bug="63918" context="SL_Common XSLF">Fix texture fill - scale stretched images correctly</action>
+            <action type="add" context="XDDF">Add Doughnut chart data series support</action>
+            <action type="fix" fixes-bug="63955" context="HMEF">HMEFContentsExtractor fails to extract content from winmail.dat</action>
+            <action type="fix" fixes-bug="63927" context="POI_Overall">Inconsistent mapping of Norwegian locales for date formats</action>
+            <action type="fix" fixes-bug="github-163" context="XSSF">Add set level numbering on XWPFParagraph</action>
+            <action type="fix" fixes-bug="github-164" context="XSSF">Fix Bug in XSSFTable.setCellReferences when table is single cell</action>
+            <action type="fix" fixes-bug="64004" context="POI_Overall">Replace Cloneable / clone() with copy constructor</action>
+            <action type="fix" fixes-bug="64036" context="POI_Overall">Replace reflection calls in factories for Java 9+</action>
+            <action type="fix" fixes-bug="64044" context="POI_Overall">Fix issue with setCellValue(LocalDate) not supporting nulls properly</action>
+            <action type="fix" fixes-bug="64088" context="SL_Common XSLF">SlideShow rendering fixes</action>
+            <action type="fix" fixes-bug="64098" context="XWPF">XWPFRun: Whitespace in text not preserved if starting with tab character.</action>
+            <action type="fix" fixes-bug="64108" context="POI_Overall">unsafe pipe character ("|") in Relationship target attribute is not being encoded into a '%7C'.</action>
+            <action type="fix" fixes-bug="github-166" context="XDDF">Expose invert if negative on bar charts</action>
+            <action type="fix" fixes-bug="63998" context="HSSF">Support commas, exclamation marks correctly in AreaReference</action>
+            <action type="fix" fixes-bug="64045" context="XSSF">XSSFWorkbook constructor doesn't close ZipFile if an exception occurs</action>
+            <action type="fix" fixes-bug="64130" context="HSSF">Regression in OldSheetRecord</action>
+        </actions>
+    </release>
+
+    <release version="4.1.1" date="2019-10-20">
+        <summary>
+            <summary-item>XSSF: Memory improvements which use much less memory while writing large xlsx files</summary-item>
+            <summary-item>XDDF: Improved chart support: more types and some API changes around angles and width units</summary-item>
+            <summary-item>updated dependencies to Bouncycastle 1.62, Commons-Codec 1.13, Commons-Collections4 4.4, Commons-Compress 1.19</summary-item>
+            <summary-item>XWPF: Additional API methods</summary-item>
+            <summary-item>XSSF: Fixes to XSSFSheet.addMergedRegion() and XSSFRow.shiftRows()</summary-item>
+            <summary-item>EMF/HSLF: Rendering fixes</summary-item>
+            <summary-item>CVE-2019-12415 - XML External Entity (XXE) Processing in Apache POI</summary-item>
+        </summary>
+        <actions>
+            <action type="add" fixes-bug="63774" context="POI_Overall">Cache pids to speed up custom properties "add" method</action>
+            <action type="add" fixes-bug="63779" context="SS_Common">Add support for the new Java date/time API added in Java 8</action>
+            <action type="fix" fixes-bug="59322" context="HWPF">Avoid NullPointerException when reading Word Document with tables and a cell with a null descriptor</action>
+            <action type="fix" fixes-bug="61490" context="HWPF">Read cells of tables correctly in cases where the last cell is not 'fake'</action>
+            <action type="fix" context="HWPF">Do not use WeakReference for parents in Ranges to avoid spurious failures in tests</action>
+            <action type="fix" fixes-bug="63657" context="XSSF">Fix regression with memory usage in XSSFRow.onDocumentWrite and some other temporary memory leaks</action>
+            <action type="fix" fixes-bug="63842" context="SS_Common">FractionFormat casts whole part of the value into 'int'</action>
+            <action type="fix" fixes-bug="63818" context="HSLF">Allow multiple charsets for same font typeface</action>
+            <action type="fix" fixes-bug="63768" context="XSSF">XSSFExportToXml adjust settings on SchemaFactory</action>
+            <action type="fix" fixes-bug="63541" context="XSLF">NullPointerException from XSLFSimpleShape.getAnchor for empty xfrm tags</action>
+            <action type="add" fixes-bug="63745" context="POI_Overall">Add traversing and debugging interface</action>
+            <action type="fix" fixes-bug="57423,62711" context="XSSF">Fix regression when XSSFRow.shiftRows() is used</action>
+            <action type="fix" fixes-bug="63580" context="SL_Common HSLF XSLF">Fix texture paint handling</action>
+            <action type="fix" fixes-bug="59004" context="HSLF">HSLF rendering - adjust values for presetShapeDefinition differs in HSLF/XSLF</action>
+            <action type="fix" context="HSLF">Don't fallback to master shape properties, if master shape is not assigned</action>
+            <action type="add" context="POI_Overall">Add a ThreadLocalUtil.clearAllThreadLocals which can be used to clear thread-locals</action>
+            <action type="fix" fixes-bug="63371" context="XSSF">XSSFSheet.addMergedRegion should adjust count of merged cells</action>
+            <action type="fix" fixes-bug="63073" context="XSSF">Return value of XSSFSheet.addMergedRegion is off by one</action>
+            <action type="fix" fixes-bug="54803" context="OPC">Error opening XLSX after saving with a Drawing using POI</action>
+            <action type="add" fixes-bug="github-135" context="XDDF">Support to create new chart without reading template</action>
+            <action type="add" fixes-bug="github-143" context="HPSF">MAPIType.isFixedLength: not true in case of length > 8</action>
+            <action type="add" fixes-bug="github-144" context="XDDF">Support for seven new chart types</action>
+            <action type="add" fixes-bug="github-149" context="HSMF">improve MAPIMessage.getHtmlBody</action>
+            <action type="add" fixes-bug="github-150" context="XWPF">Add XWPFPicture getWidth and getDepth methods</action>
+            <action type="add" fixes-bug="github-151" context="XWPF">Add XWPFRun getStyle method</action>
+            <action type="add" fixes-bug="github-152" context="XWPF">Add XWPFParagraph setKeepNext method</action>
+            <action type="add" fixes-bug="github-153" context="XWPF">Add XWPFParagraph createHyperlinkRun method</action>
+            <action type="add" fixes-bug="github-154" context="SXSSF">Improved support for writing large files</action>
+            <action type="add" fixes-bug="github-157" context="OOXML">Add setters to POIXMLProperties</action>
+            <action type="fix" fixes-bug="63153" context="XDDF">Enable safe removal of data series from charts</action>
+            <action type="fix" fixes-bug="59623" context="XDDF">Provide example of threshold line in bar chart</action>
+        </actions>
+    </release>
+
+    <release version="4.1.0" date="2019-04-09">
+        <summary>
+            <summary-item>Improved support/fixes for Java 9+ and IBM JVM</summary-item>
+            <summary-item>New EMF renderer and support of SVG images in XSLF</summary-item>
+            <summary-item>Security, stability and memory/resource handling improvements</summary-item>
+            <summary-item>Various bug fixes across function and conditional format rule evaluation</summary-item>
+            <summary-item>Upgrade to XMLBeans 3.1.0</summary-item>
+            <summary-item>Upgrade to Bouncycastle 1.61</summary-item>
+            <summary-item>Upgrade to Curvesapi 1.06</summary-item>
+            <summary-item>Upgrade to Commons-Codec 1.12</summary-item>
+            <summary-item>Upgrade to Commons-Collections4 4.3</summary-item>
+            <summary-item>Upgrade to XMLSec 2.1.2</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="63200" context="XSLF">Avoid a possible NullPointerException in XSLFShape.selectPaint()</action>
+            <action type="add" fixes-bug="60724" context="SS_Common">Implement 'ignore hidden rows' variations for existing implemented variants</action>
+            <action type="fix" fixes-bug="63264" context="SS_Common">Conditional Format rule evaluation calculates relative references incorrectly</action>
+            <action type="fix" fixes-bug="61652" context="SS_Common">Fix NPE in EDATE function when date evaluates to an invalid value</action>
+            <action type="fix" fixes-bug="62151" context="POIFS">Work around illegal reflective access in Java 9+ when freeing buffers</action>
+            <action type="add" fixes-bug="63029" context="OPC">OPCPackage Potentially clobbers files on close()</action>
+            <action type="add" fixes-bug="62980" context="SS_Common XSSF HSSF">Make D* functions ignore case in headings</action>
+            <action type="fix" fixes-bug="60977" context="XSSF">Adding custom properties creates invalid .xlsx file on second write</action>
+            <action type="fix" fixes-bug="60460" context="SL_Common">Null pointer exception in ExternSheetNameResolver.prependSheetName method</action>
+            <action type="fix" fixes-bug="60845" context="XSSF">Fix copying styles/conditional formatting</action>
+            <action type="add" fixes-bug="63054" context="SS_Common XSSF HSSF">Improved evaluation of array formulas with errors in arguments</action>
+            <action type="fix" fixes-bug="63047" context="POI_Overall">Make POILogger subclassable</action>
+            <action type="add" fixes-bug="62904" context="SS_Common XSSF HSSF">Support array arguments in IF and logical IS*** functions</action>
+            <action type="add" fixes-bug="63028" context="SL_Common XSLF HSLF">Provide font embedding for slideshows</action>
+            <action type="fix" fixes-bug="61532" context="SXSSF">Fix setting values/types during formula evaluation for SXSSF</action>
+            <action type="fix" fixes-bug="62629" context="OPC">Allow to handle files with invalid content types for pictures</action>
+            <action type="fix" fixes-bug="62839" context="SL_Common">Fix MathX.floor for negative n</action>
+            <action type="fix" fixes-bug="62884" context="SL_Common">Sheetnum is not checked in InternalWorkbook.setSheetHidden()</action>
+            <action type="fix" fixes-bug="62886" context="OPC">Regression extracting text from corrupted docx files</action>
+            <action type="add" fixes-bug="63017" context="SL_Common XSLF">Remove rows from a XSLFTable</action>
+            <action type="add" fixes-bug="60656" context="SL_Common XSLF HSLF">EMF image support in slideshows</action>
+            <action type="add" fixes-bug="62365" context="XSLF">SVG image support in XSLF</action>
+            <action type="add" fixes-bug="github-136" context="XSSF">Support GEOMEAN function</action>
+            <action type="fix" fixes-bug="63011" context="OPC">Multiple digital signature in excel file broke first signature</action>
+            <action type="fix" fixes-bug="62999" context="SL_Common">IBM JDK JIT causes AIOOBE in TexturePaintContext</action>
+            <action type="fix" fixes-bug="62994" context="POI_Overall">IBM JCE workarounds</action>
+            <action type="fix" fixes-bug="62966" context="SL_Common">init presetShapeDefinitions.xml fail under IBM jdk</action>
+            <action type="fix" fixes-bug="62953" context="SL_Common XSLF HSLF">Rendering of FreeformShapes with formula fails</action>
+            <action type="fix" fixes-bug="63005" context="POI_Overall">Remove support for reading files that have XML entity definitions</action>
+            <action type="fix" fixes-bug="63013" context="XWPF">add XWPFRun setLang method</action>
+            <action type="fix" fixes-bug="63240" context="XSSF">Remove unnecessary synchronization on DocumentHelper.newDocumentBuilder and SAXHelper.newXMLReader</action>
+            <action type="fix" fixes-bug="61652" context="SS_Common">Fix NPE in EDATE function when date evaluates to an invalid value</action>
+            <action type="fix" fixes-bug="63264" context="SS_Common">Conditional Format rule evaluation calculates relative references incorrectly</action>
+            <action type="add" fixes-bug="60724" context="SS_Common">Implement 'ignore hidden rows' variations for existing SUBTOTAL function variants</action>
+            <action type="fix" fixes-bug="63268" context="SS_Common">Fix issue with CellUtil.setFont adding unnecessary styles</action>
+            <action type="fix" fixes-bug="61700" context="SS_Common">getForceFormulaRecalculation() returns wrong value</action>
+            <action type="fix" fixes-bug="63292" context="SS_Common">DataFormatter.formatCellValue() ignores use1904Windowing w/4-part date formats</action>
+        </actions>
+    </release>
+
+    <release version="4.0.1" date="2018-12-03">
+        <summary>
+            <summary-item>Fixes pom.xml entries for commons-maths3 (missing), curvesapi and commons-codec</summary-item>
+            <summary-item>Improvements for XDDF charts and text manipulation</summary-item>
+            <summary-item>Upgrade to XMLBeans 3.0.2</summary-item>
+        </summary>
+        <actions>
+            <action type="fix" fixes-bug="59773" context="POI_Overall">Move loop invariants outside of loop for faster execution</action>
+            <action type="fix" fixes-bug="59834" context="POI_Overall">poi-ooxml pom.xml should include dependency on poi-scratchpad</action>
+            <action type="fix" fixes-bug="62690" context="POI_Overall">Missing Maven dependency to commons-math3</action>
+            <action type="fix" fixes-bug="62692" context="OPC">WildFly XML parser not properly supported - Property 'http://www.oracle.com/xml/jaxp/properties/entityExpansionLimit' is not recognized</action>
+            <action type="fix" fixes-bug="62699" context="POI_Overall">Download page must link to https://downloads.apache.org/poi/KEYS</action>
+            <action type="fix" fixes-bug="62733" context="XSLF">XSLFBackground setFill() can corrupt the document</action>
+            <action type="fix" fixes-bug="62735" context="XSSF">poi-ooxml 4.0.0 should have dependency on curvesapi 1.05</action>
+            <action type="fix" fixes-bug="62740" context="XSSF">XSSFTable constructor automatically assigns invalid (non-unique) column IDs</action>
+            <action type="fix" fixes-bug="62768" context="OPC">OPCPackage#close() method is incorrectly synchronized</action>
+            <action type="fix" fixes-bug="62796" context="POI_Overall">Remove XML Event parser code from PackagePropertiesMarshaller</action>
+            <action type="fix" fixes-bug="62800" context="XSLF">Fix null pointer exception if a picture shape has no blip id</action>
+            <action type="fix" fixes-bug="62805" context="POI_Overall">Fix Old-Xerces build issues</action>
+            <action type="fix" fixes-bug="62805" context="XSLF">XSLFTableCell#removeBorder(BorderEdge.right) removes the bottom edge not the right edge.</action>
+            <action type="fix" fixes-bug="62811" context="POI_Overall">POI Encryption didn't work with 4.0.0 but did work with 3.17</action>
+            <action type="fix" fixes-bug="62951" context="POI_Overall">FileMagic not correctly identified</action>
+            <action type="fix" fixes-bug="62949" context="SL_Common">SlideShow rendering - keyframe fractions must be increasing</action>
+            <action type="fix" fixes-bug="62921" context="POI_Overall">Provide OOXMLLite alternative for Java 12+</action>
+            <action type="fix" fixes-bug="62625" context="POI_Overall">Handle off-spec, variant REFERENCE_NAME record structure in VBAMacroReader</action>
+            <action type="fix" fixes-bug="62624" context="POI_Overall">Handle module name mapping in VBAMacroReader</action>
+            <action type="fix" fixes-bug="62836" context="SS_Common">Support TREND function</action>
+            <action type="fix" fixes-bug="62859" context="XWPF">Rare NPE while creating XWPFSDTContent</action>
+            <action type="add" fixes-bug="62373" context="SS_Common">Support for FREQUENCY function</action>
+            <action type="fix" fixes-bug="62831" context="POI_Overall">WorkbookFactory.create support for subclass of File, eg from JFileChooser</action>
+            <action type="fix" fixes-bug="62815" context="XSSF">XLSB number extraction improvements</action>
+            <action type="fix" fixes-bug="62373" context="SS_Common">Support FREQUENCY function</action>
+            <action type="fix" fixes-bug="62742" context="POI_Overall">Add common-compress jar to bin zip/tgz</action>
+            <action type="fix" fixes-bug="62747" context="POI_Overall">Upgrade bouncycastle dependency to 1.60</action>
+            <action type="fix" fixes-bug="62736" context="XWPF">Relations on XSLFPictureShape were removed unconditionally</action>
+            <action type="add" fixes-bug="github-109" context="XDDF">Define XDDF user model for text body, its paragraphs and text runs</action>
+            <action type="add" fixes-bug="github-123" context="XSSF">Import chart on drawing</action>
+            <action type="fix" fixes-bug="62746" context="XDDF">Support axIds in XDDF</action>
+            <action type="fix" fixes-bug="60509" context="XSSF">XSSFWorkbook.setSheetName() does not update references in charts</action>
+            <action type="fix" fixes-bug="59625" context="XWPF">Localisation (Internationalisation in other languages) when applied in charts corrupt the MS Word file</action>
+        </actions>
+    </release>
+
+    <release version="4.0.0" date="2018-09-07">
+        <summary>
+            <summary-item>Removed support for Java 6 and 7 making Java 8 the minimum version supported</summary-item>
+            <summary-item>New OOXML schema (1.4) necessary, because of incompatible XMLBeans loading not anymore through POIXMLTypeLoader</summary-item>
+        </summary>
+        <actions>
+            <action type="remove" fixes-bug="62649" breaks-compatibility="true" context="POIFS">Remove OPOIFS*</action>
+            <action type="fix" fixes-bug="61589" context="XSLF">Importing content does not copy hyperlink address</action>
+            <action type="fix" fixes-bug="62587" context="XSLF">repeated call to XSLFSheet.removeShape leads to java.lang.IllegalArgumentException: partName</action>
+            <action type="fix" fixes-bug="62513" context="OOXML">Don't try to parse embedded package relationships</action>
+            <action type="add" fixes-bug="59268" context="OOXML">Work on providing an updated version of XMLBeans</action>
+            <action type="fix" fixes-bug="62451" context="HPSF">Document last printed in the year 27321</action>
+            <action type="fix" fixes-bug="60713" breaks-compatibility="true" context="SXSSF XSSF OPC">(S)XSSFWorkbook/POIXMLDocument.write(OutputStream) closes the OutputStream</action>
+            <action type="add" fixes-bug="62452" context="OPC">Extract configuration while verifying XML signatures</action>
+            <action type="fix" fixes-bug="62187" breaks-compatibility="true" context="OPC">Compiling with Java 10 fails with ClassCastException / use commons-compress</action>
+            <action type="fix" fixes-bug="62355" breaks-compatibility="true" context="POI_Overall">Unsplit packages for Jigsaw / Java 9 compatibility</action>
+            <action type="fix" fixes-bug="62041" context="SL_Common">TestFonts fails on Mac</action>
+            <action type="fix" fixes-bug="62051" context="XSLF">Two shapes have the same shapeId within the same slide</action>
+            <action type="fix" fixes-bug="61633" context="XSLF">Zero width shapes aren't rendered</action>
+            <action type="add" fixes-bug="62037" context="SL_Common">SlideNames should not be null but have a default as if accessed by VBA</action>
+            <action type="fix" fixes-bug="62381" context="SL_Common">Fix rendering of AutoShapes</action>
+            <action type="fix" fixes-bug="59893" context="POI_Overall">Forbid calls to InputStream.available</action>
+            <action type="fix" fixes-bug="61905" context="HSSF">HSSFWorkbook.setActiveCell() does not actually make the cell selected in Excel</action>
+            <action type="fix" fixes-bug="61459" context="HSLF">HSLFShape.getShapeName() returns name of shapeType and not the shape name</action>
+            <action type="add" fixes-bug="62319" breaks-compatibility="true" context="SL_Common">Decommission XSLF-/PowerPointExtractor</action>
+            <action type="add" fixes-bug="62092" context="SL_Common">Text not extracted from grouped text shapes in HSLF</action>
+            <action type="add" fixes-bug="62159" context="OPC">Support XML signature over windows certificate store</action>
+            <action type="add" fixes-bug="57369" context="XDDF">Add support for major and minor units on chart axes</action>
+            <action type="add" fixes-bug="55954" context="XWPF">Added methods to position table</action>
+            <action type="add" fixes-bug="61947" context="POI_Overall">Remove deprecated classes (POI 4.0.0)</action>
+            <action type="add" fixes-bug="55954" context="XWPF">Add functions to get, set, remove outer borders for tables</action>
+            <action type="add" fixes-bug="github-72" context="XDDF">Define XDDF user model for shape properties to be shared between XSLF, XSSF and XWPF</action>
+            <action type="add" fixes-bug="61543" breaks-compatibility="true" context="XSSF">Do not fail with "part already exists" when tables are created/removed</action>
+            <action type="add" fixes-bug="61550" breaks-compatibility="true" context="POI_Overall">Add more information to exception text and verify that it is thrown</action>
+            <action type="add" fixes-bug="61609" breaks-compatibility="true" context="POI_Overall">Add .gitattribute file and set lf for one sample-file</action>
+            <action type="add" fixes-bug="61797" breaks-compatibility="true" context="SL_Common">Embed Excel / Ole objects into powerpoint</action>
+            <action type="fix" fixes-bug="61943" context="SL_Common">narrow generics definition because of tighter java9 checks</action>
+            <action type="add" fixes-bug="61942" context="OPC">Refactor PackagePartName handling and add getUnusedPartIndex method</action>
+            <action type="fix" fixes-bug="61941" context="POIFS">Move Ole marker generation to Ole10Native</action>
+            <action type="fix" fixes-bug="61940" context="POI_Overall">Replace ClassID statics with enum</action>
+            <action type="add" fixes-bug="61939" context="OPC">Provide schema for AlternateContent - provide new ooxml-schemas-1.4.jar</action>
+            <action type="fix" fixes-bug="61787" context="HSSF">Change how deleted content is detected to not incorrectly see too much text as deleted, this was introduced with bug 58067</action>
+            <action type="fix" fixes-bug="61798" context="HSSF">Fix usage of getLastCellNum() when calculating worksheet dimension during saving</action>
+            <action type="fix" fixes-bug="61911" context="HWPF">Avoid IndexOutOfBounds access when reading pictures</action>
+            <action type="fix" fixes-bug="61765" context="HSSF">Support third party tool generated files using WorkBook as their POIFS directory name</action>
+            <action type="fix" fixes-bug="61881" context="HSLF">Regression in ppt parsing: typeface can't be null or empty</action>
+            <action type="add" fixes-bug="github-68" context="XDDF XSLF XSSF XWPF">Share chart data implementation between XSLFChart, XSSFChart and XWPFChart through XDDF</action>
+            <action type="fix" fixes-bug="61809" context="HPSF">Infinite loop in SectionIDMap.get() and .put()</action>
+            <action type="add" fixes-bug="60887" context="XSSF">Surface XSSF Header/Footer Attributes</action>
+            <action type="add" fixes-bug="61730" context="SS_Common">CellRangeAddresses support iterating over their CellAddresses</action>
+            <action type="fix" fixes-bug="61727" context="SS_Common">CellRangeUtil merge cell ranges broken for certain orders of arguments</action>
+            <action type="fix" fixes-bug="57517" context="HSSF">Fix various situations that were handled incorrectly in HSSFOptimiser</action>
+            <action type="add" fixes-bug="61671" context="XSLF">XSLFSlide does not contain isHidden and setHidden like HSLFSlide does</action>
+            <action type="update" fixes-bug="61630" context="XSSF">Performance improvement to XSSFExportToXML</action>
+            <action type="add" fixes-bug="58068" context="XSSF">Add a method to pass the actual Color to StylesTable.findFont()</action>
+            <action type="fix" fixes-bug="61096" context="POIFS">Add support for modules in VBAMacroReader</action>
+            <action type="fix" fixes-bug="61033" context="XSSF">Add XSSFWorkbook.setCellFormulaValidation() to control if formulas are validated during Cell.setCellFormula()</action>
+            <action type="fix" fixes-bug="61148" context="SXSSF">Fix calculating/setting formula value</action>
+            <action type="fix" fixes-bug="61064" context="SS_Common">Support behavior of function CEILING in newer versions of Microsoft Excel</action>
+            <action type="fix" fixes-bug="61516" context="SS_Common">Correctly handle references that end up outside the workbook when cells with formulas are copied</action>
+            <action type="add" fixes-bug="60737" context="XSSF">Add endSheet() to XSSFEventBasedExcelExtractor</action>
+            <action type="fix" fixes-bug="59747" context="OPC">Exchange order of writing parts into Zip to allow some tools to handle files better</action>
+            <action type="add" fixes-bug="github-69" context="SS_Common">Support matrix functions</action>
+            <action type="fix" fixes-bug="60499" context="OPC">Deleting a picture that is used twice on a slide corrupt the slide</action>
+            <action type="fix" fixes-bug="60279" context="POI_Overall">Back-off to brute-force search for macro content if macro offset is incorrect</action>
+            <action type="add" fixes-bug="61528" context="XSSF">Pivot table enhancements</action>
+            <action type="fix" fixes-bug="61906" context="XSSF">add API for working with RichStringText</action>
+            <action type="fix" fixes-bug="61792" context="SS_Common">Avoid iterating over chars (use codepoints instead)</action>
+            <action type="fix" fixes-bug="62254" context="SS_Common">Update OFFSET function to support optional values</action>
+            <action type="update" fixes-bug="62435" context="XSSF">Rename getAllEmbedds method to getAllEmbeddedParts (getAllEmbedds is retained but deprecated)</action>
+            <action type="update" fixes-bug="62438" breaks-compatibility="true" context="POI_Overall">Replace org.apache.poi.openxml4j.util.Nullable with java.lang.Optional</action>
+            <action type="fix" fixes-bug="github-90" context="XSSF">Change default DSIG signing algorithm to SHA256</action>
+            <action type="fix" fixes-bug="github-107" context="SS_Common">Support AREAS function</action>
+            <action type="fix" fixes-bug="github-110" breaks-compatibility="true" context="XWPF">Renames org.apache.poi.xwpf.usermodel.TextSegement to org.apache.poi.xwpf.usermodel.TextSegment</action>
+            <action type="fix" fixes-bug="github-114" context="XWPF">Better support for Footnotes and Endnotes</action>
+        </actions>
+    </release>
+
+</changes>

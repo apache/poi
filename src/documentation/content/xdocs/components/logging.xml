@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+    <header>
+        <title>Apache POI™ - Logging Framework</title>
+        <authors>
+            <person id="DS" name="Dominik Stadler" email="centic@apache.org"/>
+            <person id="MV" name="Marius Volkhart" email="mariusvolkhart@apache.org"/>
+        </authors>
+    </header>
+
+    <body>
+        <section>
+            <title>Introduction</title>
+            <p>
+                Logging in POI is used primarily as a debugging mechanism, not a normal runtime
+                logging system. Logging at levels noisier than WARN is ONLY for autopsy type debugging, and should
+                NEVER be enabled on a production system.
+            </p>
+        </section>
+        <section>
+            <title>POI 5.1.0 and above</title>
+            <p>
+                Since version 5.1.0 Apache POI uses <a href="https://logging.apache.org/log4j/2.x/">Apache Log4j v2</a> directly.
+            </p>
+            <p>
+                Apache POI only depends on log4j-api and allows choosing which logging framework to use. log4j-core is
+                just one of many options.
+                If you want to continue to use another SLF4J compatible logging framework, you can deploy the
+                <a href="https://logging.apache.org/log4j/log4j-2.2/log4j-to-slf4j/index.html">log4j-to-slf4j</a> jar to
+                facilitate this.
+            </p>
+            <p>
+                POI tries to name loggers after the canonical name of the containing class. For example,
+                <code>org.apache.poi.poifs.filesystem.POIFSFileSystem</code>. Use your logging framework's typical
+                mechanisms for activating and deactivating logging for specific loggers.
+            </p>
+            <p>
+                All loggers are named <code>com.apache.poi.*</code>, so rules applied to <code>com.apache.poi</code>
+                will affect all POI loggers.
+            </p>
+        </section>
+        <section>
+            <title>Logging with Log4j 2 Core</title>
+            <p>
+                Capturing POI logs using Log4j 2 Core is as simple as including the
+                <a href="https://logging.apache.org/log4j/2.x/maven-artifacts.html"><code>log4j-core</code></a> JAR in
+                your project. POI also has dependencies on libraries that make use of the SLF4J and Apache Commons
+                Logging APIs. Gather logs from these dependencies by adding the
+                <a href="https://logging.apache.org/log4j/2.x/log4j-jcl/index.html">Commons Logging Bridge</a> and the
+                the <a href="https://logging.apache.org/log4j/2.x/log4j-slf4j-impl/index.html">SLF4J Binding</a> to your
+                project.
+            </p>
+            <p>
+                The simplest configuration is to capture all POI logs at the same level as your application. You might
+                want to collect all messages <code>INFO</code> and higher, and are OK with capturing POI messages as well.
+            </p>
+            <source>
+                &lt;Configuration ...&gt;
+                    &lt;Loggers&gt;
+                        &lt;Root level="INFO"&gt;
+                            ...
+                        &lt;/Root&gt;
+                    &lt;/Loggers&gt;
+                &lt;/Configuration&gt;
+            </source>
+
+            <p>
+                A more recommended configuration is to capture only messages from loggers you opt in to. For example,
+                you might want to capture all messages from <code>com.example.myapplication</code> at <code>INFO</code>
+                but only POI messages at <code>WARN</code> or more severe.
+            </p>
+            <source>
+                &lt;Configuration ...&gt;
+                    &lt;Loggers&gt;
+                        &lt;Logger name="com.example.myapplication" level="INFO" /&gt;
+                        &lt;Logger name="org.apache.poi" level="WARN" /&gt;
+
+                        &lt;Root level="OFF"&gt;
+                            ...
+                        &lt;/Root&gt;
+                    &lt;/Loggers&gt;
+                &lt;/Configuration&gt;
+            </source>
+
+            <p>Another strategy you may decide to use is to capture all messages except those coming from POI.</p>
+            <source>
+                &lt;Configuration ...&gt;
+                    &lt;Loggers&gt;
+                        &lt;Logger name="org.apache.poi" level="OFF" /&gt;
+
+                        &lt;Root level="INFO"&gt;
+                            ...
+                        &lt;/Root&gt;
+                    &lt;/Loggers&gt;
+                &lt;/Configuration&gt;
+            </source>
+        </section>
+        <section>
+            <title>Log4J SimpleLogger</title>
+            <p>
+                If your main aim is just to get rid of the scary logging log message from Log4J that says
+                'ERROR StatusLogger Log4j2 could not find a logging implementation.', then one option is to
+                enable the SimpleLogger using a system property.
+            </p>
+            <p>
+                -Dlog4j2.loggerContextFactory=org.apache.logging.log4j.simple.SimpleLoggerContextFactory
+            </p>
+        </section>
+        <section>
+            <title>Logging with SLF4J</title>
+            <p>
+                If you want to continue to use another SLF4J compatible logging framework, you can deploy the
+                <a href="https://logging.apache.org/log4j/log4j-2.2/log4j-to-slf4j/index.html">log4j-to-slf4j</a> jar
+                and the intended slf4j-bridges to facilitate this.
+            </p>
+            <p>
+                See <a href="https://www.slf4j.org/">https://www.slf4j.org/</a> for more details about using SLF4J.
+            </p>
+        </section>
+        <section>
+            <title>Logging with Logback</title>
+            <p>
+                Capturing POI logs using Logback requires adding the
+                <a href="https://logging.apache.org/log4j/2.x/log4j-to-slf4j/index.html">Log4j to SLF4J Adapter</a> to
+                your project, along with the standard Logback dependencies. POI also has dependencies on libraries that
+                make use of the SLF4J and Apache Commons Logging APIs. Gather logs from these dependencies by adding the
+                <a href="https://www.slf4j.org/legacy.html#jcl-over-slf4j">Commons Logging Bridge</a> to your project.
+            </p>
+
+            <p>
+                The simplest configuration is to capture all POI logs at the same level as your application. You might
+                want to collect all messages <code>INFO</code> and higher, and are OK with capturing POI messages as well.
+            </p>
+            <source>
+                &lt;configuration ...&gt;
+                    &lt;root level="INFO"&gt;
+                        ...
+                    &lt;/root&gt;
+                &lt;/configuration&gt;
+            </source>
+
+            <p>
+                A more recommended configuration is to capture only messages from loggers you opt in to. For example,
+                you might want to capture all messages from <code>com.example.myapplication</code> at <code>INFO</code>
+                but only POI messages at <code>WARN</code> or more severe.
+            </p>
+            <source>
+                &lt;configuration ...&gt;
+                    &lt;logger name="com.example.myapplication" level="INFO" /&gt;
+                    &lt;logger name="org.apache.poi" level="WARN" /&gt;
+
+                    &lt;root level="OFF"&gt;
+                        ...
+                    &lt;/root&gt;
+                &lt;/configuration&gt;
+            </source>
+
+            <p>Another strategy you may decide to use is to capture all messages except those coming from POI.</p>
+            <source>
+                &lt;configuration ...&gt;
+                    &lt;logger name="org.apache.poi" level="OFF" /&gt;
+
+                    &lt;root level="INFO"&gt;
+                        ...
+                    &lt;/root&gt;
+                &lt;/configuration&gt;
+            </source>
+        </section>
+        <section>
+            <title>POI 5.0.0</title>
+            <p>
+                POI 5.0.0 switched to using <a href="https://www.slf4j.org/">SLF4J</a> for logging. If you want
+                to enable logging, please read up on the various SLF4J compatible logging frameworks.
+                <a href="https://logging.apache.org/log4j/2.x/">Apache Log4j v2</a> is a good choice.
+                <a href="https://logback.qos.ch/">Logback</a> is also widely used.
+            </p>
+        </section>
+        <section>
+            <title>Legacy POI Logging Framework (no longer supported in POI 5.0.0 and above)</title>
+            <p>
+                Prior to POI 5.0.0, POI used a custom logging framework which allows to configure where logs are sent to.
+            </p>
+            <p>
+                Logging in POI 3 and 4 is used only as a debugging mechanism, not as a normal runtime
+                logging system.  Logging at level debug/info is ONLY for debugging, and should
+                NEVER be enabled on a production system.
+            </p>
+            <p>
+                The framework is extensible so that you can send log messages to any logging framework
+                that your application uses.
+            </p>
+            <p>
+                A number of default logging implementations are supported by POI out-of-the-box and can be selected via a
+                system property.
+            </p>
+        </section>
+        <section><title>POI 4.x and before: Enable Legacy POI Logging Framework</title>
+            <p>
+                By default, logging is disabled in POI 3 and 4. Sometimes, it might be useful
+                to enable logging to see some debug messages printed out which can
+                help in analyzing problems.
+            </p>
+            <p>
+                You can select the logging framework by setting the system property <em>org.apache.poi.util.POILogger</em> during application startup or by calling System.setProperty():
+            </p>
+            <source>
+                System.setProperty("org.apache.poi.util.POILogger", "org.apache.poi.util.CommonsLogger" );
+            </source>
+            <p>
+                Note: You need to call <em>setProperty()</em> before any POI functionality is invoked as the logger is only initialized during startup.
+            </p>
+        </section>
+        <section><title>POI 4.x and before: Available Legacy POI Logging Framework implementations</title>
+            <p>
+                The following logger implementations are provided by POI 3 and 4:
+            </p>
+            <table>
+                <tr>
+                    <th>Class</th>
+                    <th>Type</th>
+                </tr>
+                <tr>
+                    <td>org.apache.poi.util.SystemOutLogger</td>
+                    <td>Sends log output to the system console</td>
+                </tr>
+                <tr>
+                    <td>org.apache.poi.util.NullLogger</td>
+                    <td>Default logger, does not log anything</td>
+                </tr>
+                <tr>
+                    <td>org.apache.poi.util.CommonsLogger</td>
+                    <td>Allows to use <a href="https://commons.apache.org/proper/commons-logging/">Apache Commons Logging</a> for logging. This can use JDK1.4 logging,
+                        log4j, logkit, etc. The log4j dependency was removed in POI 5.0.0, so you will need to include this dependency yourself if you need it.</td>
+                </tr>
+                <tr>
+                    <td>org.apache.poi.util.DummyPOILogger</td>
+                    <td>Simple logger which will keep all log-lines in memory for later analysis (this class is not in the jar, just in the test source).
+                        Used primarily for testing. Note: this may cause a memory leak if used in production application!</td>
+                </tr>
+            </table>
+        </section>
+        <section><title>POI 4.x and before: Sending logs to a different log framework</title>
+            <p>
+                You can send logs to other logging frameworks by implementing the interface <em>org.apache.poi.util.POILogger</em>.
+            </p>
+        </section>
+        <section><title>POI 4.x and before: Implementation details</title>
+            <p>
+                Every class uses a <code>POILogger</code> to log, and gets it using a static method
+                of the <code>POILogFactory</code> .
+            </p>
+            <p>
+                Each class in POI can log using a <code>POILogger</code>, which is an abstract class.
+                We decided to make our own logging facade because:</p>
+            <ol>
+                <li>we need to log many values and we put many methods in this class to facilitate the
+                    programmer, without having him write string concatenations;</li>
+                <li>we need to be able to use POI without any logger package present.</li>
+            </ol>
+        </section>
+    </body>
+    <footer>
+        <legal>
+            Copyright (c) @year@ The Apache Software Foundation All rights reserved.
+            <br />
+            Apache POI, POI, Apache, the Apache feather logo, and the Apache
+            POI project logo are trademarks of The Apache Software Foundation.
+        </legal>
+    </footer>
+</document>

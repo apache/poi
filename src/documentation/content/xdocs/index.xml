@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+  <header>
+    <title>Apache POI™ - the Java API for Microsoft Documents</title>
+  </header>
+
+  <body>
+    <section><title>Project News</title>
+
+      <section><title>8 April 2025 - CVE-2025-31672 - Improper Input Validation vulnerability in Apache POI before 5.4.0</title>
+        <p>
+          While parsing of OOXML format files like xlsx, docx and pptx, a specially crafted file could
+          be used to provide multiple entries with the same name in the zip-compressed file-format.
+          <br/>
+          Products reading the affected file could read different data because one of the zip entries with the
+          duplicate name is selected over another by different products differently.<br/><br/>
+          This issue affects Apache POI component poi-ooxml before 5.4.0. Starting with 5.4.0 poi-ooxml performs
+          a check that throws an exception if zip entries with duplicate file names are found in the input file.<br/><br/>
+          Users are recommended to upgrade to version poi-ooxml 5.4.0 or later, which fixes the issue.
+          Please refer to our <a href="https://poi.apache.org/security.html">security guidelines</a>
+          for recommendations about how to use the POI libraries securely.
+        </p>
+        <p>
+          References:
+        </p>
+        <ul>
+          <li><a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=69620">Bug 69620</a></li>
+          <li><a href="https://www.cve.org/CVERecord?id=CVE-2025-31672">CVE-2025-31672</a></li>
+        </ul>
+      </section>
+
+      <!-- latest final release -->
+      <section><title>6 April 2025 - POI 5.4.1 available</title>
+        <p>The Apache POI team is pleased to announce the release of 5.4.1.
+          Several dependencies were updated to their latest versions to pick up security fixes and other improvements.</p>
+        <p>A summary of changes is available in the
+          <a href="https://www.apache.org/dyn/closer.lua/poi/release/RELEASE-NOTES.txt">Release Notes</a>.
+          A full list of changes is available in the <a href="changes.html#5.4.1">change log</a>.
+          People interested should also follow the <a href="site:mailinglists">dev list</a> to track progress.</p>
+        <p>See the <a href="download.html#POI-5.4.1">downloads</a> page for more details.</p>
+        <p>POI requires Java 8 or newer since version 4.0.1.</p>
+      </section>
+
+      <section><title>11 November 2024 - Avoid log4j-api 2.24.1</title>
+        <p>While testing a potential Apache POI 5.4.0 release, we discovered a serious bug in
+        log4j-api 2.24.1. This leads to NullPointerExceptions when you use a version of log4j-core that is not of
+        the exact same version (2.24.1). We recommend that users avoid log4j 2.24.1 and use the latest
+          2.24.x version where this issue is fixed again.</p>
+        <p>XMLBeans release 5.2.2 had the problematic log4j-api 2.24.1 dependency and thus
+          can lead to such issues if used in some other context. In the meantime a version 5.3.0
+          of XmlBeans was released which avoids this issue.</p>
+        <p>Please direct any queries to the Log4j Team. The main issue is
+          <a href="https://github.com/apache/logging-log4j2/issues/3143">Issue 3143</a>.</p>
+      </section>
+
+      <section><title>4 March 2022 - CVE-2022-26336 - A carefully crafted TNEF file can cause an out of memory exception in Apache POI poi-scratchpad versions prior to 5.2.0</title>
+        <p>Description:<br/>
+          A shortcoming in the HMEF package of poi-scratchpad (Apache POI) allows an attacker to cause an Out of Memory exception.
+          This package is used to read TNEF files (Microsoft Outlook and Microsoft Exchange Server).
+          If an application uses poi-scratchpad to parse TNEF files and the application allows untrusted users to supply them, then a carefully crafted file can cause an Out of Memory exception.</p>
+
+        <p>Mitigation:<br/>
+          Affected users are advised to update to poi-scratchpad 5.2.1 or above
+          which fixes this vulnerability. It is recommended that you use the same versions of all POI jars.</p>
+
+      </section>
+
+      <section><title>10+16+18 December 2021- Log4j vulnerabilities CVE-2021-44228, CVE-2021-45046 and CVE-2021-45105</title>
+        <p>The Apache POI PMC has evaluated the security vulnerabilities reported
+            for Apache Log4j.</p>
+        <p>POI 5.1.0 and XMLBeans 5.0.2 only have dependencies on log4j-api 2.14.1.
+            The security vulnerabilities are not in log4j-api - they are in log4j-core.</p>
+        <p>If any POI or XMLBeans user uses log4j-core to control their logging of their application,
+            we strongly recommend that they upgrade all their log4j dependencies to the latest
+            version (currently v2.20.0) - including log4j-api.</p>
+      </section>
+
+      <section><title>13 January 2021 - CVE-2021-23926 - XML External Entity (XXE) Processing in Apache XMLBeans versions prior to 3.0.0</title>
+        <p>Description:<br/>
+          When parsing XML files using XMLBeans 2.6.0 or below, the underlying parser
+          created by XMLBeans could be susceptible to XML External Entity (XXE) attacks.</p>
+
+        <p>This issue was fixed a few years ago but on review, we decided we should have a CVE
+          to raise awareness of the issue.</p>
+
+        <p>Mitigation:<br/>
+          Affected users are advised to update to Apache XMLBeans 3.0.0 or above
+          which fixes this vulnerability. XMLBeans 4.0.0 or above is preferable.</p>
+
+        <p>References:
+          <a href="https://en.wikipedia.org/wiki/XML_external_entity_attack">XML external entity attack</a>
+        </p>
+      </section>
+
+      <section><title>20 October 2019 - CVE-2019-12415 - XML External Entity (XXE) Processing in Apache POI versions prior to 4.1.1</title>
+        <p>Description:<br/>
+          When using the tool XSSFExportToXml to convert user-provided Microsoft
+          Excel documents, a specially crafted document can allow an attacker to
+          read files from the local filesystem or from internal network resources
+          via XML External Entity (XXE) Processing.</p>
+
+        <p>Mitigation:<br/>
+          Apache POI 4.1.0 and before: users who do not use the tool XSSFExportToXml
+          are not affected. Affected users are advised to update to Apache POI 4.1.1
+          which fixes this vulnerability.</p>
+
+        <p>Credit:
+          This issue was discovered by Artem Smotrakov from SAP</p>
+
+        <p>References:
+          <a href="https://en.wikipedia.org/wiki/XML_external_entity_attack">XML external entity attack</a>
+        </p>
+      </section>
+
+
+      <!-- xmlbeans 3.1.0 release -->
+      <section><title>26 March 2019 - XMLBeans 3.1.0 available</title>
+      <p>The Apache POI team is pleased to announce the release of XMLBeans 3.1.0.
+         Featured are a handful of bug fixes.</p>
+      <p>The Apache POI project has unretired the XMLBeans codebase and is maintaining it as a sub-project,
+         due to its importance in the poi-ooxml codebase.</p>
+      <p>A summary of changes is available in the
+        <a href="https://svn.apache.org/viewvc/xmlbeans/trunk/CHANGES.txt?view=markup">Release Notes</a>.
+        People interested should also follow the <a href="site:mailinglists">POI dev list</a> to track progress.</p>
+       <p>The XMLBeans <a href="https://issues.apache.org/jira/projects/XMLBEANS">JIRA project</a> has been reopened and feel free to open issues.</p>
+       <p>POI 4.1.0 uses XMLBeans 3.1.0.</p>
+       <p>XMLBeans requires Java 6 or newer since version 3.0.2.</p>
+      </section>
+
+      <section><title>11 January 2019 - Initial support for JDK 11</title>
+        <p>We did some work to verify that compilation with Java 11 is working and
+          that all unit-tests pass.
+        </p>
+        <p>See the details in the <a href="help/faq.html#faq-N102B0">FAQ entry</a>.</p>
+      </section>
+    </section>
+
+    <section><title>Mission Statement</title>
+      <p>
+      The Apache POI Project's mission is to create and maintain Java APIs for manipulating various file formats
+      based upon the Office Open XML standards (OOXML) and Microsoft's OLE 2 Compound Document format (OLE2).
+      In short, you can read and write MS Excel files using Java.
+      In addition, you can read and write MS Word and MS PowerPoint files using Java.  Apache POI is your Java Excel
+      solution (for Excel 97-2008). We have a complete API for porting other OOXML and OLE2 formats and welcome others to participate.
+      </p>
+      <p>
+      OLE2 files include most Microsoft Office files such as XLS, DOC, and PPT as well as MFC serialization API based file formats.
+      The project provides APIs for the <a href="site:poifs">OLE2 Filesystem (POIFS)</a> and
+      <a href="site:hpsf">OLE2 Document Properties (HPSF)</a>.
+      </p>
+      <p>
+      Office OpenXML Format is the new standards based XML file format found in Microsoft Office 2007 and 2008.
+      This includes XLSX, DOCX and PPTX. The project provides a low level API to support the Open Packaging Conventions
+      using <a href="site:oxml4j">openxml4j</a>.
+      </p>
+      <p>
+	For each MS Office application there exists a component module that attempts to provide a common high level Java api to both OLE2 and OOXML
+	document formats. This is most developed for <a href="site:spreadsheet">Excel workbooks (SS=HSSF+XSSF)</a>.
+	Work is progressing for <a href="site:document">Word documents (WP=HWPF+XWPF)</a> and
+	<a href="site:slideshow">PowerPoint presentations (SL=HSLF+XSLF)</a>.
+      </p>
+      <p>
+	The project has some support for <a href="site:hsmf">Outlook (HSMF)</a>. Microsoft opened the specifications
+	to this format in October 2007. We would welcome contributions.
+      </p>
+      <p>
+        There are also projects for
+        <a href="site:diagram">Visio (HDGF and XDGF)</a>,
+        <a href="site:hmef">TNEF (HMEF)</a>,
+        and <a href="site:hpbf">Publisher (HPBF)</a>.
+      </p>
+      <p>
+         As a general policy we collaborate as much as possible with other projects to
+         provide this functionality.  Examples include: <a href="https://xml.apache.org/cocoon">Cocoon</a> for
+         which there are serializers for HSSF;
+         <a href="https://www.openoffice.org">Open Office.org</a> with whom we collaborate in documenting the
+         XLS format; and <a href="https://tika.apache.org/">Tika</a> /
+         <a href="https://lucene.apache.org">Lucene</a>,
+         for which we provide format interpretors.  When practical, we donate
+         components directly to those projects for POI-enabling them.
+      </p>
+      <section><title>Why should I use Apache POI?</title>
+      <p>
+	A major use of the Apache POI api is for <a href="text-extraction.html">Text Extraction</a> applications
+	such as web spiders, index builders, and content management systems.
+      </p>
+        <p>
+		So why should you use POIFS, HSSF or XSSF?
+        </p>
+        <p>
+		You'd use POIFS if you had a document written in OLE 2 Compound Document Format, probably written using
+		MFC, that you needed to read in Java. Alternatively, you'd use POIFS to write OLE 2 Compound Document Format
+		if you needed to inter-operate with software running on the Windows platform. We are not just bragging when
+		we say that POIFS is the most complete and correct implementation of this file format to date!
+        </p>
+        <p>
+		You'd use HSSF if you needed to read or write an Excel file using Java (XLS). You'd use
+        XSSF if you need to read or write an OOXML Excel file using Java (XLSX). The combined
+        SS interface allows you to easily read and write all kinds of Excel files (XLS and XLSX)
+        using Java. Additionally there is a specialized SXSSF implementation which allows to write
+        very large Excel (XLSX) files in a memory optimized way.
+        </p>
+      </section>
+      <section><title>Components</title>
+	<p>
+	  The Apache POI Project provides several component modules some of which may not be of interest to you.
+	  Use the information on our <a href="site:components">Components</a> page to determine which
+	  jar files to include in your classpath.
+	</p>
+      </section>
+    </section>
+
+    <section><title>Contributing</title>
+      <p>
+        So you'd like to contribute to the project? Great! We need enthusiastic,
+        hard-working, talented folks to help us on the project, no matter your
+        background. So if you're motivated, ready, and have the time: Download the
+        source from the
+        <a href="site:subversion">Subversion Repository</a>,
+        <a href="site:howtobuild">build the code</a>, join the
+        <a href="site:mailinglists">mailing lists</a>, and we'll be happy to
+        help you get started on the project!
+      </p>
+      <p>
+        Please read our <a href="site:guidelines">Contribution Guidelines</a>.
+        When your contribution is ready submit a patch to our
+        <a href="https://bz.apache.org/bugzilla/buglist.cgi?product=POI">Bug Database</a>.
+      </p>
+    </section>
+  </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache
+      POI project logo are trademarks of The Apache Software Foundation.
+    </legal>
+  </footer>
+</document>

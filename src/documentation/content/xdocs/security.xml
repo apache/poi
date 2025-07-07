@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+
+<document>
+    <header>
+        <title>Apache POI™ - Security guidance</title>
+        <authors>
+            <person id="centic" name="Dominik Stadler" email="centic@apache.org"/>
+        </authors>
+    </header>
+
+    <body>
+    <section>
+        <title>Overview</title>
+
+        <p>This page provides some guidance about how Apache POI can be used in security-sensible areas.</p>
+    </section>
+
+    <section>
+        <title>Information about related security vulnerabilities</title>
+
+        <p>Information about security issues is included in the <a href="index.html">Project News</a>.</p>
+    </section>
+
+    <section>
+        <title>Reporting security vulnerabilities</title>
+
+        <p>Apache POI will try to fix security-related bugs with priority.</p>
+
+        <p>Please follow the general <a href="https://www.apache.org/security/">Apache Security Guidelines</a>
+            for proper handling.</p>
+
+        <p>But please note that by the nature of processing external files, you should design your application
+            in a way which limits impact of malicious documents as much as possible. The higher your security-related
+            requirements are, the more you likely need to invest in your application to contain effects.
+        </p>
+    </section>
+
+    <section>
+        <title>Architecting your Application</title>
+
+        <p>If you are processing documents from an untrusted source, you should add a number of safeguards to
+        your application to contain any unexpected side effects.</p>
+
+        <p>Apache POI cannot fully protect against some documents causing impact on the current process, therefore
+        we suggest the following additional layers of security.</p>
+
+        <ul>
+            <li><strong>Expect any type of Exception when processing documents</strong><br/>
+                As parsing the various formats is very complex and involved, there are some unexpected types of
+                exceptions which can be thrown. E.g. StackOverflowError or many different types of RuntimeException.
+                <br/>
+                Make sure to have a broad catch-statement around your document-parsing functionality and be prepared
+                to handle all those gracefully.
+            </li>
+            <li><strong>Expect long parsing time</strong><br/>
+                As parsing the various formats is very complex and involved, some documents might cause prolonged CPU
+                usage and long parsing time.
+                <br/>
+                If this is a concern, make sure to have a way to stop processing after some time, maybe by the
+                sandboxing approach described below.
+            </li>
+            <li><strong>Memory use can be very high</strong><br/>
+                The data in Microsoft format files is usually compressed so even small files can have a lot of data.
+                <br/>
+                The core POI APIs are not optimized to avoid excessive memory use. POI has streaming APIs for reading
+                and writing xlsx files - so if you are working with large xlsx files, you should consider using the
+                streaming APIs.
+            </li>
+            <li><strong>Consider sandboxing document-parsing</strong><br/>
+                If you operate in a highly sensitive environment and would like to avoid any side effect from
+                parsing documents on your application, then consider extracting the parsing logic into a separate
+                process which is configured with appropriate memory settings and which you stop after some timeout.
+                It is a good idea to be able to auto-restart the process in case of a crash.
+                <br />
+            </li>
+            <li><strong>Keep up to date with releases</strong><br/>
+                Apache POI does occasionally issue CVEs for security issues. There are also other bug fixes and
+                improvements in each release. Some of these fixes will be to make POI more robust against malicious
+                inputs, even if they are not explicitly security-related.
+                <br />
+            </li>
+        </ul>
+    </section>
+    </body>
+
+    <footer>
+        <legal>
+            Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+            <br />
+            Apache POI, POI, Apache, the Apache feather logo, and the Apache
+            POI project logo are trademarks of The Apache Software Foundation.
+        </legal>
+    </footer>
+</document>

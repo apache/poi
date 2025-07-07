@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+  <header>
+    <title>JVM languages</title>
+    <authors>
+      <person id="JO" name="Javen O'Neal" email="onealj@apache.org"/>
+    </authors>
+  </header>
+
+  <body>
+    <section><title>Intro</title>
+      <p>
+        Apache POI can be used with any
+        <a href="https://en.wikipedia.org/wiki/List_of_JVM_languages">JVM language</a>
+        that can import Java jar files such as Jython, Groovy, Scala, Kotlin, and JRuby.
+      </p>
+      <ul>
+       <li><a href="#Jython+example">Jython</a></li>
+       <li><a href="#Scala+example">Scala</a></li>
+       <li><a href="#Groovy+example">Groovy</a></li>
+       <li><a href="#Clojure+example">Clojure</a></li>
+      </ul>
+    </section>
+
+
+    <section><title>Tested Environments</title>
+      <ul>
+        <li><a href="https://www.jython.org/">Jython</a> 2.5+ (older versions probably work, but are untested)</li>
+        <li><a href="https://www.scala-lang.org/">Scala</a> 2.x</li>
+        <li><a href="https://groovy-lang.org/">Groovy</a> 2.4 (anything from 1.6 onwards ought to work, but only the latest 2.4 releases have been tested by us)</li>
+        <li><a href="https://clojure.org/">Clojure</a> 1.5.1+</li>
+      </ul>
+      <p>If you use POI in a different language (Kotlin, JRuby, ...) and would like to share a <em>Hello POI!</em> example,
+         please share it.</p>
+      <p>Please <a href="site:mailinglists">let us know</a> if you use POI in an environment not listed here</p>
+    </section>
+
+    <!-- FIXME: Need to make each language section expandable/collapseable so that users can compare their language to Java on one screen. See https://jsfiddle.net/eJX8z/ for an example implementation. -->
+    <section><title>Java code</title>
+    <section><title>POILanguageExample.java</title>
+    <source> <!-- lang="java" -->
+    // include poi-{version}-{yyyymmdd}.jar, poi-ooxml-{version}-{yyyymmdd}.jar,
+    // and poi-ooxml-lite-{version}-{yyyymmdd}.jar on Java classpath
+
+    // Import the POI classes
+    import java.io.File;
+    import java.io.FileOutputStream;
+    import java.io.OutputStream;
+    import org.apache.poi.ss.usermodel.Cell;
+    import org.apache.poi.ss.usermodel.Row;
+    import org.apache.poi.ss.usermodel.Sheet;
+    import org.apache.poi.ss.usermodel.Workbook;
+    import org.apache.poi.ss.usermodel.WorkbookFactory;
+    import org.apache.poi.ss.usermodel.DataFormatter;
+
+    // Read the contents of the workbook
+    File f = new File("SampleSS.xlsx");
+    Workbook wb = WorkbookFactory.create(f);
+    DataFormatter formatter = new DataFormatter();
+    int i = 1;
+    int numberOfSheets = wb.getNumberOfSheets();
+    for ( Sheet sheet : wb ) {
+        System.out.println("Sheet " + i + " of " + numberOfSheets + ": " + sheet.getSheetName());
+        for ( Row row : sheet ) {
+            System.out.println("\tRow " + row.getRowNum());
+            for ( Cell cell : row ) {
+                System.out.println("\t\t"+ cell.getAddress().formatAsString() + ": " + formatter.formatCellValue(cell));
+            }
+        }
+    }
+
+    // Modify the workbook
+    Sheet sh = wb.createSheet("new sheet");
+    Row row = sh.createRow(7);
+    Cell cell = row.createCell(42);
+    cell.setActiveCell(true);
+    cell.setCellValue("The answer to life, the universe, and everything");
+
+    // Save and close the workbook
+    OutputStream fos = new FileOutputStream("SampleSS-updated.xlsx");
+    wb.write(fos);
+    fos.close();
+    </source>
+    </section> <!-- POILanguageExample.java -->
+    </section> <!-- Java code -->
+
+    <section><title>Jython example</title>
+    <source> <!-- lang="python" -->
+    # Add <a href="site:components">poi jars</a> onto the python classpath or add them at run time
+    import sys
+    for jar in ('poi', 'poi-ooxml', 'poi-ooxml-lite'):
+        sys.path.append('/path/to/%s-5.4.1.jar')
+
+    from java.io import File, FileOutputStream
+    from contextlib import closing
+
+    # Import the POI classes
+    from org.apache.poi.ss.usermodel import <a href="../apidocs/dev/org/apache/poi/ss/usermodel/WorkbookFactory.html">WorkbookFactory</a>, <a href="../apidocs/dev/org/apache/poi/ss/usermodel/DataFormatter.html">DataFormatter</a>
+
+    # Read the contents of the workbook
+    wb = WorkbookFactory.create(File('<a href="https://svn.apache.org/viewvc/poi/trunk/test-data/spreadsheet/SampleSS.xlsx">SampleSS.xlsx</a>'))
+    formatter = DataFormatter()
+    for i, sheet in enumerate(wb, start=1):
+        print('Sheet %d of %d: %s'.format(i, wb.numberOfSheets, sheet.sheetName))
+        for row in sheet:
+            print('\tRow %i' % row.rowNum)
+            for cell in row:
+                print('\t\t%s: %s' % (cell.address, formatter.formatCellValue(cell)))
+
+    # Modify the workbook
+    sh = wb.createSheet('new sheet')
+    row = sh.createRow(7)
+    cell = sh.createCell(42)
+    cell.activeCell = True
+    cell.cellValue = 'The answer to life, the universe, and everything'
+
+    # Save and close the workbook
+    with closing(FileOutputStream('SampleSS-updated.xlsx')) as fos:
+        wb.write(fos)
+    wb.close()
+      </source>
+      <p>There are several websites that have examples of using Apache POI in Jython projects:
+        <a href="https://wiki.python.org/jython/PoiExample">python.org</a>,
+        <a href="https://www.jython.org/jythonbook/en/1.0/appendixB.html#working-with-spreadsheets">jython.org</a>, and many others.
+      </p>
+    </section>
+
+    <section><title>Scala example</title>
+    <section><title>build.sbt</title>
+      <source> <!-- lang="scala" -->
+    // Add the POI core and OOXML support dependencies into your build.sbt
+    libraryDependencies ++= Seq(
+      "org.apache.poi" % "poi" % "5.4.1",
+      "org.apache.poi" % "poi-ooxml" % "5.4.1",
+      "org.apache.poi" % "poi-ooxml-lite" % "5.4.1"
+    )
+      </source>
+    </section>
+    <section><title>XSSFMain.scala</title>
+      <source> <!-- lang="scala" -->
+    // Import the required classes
+    import org.apache.poi.ss.usermodel.{<a href="../apidocs/dev/org/apache/poi/ss/usermodel/WorkbookFactory.html">WorkbookFactory</a>, <a href="../apidocs/dev/org/apache/poi/ss/usermodel/DataFormatter.html">DataFormatter</a>}
+    import java.io.{File, FileOutputStream}
+
+    object XSSFMain extends App {
+
+        // Automatically convert Java collections to Scala equivalents
+        import scala.collection.JavaConversions._
+
+        // Read the contents of the workbook
+        val workbook = WorkbookFactory.create(new File("<a href="https://svn.apache.org/viewvc/poi/trunk/test-data/spreadsheet/SampleSS.xlsx">SampleSS.xlsx</a>"))
+        val formatter = new DataFormatter()
+        for {
+            // Iterate and print the sheets
+            (sheet, i) &lt;- workbook.zipWithIndex
+            _ = println(s"Sheet $i of ${workbook.getNumberOfSheets}: ${sheet.getSheetName}")
+
+            // Iterate and print the rows
+            row &lt;- sheet
+            _ = println(s"\tRow ${row.getRowNum}")
+
+            // Iterate and print the cells
+            cell &lt;- row
+        } {
+            println(s"\t\t${cell.getCellAddress}: ${formatter.formatCellValue(cell)}")
+        }
+
+        // Add a sheet to the workbook
+        val sheet = workbook.createSheet("new sheet")
+        val row = sheet.createRow(7)
+        val cell = row.createCell(42)
+        cell.setAsActiveCell()
+        cell.setCellValue("The answer to life, the universe, and everything")
+
+        // Save the updated workbook as a new file
+        val fos = new FileOutputStream("SampleSS-updated.xlsx")
+        workbook.write(fos)
+        workbook.close()
+    }
+      </source>
+    </section>
+    </section>
+
+    <section><title>Groovy example</title>
+    <section><title>build.gradle</title>
+      <source> <!-- lang="groovy" -->
+// Add the POI core and OOXML support dependencies into your gradle build,
+//  along with all of Groovy so it can run as a standalone script
+repositories {
+    mavenCentral()
+}
+dependencies {
+    runtime 'org.codehaus.groovy:groovy-all:2.5.15'
+    runtime 'org.apache.poi:poi:5.4.1'
+    runtime 'org.apache.poi:poi-ooxml:5.4.1'
+}
+      </source>
+    </section>
+    <section><title>SpreadSheetDemo.groovy</title>
+      <source> <!-- lang="groovy" -->
+import org.apache.poi.ss.usermodel.*
+import org.apache.poi.ss.util.*
+import java.io.File
+
+if (args.length == 0) {
+   println "Use:"
+   println "   SpreadSheetDemo &lt;excel-file&gt; [output-file]"
+   return 1
+}
+
+File f = new File(args[0])
+DataFormatter formatter = new DataFormatter()
+WorkbookFactory.create(f,null,true).withCloseable { workbook ->
+   println "Has ${workbook.getNumberOfSheets()} sheets"
+
+   // Dump the contents of the spreadsheet
+   (0..&lt;workbook.getNumberOfSheets()).each { sheetNum ->
+      println "Sheet ${sheetNum} is called ${workbook.getSheetName(sheetNum)}"
+
+      def sheet = workbook.getSheetAt(sheetNum)
+      sheet.each { row ->
+         def nonEmptyCells = row.grep { c -> c.getCellType() != Cell.CELL_TYPE_BLANK }
+         println " Row ${row.getRowNum()} has ${nonEmptyCells.size()} non-empty cells:"
+         nonEmptyCells.each { c ->
+            def cRef = [c] as CellReference
+            println "  * ${cRef.formatAsString()} = ${formatter.formatCellValue(c)}"
+         }
+      }
+   }
+
+   // Add two new sheets and populate
+   CellStyle headerStyle = makeHeaderStyle(workbook)
+   Sheet ns1 = workbook.createSheet("Generated 1")
+   exportHeader(ns1, headerStyle, null, ["ID","Title","Num"] as String[])
+   ns1.createRow(1).createCell(0).setCellValue("TODO - Populate with data")
+
+   Sheet ns2 = workbook.createSheet("Generated 2")
+   exportHeader(ns2, headerStyle, "This is a demo sheet",
+                ["ID","Title","Date","Author","Num"] as String[])
+   ns2.createRow(2).createCell(0).setCellValue(1)
+   ns2.createRow(3).createCell(0).setCellValue(4)
+   ns2.createRow(4).createCell(0).setCellValue(1)
+
+   // Save
+   File output = File.createTempFile("output-", (f.getName() =~ /(\.\w+$)/)[0][0])
+   output.withOutputStream { os -> workbook.write(os) }
+   println "Saved as ${output}"
+}
+
+CellStyle makeHeaderStyle(Workbook wb) {
+   int HEADER_HEIGHT = 18
+   CellStyle style = wb.createCellStyle()
+
+   style.setFillForegroundColor(IndexedColors.AQUA.getIndex())
+   style.setFillPattern(FillPatternType.SOLID_FOREGROUND)
+
+   Font font = wb.createFont()
+   font.setFontHeightInPoints((short)HEADER_HEIGHT)
+   font.setBold(true)
+   style.setFont(font)
+
+   return style
+}
+void exportHeader(Sheet s, CellStyle headerStyle, String info, String[] headers) {
+   Row r
+   int rn = 0
+   int HEADER_HEIGHT = 18
+   // Do they want an info row at the top?
+   if (info != null &amp;&amp; !info.isEmpty()) {
+      r = s.createRow(rn)
+      r.setHeightInPoints(HEADER_HEIGHT+1)
+      rn++
+
+      Cell c = r.createCell(0)
+      c.setCellValue(info)
+      c.setCellStyle(headerStyle)
+      s.addMergedRegion(new CellRangeAddress(0,0,0,headers.length-1))
+   }
+   // Create the header row, of the right size
+   r = s.createRow(rn)
+   r.setHeightInPoints(HEADER_HEIGHT+1)
+   // Add the column headings
+   headers.eachWithIndex { col, idx ->
+      Cell c = r.createCell(idx)
+      c.setCellValue(col)
+      c.setCellStyle(headerStyle)
+      s.autoSizeColumn(idx)
+   }
+   // Make all the columns filterable
+   s.setAutoFilter(new CellRangeAddress(rn, rn, 0, headers.length-1))
+}
+      </source>
+    </section>
+    </section>
+
+    <section><title>Clojure example</title>
+    <section><title>SpreadSheetDemo.clj</title>
+      <!-- code example provided by Blake Watson -->
+      <source> <!-- lang="clojure" -->
+(ns poi.core
+    (:gen-class)
+    (:use [clojure.java.io :only [input-stream]])
+    (:import [org.apache.poi.ss.usermodel WorkbookFactory DataFormatter]))
+
+
+(defn sheets [wb] (map #(.getSheetAt wb %1) (range 0 (.getNumberOfSheets wb))))
+
+(defn print-all [wb]
+  (let [df (DataFormatter.)]
+    (doseq [sheet (sheets wb)]
+      (doseq [row (seq sheet)]
+        (doseq [cell (seq row)]
+          (println (.formatAsString (.getAddress cell)) ": " (.formatCellValue df cell)))))))
+
+(defn -main [&amp; args]
+  (when-let [name (first args)]
+    (let [wb (WorkbookFactory/create (input-stream name))]
+      (print-all wb))))
+      </source>
+    </section>
+    </section>
+  </body>
+  <footer>
+    <legal>
+      Copyright (c) @year@ The Apache Software Foundation. All rights reserved.
+      <br />
+      Apache POI, POI, Apache, the Apache feather logo, and the Apache
+      POI project logo are trademarks of The Apache Software Foundation.
+    </legal>
+  </footer>
+</document>

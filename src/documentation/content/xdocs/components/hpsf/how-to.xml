@@ -1,0 +1,1477 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE document PUBLIC "-//APACHE//DTD Documentation V2.0//EN" "document-v20.dtd">
+
+<document>
+ <header>
+  <title>HPSF HOW-TO</title>
+  <authors>
+   <person name="Rainer Klute" email="klute@apache.org"/>
+  </authors>
+ </header>
+ <body>
+  <section><title>How To Use the HPSF API</title>
+
+   <p>This HOW-TO is organized in four sections. You should read them
+    sequentially because the later sections build upon the earlier ones.</p>
+
+   <ol>
+    <li>
+     The <a href="#sec1">first section</a> explains how to <strong>read
+      the most important standard properties</strong> of a Microsoft Office
+      document. Standard properties are things like title, author, creation
+      date etc. It is quite likely that you will find here what you need and
+      don't have to read the other sections.
+    </li>
+
+    <li>
+     The <a href="#sec2">second section</a> goes a small step
+     further and focuses on <strong>reading additional standard
+      properties</strong>. It also talks about <strong>exceptions</strong> that
+     may be thrown when dealing with HPSF and shows how you can <strong>read
+      properties of embedded objects</strong>.
+     </li>
+
+    <li>
+     The <a href="#sec3">third section</a> explains how to <strong>write
+      standard properties</strong>. HPSF provides some high-level classes and
+     methods which make writing of standard properties easy. They are based on
+     the low-level writing functions explained in the <a href="#sec3">fifth
+      section</a>.
+    </li>
+
+    <li>
+     The <a href="#sec4">fourth section</a> tells how to <strong>read
+     non-standard properties</strong>. Non-standard properties are
+     application-specific triples consisting of an ID, a type, and a value.
+    </li>
+
+    <li>
+     The <a href="#sec5">fifth section</a> tells you how to <strong>write
+     property set streams</strong> using HPSF's low-level methods. You have to
+     understand the <a href="#sec3">fourth section</a> before you should
+     think about low-level writing properties. Check the Javadoc API
+     documentation to find out about the details!
+    </li>
+   </ol>
+
+   <note><strong>Please note:</strong> HPSF's writing functionality is
+    <strong>not</strong> present in POI releases up to and including 2.5. In
+    order to write properties you have to download a 3.0.x POI release,
+    or retrieve the POI development version from the <a
+     href="site:subversion">Subversion repository</a>.</note>
+
+
+
+   <anchor id="sec1"/>
+   <section><title>Reading Standard Properties</title>
+
+    <note>This section explains how to read the most important standard
+     properties of a Microsoft Office document. Standard properties are things
+     like title, author, creation date etc. This section introduces the
+     <strong>summary information stream</strong> which is used to keep these
+     properties. Chances are that you will find here what you need and don't
+     have to read the other sections.</note>
+
+    <p>If all you are interested in is getting the textual content of
+     all the document properties, such as for full text indexing, then
+     take a look at
+     <code>org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor</code>. However,
+     if you want full access to the properties, please read on!</p>
+
+    <p>The first thing you should understand is that a Microsoft Office file is
+     not one large bunch of bytes but has an internal filesystem structure with
+     files and directories. You can access these files and directories using
+     the <a href="../poifs/index.html">POI filesystem (POIFS)</a>
+     provides. A file or document in a POI filesystem is also called a
+     <strong>stream</strong> - The properties of, say, an Excel document are
+     stored apart of the actual spreadsheet data in separate streams. The good
+     new is that this separation makes the properties independent of the
+     concrete Microsoft Office file. In the following text we will always say
+     "POI filesystem" instead of "Microsoft Office file" because a POI
+     filesystem is not necessarily created by or for a Microsoft Office
+     application, because it is shorter, and because we want to avoid the name
+     of That Redmond Company.</p>
+
+    <p>The following example shows how to read the "title" property. Reading
+     other properties is similar. Consider the API documentation of the class
+     <code>org.apache.poi.hpsf.SummaryInformation</code> to learn which methods
+     are available.</p>
+
+    <p>The standard properties this section focuses on can be found in a
+     document called <em>\005SummaryInformation</em> located in the root of the
+     POI filesystem. The notation <em>\005</em> in the document's name means
+     the character with a decimal value of 5. In order to read the "title"
+     property, an application has to perform the following steps:</p>
+
+    <ol>
+     <li>
+      Open the document <em>\005SummaryInformation</em> located in the root
+       of the POI filesystem.
+     </li>
+     <li>
+      Create an instance of the class <code>SummaryInformation</code> from
+       that document.
+     </li>
+     <li>
+      Call the <code>SummaryInformation</code> instance's
+       <code>getTitle()</code> method.
+     </li>
+    </ol>
+
+    <p>Sounds easy, doesn't it? Here are the steps in detail.</p>
+
+
+    <section><title>Open the document \005SummaryInformation in the root of the
+       POI filesystem</title>
+
+     <p>An application that wants to open a document in a POI filesystem
+      (POIFS) proceeds as shown by the following code fragment. The full
+      source code of the sample application is available in the
+      <em>examples</em> section of the POI source tree as
+      <em>ReadTitle.java</em>.</p>
+
+     <source>
+import java.io.*;
+import org.apache.poi.hpsf.*;
+import org.apache.poi.poifs.eventfilesystem.*;
+
+// ...
+
+public static void main(String[] args)
+    throws IOException
+{
+    final String filename = args[0];
+    POIFSReader r = new POIFSReader();
+    r.registerListener(new MyPOIFSReaderListener(),
+                       "\005SummaryInformation");
+    r.read(new FileInputStream(filename));
+}</source>
+
+     <p>The first interesting statement is</p>
+
+     <source>POIFSReader r = new POIFSReader();</source>
+
+     <p>It creates a
+      <code>org.apache.poi.poifs.eventfilesystem.POIFSReader</code> instance
+      which we shall need to read the POI filesystem. Before the application
+      actually opens the POI filesystem we have to tell the
+      <code>POIFSReader</code> which documents we are interested in. In this
+      case the application should do something with the document
+      <em>\005SummaryInformation</em>.</p>
+
+     <source>
+r.registerListener(new MyPOIFSReaderListener(),
+                   "\005SummaryInformation");</source>
+
+     <p>This method call registers a
+      <code>org.apache.poi.poifs.eventfilesystem.POIFSReaderListener</code>
+      with the <code>POIFSReader</code>. The <code>POIFSReaderListener</code>
+      interface specifies the method <code>processPOIFSReaderEvent()</code>
+      which processes a document. The class
+      <code>MyPOIFSReaderListener</code> implements the
+      <code>POIFSReaderListener</code> and thus the
+      <code>processPOIFSReaderEvent()</code> method. The eventing POI
+      filesystem calls this method when it finds the
+      <em>\005SummaryInformation</em> document. In the sample application
+      <code>MyPOIFSReaderListener</code> is a static class in the
+      <em>ReadTitle.java</em> source file.</p>
+
+     <p>Now everything is prepared and reading the POI filesystem can
+      start:</p>
+
+     <source>r.read(new FileInputStream(filename));</source>
+
+     <p>The following source code fragment shows the
+      <code>MyPOIFSReaderListener</code> class and how it retrieves the
+      title.</p>
+
+     <source>
+static class MyPOIFSReaderListener implements POIFSReaderListener
+{
+    public void processPOIFSReaderEvent(POIFSReaderEvent event)
+    {
+        SummaryInformation si = null;
+        try
+        {
+            si = (SummaryInformation)
+                 PropertySetFactory.create(event.getStream());
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException
+                ("Property set stream \"" +
+                 event.getPath() + event.getName() + "\": " + ex);
+        }
+        final String title = si.getTitle();
+        if (title != null)
+            System.out.println("Title: \"" + title + "\"");
+        else
+            System.out.println("Document has no title.");
+    }
+}
+</source>
+
+     <p>The line</p>
+
+     <source>SummaryInformation si = null;</source>
+
+     <p>declares a <code>SummaryInformation</code> variable and initializes it
+      with <code>null</code>. We need an instance of this class to access the
+      title. The instance is created in a <code>try</code> block:</p>
+
+     <source>si = (SummaryInformation)
+                 PropertySetFactory.create(event.getStream());</source>
+
+     <p>The expression <code>event.getStream()</code> returns the input stream
+      containing the bytes of the property set stream named
+      <em>\005SummaryInformation</em>. This stream is passed into the
+      <code>create</code> method of the factory class
+      <code>org.apache.poi.hpsf.PropertySetFactory</code> which returns
+      a <code>org.apache.poi.hpsf.PropertySet</code> instance. It is more or
+      less safe to cast this result to <code>SummaryInformation</code>, a
+      convenience class with methods like <code>getTitle()</code>,
+      <code>getAuthor()</code> etc.</p>
+
+     <p>The <code>PropertySetFactory.create()</code> method may throw all sorts
+      of exceptions. We'll deal with them in the next sections. For now we just
+      catch all exceptions and throw a <code>RuntimeException</code>
+      containing the message text of the origin exception.</p>
+
+     <p>If all goes well, the sample application retrieves the title and prints
+     it to the standard output. As you can see you must be prepared for the
+      case that the POI filesystem does not have a title.</p>
+
+     <source>final String title = si.getTitle();
+if (title != null)
+    System.out.println("Title: \"" + title + "\"");
+else
+    System.out.println("Document has no title.");</source>
+
+     <p>Please note that a POI filesystem does not necessarily contain the
+      <em>\005SummaryInformation</em> stream. The documents created by the
+      Microsoft Office suite have one, as far as I know. However, an Excel
+      spreadsheet exported from StarOffice 5.2 won't have a
+      <em>\005SummaryInformation</em> stream. In this case the applications
+      won't throw an exception but simply does not call the
+      <code>processPOIFSReaderEvent</code> method. You have been warned!</p>
+    </section>
+   </section>
+
+   <anchor id="sec2"/>
+   <section><title>Additional Standard Properties, Exceptions And Embedded
+    Objects</title>
+
+    <note>This section focusses on reading additional standard properties which
+     are kept in the <strong>document summary information</strong> stream. It
+     also talks about exceptions that may be thrown when dealing with HPSF and
+     shows how you can read properties of embedded objects.</note>
+
+    <p>A couple of <strong>additional standard properties</strong> are not
+     contained in the <em>\005SummaryInformation</em> stream explained
+     above. Examples for such properties are a document's category or the
+     number of multimedia clips in a PowerPoint presentation. Microsoft has
+     invented an additional stream named
+     <em>\005DocumentSummaryInformation</em> to hold these properties. With two
+     minor exceptions you can proceed exactly as described above to read the
+     properties stored in <em>\005DocumentSummaryInformation</em>:</p>
+
+    <ul>
+     <li>Instead of <em>\005SummaryInformation</em> use
+       <em>\005DocumentSummaryInformation</em> as the stream's name.</li>
+     <li>Replace all occurrences of the class
+       <code>SummaryInformation</code> by
+       <code>DocumentSummaryInformation</code>.</li>
+    </ul>
+
+    <p>And of course you cannot call <code>getTitle()</code> because
+     <code>DocumentSummaryInformation</code> has different query methods,
+     e.g. <code>getCategory</code>. See the Javadoc API documentation for the
+     details.</p>
+
+    <p>In the previous section the application simply caught all
+     <strong>exceptions</strong> and was in no way interested in any
+     details. However, a real application will likely want to know what went
+     wrong and act appropriately. Besides any I/O exceptions there are three
+     HPSF resp. POI specific exceptions you should know about:</p>
+
+    <dl>
+     <dt><code>NoPropertySetStreamException</code>:</dt>
+     <dd>
+      This exception is thrown if the application tries to create a
+       <code>PropertySet</code> instance from a stream that is not a
+       property set stream. (<code>SummaryInformation</code> and
+       <code>DocumentSummaryInformation</code> are subclasses of
+       <code>PropertySet</code>.) A faulty property set stream counts as not
+       being a property set stream at all. An application should be prepared to
+       deal with this case even if it opens streams named
+       <em>\005SummaryInformation</em> or
+       <em>\005DocumentSummaryInformation</em>. These are just names. A
+      stream's name by itself does not ensure that the stream contains the
+      expected contents and that this contents is correct.
+     </dd>
+
+     <dt><code>UnexpectedPropertySetTypeException</code></dt>
+     <dd>This exception is thrown if a certain type of property set is
+       expected somewhere (e.g. a <code>SummaryInformation</code> or
+       <code>DocumentSummaryInformation</code>) but the provided property
+       set is not of that type.</dd>
+
+     <dt><code>MarkUnsupportedException</code></dt>
+     <dd>This exception is thrown if an input stream that is to be parsed
+       into a property set does not support the
+       <code>InputStream.mark(int)</code> operation. The POI filesystem uses
+       the <code>DocumentInputStream</code> class which does support this
+       operation, so you are safe here. However, if you read a property set
+       stream from another kind of input stream things may be
+       different.</dd>
+    </dl>
+
+    <p>Many Microsoft Office documents contain <strong>embedded
+      objects</strong>, for example an Excel sheet within a Word
+     document. Embedded objects may have property sets of their own. An
+     application can open these property set streams as described above. The
+     only difference is that they are not located in the POI filesystem's root
+     but in a <strong>nested directory</strong> instead. Just register a
+     <code>POIFSReaderListener</code> for the property set streams you are
+     interested in.</p>
+   </section>
+
+
+
+   <anchor id="sec3"/>
+   <section><title>Writing Standard Properties</title>
+
+    <note>This section explains how to <strong>write standard
+      properties</strong>. HPSF provides some high-level classes and methods
+     which make writing of standard properties easy. They are based on the
+     low-level writing functions explained in <a href="#sec4">another
+      section</a>.</note>
+
+    <p>As explained above, standard properties are located in the summary
+     information and document summary information streams of typical POI
+     filesystems. You have already learned about the classes
+     <code>SummaryInformation</code> and
+     <code>DocumentSummaryInformation</code> and their <code>get...()</code>
+     methods for reading standard properties. These classes also provide
+     <code>set...()</code> methods for writing properties.</p>
+
+    <p>After setting properties in <code>SummaryInformation</code> or
+     <code>DocumentSummaryInformation</code> you have to write them to a disk
+     file. The following sample program shows how you can</p>
+
+    <ol>
+     <li>read a disk file into a POI filesystem,</li>
+     <li>read the document summary information from the POI filesystem,</li>
+     <li>set a property to a new value,</li>
+     <li>write the modified document summary information back to the POI
+      filesystem, and</li>
+     <li>write the POI filesystem to a disk file.</li>
+    </ol>
+
+    <p>The complete source code of this program is available as
+     <em>ModifyDocumentSummaryInformation.java</em> in the <em>examples</em>
+     section of the POI source tree.</p>
+
+    <note>Dealing with the summary information stream is analogous to handling
+     the document summary information and therefore does not need to be
+     explained here in detailed. See the HPSF API documentation to learn about
+     the <code>set...()</code> methods of the class
+     <code>SummaryInformation</code>.</note>
+
+    <p>The first step is to read the POI filesystem into memory:</p>
+
+    <source>InputStream is = new FileInputStream(poiFilesystem);
+POIFSFileSystem poifs = new POIFSFileSystem(is);
+is.close();</source>
+
+    <p>The code snippet above assumes that the variable
+     <code>poiFilesystem</code> holds the name of a disk file. It reads the
+     file from an input stream and creates a <code>POIFSFileSystem</code>
+     object in memory. After having read the file, the input stream should be
+     closed as shown.</p>
+
+    <p>In order to read the document summary information stream the application
+     must open the element <em>\005DocumentSummaryInformation</em> in the POI
+     filesystem's root directory. However, the POI filesystem does not
+     necessarily contain a document summary information stream, and the
+     application should be able to deal with that situation. The following
+     code does so by creating a new <code>DocumentSummaryInformation</code> if
+     there is none in the POI filesystem:</p>
+
+    <source>DirectoryEntry dir = poifs.getRoot();
+DocumentSummaryInformation dsi;
+try
+{
+    DocumentEntry dsiEntry = (DocumentEntry)
+        dir.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+    DocumentInputStream dis = new DocumentInputStream(dsiEntry);
+    PropertySet ps = new PropertySet(dis);
+    dis.close();
+    dsi = new DocumentSummaryInformation(ps);
+}
+catch (FileNotFoundException ex)
+{
+    /* There is no document summary information. We have to create a
+     * new one. */
+    dsi = PropertySetFactory.newDocumentSummaryInformation();
+}
+    </source>
+
+    <p>In the source code above the statement</p>
+
+    <source>DirectoryEntry dir = poifs.getRoot();</source>
+
+    <p>gets hold of the POI filesystem's root directory as a
+     <code>DirectoryEntry</code>. The <code>getEntry()</code> method of this
+     class is used to access a file or directory entry in a directory. However,
+     if the file to be opened does not exist, a
+     <code>FileNotFoundException</code> will be thrown. Therefore opening the
+     document summary information entry should be done in a <code>try</code>
+     block:</p>
+
+    <source>    DocumentEntry dsiEntry = (DocumentEntry)
+        dir.getEntry(DocumentSummaryInformation.DEFAULT_STREAM_NAME);</source>
+
+    <p><code>DocumentSummaryInformation.DEFAULT_STREAM_NAME</code> represents
+     the string "\005DocumentSummaryInformation", i.e. the standard name of a
+     document summary information stream. If this stream exists, the
+     <code>getEntry()</code> method returns a <code>DocumentEntry</code>. To
+     read the <code>DocumentEntry</code>'s contents, create a
+     <code>DocumentInputStream</code>:</p>
+
+    <source>     DocumentInputStream dis = new DocumentInputStream(dsiEntry);</source>
+
+    <p>Up to this point we have used POI's <a
+      href="../poifs/index.html">POIFS component</a>. Now HPSF enters the
+     stage. A property set is created from the input stream's data:</p>
+
+    <source>    PropertySet ps = new PropertySet(dis);
+    dis.close();
+    dsi = new DocumentSummaryInformation(ps);    </source>
+
+    <p>If the data really constitutes a property set, a
+     <code>PropertySet</code> object is created. Otherwise a
+     <code>NoPropertySetStreamException</code> is thrown. After having read the
+     data from the input stream the latter should be closed.</p>
+
+    <p>Since we know - or at least hope - that the stream named
+     "\005DocumentSummaryInformation" is not just any property set but really
+     contains the document summary information, we try to create a new
+     <code>DocumentSummaryInformation</code> from the property set. If the
+     stream is not document summary information stream the sample application
+     fails with a <code>UnexpectedPropertySetTypeException</code>.</p>
+
+    <p>If the POI document does not contain a document summary information
+     stream, we can create a new one in the <code>catch</code> clause. The
+     <code>PropertySetFactory</code>'s method
+     <code>newDocumentSummaryInformation()</code> establishes a new and empty
+     <code>DocumentSummaryInformation</code> instance:</p>
+
+    <source>    dsi = PropertySetFactory.newDocumentSummaryInformation();</source>
+
+    <p>Whether we read the document summary information from the POI filesystem
+     or created it from scratch, in either case we now have a
+     <code>DocumentSummaryInformation</code> instance we can write to. Writing
+     is quite simple, as the following line of code shows:</p>
+
+    <source>dsi.setCategory("POI example");</source>
+
+    <p>This statement sets the "category" property to "POI example". Any
+     former "category" value will be lost. If there hasn't been a "category"
+     property yet, a new one will be created.</p>
+
+    <p><code>DocumentSummaryInformation</code> of course has methods to set the
+     other standard properties, too - look into the API documentation to see
+     all of them.</p>
+
+    <p>Once all properties are set as needed, they should be stored into the
+     file on disk. The first step is to write the
+     <code>DocumentSummaryInformation</code> into the POI filesystem:</p>
+
+    <source>dsi.write(dir, DocumentSummaryInformation.DEFAULT_STREAM_NAME);</source>
+
+    <p>The <code>DocumentSummaryInformation</code>'s <code>write()</code>
+     method takes two parameters: The first is the <code>DirectoryEntry</code>
+     in the POI filesystem, the second is the name of the stream to create in
+     the directory. If this stream already exists, it will be overwritten.</p>
+
+    <note>If you not only modified the document summary information but also
+     the summary information you have to write both of them to the POI
+     filesystem.</note>
+
+    <p>Still the POI filesystem is a data structure in memory only and must be
+     written to a disk file to make it permanent. The following lines write
+     back the POI filesystem to the file it was read from before. Please note
+     that in production-quality code you should never write directly to the
+     origin file, because in case of an error everything would be lost. Here it
+     is done this way to keep the example short.</p>
+
+    <source>OutputStream out = new FileOutputStream(poiFilesystem);
+poifs.writeFilesystem(out);
+out.close();</source>
+
+    <section><title>User-Defined Properties</title>
+
+     <p>If you compare the source code excerpts above with the file containing
+      the full source code, you will notice that I left out some following
+      lines of code. The are dealing with the special topic of custom
+      properties.</p>
+
+     <source>DocumentSummaryInformation dsi = ...
+...
+CustomProperties customProperties = dsi.getCustomProperties();
+if (customProperties == null)
+    customProperties = new CustomProperties();
+
+/* Insert some custom properties into the container. */
+customProperties.put("Key 1", "Value 1");
+customProperties.put("Schlüssel 2", "Wert 2");
+customProperties.put("Sample Number", new Integer(12345));
+customProperties.put("Sample Boolean", new Boolean(true));
+customProperties.put("Sample Date", new Date());
+
+/* Read a custom property. */
+Object value = customProperties.get("Sample Number");
+
+/* Write the custom properties back to the document summary
+ * information. */
+dsi.setCustomProperties(customProperties);</source>
+
+     <p>Custom properties are properties the user can define himself. Using for
+      example Microsoft Word he can define these extra properties and give
+      each of them a <strong>name</strong>, a <strong>type</strong> and a
+      <strong>value</strong>. The custom properties are stored in the document
+      information summary along with the standard properties.</p>
+
+     <p>The source code example shows how to retrieve the custom properties
+      as a whole from a <code>DocumentSummaryInformation</code> instance using
+      the <code>getCustomProperties()</code> method. The result is a
+      <code>CustomProperties</code> instance or <code>null</code> if no
+      user-defined properties exist.</p>
+
+     <p>Since <code>CustomProperties</code> implements the <code>Map</code>
+      interface you can read and write properties with the usual
+      <code>Map</code> methods. However, <code>CustomProperties</code> poses
+      some restrictions on the types of keys and values.</p>
+
+     <ul>
+      <li>The <strong>key</strong> is a string.</li>
+      <li>The <strong>value</strong> is one of <code>String</code>,
+       <code>Boolean</code>, <code>Long</code>, <code>Integer</code>,
+       <code>Short</code>, or <code>java.util.Date</code>.</li>
+     </ul>
+
+     <p>The <code>CustomProperties</code> class has been designed for easy
+      access using just keys and values. The underlying Microsoft-specific
+      custom properties data structure is more complicated. However, it does
+      not provide noteworthy additional benefits. It is possible to have
+      multiple properties with the same name or properties without a
+      name at all. When reading custom properties from a document summary
+      information stream, the <code>CustomProperties</code> class ignores
+      properties without a name and keeps only the "last" (whatever that means)
+      of those properties having the same name. You can find out whether a
+      <code>CustomProperties</code> instance dropped any properties with the
+      <code>isPure()</code> method.</p>
+
+     <p>You can read and write the full spectrum of custom properties with
+      HPSF's low-level methods. They are explained in the <a
+       href="#sec4">next section</a>.</p>
+    </section>
+   </section>
+
+
+
+   <anchor id="sec4"/>
+   <section><title>Reading Non-Standard Properties</title>
+
+    <note>This section tells how to read non-standard properties. Non-standard
+     properties are application-specific ID/type/value triples.</note>
+
+    <section><title>Overview</title>
+     <p>Now comes the real hardcode stuff. As mentioned above,
+      <code>SummaryInformation</code> and
+      <code>DocumentSummaryInformation</code> are just special cases of the
+      general concept of a property set. This concept says that a
+      <strong>property set</strong> consists of properties and that each
+      <strong>property</strong> is an entity with an <strong>ID</strong>, a
+      <strong>type</strong>, and a <strong>value</strong>.</p>
+
+     <p>Okay, that was still rather easy. However, to make things more
+      complicated, Microsoft in its infinite wisdom decided that a property set
+      shalt be broken into one or more <strong>sections</strong>. Each section
+      holds a bunch of properties. But since that's still not complicated
+      enough, a section may have an optional <strong>dictionary</strong> that
+      maps property IDs to <strong>property names</strong> - we'll explain
+      later what that means.</p>
+
+     <p>The procedure to get to the properties is the following:</p>
+
+     <ol>
+      <li>Use the <strong><code>PropertySetFactory</code></strong> class to
+       create a <code>PropertySet</code> object from a property set stream. If
+       you don't know whether an input stream is a property set stream, just
+       try to call <code>PropertySetFactory.create(java.io.InputStream)</code>:
+       You'll either get a <code>PropertySet</code> instance returned or an
+       exception is thrown.</li>
+
+      <li>Call the <code>PropertySet</code>'s method <code>getSections()</code>
+       to get the sections contained in the property set. Each section is
+       an instance of the <code>Section</code> class.</li>
+
+      <li>Each section has a format ID. The format ID of the first section in a
+       property set determines the property set's type. For example, the first
+       (and only) section of the summary information property set has a format
+       ID of <code>F29F85E0-4FF9-1068-AB-91-08-00-2B-27-B3-D9</code>. You can
+       get the format ID with <code>Section.getFormatID()</code>.</li>
+
+      <li>The properties contained in a <code>Section</code> can be retrieved
+       with <code>Section.getProperties()</code>. The result is an array of
+       <code>Property</code> instances.</li>
+
+      <li>A property has a name, a type, and a value. The <code>Property</code>
+       class has methods to retrieve them.</li>
+     </ol>
+    </section>
+
+    <section><title>A Sample Application</title>
+     <p>Let's have a look at a sample Java application that dumps all property
+      set streams contained in a POI file system. The full source code of this
+      program can be found as <em>ReadCustomPropertySets.java</em> in the
+      <em>examples</em> area of the POI source code tree. Here are the key
+      sections:</p>
+
+    <source>import java.io.*;
+import java.util.*;
+import org.apache.poi.hpsf.*;
+import org.apache.poi.poifs.eventfilesystem.*;
+import org.apache.poi.util.HexDump;</source>
+
+    <p>The most important package the application needs is
+     <code>org.apache.poi.hpsf.*</code>. This package contains the HPSF
+     classes. Most classes named below are from the HPSF package. Of course we
+     also need the POIFS event file system's classes and <code>java.io.*</code>
+     since we are dealing with POI I/O. From the <code>java.util</code> package
+     we use the <code>List</code> and <code>Iterator</code> class. The class
+     <code>org.apache.poi.util.HexDump</code> provides a methods to dump byte
+     arrays as nicely formatted strings.</p>
+
+    <source>public static void main(String[] args)
+    throws IOException
+{
+    final String filename = args[0];
+    POIFSReader r = new POIFSReader();
+
+    /* Register a listener for *all* documents. */
+    r.registerListener(new MyPOIFSReaderListener());
+    r.read(new FileInputStream(filename));
+}</source>
+
+    <p>The <code>POIFSReader</code> is set up in a way that the listener
+     <code>MyPOIFSReaderListener</code> is called on every file in the POI file
+    system.</p>
+    </section>
+
+    <section><title>The Property Set</title>
+     <p>The listener class tries to create a <code>PropertySet</code> from each
+     stream using the <code>PropertySetFactory.create()</code> method:</p>
+
+    <source>static class MyPOIFSReaderListener implements POIFSReaderListener
+{
+    public void processPOIFSReaderEvent(POIFSReaderEvent event)
+    {
+        PropertySet ps = null;
+        try
+        {
+            ps = PropertySetFactory.create(event.getStream());
+        }
+        catch (NoPropertySetStreamException ex)
+        {
+            out("No property set stream: \"" + event.getPath() +
+                event.getName() + "\"");
+            return;
+        }
+        catch (Exception ex)
+        {
+            throw new RuntimeException
+                ("Property set stream \"" +
+                 event.getPath() + event.getName() + "\": " + ex);
+        }
+
+        /* Print the name of the property set stream: */
+        out("Property set stream \"" + event.getPath() +
+            event.getName() + "\":");</source>
+
+    <p>Creating the <code>PropertySet</code> is done in a <code>try</code>
+     block, because not each stream in the POI file system contains a property
+     set. If it is some other file, the
+     <code>PropertySetFactory.create()</code> throws a
+     <code>NoPropertySetStreamException</code>, which is caught and
+     logged. Then the program continues with the next stream. However, all
+     other types of exceptions cause the program to terminate by throwing a
+     runtime exception. If all went well, we can print the name of the property
+     set stream.</p>
+    </section>
+
+    <section><title>The Sections</title>
+     <p>The next step is to print the number of sections followed by the
+     sections themselves:</p>
+
+    <source>/* Print the number of sections: */
+final long sectionCount = ps.getSectionCount();
+out("   No. of sections: " + sectionCount);
+
+/* Print the list of sections: */
+List sections = ps.getSections();
+int nr = 0;
+for (Iterator i = sections.iterator(); i.hasNext();)
+{
+    /* Print a single section: */
+    Section sec = (Section) i.next();
+
+    // See below for the complete loop body.
+}</source>
+
+     <p>The <code>PropertySet</code>'s method <code>getSectionCount()</code>
+      returns the number of sections.</p>
+
+     <p>To retrieve the sections, use the <code>getSections()</code>
+      method. This method returns a <code>java.util.List</code> containing
+      instances of the <code>Section</code> class in their proper order.</p>
+
+     <p>The sample code shows a loop that retrieves the <code>Section</code>
+      objects one by one and prints some information about each one. Here is
+      the complete body of the loop:</p>
+
+     <source>/* Print a single section: */
+Section sec = (Section) i.next();
+out("   Section " + nr++ + ":");
+String s = hex(sec.getFormatID().getBytes());
+s = s.substring(0, s.length() - 1);
+out("      Format ID: " + s);
+
+/* Print the number of properties in this section. */
+int propertyCount = sec.getPropertyCount();
+out("      No. of properties: " + propertyCount);
+
+/* Print the properties: */
+Property[] properties = sec.getProperties();
+for (int i2 = 0; i2 &lt; properties.length; i2++)
+{
+    /* Print a single property: */
+    Property p = properties[i2];
+    int id = p.getID();
+    long type = p.getType();
+    Object value = p.getValue();
+    out("      Property ID: " + id + ", type: " + type +
+        ", value: " + value);
+}</source>
+    </section>
+
+    <section><title>The Section's Format ID</title>
+     <p>The first method called on the <code>Section</code> instance is
+      <code>getFormatID()</code>. As explained above, the format ID of the
+      first section in a property set determines the type of the property
+      set. Its type is <code>ClassID</code> which is essentially a sequence of
+      16 bytes. A real application using its own type of a custom property set
+      should have defined a unique format ID and, when reading a property set
+      stream, should check the format ID is equal to that unique format ID. The
+      sample program just prints the format ID it finds in a section:</p>
+
+     <source>String s = hex(sec.getFormatID().getBytes());
+s = s.substring(0, s.length() - 1);
+out("      Format ID: " + s);</source>
+
+     <p>As you can see, the <code>getFormatID()</code> method returns a
+      <code>ClassID</code> object. An array containing the bytes can be
+      retrieved with <code>ClassID.getBytes()</code>. In order to get a nicely
+      formatted printout, the sample program uses the <code>hex()</code> helper
+      method which in turn uses the POI utility class <code>HexDump</code> in
+      the <code>org.apache.poi.util</code> package. Another helper method is
+      <code>out()</code> which just saves typing
+      <code>System.out.println()</code>.</p>
+    </section>
+
+    <section><title>The Properties</title>
+     <p>Before getting the properties, it is possible to find out how many
+      properties are available in the section via the
+      <code>Section.getPropertyCount()</code>. The sample application uses this
+      method to print the number of properties to the standard output:</p>
+
+     <source>int propertyCount = sec.getPropertyCount();
+out("      No. of properties: " + propertyCount);</source>
+
+     <p>Now its time to get to the properties themselves. You can retrieve a
+      section's properties with the method
+      <code>Section.getProperties()</code>:</p>
+
+     <source>Property[] properties = sec.getProperties();</source>
+
+     <p>As you can see the result is an array of <code>Property</code>
+      objects. This class has three methods to retrieve a property's ID, its
+      type, and its value. The following code snippet shows how to call
+      them:</p>
+
+     <source>for (int i2 = 0; i2 &lt; properties.length; i2++)
+{
+    /* Print a single property: */
+    Property p = properties[i2];
+    int id = p.getID();
+    long type = p.getType();
+    Object value = p.getValue();
+    out("      Property ID: " + id + ", type: " + type +
+        ", value: " + value);
+}</source>
+    </section>
+
+    <section><title>Sample Output</title>
+     <p>The output of the sample program might look like the following. It
+      shows the summary information and the document summary information
+      property sets of a Microsoft Word document. However, unlike the first and
+      second section of this HOW-TO the application does not have any code
+      which is specific to the <code>SummaryInformation</code> and
+      <code>DocumentSummaryInformation</code> classes.</p>
+
+     <source>Property set stream "/SummaryInformation":
+   No. of sections: 1
+   Section 0:
+      Format ID: 00000000 F2 9F 85 E0 4F F9 10 68 AB 91 08 00 2B 27 B3 D9 ....O..h....+'..
+      No. of properties: 17
+      Property ID: 1, type: 2, value: 1252
+      Property ID: 2, type: 30, value: Titel
+      Property ID: 3, type: 30, value: Thema
+      Property ID: 4, type: 30, value: Rainer Klute (Autor)
+      Property ID: 5, type: 30, value: Test (Stichwörter)
+      Property ID: 6, type: 30, value: This is a document for testing HPSF
+      Property ID: 7, type: 30, value: Normal.dot
+      Property ID: 8, type: 30, value: Unknown User
+      Property ID: 9, type: 30, value: 3
+      Property ID: 18, type: 30, value: Microsoft Word 9.0
+      Property ID: 12, type: 64, value: Mon Jan 01 00:59:25 CET 1601
+      Property ID: 13, type: 64, value: Thu Jul 18 16:22:00 CEST 2002
+      Property ID: 14, type: 3, value: 1
+      Property ID: 15, type: 3, value: 20
+      Property ID: 16, type: 3, value: 93
+      Property ID: 19, type: 3, value: 0
+      Property ID: 17, type: 71, value: [B@13582d
+Property set stream "/DocumentSummaryInformation":
+   No. of sections: 2
+   Section 0:
+      Format ID: 00000000 D5 CD D5 02 2E 9C 10 1B 93 97 08 00 2B 2C F9 AE ............+,..
+      No. of properties: 14
+      Property ID: 1, type: 2, value: 1252
+      Property ID: 2, type: 30, value: Test
+      Property ID: 14, type: 30, value: Rainer Klute (Manager)
+      Property ID: 15, type: 30, value: Rainer Klute IT-Consulting GmbH
+      Property ID: 5, type: 3, value: 3
+      Property ID: 6, type: 3, value: 2
+      Property ID: 17, type: 3, value: 111
+      Property ID: 23, type: 3, value: 592636
+      Property ID: 11, type: 11, value: false
+      Property ID: 16, type: 11, value: false
+      Property ID: 19, type: 11, value: false
+      Property ID: 22, type: 11, value: false
+      Property ID: 13, type: 4126, value: [B@56a499
+      Property ID: 12, type: 4108, value: [B@506411
+   Section 1:
+      Format ID: 00000000 D5 CD D5 05 2E 9C 10 1B 93 97 08 00 2B 2C F9 AE ............+,..
+      No. of properties: 7
+      Property ID: 0, type: 0, value: {6=Test-JaNein, 5=Test-Zahl, 4=Test-Datum, 3=Test-Text, 2=_PID_LINKBASE}
+      Property ID: 1, type: 2, value: 1252
+      Property ID: 2, type: 65, value: [B@c9ba38
+      Property ID: 3, type: 30, value: This is some text.
+      Property ID: 4, type: 64, value: Wed Jul 17 00:00:00 CEST 2002
+      Property ID: 5, type: 3, value: 27
+      Property ID: 6, type: 11, value: true
+No property set stream: "/WordDocument"
+No property set stream: "/CompObj"
+No property set stream: "/1Table"</source>
+
+     <p>There are some interesting items to note:</p>
+
+     <ul>
+      <li>The first property set (summary information) consists of a single
+       section, the second property set (document summary information) consists
+       of two sections.</li>
+
+      <li>Each section type (identified by its format ID) has its own domain of
+       property ID. For example, in the second property set the properties with
+       ID 2 have different meanings in the two section. By the way, the format
+       IDs of these sections are <strong>not</strong> equal, but you have to
+       look hard to find the difference.</li>
+
+      <li>The properties are not in any particular order in the section,
+       although they slightly tend to be sorted by their IDs.</li>
+     </ul>
+    </section>
+
+    <section><title>Property IDs</title>
+     <p>Properties in the same section are distinguished by their IDs. This is
+      similar to variables in a programming language like Java, which are
+      distinguished by their names. But unlike variable names, property IDs are
+      simple integral numbers. There is another similarity, however. Just like
+      a Java variable has a certain scope (e.g. a member variables in a class),
+      a property ID also has its scope of validity: the section.</p>
+
+     <p>Two property IDs in sections with different section format IDs
+      don't have the same meaning even though their IDs might be equal. For
+      example, ID 4 in the first (and only) section of a summary
+      information property set denotes the document's author, while ID 4 in the
+      first section of the document summary information property set means the
+      document's byte count. The sample output above does not show a property
+      with an ID of 4 in the first section of the document summary information
+      property set. That means that the document does not have a byte
+      count. However, there is a property with an ID of 4 in the
+      <em>second</em> section: This is a user-defined property ID - we'll get
+      to that topic in a minute.</p>
+
+     <p>So, how can you find out what the meaning of a certain property ID in
+      the summary information and the document summary information property set
+      is? The standard property sets as such don't have any hints about the
+      <strong>meanings of their property IDs</strong>. For example, the summary
+      information property set does not tell you that the property ID 4 stands
+      for the document's author. This is external knowledge. Microsoft defined
+      standard meanings for some of the property IDs in the summary information
+      and the document summary information property sets. As a help to the Java
+      and POI programmer, the class <code>PropertyIDMap</code> in the
+      <code>org.apache.poi.hpsf.wellknown</code> package defines constants
+      for the "well-known" property IDs. For example, there is the
+      definition</p>
+
+     <source>public final static int PID_AUTHOR = 4;</source>
+
+     <p>These definitions allow you to use symbolic names instead of
+      numbers.</p>
+
+     <p>In order to provide support for the other way, too, - i.e. to map
+      property IDs to property names - the class <code>PropertyIDMap</code>
+      defines two static methods:
+      <code>getSummaryInformationProperties()</code> and
+      <code>getDocumentSummaryInformationProperties()</code>. Both return
+      <code>java.util.Map</code> objects which map property IDs to
+      strings. Such a string gives a hint about the property's meaning. For
+      example,
+      <code>PropertyIDMap.getSummaryInformationProperties().get(4)</code>
+      returns the string "PID_AUTHOR". An application could use this string as
+      a key to a localized string which is displayed to the user, e.g. "Author"
+      in English or "Verfasser" in German. HPSF might provide such
+      language-dependent ("localized") mappings in a later release.</p>
+
+     <p>Usually you won't have to deal with those two maps. Instead you should
+      call the <code>Section.getPIDString(int)</code> method. It returns the
+      string associated with the specified property ID in the context of the
+      <code>Section</code> object.</p>
+
+     <p>Above you learned that property IDs have a meaning in the scope of a
+      section only. However, there are two exceptions to the rule: The property
+      IDs 0 and 1 have a fixed meaning in <strong>all</strong> sections:</p>
+
+     <table>
+      <tr>
+       <th>Property ID</th>
+       <th>Meaning</th>
+      </tr>
+
+      <tr>
+       <td>0</td>
+       <td>The property's value is a <strong>dictionary</strong>, i.e. a
+        mapping from property IDs to strings.</td>
+      </tr>
+
+      <tr>
+       <td>1</td>
+       <td>The property's value is the number of a <strong>codepage</strong>,
+        i.e. a mapping from character codes to characters. All strings in the
+        section containing this property must be interpreted using this
+        codepage. Typical property values are 1252 (8-bit "western" characters,
+	ISO-8859-1), 1200 (16-bit Unicode characters, UFT-16), or 65001 (8-bit
+	Unicode characters, UFT-8).</td>
+      </tr>
+     </table>
+    </section>
+
+    <section><title>Property types</title>
+     <p>A property is nothing without its value. It is stored in a property set
+      stream as a sequence of bytes. You must know the property's
+      <strong>type</strong> in order to properly interpret those bytes and
+      reasonably handle the value. A property's type is one of the so-called
+      Microsoft-defined <strong>"variant types"</strong>. When you call
+      <code>Property.getType()</code> you'll get a <code>long</code> value
+      which denoting the property's variant type. The class
+      <code>Variant</code> in the <code>org.apache.poi.hpsf</code> package
+      holds most of those <code>long</code> values as named constants. For
+      example, the constant <code>VT_I4 = 3</code> means a signed integer value
+      of four bytes. Examples of other types are <code>VT_LPSTR = 30</code>
+      meaning a null-terminated string of 8-bit characters, <code>VT_LPWSTR =
+       31</code> which means a null-terminated Unicode string, or <code>VT_BOOL
+       = 11</code> denoting a boolean value.</p>
+
+     <p>In most cases you won't need a property's type because HPSF does all
+      the work for you.</p>
+    </section>
+
+    <section><title>Property values</title>
+     <p>When an application wants to retrieve a property's value and calls
+      <code>Property.getValue()</code>, HPSF has to interpret the bytes making
+      out the value according to the property's type. The type determines how
+      many bytes the value consists of and what
+      to do with them. For example, if the type is <code>VT_I4</code>, HPSF
+      knows that the value is four bytes long and that these bytes
+      comprise a signed integer value in the little-endian format. This is
+      quite different from e.g. a type of <code>VT_LPWSTR</code>. In this case
+      HPSF has to scan the value bytes for a Unicode null character and collect
+      everything from the beginning to that null character as a Unicode
+      string.</p>
+
+     <p>The good new is that HPSF does another job for you, too: It maps the
+      variant type to an adequate Java type.</p>
+
+     <table>
+      <tr>
+       <th>Variant type:</th>
+       <th>Java type:</th>
+      </tr>
+
+      <tr>
+       <td>VT_I2</td>
+       <td>java.lang.Integer</td>
+      </tr>
+
+      <tr>
+       <td>VT_I4</td>
+       <td>java.lang.Long</td>
+      </tr>
+
+      <tr>
+       <td>VT_FILETIME</td>
+       <td>java.util.Date</td>
+      </tr>
+
+      <tr>
+       <td>VT_LPSTR</td>
+       <td>java.lang.String</td>
+      </tr>
+
+      <tr>
+       <td>VT_LPWSTR</td>
+       <td>java.lang.String</td>
+      </tr>
+
+      <tr>
+       <td>VT_CF</td>
+       <td>byte[]</td>
+      </tr>
+
+      <tr>
+       <td>VT_BOOL</td>
+       <td>java.lang.Boolean</td>
+      </tr>
+
+     </table>
+
+     <p>The bad news is that there are still a couple of variant types HPSF
+      does not yet support. If it encounters one of these types it
+      returns the property's value as a byte array and leaves it to be
+      interpreted by the application.</p>
+
+     <p>An application retrieves a property's value by calling the
+      <code>Property.getValue()</code> method. This method's return type is the
+      abstract <code>Object</code> class. The <code>getValue()</code> method
+      looks up the property's variant type, reads the property's value bytes,
+      creates an instance of an adequate Java type, assigns it the property's
+      value and returns it. Primitive types like <code>int</code> or
+      <code>long</code> will be returned as the corresponding class,
+      e.g. <code>Integer</code> or <code>Long</code>.</p>
+    </section>
+
+
+    <section><title>Dictionaries</title>
+     <p>The property with ID 0 has a very special meaning: It is a
+      <strong>dictionary</strong> mapping property IDs to property names. We
+      have seen already that the meanings of standard properties in the
+      summary information and the document summary information property sets
+      have been defined by Microsoft. The advantage is that the labels of
+      properties like "Author" or "Title" don't have to be stored in the
+      property set. However, a user can define custom fields in, say, Microsoft
+      Word. For each field the user has to specify a name, a type, and a
+      value.</p>
+
+     <p>The names of the custom-defined fields (i.e. the property names) are
+      stored in the document summary information second section's
+      <strong>dictionary</strong>. The dictionary is a map which associates
+      property IDs with property names.</p>
+
+     <p>The method <code>Section.getPIDString(int)</code> not only returns with
+      the well-known property names of the summary information and document
+      summary information property sets, but with self-defined properties,
+      too. It should also work with self-defined properties in self-defined
+      sections.</p>
+    </section>
+
+    <section><title>Codepage support</title>
+
+     <p>The property with ID 1 holds the number of the codepage which was used
+      to encode the strings in this section. If this property is not available
+      in a section, the platform's default character encoding will be
+      used. This works fine as long as the document being read has been written
+      on a platform with the same default character encoding. However, if you
+      receive a document from another region of the world and the codepage is
+      undefined, you are in trouble.</p>
+
+     <p>HPSF's codepage support is only as good as the character encoding
+      support of the Java Virtual Machine (JVM) the application runs on. If
+      HPSF encounters a codepage number it assumes that the JVM has a character
+      encoding with a corresponding name. For example, if the codepage is 1252,
+      HPSF uses the character encoding "cp1252" to read or write strings. If
+      the JVM does not have that character encoding installed or if the
+      codepage number is illegal, an UnsupportedEncodingException will be
+      thrown. This works quite well with Java 2 Standard Edition (J2SE)
+      versions since 1.4. However, under J2SE 1.3 or lower you are out of
+      luck. You should install a newer J2SE version to process codepages with
+      HPSF.</p>
+
+     <p>There are some exceptions to the rule saying that a character
+      encoding's name is derived from the codepage number by prepending the
+      string "cp" to it. In these cases the codepage number is mapped to a
+      well-known character encoding name. Here are a few examples:</p>
+
+     <dl>
+      <dt>Codepage 932</dt>
+      <dd>is mapped to the character encoding "SJIS".</dd>
+      <dt>Codepage 1200</dt>
+      <dd>is mapped to the character encoding "UTF-16".</dd>
+      <dt>Codepage 65001</dt>
+      <dd>is mapped to the character encoding "UTF-8".</dd>
+     </dl>
+
+     <p>More of these mappings between codepage and character encoding name are
+      hard-coded in the classes <code>org.apache.poi.hpsf.Constants</code> and
+      <code>org.apache.poi.hpsf.VariantSupport</code>. Probably there will be a
+      need to add more mappings. The HPSF author will appreciate any hints.</p>
+    </section>
+   </section>
+
+   <anchor id="sec5"/>
+   <section><title>Writing Properties</title>
+
+    <note>This section describes how to write properties.</note>
+
+    <section><title>Overview of Writing Properties</title>
+     <p>Writing properties is possible at a high level and at a low level:</p>
+
+     <ul>
+
+      <li>Most users will want to create or change entries in the summary
+       information or document summary information streams. </li>
+
+      <li>On the low level, there are no convenience classes or methods. You
+       have to deal with things like property IDs and variant types to write
+       properties. Therefore you should have read <a href="#sec3">section
+	3</a> to understand the description of the low-level writing
+       functions.</li>
+     </ul>
+
+     <p>HPSF's writing capabilities come with the classes
+      <code>PropertySet</code>, <code>Section</code>,
+      <code>Property</code>, and some helper classes.</p>
+    </section>
+
+
+    <section><title>Low-Level Writing: An Overview</title>
+     <p>When you are going to write a property set stream your application has
+      to perform the following steps:</p>
+
+     <ol>
+      <li>Create a <code>PropertySet</code> instance.</li>
+
+      <li>Get hold of a <code>Section</code>. You can either retrieve
+       the one that is always present in a new <code>PropertySet</code>,
+       or you have to create a new <code>Section</code> and add it to
+       the <code>PropertySet</code>.
+      </li>
+
+      <li>Set any <code>Section</code> fields as you like.</li>
+
+      <li>Create as many <code>Property</code> objects as you need. Set
+       each property's ID, type, and value. Add the
+       <code>Property</code> objects to the <code>Section</code>.
+      </li>
+
+      <li>Create further <code>Section</code>s if you need them.</li>
+
+      <li>Eventually retrieve the property set as a byte stream using
+       <code>PropertySet.toInputStream()</code> and write it to a POIFS
+       document.</li>
+     </ol>
+    </section>
+
+    <section><title>Low-level Writing Functions In Details</title>
+     <p>Writing properties is introduced by an artificial but simple example: a
+      program creating a new document (aka POI file system) which contains only
+      a single document: a summary information property set stream. The latter
+      will hold the document's title only. This is artificial in that it does
+      not contain any Word, Excel or other kind of useful application document
+      data. A document containing just a property set is without any practical
+      use. However, it is perfectly fine for an example because it make it very
+      simple and easy to understand, and you will get used to writing
+      properties in real applications quickly.</p>
+
+     <p>The application expects the name of the POI file system to be written
+      on the command line. The title property it writes is "Sample title".</p>
+
+     <p>Here's the application's source code. You can also find it in the
+      "examples" section of the POI source code distribution. Explanations are
+      following below.</p>
+
+     <source>package org.apache.poi.hpsf.examples;
+
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.apache.poi.hpsf.Property;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.Section;
+import org.apache.poi.hpsf.Section;
+import org.apache.poi.hpsf.SummaryInformation;
+import org.apache.poi.hpsf.Variant;
+import org.apache.poi.hpsf.WritingNotSupportedException;
+import org.apache.poi.hpsf.wellknown.PropertyIDMap;
+import org.apache.poi.hpsf.wellknown.SectionIDMap;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
+/**
+ * &lt;p&gt;This class is a simple sample application showing how to create a property
+ * set and write it to disk.&lt;/p&gt;
+ *
+ * @author Rainer Klute
+ * @since 2003-09-12
+ */
+public class WriteTitle
+{
+    /**
+     * &lt;p&gt;Runs the example program.&lt;/p&gt;
+     *
+     * @param args Command-line arguments. The first and only command-line
+     * argument is the name of the POI file system to create.
+     * @throws IOException if any I/O exception occurs.
+     * @throws WritingNotSupportedException if HPSF does not (yet) support
+     * writing a certain property type.
+     */
+    public static void main(final String[] args)
+    throws WritingNotSupportedException, IOException
+    {
+        /* Check whether we have exactly one command-line argument. */
+        if (args.length != 1)
+        {
+            System.err.println("Usage: " + WriteTitle.class.getName() +
+                               "destinationPOIFS");
+            System.exit(1);
+        }
+
+        final String fileName = args[0];
+
+        /* Create a mutable property set. Initially it contains a single section
+         * with no properties. */
+        final PropertySet mps = new PropertySet();
+
+        /* Retrieve the section the property set already contains. */
+        final Section ms = mps.getSections().get(0);
+
+        /* Turn the property set into a summary information property. This is
+         * done by setting the format ID of its first section to
+         * SectionIDMap.SUMMARY_INFORMATION_ID. */
+        ms.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);
+
+        /* Create an empty property. */
+        final Property p = new Property();
+
+        /* Fill the property with appropriate settings so that it specifies the
+         * document's title. */
+        p.setID(PropertyIDMap.PID_TITLE);
+        p.setType(Variant.VT_LPWSTR);
+        p.setValue("Sample title");
+
+        /* Place the property into the section. */
+        ms.setProperty(p);
+
+        /* Create the POI file system the property set is to be written to. */
+        final POIFSFileSystem poiFs = new POIFSFileSystem();
+
+        /* For writing the property set into a POI file system it has to be
+         * handed over to the POIFS.createDocument() method as an input stream
+         * which produces the bytes making out the property set stream. */
+        final InputStream is = mps.toInputStream();
+
+        /* Create the summary information property set in the POI file
+         * system. It is given the default name most (if not all) summary
+         * information property sets have. */
+        poiFs.createDocument(is, SummaryInformation.DEFAULT_STREAM_NAME);
+
+        /* Write the whole POI file system to a disk file. */
+        poiFs.writeFilesystem(new FileOutputStream(fileName));
+    }
+
+}</source>
+
+     <p>The application first checks that there is exactly one single argument
+      on the command line: the name of the file to write. If this single
+      argument is present, the application stores it in the
+      <code>fileName</code> variable. It will be used in the end when the POI
+      file system is written to a disk file.</p>
+
+     <source>if (args.length != 1)
+{
+    System.err.println("Usage: " + WriteTitle.class.getName() +
+                       "destinationPOIFS");
+    System.exit(1);
+}
+final String fileName = args[0];</source>
+
+     <p>Let's create a property set now. We cannot use the
+      <code>PropertySet</code> class, because it is read-only. It does not have
+      a constructor creating an empty property set, and it does not have any
+      methods to modify its contents, i.e. to write sections containing
+      properties into it.</p>
+
+     <p>The class to use is <code>PropertySet</code>. The sample application calls its no-args
+      constructor in order to establish an empty property set:</p>
+
+     <source>final PropertySet mps = new PropertySet();</source>
+
+     <p>As said, we have an empty property set now. Later we will put some
+      contents into it.</p>
+
+     <p>The <code>PropertySet</code> created by the no-args constructor
+      is not really empty: It contains a single section without properties. We
+      can either retrieve that section and fill it with properties or we can
+      replace it by another section. We can also add further sections to the
+      property set. The sample application decides to retrieve the section
+      being already there:</p>
+
+     <source>final Section ms = mps.getSections().get(0);</source>
+
+     <p>The <code>getSections()</code> method returns the property set's
+      sections as a list, i.e. an instance of
+      <code>java.util.List</code>. Calling <code>get(0)</code> returns the
+      list's first (or zeroth, if you prefer) element.</p>
+
+     <p>The alternative to retrieving the <code>Section</code> being
+      already there would have been to create an new
+      <code>Section</code> like this:</p>
+
+     <source>Section s = new Section();</source>
+
+     <p>The <code>Section</code> the sample application retrieved from
+      the <code>PropertySet</code> is still empty. It contains no
+      properties and does not have a format ID. As you have read <a
+       href="#sec3">above</a> the format ID of the first section in a
+      property set determines the property set's type. Since our property set
+      should become a SummaryInformation property set we have to set the format
+      ID of its first (and only) section to
+      <code>F29F85E0-4FF9-1068-AB-91-08-00-2B-27-B3-D9</code>. However, you
+      won't have to remember that ID: HPSF has it defined as the well-known
+      constant <code>SectionIDMap.SUMMARY_INFORMATION_ID</code>. The sample
+      application writes it to the section using the
+      <code>setFormatID(byte[])</code> method:</p>
+
+     <source>ms.setFormatID(SectionIDMap.SUMMARY_INFORMATION_ID);</source>
+
+     <source>final Property p = new Property();</source>
+
+     <p>A <code>Property</code> object must have an ID, a type, and a
+      value (see <a href="#sec3">above</a> for details). The class
+      provides methods to set these attributes:</p>
+
+     <source>p.setID(PropertyIDMap.PID_TITLE);
+p.setType(Variant.VT_LPWSTR);
+p.setValue("Sample title");</source>
+
+     <p>The <code>Property</code> class has a constructor which you can
+      use to pass in all three attributes in a single call. See the Javadoc API
+      documentation for details!</p>
+
+     <p>The sample property set is complete now. We have a
+      <code>PropertySet</code> containing a  <code>Section</code>
+      containing a <code>Property</code>. Of course we could have added
+      more sections to the property set and more properties to the sections but
+      we wanted to keep things simple.</p>
+
+     <p>The property set has to be written to a POI file system. The following
+      statement creates it.</p>
+
+     <source>final POIFSFileSystem poiFs = new POIFSFileSystem();</source>
+
+     <p>Writing the property set includes the step of converting it into a
+      sequence of bytes. The <code>PropertySet</code> class has the
+      method <code>toInputStream()</code> for this purpose. It returns the
+      bytes making out the property set stream as an
+      <code>InputStream</code>:</p>
+
+     <source>final InputStream is = mps.toInputStream();</source>
+
+     <p>If you'd read from this input stream you'd receive all the property
+      set's bytes. However, it is very likely that you'll never do
+      that. Instead you'll pass the input stream to the
+      <code>POIFSFileSystem.createDocument()</code> method, like this:</p>
+
+     <source>poiFs.createDocument(is, SummaryInformation.DEFAULT_STREAM_NAME);</source>
+
+     <p>Besides the <code>InputStream</code> <code>createDocument()</code>
+      takes a second parameter: the name of the document to be created. For a
+      SummaryInformation property set stream the default name is available as
+      the constant <code>SummaryInformation.DEFAULT_STREAM_NAME</code>.</p>
+
+     <p>The last step is to write the POI file system to a disk file:</p>
+
+     <source>poiFs.writeFilesystem(new FileOutputStream(fileName));</source>
+    </section>
+   </section>
+
+
+
+   <section><title>Further Reading</title>
+    <p>There are still some aspects of HSPF left which are not covered by this
+     HOW-TO. You should dig into the Javadoc API documentation to learn
+     further details. Since you've struggled through this document up to this
+     point, you are well prepared.</p>
+   </section>
+
+  </section>
+ </body>
+</document>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: xml
+sgml-omittag:nil
+sgml-shorttag:nil
+sgml-namecase-general:nil
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:1
+sgml-indent-data:t
+sgml-parent-document:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

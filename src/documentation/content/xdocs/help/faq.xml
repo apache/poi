@@ -1,0 +1,742 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+   ====================================================================
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+   ====================================================================
+-->
+<!DOCTYPE faqs PUBLIC "-//APACHE//DTD FAQ V2.0//EN" "faq-v20.dtd">
+
+<faqs>
+  <title>Frequently Asked Questions</title>
+  <faq id="faq-N10006">
+    <question>
+      My code uses some new feature, compiles fine but fails when live with a "MethodNotFoundException" or "IncompatibleClassChangeError"
+    </question>
+    <answer>
+      <p>You almost certainly have an older version of Apache POI
+	on your classpath. Quite a few runtimes and other packages
+	will ship older version of Apache POI, so this is an easy problem
+	to hit without your realising. Some will ship just one old jar,
+   some may ship a full set of old POI jars.</p>
+      <p>The best way to identify the offending earlier jar files is
+	with a few lines of java. These will load a Core POI class, an
+   OOXML class and a Scratchpad class, and report where they all came
+   from.</p>
+      <source><![CDATA[
+ClassLoader classloader =
+   org.apache.poi.poifs.filesystem.POIFSFileSystem.class.getClassLoader();
+URL res = classloader.getResource(
+             "org/apache/poi/poifs/filesystem/POIFSFileSystem.class");
+String path = res.getPath();
+System.out.println("POI Core came from " + path);
+
+classloader = org.apache.poi.ooxml.POIXMLDocument.class.getClassLoader();
+res = classloader.getResource("org/apache/poi/ooxml/POIXMLDocument.class");
+path = res.getPath();
+System.out.println("POI OOXML came from " + path);
+
+classloader = org.apache.poi.hslf.usermodel.HSLFSlideShow.class.getClassLoader();
+res = classloader.getResource("org/apache/poi/hslf/usermodel/HSLFSlideShow.class");
+path = res.getPath();
+System.out.println("POI Scratchpad came from " + path);]]></source>
+    </answer>
+  </faq>
+  <faq id="faq-N10019">
+    <question>
+      My code uses the scratchpad, compiles fine but fails to run with a "MethodNotFoundException"
+    </question>
+    <answer>
+      <p>You almost certainly have an older version earlier on your
+	classpath. See the prior answer.</p>
+    </answer>
+  </faq>
+  <faq id="faq-N10025">
+    <question>
+      I'm using the poi-ooxml-lite (previously known as poi-ooxml-schemas) jar, but my code is failing with "java.lang.NoClassDefFoundError: org/openxmlformats/schemas/*something*"
+    </question>
+    <answer>
+      <p>To use the new OOXML file formats, POI requires a jar containing
+       the file format XSDs, as compiled by
+       <a href="https://xmlbeans.apache.org/">XMLBeans</a>. These
+       XSDs, once compiled into Java classes, live in the
+       <em>org.openxmlformats.schemas</em> namespace.</p>
+      <p>There are two jar files available, as described in
+       <a href="site:components">the components overview section</a>.
+       The <em>full jar of all of the schemas is poi-ooxml-full-XXX.jar (previously known as ooxml-schemas)
+       (lower versions for older releases, see table below)</em>,
+       and it is currently around 16mb. The <em>smaller poi-ooxml-lite (previously known as poi-ooxml-schemas)
+       jar</em> is only about 6mb. This latter jar file only contains the
+       typically used parts though.</p>
+      <p>Many users choose to use the smaller poi-ooxml-lite jar to save
+       space. However, the poi-ooxml-lite jar only contains the XSDs and
+       classes that are typically used, as identified by the unit tests.
+       Every so often, you may try to use part of the file format which
+       isn't included in the minimal poi-ooxml-lite jar. In this case,
+       you should switch to the full poi-ooxml-full jar. Longer term,
+       you may also wish to submit a new unit test which uses the extra
+       parts of the XSDs, so that a future poi-ooxml-lite jar will
+       include them.</p>
+      <p>There are a number of ways to get the full poi-ooxml-full jar.
+       If you are a maven user, see the
+       <a href="site:components">the components overview section</a>
+       for the artifact details to have maven download it for you.
+       If you download the source release of POI, and/or checkout the
+       source code from <a href="site:subversion">subversion</a>,
+       then you can run the ant task "compile-ooxml-xsds" to have the
+       OOXML schemas downloaded and compiled for you (This will also
+       give you the XMLBeans generated source code, in case you wish to
+       look at this). Finally, you can download the jar by hand from the
+       <a href="http://mirrors.ibiblio.org/apache/poi/">POI
+       Maven Repository</a>.</p>
+      <p>Note that historically, different versions of poi-ooxml-full / ooxml-schemas were
+          used</p>
+
+        <table class="POITable autosize">
+            <tr>
+                <th>Version of ooxml-schemas</th>
+                <th>Version of POI</th>
+                <th>Commment</th>
+            </tr>
+            <tr>
+                <td>ooxml-schemas-1.0.jar</td>
+                <td>POI 3.5 and 3.6</td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>ooxml-schemas-1.1.jar</td>
+                <td>POI 3.7 to POI 3.13</td>
+                <td>Generics support added, can be used with POI 3.5 and POI 3.6 as well</td>
+            </tr>
+            <tr>
+                <td>ooxml-schemas-1.2.jar</td>
+                <td>-</td>
+                <td>Not released</td>
+            </tr>
+            <tr>
+                <td>ooxml-schemas-1.3.jar</td>
+                <td>POI 3.14 and newer</td>
+                <td>Visio XML format support added, can be used with POI 3.7 - POI 3.13 as well</td>
+            </tr>
+            <tr>
+                <td>ooxml-schemas-1.4.jar</td>
+                <td>POI 4.*.*</td>
+                <td>Provide schema for AlternateContent, can be used with previous versions of POI as well</td>
+            </tr>
+            <tr>
+                <td>poi-ooxml-full jar</td>
+                <td>POI 5.0.0 and newer</td>
+                <td>Upgrade to ECMA-376 5th edition - which is not downward compatible</td>
+            </tr>
+        </table>
+    </answer>
+  </faq>
+  <faq id="faq-N100B6">
+    <question>
+      Why is reading a simple sheet taking so long?
+    </question>
+    <answer>
+      <p>You've probably enabled logging.  Logging is intended only for
+        autopsy style debugging.  Having it enabled will reduce performance
+        by a factor of at least 100.  Logging is helpful for understanding
+        why POI can't read some file or developing POI itself.  Important
+        errors are thrown as exceptions, which means you probably don't need
+        logging.</p>
+    </answer>
+  </faq>
+  <faq id="faq-N100C2">
+    <question>
+      What is the HSSF "eventmodel"?
+    </question>
+    <answer>
+      <p>The SS eventmodel package is an API for reading Excel files without loading the whole spreadsheet into memory.  It does
+        require more knowledge on the part of the user, but reduces memory consumption by more than
+        tenfold.  It is based on the AWT event model in combination with SAX.  If you need read-only
+        access, this is the best way to do it.</p>
+    </answer>
+  </faq>
+  <faq id="faq-N100CE">
+    <question>
+      Why can't read the document I created using Star Office 5.1?
+    </question>
+    <answer>
+      <p>Star Office 5.1 writes some records using the older BIFF standard.  This causes some problems
+        with POI which supports only BIFF8.</p>
+    </answer>
+  </faq>
+  <faq id="faq-N100DA">
+    <question>
+      Why am I getting an exception each time I attempt to read my spreadsheet?
+    </question>
+    <answer>
+      <p>It's possible your spreadsheet contains a feature that is not currently supported by POI.
+        If you encounter this then please create the simplest file that demonstrates the trouble and submit it to
+	<a href="https://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bugzilla.</a></p>
+    </answer>
+  </faq>
+  <faq id="faq-N100E9">
+    <question>
+      How do you tell if a spreadsheet cell contains a date?
+    </question>
+    <answer>
+      <p>Excel stores dates as numbers therefore the only way to determine if a cell is
+        actually stored as a date is to look at the formatting. There is a helper method
+        in HSSFDateUtil that checks for this.
+        Thanks to Jason Hoffman for providing the solution.</p>
+      <source><![CDATA[
+case HSSFCell.CELL_TYPE_NUMERIC:
+     double d = cell.getNumericCellValue();
+     // test if a date!
+     if (HSSFDateUtil.isCellDateFormatted(cell)) {
+       // format in form of M/D/YY
+       cal.setTime(HSSFDateUtil.getJavaDate(d));
+       cellText =
+         (String.valueOf(cal.get(Calendar.YEAR))).substring(2);
+       cellText = cal.get(Calendar.MONTH)+1 + "/" +
+                  cal.get(Calendar.DAY_OF_MONTH) + "/" +
+                  cellText;
+     }]]></source>
+    </answer>
+  </faq>
+  <faq id="faq-N100F9">
+    <question>
+      I'm trying to stream an XLS file from a servlet and I'm having some trouble.  What's the problem?
+    </question>
+    <answer>
+      <p>
+        The problem usually manifests itself as the junk characters being shown on
+        screen. The problem persists even though you have set the correct mime type.
+      </p>
+      <p>
+        The short answer is, don't depend on IE to display a binary file type properly if you stream it via a
+        servlet. Every minor version of IE has different bugs on this issue.
+      </p>
+      <p>
+        The problem in most versions of IE is that it does not use the mime type on
+        the HTTP response to determine the file type; rather it uses the file extension
+        on the request. Thus you might want to add a
+        <strong>.xls</strong> to your request
+        string. For example
+        <em>http://yourserver.com/myServelet.xls?param1=xx</em>. This is
+        easily accomplished through URL mapping in any servlet container. Sometimes
+        a request like
+        <em>http://yourserver.com/myServelet?param1=xx&amp;dummy=file.xls</em> is also
+        known to work.
+      </p>
+      <p>
+        To guarantee opening the file properly in Excel from IE, write out your file to a
+        temporary file under your web root from your servlet. Then send an http response
+        to the browser to do a client side redirection to your temp file. (Note that using a
+        server side redirect using RequestDispatcher will not be effective in this case)
+      </p>
+      <p>
+        Note also that when you request a document that is opened with an
+        external handler, IE sometimes makes two requests to the webserver. So if your
+        generating process is heavy, it makes sense to write out to a temporary file, so that multiple
+        requests happen for a static file.
+      </p>
+      <p>
+        None of this is particular to Excel. The same problem arises when you try to
+        generate any binary file dynamically to an IE client. For example, if you generate
+        pdf files using
+        <a href="https://xml.apache.org/fop">FOP</a>, you will come across many of the same issues.
+      </p>
+      <!-- Thanks to Avik for the answer -->
+    </answer>
+  </faq>
+  <faq id="faq-N10123">
+    <question>
+      I want to set a cell format (Data format of a cell) of an excel sheet as ###,###,###.#### or ###,###,###.0000.    Is it possible using POI ?
+    </question>
+    <answer>
+      <p>
+	Yes.  You first need to get a DataFormat object from the workbook and call getFormat with the desired format.  Some examples are <a href="../components/spreadsheet/quick-guide.html#DataFormats">here</a>.
+      </p>
+    </answer>
+  </faq>
+  <faq id="faq-N10133">
+    <question>
+      I want to set a cell format (Data format of a cell) of an excel sheet as text.    Is it possible using POI ?
+    </question>
+    <answer>
+      <p>
+	Yes.  This is a built-in format for excel that you can get from DataFormat object using the format string "@".  Also, the string "text" will alias this format.
+      </p>
+    </answer>
+  </faq>
+  <faq id="faq-N1013F">
+    <question>
+      How do I add a border around a merged cell?
+    </question>
+    <answer>
+      <p>Add blank cells around where the cells normally would have been and set the borders individually for each cell.
+        We will probably enhance HSSF in the future to make this process easier.</p>
+    </answer>
+  </faq>
+  <faq id="faq-N1014B">
+    <question>
+      I am using styles when creating a workbook in POI, but Excel refuses to open the file, complaining about "Too Many Styles".
+    </question>
+    <answer>
+      <p>You just create the styles OUTSIDE of the loop in which you create cells.</p>
+      <p>GOOD:</p>
+      <source><![CDATA[
+ HSSFWorkbook wb = new HSSFWorkbook();
+ HSSFSheet sheet = wb.createSheet("new sheet");
+ HSSFRow row = null;
+
+ // Aqua background
+ HSSFCellStyle style = wb.createCellStyle();
+ style.setFillBackgroundColor(HSSFColor.AQUA.index);
+ style.setFillPattern(HSSFCellStyle.BIG_SPOTS);
+ HSSFCell cell = row.createCell((short) 1);
+ cell.setCellValue("X");
+ cell.setCellStyle(style);
+
+ // Orange "foreground",
+ //     foreground being the fill foreground not the font color.
+ style = wb.createCellStyle();
+ style.setFillForegroundColor(HSSFColor.ORANGE.index);
+ style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+ for (int x = 0; x &lt; 1000; x++) {
+
+ // Create a row and put some cells in it. Rows are 0 based.
+	 row = sheet.createRow((short) k);
+
+	 for (int y = 0; y &lt; 100; y++) {
+		cell = row.createCell((short) k);
+ 		cell.setCellValue("X");
+		cell.setCellStyle(style);
+	 }
+ }
+
+ // Write the output to a file
+ FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+ wb.write(fileOut);
+ fileOut.close();
+      </source>
+      <p>BAD:</p>
+      <source>
+ HSSFWorkbook wb = new HSSFWorkbook();
+ HSSFSheet sheet = wb.createSheet("new sheet");
+ HSSFRow row = null;
+
+ for (int x = 0; x &lt; 1000; x++) {
+    // Aqua background
+    HSSFCellStyle style = wb.createCellStyle();
+    style.setFillBackgroundColor(HSSFColor.AQUA.index);
+    style.setFillPattern(HSSFCellStyle.BIG_SPOTS);
+    HSSFCell cell = row.createCell((short) 1);
+    cell.setCellValue("X");
+    cell.setCellStyle(style);
+
+    // Orange "foreground",
+    //       foreground being the fill foreground not the font color.
+    style = wb.createCellStyle();
+    style.setFillForegroundColor(HSSFColor.ORANGE.index);
+    style.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+
+    // Create a row and put some cells in it. Rows are 0 based.
+    row = sheet.createRow((short) k);
+
+    for (int y = 0; y &lt; 100; y++) {
+       cell = row.createCell((short) k);
+       cell.setCellValue("X");
+       cell.setCellStyle(style);
+    }
+ }
+
+ // Write the output to a file
+ FileOutputStream fileOut = new FileOutputStream("workbook.xls");
+ wb.write(fileOut);
+ fileOut.close();]]></source>
+    </answer>
+  </faq>
+  <faq id="faq-N10165">
+    <question>
+      I think POI is using too much memory! What can I do?
+    </question>
+    <answer>
+     <p>This one comes up quite a lot, but often the reason isn't what
+     you might initially think. So, the first thing to check is - what's
+     the source of the problem? Your file? Your code? Your environment?
+     Or Apache POI?</p>
+     <p>(If you're here, you probably think it's Apache POI. However, it
+     often isn't! A moderate laptop, with a decent but not excessive heap
+     size, from a standing start, can normally read or write a file with
+     100 columns and 100,000 rows in under a couple of seconds, including
+     the time to start the JVM).</p>
+     <p>Apache POI ships with a few programs and a few example programs,
+     which can be used to do some basic performance checks. For testing
+     file generation, the class to use is in the examples package,
+     <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples/ss/SSPerformanceTest.java">SSPerformanceTest</a>
+     (<a href="https://svn.apache.org/viewvc/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples/ss/SSPerformanceTest.java">viewvc</a>).
+     Run SSPerformanceTest with arguments of the writing type (HSSF, XSSF
+     or SXSSF), the number rows, the number of columns, and if the file
+     should be saved. If you can't run that with 50,000 rows and 50 columns
+     in HSSF and SXSSF in under 3 seconds, and XSSF in under 20 seconds
+     (and ideally all 3 in less than that!), then the problem is with
+     your environment.</p>
+     <p>Next, use the example program
+     <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples/ss/ToCSV.java">ToCSV</a>
+     (<a href="https://svn.apache.org/viewvc/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples/ss/ToCSV.java">viewvc</a>)
+     to try reading the file in with HSSF or XSSF. Related is
+     <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples/xssf/eventusermodel/XLSX2CSV.java">XLSX2CSV</a>
+     (<a href="https://svn.apache.org/viewvc/poi/trunk/poi-examples/src/main/java/org/apache/poi/examples/xssf/eventusermodel/XLSX2CSV.java">viewvc</a>),
+     which uses SAX parsing for .xlsx. Run this against both your problem file,
+     and a simple one generated by SSPerformanceTest of the same size. If this is
+     slow, then there could be an Apache POI problem with how the file is being
+     processed (POI makes some assumptions that might not always be right on all
+     files). If these tests are fast, then performance problems likely are in your
+     code.</p>
+    </answer>
+  </faq>
+  <faq id="faq-N10192">
+    <question>
+      I can't seem to find the source for the OOXML CT.. classes, where do they
+      come from?
+    </question>
+    <answer>
+       <p>The OOXML support in Apache POI is built on top of the file format
+         XML Schemas, as compiled into Java using
+         <a href="https://xmlbeans.apache.org/">XMLBeans</a>. Currently,
+         the compilation is done with XMLBeans 5.x, for maximum compatibility
+         with installations.</p>
+        <p>All of the <em>org.openxmlformats.schemas.spreadsheetml.x2006</em> CT...
+         classes are auto-generated by XMLBeans. The resulting generated Java goes
+         in the <em>poi-ooxml-full-*-sources</em> jar, and the compiled version into the
+         <em>poi-ooxml-full</em> jar.</p>
+        <p>The full <em>poi-ooxml-full</em> jar is distributed with Apache POI,
+         along with the cut-down <em>poi-ooxml-lite</em> jar containing just
+         the common parts. Use the sources off <em>poi-ooxml-full</em> for the lite version,
+         which is available from Maven Central - ask your favourite Maven
+         mirror for the <em>poi-ooxml-full-*-sources</em> jar. Alternately, if you download
+         the POI source distribution (or checkout from SVN) and build, Ant will
+         automatically compile it for you to generate the source and binary poi-ooxml-full jars.</p>
+    </answer>
+  </faq>
+  <faq id="faq-N101BA">
+    <question>
+      An OLE2 ("binary") file is giving me problems, but I can't share it. How can I investigate the problem on my own?
+    </question>
+    <answer>
+      <p>The first thing to try is running the
+        <a href="https://blogs.msdn.com/b/officeinteroperability/archive/2011/07/12/microsoft-office-binary-file-format-validator-is-now-available.aspx">Binary File Format Validator</a>
+        from Microsoft against the file, which will report if the file
+        complies with the specification. If your input file doesn't, then this
+        may well explain why POI isn't able to process it correctly. You
+        should probably in this case speak to whoever is generating the file,
+        and have them fix it there. If your POI generated file is identified
+        as having an issue, and you're on the
+        <a href="site:howtobuild">latest codebase</a>, report a new
+        POI bug and include the details of the validation failure.</p>
+      <p>Another thing to try, especially if the file is valid but POI isn't
+        behaving as expected, are the POI Dev Tools for the component you're
+        using. For example, HSSF has <em>org.apache.poi.hssf.dev.BiffViewer</em>
+        which will allow you to view the file as POI does. This will often
+        allow you to check that things are being read as you expect, and
+        narrow in on problem records and structures.</p>
+    </answer>
+  </faq>
+  <faq id="faq-N101D4">
+    <question>
+      An OOXML ("xml") file is giving me problems, but I can't share it. How can I investigate the problem on my own?
+    </question>
+    <answer>
+       <p>There's not currently a simple validator tool as there is for the
+         OLE2 based (binary) file formats, but checking the basics of a file
+         is generally much easier.</p>
+       <p>Files such as .xlsx, .docx and .pptx are actually a zip file of XML
+         files, with a special structure. Your first step in diagnosing the
+         issues with the input or output file will likely be to unzip the
+         file, and look at the XML of it. Newer versions of Office will
+         normally tell you which area of the file is problematic, so
+         narrow in on there. Looking at the XML, does it look correct?</p>
+       <p>When reporting bugs, ideally include the whole file, but if you're
+         unable to then include the snippet of XML for the problem area, and
+         reference the OOXML standard for what it should contain.</p>
+    </answer>
+  </faq>
+  <faq id="faq-N101E6">
+    <question>
+      Why do I get a java.lang.NoClassDefFoundError: javax/xml/stream/XMLEventFactory.newFactory()
+    </question>
+    <answer>
+      <p><strong>Applies to versions &lt;= 3.17 (Java 6): </strong></p>
+      <p>This error indicates that the class XMLEventFactory does not provide
+       functionality which POI is depending upon. There can be a number of
+       different reasons for this:</p>
+	  <ul>
+		<li>Outdated xml-apis.jar, stax-apis.jar or xercesImpl.jar:<br/>
+        These libraries were required with Java 5 and lower, but are not actually
+        required with spec-compliant Java 6 implementations, so try removing those
+        libraries from your classpath. If this is not possible, try upgrading to a
+        newer version of those jar files.
+        </li>
+		<li>Running IBM Java 6 (potentially as part of WebSphere Application Server):<br/>
+        IBM Java 6 does not provide all the interfaces required by the XML standards,
+        only IBM Java 7 seems to provide the correct interfaces, so try upgrading
+        your JDK.
+        </li>
+		<li>Sun/Oracle Java 6 with outdated patchlevel:<br/>
+        Some of the interfaces were only included/fixed in some of the patchlevels for
+        Java 6. Try running with the latest available patchlevel or even better use
+        Java 7/8 where this functionality should be available in all cases.
+        </li>
+	  </ul>
+    </answer>
+  </faq>
+  <faq id="faq-N10204">
+    <question>
+      Can I mix POI jars from different versions?
+    </question>
+    <answer>
+      <p>No. This is not supported.</p>
+      <p>All POI jars in use must come from the same version. A combination
+        such as <em>poi-3.11.jar</em> and <em>poi-ooxml-3.9.jar</em> is not
+        supported, and will fail to work in unpredictable ways.</p>
+      <p>If you're not sure which POI jars you're using at runtime, and/or
+        you suspect it might not be the one you intended, see
+        <a href="#faq-N10006">this FAQ entry</a> for details on
+        diagnosing it. If you aren't sure what POI jars you need, see the
+        <a href="site:components">Components Overview</a>
+        for details</p>
+    </answer>
+  </faq>
+  <faq id="faq-N10224">
+        <question>
+            Can I access/modify workbooks/documents/slideshows in multiple threads?
+            What are the multi-threading guarantees that Apache POI makes
+        </question>
+        <answer>
+            <p>In short: <em>Handling different document-objects in different threads will
+                work. Accessing the same document in multiple threads will not work.</em></p>
+            <p>This means the workbook/document/slideshow objects are not checked for
+                thread safety, but any globally held object like global caches or other
+                data structures are guarded against multi threaded access accordingly.</p>
+            <p>There have been
+                <a href="https://mail-archives.apache.org/mod_mbox/poi-user/201109.mbox/%3C1314859350817-4757295.post@n5.nabble.com%3E">discussions</a>
+                about accessing different Workbook-sheets
+                in different threads concurrently. While this may work to some degree, it may lead
+                to very hard to track errors as multi-threading issues typically only
+                manifest after long runtime when many threads are active and the system
+                is under high load, i.e. in production use! Also it might break in future
+                versions of Apache POI as we do not specifically test using the library
+                this way.</p>
+        </answer>
+  </faq>
+  <faq id="faq-N1023C">
+    <question>
+      What are the advantages and disadvantages of the different constructor and
+      write methods?
+    </question>
+    <answer>
+      <p>Across most of the UserModel classes (
+<a href="../apidocs/dev/org/apache/poi/ooxml/POIDocument.html">POIDocument</a>
+and
+<a href="../apidocs/dev/org/apache/poi/ooxml/POIXMLDocument.html">POIXMLDocument</a>),
+       you can open the document from a read-only <em>File</em>, a read-write <em>File</em>
+       or an <em>InputStream</em>. You can always write out to an <em>OutputStream</em>,
+       and increasing also to a <em>File</em>.
+      </p>
+      <p>Opening your document from a <em>File</em> is suggested wherever possible.
+       This will always be quicker and lower memory then using an <em>InputStream</em>,
+       as the latter has to buffer things in memory.</p>
+      <p>When writing, you can use an <em>OutputStream</em> to write to a new file, or
+       overwrite an existing one (provided it isn't already open!). On slow links / disks,
+       wrapping with a <em>BufferedOutputStream</em> is suggested. To write like this, use
+<a href="../apidocs/dev/org/apache/poi/POIDocument.html#write(java.io.OutputStream)">write(OutputStream)</a>.
+      </p>
+      <p>To write to the currently open file (an in-place write / replace), you need to
+       have opened your document from a <em>File</em>, not an <em>InputStream</em>. In
+       addition, you need to have opened from the <em>File</em> in read-write mode, not
+       read-only mode. To write to the currently open file, on formats that support it
+       (not all do), use
+<a href="../apidocs/dev/org/apache/poi/POIDocument.html#write()">write()</a>.
+      </p>
+      <p>You can also write out to a new <em>File</em>. This is available no matter how
+       you opened the document, and will create/replace a new file. It is faster and lower
+       memory than writing to an <em>OutputStream</em>. However, you can't use this to
+       replace the currently open file, only files not currently open. To write to a
+       new / different file, use
+<a href="../apidocs/dev/org/apache/poi/POIDocument.html#write(java.io.File)">write(File)</a>
+      </p>
+      <p>More information is also available in the
+<a href="../components/spreadsheet/quick-guide.html#FileInputStream">HSSF and XSSF documentation</a>,
+       which largely applies to the other formats too.
+      </p>
+      <p>Note that currenly (POI 3.15 beta 3), not all of the write methods are available
+       for the OOXML formats yet.
+      </p>
+    </answer>
+  </faq>
+  <faq id="faq-N1029C">
+    <question>
+      Can POI be used with OSGI?
+    </question>
+    <answer>
+    	<p>Starting with POI 3.16 there's a workaround for OSGIs context classloader handling,
+    	 i.e. it replaces the threads current context classloader with an implementation of
+    	 limited class view. This will lead to IllegalStateExceptions, as xmlbeans can't find
+    	 the xml schema definitions in this reduced view. The workaround is to initialize
+    	 the classloader delegate of <em>POIXMLTypeLoader</em> , which defaults to the current
+    	 thread context classloader. The initialization should take place before any other
+    	 OOXML related calls. The class in the example could be any class, which is
+    	 part of the poi-ooxml-schema or ooxml-schema:<br/>
+    	 <em> POIXMLTypeLoader.setClassLoader(CTTable.class.getClassLoader());</em>
+    	</p>
+	</answer>
+  </faq>
+    <faq id="faq-N102B0">
+        <question>
+            Can Apache POI be compiled/used with Java 11, 17 and 21?
+        </question>
+        <answer>
+            <p>
+              POI is successfully tested with many different versions of Java. It is
+              recommended that you use Java versions that have Long Term Support (Java 11, 17 and 21).
+            </p>
+            <p>Including the existing binaries as normal jar-files
+                should work when using recent versions of Apache POI. You may see
+                some warnings about illegal reflective access, but it should work fine
+                despite those. We are working on getting the code changed so we avoid
+                discouraged accesses in the future.
+            </p>
+            <p>NOTE: Apache POI tries to support the Java module system but it is more complicated
+                because Apache POI is still supporting Java 8 and the module system
+                cannot be fully supported while maintaining such support.
+            </p>
+            <p>
+                FYI, jaxb in current versions also causes some warnings about reflective access,
+                we cannot fix those until jaxb >= 2.4.0 is available, see
+                https://stackoverflow.com/a/50251510/411846 for details, you can set a system
+                property "com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize" to avoid this warning.
+            </p>
+            <p>
+                For compiling Apache POI, you should use at least version 4.1.0 when it becomes available
+                or a recent trunk checkout until then.
+            </p>
+            <p>
+              If you are building POI yourself from source files, use an up to date version of Gradle.
+              If you use Ant, again check the Ant version supports the version of Java you are using.
+            </p>
+        </answer>
+    </faq>
+    <faq id="faq-java10">
+        <question>
+            Can Apache POI be compiled/used with Java 9 or Java 10?
+        </question>
+        <answer>
+            <p>Apache POI does not actively support Java 9 or Java 10 any longer as those versions were
+                obsoleted by Oracle already. See the previous FAQ entry for information about support for
+                Java LTS versions.
+            </p>
+        </answer>
+    </faq>
+    <faq id="faq-ibmjdk">
+        <question>
+            Anything to consider when using IBM JDK?
+        </question>
+        <answer>
+            <p>The IBM Java runtime is using a JIT compiler which doesn't behave sometimes. ;)
+                Especially when rendering slideshows it throws errors, which don't occur when debugging the code.
+                E.g. an ArrayIndexOutOfBoundsException is thrown in TexturePaintContext when the image contains
+                textures - see <a href="https://bz.apache.org/bugzilla/show_bug.cgi?id=62999">#62999</a> for more
+                details on how to detected JIT errors.</p>
+            <p>To prevent the JIT errors, the affected methods need be excluded from JIT compiling.
+                Currently (tested with IBM JDK 1.8.0_144 and _191) the following should be added to the VM parameters:<br/>
+            </p>
+            <source>
+                -Xjit:exclude={sun/java2d/pipe/AAShapePipe.renderTiles(Lsun/java2d/SunGraphics2D;Ljava/awt/Shape;Lsun/java2d/pipe/AATileGenerator;[I)V},exclude={sun/java2d/pipe/AlphaPaintPipe.renderPathTile(Ljava/lang/Object;[BIIIIII)V},exclude={java/awt/TexturePaintContext.getRaster(IIII)Ljava/awt/image/Raster;}
+            </source>
+        </answer>
+    </faq>
+    <faq id="faq-thread-local-memory-leaks">
+        <question>
+            Tomcat is reporting memory leaks caused by some class in Apache POI which uses ThreadLocal
+        </question>
+        <answer>
+            <p>Apache POI uses Java <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/ThreadLocal.html">ThreadLocals</a>
+                in order to cache some data when Apache POI is used in a multi-threading environment (see also the FAQ about thread-safety above!)
+            </p>
+            <p>WebServers like Tomcat use thread-pooling to re-use threads to avoid the cost of frequent thread-startup and shutdown.
+                In order to guard against memory-leaks, Tomcat performs checks on allocated memory in ThreadLocals and reports them as warnings.
+            </p>
+            <p>In order to get rid of these warnings, Apache POI, starting with version 5.2.4, provides a utility ThreadLocalUtils which can
+                be used to clear all objects held in thread-local objects before returning the thread back to the global pool.
+            </p>
+            <source>
+                org.apache.poi.util.ThreadLocalUtil.clearAllThreadLocals();
+
+                // if you use poi-ooxml, also clear thread-locals in XMLBeans
+                org.apache.xmlbeans.ThreadLocalUtil.clearAllThreadLocals();
+            </source>
+        </answer>
+    </faq>
+    <faq id="faq-demand-fix-asap">
+        <question>
+            How can I demand fixes or features in Apache POI to be done with urgency?
+        </question>
+        <answer>
+            <p>Apache POI is an open source project developed by a very small group of volunteers.
+            </p>
+            <p>Currently no-one is paid to work on new features or bug-fixes.
+            </p>
+            <p>So it is considered fairly rude to "demand" things, especially "ASAP" is quite frowned
+                upon and may even reduce the likelihood that your issue is picked up and worked on.
+            </p>
+            <p>If you would like to increase chances that your problem is tackled, you can do a number of things
+                as follows, sorted by the amount of effort which may be required from you:
+            </p>
+            <ul>
+                <li>Ensure your bug-report is complete and contains instructions/samples which allow to reproduce the problem.
+                Ideally a self-sufficient test-case which does not need lots of manual setup.</li>
+                <li>Provide a summary of research of the root-cause of your problem.</li>
+                <li>Provide a patch which fixes the problem. We usually like to have unit-tests accompanying changes to
+                    have high code-coverage and good confidence that issues are fixed and few regressions are introduced
+                    over time.</li>
+                <li>Become a contributor! The entry threshold is actually not too high as soon as you provided your
+                    first successful bugfix. If you think you can spare the time to contribute for some longer time,
+                    becoming an official committer should not be too hard.</li>
+            </ul>
+        </answer>
+    </faq>
+    <faq id="faq-reproducible-build-and-output">
+        <question>
+            Does Apache POI support building reproducibly and/or producing reproducible output?
+        </question>
+        <answer>
+            <p>There are two angles to reproducibility: building reproducible jars for Apache POI itself and making Apache POI
+            produce byte-for-byte identical files when it is used to create documents.
+            </p>
+            <ul>
+            <li>The build of jars for Apache POI should be reproducible since version 5.2.4 by removing the build-timestamp
+                from the generated Version.java. Make sure the exact same combination of build-tools is used,
+                especially the version of the JDK.</li>
+            <li>Producing reproducible output files will be supported in the future (after version 5.3.0), initial support is available in
+                nightly builds.<br/>
+                Note: Files are only written without timestamps if the environment variable SOURCE_DATE_EPOCH is set to a
+                non-empty value.</li>
+            </ul>
+            <p>Please create a bug entry if you find things which break reproducibility, both for building and output files.<br/>
+                Please provide exact steps how to reproduce your issue!
+            </p>
+            <p>See <a href="https://reproducible-builds.org/">https://reproducible-builds.org/</a> for general information about why reproducible builds
+                and output may be important.
+            </p>
+        </answer>
+    </faq>
+</faqs>

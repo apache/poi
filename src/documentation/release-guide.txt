@@ -1,0 +1,367 @@
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+
+
+             ==============================
+                   POI Release Guide
+             ==============================
+
+
+(I) Prerequisites
+
+   1. You should read the <a href="https://www.apache.org/dev/release.html">Apache Release FAQ</a>
+   2a. You must have shell access to people.apache.org; and you should
+       have key-based authentication set up
+       1. Generate ssh key with ssh-keygen -t rsa -b 4096
+       (e.g. <a href="http://www.linuxproblem.org/art_9.html">how to</a>.)
+       2. Add contents of id_rsa.pub to SSH Key (authorized_keys) line on https://id.apache.org/
+       3. ssh -v username@people.apache.org
+          Verify authenticity of host: https://www.apache.org/dev/machines
+       4. Only sftp access is necessary
+   2b. You must be a member of the committee group
+   3. Release manager must have their public key appended to the KEYS file checked in to SVN and the key published on one of the public key servers.
+      More info can be found here: <a href="https://www.apache.org/dev/release-signing.html">https://www.apache.org/dev/release-signing.html</a>
+   4. You must have Java JDK 1.8 installed and active.
+   5. You must have the following utilities installed on your local machine and available in your path:
+          * <a href="www.openssh.com">ssh</a>
+          * <a href="www.gnupg.org">gnupg</a>
+          * <a href="www.openssl.org">openssl</a>
+      For Windows users, install Cygwin and make sure you have the above utilities
+   6a. The POI build system requires two components to perform a build
+          * <a href="https://ant.apache.org">Ant</a> 1.9.x or higher
+          * <a href="https://forrest.apache.org/">Forrest</a> 0.9.
+      Make sure ANT_HOME and FORREST_HOME are set.
+
+   6b. Ensure you can log in to https://repository.apache.org/ with your Apache
+        credentials, and that you can see the "Staging Repositories" area on
+        the left hand side.
+
+   6c. It's a good idea to check at https://ci-builds.apache.org/job/POI/
+       that Jenkins is in a good state (i.e. most recent build passed
+       and is up to date with SVN). You probably also want to e-mail
+       the dev list with a note to say you're building a release.
+
+   7. Before building, you should run the "rat-check" build task, which
+      uses <a href="https://creadur.apache.org/rat/">Apache Rat</a>
+      to check the source tree for files lacking license headers. Files
+      without headers should be either fixed, or added to the exclude list
+
+   8. Check file permissions are correct in SVN.
+      There can be files in the SVN tree marked executable (have the
+      svn:executable property set), but which should not be. Checking them
+      out will cause the executable bit to be set for them on filesystems
+      which support it. The flag can be removed in batch using
+
+{code:sh}
+svn pd 'svn:executable' $(find -name .svn -prune -or -type f ! -name \*.sh \
+ -print0 | xargs -0 svn pg 'svn:executable' | cut -d ' ' -f 1)
+{code}
+
+   9. Before building, ensure that the year in the NOTICE file is correct,
+      and review any new or updated dependencies to ensure that if they
+      required LICENSE or NOTICE updates then these were done.
+
+  10. Ensure that the changelog is up to date
+
+  11. Ensure that the KEYS files in the dist areas are up-to-date with the
+      latest ones in svn:
+      https://dist.apache.org/repos/dist/dev/poi/KEYS
+      https://dist.apache.org/repos/dist/release/poi/KEYS
+      Dist is a regular svn repo that can be checked out and committed to.
+      To upload to dist: https://www.apache.org/dev/release-distribution
+
+You can use these commands to do a sparse checkout of dist.apache.org.
+There are so many files from all the Apache projects that it is not recommended to do a full checkout.
+
+{code:sh}
+svn checkout https://dist.apache.org/repos/dist/ --depth immediates
+svn update --set-depth infinity dist/dev/poi/
+svn update --set-depth infinity dist/release/poi/
+{code}
+
+
+(II) Making release artifacts
+  Run these commands from a clean checkout of https://svn.apache.org/repos/asf/poi/trunk
+
+  1. Update the version number in these files and commit the changes to svn.
+     - build.xml (version.id)
+     - build.gradle
+     - osgi/pom.xml (version and poi.version)
+
+  2. Force a new build at https://ci-builds.apache.org/job/POI/job/POI-DSL-1.8
+     - when build completes, download the built jars from
+       https://ci-builds.apache.org/job/POI/job/POI-DSL-1.8/lastSuccessfulBuild/artifact/
+
+  3. To produce the source distributions, run
+     - ./gradlew srcDistZip
+     - ./gradlew srcDistTar
+
+  4. Copy the build/dist files to your svn checkout of dist.apache.org (dist/dev/poi/src)
+{code:sh}
+svn co https://dist.apache.org/repos/dist/release/poi /opt/poi-dist
+cp build/dist/*.zip build/*.tgz /opt/poi-dist/dev/
+{code}
+
+  5. Generate SHA512 checksums
+
+{code:sh}
+for f in *.zip *.tgz
+do
+  sha512sum $f > $f.sha512
+done
+{code}
+
+  6. Generate signatures
+     - The 1556F3A4 key in the command below is just an example, replace the value with your own key id
+
+{code:sh}
+for f in *.zip *.tgz; do gpg --default-key 1556F3A4 -ab $f; done
+{code}
+
+  7. Validate the checksums and signatures
+
+{code:sh}
+find . -name "*.sha512" -type f -execdir sha512sum -c {} \;
+find . -name "*.asc" -exec gpg --no-secmem-warning --verify {} \;
+{code}
+
+  8. Deploy the source distribution files to the dev area of dist.apache.org
+     - Remove any old release candidates (only need to keep the latest one)
+     - svn commit the changes
+
+(III) Deploy Jars to Maven Staging
+
+  1. Ensure that there has been a build with the right svn commit and then download the jars
+     - https://ci-builds.apache.org/job/POI/job/POI-DSL-1.8
+     - https://ci-builds.apache.org/job/POI/job/POI-DSL-1.8/lastSuccessfulBuild/artifact/
+
+  2. Set up a `poi-prep` directory and copy all the jars other than the `test` jars into it.
+     - The artifacts in the archive.zip that you can download (see 1 above) are grouped in different dirs
+     - you can unzip the archive.zip and use the sample script from the `poi-prep` dir
+This is an example script:
+{code:sh}
+export DOWNLOADED_JARS_DIR=/path/to/unzipped/archive
+mv $DOWNLOADED_JARS_DIR/build/dist/maven/poi/*.jar .
+mv $DOWNLOADED_JARS_DIR/build/dist/maven/poi-excelant/*.jar .
+mv $DOWNLOADED_JARS_DIR/build/dist/maven/poi-examples/*.jar .
+mv $DOWNLOADED_JARS_DIR/build/dist/maven/poi-ooxml/*.jar .
+mv $DOWNLOADED_JARS_DIR/build/dist/maven/poi-ooxml-full/*.jar .
+mv $DOWNLOADED_JARS_DIR/build/dist/maven/poi-ooxml-lite/*.jar .
+mv $DOWNLOADED_JARS_DIR/build/dist/maven/poi-scratchpad/*.jar .
+mv $DOWNLOADED_JARS_DIR/build/dist/maven/poi-javadoc/*.jar .
+mv $DOWNLOADED_JARS_DIR/build/dist/maven/poi-examples-javadoc/*.jar .
+mv $DOWNLOADED_JARS_DIR/build/dist/maven/poi-excelant-javadoc/*.jar .
+mv $DOWNLOADED_JARS_DIR/build/dist/maven/poi-ooxml-javadoc/*.jar .
+mv $DOWNLOADED_JARS_DIR/build/dist/maven/poi-scratchpad-javadoc/*.jar .
+{code:sh}
+
+  3. We need to create pom files. Copy the ones from the last release into the directory with the jars.
+     - ensure the pom file names match the jar names (same version)
+
+This is an example script:
+{code:sh}
+export POI_RELEASE=5.3.0
+export POI_LAST_RELEASE=5.2.5
+curl https://repo1.maven.org/maven2/org/apache/poi/poi/$POI_LAST_RELEASE/poi-$POI_LAST_RELEASE.pom --output poi-$POI_RELEASE.pom
+curl https://repo1.maven.org/maven2/org/apache/poi/poi-scratchpad/$POI_LAST_RELEASE/poi-scratchpad-$POI_LAST_RELEASE.pom --output poi-scratchpad-$POI_RELEASE.pom
+curl https://repo1.maven.org/maven2/org/apache/poi/poi-ooxml/$POI_LAST_RELEASE/poi-ooxml-$POI_LAST_RELEASE.pom --output poi-ooxml-$POI_RELEASE.pom
+curl https://repo1.maven.org/maven2/org/apache/poi/poi-ooxml-lite/$POI_LAST_RELEASE/poi-ooxml-lite-$POI_LAST_RELEASE.pom --output poi-ooxml-lite-$POI_RELEASE.pom
+curl https://repo1.maven.org/maven2/org/apache/poi/poi-ooxml-full/$POI_LAST_RELEASE/poi-ooxml-full-$POI_LAST_RELEASE.pom --output poi-ooxml-full-$POI_RELEASE.pom
+curl https://repo1.maven.org/maven2/org/apache/poi/poi-excelent/$POI_LAST_RELEASE/poi-excelent-$POI_LAST_RELEASE.pom --output poi-excelent-$POI_RELEASE.pom
+curl https://repo1.maven.org/maven2/org/apache/poi/poi-examples/$POI_LAST_RELEASE/poi-examples-$POI_LAST_RELEASE.pom --output poi-examples-$POI_RELEASE.pom
+{code:sh}
+
+  4. Fix up the version values in the poms
+     - I would recommend using an IDE and loading up the full `poi-prep` directory
+     - Replace all instances of the old version number with the new one
+     - if using 'Replace All', approve each change just in case the old version number might also match the version of a non-POI dependency
+     - update the dependency versions
+     - check if we need to remove or add dependencies
+     - great care must be taken at this stage because this step is very error prone
+     - feel free to generate the poms using the Gradle build instead but the Gradle build will get some aspects wrong
+     - the poi-ooxml-lite build is one aspect that messes up the generated poms
+     - you can hand modify the poms to fix issues (compare against the poms from the last release)
+
+  5. Generate signatures (no need for SHA checksums because they are automatically created later)
+     - The 1556F3A4 key in the command below is just an example, replace the value with your own key id
+
+{code:sh}
+for f in *.jar *.pom; do gpg --default-key 1556F3A4 -ab $f; done
+{code}
+
+  6. Create bundle jars
+
+{code:sh}
+jar -cvf poi-bundle.jar poi-5*.pom poi-5*.pom.asc poi-5*.jar poi-5*.jar.asc
+jar -cvf poi-ooxml-bundle.jar poi-ooxml-5*.pom poi-ooxml-5*.pom.asc poi-ooxml-5*.jar poi-ooxml-5*.jar.asc
+jar -cvf poi-ooxml-full-bundle.jar poi-ooxml-full*.pom poi-ooxml-full*.pom.asc poi-ooxml-full*.jar poi-ooxml-full*.jar.asc
+jar -cvf poi-ooxml-lite-bundle.jar poi-ooxml-lite*.pom poi-ooxml-lite*.pom.asc poi-ooxml-lite*.jar poi-ooxml-lite*.jar.asc
+jar -cvf poi-scratchpad-bundle.jar poi-scratchpad*.pom poi-scratchpad*.pom.asc poi-scratchpad*.jar poi-scratchpad*.jar.asc
+jar -cvf poi-excelant-bundle.jar poi-excelant*.pom poi-excelant*.pom.asc poi-excelant*.jar poi-excelant*.jar.asc
+jar -cvf poi-examples-bundle.jar poi-examples*.pom poi-examples*.pom.asc poi-examples*.jar poi-examples*.jar.asc
+{code}
+
+  7. Deploy bundle jars to repository.apache.org
+     - Login with your Apache username and password
+     - If you have never deployed a bundle artifact then read
+       https://help.sonatype.com/repomanager2/staging-releases/artifact-bundles
+     - deploy each of the 7 bundle jars - watch out for exceptions when loading them
+
+(IV) Calling the vote:
+
+   1. The release manager should call the vote
+   2. Include the URL of the release artifacts
+   3. Include the time for the vote to run (3 day minimum, can be longer)
+   4. Provide guidance on what needs to be checked
+   5. Complete a tally, and send a result once the time has passed
+
+(V) After the vote:
+
+Deploy the artifacts from the staging area (https://dist.apache.org/repos/dist/dev/poi/)
+to the release area of the dist repo:
+    https://dist.apache.org/repos/dist/release/poi/release/
+
+And remove any old releases from the staging area if they exist (should have been deleted by Step 11)
+Staging area: https://dist.apache.org/repos/dist/dev/poi/
+
+{code:sh}
+svn rm https://dist.apache.org/repos/dist/dev/poi/FIXME3.16-RC1 -m "remove old release from staging area"
+{code:sh}
+
+You should get an email from the Apache Reporter Service (no-reply@reporter.apache.org)
+at your Apache email address.
+The email instructions will ask you to log on to https://reporter.apache.org/addrelease.html?poi
+and add your release data (version and date) to the database.
+
+Log into https://repository.apache.org/ and go to the "Staging Repositories" area.
+Find the "orgapachepoi" entry, check it has the right content, then Close the repository
+(it was probably already closed by release-prep3).
+Select all artifacts and Release (and Automatically Drop) them.
+Refresh to verify that the artifacts are no longer in the Staging Repositories area.
+
+2. Wait for the distributions to appear on your favourite mirror (anywhere from 3-24 hours)
+  https://www.apache.org/dyn/closer.lua/poi/dev/
+
+3. Wait for the maven artifacts to appear on Maven Central, and ensure they work:
+  Maven Central: https://search.maven.org/#search|ga|1|g%3A%22org.apache.poi%22
+
+Create a simple project and make sure the release artifacts are accessible
+by maven:
+
+{code:sh}
+mvn archetype:create -DgroupId=org.apache.poi.scratchpad -DartifactId=maven-test
+cd maven-test
+{code}
+
+edit pom.xml and add the release artifacts to the project dependencies:
+
+{code:xml}
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-ooxml</artifactId>
+      <version>4.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi-scratchpad</artifactId>
+      <version>4.0.0</version>
+    </dependency>
+{code}
+
+edit src/main/java/Test.java and add this:
+
+{code:java}
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+
+public class Test {}
+{code}
+
+{code:sh}
+mvn compile
+{code}
+
+You should see [INFO] BUILD SUCCESSFUL in the end, which tells you that
+the jars could be downloaded fine.
+
+4. Edit the website homepage and list the new release there.
+   * poi/site/src/documentation/content/xdocs/index.xml
+   * poi/site/src/documentation/content/xdocs/changes.xml
+   remove older releases.
+
+5. Edit the website download page, and list the new release there. This should
+   reference the checksums, so take care when updating
+   * poi/site/src/documentation/content/xdocs/download.xml
+{code:sh}
+# the following generates a download-snipplet.xml to be copy&pasted in the download.xml
+ant update-download -Dversion.id="3.15" -Dreltype=dev -Drel_date="02 July 2016" -Dfile_date="20160702"
+{code}
+   And copy the contents from the output, download-snipplet.xml, to the appropriate section
+   in poi/site/src/documentation/content/xdocs/download.xml.
+
+   Additionally there are some further files to be updated ... check the results and commit them:
+{code:sh}
+# the following updates various references from the previous release to the current release
+ant release-finish -Dfile_date="20160702"
+{code}
+
+
+6. Build site using a recent version of Java 1.8
+   Commit the site changes to svn, and publish live
+
+7. Copy the build javadocs to a stable location under /apidocs/{ver}/
+   - For a major release, create a new subfolder to hold the javadocs for
+     this release family, eg 4.1 for 4.1.x
+   - For a minor release, replace the existing subfolder for the release
+     family, eg 4.1.2 uses 4.1 replacing the previous 4.1.1
+
+8. Don't forget to upload the latest version of the site and javadocs
+
+9. Send announcements:
+From: your @apache.org e-mail address
+To: user@poi.apache.org, dev@poi.apache.org, general@poi.apache.org, and announce@apache.org
+Subject: [ANNOUNCE] Apache POI FIXME3.16 released
+Body:
+"""
+The Apache POI PMC is pleased to announce the release of Apache POI FIXME3.16.
+
+Apache POI is a Java library for reading and writing Microsoft Office files.
+
+For detailed changes in this release, refer to the release notes [1] and the changelog [2].
+
+Thank you to all our contributors for making this release possible.
+
+On behalf of the Apache POI PMC,
+Your Name
+
+[1] Release notes: https://www.apache.org/dyn/closer.lua/poi/dev/RELEASE-NOTES-FIXME3.16.txt
+[2] Changelog: https://poi.apache.org/changes.html#FIXME3.16
+"""
+
+Note, announcements should be sent from your @apache.org e-mail address.
+
+10. In Bugzilla, add a new version and the next "...-dev" version. Also close the n-2 -dev version to new bugs.
+
+11. Add the version to the DOAP file too
+  https://svn.apache.org/repos/asf/poi/trunk/doap_POI.rdf
+
+12. Delete directory that held RC.
+
+e.g.
+{code:sh}
+svn delete -m "delete empty RC directory for 4.0.0" https://dist.apache.org/repos/dist/dev/poi/4.0.0-RC1
+{code}
