@@ -14,10 +14,30 @@ github:
     - powerpoint
     - visio
   
+  dependabot_alerts:  true
+  dependabot_updates: false
+
   features:
     # Enable wiki for documentation
     wiki: false
     # Enable issue management
-    issues: false
+    issues: true
     # Enable projects for project management boards
     projects: false
+    # Enable github discussions
+    discussions: true
+
+  enabled_merge_buttons:
+    squash:  true
+    merge:   false
+    rebase:  true
+
+  protected_branches:
+    trunk: {}
+
+notifications:
+  commits:              commits@poi.apache.org
+  issues:               dev@poi.apache.org
+  pullrequests:         dev@poi.apache.org
+  discussions:          dev@poi.apache.org
+  jobs:                 dev@poi.apache.org
