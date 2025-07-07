@@ -44,7 +44,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
  * SpreadsheetML workbook embedded into the document.<p>
  *
  * This code was successfully tested with the following file from the POI test collection:
- * http://svn.apache.org/repos/asf/poi/trunk/test-data/document/EmbeddedDocument.docx
+ * test-data/document/EmbeddedDocument.docx
  */
 @SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public class UpdateEmbeddedDoc {

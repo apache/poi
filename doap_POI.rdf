@@ -253,10 +253,10 @@
       </Version>
     </release>
     <repository>
-      <SVNRepository>
-        <location rdf:resource="https://svn.apache.org/repos/asf/poi/"/>
-        <browse rdf:resource="https://svn.apache.org/viewvc/poi/"/>
-      </SVNRepository>
+      <GitRepository>
+        <location rdf:resource="https://github.com/apache/poi.git"/>
+        <browse rdf:resource="https://github.com/apache/poi/"/>
+      </GitRepository>
     </repository>
    <maintainer>
       <foaf:Person>

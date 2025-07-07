@@ -53,9 +53,7 @@ Bug tracker:
 
 Source code:
 
-* Official `Apache Subversion repo`_ at apache.org
-* `ViewVC repo browser`_ at apache.org
-* `GitHub git mirror`_ at github.com
+* Official `Apache Git repo`_ at apache.org
 
 Requires Java 1.8 or later.
 
@@ -100,7 +98,5 @@ To build the jar files for poi, poi-ooxml, poi-ooxml-lite, poi-ooxml-full and po
 .. _Bugzilla: https://bz.apache.org/bugzilla/buglist.cgi?product=POI
 .. _GitHub pull requests: https://github.com/apache/poi/pulls
 
-.. _Apache Subversion repo: https://svn.apache.org/repos/asf/poi/trunk
-.. _ViewVC repo browser: https://svn.apache.org/viewvc/poi/trunk
-.. _GitHub git mirror: https://github.com/apache/poi
+.. _Apache Git repo: https://github.com/apache/poi
 .. _How To Build page: http://poi.apache.org/devel/
