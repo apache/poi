@@ -204,10 +204,9 @@ def shellCmdsUnix =
 rm -rf examples excelant integrationtest main ooxml ooxml-schema scratchpad build.javacheck.xml
 
 # show which files are currently modified in the working copy
-svn status || true
+git status || true
 # make sure no changed module-class-files or ooxml-lite-report-files are lingering on
-svn revert poi*/src/*/java9/module-info.* || true
-svn revert src/resources/ooxml-lite-report.* || true
+git reset --hard || true
 
 # print out information about which exact version of java we are using
 echo Java-Home: $JAVA_HOME
@@ -240,11 +239,9 @@ exit 0'''
 def shellCmdsWin =
         '''@echo off
 :: show which files are currently modified in the working copy
-svn status
+git status
 :: make sure no changed module-class-files are lingering on
-svn revert poi*\\src\\*\\java9\\module-info.*
-:: also revert some files directly as the wildcard-based revert seems to fail sometimes
-svn revert poi\\src\\main\\java9\\module-info.class poi\\src\\test\\java9\\module-info.class poi-examples\\src\\main\\java9\\module-info.class poi-excelant\\src\\main\\java9\\module-info.class poi-excelant\\src\\test\\java9\\module-info.class poi-integration\\src\\test\\java9\\module-info.class poi-ooxml\\src\\main\\java9\\module-info.class poi-ooxml\\src\\test\\java9\\module-info.class poi-ooxml-full\\src\\main\\java9\\module-info.class poi-ooxml-lite\\src\\main\\java9\\module-info.class poi-ooxml-lite\\src\\main\\java9\\module-info.java poi-ooxml-lite-agent\\src\\main\\java9\\module-info.class poi-scratchpad\\src\\main\\java9\\module-info.class poi-scratchpad\\src\\test\\java9\\module-info.class src\\resources\\ooxml-lite-report.clazz src\\resources\\ooxml-lite-report.xsb
+git reset --hard
 
 :: print out information about which exact version of java we are using
 echo Java-Home: %JAVA_HOME%
@@ -639,7 +636,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
             runner('DontRun')
             steps {
                 shell(
-                        '''which svn || true
+                        '''which git || true
 which javac
 javac -version
 echo '<?xml version="1.0"?><project name="POI Build" default="test"><target name="test"><echo>Using Ant: ${ant.version} from ${ant.home}</echo></target></project>' > build.xml
