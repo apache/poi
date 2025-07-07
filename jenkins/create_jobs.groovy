@@ -303,8 +303,11 @@ poijobs.each { poijob ->
         }
         jdk(jdkMapping.get(jdkKey).jenkinsJdk)
         scm {
-            git(gitBase) {
-                branch('origin/trunk')
+            git {
+                remote {
+                    url(gitBase)
+                }
+                branch('*/trunk')
             }
         }
         checkoutRetryCount(3)
