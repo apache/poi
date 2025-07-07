@@ -1,7 +1,7 @@
 # https://cwiki.apache.org/confluence/display/INFRA/Git+-+.asf.yaml+features
 
 github:
-  description: "Mirror of Apache POI subversion. The Java API for Microsoft Documents."
+  description: "Mirror of Apache POI gitbox. The Java API for Microsoft Documents."
   homepage: https://poi.apache.org/
   labels:
     - poi
