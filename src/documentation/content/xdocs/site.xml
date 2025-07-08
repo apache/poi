@@ -124,7 +124,7 @@ See https://xml.apache.org/forrest/linking.html for more info
     <community label="Getting Involved" href="devel/" tab="community">
         <howtobuild label="How To Build" href="index.html"/>
         <nightly label="Nightly Builds" href="nightly.html"/>
-        <subversion label="Subversion Repository" href="subversion.html"/>
+        <git label="Git Repository" href="git.html"/>
         <guidelines label="Contribution Guidelines" href="guidelines.html"/>
         <whoweare label="Who We Are" href="who.html"/>
         <plan label="Planning Documents" href="plan/">
