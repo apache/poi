@@ -1,7 +1,2 @@
 <broken-links>
-  <link message="No pipeline matched request: components/spreadsheet/error:site:subversion">components/spreadsheet/error:site:subversion</link>
-  <link message="No pipeline matched request: error:site:subversion">error:site:subversion</link>
-  <link message="No pipeline matched request: components/hpsf/error:site:subversion">components/hpsf/error:site:subversion</link>
-  <link message="No pipeline matched request: help/error:site:subversion">help/error:site:subversion</link>
-  <link message="No pipeline matched request: devel/error:site:subversion">devel/error:site:subversion</link>
 </broken-links>
