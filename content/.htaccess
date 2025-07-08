@@ -18,7 +18,8 @@ RewriteRule ^poi-jvm-languages.html$ /components/poi-jvm-languages.html [R=perma
 RewriteRule ^poi-ruby.html$     /components/poi-ruby.html [R=permanent]
 RewriteRule ^guidelines.html$   /devel/guidelines.html [R=permanent]
 RewriteRule ^howtobuild.html$   /devel/howtobuild.html [R=permanent]
-RewriteRule ^subversion.html$   /devel/subversion.html [R=permanent]
+RewriteRule ^subversion.html$   /devel/git.html [R=permanent]
+RewriteRule ^devel/subversion.html$  /devel/git.html [R=permanent]
 # Redirects for the latest/dev JavaDocs to the new versioned location
 RewriteRule ^apidocs/org/(.*)$    /apidocs/dev/org/$1 [R=permanent]
 RewriteRule ^apidocs/(overview*)$ /apidocs/dev/$1 [R=permanent]
