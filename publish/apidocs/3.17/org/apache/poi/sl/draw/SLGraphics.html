@@ -1,0 +1,3187 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+SLGraphics (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="SLGraphics (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html" title="interface in org.apache.poi.sl.draw"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/draw/SLGraphics.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SLGraphics.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.sl.draw</FONT>
+<BR>
+Class SLGraphics</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by ">java.awt.Graphics
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by ">java.awt.Graphics2D
+          <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.sl.draw.SLGraphics</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>SLGraphics</B><DT>extends java.awt.Graphics2D<DT>implements java.lang.Cloneable</DL>
+</PRE>
+
+<P>
+Translates Graphics2D calls into PowerPoint.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/util/POILogger.html" title="class in org.apache.poi.util">POILogger</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#log">log</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#SLGraphics(org.apache.poi.sl.usermodel.GroupShape)">SLGraphics</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/GroupShape.html" title="interface in org.apache.poi.sl.usermodel">GroupShape</A>&lt;?,?&gt;&nbsp;group)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Construct Java Graphics object which translates graphic calls in ppt drawing layer.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#addRenderingHints(java.util.Map)">addRenderingHints</A></B>(java.util.Map&lt;?,?&gt;&nbsp;hints)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the values of an arbitrary number of preferences for the
+ rendering algorithms.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#applyPaint(org.apache.poi.sl.usermodel.SimpleShape)">applyPaint</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="interface in org.apache.poi.sl.usermodel">SimpleShape</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#applyStroke(org.apache.poi.sl.usermodel.SimpleShape)">applyStroke</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="interface in org.apache.poi.sl.usermodel">SimpleShape</A>&lt;?,?&gt;&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#clearRect(int, int, int, int)">clearRect</A></B>(int&nbsp;x,
+          int&nbsp;y,
+          int&nbsp;width,
+          int&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Clears the specified rectangle by filling it with the background
+ color of the current drawing surface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#clip(java.awt.Shape)">clip</A></B>(java.awt.Shape&nbsp;s)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Intersects the current <code>Clip</code> with the interior of the
+ specified <code>Shape</code> and sets the <code>Clip</code> to the
+ resulting intersection.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#clipRect(int, int, int, int)">clipRect</A></B>(int&nbsp;x,
+         int&nbsp;y,
+         int&nbsp;width,
+         int&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Intersects the current clip with the specified rectangle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#copyArea(int, int, int, int, int, int)">copyArea</A></B>(int&nbsp;x,
+         int&nbsp;y,
+         int&nbsp;width,
+         int&nbsp;height,
+         int&nbsp;dx,
+         int&nbsp;dy)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Graphics</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#create()">create</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new <code>Graphics</code> object that is
+ a copy of this <code>Graphics</code> object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#dispose()">dispose</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Disposes of this graphics context and releases
+ any system resources that it is using.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#draw(java.awt.Shape)">draw</A></B>(java.awt.Shape&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Strokes the outline of a <code>Shape</code> using the settings of the
+ current <code>Graphics2D</code> context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawArc(int, int, int, int, int, int)">drawArc</A></B>(int&nbsp;x,
+        int&nbsp;y,
+        int&nbsp;width,
+        int&nbsp;height,
+        int&nbsp;startAngle,
+        int&nbsp;arcAngle)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws the outline of a circular or elliptical arc
+ covering the specified rectangle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawGlyphVector(java.awt.font.GlyphVector, float, float)">drawGlyphVector</A></B>(java.awt.font.GlyphVector&nbsp;g,
+                float&nbsp;x,
+                float&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Renders the text of the specified
+ <CODE>GlyphVector</CODE> using
+ the <code>Graphics2D</code> context's rendering attributes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawImage(java.awt.image.BufferedImage, java.awt.image.BufferedImageOp, int, int)">drawImage</A></B>(java.awt.image.BufferedImage&nbsp;img,
+          java.awt.image.BufferedImageOp&nbsp;op,
+          int&nbsp;x,
+          int&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Renders a <code>BufferedImage</code> that is
+ filtered with a
+ <CODE>BufferedImageOp</CODE>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawImage(java.awt.Image, java.awt.geom.AffineTransform, java.awt.image.ImageObserver)">drawImage</A></B>(java.awt.Image&nbsp;img,
+          java.awt.geom.AffineTransform&nbsp;xform,
+          java.awt.image.ImageObserver&nbsp;obs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Renders an image, applying a transform from image space into user space
+ before drawing.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawImage(java.awt.Image, int, int, java.awt.Color, java.awt.image.ImageObserver)">drawImage</A></B>(java.awt.Image&nbsp;img,
+          int&nbsp;x,
+          int&nbsp;y,
+          java.awt.Color&nbsp;bgcolor,
+          java.awt.image.ImageObserver&nbsp;observer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws as much of the specified image as is currently available.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawImage(java.awt.Image, int, int, java.awt.image.ImageObserver)">drawImage</A></B>(java.awt.Image&nbsp;img,
+          int&nbsp;x,
+          int&nbsp;y,
+          java.awt.image.ImageObserver&nbsp;observer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws as much of the specified image as is currently available.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawImage(java.awt.Image, int, int, int, int, java.awt.Color, java.awt.image.ImageObserver)">drawImage</A></B>(java.awt.Image&nbsp;img,
+          int&nbsp;x,
+          int&nbsp;y,
+          int&nbsp;width,
+          int&nbsp;height,
+          java.awt.Color&nbsp;bgcolor,
+          java.awt.image.ImageObserver&nbsp;observer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws as much of the specified image as has already been scaled
+ to fit inside the specified rectangle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawImage(java.awt.Image, int, int, int, int, java.awt.image.ImageObserver)">drawImage</A></B>(java.awt.Image&nbsp;img,
+          int&nbsp;x,
+          int&nbsp;y,
+          int&nbsp;width,
+          int&nbsp;height,
+          java.awt.image.ImageObserver&nbsp;observer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws as much of the specified image as has already been scaled
+ to fit inside the specified rectangle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawImage(java.awt.Image, int, int, int, int, int, int, int, int, java.awt.Color, java.awt.image.ImageObserver)">drawImage</A></B>(java.awt.Image&nbsp;img,
+          int&nbsp;dx1,
+          int&nbsp;dy1,
+          int&nbsp;dx2,
+          int&nbsp;dy2,
+          int&nbsp;sx1,
+          int&nbsp;sy1,
+          int&nbsp;sx2,
+          int&nbsp;sy2,
+          java.awt.Color&nbsp;bgcolor,
+          java.awt.image.ImageObserver&nbsp;observer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws as much of the specified area of the specified image as is
+ currently available, scaling it on the fly to fit inside the
+ specified area of the destination drawable surface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawImage(java.awt.Image, int, int, int, int, int, int, int, int, java.awt.image.ImageObserver)">drawImage</A></B>(java.awt.Image&nbsp;img,
+          int&nbsp;dx1,
+          int&nbsp;dy1,
+          int&nbsp;dx2,
+          int&nbsp;dy2,
+          int&nbsp;sx1,
+          int&nbsp;sy1,
+          int&nbsp;sx2,
+          int&nbsp;sy2,
+          java.awt.image.ImageObserver&nbsp;observer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws as much of the specified area of the specified image as is
+ currently available, scaling it on the fly to fit inside the
+ specified area of the destination drawable surface.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawLine(int, int, int, int)">drawLine</A></B>(int&nbsp;x1,
+         int&nbsp;y1,
+         int&nbsp;x2,
+         int&nbsp;y2)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws a line, using the current color, between the points
+ <code>(x1,&nbsp;y1)</code> and <code>(x2,&nbsp;y2)</code>
+ in this graphics context's coordinate system.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawOval(int, int, int, int)">drawOval</A></B>(int&nbsp;x,
+         int&nbsp;y,
+         int&nbsp;width,
+         int&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws the outline of an oval.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawPolygon(int[], int[], int)">drawPolygon</A></B>(int[]&nbsp;xPoints,
+            int[]&nbsp;yPoints,
+            int&nbsp;nPoints)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws a closed polygon defined by
+ arrays of <i>x</i> and <i>y</i> coordinates.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawPolyline(int[], int[], int)">drawPolyline</A></B>(int[]&nbsp;xPoints,
+             int[]&nbsp;yPoints,
+             int&nbsp;nPoints)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws a sequence of connected lines defined by
+ arrays of <i>x</i> and <i>y</i> coordinates.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawRect(int, int, int, int)">drawRect</A></B>(int&nbsp;x,
+         int&nbsp;y,
+         int&nbsp;width,
+         int&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws the outline of the specified rectangle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawRenderableImage(java.awt.image.renderable.RenderableImage, java.awt.geom.AffineTransform)">drawRenderableImage</A></B>(java.awt.image.renderable.RenderableImage&nbsp;img,
+                    java.awt.geom.AffineTransform&nbsp;xform)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Renders a <CODE>RenderedImage</CODE>,
+ applying a transform from image
+ space into user space before drawing.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawRenderedImage(java.awt.image.RenderedImage, java.awt.geom.AffineTransform)">drawRenderedImage</A></B>(java.awt.image.RenderedImage&nbsp;img,
+                  java.awt.geom.AffineTransform&nbsp;xform)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Renders a
+ <CODE>RenderableImage</CODE>,
+ applying a transform from image space into user space before drawing.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawRoundRect(int, int, int, int, int, int)">drawRoundRect</A></B>(int&nbsp;x,
+              int&nbsp;y,
+              int&nbsp;width,
+              int&nbsp;height,
+              int&nbsp;arcWidth,
+              int&nbsp;arcHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws an outlined round-cornered rectangle using this graphics
+ context's current color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawString(java.text.AttributedCharacterIterator, float, float)">drawString</A></B>(java.text.AttributedCharacterIterator&nbsp;iterator,
+           float&nbsp;x,
+           float&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Renders the text of the specified iterator, using the
+ <code>Graphics2D</code> context's current <code>Paint</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawString(java.text.AttributedCharacterIterator, int, int)">drawString</A></B>(java.text.AttributedCharacterIterator&nbsp;iterator,
+           int&nbsp;x,
+           int&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws the text given by the specified iterator, using this
+ graphics context's current color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawString(java.lang.String, float, float)">drawString</A></B>(java.lang.String&nbsp;s,
+           float&nbsp;x,
+           float&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Renders the text specified by the specified <code>String</code>,
+ using the current text attribute state in the <code>Graphics2D</code> context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawString(java.lang.String, int, int)">drawString</A></B>(java.lang.String&nbsp;str,
+           int&nbsp;x,
+           int&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Draws the text given by the specified string, using this
+ graphics context's current font and color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#fill(java.awt.Shape)">fill</A></B>(java.awt.Shape&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fills the interior of a <code>Shape</code> using the settings of the
+ <code>Graphics2D</code> context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#fillArc(int, int, int, int, int, int)">fillArc</A></B>(int&nbsp;x,
+        int&nbsp;y,
+        int&nbsp;width,
+        int&nbsp;height,
+        int&nbsp;startAngle,
+        int&nbsp;arcAngle)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fills a circular or elliptical arc covering the specified rectangle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#fillOval(int, int, int, int)">fillOval</A></B>(int&nbsp;x,
+         int&nbsp;y,
+         int&nbsp;width,
+         int&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fills an oval bounded by the specified rectangle with the
+ current color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#fillPolygon(int[], int[], int)">fillPolygon</A></B>(int[]&nbsp;xPoints,
+            int[]&nbsp;yPoints,
+            int&nbsp;nPoints)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fills a closed polygon defined by
+ arrays of <i>x</i> and <i>y</i> coordinates.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#fillRect(int, int, int, int)">fillRect</A></B>(int&nbsp;x,
+         int&nbsp;y,
+         int&nbsp;width,
+         int&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fills the specified rectangle.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#fillRoundRect(int, int, int, int, int, int)">fillRoundRect</A></B>(int&nbsp;x,
+              int&nbsp;y,
+              int&nbsp;width,
+              int&nbsp;height,
+              int&nbsp;arcWidth,
+              int&nbsp;arcHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fills the specified rounded corner rectangle with the current color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Color</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getBackground()">getBackground</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the background color used for clearing a region.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Shape</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getClip()">getClip</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the current clipping area.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Rectangle</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getClipBounds()">getClipBounds</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the bounding rectangle of the current clipping area.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Color</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getColor()">getColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets this graphics context's current color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Composite</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getComposite()">getComposite</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the current <code>Composite</code> in the
+ <code>Graphics2D</code> context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.GraphicsConfiguration</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getDeviceConfiguration()">getDeviceConfiguration</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the device configuration associated with this
+ <code>Graphics2D</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Font</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getFont()">getFont</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the current font.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.FontMetrics</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getFontMetrics(java.awt.Font)">getFontMetrics</A></B>(java.awt.Font&nbsp;f)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the font metrics for the specified font.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.font.FontRenderContext</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getFontRenderContext()">getFontRenderContext</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the rendering context of the <code>Font</code> within this
+ <code>Graphics2D</code> context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Paint</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getPaint()">getPaint</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the current <code>Paint</code> of the
+ <code>Graphics2D</code> context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Object</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getRenderingHint(java.awt.RenderingHints.Key)">getRenderingHint</A></B>(java.awt.RenderingHints.Key&nbsp;hintKey)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the value of a single preference for the rendering algorithms.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.RenderingHints</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getRenderingHints()">getRenderingHints</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the preferences for the rendering algorithms.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/GroupShape.html" title="interface in org.apache.poi.sl.usermodel">GroupShape</A>&lt;?,?&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getShapeGroup()">getShapeGroup</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Stroke</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getStroke()">getStroke</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the current <code>Stroke</code> in the
+ <code>Graphics2D</code> context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.geom.AffineTransform</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getTransform()">getTransform</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a copy of the current <code>Transform</code> in the
+ <code>Graphics2D</code> context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#hit(java.awt.Rectangle, java.awt.Shape, boolean)">hit</A></B>(java.awt.Rectangle&nbsp;rect,
+    java.awt.Shape&nbsp;s,
+    boolean&nbsp;onStroke)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks whether or not the specified <code>Shape</code> intersects
+ the specified <CODE>Rectangle</CODE>, which is in device
+ space.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#rotate(double)">rotate</A></B>(double&nbsp;theta)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Concatenates the current <code>Graphics2D</code>
+ <code>Transform</code> with a rotation transform.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#rotate(double, double, double)">rotate</A></B>(double&nbsp;theta,
+       double&nbsp;x,
+       double&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Concatenates the current <code>Graphics2D</code>
+ <code>Transform</code> with a translated rotation
+ transform.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#scale(double, double)">scale</A></B>(double&nbsp;sx,
+      double&nbsp;sy)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Concatenates the current <code>Graphics2D</code>
+ <code>Transform</code> with a scaling transformation
+ Subsequent rendering is resized according to the specified scaling
+ factors relative to the previous scaling.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setBackground(java.awt.Color)">setBackground</A></B>(java.awt.Color&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the background color for the <code>Graphics2D</code> context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(int, int, int, int)">setClip</A></B>(int&nbsp;x,
+        int&nbsp;y,
+        int&nbsp;width,
+        int&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the current clip to the rectangle specified by the given
+ coordinates.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(java.awt.Shape)">setClip</A></B>(java.awt.Shape&nbsp;clip)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the current clipping area to an arbitrary clip shape.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setColor(java.awt.Color)">setColor</A></B>(java.awt.Color&nbsp;c)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets this graphics context's current color to the specified
+ color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setComposite(java.awt.Composite)">setComposite</A></B>(java.awt.Composite&nbsp;comp)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the <code>Composite</code> for the <code>Graphics2D</code> context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setFont(java.awt.Font)">setFont</A></B>(java.awt.Font&nbsp;font)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets this graphics context's font to the specified font.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setPaint(java.awt.Paint)">setPaint</A></B>(java.awt.Paint&nbsp;paint)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the <code>Paint</code> attribute for the
+ <code>Graphics2D</code> context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setPaintMode()">setPaintMode</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the paint mode of this graphics context to overwrite the
+ destination with this graphics context's current color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setRenderingHint(java.awt.RenderingHints.Key, java.lang.Object)">setRenderingHint</A></B>(java.awt.RenderingHints.Key&nbsp;hintKey,
+                 java.lang.Object&nbsp;hintValue)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the value of a single preference for the rendering algorithms.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setRenderingHints(java.util.Map)">setRenderingHints</A></B>(java.util.Map&lt;?,?&gt;&nbsp;hints)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Replaces the values of all preferences for the rendering
+ algorithms with the specified <code>hints</code>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setStroke(java.awt.Stroke)">setStroke</A></B>(java.awt.Stroke&nbsp;s)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the <code>Stroke</code> for the <code>Graphics2D</code> context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setTransform(java.awt.geom.AffineTransform)">setTransform</A></B>(java.awt.geom.AffineTransform&nbsp;Tx)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the <code>Transform</code> in the <code>Graphics2D</code>
+ context.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setXORMode(java.awt.Color)">setXORMode</A></B>(java.awt.Color&nbsp;c1)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the paint mode of this graphics context to alternate between
+ this graphics context's current color and the new specified color.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#shear(double, double)">shear</A></B>(double&nbsp;shx,
+      double&nbsp;shy)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Concatenates the current <code>Graphics2D</code>
+ <code>Transform</code> with a shearing transform.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#transform(java.awt.geom.AffineTransform)">transform</A></B>(java.awt.geom.AffineTransform&nbsp;Tx)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Composes an <code>AffineTransform</code> object with the
+ <code>Transform</code> in this <code>Graphics2D</code> according
+ to the rule last-specified-first-applied.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#translate(double, double)">translate</A></B>(double&nbsp;tx,
+          double&nbsp;ty)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Concatenates the current
+ <code>Graphics2D</code> <code>Transform</code>
+ with a translation transform.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#translate(int, int)">translate</A></B>(int&nbsp;x,
+          int&nbsp;y)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Translates the origin of the graphics context to the point
+ (<i>x</i>,&nbsp;<i>y</i>) in the current coordinate system.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.awt.Graphics2D"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.awt.Graphics2D</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>draw3DRect, fill3DRect</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.awt.Graphics"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.awt.Graphics</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>create, drawBytes, drawChars, drawPolygon, fillPolygon, finalize, getClipBounds, getClipRect, getFontMetrics, hitClip, toString</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="log"><!-- --></A><H3>
+log</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/util/POILogger.html" title="class in org.apache.poi.util">POILogger</A> <B>log</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SLGraphics(org.apache.poi.sl.usermodel.GroupShape)"><!-- --></A><H3>
+SLGraphics</H3>
+<PRE>
+public <B>SLGraphics</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/GroupShape.html" title="interface in org.apache.poi.sl.usermodel">GroupShape</A>&lt;?,?&gt;&nbsp;group)</PRE>
+<DL>
+<DD>Construct Java Graphics object which translates graphic calls in ppt drawing layer.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>group</CODE> - The shape group to write the graphics calls into.</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getShapeGroup()"><!-- --></A><H3>
+getShapeGroup</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/sl/usermodel/GroupShape.html" title="interface in org.apache.poi.sl.usermodel">GroupShape</A>&lt;?,?&gt; <B>getShapeGroup</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the shape group being used for drawing</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFont()"><!-- --></A><H3>
+getFont</H3>
+<PRE>
+public java.awt.Font <B>getFont</B>()</PRE>
+<DL>
+<DD>Gets the current font.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getFont</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>this graphics context's current font.<DT><B>See Also:</B><DD><CODE>Font</CODE>, 
+<CODE>Graphics.setFont(Font)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFont(java.awt.Font)"><!-- --></A><H3>
+setFont</H3>
+<PRE>
+public void <B>setFont</B>(java.awt.Font&nbsp;font)</PRE>
+<DL>
+<DD>Sets this graphics context's font to the specified font.
+ All subsequent text operations using this graphics context
+ use this font.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>setFont</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>font</CODE> - the font.<DT><B>See Also:</B><DD><CODE>Graphics.getFont()</CODE>, 
+<CODE>Graphics.drawString(java.lang.String, int, int)</CODE>, 
+<CODE>Graphics.drawBytes(byte[], int, int, int, int)</CODE>, 
+<CODE>Graphics.drawChars(char[], int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColor()"><!-- --></A><H3>
+getColor</H3>
+<PRE>
+public java.awt.Color <B>getColor</B>()</PRE>
+<DL>
+<DD>Gets this graphics context's current color.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getColor</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>this graphics context's current color.<DT><B>See Also:</B><DD><CODE>Color</CODE>, 
+<CODE>Graphics.setColor(java.awt.Color)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColor(java.awt.Color)"><!-- --></A><H3>
+setColor</H3>
+<PRE>
+public void <B>setColor</B>(java.awt.Color&nbsp;c)</PRE>
+<DL>
+<DD>Sets this graphics context's current color to the specified
+ color. All subsequent graphics operations using this graphics
+ context use this specified color.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>setColor</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>c</CODE> - the new rendering color.<DT><B>See Also:</B><DD><CODE>Color</CODE>, 
+<CODE>Graphics.getColor()</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStroke()"><!-- --></A><H3>
+getStroke</H3>
+<PRE>
+public java.awt.Stroke <B>getStroke</B>()</PRE>
+<DL>
+<DD>Returns the current <code>Stroke</code> in the
+ <code>Graphics2D</code> context.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getStroke</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the current <code>Graphics2D</code> <code>Stroke</code>,
+                 which defines the line style.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setStroke(java.awt.Stroke)"><CODE>setStroke(java.awt.Stroke)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setStroke(java.awt.Stroke)"><!-- --></A><H3>
+setStroke</H3>
+<PRE>
+public void <B>setStroke</B>(java.awt.Stroke&nbsp;s)</PRE>
+<DL>
+<DD>Sets the <code>Stroke</code> for the <code>Graphics2D</code> context.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>setStroke</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>s</CODE> - the <code>Stroke</code> object to be used to stroke a
+ <code>Shape</code> during the rendering process</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPaint()"><!-- --></A><H3>
+getPaint</H3>
+<PRE>
+public java.awt.Paint <B>getPaint</B>()</PRE>
+<DL>
+<DD>Returns the current <code>Paint</code> of the
+ <code>Graphics2D</code> context.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getPaint</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the current <code>Graphics2D</code> <code>Paint</code>,
+ which defines a color or pattern.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setPaint(java.awt.Paint)"><CODE>setPaint(java.awt.Paint)</CODE></A>, 
+<CODE>Graphics.setColor(java.awt.Color)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPaint(java.awt.Paint)"><!-- --></A><H3>
+setPaint</H3>
+<PRE>
+public void <B>setPaint</B>(java.awt.Paint&nbsp;paint)</PRE>
+<DL>
+<DD>Sets the <code>Paint</code> attribute for the
+ <code>Graphics2D</code> context.  Calling this method
+ with a <code>null</code> <code>Paint</code> object does
+ not have any effect on the current <code>Paint</code> attribute
+ of this <code>Graphics2D</code>.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>setPaint</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>paint</CODE> - the <code>Paint</code> object to be used to generate
+ color during the rendering process, or <code>null</code><DT><B>See Also:</B><DD><CODE>Graphics.setColor(java.awt.Color)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTransform()"><!-- --></A><H3>
+getTransform</H3>
+<PRE>
+public java.awt.geom.AffineTransform <B>getTransform</B>()</PRE>
+<DL>
+<DD>Returns a copy of the current <code>Transform</code> in the
+ <code>Graphics2D</code> context.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getTransform</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the current <code>AffineTransform</code> in the
+             <code>Graphics2D</code> context.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#_transform"><CODE>_transform</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setTransform(java.awt.geom.AffineTransform)"><CODE>setTransform(java.awt.geom.AffineTransform)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTransform(java.awt.geom.AffineTransform)"><!-- --></A><H3>
+setTransform</H3>
+<PRE>
+public void <B>setTransform</B>(java.awt.geom.AffineTransform&nbsp;Tx)</PRE>
+<DL>
+<DD>Sets the <code>Transform</code> in the <code>Graphics2D</code>
+ context.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>setTransform</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>Tx</CODE> - the <code>AffineTransform</code> object to be used in the
+ rendering process<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#_transform"><CODE>_transform</CODE></A>, 
+<CODE>AffineTransform</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="draw(java.awt.Shape)"><!-- --></A><H3>
+draw</H3>
+<PRE>
+public void <B>draw</B>(java.awt.Shape&nbsp;shape)</PRE>
+<DL>
+<DD>Strokes the outline of a <code>Shape</code> using the settings of the
+ current <code>Graphics2D</code> context.  The rendering attributes
+ applied include the <code>Clip</code>, <code>Transform</code>,
+ <code>Paint</code>, <code>Composite</code> and
+ <code>Stroke</code> attributes.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>draw</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>shape</CODE> - the <code>Shape</code> to be rendered<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setStroke(java.awt.Stroke)"><CODE>setStroke(java.awt.Stroke)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setPaint(java.awt.Paint)"><CODE>setPaint(java.awt.Paint)</CODE></A>, 
+<CODE>Graphics.setColor(java.awt.Color)</CODE>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#_transform"><CODE>_transform</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setTransform(java.awt.geom.AffineTransform)"><CODE>setTransform(java.awt.geom.AffineTransform)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#clip(java.awt.Shape)"><CODE>clip(java.awt.Shape)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(java.awt.Shape)"><CODE>setClip(java.awt.Shape)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setComposite(java.awt.Composite)"><CODE>setComposite(java.awt.Composite)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawString(java.lang.String, float, float)"><!-- --></A><H3>
+drawString</H3>
+<PRE>
+public void <B>drawString</B>(java.lang.String&nbsp;s,
+                       float&nbsp;x,
+                       float&nbsp;y)</PRE>
+<DL>
+<DD>Renders the text specified by the specified <code>String</code>,
+ using the current text attribute state in the <code>Graphics2D</code> context.
+ The baseline of the first character is at position
+ (<i>x</i>,&nbsp;<i>y</i>) in the User Space.
+ The rendering attributes applied include the <code>Clip</code>,
+ <code>Transform</code>, <code>Paint</code>, <code>Font</code> and
+ <code>Composite</code> attributes. For characters in script systems
+ such as Hebrew and Arabic, the glyphs can be rendered from right to
+ left, in which case the coordinate supplied is the location of the
+ leftmost character on the baseline.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawString</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>s</CODE> - the <code>String</code> to be rendered<DD><CODE>x</CODE> - the x coordinate of the location where the
+ <code>String</code> should be rendered<DD><CODE>y</CODE> - the y coordinate of the location where the
+ <code>String</code> should be rendered
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.NullPointerException</CODE> - if <code>str</code> is
+         <code>null</code><DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setPaint(java.awt.Paint)"><CODE>setPaint(java.awt.Paint)</CODE></A>, 
+<CODE>Graphics.setColor(java.awt.Color)</CODE>, 
+<CODE>Graphics.setFont(java.awt.Font)</CODE>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setTransform(java.awt.geom.AffineTransform)"><CODE>setTransform(java.awt.geom.AffineTransform)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setComposite(java.awt.Composite)"><CODE>setComposite(java.awt.Composite)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(java.awt.Shape)"><CODE>setClip(java.awt.Shape)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="fill(java.awt.Shape)"><!-- --></A><H3>
+fill</H3>
+<PRE>
+public void <B>fill</B>(java.awt.Shape&nbsp;shape)</PRE>
+<DL>
+<DD>Fills the interior of a <code>Shape</code> using the settings of the
+ <code>Graphics2D</code> context. The rendering attributes applied
+ include the <code>Clip</code>, <code>Transform</code>,
+ <code>Paint</code>, and <code>Composite</code>.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>fill</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>shape</CODE> - the <code>Shape</code> to be filled<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setPaint(java.awt.Paint)"><CODE>setPaint(java.awt.Paint)</CODE></A>, 
+<CODE>Graphics.setColor(java.awt.Color)</CODE>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#_transform"><CODE>_transform</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setTransform(java.awt.geom.AffineTransform)"><CODE>setTransform(java.awt.geom.AffineTransform)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setComposite(java.awt.Composite)"><CODE>setComposite(java.awt.Composite)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#clip(java.awt.Shape)"><CODE>clip(java.awt.Shape)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(java.awt.Shape)"><CODE>setClip(java.awt.Shape)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="translate(int, int)"><!-- --></A><H3>
+translate</H3>
+<PRE>
+public void <B>translate</B>(int&nbsp;x,
+                      int&nbsp;y)</PRE>
+<DL>
+<DD>Translates the origin of the graphics context to the point
+ (<i>x</i>,&nbsp;<i>y</i>) in the current coordinate system.
+ Modifies this graphics context so that its new origin corresponds
+ to the point (<i>x</i>,&nbsp;<i>y</i>) in this graphics context's
+ original coordinate system.  All coordinates used in subsequent
+ rendering operations on this graphics context will be relative
+ to this new origin.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>translate</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the <i>x</i> coordinate.<DD><CODE>y</CODE> - the <i>y</i> coordinate.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clip(java.awt.Shape)"><!-- --></A><H3>
+clip</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public void <B>clip</B>(java.awt.Shape&nbsp;s)</PRE>
+<DL>
+<DD>Intersects the current <code>Clip</code> with the interior of the
+ specified <code>Shape</code> and sets the <code>Clip</code> to the
+ resulting intersection.  The specified <code>Shape</code> is
+ transformed with the current <code>Graphics2D</code>
+ <code>Transform</code> before being intersected with the current
+ <code>Clip</code>.  This method is used to make the current
+ <code>Clip</code> smaller.
+ To make the <code>Clip</code> larger, use <code>setClip</code>.
+ The <i>user clip</i> modified by this method is independent of the
+ clipping associated with device bounds and visibility.  If no clip has
+ previously been set, or if the clip has been cleared using
+ <CODE>setClip</CODE> with a
+ <code>null</code> argument, the specified <code>Shape</code> becomes
+ the new user clip.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>clip</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>s</CODE> - the <code>Shape</code> to be intersected with the current
+          <code>Clip</code>.  If <code>s</code> is <code>null</code>,
+          this method clears the current <code>Clip</code>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getClip()"><!-- --></A><H3>
+getClip</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public java.awt.Shape <B>getClip</B>()</PRE>
+<DL>
+<DD>Gets the current clipping area.
+ This method returns the user clip, which is independent of the
+ clipping associated with device bounds and window visibility.
+ If no clip has previously been set, or if the clip has been
+ cleared using <code>setClip(null)</code>, this method returns
+ <code>null</code>.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getClip</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a <code>Shape</code> object representing the
+              current clipping area, or <code>null</code> if
+              no clip is set.<DT><B>Since:</B></DT>
+  <DD>JDK1.1</DD>
+<DT><B>See Also:</B><DD><CODE>Graphics.getClipBounds()</CODE>, 
+<CODE>Graphics.clipRect(int, int, int, int)</CODE>, 
+<CODE>Graphics.setClip(int, int, int, int)</CODE>, 
+<CODE>Graphics.setClip(Shape)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="scale(double, double)"><!-- --></A><H3>
+scale</H3>
+<PRE>
+public void <B>scale</B>(double&nbsp;sx,
+                  double&nbsp;sy)</PRE>
+<DL>
+<DD>Concatenates the current <code>Graphics2D</code>
+ <code>Transform</code> with a scaling transformation
+ Subsequent rendering is resized according to the specified scaling
+ factors relative to the previous scaling.
+ This is equivalent to calling <code>transform(S)</code>, where S is an
+ <code>AffineTransform</code> represented by the following matrix:
+ <pre>
+          [   sx   0    0   ]
+          [   0    sy   0   ]
+          [   0    0    1   ]
+ </pre>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>scale</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sx</CODE> - the amount by which X coordinates in subsequent
+ rendering operations are multiplied relative to previous
+ rendering operations.<DD><CODE>sy</CODE> - the amount by which Y coordinates in subsequent
+ rendering operations are multiplied relative to previous
+ rendering operations.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawRoundRect(int, int, int, int, int, int)"><!-- --></A><H3>
+drawRoundRect</H3>
+<PRE>
+public void <B>drawRoundRect</B>(int&nbsp;x,
+                          int&nbsp;y,
+                          int&nbsp;width,
+                          int&nbsp;height,
+                          int&nbsp;arcWidth,
+                          int&nbsp;arcHeight)</PRE>
+<DL>
+<DD>Draws an outlined round-cornered rectangle using this graphics
+ context's current color. The left and right edges of the rectangle
+ are at <code>x</code> and <code>x&nbsp;+&nbsp;width</code>,
+ respectively. The top and bottom edges of the rectangle are at
+ <code>y</code> and <code>y&nbsp;+&nbsp;height</code>.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawRoundRect</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the <i>x</i> coordinate of the rectangle to be drawn.<DD><CODE>y</CODE> - the <i>y</i> coordinate of the rectangle to be drawn.<DD><CODE>width</CODE> - the width of the rectangle to be drawn.<DD><CODE>height</CODE> - the height of the rectangle to be drawn.<DD><CODE>arcWidth</CODE> - the horizontal diameter of the arc
+                    at the four corners.<DD><CODE>arcHeight</CODE> - the vertical diameter of the arc
+                    at the four corners.<DT><B>See Also:</B><DD><CODE>Graphics.fillRoundRect(int, int, int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawString(java.lang.String, int, int)"><!-- --></A><H3>
+drawString</H3>
+<PRE>
+public void <B>drawString</B>(java.lang.String&nbsp;str,
+                       int&nbsp;x,
+                       int&nbsp;y)</PRE>
+<DL>
+<DD>Draws the text given by the specified string, using this
+ graphics context's current font and color. The baseline of the
+ first character is at position (<i>x</i>,&nbsp;<i>y</i>) in this
+ graphics context's coordinate system.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawString</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>str</CODE> - the string to be drawn.<DD><CODE>x</CODE> - the <i>x</i> coordinate.<DD><CODE>y</CODE> - the <i>y</i> coordinate.<DT><B>See Also:</B><DD><CODE>Graphics.drawBytes(byte[], int, int, int, int)</CODE>, 
+<CODE>Graphics.drawChars(char[], int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="fillOval(int, int, int, int)"><!-- --></A><H3>
+fillOval</H3>
+<PRE>
+public void <B>fillOval</B>(int&nbsp;x,
+                     int&nbsp;y,
+                     int&nbsp;width,
+                     int&nbsp;height)</PRE>
+<DL>
+<DD>Fills an oval bounded by the specified rectangle with the
+ current color.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>fillOval</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the <i>x</i> coordinate of the upper left corner
+                     of the oval to be filled.<DD><CODE>y</CODE> - the <i>y</i> coordinate of the upper left corner
+                     of the oval to be filled.<DD><CODE>width</CODE> - the width of the oval to be filled.<DD><CODE>height</CODE> - the height of the oval to be filled.<DT><B>See Also:</B><DD><CODE>Graphics.drawOval(int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="fillRoundRect(int, int, int, int, int, int)"><!-- --></A><H3>
+fillRoundRect</H3>
+<PRE>
+public void <B>fillRoundRect</B>(int&nbsp;x,
+                          int&nbsp;y,
+                          int&nbsp;width,
+                          int&nbsp;height,
+                          int&nbsp;arcWidth,
+                          int&nbsp;arcHeight)</PRE>
+<DL>
+<DD>Fills the specified rounded corner rectangle with the current color.
+ The left and right edges of the rectangle
+ are at <code>x</code> and <code>x&nbsp;+&nbsp;width&nbsp;-&nbsp;1</code>,
+ respectively. The top and bottom edges of the rectangle are at
+ <code>y</code> and <code>y&nbsp;+&nbsp;height&nbsp;-&nbsp;1</code>.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>fillRoundRect</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the <i>x</i> coordinate of the rectangle to be filled.<DD><CODE>y</CODE> - the <i>y</i> coordinate of the rectangle to be filled.<DD><CODE>width</CODE> - the width of the rectangle to be filled.<DD><CODE>height</CODE> - the height of the rectangle to be filled.<DD><CODE>arcWidth</CODE> - the horizontal diameter
+                     of the arc at the four corners.<DD><CODE>arcHeight</CODE> - the vertical diameter
+                     of the arc at the four corners.<DT><B>See Also:</B><DD><CODE>Graphics.drawRoundRect(int, int, int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="fillArc(int, int, int, int, int, int)"><!-- --></A><H3>
+fillArc</H3>
+<PRE>
+public void <B>fillArc</B>(int&nbsp;x,
+                    int&nbsp;y,
+                    int&nbsp;width,
+                    int&nbsp;height,
+                    int&nbsp;startAngle,
+                    int&nbsp;arcAngle)</PRE>
+<DL>
+<DD>Fills a circular or elliptical arc covering the specified rectangle.
+ <p>
+ The resulting arc begins at <code>startAngle</code> and extends
+ for <code>arcAngle</code> degrees.
+ Angles are interpreted such that 0&nbsp;degrees
+ is at the 3&nbsp;o'clock position.
+ A positive value indicates a counter-clockwise rotation
+ while a negative value indicates a clockwise rotation.
+ <p>
+ The center of the arc is the center of the rectangle whose origin
+ is (<i>x</i>,&nbsp;<i>y</i>) and whose size is specified by the
+ <code>width</code> and <code>height</code> arguments.
+ <p>
+ The resulting arc covers an area
+ <code>width&nbsp;+&nbsp;1</code> pixels wide
+ by <code>height&nbsp;+&nbsp;1</code> pixels tall.
+ <p>
+ The angles are specified relative to the non-square extents of
+ the bounding rectangle such that 45 degrees always falls on the
+ line from the center of the ellipse to the upper right corner of
+ the bounding rectangle. As a result, if the bounding rectangle is
+ noticeably longer in one axis than the other, the angles to the
+ start and end of the arc segment will be skewed farther along the
+ longer axis of the bounds.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>fillArc</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the <i>x</i> coordinate of the
+                    upper-left corner of the arc to be filled.<DD><CODE>y</CODE> - the <i>y</i>  coordinate of the
+                    upper-left corner of the arc to be filled.<DD><CODE>width</CODE> - the width of the arc to be filled.<DD><CODE>height</CODE> - the height of the arc to be filled.<DD><CODE>startAngle</CODE> - the beginning angle.<DD><CODE>arcAngle</CODE> - the angular extent of the arc,
+                    relative to the start angle.<DT><B>See Also:</B><DD><CODE>Graphics.drawArc(int, int, int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawArc(int, int, int, int, int, int)"><!-- --></A><H3>
+drawArc</H3>
+<PRE>
+public void <B>drawArc</B>(int&nbsp;x,
+                    int&nbsp;y,
+                    int&nbsp;width,
+                    int&nbsp;height,
+                    int&nbsp;startAngle,
+                    int&nbsp;arcAngle)</PRE>
+<DL>
+<DD>Draws the outline of a circular or elliptical arc
+ covering the specified rectangle.
+ <p>
+ The resulting arc begins at <code>startAngle</code> and extends
+ for <code>arcAngle</code> degrees, using the current color.
+ Angles are interpreted such that 0&nbsp;degrees
+ is at the 3&nbsp;o'clock position.
+ A positive value indicates a counter-clockwise rotation
+ while a negative value indicates a clockwise rotation.
+ <p>
+ The center of the arc is the center of the rectangle whose origin
+ is (<i>x</i>,&nbsp;<i>y</i>) and whose size is specified by the
+ <code>width</code> and <code>height</code> arguments.
+ <p>
+ The resulting arc covers an area
+ <code>width&nbsp;+&nbsp;1</code> pixels wide
+ by <code>height&nbsp;+&nbsp;1</code> pixels tall.
+ <p>
+ The angles are specified relative to the non-square extents of
+ the bounding rectangle such that 45 degrees always falls on the
+ line from the center of the ellipse to the upper right corner of
+ the bounding rectangle. As a result, if the bounding rectangle is
+ noticeably longer in one axis than the other, the angles to the
+ start and end of the arc segment will be skewed farther along the
+ longer axis of the bounds.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawArc</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the <i>x</i> coordinate of the
+                    upper-left corner of the arc to be drawn.<DD><CODE>y</CODE> - the <i>y</i>  coordinate of the
+                    upper-left corner of the arc to be drawn.<DD><CODE>width</CODE> - the width of the arc to be drawn.<DD><CODE>height</CODE> - the height of the arc to be drawn.<DD><CODE>startAngle</CODE> - the beginning angle.<DD><CODE>arcAngle</CODE> - the angular extent of the arc,
+                    relative to the start angle.<DT><B>See Also:</B><DD><CODE>Graphics.fillArc(int, int, int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawPolyline(int[], int[], int)"><!-- --></A><H3>
+drawPolyline</H3>
+<PRE>
+public void <B>drawPolyline</B>(int[]&nbsp;xPoints,
+                         int[]&nbsp;yPoints,
+                         int&nbsp;nPoints)</PRE>
+<DL>
+<DD>Draws a sequence of connected lines defined by
+ arrays of <i>x</i> and <i>y</i> coordinates.
+ Each pair of (<i>x</i>,&nbsp;<i>y</i>) coordinates defines a point.
+ The figure is not closed if the first point
+ differs from the last point.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawPolyline</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>xPoints</CODE> - an array of <i>x</i> points<DD><CODE>yPoints</CODE> - an array of <i>y</i> points<DD><CODE>nPoints</CODE> - the total number of points<DT><B>Since:</B></DT>
+  <DD>JDK1.1</DD>
+<DT><B>See Also:</B><DD><CODE>Graphics.drawPolygon(int[], int[], int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawOval(int, int, int, int)"><!-- --></A><H3>
+drawOval</H3>
+<PRE>
+public void <B>drawOval</B>(int&nbsp;x,
+                     int&nbsp;y,
+                     int&nbsp;width,
+                     int&nbsp;height)</PRE>
+<DL>
+<DD>Draws the outline of an oval.
+ The result is a circle or ellipse that fits within the
+ rectangle specified by the <code>x</code>, <code>y</code>,
+ <code>width</code>, and <code>height</code> arguments.
+ <p>
+ The oval covers an area that is
+ <code>width&nbsp;+&nbsp;1</code> pixels wide
+ and <code>height&nbsp;+&nbsp;1</code> pixels tall.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawOval</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the <i>x</i> coordinate of the upper left
+                     corner of the oval to be drawn.<DD><CODE>y</CODE> - the <i>y</i> coordinate of the upper left
+                     corner of the oval to be drawn.<DD><CODE>width</CODE> - the width of the oval to be drawn.<DD><CODE>height</CODE> - the height of the oval to be drawn.<DT><B>See Also:</B><DD><CODE>Graphics.fillOval(int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawImage(java.awt.Image, int, int, java.awt.Color, java.awt.image.ImageObserver)"><!-- --></A><H3>
+drawImage</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public boolean <B>drawImage</B>(java.awt.Image&nbsp;img,
+                                        int&nbsp;x,
+                                        int&nbsp;y,
+                                        java.awt.Color&nbsp;bgcolor,
+                                        java.awt.image.ImageObserver&nbsp;observer)</PRE>
+<DL>
+<DD>Draws as much of the specified image as is currently available.
+ The image is drawn with its top-left corner at
+ (<i>x</i>,&nbsp;<i>y</i>) in this graphics context's coordinate
+ space.  Transparent pixels are drawn in the specified
+ background color.
+ <p>
+ This operation is equivalent to filling a rectangle of the
+ width and height of the specified image with the given color and then
+ drawing the image on top of it, but possibly more efficient.
+ <p>
+ This method returns immediately in all cases, even if the
+ complete image has not yet been loaded, and it has not been dithered
+ and converted for the current output device.
+ <p>
+ If the image has not yet been completely loaded, then
+ <code>drawImage</code> returns <code>false</code>. As more of
+ the image becomes available, the process that draws the image notifies
+ the specified image observer.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawImage</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>img</CODE> - the specified image to be drawn.<DD><CODE>x</CODE> - the <i>x</i> coordinate.<DD><CODE>y</CODE> - the <i>y</i> coordinate.<DD><CODE>bgcolor</CODE> - the background color to paint under the
+                         non-opaque portions of the image.<DD><CODE>observer</CODE> - object to be notified as more of
+                          the image is converted.<DT><B>See Also:</B><DD><CODE>Image</CODE>, 
+<CODE>ImageObserver</CODE>, 
+<CODE>ImageObserver.imageUpdate(java.awt.Image, int, int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawImage(java.awt.Image, int, int, int, int, java.awt.Color, java.awt.image.ImageObserver)"><!-- --></A><H3>
+drawImage</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public boolean <B>drawImage</B>(java.awt.Image&nbsp;img,
+                                        int&nbsp;x,
+                                        int&nbsp;y,
+                                        int&nbsp;width,
+                                        int&nbsp;height,
+                                        java.awt.Color&nbsp;bgcolor,
+                                        java.awt.image.ImageObserver&nbsp;observer)</PRE>
+<DL>
+<DD>Draws as much of the specified image as has already been scaled
+ to fit inside the specified rectangle.
+ <p>
+ The image is drawn inside the specified rectangle of this
+ graphics context's coordinate space, and is scaled if
+ necessary. Transparent pixels are drawn in the specified
+ background color.
+ This operation is equivalent to filling a rectangle of the
+ width and height of the specified image with the given color and then
+ drawing the image on top of it, but possibly more efficient.
+ <p>
+ This method returns immediately in all cases, even if the
+ entire image has not yet been scaled, dithered, and converted
+ for the current output device.
+ If the current output representation is not yet complete then
+ <code>drawImage</code> returns <code>false</code>. As more of
+ the image becomes available, the process that draws the image notifies
+ the specified image observer.
+ <p>
+ A scaled version of an image will not necessarily be
+ available immediately just because an unscaled version of the
+ image has been constructed for this output device.  Each size of
+ the image may be cached separately and generated from the original
+ data in a separate image production sequence.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawImage</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>img</CODE> - the specified image to be drawn.<DD><CODE>x</CODE> - the <i>x</i> coordinate.<DD><CODE>y</CODE> - the <i>y</i> coordinate.<DD><CODE>width</CODE> - the width of the rectangle.<DD><CODE>height</CODE> - the height of the rectangle.<DD><CODE>bgcolor</CODE> - the background color to paint under the
+                         non-opaque portions of the image.<DD><CODE>observer</CODE> - object to be notified as more of
+                          the image is converted.<DT><B>See Also:</B><DD><CODE>Image</CODE>, 
+<CODE>ImageObserver</CODE>, 
+<CODE>ImageObserver.imageUpdate(java.awt.Image, int, int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawImage(java.awt.Image, int, int, int, int, int, int, int, int, java.awt.image.ImageObserver)"><!-- --></A><H3>
+drawImage</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public boolean <B>drawImage</B>(java.awt.Image&nbsp;img,
+                                        int&nbsp;dx1,
+                                        int&nbsp;dy1,
+                                        int&nbsp;dx2,
+                                        int&nbsp;dy2,
+                                        int&nbsp;sx1,
+                                        int&nbsp;sy1,
+                                        int&nbsp;sx2,
+                                        int&nbsp;sy2,
+                                        java.awt.image.ImageObserver&nbsp;observer)</PRE>
+<DL>
+<DD>Draws as much of the specified area of the specified image as is
+ currently available, scaling it on the fly to fit inside the
+ specified area of the destination drawable surface. Transparent pixels
+ do not affect whatever pixels are already there.
+ <p>
+ This method returns immediately in all cases, even if the
+ image area to be drawn has not yet been scaled, dithered, and converted
+ for the current output device.
+ If the current output representation is not yet complete then
+ <code>drawImage</code> returns <code>false</code>. As more of
+ the image becomes available, the process that draws the image notifies
+ the specified image observer.
+ <p>
+ This method always uses the unscaled version of the image
+ to render the scaled rectangle and performs the required
+ scaling on the fly. It does not use a cached, scaled version
+ of the image for this operation. Scaling of the image from source
+ to destination is performed such that the first coordinate
+ of the source rectangle is mapped to the first coordinate of
+ the destination rectangle, and the second source coordinate is
+ mapped to the second destination coordinate. The subimage is
+ scaled and flipped as needed to preserve those mappings.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawImage</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>img</CODE> - the specified image to be drawn<DD><CODE>dx1</CODE> - the <i>x</i> coordinate of the first corner of the
+                    destination rectangle.<DD><CODE>dy1</CODE> - the <i>y</i> coordinate of the first corner of the
+                    destination rectangle.<DD><CODE>dx2</CODE> - the <i>x</i> coordinate of the second corner of the
+                    destination rectangle.<DD><CODE>dy2</CODE> - the <i>y</i> coordinate of the second corner of the
+                    destination rectangle.<DD><CODE>sx1</CODE> - the <i>x</i> coordinate of the first corner of the
+                    source rectangle.<DD><CODE>sy1</CODE> - the <i>y</i> coordinate of the first corner of the
+                    source rectangle.<DD><CODE>sx2</CODE> - the <i>x</i> coordinate of the second corner of the
+                    source rectangle.<DD><CODE>sy2</CODE> - the <i>y</i> coordinate of the second corner of the
+                    source rectangle.<DD><CODE>observer</CODE> - object to be notified as more of the image is
+                    scaled and converted.<DT><B>Since:</B></DT>
+  <DD>JDK1.1</DD>
+<DT><B>See Also:</B><DD><CODE>Image</CODE>, 
+<CODE>ImageObserver</CODE>, 
+<CODE>ImageObserver.imageUpdate(java.awt.Image, int, int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawImage(java.awt.Image, int, int, int, int, int, int, int, int, java.awt.Color, java.awt.image.ImageObserver)"><!-- --></A><H3>
+drawImage</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public boolean <B>drawImage</B>(java.awt.Image&nbsp;img,
+                                        int&nbsp;dx1,
+                                        int&nbsp;dy1,
+                                        int&nbsp;dx2,
+                                        int&nbsp;dy2,
+                                        int&nbsp;sx1,
+                                        int&nbsp;sy1,
+                                        int&nbsp;sx2,
+                                        int&nbsp;sy2,
+                                        java.awt.Color&nbsp;bgcolor,
+                                        java.awt.image.ImageObserver&nbsp;observer)</PRE>
+<DL>
+<DD>Draws as much of the specified area of the specified image as is
+ currently available, scaling it on the fly to fit inside the
+ specified area of the destination drawable surface.
+ <p>
+ Transparent pixels are drawn in the specified background color.
+ This operation is equivalent to filling a rectangle of the
+ width and height of the specified image with the given color and then
+ drawing the image on top of it, but possibly more efficient.
+ <p>
+ This method returns immediately in all cases, even if the
+ image area to be drawn has not yet been scaled, dithered, and converted
+ for the current output device.
+ If the current output representation is not yet complete then
+ <code>drawImage</code> returns <code>false</code>. As more of
+ the image becomes available, the process that draws the image notifies
+ the specified image observer.
+ <p>
+ This method always uses the unscaled version of the image
+ to render the scaled rectangle and performs the required
+ scaling on the fly. It does not use a cached, scaled version
+ of the image for this operation. Scaling of the image from source
+ to destination is performed such that the first coordinate
+ of the source rectangle is mapped to the first coordinate of
+ the destination rectangle, and the second source coordinate is
+ mapped to the second destination coordinate. The subimage is
+ scaled and flipped as needed to preserve those mappings.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawImage</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>img</CODE> - the specified image to be drawn<DD><CODE>dx1</CODE> - the <i>x</i> coordinate of the first corner of the
+                    destination rectangle.<DD><CODE>dy1</CODE> - the <i>y</i> coordinate of the first corner of the
+                    destination rectangle.<DD><CODE>dx2</CODE> - the <i>x</i> coordinate of the second corner of the
+                    destination rectangle.<DD><CODE>dy2</CODE> - the <i>y</i> coordinate of the second corner of the
+                    destination rectangle.<DD><CODE>sx1</CODE> - the <i>x</i> coordinate of the first corner of the
+                    source rectangle.<DD><CODE>sy1</CODE> - the <i>y</i> coordinate of the first corner of the
+                    source rectangle.<DD><CODE>sx2</CODE> - the <i>x</i> coordinate of the second corner of the
+                    source rectangle.<DD><CODE>sy2</CODE> - the <i>y</i> coordinate of the second corner of the
+                    source rectangle.<DD><CODE>bgcolor</CODE> - the background color to paint under the
+                    non-opaque portions of the image.<DD><CODE>observer</CODE> - object to be notified as more of the image is
+                    scaled and converted.<DT><B>Since:</B></DT>
+  <DD>JDK1.1</DD>
+<DT><B>See Also:</B><DD><CODE>Image</CODE>, 
+<CODE>ImageObserver</CODE>, 
+<CODE>ImageObserver.imageUpdate(java.awt.Image, int, int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawImage(java.awt.Image, int, int, java.awt.image.ImageObserver)"><!-- --></A><H3>
+drawImage</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public boolean <B>drawImage</B>(java.awt.Image&nbsp;img,
+                                        int&nbsp;x,
+                                        int&nbsp;y,
+                                        java.awt.image.ImageObserver&nbsp;observer)</PRE>
+<DL>
+<DD>Draws as much of the specified image as is currently available.
+ The image is drawn with its top-left corner at
+ (<i>x</i>,&nbsp;<i>y</i>) in this graphics context's coordinate
+ space. Transparent pixels in the image do not affect whatever
+ pixels are already there.
+ <p>
+ This method returns immediately in all cases, even if the
+ complete image has not yet been loaded, and it has not been dithered
+ and converted for the current output device.
+ <p>
+ If the image has completely loaded and its pixels are
+ no longer being changed, then
+ <code>drawImage</code> returns <code>true</code>.
+ Otherwise, <code>drawImage</code> returns <code>false</code>
+ and as more of
+ the image becomes available
+ or it is time to draw another frame of animation,
+ the process that loads the image notifies
+ the specified image observer.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawImage</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>img</CODE> - the specified image to be drawn. This method does
+               nothing if <code>img</code> is null.<DD><CODE>x</CODE> - the <i>x</i> coordinate.<DD><CODE>y</CODE> - the <i>y</i> coordinate.<DD><CODE>observer</CODE> - object to be notified as more of
+                          the image is converted.
+<DT><B>Returns:</B><DD><code>false</code> if the image pixels are still changing;
+           <code>true</code> otherwise.<DT><B>See Also:</B><DD><CODE>Image</CODE>, 
+<CODE>ImageObserver</CODE>, 
+<CODE>ImageObserver.imageUpdate(java.awt.Image, int, int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dispose()"><!-- --></A><H3>
+dispose</H3>
+<PRE>
+public void <B>dispose</B>()</PRE>
+<DL>
+<DD>Disposes of this graphics context and releases
+ any system resources that it is using.
+ A <code>Graphics</code> object cannot be used after
+ <code>dispose</code>has been called.
+ <p>
+ When a Java program runs, a large number of <code>Graphics</code>
+ objects can be created within a short time frame.
+ Although the finalization process of the garbage collector
+ also disposes of the same system resources, it is preferable
+ to manually free the associated resources by calling this
+ method rather than to rely on a finalization process which
+ may not run to completion for a long period of time.
+ <p>
+ Graphics objects which are provided as arguments to the
+ <code>paint</code> and <code>update</code> methods
+ of components are automatically released by the system when
+ those methods return. For efficiency, programmers should
+ call <code>dispose</code> when finished using
+ a <code>Graphics</code> object only if it was created
+ directly from a component or another <code>Graphics</code> object.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>dispose</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>See Also:</B><DD><CODE>Graphics.finalize()</CODE>, 
+<CODE>Component.paint(java.awt.Graphics)</CODE>, 
+<CODE>Component.update(java.awt.Graphics)</CODE>, 
+<CODE>Component.getGraphics()</CODE>, 
+<CODE>Graphics.create()</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawLine(int, int, int, int)"><!-- --></A><H3>
+drawLine</H3>
+<PRE>
+public void <B>drawLine</B>(int&nbsp;x1,
+                     int&nbsp;y1,
+                     int&nbsp;x2,
+                     int&nbsp;y2)</PRE>
+<DL>
+<DD>Draws a line, using the current color, between the points
+ <code>(x1,&nbsp;y1)</code> and <code>(x2,&nbsp;y2)</code>
+ in this graphics context's coordinate system.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawLine</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x1</CODE> - the first point's <i>x</i> coordinate.<DD><CODE>y1</CODE> - the first point's <i>y</i> coordinate.<DD><CODE>x2</CODE> - the second point's <i>x</i> coordinate.<DD><CODE>y2</CODE> - the second point's <i>y</i> coordinate.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="fillPolygon(int[], int[], int)"><!-- --></A><H3>
+fillPolygon</H3>
+<PRE>
+public void <B>fillPolygon</B>(int[]&nbsp;xPoints,
+                        int[]&nbsp;yPoints,
+                        int&nbsp;nPoints)</PRE>
+<DL>
+<DD>Fills a closed polygon defined by
+ arrays of <i>x</i> and <i>y</i> coordinates.
+ <p>
+ This method draws the polygon defined by <code>nPoint</code> line
+ segments, where the first <code>nPoint&nbsp;-&nbsp;1</code>
+ line segments are line segments from
+ <code>(xPoints[i&nbsp;-&nbsp;1],&nbsp;yPoints[i&nbsp;-&nbsp;1])</code>
+ to <code>(xPoints[i],&nbsp;yPoints[i])</code>, for
+ 1&nbsp;&le;&nbsp;<i>i</i>&nbsp;&le;&nbsp;<code>nPoints</code>.
+ The figure is automatically closed by drawing a line connecting
+ the final point to the first point, if those points are different.
+ <p>
+ The area inside the polygon is defined using an
+ even-odd fill rule, also known as the alternating rule.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>fillPolygon</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>xPoints</CODE> - a an array of <code>x</code> coordinates.<DD><CODE>yPoints</CODE> - a an array of <code>y</code> coordinates.<DD><CODE>nPoints</CODE> - a the total number of points.<DT><B>See Also:</B><DD><CODE>Graphics.drawPolygon(int[], int[], int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="fillRect(int, int, int, int)"><!-- --></A><H3>
+fillRect</H3>
+<PRE>
+public void <B>fillRect</B>(int&nbsp;x,
+                     int&nbsp;y,
+                     int&nbsp;width,
+                     int&nbsp;height)</PRE>
+<DL>
+<DD>Fills the specified rectangle.
+ The left and right edges of the rectangle are at
+ <code>x</code> and <code>x&nbsp;+&nbsp;width&nbsp;-&nbsp;1</code>.
+ The top and bottom edges are at
+ <code>y</code> and <code>y&nbsp;+&nbsp;height&nbsp;-&nbsp;1</code>.
+ The resulting rectangle covers an area
+ <code>width</code> pixels wide by
+ <code>height</code> pixels tall.
+ The rectangle is filled using the graphics context's current color.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>fillRect</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the <i>x</i> coordinate
+                         of the rectangle to be filled.<DD><CODE>y</CODE> - the <i>y</i> coordinate
+                         of the rectangle to be filled.<DD><CODE>width</CODE> - the width of the rectangle to be filled.<DD><CODE>height</CODE> - the height of the rectangle to be filled.<DT><B>See Also:</B><DD><CODE>Graphics.clearRect(int, int, int, int)</CODE>, 
+<CODE>Graphics.drawRect(int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawRect(int, int, int, int)"><!-- --></A><H3>
+drawRect</H3>
+<PRE>
+public void <B>drawRect</B>(int&nbsp;x,
+                     int&nbsp;y,
+                     int&nbsp;width,
+                     int&nbsp;height)</PRE>
+<DL>
+<DD>Draws the outline of the specified rectangle.
+ The left and right edges of the rectangle are at
+ <code>x</code> and <code>x&nbsp;+&nbsp;width</code>.
+ The top and bottom edges are at
+ <code>y</code> and <code>y&nbsp;+&nbsp;height</code>.
+ The rectangle is drawn using the graphics context's current color.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>drawRect</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the <i>x</i> coordinate
+                         of the rectangle to be drawn.<DD><CODE>y</CODE> - the <i>y</i> coordinate
+                         of the rectangle to be drawn.<DD><CODE>width</CODE> - the width of the rectangle to be drawn.<DD><CODE>height</CODE> - the height of the rectangle to be drawn.<DT><B>See Also:</B><DD><CODE>Graphics.fillRect(int, int, int, int)</CODE>, 
+<CODE>Graphics.clearRect(int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawPolygon(int[], int[], int)"><!-- --></A><H3>
+drawPolygon</H3>
+<PRE>
+public void <B>drawPolygon</B>(int[]&nbsp;xPoints,
+                        int[]&nbsp;yPoints,
+                        int&nbsp;nPoints)</PRE>
+<DL>
+<DD>Draws a closed polygon defined by
+ arrays of <i>x</i> and <i>y</i> coordinates.
+ Each pair of (<i>x</i>,&nbsp;<i>y</i>) coordinates defines a point.
+ <p>
+ This method draws the polygon defined by <code>nPoint</code> line
+ segments, where the first <code>nPoint&nbsp;-&nbsp;1</code>
+ line segments are line segments from
+ <code>(xPoints[i&nbsp;-&nbsp;1],&nbsp;yPoints[i&nbsp;-&nbsp;1])</code>
+ to <code>(xPoints[i],&nbsp;yPoints[i])</code>, for
+ 1&nbsp;&le;&nbsp;<i>i</i>&nbsp;&le;&nbsp;<code>nPoints</code>.
+ The figure is automatically closed by drawing a line connecting
+ the final point to the first point, if those points are different.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawPolygon</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>xPoints</CODE> - a an array of <code>x</code> coordinates.<DD><CODE>yPoints</CODE> - a an array of <code>y</code> coordinates.<DD><CODE>nPoints</CODE> - a the total number of points.<DT><B>See Also:</B><DD><CODE>Graphics.fillPolygon(int[],int[],int)</CODE>, 
+<CODE>Graphics.drawPolyline(int[], int[], int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clipRect(int, int, int, int)"><!-- --></A><H3>
+clipRect</H3>
+<PRE>
+public void <B>clipRect</B>(int&nbsp;x,
+                     int&nbsp;y,
+                     int&nbsp;width,
+                     int&nbsp;height)</PRE>
+<DL>
+<DD>Intersects the current clip with the specified rectangle.
+ The resulting clipping area is the intersection of the current
+ clipping area and the specified rectangle.  If there is no
+ current clipping area, either because the clip has never been
+ set, or the clip has been cleared using <code>setClip(null)</code>,
+ the specified rectangle becomes the new clip.
+ This method sets the user clip, which is independent of the
+ clipping associated with device bounds and window visibility.
+ This method can only be used to make the current clip smaller.
+ To set the current clip larger, use any of the setClip methods.
+ Rendering operations have no effect outside of the clipping area.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>clipRect</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the x coordinate of the rectangle to intersect the clip with<DD><CODE>y</CODE> - the y coordinate of the rectangle to intersect the clip with<DD><CODE>width</CODE> - the width of the rectangle to intersect the clip with<DD><CODE>height</CODE> - the height of the rectangle to intersect the clip with<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(int, int, int, int)"><CODE>setClip(int, int, int, int)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(java.awt.Shape)"><CODE>setClip(Shape)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setClip(java.awt.Shape)"><!-- --></A><H3>
+setClip</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public void <B>setClip</B>(java.awt.Shape&nbsp;clip)</PRE>
+<DL>
+<DD>Sets the current clipping area to an arbitrary clip shape.
+ Not all objects that implement the <code>Shape</code>
+ interface can be used to set the clip.  The only
+ <code>Shape</code> objects that are guaranteed to be
+ supported are <code>Shape</code> objects that are
+ obtained via the <code>getClip</code> method and via
+ <code>Rectangle</code> objects.  This method sets the
+ user clip, which is independent of the clipping associated
+ with device bounds and window visibility.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>setClip</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>clip</CODE> - the <code>Shape</code> to use to set the clip<DT><B>Since:</B></DT>
+  <DD>JDK1.1</DD>
+<DT><B>See Also:</B><DD><CODE>Graphics.getClip()</CODE>, 
+<CODE>Graphics.clipRect(int, int, int, int)</CODE>, 
+<CODE>Graphics.setClip(int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getClipBounds()"><!-- --></A><H3>
+getClipBounds</H3>
+<PRE>
+public java.awt.Rectangle <B>getClipBounds</B>()</PRE>
+<DL>
+<DD>Returns the bounding rectangle of the current clipping area.
+ This method refers to the user clip, which is independent of the
+ clipping associated with device bounds and window visibility.
+ If no clip has previously been set, or if the clip has been
+ cleared using <code>setClip(null)</code>, this method returns
+ <code>null</code>.
+ The coordinates in the rectangle are relative to the coordinate
+ system origin of this graphics context.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getClipBounds</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the bounding rectangle of the current clipping area,
+              or <code>null</code> if no clip is set.<DT><B>Since:</B></DT>
+  <DD>JDK1.1</DD>
+<DT><B>See Also:</B><DD><CODE>Graphics.getClip()</CODE>, 
+<CODE>Graphics.clipRect(int, int, int, int)</CODE>, 
+<CODE>Graphics.setClip(int, int, int, int)</CODE>, 
+<CODE>Graphics.setClip(Shape)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawString(java.text.AttributedCharacterIterator, int, int)"><!-- --></A><H3>
+drawString</H3>
+<PRE>
+public void <B>drawString</B>(java.text.AttributedCharacterIterator&nbsp;iterator,
+                       int&nbsp;x,
+                       int&nbsp;y)</PRE>
+<DL>
+<DD>Draws the text given by the specified iterator, using this
+ graphics context's current color. The iterator has to specify a font
+ for each character. The baseline of the
+ first character is at position (<i>x</i>,&nbsp;<i>y</i>) in this
+ graphics context's coordinate system.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawString</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>iterator</CODE> - the iterator whose text is to be drawn<DD><CODE>x</CODE> - the <i>x</i> coordinate.<DD><CODE>y</CODE> - the <i>y</i> coordinate.<DT><B>See Also:</B><DD><CODE>Graphics.drawBytes(byte[], int, int, int, int)</CODE>, 
+<CODE>Graphics.drawChars(char[], int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clearRect(int, int, int, int)"><!-- --></A><H3>
+clearRect</H3>
+<PRE>
+public void <B>clearRect</B>(int&nbsp;x,
+                      int&nbsp;y,
+                      int&nbsp;width,
+                      int&nbsp;height)</PRE>
+<DL>
+<DD>Clears the specified rectangle by filling it with the background
+ color of the current drawing surface. This operation does not
+ use the current paint mode.
+ <p>
+ Beginning with Java&nbsp;1.1, the background color
+ of offscreen images may be system dependent. Applications should
+ use <code>setColor</code> followed by <code>fillRect</code> to
+ ensure that an offscreen image is cleared to a specific color.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>clearRect</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the <i>x</i> coordinate of the rectangle to clear.<DD><CODE>y</CODE> - the <i>y</i> coordinate of the rectangle to clear.<DD><CODE>width</CODE> - the width of the rectangle to clear.<DD><CODE>height</CODE> - the height of the rectangle to clear.<DT><B>See Also:</B><DD><CODE>Graphics.fillRect(int, int, int, int)</CODE>, 
+<CODE>Graphics.drawRect(int, int, int, int)</CODE>, 
+<CODE>Graphics.setColor(java.awt.Color)</CODE>, 
+<CODE>Graphics.setPaintMode()</CODE>, 
+<CODE>Graphics.setXORMode(java.awt.Color)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="copyArea(int, int, int, int, int, int)"><!-- --></A><H3>
+copyArea</H3>
+<PRE>
+public void <B>copyArea</B>(int&nbsp;x,
+                     int&nbsp;y,
+                     int&nbsp;width,
+                     int&nbsp;height,
+                     int&nbsp;dx,
+                     int&nbsp;dy)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>copyArea</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setClip(int, int, int, int)"><!-- --></A><H3>
+setClip</H3>
+<PRE>
+public void <B>setClip</B>(int&nbsp;x,
+                    int&nbsp;y,
+                    int&nbsp;width,
+                    int&nbsp;height)</PRE>
+<DL>
+<DD>Sets the current clip to the rectangle specified by the given
+ coordinates.  This method sets the user clip, which is
+ independent of the clipping associated with device bounds
+ and window visibility.
+ Rendering operations have no effect outside of the clipping area.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>setClip</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>x</CODE> - the <i>x</i> coordinate of the new clip rectangle.<DD><CODE>y</CODE> - the <i>y</i> coordinate of the new clip rectangle.<DD><CODE>width</CODE> - the width of the new clip rectangle.<DD><CODE>height</CODE> - the height of the new clip rectangle.<DT><B>Since:</B></DT>
+  <DD>JDK1.1</DD>
+<DT><B>See Also:</B><DD><CODE>Graphics.clipRect(int, int, int, int)</CODE>, 
+<CODE>Graphics.setClip(Shape)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="rotate(double)"><!-- --></A><H3>
+rotate</H3>
+<PRE>
+public void <B>rotate</B>(double&nbsp;theta)</PRE>
+<DL>
+<DD>Concatenates the current <code>Graphics2D</code>
+ <code>Transform</code> with a rotation transform.
+ Subsequent rendering is rotated by the specified radians relative
+ to the previous origin.
+ This is equivalent to calling <code>transform(R)</code>, where R is an
+ <code>AffineTransform</code> represented by the following matrix:
+ <pre>
+          [   cos(theta)    -sin(theta)    0   ]
+          [   sin(theta)     cos(theta)    0   ]
+          [       0              0         1   ]
+ </pre>
+ Rotating with a positive angle theta rotates points on the positive
+ x axis toward the positive y axis.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>rotate</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>theta</CODE> - the angle of rotation in radians</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="rotate(double, double, double)"><!-- --></A><H3>
+rotate</H3>
+<PRE>
+public void <B>rotate</B>(double&nbsp;theta,
+                   double&nbsp;x,
+                   double&nbsp;y)</PRE>
+<DL>
+<DD>Concatenates the current <code>Graphics2D</code>
+ <code>Transform</code> with a translated rotation
+ transform.  Subsequent rendering is transformed by a transform
+ which is constructed by translating to the specified location,
+ rotating by the specified radians, and translating back by the same
+ amount as the original translation.  This is equivalent to the
+ following sequence of calls:
+ <pre>
+          translate(x, y);
+          rotate(theta);
+          translate(-x, -y);
+ </pre>
+ Rotating with a positive angle theta rotates points on the positive
+ x axis toward the positive y axis.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>rotate</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>theta</CODE> - the angle of rotation in radians<DD><CODE>x</CODE> - x coordinate of the origin of the rotation<DD><CODE>y</CODE> - y coordinate of the origin of the rotation</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="shear(double, double)"><!-- --></A><H3>
+shear</H3>
+<PRE>
+public void <B>shear</B>(double&nbsp;shx,
+                  double&nbsp;shy)</PRE>
+<DL>
+<DD>Concatenates the current <code>Graphics2D</code>
+ <code>Transform</code> with a shearing transform.
+ Subsequent renderings are sheared by the specified
+ multiplier relative to the previous position.
+ This is equivalent to calling <code>transform(SH)</code>, where SH
+ is an <code>AffineTransform</code> represented by the following
+ matrix:
+ <pre>
+          [   1   shx   0   ]
+          [  shy   1    0   ]
+          [   0    0    1   ]
+ </pre>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>shear</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>shx</CODE> - the multiplier by which coordinates are shifted in
+ the positive X axis direction as a function of their Y coordinate<DD><CODE>shy</CODE> - the multiplier by which coordinates are shifted in
+ the positive Y axis direction as a function of their X coordinate</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFontRenderContext()"><!-- --></A><H3>
+getFontRenderContext</H3>
+<PRE>
+public java.awt.font.FontRenderContext <B>getFontRenderContext</B>()</PRE>
+<DL>
+<DD>Get the rendering context of the <code>Font</code> within this
+ <code>Graphics2D</code> context.
+ The <CODE>FontRenderContext</CODE>
+ encapsulates application hints such as anti-aliasing and
+ fractional metrics, as well as target device specific information
+ such as dots-per-inch.  This information should be provided by the
+ application when using objects that perform typographical
+ formatting, such as <code>Font</code> and
+ <code>TextLayout</code>.  This information should also be provided
+ by applications that perform their own layout and need accurate
+ measurements of various characteristics of glyphs such as advance
+ and line height when various rendering hints have been applied to
+ the text rendering.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getFontRenderContext</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a reference to an instance of FontRenderContext.<DT><B>Since:</B></DT>
+  <DD>JDK1.2</DD>
+<DT><B>See Also:</B><DD><CODE>FontRenderContext</CODE>, 
+<CODE>Font.createGlyphVector(FontRenderContext,char[])</CODE>, 
+<CODE>TextLayout</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="transform(java.awt.geom.AffineTransform)"><!-- --></A><H3>
+transform</H3>
+<PRE>
+public void <B>transform</B>(java.awt.geom.AffineTransform&nbsp;Tx)</PRE>
+<DL>
+<DD>Composes an <code>AffineTransform</code> object with the
+ <code>Transform</code> in this <code>Graphics2D</code> according
+ to the rule last-specified-first-applied.  If the current
+ <code>Transform</code> is Cx, the result of composition
+ with Tx is a new <code>Transform</code> Cx'.  Cx' becomes the
+ current <code>Transform</code> for this <code>Graphics2D</code>.
+ Transforming a point p by the updated <code>Transform</code> Cx' is
+ equivalent to first transforming p by Tx and then transforming
+ the result by the original <code>Transform</code> Cx.  In other
+ words, Cx'(p) = Cx(Tx(p)).  A copy of the Tx is made, if necessary,
+ so further modifications to Tx do not affect rendering.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>transform</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>Tx</CODE> - the <code>AffineTransform</code> object to be composed with
+ the current <code>Transform</code><DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setTransform(java.awt.geom.AffineTransform)"><CODE>setTransform(java.awt.geom.AffineTransform)</CODE></A>, 
+<CODE>AffineTransform</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawImage(java.awt.image.BufferedImage, java.awt.image.BufferedImageOp, int, int)"><!-- --></A><H3>
+drawImage</H3>
+<PRE>
+public void <B>drawImage</B>(java.awt.image.BufferedImage&nbsp;img,
+                      java.awt.image.BufferedImageOp&nbsp;op,
+                      int&nbsp;x,
+                      int&nbsp;y)</PRE>
+<DL>
+<DD>Renders a <code>BufferedImage</code> that is
+ filtered with a
+ <CODE>BufferedImageOp</CODE>.
+ The rendering attributes applied include the <code>Clip</code>,
+ <code>Transform</code>
+ and <code>Composite</code> attributes.  This is equivalent to:
+ <pre>
+ img1 = op.filter(img, null);
+ drawImage(img1, new AffineTransform(1f,0f,0f,1f,x,y), null);
+ </pre>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawImage</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>img</CODE> - the <code>BufferedImage</code> to be rendered<DD><CODE>op</CODE> - the filter to be applied to the image before rendering<DD><CODE>x</CODE> - the x coordinate in user space where the image is rendered<DD><CODE>y</CODE> - the y coordinate in user space where the image is rendered<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#_transform"><CODE>_transform</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setTransform(java.awt.geom.AffineTransform)"><CODE>setTransform(java.awt.geom.AffineTransform)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setComposite(java.awt.Composite)"><CODE>setComposite(java.awt.Composite)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#clip(java.awt.Shape)"><CODE>clip(java.awt.Shape)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(java.awt.Shape)"><CODE>setClip(Shape)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBackground(java.awt.Color)"><!-- --></A><H3>
+setBackground</H3>
+<PRE>
+public void <B>setBackground</B>(java.awt.Color&nbsp;color)</PRE>
+<DL>
+<DD>Sets the background color for the <code>Graphics2D</code> context.
+ The background color is used for clearing a region.
+ When a <code>Graphics2D</code> is constructed for a
+ <code>Component</code>, the background color is
+ inherited from the <code>Component</code>. Setting the background color
+ in the <code>Graphics2D</code> context only affects the subsequent
+ <code>clearRect</code> calls and not the background color of the
+ <code>Component</code>.  To change the background
+ of the <code>Component</code>, use appropriate methods of
+ the <code>Component</code>.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>setBackground</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - the background color that isused in
+ subsequent calls to <code>clearRect</code><DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#getBackground()"><CODE>getBackground()</CODE></A>, 
+<CODE>Graphics.clearRect(int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBackground()"><!-- --></A><H3>
+getBackground</H3>
+<PRE>
+public java.awt.Color <B>getBackground</B>()</PRE>
+<DL>
+<DD>Returns the background color used for clearing a region.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getBackground</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the current <code>Graphics2D</code> <code>Color</code>,
+ which defines the background color.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setBackground(java.awt.Color)"><CODE>setBackground(java.awt.Color)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setComposite(java.awt.Composite)"><!-- --></A><H3>
+setComposite</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public void <B>setComposite</B>(java.awt.Composite&nbsp;comp)</PRE>
+<DL>
+<DD>Sets the <code>Composite</code> for the <code>Graphics2D</code> context.
+ The <code>Composite</code> is used in all drawing methods such as
+ <code>drawImage</code>, <code>drawString</code>, <code>draw</code>,
+ and <code>fill</code>.  It specifies how new pixels are to be combined
+ with the existing pixels on the graphics device during the rendering
+ process.
+ <p>If this <code>Graphics2D</code> context is drawing to a
+ <code>Component</code> on the display screen and the
+ <code>Composite</code> is a custom object rather than an
+ instance of the <code>AlphaComposite</code> class, and if
+ there is a security manager, its <code>checkPermission</code>
+ method is called with an <code>AWTPermission("readDisplayPixels")</code>
+ permission.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>setComposite</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>comp</CODE> - the <code>Composite</code> object to be used for rendering
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.SecurityException</CODE> - if a custom <code>Composite</code> object is being
+         used to render to the screen and a security manager
+         is set and its <code>checkPermission</code> method
+         does not allow the operation.<DT><B>See Also:</B><DD><CODE>Graphics.setXORMode(java.awt.Color)</CODE>, 
+<CODE>Graphics.setPaintMode()</CODE>, 
+<CODE>AlphaComposite</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getComposite()"><!-- --></A><H3>
+getComposite</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public java.awt.Composite <B>getComposite</B>()</PRE>
+<DL>
+<DD>Returns the current <code>Composite</code> in the
+ <code>Graphics2D</code> context.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getComposite</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the current <code>Graphics2D</code> <code>Composite</code>,
+              which defines a compositing style.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setComposite(java.awt.Composite)"><CODE>setComposite(java.awt.Composite)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRenderingHint(java.awt.RenderingHints.Key)"><!-- --></A><H3>
+getRenderingHint</H3>
+<PRE>
+public java.lang.Object <B>getRenderingHint</B>(java.awt.RenderingHints.Key&nbsp;hintKey)</PRE>
+<DL>
+<DD>Returns the value of a single preference for the rendering algorithms.
+ Hint categories include controls for rendering quality and overall
+ time/quality trade-off in the rendering process.  Refer to the
+ <code>RenderingHints</code> class for definitions of some common
+ keys and values.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getRenderingHint</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hintKey</CODE> - the key corresponding to the hint to get.
+<DT><B>Returns:</B><DD>an object representing the value for the specified hint key.
+ Some of the keys and their associated values are defined in the
+ <code>RenderingHints</code> class.<DT><B>See Also:</B><DD><CODE>RenderingHints</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRenderingHint(java.awt.RenderingHints.Key, java.lang.Object)"><!-- --></A><H3>
+setRenderingHint</H3>
+<PRE>
+public void <B>setRenderingHint</B>(java.awt.RenderingHints.Key&nbsp;hintKey,
+                             java.lang.Object&nbsp;hintValue)</PRE>
+<DL>
+<DD>Sets the value of a single preference for the rendering algorithms.
+ Hint categories include controls for rendering quality and overall
+ time/quality trade-off in the rendering process.  Refer to the
+ <code>RenderingHints</code> class for definitions of some common
+ keys and values.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>setRenderingHint</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hintKey</CODE> - the key of the hint to be set.<DD><CODE>hintValue</CODE> - the value indicating preferences for the specified
+ hint category.<DT><B>See Also:</B><DD><CODE>RenderingHints</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawGlyphVector(java.awt.font.GlyphVector, float, float)"><!-- --></A><H3>
+drawGlyphVector</H3>
+<PRE>
+public void <B>drawGlyphVector</B>(java.awt.font.GlyphVector&nbsp;g,
+                            float&nbsp;x,
+                            float&nbsp;y)</PRE>
+<DL>
+<DD>Renders the text of the specified
+ <CODE>GlyphVector</CODE> using
+ the <code>Graphics2D</code> context's rendering attributes.
+ The rendering attributes applied include the <code>Clip</code>,
+ <code>Transform</code>, <code>Paint</code>, and
+ <code>Composite</code> attributes.  The <code>GlyphVector</code>
+ specifies individual glyphs from a <CODE>Font</CODE>.
+ The <code>GlyphVector</code> can also contain the glyph positions.
+ This is the fastest way to render a set of characters to the
+ screen.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawGlyphVector</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>g</CODE> - the <code>GlyphVector</code> to be rendered<DD><CODE>x</CODE> - the x position in user space where the glyphs should be
+        rendered<DD><CODE>y</CODE> - the y position in user space where the glyphs should be
+        rendered<DT><B>See Also:</B><DD><CODE>Font.createGlyphVector(FontRenderContext, char[])</CODE>, 
+<CODE>GlyphVector</CODE>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setPaint(java.awt.Paint)"><CODE>setPaint(java.awt.Paint)</CODE></A>, 
+<CODE>Graphics.setColor(java.awt.Color)</CODE>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setTransform(java.awt.geom.AffineTransform)"><CODE>setTransform(java.awt.geom.AffineTransform)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setComposite(java.awt.Composite)"><CODE>setComposite(java.awt.Composite)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(java.awt.Shape)"><CODE>setClip(Shape)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDeviceConfiguration()"><!-- --></A><H3>
+getDeviceConfiguration</H3>
+<PRE>
+public java.awt.GraphicsConfiguration <B>getDeviceConfiguration</B>()</PRE>
+<DL>
+<DD>Returns the device configuration associated with this
+ <code>Graphics2D</code>.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getDeviceConfiguration</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the device configuration</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addRenderingHints(java.util.Map)"><!-- --></A><H3>
+addRenderingHints</H3>
+<PRE>
+public void <B>addRenderingHints</B>(java.util.Map&lt;?,?&gt;&nbsp;hints)</PRE>
+<DL>
+<DD>Sets the values of an arbitrary number of preferences for the
+ rendering algorithms.
+ Only values for the rendering hints that are present in the
+ specified <code>Map</code> object are modified.
+ All other preferences not present in the specified
+ object are left unmodified.
+ Hint categories include controls for rendering quality and
+ overall time/quality trade-off in the rendering process.
+ Refer to the <code>RenderingHints</code> class for definitions of
+ some common keys and values.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>addRenderingHints</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hints</CODE> - the rendering hints to be set<DT><B>See Also:</B><DD><CODE>RenderingHints</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="translate(double, double)"><!-- --></A><H3>
+translate</H3>
+<PRE>
+public void <B>translate</B>(double&nbsp;tx,
+                      double&nbsp;ty)</PRE>
+<DL>
+<DD>Concatenates the current
+ <code>Graphics2D</code> <code>Transform</code>
+ with a translation transform.
+ Subsequent rendering is translated by the specified
+ distance relative to the previous position.
+ This is equivalent to calling transform(T), where T is an
+ <code>AffineTransform</code> represented by the following matrix:
+ <pre>
+          [   1    0    tx  ]
+          [   0    1    ty  ]
+          [   0    0    1   ]
+ </pre>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>translate</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>tx</CODE> - the distance to translate along the x-axis<DD><CODE>ty</CODE> - the distance to translate along the y-axis</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawString(java.text.AttributedCharacterIterator, float, float)"><!-- --></A><H3>
+drawString</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public void <B>drawString</B>(java.text.AttributedCharacterIterator&nbsp;iterator,
+                                      float&nbsp;x,
+                                      float&nbsp;y)</PRE>
+<DL>
+<DD>Renders the text of the specified iterator, using the
+ <code>Graphics2D</code> context's current <code>Paint</code>. The
+ iterator must specify a font
+ for each character. The baseline of the
+ first character is at position (<i>x</i>,&nbsp;<i>y</i>) in the
+ User Space.
+ The rendering attributes applied include the <code>Clip</code>,
+ <code>Transform</code>, <code>Paint</code>, and
+ <code>Composite</code> attributes.
+ For characters in script systems such as Hebrew and Arabic,
+ the glyphs can be rendered from right to left, in which case the
+ coordinate supplied is the location of the leftmost character
+ on the baseline.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawString</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>iterator</CODE> - the iterator whose text is to be rendered<DD><CODE>x</CODE> - the x coordinate where the iterator's text is to be
+ rendered<DD><CODE>y</CODE> - the y coordinate where the iterator's text is to be
+ rendered<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setPaint(java.awt.Paint)"><CODE>setPaint(java.awt.Paint)</CODE></A>, 
+<CODE>Graphics.setColor(java.awt.Color)</CODE>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setTransform(java.awt.geom.AffineTransform)"><CODE>setTransform(java.awt.geom.AffineTransform)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setComposite(java.awt.Composite)"><CODE>setComposite(java.awt.Composite)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(java.awt.Shape)"><CODE>setClip(java.awt.Shape)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hit(java.awt.Rectangle, java.awt.Shape, boolean)"><!-- --></A><H3>
+hit</H3>
+<PRE>
+public boolean <B>hit</B>(java.awt.Rectangle&nbsp;rect,
+                   java.awt.Shape&nbsp;s,
+                   boolean&nbsp;onStroke)</PRE>
+<DL>
+<DD>Checks whether or not the specified <code>Shape</code> intersects
+ the specified <CODE>Rectangle</CODE>, which is in device
+ space. If <code>onStroke</code> is false, this method checks
+ whether or not the interior of the specified <code>Shape</code>
+ intersects the specified <code>Rectangle</code>.  If
+ <code>onStroke</code> is <code>true</code>, this method checks
+ whether or not the <code>Stroke</code> of the specified
+ <code>Shape</code> outline intersects the specified
+ <code>Rectangle</code>.
+ The rendering attributes taken into account include the
+ <code>Clip</code>, <code>Transform</code>, and <code>Stroke</code>
+ attributes.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>hit</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rect</CODE> - the area in device space to check for a hit<DD><CODE>s</CODE> - the <code>Shape</code> to check for a hit<DD><CODE>onStroke</CODE> - flag used to choose between testing the
+ stroked or the filled shape.  If the flag is <code>true</code>, the
+ <code>Stroke</code> oultine is tested.  If the flag is
+ <code>false</code>, the filled <code>Shape</code> is tested.
+<DT><B>Returns:</B><DD><code>true</code> if there is a hit; <code>false</code>
+ otherwise.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setStroke(java.awt.Stroke)"><CODE>setStroke(java.awt.Stroke)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#fill(java.awt.Shape)"><CODE>fill(Shape)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#draw(java.awt.Shape)"><CODE>draw(Shape)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#_transform"><CODE>_transform</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setTransform(java.awt.geom.AffineTransform)"><CODE>setTransform(java.awt.geom.AffineTransform)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#clip(java.awt.Shape)"><CODE>clip(java.awt.Shape)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(java.awt.Shape)"><CODE>setClip(Shape)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRenderingHints()"><!-- --></A><H3>
+getRenderingHints</H3>
+<PRE>
+public java.awt.RenderingHints <B>getRenderingHints</B>()</PRE>
+<DL>
+<DD>Gets the preferences for the rendering algorithms.  Hint categories
+ include controls for rendering quality and overall time/quality
+ trade-off in the rendering process.
+ Returns all of the hint key/value pairs that were ever specified in
+ one operation.  Refer to the
+ <code>RenderingHints</code> class for definitions of some common
+ keys and values.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getRenderingHints</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a reference to an instance of <code>RenderingHints</code>
+ that contains the current preferences.<DT><B>See Also:</B><DD><CODE>RenderingHints</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRenderingHints(java.util.Map)"><!-- --></A><H3>
+setRenderingHints</H3>
+<PRE>
+public void <B>setRenderingHints</B>(java.util.Map&lt;?,?&gt;&nbsp;hints)</PRE>
+<DL>
+<DD>Replaces the values of all preferences for the rendering
+ algorithms with the specified <code>hints</code>.
+ The existing values for all rendering hints are discarded and
+ the new set of known hints and values are initialized from the
+ specified <CODE>Map</CODE> object.
+ Hint categories include controls for rendering quality and
+ overall time/quality trade-off in the rendering process.
+ Refer to the <code>RenderingHints</code> class for definitions of
+ some common keys and values.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>setRenderingHints</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hints</CODE> - the rendering hints to be set<DT><B>See Also:</B><DD><CODE>RenderingHints</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawImage(java.awt.Image, java.awt.geom.AffineTransform, java.awt.image.ImageObserver)"><!-- --></A><H3>
+drawImage</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public boolean <B>drawImage</B>(java.awt.Image&nbsp;img,
+                                        java.awt.geom.AffineTransform&nbsp;xform,
+                                        java.awt.image.ImageObserver&nbsp;obs)</PRE>
+<DL>
+<DD>Renders an image, applying a transform from image space into user space
+ before drawing.
+ The transformation from user space into device space is done with
+ the current <code>Transform</code> in the <code>Graphics2D</code>.
+ The specified transformation is applied to the image before the
+ transform attribute in the <code>Graphics2D</code> context is applied.
+ The rendering attributes applied include the <code>Clip</code>,
+ <code>Transform</code>, and <code>Composite</code> attributes.
+ Note that no rendering is done if the specified transform is
+ noninvertible.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawImage</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>img</CODE> - the <code>Image</code> to be rendered<DD><CODE>xform</CODE> - the transformation from image space into user space<DD><CODE>obs</CODE> - the <CODE>ImageObserver</CODE>
+ to be notified as more of the <code>Image</code>
+ is converted
+<DT><B>Returns:</B><DD><code>true</code> if the <code>Image</code> is
+ fully loaded and completely rendered;
+ <code>false</code> if the <code>Image</code> is still being loaded.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#_transform"><CODE>_transform</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setTransform(java.awt.geom.AffineTransform)"><CODE>setTransform(java.awt.geom.AffineTransform)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setComposite(java.awt.Composite)"><CODE>setComposite(java.awt.Composite)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#clip(java.awt.Shape)"><CODE>clip(java.awt.Shape)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(java.awt.Shape)"><CODE>setClip(Shape)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawImage(java.awt.Image, int, int, int, int, java.awt.image.ImageObserver)"><!-- --></A><H3>
+drawImage</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public boolean <B>drawImage</B>(java.awt.Image&nbsp;img,
+                                        int&nbsp;x,
+                                        int&nbsp;y,
+                                        int&nbsp;width,
+                                        int&nbsp;height,
+                                        java.awt.image.ImageObserver&nbsp;observer)</PRE>
+<DL>
+<DD>Draws as much of the specified image as has already been scaled
+ to fit inside the specified rectangle.
+ <p>
+ The image is drawn inside the specified rectangle of this
+ graphics context's coordinate space, and is scaled if
+ necessary. Transparent pixels do not affect whatever pixels
+ are already there.
+ <p>
+ This method returns immediately in all cases, even if the
+ entire image has not yet been scaled, dithered, and converted
+ for the current output device.
+ If the current output representation is not yet complete, then
+ <code>drawImage</code> returns <code>false</code>. As more of
+ the image becomes available, the process that loads the image notifies
+ the image observer by calling its <code>imageUpdate</code> method.
+ <p>
+ A scaled version of an image will not necessarily be
+ available immediately just because an unscaled version of the
+ image has been constructed for this output device.  Each size of
+ the image may be cached separately and generated from the original
+ data in a separate image production sequence.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawImage</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>img</CODE> - the specified image to be drawn. This method does
+                  nothing if <code>img</code> is null.<DD><CODE>x</CODE> - the <i>x</i> coordinate.<DD><CODE>y</CODE> - the <i>y</i> coordinate.<DD><CODE>width</CODE> - the width of the rectangle.<DD><CODE>height</CODE> - the height of the rectangle.<DD><CODE>observer</CODE> - object to be notified as more of
+                          the image is converted.
+<DT><B>Returns:</B><DD><code>false</code> if the image pixels are still changing;
+           <code>true</code> otherwise.<DT><B>See Also:</B><DD><CODE>Image</CODE>, 
+<CODE>ImageObserver</CODE>, 
+<CODE>ImageObserver.imageUpdate(java.awt.Image, int, int, int, int, int)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="create()"><!-- --></A><H3>
+create</H3>
+<PRE>
+public java.awt.Graphics <B>create</B>()</PRE>
+<DL>
+<DD>Creates a new <code>Graphics</code> object that is
+ a copy of this <code>Graphics</code> object.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>create</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a new graphics context that is a copy of
+                       this graphics context.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFontMetrics(java.awt.Font)"><!-- --></A><H3>
+getFontMetrics</H3>
+<PRE>
+public java.awt.FontMetrics <B>getFontMetrics</B>(java.awt.Font&nbsp;f)</PRE>
+<DL>
+<DD>Gets the font metrics for the specified font.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>getFontMetrics</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>f</CODE> - the specified font
+<DT><B>Returns:</B><DD>the font metrics for the specified font.<DT><B>See Also:</B><DD><CODE>Graphics.getFont()</CODE>, 
+<CODE>FontMetrics</CODE>, 
+<CODE>Graphics.getFontMetrics()</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setXORMode(java.awt.Color)"><!-- --></A><H3>
+setXORMode</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public void <B>setXORMode</B>(java.awt.Color&nbsp;c1)</PRE>
+<DL>
+<DD>Sets the paint mode of this graphics context to alternate between
+ this graphics context's current color and the new specified color.
+ This specifies that logical pixel operations are performed in the
+ XOR mode, which alternates pixels between the current color and
+ a specified XOR color.
+ <p>
+ When drawing operations are performed, pixels which are the
+ current color are changed to the specified color, and vice versa.
+ <p>
+ Pixels that are of colors other than those two colors are changed
+ in an unpredictable but reversible manner; if the same figure is
+ drawn twice, then all pixels are restored to their original values.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>setXORMode</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>c1</CODE> - the XOR alternation color</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPaintMode()"><!-- --></A><H3>
+setPaintMode</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public void <B>setPaintMode</B>()</PRE>
+<DL>
+<DD>Sets the paint mode of this graphics context to overwrite the
+ destination with this graphics context's current color.
+ This sets the logical pixel operation function to the paint or
+ overwrite mode.  All subsequent rendering operations will
+ overwrite the destination with the current color.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>setPaintMode</CODE> in class <CODE>java.awt.Graphics</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawRenderedImage(java.awt.image.RenderedImage, java.awt.geom.AffineTransform)"><!-- --></A><H3>
+drawRenderedImage</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public void <B>drawRenderedImage</B>(java.awt.image.RenderedImage&nbsp;img,
+                                             java.awt.geom.AffineTransform&nbsp;xform)</PRE>
+<DL>
+<DD>Renders a
+ <CODE>RenderableImage</CODE>,
+ applying a transform from image space into user space before drawing.
+ The transformation from user space into device space is done with
+ the current <code>Transform</code> in the <code>Graphics2D</code>.
+ The specified transformation is applied to the image before the
+ transform attribute in the <code>Graphics2D</code> context is applied.
+ The rendering attributes applied include the <code>Clip</code>,
+ <code>Transform</code>, and <code>Composite</code> attributes. Note
+ that no rendering is done if the specified transform is
+ noninvertible.
+<p>
+ Rendering hints set on the <code>Graphics2D</code> object might
+ be used in rendering the <code>RenderableImage</code>.
+ If explicit control is required over specific hints recognized by a
+ specific <code>RenderableImage</code>, or if knowledge of which hints
+ are used is required, then a <code>RenderedImage</code> should be
+ obtained directly from the <code>RenderableImage</code>
+ and rendered using
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawRenderedImage(java.awt.image.RenderedImage, java.awt.geom.AffineTransform)"><CODE>drawRenderedImage</CODE></A>.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawRenderedImage</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>img</CODE> - the image to be rendered. This method does
+            nothing if <code>img</code> is null.<DD><CODE>xform</CODE> - the transformation from image space into user space<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#_transform"><CODE>_transform</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setTransform(java.awt.geom.AffineTransform)"><CODE>setTransform(java.awt.geom.AffineTransform)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setComposite(java.awt.Composite)"><CODE>setComposite(java.awt.Composite)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#clip(java.awt.Shape)"><CODE>clip(java.awt.Shape)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(java.awt.Shape)"><CODE>setClip(java.awt.Shape)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#drawRenderedImage(java.awt.image.RenderedImage, java.awt.geom.AffineTransform)"><CODE>drawRenderedImage(java.awt.image.RenderedImage, java.awt.geom.AffineTransform)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="drawRenderableImage(java.awt.image.renderable.RenderableImage, java.awt.geom.AffineTransform)"><!-- --></A><H3>
+drawRenderableImage</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">@NotImplemented</A>
+</FONT>public void <B>drawRenderableImage</B>(java.awt.image.renderable.RenderableImage&nbsp;img,
+                                               java.awt.geom.AffineTransform&nbsp;xform)</PRE>
+<DL>
+<DD>Renders a <CODE>RenderedImage</CODE>,
+ applying a transform from image
+ space into user space before drawing.
+ The transformation from user space into device space is done with
+ the current <code>Transform</code> in the <code>Graphics2D</code>.
+ The specified transformation is applied to the image before the
+ transform attribute in the <code>Graphics2D</code> context is applied.
+ The rendering attributes applied include the <code>Clip</code>,
+ <code>Transform</code>, and <code>Composite</code> attributes. Note
+ that no rendering is done if the specified transform is
+ noninvertible.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>drawRenderableImage</CODE> in class <CODE>java.awt.Graphics2D</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>img</CODE> - the image to be rendered. This method does
+            nothing if <code>img</code> is null.<DD><CODE>xform</CODE> - the transformation from image space into user space<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#_transform"><CODE>_transform</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setTransform(java.awt.geom.AffineTransform)"><CODE>setTransform(java.awt.geom.AffineTransform)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setComposite(java.awt.Composite)"><CODE>setComposite(java.awt.Composite)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#clip(java.awt.Shape)"><CODE>clip(java.awt.Shape)</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/sl/draw/SLGraphics.html#setClip(java.awt.Shape)"><CODE>setClip(java.awt.Shape)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="applyStroke(org.apache.poi.sl.usermodel.SimpleShape)"><!-- --></A><H3>
+applyStroke</H3>
+<PRE>
+protected void <B>applyStroke</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="interface in org.apache.poi.sl.usermodel">SimpleShape</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="applyPaint(org.apache.poi.sl.usermodel.SimpleShape)"><!-- --></A><H3>
+applyPaint</H3>
+<PRE>
+protected void <B>applyPaint</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="interface in org.apache.poi.sl.usermodel">SimpleShape</A>&lt;?,?&gt;&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/ImageRenderer.html" title="interface in org.apache.poi.sl.draw"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/draw/SLGraphics.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SLGraphics.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

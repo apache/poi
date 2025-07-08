@@ -1,0 +1,338 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+ForkedEvaluator (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="ForkedEvaluator (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../../index.html?org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ForkedEvaluator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.formula.eval.forked</FONT>
+<BR>
+Class ForkedEvaluator</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.formula.eval.forked.ForkedEvaluator</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public final class <B>ForkedEvaluator</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+An alternative workbook evaluator that saves memory in situations where a single workbook is
+ concurrently and independently evaluated many times.  With standard formula evaluation, around
+ 90% of memory consumption is due to loading of the <A HREF="../../../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel"><CODE>HSSFWorkbook</CODE></A> or <A HREF="https://poi.apache.org/apidocs/org/apache/poi/xssf/usermodel/XSSFWorkbook.html?is-external=true" title="class or interface in org.apache.poi.xssf.usermodel"><CODE>XSSFWorkbook</CODE></A>.
+ This class enables a 'master workbook' to be loaded just once and shared between many evaluation
+ clients.  Each evaluation client creates its own <A HREF="../../../../../../../org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html" title="class in org.apache.poi.ss.formula.eval.forked"><CODE>ForkedEvaluator</CODE></A> and can set cell values
+ that will be used for local evaluations (and don't disturb evaluations on other evaluators).
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../../org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html#copyUpdatedCells(org.apache.poi.ss.usermodel.Workbook)">copyUpdatedCells</A></B>(<A HREF="../../../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;workbook)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copies the values of all updated cells (modified by calls to <A HREF="../../../../../../../org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html#updateCell(java.lang.String, int, int, org.apache.poi.ss.formula.eval.ValueEval)"><CODE>updateCell(String, int, int, ValueEval)</CODE></A>) to the supplied <tt>workbook</tt>.<br>
+ Typically, the supplied <tt>workbook</tt> is a writable copy of the 'master workbook',
+ but at the very least it must contain sheets with the same names.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../../org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html" title="class in org.apache.poi.ss.formula.eval.forked">ForkedEvaluator</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../../org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html#create(org.apache.poi.ss.usermodel.Workbook, org.apache.poi.ss.formula.IStabilityClassifier, org.apache.poi.ss.formula.udf.UDFFinder)">create</A></B>(<A HREF="../../../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;wb,
+       <A HREF="../../../../../../../org/apache/poi/ss/formula/IStabilityClassifier.html" title="interface in org.apache.poi.ss.formula">IStabilityClassifier</A>&nbsp;stabilityClassifier,
+       <A HREF="../../../../../../../org/apache/poi/ss/formula/udf/UDFFinder.html" title="interface in org.apache.poi.ss.formula.udf">UDFFinder</A>&nbsp;udfFinder)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../../org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html#evaluate(java.lang.String, int, int)">evaluate</A></B>(java.lang.String&nbsp;sheetName,
+         int&nbsp;rowIndex,
+         int&nbsp;columnIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If cell contains a formula, the formula is evaluated and returned,
+ else the CellValue simply copies the appropriate cell value from
+ the cell and also its cell type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../../org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html#setupEnvironment(java.lang.String[], org.apache.poi.ss.formula.eval.forked.ForkedEvaluator[])">setupEnvironment</A></B>(java.lang.String[]&nbsp;workbookNames,
+                 <A HREF="../../../../../../../org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html" title="class in org.apache.poi.ss.formula.eval.forked">ForkedEvaluator</A>[]&nbsp;evaluators)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Coordinates several formula evaluators together so that formulas that involve external
+ references can be evaluated.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../../org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html#updateCell(java.lang.String, int, int, org.apache.poi.ss.formula.eval.ValueEval)">updateCell</A></B>(java.lang.String&nbsp;sheetName,
+           int&nbsp;rowIndex,
+           int&nbsp;columnIndex,
+           <A HREF="../../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the specified cell to the supplied <tt>value</tt></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="create(org.apache.poi.ss.usermodel.Workbook, org.apache.poi.ss.formula.IStabilityClassifier, org.apache.poi.ss.formula.udf.UDFFinder)"><!-- --></A><H3>
+create</H3>
+<PRE>
+public static <A HREF="../../../../../../../org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html" title="class in org.apache.poi.ss.formula.eval.forked">ForkedEvaluator</A> <B>create</B>(<A HREF="../../../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;wb,
+                                     <A HREF="../../../../../../../org/apache/poi/ss/formula/IStabilityClassifier.html" title="interface in org.apache.poi.ss.formula">IStabilityClassifier</A>&nbsp;stabilityClassifier,
+                                     <A HREF="../../../../../../../org/apache/poi/ss/formula/udf/UDFFinder.html" title="interface in org.apache.poi.ss.formula.udf">UDFFinder</A>&nbsp;udfFinder)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>udfFinder</CODE> - pass <code>null</code> for default (AnalysisToolPak only)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="updateCell(java.lang.String, int, int, org.apache.poi.ss.formula.eval.ValueEval)"><!-- --></A><H3>
+updateCell</H3>
+<PRE>
+public void <B>updateCell</B>(java.lang.String&nbsp;sheetName,
+                       int&nbsp;rowIndex,
+                       int&nbsp;columnIndex,
+                       <A HREF="../../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A>&nbsp;value)</PRE>
+<DL>
+<DD>Sets the specified cell to the supplied <tt>value</tt>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sheetName</CODE> - the name of the sheet containing the cell<DD><CODE>rowIndex</CODE> - zero based<DD><CODE>columnIndex</CODE> - zero based</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="copyUpdatedCells(org.apache.poi.ss.usermodel.Workbook)"><!-- --></A><H3>
+copyUpdatedCells</H3>
+<PRE>
+public void <B>copyUpdatedCells</B>(<A HREF="../../../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;workbook)</PRE>
+<DL>
+<DD>Copies the values of all updated cells (modified by calls to <A HREF="../../../../../../../org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html#updateCell(java.lang.String, int, int, org.apache.poi.ss.formula.eval.ValueEval)"><CODE>updateCell(String, int, int, ValueEval)</CODE></A>) to the supplied <tt>workbook</tt>.<br>
+ Typically, the supplied <tt>workbook</tt> is a writable copy of the 'master workbook',
+ but at the very least it must contain sheets with the same names.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluate(java.lang.String, int, int)"><!-- --></A><H3>
+evaluate</H3>
+<PRE>
+public <A HREF="../../../../../../../org/apache/poi/ss/formula/eval/ValueEval.html" title="interface in org.apache.poi.ss.formula.eval">ValueEval</A> <B>evaluate</B>(java.lang.String&nbsp;sheetName,
+                          int&nbsp;rowIndex,
+                          int&nbsp;columnIndex)</PRE>
+<DL>
+<DD>If cell contains a formula, the formula is evaluated and returned,
+ else the CellValue simply copies the appropriate cell value from
+ the cell and also its cell type. This method should be preferred over
+ evaluateInCell() when the call should not modify the contents of the
+ original cell.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sheetName</CODE> - the name of the sheet containing the cell<DD><CODE>rowIndex</CODE> - zero based<DD><CODE>columnIndex</CODE> - zero based
+<DT><B>Returns:</B><DD><code>null</code> if the supplied cell is <code>null</code> or blank</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setupEnvironment(java.lang.String[], org.apache.poi.ss.formula.eval.forked.ForkedEvaluator[])"><!-- --></A><H3>
+setupEnvironment</H3>
+<PRE>
+public static void <B>setupEnvironment</B>(java.lang.String[]&nbsp;workbookNames,
+                                    <A HREF="../../../../../../../org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html" title="class in org.apache.poi.ss.formula.eval.forked">ForkedEvaluator</A>[]&nbsp;evaluators)</PRE>
+<DL>
+<DD>Coordinates several formula evaluators together so that formulas that involve external
+ references can be evaluated.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>workbookNames</CODE> - the simple file names used to identify the workbooks in formulas
+ with external links (for example "MyData.xls" as used in a formula "[MyData.xls]Sheet1!A1")<DD><CODE>evaluators</CODE> - all evaluators for the full set of workbooks required by the formulas.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../../index.html?org/apache/poi/ss/formula/eval/forked/ForkedEvaluator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ForkedEvaluator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

@@ -1,0 +1,851 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+Row (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Row (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.MissingCellPolicy.html" title="enum in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/Row.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Row.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.usermodel</FONT>
+<BR>
+Interface Row</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD>java.lang.Iterable&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&gt;</DD>
+</DL>
+<DL>
+<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html" title="class in org.apache.poi.hssf.usermodel">HSSFRow</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>Row</B><DT>extends java.lang.Iterable&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&gt;</DL>
+</PRE>
+
+<P>
+High level representation of a row of a spreadsheet.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.MissingCellPolicy.html" title="enum in org.apache.poi.ss.usermodel">Row.MissingCellPolicy</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used to specify the different possible policies
+  if for the case of null and blank cells</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#cellIterator()">cellIterator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#createCell(int)">createCell</A></B>(int&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use this to create new cells within the row and return it.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#createCell(int, org.apache.poi.ss.usermodel.CellType)">createCell</A></B>(int&nbsp;column,
+           <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A>&nbsp;type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use this to create new cells within the row and return it.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#createCell(int, int)">createCell</A></B>(int&nbsp;column,
+           int&nbsp;type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#createCell(int, org.apache.poi.ss.usermodel.CellType)"><CODE>createCell(int, CellType)</CODE></A> instead.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getCell(int)">getCell</A></B>(int&nbsp;cellnum)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the cell representing a given column (logical cell) 0-based.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)">getCell</A></B>(int&nbsp;cellnum,
+        <A HREF="../../../../../org/apache/poi/ss/usermodel/Row.MissingCellPolicy.html" title="enum in org.apache.poi.ss.usermodel">Row.MissingCellPolicy</A>&nbsp;policy)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the cell at the given (0 based) index, with the specified <A HREF="../../../../../org/apache/poi/ss/usermodel/Row.MissingCellPolicy.html" title="enum in org.apache.poi.ss.usermodel"><CODE>Row.MissingCellPolicy</CODE></A></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getFirstCellNum()">getFirstCellNum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the number of the first cell contained in this row.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getHeight()">getHeight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the row's height measured in twips (1/20th of a point).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getHeightInPoints()">getHeightInPoints</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns row height measured in point size.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getLastCellNum()">getLastCellNum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the index of the last cell contained in this row <b>PLUS ONE</b>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getOutlineLevel()">getOutlineLevel</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the rows outline level.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getPhysicalNumberOfCells()">getPhysicalNumberOfCells</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the number of defined cells (NOT number of cells in the actual row!).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getRowNum()">getRowNum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get row number this row represents</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getRowStyle()">getRowStyle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the whole-row cell styles.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getSheet()">getSheet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the Sheet this row belongs to</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getZeroHeight()">getZeroHeight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get whether or not to display this row with 0 height</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#isFormatted()">isFormatted</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Is this row formatted? Most aren't, but some rows
+  do have whole-row styles.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#removeCell(org.apache.poi.ss.usermodel.Cell)">removeCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove the Cell from this row.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#setHeight(short)">setHeight</A></B>(short&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the row's height or set to ff (-1) for undefined/default-height.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#setHeightInPoints(float)">setHeightInPoints</A></B>(float&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the row's height in points.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#setRowNum(int)">setRowNum</A></B>(int&nbsp;rowNum)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the row number of this row.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#setRowStyle(org.apache.poi.ss.usermodel.CellStyle)">setRowStyle</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A>&nbsp;style)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Applies a whole-row cell styling to the row.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#setZeroHeight(boolean)">setZeroHeight</A></B>(boolean&nbsp;zHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set whether or not to display this row with 0 height</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Iterable"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from interface java.lang.Iterable</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>iterator</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="createCell(int)"><!-- --></A><H3>
+createCell</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A> <B>createCell</B>(int&nbsp;column)</PRE>
+<DL>
+<DD>Use this to create new cells within the row and return it.
+ <p>
+ The cell that is returned is a <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#BLANK"><CODE>CellType.BLANK</CODE></A>. The type can be changed
+ either through calling <code>setCellValue</code> or <code>setCellType</code>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - - the column number this cell represents
+<DT><B>Returns:</B><DD>Cell a high level representation of the created cell.
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if columnIndex &lt; 0 or greater than the maximum number of supported columns
+ (255 for *.xls, 1048576 for *.xlsx)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createCell(int, int)"><!-- --></A><H3>
+createCell</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A> <B>createCell</B>(int&nbsp;column,
+                int&nbsp;type)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#createCell(int, org.apache.poi.ss.usermodel.CellType)"><CODE>createCell(int, CellType)</CODE></A> instead.</I>
+<P>
+<DD>Use this to create new cells within the row and return it.
+ <p>
+ The cell that is returned will be of the requested type.
+ The type can be changed either through calling setCellValue 
+  or setCellType, but there is a small overhead to doing this,
+  so it is best to create of the required type up front.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - - the column number this cell represents<DD><CODE>type</CODE> - - the cell's data type
+<DT><B>Returns:</B><DD>Cell a high level representation of the created cell.
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if columnIndex &lt; 0 or greater than a maximum number of supported columns
+ (255 for *.xls, 1048576 for *.xlsx)<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#BLANK"><CODE>CellType.BLANK</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#BOOLEAN"><CODE>CellType.BOOLEAN</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#ERROR"><CODE>CellType.ERROR</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#FORMULA"><CODE>CellType.FORMULA</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#NUMERIC"><CODE>CellType.NUMERIC</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#STRING"><CODE>CellType.STRING</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createCell(int, org.apache.poi.ss.usermodel.CellType)"><!-- --></A><H3>
+createCell</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A> <B>createCell</B>(int&nbsp;column,
+                <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A>&nbsp;type)</PRE>
+<DL>
+<DD>Use this to create new cells within the row and return it.
+ <p>
+ The cell that is returned will be of the requested type.
+ The type can be changed either through calling setCellValue 
+  or setCellType, but there is a small overhead to doing this,
+  so it is best to create of the required type up front.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - - the column number this cell represents<DD><CODE>type</CODE> - - the cell's data type
+<DT><B>Returns:</B><DD>Cell a high level representation of the created cell.
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if columnIndex &lt; 0 or greater than a maximum number of supported columns
+ (255 for *.xls, 1048576 for *.xlsx)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeCell(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+removeCell</H3>
+<PRE>
+void <B>removeCell</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Remove the Cell from this row.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - the cell to remove</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRowNum(int)"><!-- --></A><H3>
+setRowNum</H3>
+<PRE>
+void <B>setRowNum</B>(int&nbsp;rowNum)</PRE>
+<DL>
+<DD>Set the row number of this row.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rowNum</CODE> - the row number (0-based)
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if rowNum &lt; 0</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRowNum()"><!-- --></A><H3>
+getRowNum</H3>
+<PRE>
+int <B>getRowNum</B>()</PRE>
+<DL>
+<DD>Get row number this row represents
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the row number (0 based)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCell(int)"><!-- --></A><H3>
+getCell</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A> <B>getCell</B>(int&nbsp;cellnum)</PRE>
+<DL>
+<DD>Get the cell representing a given column (logical cell) 0-based.  If you
+ ask for a cell that is not defined....you get a null.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cellnum</CODE> - 0 based column number
+<DT><B>Returns:</B><DD>Cell representing that column or null if undefined.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)"><CODE>getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCell(int, org.apache.poi.ss.usermodel.Row.MissingCellPolicy)"><!-- --></A><H3>
+getCell</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A> <B>getCell</B>(int&nbsp;cellnum,
+             <A HREF="../../../../../org/apache/poi/ss/usermodel/Row.MissingCellPolicy.html" title="enum in org.apache.poi.ss.usermodel">Row.MissingCellPolicy</A>&nbsp;policy)</PRE>
+<DL>
+<DD>Returns the cell at the given (0 based) index, with the specified <A HREF="../../../../../org/apache/poi/ss/usermodel/Row.MissingCellPolicy.html" title="enum in org.apache.poi.ss.usermodel"><CODE>Row.MissingCellPolicy</CODE></A>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the cell at the given (0 based) index
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if cellnum &lt; 0 or the specified MissingCellPolicy is invalid</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFirstCellNum()"><!-- --></A><H3>
+getFirstCellNum</H3>
+<PRE>
+short <B>getFirstCellNum</B>()</PRE>
+<DL>
+<DD>Get the number of the first cell contained in this row.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>short representing the first logical cell in the row,
+  or -1 if the row does not contain any cells.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastCellNum()"><!-- --></A><H3>
+getLastCellNum</H3>
+<PRE>
+short <B>getLastCellNum</B>()</PRE>
+<DL>
+<DD>Gets the index of the last cell contained in this row <b>PLUS ONE</b>. The result also
+ happens to be the 1-based column number of the last cell.  This value can be used as a
+ standard upper bound when iterating over cells:
+ <pre>
+ short minColIx = row.getFirstCellNum();
+ short maxColIx = row.getLastCellNum();
+ for(short colIx=minColIx; colIx&lt;maxColIx; colIx++) {
+   Cell cell = row.getCell(colIx);
+   if(cell == null) {
+     continue;
+   }
+   //... do something with cell
+ }
+ </pre>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>short representing the last logical cell in the row <b>PLUS ONE</b>,
+   or -1 if the row does not contain any cells.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPhysicalNumberOfCells()"><!-- --></A><H3>
+getPhysicalNumberOfCells</H3>
+<PRE>
+int <B>getPhysicalNumberOfCells</B>()</PRE>
+<DL>
+<DD>Gets the number of defined cells (NOT number of cells in the actual row!).
+ That is to say if only columns 0,4,5 have values then there would be 3.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>int representing the number of defined cells in the row.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHeight(short)"><!-- --></A><H3>
+setHeight</H3>
+<PRE>
+void <B>setHeight</B>(short&nbsp;height)</PRE>
+<DL>
+<DD>Set the row's height or set to ff (-1) for undefined/default-height.  Set the height in "twips" or
+ 1/20th of a point.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>height</CODE> - rowheight or 0xff for undefined (use sheet default)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setZeroHeight(boolean)"><!-- --></A><H3>
+setZeroHeight</H3>
+<PRE>
+void <B>setZeroHeight</B>(boolean&nbsp;zHeight)</PRE>
+<DL>
+<DD>Set whether or not to display this row with 0 height
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>zHeight</CODE> - height is zero or not.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getZeroHeight()"><!-- --></A><H3>
+getZeroHeight</H3>
+<PRE>
+boolean <B>getZeroHeight</B>()</PRE>
+<DL>
+<DD>Get whether or not to display this row with 0 height
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>- zHeight height is zero or not.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHeightInPoints(float)"><!-- --></A><H3>
+setHeightInPoints</H3>
+<PRE>
+void <B>setHeightInPoints</B>(float&nbsp;height)</PRE>
+<DL>
+<DD>Set the row's height in points.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>height</CODE> - the height in points. <code>-1</code>  resets to the default height</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHeight()"><!-- --></A><H3>
+getHeight</H3>
+<PRE>
+short <B>getHeight</B>()</PRE>
+<DL>
+<DD>Get the row's height measured in twips (1/20th of a point). If the height is not set, the default worksheet value is returned,
+ See <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getDefaultRowHeightInPoints()"><CODE>Sheet.getDefaultRowHeightInPoints()</CODE></A>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>row height measured in twips (1/20th of a point)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHeightInPoints()"><!-- --></A><H3>
+getHeightInPoints</H3>
+<PRE>
+float <B>getHeightInPoints</B>()</PRE>
+<DL>
+<DD>Returns row height measured in point size. If the height is not set, the default worksheet value is returned,
+ See <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getDefaultRowHeightInPoints()"><CODE>Sheet.getDefaultRowHeightInPoints()</CODE></A>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>row height measured in point size<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getDefaultRowHeightInPoints()"><CODE>Sheet.getDefaultRowHeightInPoints()</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isFormatted()"><!-- --></A><H3>
+isFormatted</H3>
+<PRE>
+boolean <B>isFormatted</B>()</PRE>
+<DL>
+<DD>Is this row formatted? Most aren't, but some rows
+  do have whole-row styles. For those that do, you
+  can get the formatting from <A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#getRowStyle()"><CODE>getRowStyle()</CODE></A>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRowStyle()"><!-- --></A><H3>
+getRowStyle</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A> <B>getRowStyle</B>()</PRE>
+<DL>
+<DD>Returns the whole-row cell styles. Most rows won't
+  have one of these, so will return null. Call
+  <A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html#isFormatted()"><CODE>isFormatted()</CODE></A> to check first.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRowStyle(org.apache.poi.ss.usermodel.CellStyle)"><!-- --></A><H3>
+setRowStyle</H3>
+<PRE>
+void <B>setRowStyle</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A>&nbsp;style)</PRE>
+<DL>
+<DD>Applies a whole-row cell styling to the row.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="cellIterator()"><!-- --></A><H3>
+cellIterator</H3>
+<PRE>
+java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&gt; <B>cellIterator</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>Cell iterator of the physically defined cells.  Note element 4 may
+ actually be row cell depending on how many are defined!</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSheet()"><!-- --></A><H3>
+getSheet</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A> <B>getSheet</B>()</PRE>
+<DL>
+<DD>Returns the Sheet this row belongs to
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the Sheet that owns this row</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOutlineLevel()"><!-- --></A><H3>
+getOutlineLevel</H3>
+<PRE>
+int <B>getOutlineLevel</B>()</PRE>
+<DL>
+<DD>Returns the rows outline level. Increased as you
+  put it into more groups (outlines), reduced as
+  you take it out of them.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/RichTextString.html" title="interface in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.MissingCellPolicy.html" title="enum in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/Row.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="Row.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

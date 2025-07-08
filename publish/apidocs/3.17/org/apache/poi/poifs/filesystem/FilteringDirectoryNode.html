@@ -1,0 +1,762 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+FilteringDirectoryNode (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="FilteringDirectoryNode (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/FileMagic.html" title="enum in org.apache.poi.poifs.filesystem"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/NDocumentInputStream.html" title="class in org.apache.poi.poifs.filesystem"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="FilteringDirectoryNode.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.poifs.filesystem</FONT>
+<BR>
+Class FilteringDirectoryNode</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.poifs.filesystem.FilteringDirectoryNode</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Iterable&lt;<A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A>&gt;, <A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>FilteringDirectoryNode</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></DL>
+</PRE>
+
+<P>
+A DirectoryEntry filter, which exposes another
+  DirectoryEntry less certain parts.
+ This is typically used when copying or comparing
+  Filesystems.
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#FilteringDirectoryNode(org.apache.poi.poifs.filesystem.DirectoryEntry, java.util.Collection)">FilteringDirectoryNode</A></B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A>&nbsp;directory,
+                       java.util.Collection&lt;java.lang.String&gt;&nbsp;excludes)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a filter round the specified directory, which
+  will exclude entries such as "MyNode" and "MyDir/IgnoreNode".</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#createDirectory(java.lang.String)">createDirectory</A></B>(java.lang.String&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a new DirectoryEntry</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentEntry.html" title="interface in org.apache.poi.poifs.filesystem">DocumentEntry</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#createDocument(java.lang.String, java.io.InputStream)">createDocument</A></B>(java.lang.String&nbsp;name,
+               java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a new DocumentEntry</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentEntry.html" title="interface in org.apache.poi.poifs.filesystem">DocumentEntry</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#createDocument(java.lang.String, int, org.apache.poi.poifs.filesystem.POIFSWriterListener)">createDocument</A></B>(java.lang.String&nbsp;name,
+               int&nbsp;size,
+               <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSWriterListener.html" title="interface in org.apache.poi.poifs.filesystem">POIFSWriterListener</A>&nbsp;writer)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a new DocumentEntry; the data will be provided later</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#delete()">delete</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Delete this Entry.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#getEntries()">getEntries</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get an iterator of the Entry instances contained directly in
+ this instance (in other words, children only; no grandchildren
+ etc.)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#getEntry(java.lang.String)">getEntry</A></B>(java.lang.String&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a specified Entry by name</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#getEntryCount()">getEntryCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;find out how many Entry instances are contained directly within
+ this DirectoryEntry</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Set&lt;java.lang.String&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#getEntryNames()">getEntryNames</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the names of all the Entries contained directly in this
+ instance (in other words, names of children only; no grandchildren
+ etc).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#getName()">getName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the name of the Entry</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#getParent()">getParent</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get this Entry's parent (the DirectoryEntry that owns this
+ Entry).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#getStorageClsid()">getStorageClsid</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the storage clsid of the directory entry</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#hasEntry(java.lang.String)">hasEntry</A></B>(java.lang.String&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks if entry with specified name present</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#isDirectoryEntry()">isDirectoryEntry</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is this a DirectoryEntry?</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#isDocumentEntry()">isDocumentEntry</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is this a DocumentEntry?</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#isEmpty()">isEmpty</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;is this DirectoryEntry empty?</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#iterator()">iterator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#renameTo(java.lang.String)">renameTo</A></B>(java.lang.String&nbsp;newName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rename this Entry.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html#setStorageClsid(org.apache.poi.hpsf.ClassID)">setStorageClsid</A></B>(<A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A>&nbsp;clsidStorage)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the storage clsid for the directory entry</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="FilteringDirectoryNode(org.apache.poi.poifs.filesystem.DirectoryEntry, java.util.Collection)"><!-- --></A><H3>
+FilteringDirectoryNode</H3>
+<PRE>
+public <B>FilteringDirectoryNode</B>(<A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A>&nbsp;directory,
+                              java.util.Collection&lt;java.lang.String&gt;&nbsp;excludes)</PRE>
+<DL>
+<DD>Creates a filter round the specified directory, which
+  will exclude entries such as "MyNode" and "MyDir/IgnoreNode".
+ The excludes can stretch into children, if they contain a /.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>directory</CODE> - The Directory to filter<DD><CODE>excludes</CODE> - The Entries to exclude</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="createDirectory(java.lang.String)"><!-- --></A><H3>
+createDirectory</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A> <B>createDirectory</B>(java.lang.String&nbsp;name)
+                               throws java.io.IOException</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#createDirectory(java.lang.String)">DirectoryEntry</A></CODE></B></DD>
+<DD>create a new DirectoryEntry
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#createDirectory(java.lang.String)">createDirectory</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the new DirectoryEntry
+<DT><B>Returns:</B><DD>the new DirectoryEntry
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createDocument(java.lang.String, java.io.InputStream)"><!-- --></A><H3>
+createDocument</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentEntry.html" title="interface in org.apache.poi.poifs.filesystem">DocumentEntry</A> <B>createDocument</B>(java.lang.String&nbsp;name,
+                                    java.io.InputStream&nbsp;stream)
+                             throws java.io.IOException</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#createDocument(java.lang.String, java.io.InputStream)">DirectoryEntry</A></CODE></B></DD>
+<DD>create a new DocumentEntry
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#createDocument(java.lang.String, java.io.InputStream)">createDocument</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the new DocumentEntry<DD><CODE>stream</CODE> - the InputStream from which to create the new
+               DocumentEntry
+<DT><B>Returns:</B><DD>the new DocumentEntry
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createDocument(java.lang.String, int, org.apache.poi.poifs.filesystem.POIFSWriterListener)"><!-- --></A><H3>
+createDocument</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/poifs/filesystem/DocumentEntry.html" title="interface in org.apache.poi.poifs.filesystem">DocumentEntry</A> <B>createDocument</B>(java.lang.String&nbsp;name,
+                                    int&nbsp;size,
+                                    <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSWriterListener.html" title="interface in org.apache.poi.poifs.filesystem">POIFSWriterListener</A>&nbsp;writer)
+                             throws java.io.IOException</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#createDocument(java.lang.String, int, org.apache.poi.poifs.filesystem.POIFSWriterListener)">DirectoryEntry</A></CODE></B></DD>
+<DD>create a new DocumentEntry; the data will be provided later
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#createDocument(java.lang.String, int, org.apache.poi.poifs.filesystem.POIFSWriterListener)">createDocument</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the new DocumentEntry<DD><CODE>size</CODE> - the size of the new DocumentEntry<DD><CODE>writer</CODE> - the writer of the new DocumentEntry
+<DT><B>Returns:</B><DD>the new DocumentEntry
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getEntries()"><!-- --></A><H3>
+getEntries</H3>
+<PRE>
+public java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A>&gt; <B>getEntries</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#getEntries()">DirectoryEntry</A></CODE></B></DD>
+<DD>get an iterator of the Entry instances contained directly in
+ this instance (in other words, children only; no grandchildren
+ etc.)
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#getEntries()">getEntries</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>iterator; never null, but hasNext() may return false
+         immediately (i.e., this DirectoryEntry is empty). All
+         objects retrieved by next() are guaranteed to be
+         implementations of Entry.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="iterator()"><!-- --></A><H3>
+iterator</H3>
+<PRE>
+public java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A>&gt; <B>iterator</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>iterator</CODE> in interface <CODE>java.lang.Iterable&lt;<A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A>&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getEntryCount()"><!-- --></A><H3>
+getEntryCount</H3>
+<PRE>
+public int <B>getEntryCount</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#getEntryCount()">DirectoryEntry</A></CODE></B></DD>
+<DD>find out how many Entry instances are contained directly within
+ this DirectoryEntry
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#getEntryCount()">getEntryCount</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>number of immediately (no grandchildren etc.) contained
+         Entry instances</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getEntryNames()"><!-- --></A><H3>
+getEntryNames</H3>
+<PRE>
+public java.util.Set&lt;java.lang.String&gt; <B>getEntryNames</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#getEntryNames()">DirectoryEntry</A></CODE></B></DD>
+<DD>get the names of all the Entries contained directly in this
+ instance (in other words, names of children only; no grandchildren
+ etc).
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#getEntryNames()">getEntryNames</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the names of all the entries that may be retrieved with
+         getEntry(String), which may be empty (if this 
+         DirectoryEntry is empty)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isEmpty()"><!-- --></A><H3>
+isEmpty</H3>
+<PRE>
+public boolean <B>isEmpty</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#isEmpty()">DirectoryEntry</A></CODE></B></DD>
+<DD>is this DirectoryEntry empty?
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#isEmpty()">isEmpty</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if this instance contains no Entry instances</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hasEntry(java.lang.String)"><!-- --></A><H3>
+hasEntry</H3>
+<PRE>
+public boolean <B>hasEntry</B>(java.lang.String&nbsp;name)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#hasEntry(java.lang.String)">DirectoryEntry</A></CODE></B></DD>
+<DD>Checks if entry with specified name present
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#hasEntry(java.lang.String)">hasEntry</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getEntry(java.lang.String)"><!-- --></A><H3>
+getEntry</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A> <B>getEntry</B>(java.lang.String&nbsp;name)
+               throws java.io.FileNotFoundException</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#getEntry(java.lang.String)">DirectoryEntry</A></CODE></B></DD>
+<DD>get a specified Entry by name
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#getEntry(java.lang.String)">getEntry</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the Entry to obtain.
+<DT><B>Returns:</B><DD>the specified Entry, if it is directly contained in
+         this DirectoryEntry
+<DT><B>Throws:</B>
+<DD><CODE>java.io.FileNotFoundException</CODE> - if no Entry with the specified
+            name exists in this DirectoryEntry</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStorageClsid()"><!-- --></A><H3>
+getStorageClsid</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A> <B>getStorageClsid</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#getStorageClsid()">DirectoryEntry</A></CODE></B></DD>
+<DD>Gets the storage clsid of the directory entry
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#getStorageClsid()">getStorageClsid</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>storage Class ID</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setStorageClsid(org.apache.poi.hpsf.ClassID)"><!-- --></A><H3>
+setStorageClsid</H3>
+<PRE>
+public void <B>setStorageClsid</B>(<A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A>&nbsp;clsidStorage)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#setStorageClsid(org.apache.poi.hpsf.ClassID)">DirectoryEntry</A></CODE></B></DD>
+<DD>Sets the storage clsid for the directory entry
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html#setStorageClsid(org.apache.poi.hpsf.ClassID)">setStorageClsid</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>clsidStorage</CODE> - storage Class ID</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="delete()"><!-- --></A><H3>
+delete</H3>
+<PRE>
+public boolean <B>delete</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html#delete()">Entry</A></CODE></B></DD>
+<DD>Delete this Entry. This operation should succeed, but there are
+ special circumstances when it will not:
+
+ If this Entry is the root of the Entry tree, it cannot be
+ deleted, as there is no way to create another one.
+
+ If this Entry is a directory, it cannot be deleted unless it is
+ empty.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html#delete()">delete</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if the Entry was successfully deleted, else false</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="renameTo(java.lang.String)"><!-- --></A><H3>
+renameTo</H3>
+<PRE>
+public boolean <B>renameTo</B>(java.lang.String&nbsp;newName)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html#renameTo(java.lang.String)">Entry</A></CODE></B></DD>
+<DD>Rename this Entry. This operation will fail if:
+
+ There is a sibling Entry (i.e., an Entry whose parent is the
+ same as this Entry's parent) with the same name.
+
+ This Entry is the root of the Entry tree. Its name is dictated
+ by the Filesystem and many not be changed.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html#renameTo(java.lang.String)">renameTo</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>newName</CODE> - the new name for this Entry
+<DT><B>Returns:</B><DD>true if the operation succeeded, else false</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getName()"><!-- --></A><H3>
+getName</H3>
+<PRE>
+public java.lang.String <B>getName</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html#getName()">Entry</A></CODE></B></DD>
+<DD>get the name of the Entry
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html#getName()">getName</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>name</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getParent()"><!-- --></A><H3>
+getParent</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/poifs/filesystem/DirectoryEntry.html" title="interface in org.apache.poi.poifs.filesystem">DirectoryEntry</A> <B>getParent</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html#getParent()">Entry</A></CODE></B></DD>
+<DD>get this Entry's parent (the DirectoryEntry that owns this
+ Entry). All Entry objects, except the root Entry, has a parent.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html#getParent()">getParent</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>this Entry's parent; null iff this is the root Entry</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDirectoryEntry()"><!-- --></A><H3>
+isDirectoryEntry</H3>
+<PRE>
+public boolean <B>isDirectoryEntry</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html#isDirectoryEntry()">Entry</A></CODE></B></DD>
+<DD>is this a DirectoryEntry?
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html#isDirectoryEntry()">isDirectoryEntry</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if the Entry is a DirectoryEntry, else false</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDocumentEntry()"><!-- --></A><H3>
+isDocumentEntry</H3>
+<PRE>
+public boolean <B>isDocumentEntry</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html#isDocumentEntry()">Entry</A></CODE></B></DD>
+<DD>is this a DocumentEntry?
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html#isDocumentEntry()">isDocumentEntry</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/Entry.html" title="interface in org.apache.poi.poifs.filesystem">Entry</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if the Entry is a DocumentEntry, else false</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/FileMagic.html" title="enum in org.apache.poi.poifs.filesystem"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/NDocumentInputStream.html" title="class in org.apache.poi.poifs.filesystem"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/filesystem/FilteringDirectoryNode.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="FilteringDirectoryNode.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

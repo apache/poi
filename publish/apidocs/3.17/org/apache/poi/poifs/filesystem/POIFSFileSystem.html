@@ -1,0 +1,459 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+POIFSFileSystem (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="POIFSFileSystem (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSDocumentPath.html" title="class in org.apache.poi.poifs.filesystem"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSWriterEvent.html" title="class in org.apache.poi.poifs.filesystem"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/filesystem/POIFSFileSystem.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="POIFSFileSystem.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_org.apache.poi.poifs.filesystem.BlockStore">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.poifs.filesystem</FONT>
+<BR>
+Class POIFSFileSystem</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/poifs/filesystem/BlockStore.html" title="class in org.apache.poi.poifs.filesystem">org.apache.poi.poifs.filesystem.BlockStore</A>
+      <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">org.apache.poi.poifs.filesystem.NPOIFSFileSystem</A>
+          <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.poifs.filesystem.POIFSFileSystem</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.io.Closeable, <A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html" title="interface in org.apache.poi.poifs.dev">POIFSViewable</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>POIFSFileSystem</B><DT>extends <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSFileSystem</A><DT>implements <A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html" title="interface in org.apache.poi.poifs.dev">POIFSViewable</A></DL>
+</PRE>
+
+<P>
+Transition class for the move from <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>POIFSFileSystem</CODE></A> to 
+  <A HREF="../../../../../org/apache/poi/poifs/filesystem/OPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>OPOIFSFileSystem</CODE></A>, and from <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>NPOIFSFileSystem</CODE></A> to
+  <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>POIFSFileSystem</CODE></A>. 
+ <p>This has been updated to be powered by the NIO-based NPOIFS
+  <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>NPOIFSFileSystem</CODE></A>.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_org.apache.poi.poifs.filesystem.BlockStore"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from class org.apache.poi.poifs.filesystem.<A HREF="../../../../../org/apache/poi/poifs/filesystem/BlockStore.html" title="class in org.apache.poi.poifs.filesystem">BlockStore</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/BlockStore.ChainLoopDetector.html" title="class in org.apache.poi.poifs.filesystem">BlockStore.ChainLoopDetector</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html#POIFSFileSystem()">POIFSFileSystem</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Constructor, intended for writing</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html#POIFSFileSystem(java.io.File)">POIFSFileSystem</A></B>(java.io.File&nbsp;file)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a POIFSFileSystem from a <tt>File</tt>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html#POIFSFileSystem(java.io.File, boolean)">POIFSFileSystem</A></B>(java.io.File&nbsp;file,
+                boolean&nbsp;readOnly)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a POIFSFileSystem from a <tt>File</tt>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html#POIFSFileSystem(java.io.InputStream)">POIFSFileSystem</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a POIFSFileSystem from an <tt>InputStream</tt>.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">POIFSFileSystem</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html#create(java.io.File)">create</A></B>(java.io.File&nbsp;file)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>POIFSFileSystem</CODE></A> in a new <CODE>File</CODE>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.io.InputStream</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html#createNonClosingInputStream(java.io.InputStream)">createNonClosingInputStream</A></B>(java.io.InputStream&nbsp;is)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convenience method for clients that want to avoid the auto-close behaviour of the constructor.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html#main(java.lang.String[])">main</A></B>(java.lang.String[]&nbsp;args)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;read in a file and write it back out again</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.poifs.filesystem.NPOIFSFileSystem"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.poifs.filesystem.<A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">NPOIFSFileSystem</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#close()">close</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#createBlockIfNeeded(int)">createBlockIfNeeded</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#createDirectory(java.lang.String)">createDirectory</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#createDocument(java.io.InputStream, java.lang.String)">createDocument</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#createDocument(java.lang.String, int, org.apache.poi.poifs.filesystem.POIFSWriterListener)">createDocument</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#createDocumentInputStream(java.lang.String)">createDocumentInputStream</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#createOrUpdateDocument(java.io.InputStream, java.lang.String)">createOrUpdateDocument</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getBATBlockAndIndex(int)">getBATBlockAndIndex</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getBigBlockSize()">getBigBlockSize</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getBigBlockSizeDetails()">getBigBlockSizeDetails</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getBlockAt(int)">getBlockAt</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getBlockStoreBlockSize()">getBlockStoreBlockSize</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getChainLoopDetector()">getChainLoopDetector</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getFreeBlock()">getFreeBlock</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getHeaderBlock()">getHeaderBlock</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getMiniStore()">getMiniStore</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getNextBlock(int)">getNextBlock</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getPropertyTable()">getPropertyTable</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getRoot()">getRoot</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getShortDescription()">getShortDescription</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getViewableArray()">getViewableArray</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#getViewableIterator()">getViewableIterator</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#hasPOIFSHeader(byte[])">hasPOIFSHeader</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#hasPOIFSHeader(java.io.InputStream)">hasPOIFSHeader</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#isInPlaceWriteable()">isInPlaceWriteable</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#preferArray()">preferArray</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#setNextBlock(int, int)">setNextBlock</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#size()">size</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#writeFilesystem()">writeFilesystem</A>, <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#writeFilesystem(java.io.OutputStream)">writeFilesystem</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.poifs.dev.POIFSViewable"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from interface org.apache.poi.poifs.dev.<A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html" title="interface in org.apache.poi.poifs.dev">POIFSViewable</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html#getShortDescription()">getShortDescription</A>, <A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html#getViewableArray()">getViewableArray</A>, <A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html#getViewableIterator()">getViewableIterator</A>, <A HREF="../../../../../org/apache/poi/poifs/dev/POIFSViewable.html#preferArray()">preferArray</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="POIFSFileSystem()"><!-- --></A><H3>
+POIFSFileSystem</H3>
+<PRE>
+public <B>POIFSFileSystem</B>()</PRE>
+<DL>
+<DD>Constructor, intended for writing
+<P>
+</DL>
+<HR>
+
+<A NAME="POIFSFileSystem(java.io.InputStream)"><!-- --></A><H3>
+POIFSFileSystem</H3>
+<PRE>
+public <B>POIFSFileSystem</B>(java.io.InputStream&nbsp;stream)
+                throws java.io.IOException</PRE>
+<DL>
+<DD>Create a POIFSFileSystem from an <tt>InputStream</tt>.  Normally the stream is read until
+ EOF.  The stream is always closed.<p>
+
+ Some streams are usable after reaching EOF (typically those that return <code>true</code>
+ for <tt>markSupported()</tt>).  In the unlikely case that the caller has such a stream
+ <i>and</i> needs to use it after this constructor completes, a work around is to wrap the
+ stream in order to trap the <tt>close()</tt> call.  A convenience method (
+ <tt>createNonClosingInputStream()</tt>) has been provided for this purpose:
+ <pre>
+ InputStream wrappedStream = POIFSFileSystem.createNonClosingInputStream(is);
+ HSSFWorkbook wb = new HSSFWorkbook(wrappedStream);
+ is.reset();
+ doSomethingElse(is);
+ </pre>
+ Note also the special case of <tt>ByteArrayInputStream</tt> for which the <tt>close()</tt>
+ method does nothing.
+ <pre>
+ ByteArrayInputStream bais = ...
+ HSSFWorkbook wb = new HSSFWorkbook(bais); // calls bais.close() !
+ bais.reset(); // no problem
+ doSomethingElse(bais);
+ </pre>
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>stream</CODE> - the InputStream from which to read the data
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - on errors reading, or on invalid data</DL>
+</DL>
+<HR>
+
+<A NAME="POIFSFileSystem(java.io.File, boolean)"><!-- --></A><H3>
+POIFSFileSystem</H3>
+<PRE>
+public <B>POIFSFileSystem</B>(java.io.File&nbsp;file,
+                       boolean&nbsp;readOnly)
+                throws java.io.IOException</PRE>
+<DL>
+<DD><p>Creates a POIFSFileSystem from a <tt>File</tt>. This uses less memory than
+  creating from an <tt>InputStream</tt>.</p>
+  
+ <p>Note that with this constructor, you will need to call <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#close()"><CODE>NPOIFSFileSystem.close()</CODE></A>
+  when you're done to have the underlying file closed, as the file is
+  kept open during normal operation to read the data out.</p>
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>readOnly</CODE> - whether the POIFileSystem will only be used in read-only mode<DD><CODE>file</CODE> - the File from which to read the data
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - on errors reading, or on invalid data</DL>
+</DL>
+<HR>
+
+<A NAME="POIFSFileSystem(java.io.File)"><!-- --></A><H3>
+POIFSFileSystem</H3>
+<PRE>
+public <B>POIFSFileSystem</B>(java.io.File&nbsp;file)
+                throws java.io.IOException</PRE>
+<DL>
+<DD><p>Creates a POIFSFileSystem from a <tt>File</tt>. This uses less memory than
+  creating from an <tt>InputStream</tt>. The File will be opened read-only</p>
+  
+ <p>Note that with this constructor, you will need to call <A HREF="../../../../../org/apache/poi/poifs/filesystem/NPOIFSFileSystem.html#close()"><CODE>NPOIFSFileSystem.close()</CODE></A>
+  when you're done to have the underlying file closed, as the file is
+  kept open during normal operation to read the data out.</p>
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>file</CODE> - the File from which to read the data
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - on errors reading, or on invalid data</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="createNonClosingInputStream(java.io.InputStream)"><!-- --></A><H3>
+createNonClosingInputStream</H3>
+<PRE>
+public static java.io.InputStream <B>createNonClosingInputStream</B>(java.io.InputStream&nbsp;is)</PRE>
+<DL>
+<DD>Convenience method for clients that want to avoid the auto-close behaviour of the constructor.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="create(java.io.File)"><!-- --></A><H3>
+create</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem">POIFSFileSystem</A> <B>create</B>(java.io.File&nbsp;file)
+                              throws java.io.IOException</PRE>
+<DL>
+<DD>Creates a new <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>POIFSFileSystem</CODE></A> in a new <CODE>File</CODE>.
+ Use <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html#POIFSFileSystem(java.io.File)"><CODE>POIFSFileSystem(File)</CODE></A> to open an existing File,
+  this should only be used to create a new empty filesystem.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>file</CODE> - The file to create and open
+<DT><B>Returns:</B><DD>The created and opened <A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSFileSystem.html" title="class in org.apache.poi.poifs.filesystem"><CODE>POIFSFileSystem</CODE></A>
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="main(java.lang.String[])"><!-- --></A><H3>
+main</H3>
+<PRE>
+public static void <B>main</B>(java.lang.String[]&nbsp;args)
+                 throws java.io.IOException</PRE>
+<DL>
+<DD>read in a file and write it back out again
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>args</CODE> - names of the files; arg[ 0 ] is the input file,
+             arg[ 1 ] is the output file
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSDocumentPath.html" title="class in org.apache.poi.poifs.filesystem"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/filesystem/POIFSWriterEvent.html" title="class in org.apache.poi.poifs.filesystem"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/filesystem/POIFSFileSystem.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="POIFSFileSystem.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_org.apache.poi.poifs.filesystem.BlockStore">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

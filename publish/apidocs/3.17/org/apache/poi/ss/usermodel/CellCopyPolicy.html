@@ -1,0 +1,770 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+CellCopyPolicy (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="CellCopyPolicy (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.Builder.html" title="class in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/CellCopyPolicy.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CellCopyPolicy.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.usermodel</FONT>
+<BR>
+Class CellCopyPolicy</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.usermodel.CellCopyPolicy</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE><FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/Beta.html" title="annotation in org.apache.poi.util">@Beta</A>
+</FONT>public class <B>CellCopyPolicy</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.Builder.html" title="class in org.apache.poi.ss.usermodel">CellCopyPolicy.Builder</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#DEFAULT_CONDENSE_ROWS_POLICY">DEFAULT_CONDENSE_ROWS_POLICY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#DEFAULT_COPY_CELL_FORMULA_POLICY">DEFAULT_COPY_CELL_FORMULA_POLICY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#DEFAULT_COPY_CELL_STYLE_POLICY">DEFAULT_COPY_CELL_STYLE_POLICY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#DEFAULT_COPY_CELL_VALUE_POLICY">DEFAULT_COPY_CELL_VALUE_POLICY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#DEFAULT_COPY_HYPERLINK_POLICY">DEFAULT_COPY_HYPERLINK_POLICY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#DEFAULT_COPY_MERGED_REGIONS_POLICY">DEFAULT_COPY_MERGED_REGIONS_POLICY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#DEFAULT_COPY_ROW_HEIGHT_POLICY">DEFAULT_COPY_ROW_HEIGHT_POLICY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#DEFAULT_MERGE_HYPERLINK_POLICY">DEFAULT_MERGE_HYPERLINK_POLICY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#CellCopyPolicy()">CellCopyPolicy</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default CellCopyPolicy, uses default policy
+ For custom CellCopyPolicy, use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.Builder.html" title="class in org.apache.poi.ss.usermodel"><CODE>CellCopyPolicy.Builder</CODE></A> class</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#CellCopyPolicy(org.apache.poi.ss.usermodel.CellCopyPolicy)">CellCopyPolicy</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html" title="class in org.apache.poi.ss.usermodel">CellCopyPolicy</A>&nbsp;other)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy constructor</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.Builder.html" title="class in org.apache.poi.ss.usermodel">CellCopyPolicy.Builder</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#createBuilder()">createBuilder</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#isCondenseRows()">isCondenseRows</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If condenseRows is true, a discontinuities in srcRows will be removed when copied to destination
+ For example:
+ Sheet.copyRows({Row(1), Row(2), Row(5)}, 11, policy) results in rows 1, 2, and 5
+ being copied to rows 11, 12, and 13 if condenseRows is True, or rows 11, 11, 15 if condenseRows is false</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#isCopyCellFormula()">isCopyCellFormula</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#isCopyCellStyle()">isCopyCellStyle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#isCopyCellValue()">isCopyCellValue</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#isCopyHyperlink()">isCopyHyperlink</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#isCopyMergedRegions()">isCopyMergedRegions</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#isCopyRowHeight()">isCopyRowHeight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#isMergeHyperlink()">isMergeHyperlink</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#setCondenseRows(boolean)">setCondenseRows</A></B>(boolean&nbsp;condenseRows)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#setCopyCellFormula(boolean)">setCopyCellFormula</A></B>(boolean&nbsp;copyCellFormula)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#setCopyCellStyle(boolean)">setCopyCellStyle</A></B>(boolean&nbsp;copyCellStyle)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#setCopyCellValue(boolean)">setCopyCellValue</A></B>(boolean&nbsp;copyCellValue)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#setCopyHyperlink(boolean)">setCopyHyperlink</A></B>(boolean&nbsp;copyHyperlink)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#setCopyMergedRegions(boolean)">setCopyMergedRegions</A></B>(boolean&nbsp;copyMergedRegions)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#setCopyRowHeight(boolean)">setCopyRowHeight</A></B>(boolean&nbsp;copyRowHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html#setMergeHyperlink(boolean)">setMergeHyperlink</A></B>(boolean&nbsp;mergeHyperlink)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DEFAULT_COPY_CELL_VALUE_POLICY"><!-- --></A><H3>
+DEFAULT_COPY_CELL_VALUE_POLICY</H3>
+<PRE>
+public static final boolean <B>DEFAULT_COPY_CELL_VALUE_POLICY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.CellCopyPolicy.DEFAULT_COPY_CELL_VALUE_POLICY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DEFAULT_COPY_CELL_STYLE_POLICY"><!-- --></A><H3>
+DEFAULT_COPY_CELL_STYLE_POLICY</H3>
+<PRE>
+public static final boolean <B>DEFAULT_COPY_CELL_STYLE_POLICY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.CellCopyPolicy.DEFAULT_COPY_CELL_STYLE_POLICY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DEFAULT_COPY_CELL_FORMULA_POLICY"><!-- --></A><H3>
+DEFAULT_COPY_CELL_FORMULA_POLICY</H3>
+<PRE>
+public static final boolean <B>DEFAULT_COPY_CELL_FORMULA_POLICY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.CellCopyPolicy.DEFAULT_COPY_CELL_FORMULA_POLICY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DEFAULT_COPY_HYPERLINK_POLICY"><!-- --></A><H3>
+DEFAULT_COPY_HYPERLINK_POLICY</H3>
+<PRE>
+public static final boolean <B>DEFAULT_COPY_HYPERLINK_POLICY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.CellCopyPolicy.DEFAULT_COPY_HYPERLINK_POLICY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DEFAULT_MERGE_HYPERLINK_POLICY"><!-- --></A><H3>
+DEFAULT_MERGE_HYPERLINK_POLICY</H3>
+<PRE>
+public static final boolean <B>DEFAULT_MERGE_HYPERLINK_POLICY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.CellCopyPolicy.DEFAULT_MERGE_HYPERLINK_POLICY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DEFAULT_COPY_ROW_HEIGHT_POLICY"><!-- --></A><H3>
+DEFAULT_COPY_ROW_HEIGHT_POLICY</H3>
+<PRE>
+public static final boolean <B>DEFAULT_COPY_ROW_HEIGHT_POLICY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.CellCopyPolicy.DEFAULT_COPY_ROW_HEIGHT_POLICY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DEFAULT_CONDENSE_ROWS_POLICY"><!-- --></A><H3>
+DEFAULT_CONDENSE_ROWS_POLICY</H3>
+<PRE>
+public static final boolean <B>DEFAULT_CONDENSE_ROWS_POLICY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.CellCopyPolicy.DEFAULT_CONDENSE_ROWS_POLICY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DEFAULT_COPY_MERGED_REGIONS_POLICY"><!-- --></A><H3>
+DEFAULT_COPY_MERGED_REGIONS_POLICY</H3>
+<PRE>
+public static final boolean <B>DEFAULT_COPY_MERGED_REGIONS_POLICY</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.ss.usermodel.CellCopyPolicy.DEFAULT_COPY_MERGED_REGIONS_POLICY">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="CellCopyPolicy()"><!-- --></A><H3>
+CellCopyPolicy</H3>
+<PRE>
+public <B>CellCopyPolicy</B>()</PRE>
+<DL>
+<DD>Default CellCopyPolicy, uses default policy
+ For custom CellCopyPolicy, use <A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.Builder.html" title="class in org.apache.poi.ss.usermodel"><CODE>CellCopyPolicy.Builder</CODE></A> class
+<P>
+</DL>
+<HR>
+
+<A NAME="CellCopyPolicy(org.apache.poi.ss.usermodel.CellCopyPolicy)"><!-- --></A><H3>
+CellCopyPolicy</H3>
+<PRE>
+public <B>CellCopyPolicy</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.html" title="class in org.apache.poi.ss.usermodel">CellCopyPolicy</A>&nbsp;other)</PRE>
+<DL>
+<DD>Copy constructor
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>other</CODE> - policy to copy</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="createBuilder()"><!-- --></A><H3>
+createBuilder</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.Builder.html" title="class in org.apache.poi.ss.usermodel">CellCopyPolicy.Builder</A> <B>createBuilder</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isCopyCellValue()"><!-- --></A><H3>
+isCopyCellValue</H3>
+<PRE>
+public boolean <B>isCopyCellValue</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the copyCellValue</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCopyCellValue(boolean)"><!-- --></A><H3>
+setCopyCellValue</H3>
+<PRE>
+public void <B>setCopyCellValue</B>(boolean&nbsp;copyCellValue)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>copyCellValue</CODE> - the copyCellValue to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isCopyCellStyle()"><!-- --></A><H3>
+isCopyCellStyle</H3>
+<PRE>
+public boolean <B>isCopyCellStyle</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the copyCellStyle</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCopyCellStyle(boolean)"><!-- --></A><H3>
+setCopyCellStyle</H3>
+<PRE>
+public void <B>setCopyCellStyle</B>(boolean&nbsp;copyCellStyle)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>copyCellStyle</CODE> - the copyCellStyle to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isCopyCellFormula()"><!-- --></A><H3>
+isCopyCellFormula</H3>
+<PRE>
+public boolean <B>isCopyCellFormula</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the copyCellFormula</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCopyCellFormula(boolean)"><!-- --></A><H3>
+setCopyCellFormula</H3>
+<PRE>
+public void <B>setCopyCellFormula</B>(boolean&nbsp;copyCellFormula)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>copyCellFormula</CODE> - the copyCellFormula to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isCopyHyperlink()"><!-- --></A><H3>
+isCopyHyperlink</H3>
+<PRE>
+public boolean <B>isCopyHyperlink</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the copyHyperlink</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCopyHyperlink(boolean)"><!-- --></A><H3>
+setCopyHyperlink</H3>
+<PRE>
+public void <B>setCopyHyperlink</B>(boolean&nbsp;copyHyperlink)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>copyHyperlink</CODE> - the copyHyperlink to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isMergeHyperlink()"><!-- --></A><H3>
+isMergeHyperlink</H3>
+<PRE>
+public boolean <B>isMergeHyperlink</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the mergeHyperlink</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setMergeHyperlink(boolean)"><!-- --></A><H3>
+setMergeHyperlink</H3>
+<PRE>
+public void <B>setMergeHyperlink</B>(boolean&nbsp;mergeHyperlink)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>mergeHyperlink</CODE> - the mergeHyperlink to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isCopyRowHeight()"><!-- --></A><H3>
+isCopyRowHeight</H3>
+<PRE>
+public boolean <B>isCopyRowHeight</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the copyRowHeight</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCopyRowHeight(boolean)"><!-- --></A><H3>
+setCopyRowHeight</H3>
+<PRE>
+public void <B>setCopyRowHeight</B>(boolean&nbsp;copyRowHeight)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>copyRowHeight</CODE> - the copyRowHeight to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isCondenseRows()"><!-- --></A><H3>
+isCondenseRows</H3>
+<PRE>
+public boolean <B>isCondenseRows</B>()</PRE>
+<DL>
+<DD>If condenseRows is true, a discontinuities in srcRows will be removed when copied to destination
+ For example:
+ Sheet.copyRows({Row(1), Row(2), Row(5)}, 11, policy) results in rows 1, 2, and 5
+ being copied to rows 11, 12, and 13 if condenseRows is True, or rows 11, 11, 15 if condenseRows is false
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the condenseRows</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCondenseRows(boolean)"><!-- --></A><H3>
+setCondenseRows</H3>
+<PRE>
+public void <B>setCondenseRows</B>(boolean&nbsp;condenseRows)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>condenseRows</CODE> - the condenseRows to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isCopyMergedRegions()"><!-- --></A><H3>
+isCopyMergedRegions</H3>
+<PRE>
+public boolean <B>isCopyMergedRegions</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the copyMergedRegions</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCopyMergedRegions(boolean)"><!-- --></A><H3>
+setCopyMergedRegions</H3>
+<PRE>
+public void <B>setCopyMergedRegions</B>(boolean&nbsp;copyMergedRegions)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>copyMergedRegions</CODE> - the copyMergedRegions to set</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellCopyPolicy.Builder.html" title="class in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/CellCopyPolicy.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CellCopyPolicy.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

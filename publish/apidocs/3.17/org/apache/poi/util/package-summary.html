@@ -1,0 +1,490 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+org.apache.poi.util (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="org.apache.poi.util (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/ss/util/cellwalk/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/wp/usermodel/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/util/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<H2>
+Package org.apache.poi.util
+</H2>
+Top-level util package are classes that are useful throughout the project.
+<P>
+<B>See:</B>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#package_description"><B>Description</B></A>
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Interface Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/DelayableLittleEndianOutput.html" title="interface in org.apache.poi.util">DelayableLittleEndianOutput</A></B></TD>
+<TD>Implementors of this interface allow client code to 'delay' writing to a certain section of a
+ data output stream.<br>
+ A typical application is for writing BIFF records when the size is not known until well after
+ the header has been written.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/FixedField.html" title="interface in org.apache.poi.util">FixedField</A></B></TD>
+<TD>behavior of a field at a fixed location within a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/LittleEndianConsts.html" title="interface in org.apache.poi.util">LittleEndianConsts</A></B></TD>
+<TD>a repository for constants shared by classes within this package</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/TempFileCreationStrategy.html" title="interface in org.apache.poi.util">TempFileCreationStrategy</A></B></TD>
+<TD>Interface used by the <A HREF="../../../../org/apache/poi/util/TempFile.html" title="class in org.apache.poi.util"><CODE>TempFile</CODE></A> utility class to create temporary files.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/ArrayUtil.html" title="class in org.apache.poi.util">ArrayUtil</A></B></TD>
+<TD>Utility classes for dealing with arrays.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/BitField.html" title="class in org.apache.poi.util">BitField</A></B></TD>
+<TD>Manage operations dealing with bit-mapped fields.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/BitFieldFactory.html" title="class in org.apache.poi.util">BitFieldFactory</A></B></TD>
+<TD>Returns immutable Bitfield instances.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/BoundedInputStream.html" title="class in org.apache.poi.util">BoundedInputStream</A></B></TD>
+<TD>This is a stream that will only supply bytes up to a certain length - if its
+ position goes above that, it will stop.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/ByteField.html" title="class in org.apache.poi.util">ByteField</A></B></TD>
+<TD>representation of a byte (8-bit) field at a fixed location within a
+ byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/CloseIgnoringInputStream.html" title="class in org.apache.poi.util">CloseIgnoringInputStream</A></B></TD>
+<TD>A wrapper around an <CODE>InputStream</CODE>, which 
+  ignores close requests made to it.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/CodePageUtil.html" title="class in org.apache.poi.util">CodePageUtil</A></B></TD>
+<TD>Utilities for working with Microsoft CodePages.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/CommonsLogger.html" title="class in org.apache.poi.util">CommonsLogger</A></B></TD>
+<TD>A logger class that strives to make it as easy as possible for
+ developers to write log calls, while simultaneously making those
+ calls as cheap as possible by performing lazy evaluation of the log
+ message.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/Configurator.html" title="class in org.apache.poi.util">Configurator</A></B></TD>
+<TD>Helper for fetching int values from system properties</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/DefaultTempFileCreationStrategy.html" title="class in org.apache.poi.util">DefaultTempFileCreationStrategy</A></B></TD>
+<TD>Default implementation of the <A HREF="../../../../org/apache/poi/util/TempFileCreationStrategy.html" title="interface in org.apache.poi.util"><CODE>TempFileCreationStrategy</CODE></A> used by <A HREF="../../../../org/apache/poi/util/TempFile.html" title="class in org.apache.poi.util"><CODE>TempFile</CODE></A>:
+ Files are collected into one directory and by default are deleted on exit from the VM.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/DrawingDump.html" title="class in org.apache.poi.util">DrawingDump</A></B></TD>
+<TD>Dump out the aggregated escher records</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/FontMetricsDumper.html" title="class in org.apache.poi.util">FontMetricsDumper</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/HexDump.html" title="class in org.apache.poi.util">HexDump</A></B></TD>
+<TD>dump data in hexadecimal format</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/HexRead.html" title="class in org.apache.poi.util">HexRead</A></B></TD>
+<TD>Utilities to read hex from files.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/IntegerField.html" title="class in org.apache.poi.util">IntegerField</A></B></TD>
+<TD>representation of an integer (32-bit) field at a fixed location
+ within a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/IntList.html" title="class in org.apache.poi.util">IntList</A></B></TD>
+<TD>A List of int's; as full an implementation of the java.util.List
+ interface as possible, with an eye toward minimal creation of
+ objects
+
+ the mimicry of List is as follows:
+ 
+  if possible, operations designated 'optional' in the List
+      interface are attempted
+  wherever the List interface refers to an Object, substitute
+      int
+  wherever the List interface refers to a Collection or List,
+      substitute IntList
+ 
+
+ the mimicry is not perfect, however:
+ 
+  operations involving Iterators or ListIterators are not
+      supported
+  remove(Object) becomes removeValue to distinguish it from
+      remove(int index)
+  subList is not supported
+ </TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/IntMapper.html" title="class in org.apache.poi.util">IntMapper&lt;T&gt;</A></B></TD>
+<TD>A List of objects that are indexed AND keyed by an int; also allows for getting
+ the index of a value in the list</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/IOUtils.html" title="class in org.apache.poi.util">IOUtils</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/JvmBugs.html" title="class in org.apache.poi.util">JvmBugs</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html" title="class in org.apache.poi.util">LittleEndian</A></B></TD>
+<TD>a utility class for handling little-endian numbers, which the 80x86 world is
+ replete with.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/LittleEndianByteArrayInputStream.html" title="class in org.apache.poi.util">LittleEndianByteArrayInputStream</A></B></TD>
+<TD>Adapts a plain byte array to <A HREF="../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util"><CODE>LittleEndianInput</CODE></A></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/LittleEndianByteArrayOutputStream.html" title="class in org.apache.poi.util">LittleEndianByteArrayOutputStream</A></B></TD>
+<TD>Adapts a plain byte array to <A HREF="../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util"><CODE>LittleEndianOutput</CODE></A></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/LittleEndianCP950Reader.html" title="class in org.apache.poi.util">LittleEndianCP950Reader</A></B></TD>
+<TD>Stream that converts CP950 (MSOffice's dialect of Big5), with
+ zero-byte padding for ASCII and in LittleEndianOrder.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/LittleEndianInputStream.html" title="class in org.apache.poi.util">LittleEndianInputStream</A></B></TD>
+<TD>Wraps an <CODE>InputStream</CODE> providing <A HREF="../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util"><CODE>LittleEndianInput</CODE></A></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/LittleEndianOutputStream.html" title="class in org.apache.poi.util">LittleEndianOutputStream</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/LocaleUtil.html" title="class in org.apache.poi.util">LocaleUtil</A></B></TD>
+<TD>This utility class is used to set locale and time zone settings beside
+ of the JDK internal <CODE>Locale.setDefault(Locale)</CODE> and
+ <CODE>TimeZone.setDefault(TimeZone)</CODE> methods, because
+ the locale/time zone specific handling of certain office documents -
+ maybe for different time zones / locales ...</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/LongField.html" title="class in org.apache.poi.util">LongField</A></B></TD>
+<TD>representation of a long (16-bit) field at a fixed location within
+ a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/LZWDecompresser.html" title="class in org.apache.poi.util">LZWDecompresser</A></B></TD>
+<TD>This class provides common functionality for the
+  various LZW implementations in the different file
+  formats.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/NullLogger.html" title="class in org.apache.poi.util">NullLogger</A></B></TD>
+<TD>A logger class that strives to make it as easy as possible for
+ developers to write log calls, while simultaneously making those
+ calls as cheap as possible by performing lazy evaluation of the log
+ message.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/PngUtils.html" title="class in org.apache.poi.util">PngUtils</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/POILogFactory.html" title="class in org.apache.poi.util">POILogFactory</A></B></TD>
+<TD>Provides logging without clients having to mess with
+ configuration/initialization.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/POILogger.html" title="class in org.apache.poi.util">POILogger</A></B></TD>
+<TD>A logger interface that strives to make it as easy as possible for
+ developers to write log calls, while simultaneously making those
+ calls as cheap as possible by performing lazy evaluation of the log
+ message.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/ReplacingInputStream.html" title="class in org.apache.poi.util">ReplacingInputStream</A></B></TD>
+<TD>Simple FilterInputStream that can replace occurrences of bytes with something else.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/RLEDecompressingInputStream.html" title="class in org.apache.poi.util">RLEDecompressingInputStream</A></B></TD>
+<TD>Wrapper of InputStream which provides Run Length Encoding (RLE) 
+  decompression on the fly.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/ShortField.html" title="class in org.apache.poi.util">ShortField</A></B></TD>
+<TD>representation of a short (16-bit) field at a fixed location within
+ a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/StaxHelper.html" title="class in org.apache.poi.util">StaxHelper</A></B></TD>
+<TD>Provides handy methods for working with StAX parsers and readers</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/StringUtil.html" title="class in org.apache.poi.util">StringUtil</A></B></TD>
+<TD>Collection of string handling utilities</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/StringUtil.StringsIterator.html" title="class in org.apache.poi.util">StringUtil.StringsIterator</A></B></TD>
+<TD>An Iterator over an array of Strings.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/SystemOutLogger.html" title="class in org.apache.poi.util">SystemOutLogger</A></B></TD>
+<TD>A logger class that strives to make it as easy as possible for
+ developers to write log calls, while simultaneously making those
+ calls as cheap as possible by performing lazy evaluation of the log
+ message.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/TempFile.html" title="class in org.apache.poi.util">TempFile</A></B></TD>
+<TD>Interface for creating temporary files.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/TempFile.DefaultTempFileCreationStrategy.html" title="class in org.apache.poi.util">TempFile.DefaultTempFileCreationStrategy</A></B></TD>
+<TD><B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 3.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/Units.html" title="class in org.apache.poi.util">Units</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/XMLHelper.html" title="class in org.apache.poi.util">XMLHelper</A></B></TD>
+<TD>Helper methods for working with javax.xml classes.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Exception Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/DocumentFormatException.html" title="class in org.apache.poi.util">DocumentFormatException</A></B></TD>
+<TD>This is similar to <A HREF="../../../../org/apache/poi/util/RecordFormatException.html" title="class in org.apache.poi.util"><CODE>RecordFormatException</CODE></A>, except this is thrown
+ when there's a higher order problem with parsing a document beyond individual records.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util">LittleEndian.BufferUnderrunException</A></B></TD>
+<TD>Exception to handle buffer underruns</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/RecordFormatException.html" title="class in org.apache.poi.util">RecordFormatException</A></B></TD>
+<TD>A common exception thrown by our binary format parsers
+  (especially HSSF and DDF), when they hit invalid
+  format or data when processing a record.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Annotation Types Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/Beta.html" title="annotation in org.apache.poi.util">Beta</A></B></TD>
+<TD>Signifies that a public API (public class, method or field) is subject to
+ incompatible changes, or even removal, in a future release.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/Internal.html" title="annotation in org.apache.poi.util">Internal</A></B></TD>
+<TD>Program elements annotated &#64;Internal are intended for
+ POI internal use only.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/NotImplemented.html" title="annotation in org.apache.poi.util">NotImplemented</A></B></TD>
+<TD>This feature has not been implemented yet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/Removal.html" title="annotation in org.apache.poi.util">Removal</A></B></TD>
+<TD>Program elements annotated &#64;Removal track the earliest final release
+ when a deprecated feature will be removed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../org/apache/poi/util/SuppressForbidden.html" title="annotation in org.apache.poi.util">SuppressForbidden</A></B></TD>
+<TD>Marking class for elements to be ignored by the forbidden apis check</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+<A NAME="package_description"><!-- --></A><H2>
+Package org.apache.poi.util Description
+</H2>
+
+<P>
+Top-level util package are classes that are useful throughout the project.  These classes are
+generally generic enough to be useful in any project and should be contributed elsewhere!
+
+<h2>Related Documentation</h2>
+
+For overviews, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+<li><a href="http://poi.apache.org">Apache POI Project</a>
+</ul>
+<P>
+
+<P>
+<DL>
+</DL>
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/ss/util/cellwalk/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/wp/usermodel/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/util/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

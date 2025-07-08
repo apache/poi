@@ -1,0 +1,468 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+SheetUtil (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="SheetUtil (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/SheetBuilder.html" title="class in org.apache.poi.ss.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/SSCellRange.html" title="class in org.apache.poi.ss.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/util/SheetUtil.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SheetUtil.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.util</FONT>
+<BR>
+Class SheetUtil</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.util.SheetUtil</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public class <B>SheetUtil</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Helper methods for when working with Usermodel sheets
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/SheetUtil.html#SheetUtil()">SheetUtil</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/SheetUtil.html#canComputeColumnWidth(org.apache.poi.ss.usermodel.Font)">canComputeColumnWidth</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html" title="interface in org.apache.poi.ss.usermodel">Font</A>&nbsp;font)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Check if the Fonts are installed correctly so that Java can compute the size of
+ columns.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/SheetUtil.html#containsCell(org.apache.poi.ss.util.CellRangeAddress, int, int)">containsCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;cr,
+             int&nbsp;rowIx,
+             int&nbsp;colIx)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressBase.html#isInRange(int, int)"><CODE>CellRangeAddressBase.isInRange(int, int)</CODE></A>.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/SheetUtil.html#getCell(org.apache.poi.ss.usermodel.Sheet, int, int)">getCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet,
+        int&nbsp;rowIx,
+        int&nbsp;colIx)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the cell, without taking account of merged regions.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/SheetUtil.html#getCellWidth(org.apache.poi.ss.usermodel.Cell, int, org.apache.poi.ss.usermodel.DataFormatter, boolean)">getCellWidth</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+             int&nbsp;defaultCharWidth,
+             <A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html" title="class in org.apache.poi.ss.usermodel">DataFormatter</A>&nbsp;formatter,
+             boolean&nbsp;useMergedCells)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute width of a single cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/SheetUtil.html#getCellWithMerges(org.apache.poi.ss.usermodel.Sheet, int, int)">getCellWithMerges</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet,
+                  int&nbsp;rowIx,
+                  int&nbsp;colIx)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the cell, taking account of merged regions.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/SheetUtil.html#getColumnWidth(org.apache.poi.ss.usermodel.Sheet, int, boolean)">getColumnWidth</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet,
+               int&nbsp;column,
+               boolean&nbsp;useMergedCells)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute width of a column and return the result</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/SheetUtil.html#getColumnWidth(org.apache.poi.ss.usermodel.Sheet, int, boolean, int, int)">getColumnWidth</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet,
+               int&nbsp;column,
+               boolean&nbsp;useMergedCells,
+               int&nbsp;firstRow,
+               int&nbsp;lastRow)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Compute width of a column based on a subset of the rows and return the result</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/SheetUtil.html#getDefaultCharWidth(org.apache.poi.ss.usermodel.Workbook)">getDefaultCharWidth</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;wb)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get default character width using the Workbook's default font</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SheetUtil()"><!-- --></A><H3>
+SheetUtil</H3>
+<PRE>
+public <B>SheetUtil</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getCellWidth(org.apache.poi.ss.usermodel.Cell, int, org.apache.poi.ss.usermodel.DataFormatter, boolean)"><!-- --></A><H3>
+getCellWidth</H3>
+<PRE>
+public static double <B>getCellWidth</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                                  int&nbsp;defaultCharWidth,
+                                  <A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html" title="class in org.apache.poi.ss.usermodel">DataFormatter</A>&nbsp;formatter,
+                                  boolean&nbsp;useMergedCells)</PRE>
+<DL>
+<DD>Compute width of a single cell
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - the cell whose width is to be calculated<DD><CODE>defaultCharWidth</CODE> - the width of a single character<DD><CODE>formatter</CODE> - formatter used to prepare the text to be measured<DD><CODE>useMergedCells</CODE> - whether to use merged cells
+<DT><B>Returns:</B><DD>the width in pixels or -1 if cell is empty</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColumnWidth(org.apache.poi.ss.usermodel.Sheet, int, boolean)"><!-- --></A><H3>
+getColumnWidth</H3>
+<PRE>
+public static double <B>getColumnWidth</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet,
+                                    int&nbsp;column,
+                                    boolean&nbsp;useMergedCells)</PRE>
+<DL>
+<DD>Compute width of a column and return the result
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sheet</CODE> - the sheet to calculate<DD><CODE>column</CODE> - 0-based index of the column<DD><CODE>useMergedCells</CODE> - whether to use merged cells
+<DT><B>Returns:</B><DD>the width in pixels or -1 if all cells are empty</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColumnWidth(org.apache.poi.ss.usermodel.Sheet, int, boolean, int, int)"><!-- --></A><H3>
+getColumnWidth</H3>
+<PRE>
+public static double <B>getColumnWidth</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet,
+                                    int&nbsp;column,
+                                    boolean&nbsp;useMergedCells,
+                                    int&nbsp;firstRow,
+                                    int&nbsp;lastRow)</PRE>
+<DL>
+<DD>Compute width of a column based on a subset of the rows and return the result
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sheet</CODE> - the sheet to calculate<DD><CODE>column</CODE> - 0-based index of the column<DD><CODE>useMergedCells</CODE> - whether to use merged cells<DD><CODE>firstRow</CODE> - 0-based index of the first row to consider (inclusive)<DD><CODE>lastRow</CODE> - 0-based index of the last row to consider (inclusive)
+<DT><B>Returns:</B><DD>the width in pixels or -1 if cell is empty</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDefaultCharWidth(org.apache.poi.ss.usermodel.Workbook)"><!-- --></A><H3>
+getDefaultCharWidth</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/Internal.html" title="annotation in org.apache.poi.util">@Internal</A>
+</FONT>public static int <B>getDefaultCharWidth</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;wb)</PRE>
+<DL>
+<DD>Get default character width using the Workbook's default font
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>wb</CODE> - the workbook to get the default character width from
+<DT><B>Returns:</B><DD>default character width in pixels</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="canComputeColumnWidth(org.apache.poi.ss.usermodel.Font)"><!-- --></A><H3>
+canComputeColumnWidth</H3>
+<PRE>
+public static boolean <B>canComputeColumnWidth</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Font.html" title="interface in org.apache.poi.ss.usermodel">Font</A>&nbsp;font)</PRE>
+<DL>
+<DD>Check if the Fonts are installed correctly so that Java can compute the size of
+ columns. 
+ 
+ If a Cell uses a Font which is not available on the operating system then Java may 
+ fail to return useful Font metrics and thus lead to an auto-computed size of 0.
+ 
+  This method allows to check if computing the sizes for a given Font will succeed or not.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>font</CODE> - The Font that is used in the Cell
+<DT><B>Returns:</B><DD>true if computing the size for this Font will succeed, false otherwise</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="containsCell(org.apache.poi.ss.util.CellRangeAddress, int, int)"><!-- --></A><H3>
+containsCell</H3>
+<PRE>
+<FONT SIZE="-1">@Deprecated
+</FONT>public static boolean <B>containsCell</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;cr,
+                                              int&nbsp;rowIx,
+                                              int&nbsp;colIx)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressBase.html#isInRange(int, int)"><CODE>CellRangeAddressBase.isInRange(int, int)</CODE></A>.</I>
+<P>
+<DD>Check if the cell is in the specified cell range
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cr</CODE> - the cell range to check in<DD><CODE>rowIx</CODE> - the row to check<DD><CODE>colIx</CODE> - the column to check
+<DT><B>Returns:</B><DD>true if the range contains the cell [rowIx, colIx]</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCell(org.apache.poi.ss.usermodel.Sheet, int, int)"><!-- --></A><H3>
+getCell</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A> <B>getCell</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet,
+                           int&nbsp;rowIx,
+                           int&nbsp;colIx)</PRE>
+<DL>
+<DD>Return the cell, without taking account of merged regions.
+ <p>
+ Use <A HREF="../../../../../org/apache/poi/ss/util/SheetUtil.html#getCellWithMerges(org.apache.poi.ss.usermodel.Sheet, int, int)"><CODE>getCellWithMerges(Sheet, int, int)</CODE></A> if you want the top left
+ cell from merged regions instead when the reference is a merged cell.
+ <p>
+ Use this where you want to know if the given cell is explicitly defined
+ or not.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sheet</CODE> - The workbook sheet to look at.<DD><CODE>rowIx</CODE> - The 0-based index of the row.<DD><CODE>colIx</CODE> - The 0-based index of the cell.
+<DT><B>Returns:</B><DD>cell at the given location, or null if not defined
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.NullPointerException</CODE> - if sheet is null</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCellWithMerges(org.apache.poi.ss.usermodel.Sheet, int, int)"><!-- --></A><H3>
+getCellWithMerges</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A> <B>getCellWithMerges</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet,
+                                     int&nbsp;rowIx,
+                                     int&nbsp;colIx)</PRE>
+<DL>
+<DD>Return the cell, taking account of merged regions. Allows you to find the
+  cell who's contents are shown in a given position in the sheet.
+ 
+ <p>If the cell at the given co-ordinates is a merged cell, this will
+  return the primary (top-left) most cell of the merged region.
+ <p>If the cell at the given co-ordinates is not in a merged region,
+  then will return the cell itself.
+ <p>If there is no cell defined at the given co-ordinates, will return
+  null.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sheet</CODE> - The workbook sheet to look at.<DD><CODE>rowIx</CODE> - The 0-based index of the row.<DD><CODE>colIx</CODE> - The 0-based index of the cell.
+<DT><B>Returns:</B><DD>cell at the given location, its base merged cell, or null if not defined
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.NullPointerException</CODE> - if sheet is null</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/SheetBuilder.html" title="class in org.apache.poi.ss.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/SSCellRange.html" title="class in org.apache.poi.ss.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/util/SheetUtil.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SheetUtil.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

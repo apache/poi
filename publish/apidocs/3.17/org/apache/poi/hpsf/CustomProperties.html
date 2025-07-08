@@ -1,0 +1,815 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+CustomProperties (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="CustomProperties (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/hpsf/CustomProperties.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CustomProperties.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hpsf</FONT>
+<BR>
+Class CustomProperties</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hpsf.CustomProperties</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>CustomProperties</B><DT>extends java.lang.Object<DT>implements java.util.Map&lt;java.lang.String,java.lang.Object&gt;</DL>
+</PRE>
+
+<P>
+Maintains the instances of <A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf"><CODE>CustomProperty</CODE></A> that belong to a
+ <A HREF="../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A>. The class maintains the names of the
+ custom properties in a dictionary. It implements the <CODE>Map</CODE> interface
+ and by this provides a simplified view on custom properties: A property's
+ name is the key that maps to a typed value. This implementation hides
+ property IDs from the developer and regards the property names as keys to
+ typed values.<p>
+
+ While this class provides a simple API to custom properties, it ignores
+ the fact that not names, but IDs are the real keys to properties. Under the
+ hood this class maintains a 1:1 relationship between IDs and names. Therefore
+ you should not use this class to process property sets with several IDs
+ mapping to the same name or with properties without a name: the result will
+ contain only a subset of the original properties. If you really need to deal
+ such property sets, use HPSF's low-level access methods.<p>
+
+ An application can call the <A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#isPure"><CODE>isPure</CODE></A> method to check whether a
+ property set parsed by <A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html" title="class in org.apache.poi.hpsf"><CODE>CustomProperties</CODE></A> is still pure (i.e.
+ unmodified) or whether one or more properties have been dropped.<p>
+
+ This class is not thread-safe; concurrent access to instances of this
+ class must be synchronized.<p>
+
+ While this class is roughly HashMap&lt;Long,CustomProperty&gt;, that's the
+ internal representation. To external calls, it should appear as
+ HashMap&lt;String,Object&gt; mapping between Names and Custom Property Values.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_java.util.Map"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface java.util.Map</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>java.util.Map.Entry&lt;K,V&gt;</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#CustomProperties()">CustomProperties</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#clear()">clear</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#containsKey(java.lang.Object)">containsKey</A></B>(java.lang.Object&nbsp;key)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks against both String Name and Long ID</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#containsValue(java.lang.Object)">containsValue</A></B>(java.lang.Object&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks against both the property, and its values.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Set&lt;java.util.Map.Entry&lt;java.lang.String,java.lang.Object&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#entrySet()">entrySet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#equals(java.lang.Object)">equals</A></B>(java.lang.Object&nbsp;obj)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Object</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#get(java.lang.Object)">get</A></B>(java.lang.Object&nbsp;key)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets a named value from the custom properties - only works for keys of type String</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#getCodepage()">getCodepage</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the codepage.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#hashCode()">hashCode</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Set&lt;java.lang.Long&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#idSet()">idSet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a set of all the IDs of our custom properties</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#isEmpty()">isEmpty</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#isPure()">isPure</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tells whether this <A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html" title="class in org.apache.poi.hpsf"><CODE>CustomProperties</CODE></A> instance is pure or one or
+ more properties of the underlying low-level property set has been
+ dropped.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Set</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#keySet()">keySet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a set of all the names of our custom properties.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Set&lt;java.lang.String&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#nameSet()">nameSet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a set of all the names of our custom properties</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf">CustomProperty</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#properties()">properties</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf">CustomProperty</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#put(java.lang.String, org.apache.poi.hpsf.CustomProperty)">put</A></B>(java.lang.String&nbsp;name,
+    <A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf">CustomProperty</A>&nbsp;cp)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Puts a <A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf"><CODE>CustomProperty</CODE></A> into this map.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.Object</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#put(java.lang.String, java.lang.Object)">put</A></B>(java.lang.String&nbsp;key,
+    java.lang.Object&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds a named property.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#putAll(java.util.Map)">putAll</A></B>(java.util.Map&lt;? extends java.lang.String,? extends java.lang.Object&gt;&nbsp;m)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf">CustomProperty</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#remove(java.lang.Object)">remove</A></B>(java.lang.Object&nbsp;key)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes a custom property - only works for keys of type String</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#setCodepage(int)">setCodepage</A></B>(int&nbsp;codepage)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the codepage.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#setPure(boolean)">setPure</A></B>(boolean&nbsp;isPure)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the purity of the custom property set.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#size()">size</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Collection&lt;java.lang.Object&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#values()">values</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, finalize, getClass, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="CustomProperties()"><!-- --></A><H3>
+CustomProperties</H3>
+<PRE>
+public <B>CustomProperties</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="put(java.lang.String, org.apache.poi.hpsf.CustomProperty)"><!-- --></A><H3>
+put</H3>
+<PRE>
+public <A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf">CustomProperty</A> <B>put</B>(java.lang.String&nbsp;name,
+                          <A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf">CustomProperty</A>&nbsp;cp)</PRE>
+<DL>
+<DD>Puts a <A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf"><CODE>CustomProperty</CODE></A> into this map. It is assumed that the
+ <A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf"><CODE>CustomProperty</CODE></A> already has a valid ID. Otherwise use
+ <A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#put(org.apache.poi.hpsf.CustomProperty)"><CODE>put(CustomProperty)</CODE></A>.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the property name<DD><CODE>cp</CODE> - the property
+<DT><B>Returns:</B><DD>the previous property stored under this name</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="put(java.lang.String, java.lang.Object)"><!-- --></A><H3>
+put</H3>
+<PRE>
+public java.lang.Object <B>put</B>(java.lang.String&nbsp;key,
+                            java.lang.Object&nbsp;value)</PRE>
+<DL>
+<DD>Adds a named property.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>put</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>key</CODE> - The property's name.<DD><CODE>value</CODE> - The property's value.
+<DT><B>Returns:</B><DD>the property that was stored under the specified name before, or
+         <code>null</code> if there was no such property before.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="get(java.lang.Object)"><!-- --></A><H3>
+get</H3>
+<PRE>
+public java.lang.Object <B>get</B>(java.lang.Object&nbsp;key)</PRE>
+<DL>
+<DD>Gets a named value from the custom properties - only works for keys of type String
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>get</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>key</CODE> - the name of the value to get
+<DT><B>Returns:</B><DD>the value or <code>null</code> if a value with the specified
+         name is not found in the custom properties.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="remove(java.lang.Object)"><!-- --></A><H3>
+remove</H3>
+<PRE>
+public <A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf">CustomProperty</A> <B>remove</B>(java.lang.Object&nbsp;key)</PRE>
+<DL>
+<DD>Removes a custom property - only works for keys of type String
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>remove</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>key</CODE> - The name of the custom property to remove
+<DT><B>Returns:</B><DD>The removed property or <code>null</code> if the specified property was not found.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="size()"><!-- --></A><H3>
+size</H3>
+<PRE>
+public int <B>size</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>size</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isEmpty()"><!-- --></A><H3>
+isEmpty</H3>
+<PRE>
+public boolean <B>isEmpty</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>isEmpty</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clear()"><!-- --></A><H3>
+clear</H3>
+<PRE>
+public void <B>clear</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>clear</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hashCode()"><!-- --></A><H3>
+hashCode</H3>
+<PRE>
+public int <B>hashCode</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>hashCode</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE><DT><B>Overrides:</B><DD><CODE>hashCode</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="equals(java.lang.Object)"><!-- --></A><H3>
+equals</H3>
+<PRE>
+public boolean <B>equals</B>(java.lang.Object&nbsp;obj)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>equals</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE><DT><B>Overrides:</B><DD><CODE>equals</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putAll(java.util.Map)"><!-- --></A><H3>
+putAll</H3>
+<PRE>
+public void <B>putAll</B>(java.util.Map&lt;? extends java.lang.String,? extends java.lang.Object&gt;&nbsp;m)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>putAll</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="properties()"><!-- --></A><H3>
+properties</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf">CustomProperty</A>&gt; <B>properties</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the list of properties</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="values()"><!-- --></A><H3>
+values</H3>
+<PRE>
+public java.util.Collection&lt;java.lang.Object&gt; <B>values</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>values</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the list of property values - use <A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#properties()"><CODE>properties()</CODE></A> for the wrapped values</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="entrySet()"><!-- --></A><H3>
+entrySet</H3>
+<PRE>
+public java.util.Set&lt;java.util.Map.Entry&lt;java.lang.String,java.lang.Object&gt;&gt; <B>entrySet</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>entrySet</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="keySet()"><!-- --></A><H3>
+keySet</H3>
+<PRE>
+public java.util.Set <B>keySet</B>()</PRE>
+<DL>
+<DD>Returns a set of all the names of our custom properties.
+ Equivalent to <A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html#nameSet()"><CODE>nameSet()</CODE></A>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>keySet</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a set of all the names of our custom properties</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="nameSet()"><!-- --></A><H3>
+nameSet</H3>
+<PRE>
+public java.util.Set&lt;java.lang.String&gt; <B>nameSet</B>()</PRE>
+<DL>
+<DD>Returns a set of all the names of our custom properties
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a set of all the names of our custom properties</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="idSet()"><!-- --></A><H3>
+idSet</H3>
+<PRE>
+public java.util.Set&lt;java.lang.Long&gt; <B>idSet</B>()</PRE>
+<DL>
+<DD>Returns a set of all the IDs of our custom properties
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a set of all the IDs of our custom properties</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setCodepage(int)"><!-- --></A><H3>
+setCodepage</H3>
+<PRE>
+public void <B>setCodepage</B>(int&nbsp;codepage)</PRE>
+<DL>
+<DD>Sets the codepage.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>codepage</CODE> - the codepage</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCodepage()"><!-- --></A><H3>
+getCodepage</H3>
+<PRE>
+public int <B>getCodepage</B>()</PRE>
+<DL>
+<DD>Gets the codepage.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the codepage or -1 if the codepage is undefined.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="containsKey(java.lang.Object)"><!-- --></A><H3>
+containsKey</H3>
+<PRE>
+public boolean <B>containsKey</B>(java.lang.Object&nbsp;key)</PRE>
+<DL>
+<DD>Checks against both String Name and Long ID
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>containsKey</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="containsValue(java.lang.Object)"><!-- --></A><H3>
+containsValue</H3>
+<PRE>
+public boolean <B>containsValue</B>(java.lang.Object&nbsp;value)</PRE>
+<DL>
+<DD>Checks against both the property, and its values.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>containsValue</CODE> in interface <CODE>java.util.Map&lt;java.lang.String,java.lang.Object&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isPure()"><!-- --></A><H3>
+isPure</H3>
+<PRE>
+public boolean <B>isPure</B>()</PRE>
+<DL>
+<DD>Tells whether this <A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html" title="class in org.apache.poi.hpsf"><CODE>CustomProperties</CODE></A> instance is pure or one or
+ more properties of the underlying low-level property set has been
+ dropped.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if the <A HREF="../../../../org/apache/poi/hpsf/CustomProperties.html" title="class in org.apache.poi.hpsf"><CODE>CustomProperties</CODE></A> is pure, else
+         <code>false</code>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPure(boolean)"><!-- --></A><H3>
+setPure</H3>
+<PRE>
+public void <B>setPure</B>(boolean&nbsp;isPure)</PRE>
+<DL>
+<DD>Sets the purity of the custom property set.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>isPure</CODE> - the purity</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/CustomProperty.html" title="class in org.apache.poi.hpsf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/hpsf/CustomProperties.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CustomProperties.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

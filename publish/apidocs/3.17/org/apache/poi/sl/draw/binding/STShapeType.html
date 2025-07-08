@@ -1,0 +1,3890 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+STShapeType (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="STShapeType (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STTextShapeType.html" title="enum in org.apache.poi.sl.draw.binding"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/sl/draw/binding/STShapeType.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="STShapeType.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#enum_constant_summary">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#enum_constant_detail">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.sl.draw.binding</FONT>
+<BR>
+Enum STShapeType</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by ">java.lang.Enum&lt;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A>&gt;
+      <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.sl.draw.binding.STShapeType</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.io.Serializable, java.lang.Comparable&lt;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A>&gt;</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public enum <B>STShapeType</B><DT>extends java.lang.Enum&lt;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A>&gt;</DL>
+</PRE>
+
+<P>
+<p>Java class for ST_ShapeType.
+ 
+ <p>The following schema fragment specifies the expected content contained within this class.
+ <p>
+ <pre>
+ &lt;simpleType name="ST_ShapeType">
+   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
+     &lt;enumeration value="line"/>
+     &lt;enumeration value="lineInv"/>
+     &lt;enumeration value="triangle"/>
+     &lt;enumeration value="rtTriangle"/>
+     &lt;enumeration value="rect"/>
+     &lt;enumeration value="diamond"/>
+     &lt;enumeration value="parallelogram"/>
+     &lt;enumeration value="trapezoid"/>
+     &lt;enumeration value="nonIsoscelesTrapezoid"/>
+     &lt;enumeration value="pentagon"/>
+     &lt;enumeration value="hexagon"/>
+     &lt;enumeration value="heptagon"/>
+     &lt;enumeration value="octagon"/>
+     &lt;enumeration value="decagon"/>
+     &lt;enumeration value="dodecagon"/>
+     &lt;enumeration value="star4"/>
+     &lt;enumeration value="star5"/>
+     &lt;enumeration value="star6"/>
+     &lt;enumeration value="star7"/>
+     &lt;enumeration value="star8"/>
+     &lt;enumeration value="star10"/>
+     &lt;enumeration value="star12"/>
+     &lt;enumeration value="star16"/>
+     &lt;enumeration value="star24"/>
+     &lt;enumeration value="star32"/>
+     &lt;enumeration value="roundRect"/>
+     &lt;enumeration value="round1Rect"/>
+     &lt;enumeration value="round2SameRect"/>
+     &lt;enumeration value="round2DiagRect"/>
+     &lt;enumeration value="snipRoundRect"/>
+     &lt;enumeration value="snip1Rect"/>
+     &lt;enumeration value="snip2SameRect"/>
+     &lt;enumeration value="snip2DiagRect"/>
+     &lt;enumeration value="plaque"/>
+     &lt;enumeration value="ellipse"/>
+     &lt;enumeration value="teardrop"/>
+     &lt;enumeration value="homePlate"/>
+     &lt;enumeration value="chevron"/>
+     &lt;enumeration value="pieWedge"/>
+     &lt;enumeration value="pie"/>
+     &lt;enumeration value="blockArc"/>
+     &lt;enumeration value="donut"/>
+     &lt;enumeration value="noSmoking"/>
+     &lt;enumeration value="rightArrow"/>
+     &lt;enumeration value="leftArrow"/>
+     &lt;enumeration value="upArrow"/>
+     &lt;enumeration value="downArrow"/>
+     &lt;enumeration value="stripedRightArrow"/>
+     &lt;enumeration value="notchedRightArrow"/>
+     &lt;enumeration value="bentUpArrow"/>
+     &lt;enumeration value="leftRightArrow"/>
+     &lt;enumeration value="upDownArrow"/>
+     &lt;enumeration value="leftUpArrow"/>
+     &lt;enumeration value="leftRightUpArrow"/>
+     &lt;enumeration value="quadArrow"/>
+     &lt;enumeration value="leftArrowCallout"/>
+     &lt;enumeration value="rightArrowCallout"/>
+     &lt;enumeration value="upArrowCallout"/>
+     &lt;enumeration value="downArrowCallout"/>
+     &lt;enumeration value="leftRightArrowCallout"/>
+     &lt;enumeration value="upDownArrowCallout"/>
+     &lt;enumeration value="quadArrowCallout"/>
+     &lt;enumeration value="bentArrow"/>
+     &lt;enumeration value="uturnArrow"/>
+     &lt;enumeration value="circularArrow"/>
+     &lt;enumeration value="leftCircularArrow"/>
+     &lt;enumeration value="leftRightCircularArrow"/>
+     &lt;enumeration value="curvedRightArrow"/>
+     &lt;enumeration value="curvedLeftArrow"/>
+     &lt;enumeration value="curvedUpArrow"/>
+     &lt;enumeration value="curvedDownArrow"/>
+     &lt;enumeration value="swooshArrow"/>
+     &lt;enumeration value="cube"/>
+     &lt;enumeration value="can"/>
+     &lt;enumeration value="lightningBolt"/>
+     &lt;enumeration value="heart"/>
+     &lt;enumeration value="sun"/>
+     &lt;enumeration value="moon"/>
+     &lt;enumeration value="smileyFace"/>
+     &lt;enumeration value="irregularSeal1"/>
+     &lt;enumeration value="irregularSeal2"/>
+     &lt;enumeration value="foldedCorner"/>
+     &lt;enumeration value="bevel"/>
+     &lt;enumeration value="frame"/>
+     &lt;enumeration value="halfFrame"/>
+     &lt;enumeration value="corner"/>
+     &lt;enumeration value="diagStripe"/>
+     &lt;enumeration value="chord"/>
+     &lt;enumeration value="arc"/>
+     &lt;enumeration value="leftBracket"/>
+     &lt;enumeration value="rightBracket"/>
+     &lt;enumeration value="leftBrace"/>
+     &lt;enumeration value="rightBrace"/>
+     &lt;enumeration value="bracketPair"/>
+     &lt;enumeration value="bracePair"/>
+     &lt;enumeration value="straightConnector1"/>
+     &lt;enumeration value="bentConnector2"/>
+     &lt;enumeration value="bentConnector3"/>
+     &lt;enumeration value="bentConnector4"/>
+     &lt;enumeration value="bentConnector5"/>
+     &lt;enumeration value="curvedConnector2"/>
+     &lt;enumeration value="curvedConnector3"/>
+     &lt;enumeration value="curvedConnector4"/>
+     &lt;enumeration value="curvedConnector5"/>
+     &lt;enumeration value="callout1"/>
+     &lt;enumeration value="callout2"/>
+     &lt;enumeration value="callout3"/>
+     &lt;enumeration value="accentCallout1"/>
+     &lt;enumeration value="accentCallout2"/>
+     &lt;enumeration value="accentCallout3"/>
+     &lt;enumeration value="borderCallout1"/>
+     &lt;enumeration value="borderCallout2"/>
+     &lt;enumeration value="borderCallout3"/>
+     &lt;enumeration value="accentBorderCallout1"/>
+     &lt;enumeration value="accentBorderCallout2"/>
+     &lt;enumeration value="accentBorderCallout3"/>
+     &lt;enumeration value="wedgeRectCallout"/>
+     &lt;enumeration value="wedgeRoundRectCallout"/>
+     &lt;enumeration value="wedgeEllipseCallout"/>
+     &lt;enumeration value="cloudCallout"/>
+     &lt;enumeration value="cloud"/>
+     &lt;enumeration value="ribbon"/>
+     &lt;enumeration value="ribbon2"/>
+     &lt;enumeration value="ellipseRibbon"/>
+     &lt;enumeration value="ellipseRibbon2"/>
+     &lt;enumeration value="leftRightRibbon"/>
+     &lt;enumeration value="verticalScroll"/>
+     &lt;enumeration value="horizontalScroll"/>
+     &lt;enumeration value="wave"/>
+     &lt;enumeration value="doubleWave"/>
+     &lt;enumeration value="plus"/>
+     &lt;enumeration value="flowChartProcess"/>
+     &lt;enumeration value="flowChartDecision"/>
+     &lt;enumeration value="flowChartInputOutput"/>
+     &lt;enumeration value="flowChartPredefinedProcess"/>
+     &lt;enumeration value="flowChartInternalStorage"/>
+     &lt;enumeration value="flowChartDocument"/>
+     &lt;enumeration value="flowChartMultidocument"/>
+     &lt;enumeration value="flowChartTerminator"/>
+     &lt;enumeration value="flowChartPreparation"/>
+     &lt;enumeration value="flowChartManualInput"/>
+     &lt;enumeration value="flowChartManualOperation"/>
+     &lt;enumeration value="flowChartConnector"/>
+     &lt;enumeration value="flowChartPunchedCard"/>
+     &lt;enumeration value="flowChartPunchedTape"/>
+     &lt;enumeration value="flowChartSummingJunction"/>
+     &lt;enumeration value="flowChartOr"/>
+     &lt;enumeration value="flowChartCollate"/>
+     &lt;enumeration value="flowChartSort"/>
+     &lt;enumeration value="flowChartExtract"/>
+     &lt;enumeration value="flowChartMerge"/>
+     &lt;enumeration value="flowChartOfflineStorage"/>
+     &lt;enumeration value="flowChartOnlineStorage"/>
+     &lt;enumeration value="flowChartMagneticTape"/>
+     &lt;enumeration value="flowChartMagneticDisk"/>
+     &lt;enumeration value="flowChartMagneticDrum"/>
+     &lt;enumeration value="flowChartDisplay"/>
+     &lt;enumeration value="flowChartDelay"/>
+     &lt;enumeration value="flowChartAlternateProcess"/>
+     &lt;enumeration value="flowChartOffpageConnector"/>
+     &lt;enumeration value="actionButtonBlank"/>
+     &lt;enumeration value="actionButtonHome"/>
+     &lt;enumeration value="actionButtonHelp"/>
+     &lt;enumeration value="actionButtonInformation"/>
+     &lt;enumeration value="actionButtonForwardNext"/>
+     &lt;enumeration value="actionButtonBackPrevious"/>
+     &lt;enumeration value="actionButtonEnd"/>
+     &lt;enumeration value="actionButtonBeginning"/>
+     &lt;enumeration value="actionButtonReturn"/>
+     &lt;enumeration value="actionButtonDocument"/>
+     &lt;enumeration value="actionButtonSound"/>
+     &lt;enumeration value="actionButtonMovie"/>
+     &lt;enumeration value="gear6"/>
+     &lt;enumeration value="gear9"/>
+     &lt;enumeration value="funnel"/>
+     &lt;enumeration value="mathPlus"/>
+     &lt;enumeration value="mathMinus"/>
+     &lt;enumeration value="mathMultiply"/>
+     &lt;enumeration value="mathDivide"/>
+     &lt;enumeration value="mathEqual"/>
+     &lt;enumeration value="mathNotEqual"/>
+     &lt;enumeration value="cornerTabs"/>
+     &lt;enumeration value="squareTabs"/>
+     &lt;enumeration value="plaqueTabs"/>
+     &lt;enumeration value="chartX"/>
+     &lt;enumeration value="chartStar"/>
+     &lt;enumeration value="chartPlus"/>
+   &lt;/restriction>
+ &lt;/simpleType>
+ </pre>
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== ENUM CONSTANT SUMMARY =========== -->
+
+<A NAME="enum_constant_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Enum Constant Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACCENT_BORDER_CALLOUT_1">ACCENT_BORDER_CALLOUT_1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout 1 with Border and Accent Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACCENT_BORDER_CALLOUT_2">ACCENT_BORDER_CALLOUT_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout 2 with Border and Accent Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACCENT_BORDER_CALLOUT_3">ACCENT_BORDER_CALLOUT_3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout 3 with Border and Accent Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACCENT_CALLOUT_1">ACCENT_CALLOUT_1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout 1 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACCENT_CALLOUT_2">ACCENT_CALLOUT_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout 2 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACCENT_CALLOUT_3">ACCENT_CALLOUT_3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout 3 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACTION_BUTTON_BACK_PREVIOUS">ACTION_BUTTON_BACK_PREVIOUS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Back or Previous Button Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACTION_BUTTON_BEGINNING">ACTION_BUTTON_BEGINNING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Beginning Button Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACTION_BUTTON_BLANK">ACTION_BUTTON_BLANK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blank Button Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACTION_BUTTON_DOCUMENT">ACTION_BUTTON_DOCUMENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Document Button Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACTION_BUTTON_END">ACTION_BUTTON_END</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;End Button Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACTION_BUTTON_FORWARD_NEXT">ACTION_BUTTON_FORWARD_NEXT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Forward or Next Button Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACTION_BUTTON_HELP">ACTION_BUTTON_HELP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Help Button Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACTION_BUTTON_HOME">ACTION_BUTTON_HOME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Home Button Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACTION_BUTTON_INFORMATION">ACTION_BUTTON_INFORMATION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Information Button Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACTION_BUTTON_MOVIE">ACTION_BUTTON_MOVIE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Movie Button Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACTION_BUTTON_RETURN">ACTION_BUTTON_RETURN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return Button Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ACTION_BUTTON_SOUND">ACTION_BUTTON_SOUND</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sound Button Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ARC">ARC</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Curved Arc Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#BENT_ARROW">BENT_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bent Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#BENT_CONNECTOR_2">BENT_CONNECTOR_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bent Connector 2 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#BENT_CONNECTOR_3">BENT_CONNECTOR_3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bent Connector 3 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#BENT_CONNECTOR_4">BENT_CONNECTOR_4</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bent Connector 4 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#BENT_CONNECTOR_5">BENT_CONNECTOR_5</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bent Connector 5 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#BENT_UP_ARROW">BENT_UP_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bent Up Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#BEVEL">BEVEL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bevel Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#BLOCK_ARC">BLOCK_ARC</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Block Arc Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#BORDER_CALLOUT_1">BORDER_CALLOUT_1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout 1 with Border Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#BORDER_CALLOUT_2">BORDER_CALLOUT_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout 2 with Border Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#BORDER_CALLOUT_3">BORDER_CALLOUT_3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout 3 with Border Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#BRACE_PAIR">BRACE_PAIR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Brace Pair Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#BRACKET_PAIR">BRACKET_PAIR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bracket Pair Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CALLOUT_1">CALLOUT_1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout 1 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CALLOUT_2">CALLOUT_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout 2 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CALLOUT_3">CALLOUT_3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout 3 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CAN">CAN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Can Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CHART_PLUS">CHART_PLUS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chart Plus Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CHART_STAR">CHART_STAR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chart Star Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CHART_X">CHART_X</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chart X Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CHEVRON">CHEVRON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chevron Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CHORD">CHORD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chord Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CIRCULAR_ARROW">CIRCULAR_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Circular Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CLOUD">CLOUD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cloud Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CLOUD_CALLOUT">CLOUD_CALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout Cloud Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CORNER">CORNER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Corner Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CORNER_TABS">CORNER_TABS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Corner Tabs Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CUBE">CUBE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cube Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CURVED_CONNECTOR_2">CURVED_CONNECTOR_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Curved Connector 2 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CURVED_CONNECTOR_3">CURVED_CONNECTOR_3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Curved Connector 3 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CURVED_CONNECTOR_4">CURVED_CONNECTOR_4</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Curved Connector 4 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CURVED_CONNECTOR_5">CURVED_CONNECTOR_5</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Curved Connector 5 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CURVED_DOWN_ARROW">CURVED_DOWN_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Curved Down Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CURVED_LEFT_ARROW">CURVED_LEFT_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Curved Left Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CURVED_RIGHT_ARROW">CURVED_RIGHT_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Curved Right Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#CURVED_UP_ARROW">CURVED_UP_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Curved Up Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#DECAGON">DECAGON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Decagon Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#DIAG_STRIPE">DIAG_STRIPE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diagonal Stripe Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#DIAMOND">DIAMOND</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Diamond Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#DODECAGON">DODECAGON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dodecagon Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#DONUT">DONUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Donut Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#DOUBLE_WAVE">DOUBLE_WAVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Double Wave Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#DOWN_ARROW">DOWN_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Down Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#DOWN_ARROW_CALLOUT">DOWN_ARROW_CALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout Down Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ELLIPSE">ELLIPSE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ellipse Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ELLIPSE_RIBBON">ELLIPSE_RIBBON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ellipse Ribbon Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ELLIPSE_RIBBON_2">ELLIPSE_RIBBON_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ellipse Ribbon 2 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_ALTERNATE_PROCESS">FLOW_CHART_ALTERNATE_PROCESS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alternate Process Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_COLLATE">FLOW_CHART_COLLATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Collate Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_CONNECTOR">FLOW_CHART_CONNECTOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Connector Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_DECISION">FLOW_CHART_DECISION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Decision Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_DELAY">FLOW_CHART_DELAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Delay Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_DISPLAY">FLOW_CHART_DISPLAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Display Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_DOCUMENT">FLOW_CHART_DOCUMENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Document Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_EXTRACT">FLOW_CHART_EXTRACT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Extract Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_INPUT_OUTPUT">FLOW_CHART_INPUT_OUTPUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Input Output Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_INTERNAL_STORAGE">FLOW_CHART_INTERNAL_STORAGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Internal Storage Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_MAGNETIC_DISK">FLOW_CHART_MAGNETIC_DISK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Magnetic Disk Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_MAGNETIC_DRUM">FLOW_CHART_MAGNETIC_DRUM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Magnetic Drum Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_MAGNETIC_TAPE">FLOW_CHART_MAGNETIC_TAPE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Magnetic Tape Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_MANUAL_INPUT">FLOW_CHART_MANUAL_INPUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manual Input Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_MANUAL_OPERATION">FLOW_CHART_MANUAL_OPERATION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manual Operation Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_MERGE">FLOW_CHART_MERGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Merge Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_MULTIDOCUMENT">FLOW_CHART_MULTIDOCUMENT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Multi-Document Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_OFFLINE_STORAGE">FLOW_CHART_OFFLINE_STORAGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Offline Storage Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_OFFPAGE_CONNECTOR">FLOW_CHART_OFFPAGE_CONNECTOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Off-Page Connector Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_ONLINE_STORAGE">FLOW_CHART_ONLINE_STORAGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Online Storage Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_OR">FLOW_CHART_OR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Or Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_PREDEFINED_PROCESS">FLOW_CHART_PREDEFINED_PROCESS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predefined Process Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_PREPARATION">FLOW_CHART_PREPARATION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Preparation Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_PROCESS">FLOW_CHART_PROCESS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Process Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_PUNCHED_CARD">FLOW_CHART_PUNCHED_CARD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Punched Card Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_PUNCHED_TAPE">FLOW_CHART_PUNCHED_TAPE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Punched Tape Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_SORT">FLOW_CHART_SORT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sort Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_SUMMING_JUNCTION">FLOW_CHART_SUMMING_JUNCTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Summing Junction Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FLOW_CHART_TERMINATOR">FLOW_CHART_TERMINATOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Terminator Flow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FOLDED_CORNER">FOLDED_CORNER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Folded Corner Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FRAME">FRAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Frame Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#FUNNEL">FUNNEL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Funnel Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#GEAR_6">GEAR_6</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gear 6 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#GEAR_9">GEAR_9</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gear 9 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#HALF_FRAME">HALF_FRAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Half Frame Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#HEART">HEART</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Heart Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#HEPTAGON">HEPTAGON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Heptagon Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#HEXAGON">HEXAGON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hexagon Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#HOME_PLATE">HOME_PLATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Home Plate Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#HORIZONTAL_SCROLL">HORIZONTAL_SCROLL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Horizontal Scroll Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#IRREGULAR_SEAL_1">IRREGULAR_SEAL_1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Irregular Seal 1 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#IRREGULAR_SEAL_2">IRREGULAR_SEAL_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Irregular Seal 2 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LEFT_ARROW">LEFT_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Left Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LEFT_ARROW_CALLOUT">LEFT_ARROW_CALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout Left Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LEFT_BRACE">LEFT_BRACE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Left Brace Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LEFT_BRACKET">LEFT_BRACKET</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Left Bracket Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LEFT_CIRCULAR_ARROW">LEFT_CIRCULAR_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Left Circular Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LEFT_RIGHT_ARROW">LEFT_RIGHT_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Left Right Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LEFT_RIGHT_ARROW_CALLOUT">LEFT_RIGHT_ARROW_CALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout Left Right Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LEFT_RIGHT_CIRCULAR_ARROW">LEFT_RIGHT_CIRCULAR_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Left Right Circular Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LEFT_RIGHT_RIBBON">LEFT_RIGHT_RIBBON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Left Right Ribbon Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LEFT_RIGHT_UP_ARROW">LEFT_RIGHT_UP_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Left Right Up Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LEFT_UP_ARROW">LEFT_UP_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Left Up Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LIGHTNING_BOLT">LIGHTNING_BOLT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lightning Bolt Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LINE">LINE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Line Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#LINE_INV">LINE_INV</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Line Inverse Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#MATH_DIVIDE">MATH_DIVIDE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Divide Math Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#MATH_EQUAL">MATH_EQUAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Equal Math Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#MATH_MINUS">MATH_MINUS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Minus Math Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#MATH_MULTIPLY">MATH_MULTIPLY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Multiply Math Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#MATH_NOT_EQUAL">MATH_NOT_EQUAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Not Equal Math Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#MATH_PLUS">MATH_PLUS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plus Math Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#MOON">MOON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Moon Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#NO_SMOKING">NO_SMOKING</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No Smoking Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#NON_ISOSCELES_TRAPEZOID">NON_ISOSCELES_TRAPEZOID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Non-Isosceles Trapezoid Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#NOTCHED_RIGHT_ARROW">NOTCHED_RIGHT_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Notched Right Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#OCTAGON">OCTAGON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Octagon Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#PARALLELOGRAM">PARALLELOGRAM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Parallelogram Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#PENTAGON">PENTAGON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pentagon Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#PIE">PIE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pie Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#PIE_WEDGE">PIE_WEDGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pie Wedge Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#PLAQUE">PLAQUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plaque Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#PLAQUE_TABS">PLAQUE_TABS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plaque Tabs Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#PLUS">PLUS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plus Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#QUAD_ARROW">QUAD_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quad-Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#QUAD_ARROW_CALLOUT">QUAD_ARROW_CALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout Quad-Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#RECT">RECT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rectangle Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#RIBBON">RIBBON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ribbon Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#RIBBON_2">RIBBON_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ribbon 2 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#RIGHT_ARROW">RIGHT_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Right Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#RIGHT_ARROW_CALLOUT">RIGHT_ARROW_CALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout Right Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#RIGHT_BRACE">RIGHT_BRACE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Right Brace Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#RIGHT_BRACKET">RIGHT_BRACKET</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Right Bracket Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ROUND_1_RECT">ROUND_1_RECT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;One Round Corner Rectangle Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ROUND_2_DIAG_RECT">ROUND_2_DIAG_RECT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Two Diagonal Round Corner Rectangle Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ROUND_2_SAME_RECT">ROUND_2_SAME_RECT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Two Same-side Round Corner Rectangle Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#ROUND_RECT">ROUND_RECT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Round Corner Rectangle Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#RT_TRIANGLE">RT_TRIANGLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Right Triangle Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#SMILEY_FACE">SMILEY_FACE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Smiley Face Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#SNIP_1_RECT">SNIP_1_RECT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;One Snip Corner Rectangle Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#SNIP_2_DIAG_RECT">SNIP_2_DIAG_RECT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Two Diagonal Snip Corner Rectangle Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#SNIP_2_SAME_RECT">SNIP_2_SAME_RECT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Two Same-side Snip Corner Rectangle Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#SNIP_ROUND_RECT">SNIP_ROUND_RECT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;One Snip One Round Corner Rectangle Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#SQUARE_TABS">SQUARE_TABS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Square Tabs Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#STAR_10">STAR_10</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ten Pointed Star Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#STAR_12">STAR_12</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Twelve Pointed Star Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#STAR_16">STAR_16</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sixteen Pointed Star Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#STAR_24">STAR_24</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Twenty Four Pointed Star Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#STAR_32">STAR_32</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thirty Two Pointed Star Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#STAR_4">STAR_4</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Four Pointed Star Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#STAR_5">STAR_5</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Five Pointed Star Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#STAR_6">STAR_6</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Six Pointed Star Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#STAR_7">STAR_7</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Seven Pointed Star Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#STAR_8">STAR_8</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Eight Pointed Star Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#STRAIGHT_CONNECTOR_1">STRAIGHT_CONNECTOR_1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Straight Connector 1 Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#STRIPED_RIGHT_ARROW">STRIPED_RIGHT_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Striped Right Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#SUN">SUN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sun Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#SWOOSH_ARROW">SWOOSH_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Swoosh Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#TEARDROP">TEARDROP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Teardrop Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#TRAPEZOID">TRAPEZOID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Trapezoid Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#TRIANGLE">TRIANGLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Triangle Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#UP_ARROW">UP_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Up Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#UP_ARROW_CALLOUT">UP_ARROW_CALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout Up Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#UP_DOWN_ARROW">UP_DOWN_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Up Down Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#UP_DOWN_ARROW_CALLOUT">UP_DOWN_ARROW_CALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout Up Down Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#UTURN_ARROW">UTURN_ARROW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;U-Turn Arrow Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#VERTICAL_SCROLL">VERTICAL_SCROLL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vertical Scroll Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#WAVE">WAVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wave Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#WEDGE_ELLIPSE_CALLOUT">WEDGE_ELLIPSE_CALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout Wedge Ellipse Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#WEDGE_RECT_CALLOUT">WEDGE_RECT_CALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout Wedge Rectangle Shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#WEDGE_ROUND_RECT_CALLOUT">WEDGE_ROUND_RECT_CALLOUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Callout Wedge Round Rectangle Shape</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#fromValue(java.lang.String)">fromValue</A></B>(java.lang.String&nbsp;v)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#value()">value</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#valueOf(java.lang.String)">valueOf</A></B>(java.lang.String&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the enum constant of this type with the specified name.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html#values()">values</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an array containing the constants of this enum type, in
+the order they are declared.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Enum"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Enum</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, compareTo, equals, finalize, getDeclaringClass, hashCode, name, ordinal, toString, valueOf</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ ENUM CONSTANT DETAIL =========== -->
+
+<A NAME="enum_constant_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Enum Constant Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="LINE"><!-- --></A><H3>
+LINE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LINE</B></PRE>
+<DL>
+<DD>Line Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LINE_INV"><!-- --></A><H3>
+LINE_INV</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LINE_INV</B></PRE>
+<DL>
+<DD>Line Inverse Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="TRIANGLE"><!-- --></A><H3>
+TRIANGLE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>TRIANGLE</B></PRE>
+<DL>
+<DD>Triangle Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="RT_TRIANGLE"><!-- --></A><H3>
+RT_TRIANGLE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>RT_TRIANGLE</B></PRE>
+<DL>
+<DD>Right Triangle Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="RECT"><!-- --></A><H3>
+RECT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>RECT</B></PRE>
+<DL>
+<DD>Rectangle Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DIAMOND"><!-- --></A><H3>
+DIAMOND</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>DIAMOND</B></PRE>
+<DL>
+<DD>Diamond Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PARALLELOGRAM"><!-- --></A><H3>
+PARALLELOGRAM</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>PARALLELOGRAM</B></PRE>
+<DL>
+<DD>Parallelogram Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="TRAPEZOID"><!-- --></A><H3>
+TRAPEZOID</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>TRAPEZOID</B></PRE>
+<DL>
+<DD>Trapezoid Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="NON_ISOSCELES_TRAPEZOID"><!-- --></A><H3>
+NON_ISOSCELES_TRAPEZOID</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>NON_ISOSCELES_TRAPEZOID</B></PRE>
+<DL>
+<DD>Non-Isosceles Trapezoid Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PENTAGON"><!-- --></A><H3>
+PENTAGON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>PENTAGON</B></PRE>
+<DL>
+<DD>Pentagon Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="HEXAGON"><!-- --></A><H3>
+HEXAGON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>HEXAGON</B></PRE>
+<DL>
+<DD>Hexagon Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="HEPTAGON"><!-- --></A><H3>
+HEPTAGON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>HEPTAGON</B></PRE>
+<DL>
+<DD>Heptagon Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="OCTAGON"><!-- --></A><H3>
+OCTAGON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>OCTAGON</B></PRE>
+<DL>
+<DD>Octagon Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DECAGON"><!-- --></A><H3>
+DECAGON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>DECAGON</B></PRE>
+<DL>
+<DD>Decagon Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DODECAGON"><!-- --></A><H3>
+DODECAGON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>DODECAGON</B></PRE>
+<DL>
+<DD>Dodecagon Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="STAR_4"><!-- --></A><H3>
+STAR_4</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>STAR_4</B></PRE>
+<DL>
+<DD>Four Pointed Star Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="STAR_5"><!-- --></A><H3>
+STAR_5</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>STAR_5</B></PRE>
+<DL>
+<DD>Five Pointed Star Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="STAR_6"><!-- --></A><H3>
+STAR_6</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>STAR_6</B></PRE>
+<DL>
+<DD>Six Pointed Star Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="STAR_7"><!-- --></A><H3>
+STAR_7</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>STAR_7</B></PRE>
+<DL>
+<DD>Seven Pointed Star Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="STAR_8"><!-- --></A><H3>
+STAR_8</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>STAR_8</B></PRE>
+<DL>
+<DD>Eight Pointed Star Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="STAR_10"><!-- --></A><H3>
+STAR_10</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>STAR_10</B></PRE>
+<DL>
+<DD>Ten Pointed Star Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="STAR_12"><!-- --></A><H3>
+STAR_12</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>STAR_12</B></PRE>
+<DL>
+<DD>Twelve Pointed Star Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="STAR_16"><!-- --></A><H3>
+STAR_16</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>STAR_16</B></PRE>
+<DL>
+<DD>Sixteen Pointed Star Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="STAR_24"><!-- --></A><H3>
+STAR_24</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>STAR_24</B></PRE>
+<DL>
+<DD>Twenty Four Pointed Star Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="STAR_32"><!-- --></A><H3>
+STAR_32</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>STAR_32</B></PRE>
+<DL>
+<DD>Thirty Two Pointed Star Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ROUND_RECT"><!-- --></A><H3>
+ROUND_RECT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ROUND_RECT</B></PRE>
+<DL>
+<DD>Round Corner Rectangle Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ROUND_1_RECT"><!-- --></A><H3>
+ROUND_1_RECT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ROUND_1_RECT</B></PRE>
+<DL>
+<DD>One Round Corner Rectangle Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ROUND_2_SAME_RECT"><!-- --></A><H3>
+ROUND_2_SAME_RECT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ROUND_2_SAME_RECT</B></PRE>
+<DL>
+<DD>Two Same-side Round Corner Rectangle Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ROUND_2_DIAG_RECT"><!-- --></A><H3>
+ROUND_2_DIAG_RECT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ROUND_2_DIAG_RECT</B></PRE>
+<DL>
+<DD>Two Diagonal Round Corner Rectangle Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SNIP_ROUND_RECT"><!-- --></A><H3>
+SNIP_ROUND_RECT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>SNIP_ROUND_RECT</B></PRE>
+<DL>
+<DD>One Snip One Round Corner Rectangle Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SNIP_1_RECT"><!-- --></A><H3>
+SNIP_1_RECT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>SNIP_1_RECT</B></PRE>
+<DL>
+<DD>One Snip Corner Rectangle Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SNIP_2_SAME_RECT"><!-- --></A><H3>
+SNIP_2_SAME_RECT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>SNIP_2_SAME_RECT</B></PRE>
+<DL>
+<DD>Two Same-side Snip Corner Rectangle Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SNIP_2_DIAG_RECT"><!-- --></A><H3>
+SNIP_2_DIAG_RECT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>SNIP_2_DIAG_RECT</B></PRE>
+<DL>
+<DD>Two Diagonal Snip Corner Rectangle Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PLAQUE"><!-- --></A><H3>
+PLAQUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>PLAQUE</B></PRE>
+<DL>
+<DD>Plaque Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ELLIPSE"><!-- --></A><H3>
+ELLIPSE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ELLIPSE</B></PRE>
+<DL>
+<DD>Ellipse Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="TEARDROP"><!-- --></A><H3>
+TEARDROP</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>TEARDROP</B></PRE>
+<DL>
+<DD>Teardrop Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="HOME_PLATE"><!-- --></A><H3>
+HOME_PLATE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>HOME_PLATE</B></PRE>
+<DL>
+<DD>Home Plate Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CHEVRON"><!-- --></A><H3>
+CHEVRON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CHEVRON</B></PRE>
+<DL>
+<DD>Chevron Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PIE_WEDGE"><!-- --></A><H3>
+PIE_WEDGE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>PIE_WEDGE</B></PRE>
+<DL>
+<DD>Pie Wedge Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PIE"><!-- --></A><H3>
+PIE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>PIE</B></PRE>
+<DL>
+<DD>Pie Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BLOCK_ARC"><!-- --></A><H3>
+BLOCK_ARC</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>BLOCK_ARC</B></PRE>
+<DL>
+<DD>Block Arc Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DONUT"><!-- --></A><H3>
+DONUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>DONUT</B></PRE>
+<DL>
+<DD>Donut Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="NO_SMOKING"><!-- --></A><H3>
+NO_SMOKING</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>NO_SMOKING</B></PRE>
+<DL>
+<DD>No Smoking Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="RIGHT_ARROW"><!-- --></A><H3>
+RIGHT_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>RIGHT_ARROW</B></PRE>
+<DL>
+<DD>Right Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LEFT_ARROW"><!-- --></A><H3>
+LEFT_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LEFT_ARROW</B></PRE>
+<DL>
+<DD>Left Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="UP_ARROW"><!-- --></A><H3>
+UP_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>UP_ARROW</B></PRE>
+<DL>
+<DD>Up Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DOWN_ARROW"><!-- --></A><H3>
+DOWN_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>DOWN_ARROW</B></PRE>
+<DL>
+<DD>Down Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="STRIPED_RIGHT_ARROW"><!-- --></A><H3>
+STRIPED_RIGHT_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>STRIPED_RIGHT_ARROW</B></PRE>
+<DL>
+<DD>Striped Right Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="NOTCHED_RIGHT_ARROW"><!-- --></A><H3>
+NOTCHED_RIGHT_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>NOTCHED_RIGHT_ARROW</B></PRE>
+<DL>
+<DD>Notched Right Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BENT_UP_ARROW"><!-- --></A><H3>
+BENT_UP_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>BENT_UP_ARROW</B></PRE>
+<DL>
+<DD>Bent Up Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LEFT_RIGHT_ARROW"><!-- --></A><H3>
+LEFT_RIGHT_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LEFT_RIGHT_ARROW</B></PRE>
+<DL>
+<DD>Left Right Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="UP_DOWN_ARROW"><!-- --></A><H3>
+UP_DOWN_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>UP_DOWN_ARROW</B></PRE>
+<DL>
+<DD>Up Down Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LEFT_UP_ARROW"><!-- --></A><H3>
+LEFT_UP_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LEFT_UP_ARROW</B></PRE>
+<DL>
+<DD>Left Up Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LEFT_RIGHT_UP_ARROW"><!-- --></A><H3>
+LEFT_RIGHT_UP_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LEFT_RIGHT_UP_ARROW</B></PRE>
+<DL>
+<DD>Left Right Up Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="QUAD_ARROW"><!-- --></A><H3>
+QUAD_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>QUAD_ARROW</B></PRE>
+<DL>
+<DD>Quad-Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LEFT_ARROW_CALLOUT"><!-- --></A><H3>
+LEFT_ARROW_CALLOUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LEFT_ARROW_CALLOUT</B></PRE>
+<DL>
+<DD>Callout Left Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="RIGHT_ARROW_CALLOUT"><!-- --></A><H3>
+RIGHT_ARROW_CALLOUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>RIGHT_ARROW_CALLOUT</B></PRE>
+<DL>
+<DD>Callout Right Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="UP_ARROW_CALLOUT"><!-- --></A><H3>
+UP_ARROW_CALLOUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>UP_ARROW_CALLOUT</B></PRE>
+<DL>
+<DD>Callout Up Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DOWN_ARROW_CALLOUT"><!-- --></A><H3>
+DOWN_ARROW_CALLOUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>DOWN_ARROW_CALLOUT</B></PRE>
+<DL>
+<DD>Callout Down Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LEFT_RIGHT_ARROW_CALLOUT"><!-- --></A><H3>
+LEFT_RIGHT_ARROW_CALLOUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LEFT_RIGHT_ARROW_CALLOUT</B></PRE>
+<DL>
+<DD>Callout Left Right Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="UP_DOWN_ARROW_CALLOUT"><!-- --></A><H3>
+UP_DOWN_ARROW_CALLOUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>UP_DOWN_ARROW_CALLOUT</B></PRE>
+<DL>
+<DD>Callout Up Down Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="QUAD_ARROW_CALLOUT"><!-- --></A><H3>
+QUAD_ARROW_CALLOUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>QUAD_ARROW_CALLOUT</B></PRE>
+<DL>
+<DD>Callout Quad-Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BENT_ARROW"><!-- --></A><H3>
+BENT_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>BENT_ARROW</B></PRE>
+<DL>
+<DD>Bent Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="UTURN_ARROW"><!-- --></A><H3>
+UTURN_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>UTURN_ARROW</B></PRE>
+<DL>
+<DD>U-Turn Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CIRCULAR_ARROW"><!-- --></A><H3>
+CIRCULAR_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CIRCULAR_ARROW</B></PRE>
+<DL>
+<DD>Circular Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LEFT_CIRCULAR_ARROW"><!-- --></A><H3>
+LEFT_CIRCULAR_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LEFT_CIRCULAR_ARROW</B></PRE>
+<DL>
+<DD>Left Circular Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LEFT_RIGHT_CIRCULAR_ARROW"><!-- --></A><H3>
+LEFT_RIGHT_CIRCULAR_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LEFT_RIGHT_CIRCULAR_ARROW</B></PRE>
+<DL>
+<DD>Left Right Circular Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CURVED_RIGHT_ARROW"><!-- --></A><H3>
+CURVED_RIGHT_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CURVED_RIGHT_ARROW</B></PRE>
+<DL>
+<DD>Curved Right Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CURVED_LEFT_ARROW"><!-- --></A><H3>
+CURVED_LEFT_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CURVED_LEFT_ARROW</B></PRE>
+<DL>
+<DD>Curved Left Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CURVED_UP_ARROW"><!-- --></A><H3>
+CURVED_UP_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CURVED_UP_ARROW</B></PRE>
+<DL>
+<DD>Curved Up Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CURVED_DOWN_ARROW"><!-- --></A><H3>
+CURVED_DOWN_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CURVED_DOWN_ARROW</B></PRE>
+<DL>
+<DD>Curved Down Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SWOOSH_ARROW"><!-- --></A><H3>
+SWOOSH_ARROW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>SWOOSH_ARROW</B></PRE>
+<DL>
+<DD>Swoosh Arrow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CUBE"><!-- --></A><H3>
+CUBE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CUBE</B></PRE>
+<DL>
+<DD>Cube Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CAN"><!-- --></A><H3>
+CAN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CAN</B></PRE>
+<DL>
+<DD>Can Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LIGHTNING_BOLT"><!-- --></A><H3>
+LIGHTNING_BOLT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LIGHTNING_BOLT</B></PRE>
+<DL>
+<DD>Lightning Bolt Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="HEART"><!-- --></A><H3>
+HEART</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>HEART</B></PRE>
+<DL>
+<DD>Heart Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SUN"><!-- --></A><H3>
+SUN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>SUN</B></PRE>
+<DL>
+<DD>Sun Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MOON"><!-- --></A><H3>
+MOON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>MOON</B></PRE>
+<DL>
+<DD>Moon Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SMILEY_FACE"><!-- --></A><H3>
+SMILEY_FACE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>SMILEY_FACE</B></PRE>
+<DL>
+<DD>Smiley Face Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="IRREGULAR_SEAL_1"><!-- --></A><H3>
+IRREGULAR_SEAL_1</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>IRREGULAR_SEAL_1</B></PRE>
+<DL>
+<DD>Irregular Seal 1 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="IRREGULAR_SEAL_2"><!-- --></A><H3>
+IRREGULAR_SEAL_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>IRREGULAR_SEAL_2</B></PRE>
+<DL>
+<DD>Irregular Seal 2 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FOLDED_CORNER"><!-- --></A><H3>
+FOLDED_CORNER</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FOLDED_CORNER</B></PRE>
+<DL>
+<DD>Folded Corner Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BEVEL"><!-- --></A><H3>
+BEVEL</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>BEVEL</B></PRE>
+<DL>
+<DD>Bevel Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FRAME"><!-- --></A><H3>
+FRAME</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FRAME</B></PRE>
+<DL>
+<DD>Frame Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="HALF_FRAME"><!-- --></A><H3>
+HALF_FRAME</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>HALF_FRAME</B></PRE>
+<DL>
+<DD>Half Frame Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CORNER"><!-- --></A><H3>
+CORNER</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CORNER</B></PRE>
+<DL>
+<DD>Corner Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DIAG_STRIPE"><!-- --></A><H3>
+DIAG_STRIPE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>DIAG_STRIPE</B></PRE>
+<DL>
+<DD>Diagonal Stripe Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CHORD"><!-- --></A><H3>
+CHORD</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CHORD</B></PRE>
+<DL>
+<DD>Chord Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ARC"><!-- --></A><H3>
+ARC</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ARC</B></PRE>
+<DL>
+<DD>Curved Arc Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LEFT_BRACKET"><!-- --></A><H3>
+LEFT_BRACKET</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LEFT_BRACKET</B></PRE>
+<DL>
+<DD>Left Bracket Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="RIGHT_BRACKET"><!-- --></A><H3>
+RIGHT_BRACKET</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>RIGHT_BRACKET</B></PRE>
+<DL>
+<DD>Right Bracket Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LEFT_BRACE"><!-- --></A><H3>
+LEFT_BRACE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LEFT_BRACE</B></PRE>
+<DL>
+<DD>Left Brace Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="RIGHT_BRACE"><!-- --></A><H3>
+RIGHT_BRACE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>RIGHT_BRACE</B></PRE>
+<DL>
+<DD>Right Brace Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BRACKET_PAIR"><!-- --></A><H3>
+BRACKET_PAIR</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>BRACKET_PAIR</B></PRE>
+<DL>
+<DD>Bracket Pair Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BRACE_PAIR"><!-- --></A><H3>
+BRACE_PAIR</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>BRACE_PAIR</B></PRE>
+<DL>
+<DD>Brace Pair Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="STRAIGHT_CONNECTOR_1"><!-- --></A><H3>
+STRAIGHT_CONNECTOR_1</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>STRAIGHT_CONNECTOR_1</B></PRE>
+<DL>
+<DD>Straight Connector 1 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BENT_CONNECTOR_2"><!-- --></A><H3>
+BENT_CONNECTOR_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>BENT_CONNECTOR_2</B></PRE>
+<DL>
+<DD>Bent Connector 2 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BENT_CONNECTOR_3"><!-- --></A><H3>
+BENT_CONNECTOR_3</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>BENT_CONNECTOR_3</B></PRE>
+<DL>
+<DD>Bent Connector 3 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BENT_CONNECTOR_4"><!-- --></A><H3>
+BENT_CONNECTOR_4</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>BENT_CONNECTOR_4</B></PRE>
+<DL>
+<DD>Bent Connector 4 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BENT_CONNECTOR_5"><!-- --></A><H3>
+BENT_CONNECTOR_5</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>BENT_CONNECTOR_5</B></PRE>
+<DL>
+<DD>Bent Connector 5 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CURVED_CONNECTOR_2"><!-- --></A><H3>
+CURVED_CONNECTOR_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CURVED_CONNECTOR_2</B></PRE>
+<DL>
+<DD>Curved Connector 2 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CURVED_CONNECTOR_3"><!-- --></A><H3>
+CURVED_CONNECTOR_3</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CURVED_CONNECTOR_3</B></PRE>
+<DL>
+<DD>Curved Connector 3 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CURVED_CONNECTOR_4"><!-- --></A><H3>
+CURVED_CONNECTOR_4</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CURVED_CONNECTOR_4</B></PRE>
+<DL>
+<DD>Curved Connector 4 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CURVED_CONNECTOR_5"><!-- --></A><H3>
+CURVED_CONNECTOR_5</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CURVED_CONNECTOR_5</B></PRE>
+<DL>
+<DD>Curved Connector 5 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CALLOUT_1"><!-- --></A><H3>
+CALLOUT_1</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CALLOUT_1</B></PRE>
+<DL>
+<DD>Callout 1 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CALLOUT_2"><!-- --></A><H3>
+CALLOUT_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CALLOUT_2</B></PRE>
+<DL>
+<DD>Callout 2 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CALLOUT_3"><!-- --></A><H3>
+CALLOUT_3</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CALLOUT_3</B></PRE>
+<DL>
+<DD>Callout 3 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACCENT_CALLOUT_1"><!-- --></A><H3>
+ACCENT_CALLOUT_1</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACCENT_CALLOUT_1</B></PRE>
+<DL>
+<DD>Callout 1 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACCENT_CALLOUT_2"><!-- --></A><H3>
+ACCENT_CALLOUT_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACCENT_CALLOUT_2</B></PRE>
+<DL>
+<DD>Callout 2 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACCENT_CALLOUT_3"><!-- --></A><H3>
+ACCENT_CALLOUT_3</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACCENT_CALLOUT_3</B></PRE>
+<DL>
+<DD>Callout 3 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_CALLOUT_1"><!-- --></A><H3>
+BORDER_CALLOUT_1</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>BORDER_CALLOUT_1</B></PRE>
+<DL>
+<DD>Callout 1 with Border Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_CALLOUT_2"><!-- --></A><H3>
+BORDER_CALLOUT_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>BORDER_CALLOUT_2</B></PRE>
+<DL>
+<DD>Callout 2 with Border Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_CALLOUT_3"><!-- --></A><H3>
+BORDER_CALLOUT_3</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>BORDER_CALLOUT_3</B></PRE>
+<DL>
+<DD>Callout 3 with Border Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACCENT_BORDER_CALLOUT_1"><!-- --></A><H3>
+ACCENT_BORDER_CALLOUT_1</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACCENT_BORDER_CALLOUT_1</B></PRE>
+<DL>
+<DD>Callout 1 with Border and Accent Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACCENT_BORDER_CALLOUT_2"><!-- --></A><H3>
+ACCENT_BORDER_CALLOUT_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACCENT_BORDER_CALLOUT_2</B></PRE>
+<DL>
+<DD>Callout 2 with Border and Accent Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACCENT_BORDER_CALLOUT_3"><!-- --></A><H3>
+ACCENT_BORDER_CALLOUT_3</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACCENT_BORDER_CALLOUT_3</B></PRE>
+<DL>
+<DD>Callout 3 with Border and Accent Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="WEDGE_RECT_CALLOUT"><!-- --></A><H3>
+WEDGE_RECT_CALLOUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>WEDGE_RECT_CALLOUT</B></PRE>
+<DL>
+<DD>Callout Wedge Rectangle Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="WEDGE_ROUND_RECT_CALLOUT"><!-- --></A><H3>
+WEDGE_ROUND_RECT_CALLOUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>WEDGE_ROUND_RECT_CALLOUT</B></PRE>
+<DL>
+<DD>Callout Wedge Round Rectangle Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="WEDGE_ELLIPSE_CALLOUT"><!-- --></A><H3>
+WEDGE_ELLIPSE_CALLOUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>WEDGE_ELLIPSE_CALLOUT</B></PRE>
+<DL>
+<DD>Callout Wedge Ellipse Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CLOUD_CALLOUT"><!-- --></A><H3>
+CLOUD_CALLOUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CLOUD_CALLOUT</B></PRE>
+<DL>
+<DD>Callout Cloud Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CLOUD"><!-- --></A><H3>
+CLOUD</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CLOUD</B></PRE>
+<DL>
+<DD>Cloud Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="RIBBON"><!-- --></A><H3>
+RIBBON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>RIBBON</B></PRE>
+<DL>
+<DD>Ribbon Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="RIBBON_2"><!-- --></A><H3>
+RIBBON_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>RIBBON_2</B></PRE>
+<DL>
+<DD>Ribbon 2 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ELLIPSE_RIBBON"><!-- --></A><H3>
+ELLIPSE_RIBBON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ELLIPSE_RIBBON</B></PRE>
+<DL>
+<DD>Ellipse Ribbon Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ELLIPSE_RIBBON_2"><!-- --></A><H3>
+ELLIPSE_RIBBON_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ELLIPSE_RIBBON_2</B></PRE>
+<DL>
+<DD>Ellipse Ribbon 2 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LEFT_RIGHT_RIBBON"><!-- --></A><H3>
+LEFT_RIGHT_RIBBON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>LEFT_RIGHT_RIBBON</B></PRE>
+<DL>
+<DD>Left Right Ribbon Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="VERTICAL_SCROLL"><!-- --></A><H3>
+VERTICAL_SCROLL</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>VERTICAL_SCROLL</B></PRE>
+<DL>
+<DD>Vertical Scroll Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="HORIZONTAL_SCROLL"><!-- --></A><H3>
+HORIZONTAL_SCROLL</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>HORIZONTAL_SCROLL</B></PRE>
+<DL>
+<DD>Horizontal Scroll Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="WAVE"><!-- --></A><H3>
+WAVE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>WAVE</B></PRE>
+<DL>
+<DD>Wave Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DOUBLE_WAVE"><!-- --></A><H3>
+DOUBLE_WAVE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>DOUBLE_WAVE</B></PRE>
+<DL>
+<DD>Double Wave Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PLUS"><!-- --></A><H3>
+PLUS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>PLUS</B></PRE>
+<DL>
+<DD>Plus Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_PROCESS"><!-- --></A><H3>
+FLOW_CHART_PROCESS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_PROCESS</B></PRE>
+<DL>
+<DD>Process Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_DECISION"><!-- --></A><H3>
+FLOW_CHART_DECISION</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_DECISION</B></PRE>
+<DL>
+<DD>Decision Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_INPUT_OUTPUT"><!-- --></A><H3>
+FLOW_CHART_INPUT_OUTPUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_INPUT_OUTPUT</B></PRE>
+<DL>
+<DD>Input Output Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_PREDEFINED_PROCESS"><!-- --></A><H3>
+FLOW_CHART_PREDEFINED_PROCESS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_PREDEFINED_PROCESS</B></PRE>
+<DL>
+<DD>Predefined Process Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_INTERNAL_STORAGE"><!-- --></A><H3>
+FLOW_CHART_INTERNAL_STORAGE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_INTERNAL_STORAGE</B></PRE>
+<DL>
+<DD>Internal Storage Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_DOCUMENT"><!-- --></A><H3>
+FLOW_CHART_DOCUMENT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_DOCUMENT</B></PRE>
+<DL>
+<DD>Document Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_MULTIDOCUMENT"><!-- --></A><H3>
+FLOW_CHART_MULTIDOCUMENT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_MULTIDOCUMENT</B></PRE>
+<DL>
+<DD>Multi-Document Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_TERMINATOR"><!-- --></A><H3>
+FLOW_CHART_TERMINATOR</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_TERMINATOR</B></PRE>
+<DL>
+<DD>Terminator Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_PREPARATION"><!-- --></A><H3>
+FLOW_CHART_PREPARATION</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_PREPARATION</B></PRE>
+<DL>
+<DD>Preparation Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_MANUAL_INPUT"><!-- --></A><H3>
+FLOW_CHART_MANUAL_INPUT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_MANUAL_INPUT</B></PRE>
+<DL>
+<DD>Manual Input Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_MANUAL_OPERATION"><!-- --></A><H3>
+FLOW_CHART_MANUAL_OPERATION</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_MANUAL_OPERATION</B></PRE>
+<DL>
+<DD>Manual Operation Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_CONNECTOR"><!-- --></A><H3>
+FLOW_CHART_CONNECTOR</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_CONNECTOR</B></PRE>
+<DL>
+<DD>Connector Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_PUNCHED_CARD"><!-- --></A><H3>
+FLOW_CHART_PUNCHED_CARD</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_PUNCHED_CARD</B></PRE>
+<DL>
+<DD>Punched Card Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_PUNCHED_TAPE"><!-- --></A><H3>
+FLOW_CHART_PUNCHED_TAPE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_PUNCHED_TAPE</B></PRE>
+<DL>
+<DD>Punched Tape Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_SUMMING_JUNCTION"><!-- --></A><H3>
+FLOW_CHART_SUMMING_JUNCTION</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_SUMMING_JUNCTION</B></PRE>
+<DL>
+<DD>Summing Junction Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_OR"><!-- --></A><H3>
+FLOW_CHART_OR</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_OR</B></PRE>
+<DL>
+<DD>Or Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_COLLATE"><!-- --></A><H3>
+FLOW_CHART_COLLATE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_COLLATE</B></PRE>
+<DL>
+<DD>Collate Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_SORT"><!-- --></A><H3>
+FLOW_CHART_SORT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_SORT</B></PRE>
+<DL>
+<DD>Sort Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_EXTRACT"><!-- --></A><H3>
+FLOW_CHART_EXTRACT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_EXTRACT</B></PRE>
+<DL>
+<DD>Extract Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_MERGE"><!-- --></A><H3>
+FLOW_CHART_MERGE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_MERGE</B></PRE>
+<DL>
+<DD>Merge Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_OFFLINE_STORAGE"><!-- --></A><H3>
+FLOW_CHART_OFFLINE_STORAGE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_OFFLINE_STORAGE</B></PRE>
+<DL>
+<DD>Offline Storage Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_ONLINE_STORAGE"><!-- --></A><H3>
+FLOW_CHART_ONLINE_STORAGE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_ONLINE_STORAGE</B></PRE>
+<DL>
+<DD>Online Storage Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_MAGNETIC_TAPE"><!-- --></A><H3>
+FLOW_CHART_MAGNETIC_TAPE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_MAGNETIC_TAPE</B></PRE>
+<DL>
+<DD>Magnetic Tape Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_MAGNETIC_DISK"><!-- --></A><H3>
+FLOW_CHART_MAGNETIC_DISK</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_MAGNETIC_DISK</B></PRE>
+<DL>
+<DD>Magnetic Disk Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_MAGNETIC_DRUM"><!-- --></A><H3>
+FLOW_CHART_MAGNETIC_DRUM</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_MAGNETIC_DRUM</B></PRE>
+<DL>
+<DD>Magnetic Drum Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_DISPLAY"><!-- --></A><H3>
+FLOW_CHART_DISPLAY</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_DISPLAY</B></PRE>
+<DL>
+<DD>Display Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_DELAY"><!-- --></A><H3>
+FLOW_CHART_DELAY</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_DELAY</B></PRE>
+<DL>
+<DD>Delay Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_ALTERNATE_PROCESS"><!-- --></A><H3>
+FLOW_CHART_ALTERNATE_PROCESS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_ALTERNATE_PROCESS</B></PRE>
+<DL>
+<DD>Alternate Process Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLOW_CHART_OFFPAGE_CONNECTOR"><!-- --></A><H3>
+FLOW_CHART_OFFPAGE_CONNECTOR</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FLOW_CHART_OFFPAGE_CONNECTOR</B></PRE>
+<DL>
+<DD>Off-Page Connector Flow Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACTION_BUTTON_BLANK"><!-- --></A><H3>
+ACTION_BUTTON_BLANK</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACTION_BUTTON_BLANK</B></PRE>
+<DL>
+<DD>Blank Button Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACTION_BUTTON_HOME"><!-- --></A><H3>
+ACTION_BUTTON_HOME</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACTION_BUTTON_HOME</B></PRE>
+<DL>
+<DD>Home Button Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACTION_BUTTON_HELP"><!-- --></A><H3>
+ACTION_BUTTON_HELP</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACTION_BUTTON_HELP</B></PRE>
+<DL>
+<DD>Help Button Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACTION_BUTTON_INFORMATION"><!-- --></A><H3>
+ACTION_BUTTON_INFORMATION</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACTION_BUTTON_INFORMATION</B></PRE>
+<DL>
+<DD>Information Button Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACTION_BUTTON_FORWARD_NEXT"><!-- --></A><H3>
+ACTION_BUTTON_FORWARD_NEXT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACTION_BUTTON_FORWARD_NEXT</B></PRE>
+<DL>
+<DD>Forward or Next Button Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACTION_BUTTON_BACK_PREVIOUS"><!-- --></A><H3>
+ACTION_BUTTON_BACK_PREVIOUS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACTION_BUTTON_BACK_PREVIOUS</B></PRE>
+<DL>
+<DD>Back or Previous Button Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACTION_BUTTON_END"><!-- --></A><H3>
+ACTION_BUTTON_END</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACTION_BUTTON_END</B></PRE>
+<DL>
+<DD>End Button Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACTION_BUTTON_BEGINNING"><!-- --></A><H3>
+ACTION_BUTTON_BEGINNING</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACTION_BUTTON_BEGINNING</B></PRE>
+<DL>
+<DD>Beginning Button Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACTION_BUTTON_RETURN"><!-- --></A><H3>
+ACTION_BUTTON_RETURN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACTION_BUTTON_RETURN</B></PRE>
+<DL>
+<DD>Return Button Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACTION_BUTTON_DOCUMENT"><!-- --></A><H3>
+ACTION_BUTTON_DOCUMENT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACTION_BUTTON_DOCUMENT</B></PRE>
+<DL>
+<DD>Document Button Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACTION_BUTTON_SOUND"><!-- --></A><H3>
+ACTION_BUTTON_SOUND</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACTION_BUTTON_SOUND</B></PRE>
+<DL>
+<DD>Sound Button Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACTION_BUTTON_MOVIE"><!-- --></A><H3>
+ACTION_BUTTON_MOVIE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>ACTION_BUTTON_MOVIE</B></PRE>
+<DL>
+<DD>Movie Button Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="GEAR_6"><!-- --></A><H3>
+GEAR_6</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>GEAR_6</B></PRE>
+<DL>
+<DD>Gear 6 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="GEAR_9"><!-- --></A><H3>
+GEAR_9</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>GEAR_9</B></PRE>
+<DL>
+<DD>Gear 9 Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FUNNEL"><!-- --></A><H3>
+FUNNEL</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>FUNNEL</B></PRE>
+<DL>
+<DD>Funnel Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MATH_PLUS"><!-- --></A><H3>
+MATH_PLUS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>MATH_PLUS</B></PRE>
+<DL>
+<DD>Plus Math Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MATH_MINUS"><!-- --></A><H3>
+MATH_MINUS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>MATH_MINUS</B></PRE>
+<DL>
+<DD>Minus Math Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MATH_MULTIPLY"><!-- --></A><H3>
+MATH_MULTIPLY</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>MATH_MULTIPLY</B></PRE>
+<DL>
+<DD>Multiply Math Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MATH_DIVIDE"><!-- --></A><H3>
+MATH_DIVIDE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>MATH_DIVIDE</B></PRE>
+<DL>
+<DD>Divide Math Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MATH_EQUAL"><!-- --></A><H3>
+MATH_EQUAL</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>MATH_EQUAL</B></PRE>
+<DL>
+<DD>Equal Math Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MATH_NOT_EQUAL"><!-- --></A><H3>
+MATH_NOT_EQUAL</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>MATH_NOT_EQUAL</B></PRE>
+<DL>
+<DD>Not Equal Math Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CORNER_TABS"><!-- --></A><H3>
+CORNER_TABS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CORNER_TABS</B></PRE>
+<DL>
+<DD>Corner Tabs Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SQUARE_TABS"><!-- --></A><H3>
+SQUARE_TABS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>SQUARE_TABS</B></PRE>
+<DL>
+<DD>Square Tabs Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PLAQUE_TABS"><!-- --></A><H3>
+PLAQUE_TABS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>PLAQUE_TABS</B></PRE>
+<DL>
+<DD>Plaque Tabs Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CHART_X"><!-- --></A><H3>
+CHART_X</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CHART_X</B></PRE>
+<DL>
+<DD>Chart X Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CHART_STAR"><!-- --></A><H3>
+CHART_STAR</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CHART_STAR</B></PRE>
+<DL>
+<DD>Chart Star Shape
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CHART_PLUS"><!-- --></A><H3>
+CHART_PLUS</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>CHART_PLUS</B></PRE>
+<DL>
+<DD>Chart Plus Shape
+<P>
+<DL>
+</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="values()"><!-- --></A><H3>
+values</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A>[] <B>values</B>()</PRE>
+<DL>
+<DD>Returns an array containing the constants of this enum type, in
+the order they are declared.  This method may be used to iterate
+over the constants as follows:
+<pre>
+for (STShapeType c : STShapeType.values())
+&nbsp;   System.out.println(c);
+</pre>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an array containing the constants of this enum type, in
+the order they are declared</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="valueOf(java.lang.String)"><!-- --></A><H3>
+valueOf</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>valueOf</B>(java.lang.String&nbsp;name)</PRE>
+<DL>
+<DD>Returns the enum constant of this type with the specified name.
+The string must match <I>exactly</I> an identifier used to declare an
+enum constant in this type.  (Extraneous whitespace characters are 
+not permitted.)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the enum constant to be returned.
+<DT><B>Returns:</B><DD>the enum constant with the specified name
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if this enum type has no constant
+with the specified name
+<DD><CODE>java.lang.NullPointerException</CODE> - if the argument is null</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="value()"><!-- --></A><H3>
+value</H3>
+<PRE>
+public java.lang.String <B>value</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="fromValue(java.lang.String)"><!-- --></A><H3>
+fromValue</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding">STShapeType</A> <B>fromValue</B>(java.lang.String&nbsp;v)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STTextShapeType.html" title="enum in org.apache.poi.sl.draw.binding"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/sl/draw/binding/STShapeType.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="STShapeType.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#enum_constant_summary">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#enum_constant_detail">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

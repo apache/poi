@@ -1,0 +1,712 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+BATBlock (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="BATBlock (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.BATBlockAndIndex.html" title="class in org.apache.poi.poifs.storage"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/storage/BATBlock.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="BATBlock.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.poifs.storage</FONT>
+<BR>
+Class BATBlock</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.poifs.storage.BATBlock</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../org/apache/poi/poifs/storage/BlockWritable.html" title="interface in org.apache.poi.poifs.storage">BlockWritable</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>BATBlock</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+A block of block allocation table entries. BATBlocks are created
+ only through a static factory method: createBATBlocks.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.BATBlockAndIndex.html" title="class in org.apache.poi.poifs.storage">BATBlock.BATBlockAndIndex</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#bigBlockSize">bigBlockSize</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Either 512 bytes (<A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#SMALLER_BIG_BLOCK_SIZE"><CODE>POIFSConstants.SMALLER_BIG_BLOCK_SIZE</CODE></A>) 
+  or 4096 bytes (<A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#LARGER_BIG_BLOCK_SIZE"><CODE>POIFSConstants.LARGER_BIG_BLOCK_SIZE</CODE></A>)</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#calculateMaximumSize(org.apache.poi.poifs.storage.HeaderBlock)">calculateMaximumSize</A></B>(<A HREF="../../../../../org/apache/poi/poifs/storage/HeaderBlock.html" title="class in org.apache.poi.poifs.storage">HeaderBlock</A>&nbsp;header)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#calculateMaximumSize(org.apache.poi.poifs.common.POIFSBigBlockSize, int)">calculateMaximumSize</A></B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+                     int&nbsp;numBATs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculates the maximum size of a file which is addressable given the
+  number of FAT (BAT) sectors specified.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#calculateStorageRequirements(org.apache.poi.poifs.common.POIFSBigBlockSize, int)">calculateStorageRequirements</A></B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+                             int&nbsp;entryCount)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculate how many BATBlocks are needed to hold a specified
+ number of BAT entries.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#calculateXBATStorageRequirements(org.apache.poi.poifs.common.POIFSBigBlockSize, int)">calculateXBATStorageRequirements</A></B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+                                 int&nbsp;entryCount)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculate how many XBATBlocks are needed to hold a specified
+ number of BAT entries.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html" title="class in org.apache.poi.poifs.storage">BATBlock</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#createBATBlock(org.apache.poi.poifs.common.POIFSBigBlockSize, java.nio.ByteBuffer)">createBATBlock</A></B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+               java.nio.ByteBuffer&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a single BATBlock from the byte buffer, which must hold at least
+  one big block of data to be read.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html" title="class in org.apache.poi.poifs.storage">BATBlock</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#createBATBlocks(org.apache.poi.poifs.common.POIFSBigBlockSize, int[])">createBATBlocks</A></B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+                int[]&nbsp;entries)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an array of BATBlocks from an array of int block
+ allocation table entries</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html" title="class in org.apache.poi.poifs.storage">BATBlock</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#createEmptyBATBlock(org.apache.poi.poifs.common.POIFSBigBlockSize, boolean)">createEmptyBATBlock</A></B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+                    boolean&nbsp;isXBAT)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a single BATBlock, with all the values set to empty.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html" title="class in org.apache.poi.poifs.storage">BATBlock</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#createXBATBlocks(org.apache.poi.poifs.common.POIFSBigBlockSize, int[], int)">createXBATBlocks</A></B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+                 int[]&nbsp;entries,
+                 int&nbsp;startBlock)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an array of XBATBlocks from an array of int block
+ allocation table entries</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#doWriteData(java.io.OutputStream, byte[])">doWriteData</A></B>(java.io.OutputStream&nbsp;stream,
+            byte[]&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Default implementation of write for extending classes that
+ contain their data in a simple array of bytes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.BATBlockAndIndex.html" title="class in org.apache.poi.poifs.storage">BATBlock.BATBlockAndIndex</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#getBATBlockAndIndex(int, org.apache.poi.poifs.storage.HeaderBlock, java.util.List)">getBATBlockAndIndex</A></B>(int&nbsp;offset,
+                    <A HREF="../../../../../org/apache/poi/poifs/storage/HeaderBlock.html" title="class in org.apache.poi.poifs.storage">HeaderBlock</A>&nbsp;header,
+                    java.util.List&lt;<A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html" title="class in org.apache.poi.poifs.storage">BATBlock</A>&gt;&nbsp;bats)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the BATBlock that handles the specified offset,
+  and the relative index within it.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#getOurBlockIndex()">getOurBlockIndex</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve where in the file we live</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.BATBlockAndIndex.html" title="class in org.apache.poi.poifs.storage">BATBlock.BATBlockAndIndex</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#getSBATBlockAndIndex(int, org.apache.poi.poifs.storage.HeaderBlock, java.util.List)">getSBATBlockAndIndex</A></B>(int&nbsp;offset,
+                     <A HREF="../../../../../org/apache/poi/poifs/storage/HeaderBlock.html" title="class in org.apache.poi.poifs.storage">HeaderBlock</A>&nbsp;header,
+                     java.util.List&lt;<A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html" title="class in org.apache.poi.poifs.storage">BATBlock</A>&gt;&nbsp;sbats)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the BATBlock that handles the specified offset,
+  and the relative index within it, for the mini stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#getUsedSectors(boolean)">getUsedSectors</A></B>(boolean&nbsp;isAnXBAT)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;How many sectors in this block are taken?
+ Note that calling <A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#hasFreeSectors()"><CODE>hasFreeSectors()</CODE></A> is much quicker</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#getValueAt(int)">getValueAt</A></B>(int&nbsp;relativeOffset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#hasFreeSectors()">hasFreeSectors</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Does this BATBlock have any free sectors in it, or
+  is it full?</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#setOurBlockIndex(int)">setOurBlockIndex</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Record where in the file we live</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#setValueAt(int, int)">setValueAt</A></B>(int&nbsp;relativeOffset,
+           int&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#writeBlocks(java.io.OutputStream)">writeBlocks</A></B>(java.io.OutputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write the storage to an OutputStream</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="bigBlockSize"><!-- --></A><H3>
+bigBlockSize</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A> <B>bigBlockSize</B></PRE>
+<DL>
+<DD>Either 512 bytes (<A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#SMALLER_BIG_BLOCK_SIZE"><CODE>POIFSConstants.SMALLER_BIG_BLOCK_SIZE</CODE></A>) 
+  or 4096 bytes (<A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#LARGER_BIG_BLOCK_SIZE"><CODE>POIFSConstants.LARGER_BIG_BLOCK_SIZE</CODE></A>)
+<P>
+<DL>
+</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="createBATBlock(org.apache.poi.poifs.common.POIFSBigBlockSize, java.nio.ByteBuffer)"><!-- --></A><H3>
+createBATBlock</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html" title="class in org.apache.poi.poifs.storage">BATBlock</A> <B>createBATBlock</B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+                                      java.nio.ByteBuffer&nbsp;data)</PRE>
+<DL>
+<DD>Create a single BATBlock from the byte buffer, which must hold at least
+  one big block of data to be read.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createEmptyBATBlock(org.apache.poi.poifs.common.POIFSBigBlockSize, boolean)"><!-- --></A><H3>
+createEmptyBATBlock</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html" title="class in org.apache.poi.poifs.storage">BATBlock</A> <B>createEmptyBATBlock</B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+                                           boolean&nbsp;isXBAT)</PRE>
+<DL>
+<DD>Creates a single BATBlock, with all the values set to empty.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createBATBlocks(org.apache.poi.poifs.common.POIFSBigBlockSize, int[])"><!-- --></A><H3>
+createBATBlocks</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html" title="class in org.apache.poi.poifs.storage">BATBlock</A>[] <B>createBATBlocks</B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+                                         int[]&nbsp;entries)</PRE>
+<DL>
+<DD>Create an array of BATBlocks from an array of int block
+ allocation table entries
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>entries</CODE> - the array of int entries
+<DT><B>Returns:</B><DD>the newly created array of BATBlocks</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createXBATBlocks(org.apache.poi.poifs.common.POIFSBigBlockSize, int[], int)"><!-- --></A><H3>
+createXBATBlocks</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html" title="class in org.apache.poi.poifs.storage">BATBlock</A>[] <B>createXBATBlocks</B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+                                          int[]&nbsp;entries,
+                                          int&nbsp;startBlock)</PRE>
+<DL>
+<DD>Create an array of XBATBlocks from an array of int block
+ allocation table entries
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>entries</CODE> - the array of int entries<DD><CODE>startBlock</CODE> - the start block of the array of XBAT blocks
+<DT><B>Returns:</B><DD>the newly created array of BATBlocks</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="calculateStorageRequirements(org.apache.poi.poifs.common.POIFSBigBlockSize, int)"><!-- --></A><H3>
+calculateStorageRequirements</H3>
+<PRE>
+public static int <B>calculateStorageRequirements</B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+                                               int&nbsp;entryCount)</PRE>
+<DL>
+<DD>Calculate how many BATBlocks are needed to hold a specified
+ number of BAT entries.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>entryCount</CODE> - the number of entries
+<DT><B>Returns:</B><DD>the number of BATBlocks needed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="calculateXBATStorageRequirements(org.apache.poi.poifs.common.POIFSBigBlockSize, int)"><!-- --></A><H3>
+calculateXBATStorageRequirements</H3>
+<PRE>
+public static int <B>calculateXBATStorageRequirements</B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+                                                   int&nbsp;entryCount)</PRE>
+<DL>
+<DD>Calculate how many XBATBlocks are needed to hold a specified
+ number of BAT entries.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>entryCount</CODE> - the number of entries
+<DT><B>Returns:</B><DD>the number of XBATBlocks needed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="calculateMaximumSize(org.apache.poi.poifs.common.POIFSBigBlockSize, int)"><!-- --></A><H3>
+calculateMaximumSize</H3>
+<PRE>
+public static long <B>calculateMaximumSize</B>(<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A>&nbsp;bigBlockSize,
+                                        int&nbsp;numBATs)</PRE>
+<DL>
+<DD>Calculates the maximum size of a file which is addressable given the
+  number of FAT (BAT) sectors specified. (We don't care if those BAT
+  blocks come from the 109 in the header, or from header + XBATS, it
+  won't affect the calculation)
+  
+ The actual file size will be between [size of fatCount-1 blocks] and
+   [size of fatCount blocks].
+  For 512 byte block sizes, this means we may over-estimate by up to 65kb.
+  For 4096 byte block sizes, this means we may over-estimate by up to 4mb
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="calculateMaximumSize(org.apache.poi.poifs.storage.HeaderBlock)"><!-- --></A><H3>
+calculateMaximumSize</H3>
+<PRE>
+public static long <B>calculateMaximumSize</B>(<A HREF="../../../../../org/apache/poi/poifs/storage/HeaderBlock.html" title="class in org.apache.poi.poifs.storage">HeaderBlock</A>&nbsp;header)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBATBlockAndIndex(int, org.apache.poi.poifs.storage.HeaderBlock, java.util.List)"><!-- --></A><H3>
+getBATBlockAndIndex</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.BATBlockAndIndex.html" title="class in org.apache.poi.poifs.storage">BATBlock.BATBlockAndIndex</A> <B>getBATBlockAndIndex</B>(int&nbsp;offset,
+                                                            <A HREF="../../../../../org/apache/poi/poifs/storage/HeaderBlock.html" title="class in org.apache.poi.poifs.storage">HeaderBlock</A>&nbsp;header,
+                                                            java.util.List&lt;<A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html" title="class in org.apache.poi.poifs.storage">BATBlock</A>&gt;&nbsp;bats)</PRE>
+<DL>
+<DD>Returns the BATBlock that handles the specified offset,
+  and the relative index within it.
+ The List of BATBlocks must be in sequential order
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSBATBlockAndIndex(int, org.apache.poi.poifs.storage.HeaderBlock, java.util.List)"><!-- --></A><H3>
+getSBATBlockAndIndex</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.BATBlockAndIndex.html" title="class in org.apache.poi.poifs.storage">BATBlock.BATBlockAndIndex</A> <B>getSBATBlockAndIndex</B>(int&nbsp;offset,
+                                                             <A HREF="../../../../../org/apache/poi/poifs/storage/HeaderBlock.html" title="class in org.apache.poi.poifs.storage">HeaderBlock</A>&nbsp;header,
+                                                             java.util.List&lt;<A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html" title="class in org.apache.poi.poifs.storage">BATBlock</A>&gt;&nbsp;sbats)</PRE>
+<DL>
+<DD>Returns the BATBlock that handles the specified offset,
+  and the relative index within it, for the mini stream.
+ The List of BATBlocks must be in sequential order
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hasFreeSectors()"><!-- --></A><H3>
+hasFreeSectors</H3>
+<PRE>
+public boolean <B>hasFreeSectors</B>()</PRE>
+<DL>
+<DD>Does this BATBlock have any free sectors in it, or
+  is it full?
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUsedSectors(boolean)"><!-- --></A><H3>
+getUsedSectors</H3>
+<PRE>
+public int <B>getUsedSectors</B>(boolean&nbsp;isAnXBAT)</PRE>
+<DL>
+<DD>How many sectors in this block are taken?
+ Note that calling <A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.html#hasFreeSectors()"><CODE>hasFreeSectors()</CODE></A> is much quicker
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getValueAt(int)"><!-- --></A><H3>
+getValueAt</H3>
+<PRE>
+public int <B>getValueAt</B>(int&nbsp;relativeOffset)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setValueAt(int, int)"><!-- --></A><H3>
+setValueAt</H3>
+<PRE>
+public void <B>setValueAt</B>(int&nbsp;relativeOffset,
+                       int&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setOurBlockIndex(int)"><!-- --></A><H3>
+setOurBlockIndex</H3>
+<PRE>
+public void <B>setOurBlockIndex</B>(int&nbsp;index)</PRE>
+<DL>
+<DD>Record where in the file we live
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOurBlockIndex()"><!-- --></A><H3>
+getOurBlockIndex</H3>
+<PRE>
+public int <B>getOurBlockIndex</B>()</PRE>
+<DL>
+<DD>Retrieve where in the file we live
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="doWriteData(java.io.OutputStream, byte[])"><!-- --></A><H3>
+doWriteData</H3>
+<PRE>
+protected void <B>doWriteData</B>(java.io.OutputStream&nbsp;stream,
+                           byte[]&nbsp;data)
+                    throws java.io.IOException</PRE>
+<DL>
+<DD>Default implementation of write for extending classes that
+ contain their data in a simple array of bytes.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>stream</CODE> - the OutputStream to which the data should be
+               written.<DD><CODE>data</CODE> - the byte array of to be written.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - on problems writing to the specified
+            stream.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writeBlocks(java.io.OutputStream)"><!-- --></A><H3>
+writeBlocks</H3>
+<PRE>
+public void <B>writeBlocks</B>(java.io.OutputStream&nbsp;stream)
+                 throws java.io.IOException</PRE>
+<DL>
+<DD>Write the storage to an OutputStream
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/poifs/storage/BlockWritable.html#writeBlocks(java.io.OutputStream)">writeBlocks</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/poifs/storage/BlockWritable.html" title="interface in org.apache.poi.poifs.storage">BlockWritable</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>stream</CODE> - the OutputStream to which the stored data should
+               be written
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - on problems writing to the specified
+            stream</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/storage/BATBlock.BATBlockAndIndex.html" title="class in org.apache.poi.poifs.storage"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/storage/BATBlock.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="BATBlock.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

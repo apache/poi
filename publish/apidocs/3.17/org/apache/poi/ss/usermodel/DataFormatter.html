@@ -1,0 +1,774 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+DataFormatter (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="DataFormatter (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormat.html" title="interface in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.html" title="interface in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/DataFormatter.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DataFormatter.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.usermodel</FONT>
+<BR>
+Class DataFormatter</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.usermodel.DataFormatter</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.util.Observer</DD>
+</DL>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataFormatter.html" title="class in org.apache.poi.hssf.usermodel">HSSFDataFormatter</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>DataFormatter</B><DT>extends java.lang.Object<DT>implements java.util.Observer</DL>
+</PRE>
+
+<P>
+DataFormatter contains methods for formatting the value stored in an
+ Cell. This can be useful for reports and GUI presentations when you
+ need to display data exactly as it appears in Excel. Supported formats
+ include currency, SSN, percentages, decimals, dates, phone numbers, zip
+ codes, etc.
+ <p>
+ Internally, formats will be implemented using subclasses of <CODE>Format</CODE>
+ such as <CODE>DecimalFormat</CODE> and <CODE>SimpleDateFormat</CODE>. Therefore the
+ formats used by this class must obey the same pattern rules as these Format
+ subclasses. This means that only legal number pattern characters ("0", "#",
+ ".", "," etc.) may appear in number formats. Other characters can be
+ inserted <em>before</em> or <em> after</em> the number pattern to form a
+ prefix or suffix.
+ </p>
+ <p>
+ For example the Excel pattern <code>"$#,##0.00 "USD"_);($#,##0.00 "USD")"
+ </code> will be correctly formatted as "$1,000.00 USD" or "($1,000.00 USD)".
+ However the pattern <code>"00-00-00"</code> is incorrectly formatted by
+ DecimalFormat as "000000--". For Excel formats that are not compatible with
+ DecimalFormat, you can provide your own custom <CODE>Format</CODE> implementation
+ via <code>DataFormatter.addFormat(String,Format)</code>. The following
+ custom formats are already provided by this class:
+ </p>
+ <pre>
+ <ul><li>SSN "000-00-0000"</li>
+     <li>Phone Number "(###) ###-####"</li>
+     <li>Zip plus 4 "00000-0000"</li>
+ </ul>
+ </pre>
+ <p>
+ If the Excel format pattern cannot be parsed successfully, then a default
+ format will be used. The default number format will mimic the Excel General
+ format: "#" for whole numbers and "#.##########" for decimal numbers. You
+ can override the default format pattern with <code>
+ DataFormatter.setDefaultNumberFormat(Format)</code>. <b>Note:</b> the
+ default format will only be used when a Format cannot be created from the
+ cell's data format string.
+
+ <p>
+ Note that by default formatted numeric values are trimmed.
+ Excel formats can contain spacers and padding and the default behavior is to strip them off.
+ </p>
+ <p>Example:</p>
+ <p>
+ Consider a numeric cell with a value <code>12.343</code> and format <code>"##.##_ "</code>.
+  The trailing underscore and space ("_ ") in the format adds a space to the end and Excel formats this cell as <code>"12.34 "</code>,
+  but <code>DataFormatter</code> trims the formatted value and returns <code>"12.34"</code>.
+ </p>
+ You can enable spaces by passing the <code>emulateCSV=true</code> flag in the <code>DateFormatter</code> cosntructor.
+ If set to true, then the output tries to conform to what you get when you take an xls or xlsx in Excel and Save As CSV file:
+ <ul>
+  <li>returned values are not trimmed</li>
+  <li>Invalid dates are formatted as  255 pound signs ("#")</li>
+  <li>simulate Excel's handling of a format string of all # when the value is 0.
+   Excel will output "", <code>DataFormatter</code> will output "0".
+ </ul>
+ <p>
+  Some formats are automatically "localized" by Excel, eg show as mm/dd/yyyy when
+   loaded in Excel in some Locales but as dd/mm/yyyy in others. These are always
+   returned in the "default" (US) format, as stored in the file. 
+  Some format strings request an alternate locale, eg 
+   <code>[$-809]d/m/yy h:mm AM/PM</code> which explicitly requests UK locale.
+   These locale directives are (currently) ignored.
+  You can use <A HREF="../../../../../org/apache/poi/ss/util/DateFormatConverter.html" title="class in org.apache.poi.ss.util"><CODE>DateFormatConverter</CODE></A> to do some of this localisation if
+   you need it.
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#DataFormatter()">DataFormatter</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a formatter using the <CODE>default locale</CODE>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#DataFormatter(boolean)">DataFormatter</A></B>(boolean&nbsp;emulateCSV)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a formatter using the <CODE>default locale</CODE>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#DataFormatter(java.util.Locale)">DataFormatter</A></B>(java.util.Locale&nbsp;locale)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a formatter using the given locale.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#DataFormatter(java.util.Locale, boolean)">DataFormatter</A></B>(java.util.Locale&nbsp;locale,
+              boolean&nbsp;emulateCSV)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a formatter using the given locale.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#addFormat(java.lang.String, java.text.Format)">addFormat</A></B>(java.lang.String&nbsp;excelFormatStr,
+          java.text.Format&nbsp;format)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds a new format to the available formats.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.text.Format</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#createFormat(org.apache.poi.ss.usermodel.Cell)">createFormat</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create and return a Format based on the format string from a  cell's
+ style.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#formatCellValue(org.apache.poi.ss.usermodel.Cell)">formatCellValue</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ Returns the formatted value of a cell as a <tt>String</tt> regardless
+ of the cell type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#formatCellValue(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.FormulaEvaluator)">formatCellValue</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                <A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel">FormulaEvaluator</A>&nbsp;evaluator)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ Returns the formatted value of a cell as a <tt>String</tt> regardless
+ of the cell type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#formatCellValue(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.FormulaEvaluator, org.apache.poi.ss.formula.ConditionalFormattingEvaluator)">formatCellValue</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                <A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel">FormulaEvaluator</A>&nbsp;evaluator,
+                <A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html" title="class in org.apache.poi.ss.formula">ConditionalFormattingEvaluator</A>&nbsp;cfEvaluator)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ Returns the formatted value of a cell as a <tt>String</tt> regardless
+ of the cell type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#formatRawCellContents(double, int, java.lang.String)">formatRawCellContents</A></B>(double&nbsp;value,
+                      int&nbsp;formatIndex,
+                      java.lang.String&nbsp;formatString)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Formats the given raw cell value, based on the supplied
+  format index and string, according to excel style rules.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#formatRawCellContents(double, int, java.lang.String, boolean)">formatRawCellContents</A></B>(double&nbsp;value,
+                      int&nbsp;formatIndex,
+                      java.lang.String&nbsp;formatString,
+                      boolean&nbsp;use1904Windowing)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Formats the given raw cell value, based on the supplied
+  format index and string, according to excel style rules.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.text.Format</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#getDefaultFormat(org.apache.poi.ss.usermodel.Cell)">getDefaultFormat</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a default format for a cell.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Observable</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#getLocaleChangedObservable()">getLocaleChangedObservable</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the Locale has been changed via <A HREF="../../../../../org/apache/poi/util/LocaleUtil.html#setUserLocale(java.util.Locale)"><CODE>LocaleUtil.setUserLocale(Locale)</CODE></A> the stored
+ formats need to be refreshed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#setDefaultNumberFormat(java.text.Format)">setDefaultNumberFormat</A></B>(java.text.Format&nbsp;format)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+ Sets a default number format to be used when the Excel format cannot be
+ parsed successfully.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#setExcelStyleRoundingMode(java.text.DecimalFormat)">setExcelStyleRoundingMode</A></B>(java.text.DecimalFormat&nbsp;format)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enables excel style rounding mode (round half up) on the 
+  Decimal Format given.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#setExcelStyleRoundingMode(java.text.DecimalFormat, java.math.RoundingMode)">setExcelStyleRoundingMode</A></B>(java.text.DecimalFormat&nbsp;format,
+                          java.math.RoundingMode&nbsp;roundingMode)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enables custom rounding mode on the given Decimal Format.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#update(java.util.Observable, java.lang.Object)">update</A></B>(java.util.Observable&nbsp;observable,
+       java.lang.Object&nbsp;localeObj)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Update formats when locale has been changed</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DataFormatter()"><!-- --></A><H3>
+DataFormatter</H3>
+<PRE>
+public <B>DataFormatter</B>()</PRE>
+<DL>
+<DD>Creates a formatter using the <CODE>default locale</CODE>.
+<P>
+</DL>
+<HR>
+
+<A NAME="DataFormatter(boolean)"><!-- --></A><H3>
+DataFormatter</H3>
+<PRE>
+public <B>DataFormatter</B>(boolean&nbsp;emulateCSV)</PRE>
+<DL>
+<DD>Creates a formatter using the <CODE>default locale</CODE>.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>emulateCSV</CODE> - whether to emulate CSV output.</DL>
+</DL>
+<HR>
+
+<A NAME="DataFormatter(java.util.Locale)"><!-- --></A><H3>
+DataFormatter</H3>
+<PRE>
+public <B>DataFormatter</B>(java.util.Locale&nbsp;locale)</PRE>
+<DL>
+<DD>Creates a formatter using the given locale.
+<P>
+</DL>
+<HR>
+
+<A NAME="DataFormatter(java.util.Locale, boolean)"><!-- --></A><H3>
+DataFormatter</H3>
+<PRE>
+public <B>DataFormatter</B>(java.util.Locale&nbsp;locale,
+                     boolean&nbsp;emulateCSV)</PRE>
+<DL>
+<DD>Creates a formatter using the given locale.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>emulateCSV</CODE> - whether to emulate CSV output.</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="createFormat(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+createFormat</H3>
+<PRE>
+public java.text.Format <B>createFormat</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Create and return a Format based on the format string from a  cell's
+ style. If the pattern cannot be parsed, return a default pattern.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - The Excel cell
+<DT><B>Returns:</B><DD>A Format representing the excel format. May return null.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDefaultFormat(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+getDefaultFormat</H3>
+<PRE>
+public java.text.Format <B>getDefaultFormat</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Returns a default format for a cell.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - The cell
+<DT><B>Returns:</B><DD>a default format</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="formatRawCellContents(double, int, java.lang.String)"><!-- --></A><H3>
+formatRawCellContents</H3>
+<PRE>
+public java.lang.String <B>formatRawCellContents</B>(double&nbsp;value,
+                                              int&nbsp;formatIndex,
+                                              java.lang.String&nbsp;formatString)</PRE>
+<DL>
+<DD>Formats the given raw cell value, based on the supplied
+  format index and string, according to excel style rules.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#formatCellValue(org.apache.poi.ss.usermodel.Cell)"><CODE>formatCellValue(Cell)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="formatRawCellContents(double, int, java.lang.String, boolean)"><!-- --></A><H3>
+formatRawCellContents</H3>
+<PRE>
+public java.lang.String <B>formatRawCellContents</B>(double&nbsp;value,
+                                              int&nbsp;formatIndex,
+                                              java.lang.String&nbsp;formatString,
+                                              boolean&nbsp;use1904Windowing)</PRE>
+<DL>
+<DD>Formats the given raw cell value, based on the supplied
+  format index and string, according to excel style rules.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#formatCellValue(org.apache.poi.ss.usermodel.Cell)"><CODE>formatCellValue(Cell)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="formatCellValue(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+formatCellValue</H3>
+<PRE>
+public java.lang.String <B>formatCellValue</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD><p>
+ Returns the formatted value of a cell as a <tt>String</tt> regardless
+ of the cell type. If the Excel format pattern cannot be parsed then the
+ cell value will be formatted using a default format.
+ </p>
+ <p>When passed a null or blank cell, this method will return an empty
+ String (""). Formulas in formula type cells will not be evaluated.
+ </p>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - The cell
+<DT><B>Returns:</B><DD>the formatted cell value as a String</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="formatCellValue(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.FormulaEvaluator)"><!-- --></A><H3>
+formatCellValue</H3>
+<PRE>
+public java.lang.String <B>formatCellValue</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                                        <A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel">FormulaEvaluator</A>&nbsp;evaluator)</PRE>
+<DL>
+<DD><p>
+ Returns the formatted value of a cell as a <tt>String</tt> regardless
+ of the cell type. If the Excel number format pattern cannot be parsed then the
+ cell value will be formatted using a default format.
+ </p>
+ <p>When passed a null or blank cell, this method will return an empty
+ String (""). Formula cells will be evaluated using the given
+ <A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel"><CODE>FormulaEvaluator</CODE></A> if the evaluator is non-null. If the
+ evaluator is null, then the formula String will be returned. The caller
+ is responsible for setting the currentRow on the evaluator
+</p>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - The cell (can be null)<DD><CODE>evaluator</CODE> - The FormulaEvaluator (can be null)
+<DT><B>Returns:</B><DD>a string value of the cell</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="formatCellValue(org.apache.poi.ss.usermodel.Cell, org.apache.poi.ss.usermodel.FormulaEvaluator, org.apache.poi.ss.formula.ConditionalFormattingEvaluator)"><!-- --></A><H3>
+formatCellValue</H3>
+<PRE>
+public java.lang.String <B>formatCellValue</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell,
+                                        <A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel">FormulaEvaluator</A>&nbsp;evaluator,
+                                        <A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html" title="class in org.apache.poi.ss.formula">ConditionalFormattingEvaluator</A>&nbsp;cfEvaluator)</PRE>
+<DL>
+<DD><p>
+ Returns the formatted value of a cell as a <tt>String</tt> regardless
+ of the cell type. If the Excel number format pattern cannot be parsed then the
+ cell value will be formatted using a default format.
+ </p>
+ <p>When passed a null or blank cell, this method will return an empty
+ String (""). Formula cells will be evaluated using the given
+ <A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel"><CODE>FormulaEvaluator</CODE></A> if the evaluator is non-null. If the
+ evaluator is null, then the formula String will be returned. The caller
+ is responsible for setting the currentRow on the evaluator
+</p>
+ <p>
+ When a ConditionalFormattingEvaluator is present, it is checked first to see
+ if there is a number format to apply.  If multiple rules apply, the last one is used.
+ If no ConditionalFormattingEvaluator is present, no rules apply, or the applied
+ rules do not define a format, the cell's style format is used.
+ </p>
+ <p>
+ The two evaluators should be from the same context, to avoid inconsistencies in cached values.
+</p>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - The cell (can be null)<DD><CODE>evaluator</CODE> - The FormulaEvaluator (can be null)<DD><CODE>cfEvaluator</CODE> - ConditionalFormattingEvaluator (can be null)
+<DT><B>Returns:</B><DD>a string value of the cell</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDefaultNumberFormat(java.text.Format)"><!-- --></A><H3>
+setDefaultNumberFormat</H3>
+<PRE>
+public void <B>setDefaultNumberFormat</B>(java.text.Format&nbsp;format)</PRE>
+<DL>
+<DD><p>
+ Sets a default number format to be used when the Excel format cannot be
+ parsed successfully. <b>Note:</b> This is a fall back for when an error
+ occurs while parsing an Excel number format pattern. This will not
+ affect cells with the <em>General</em> format.
+ </p>
+ <p>
+ The value that will be passed to the Format's format method (specified
+ by <code>java.text.Format#format</code>) will be a double value from a
+ numeric cell. Therefore the code in the format method should expect a
+ <code>Number</code> value.
+ </p>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>format</CODE> - A Format instance to be used as a default<DT><B>See Also:</B><DD><CODE>Format.format(java.lang.Object)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addFormat(java.lang.String, java.text.Format)"><!-- --></A><H3>
+addFormat</H3>
+<PRE>
+public void <B>addFormat</B>(java.lang.String&nbsp;excelFormatStr,
+                      java.text.Format&nbsp;format)</PRE>
+<DL>
+<DD>Adds a new format to the available formats.
+ <p>
+ The value that will be passed to the Format's format method (specified
+ by <code>java.text.Format#format</code>) will be a double value from a
+ numeric cell. Therefore the code in the format method should expect a
+ <code>Number</code> value.
+ </p>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>excelFormatStr</CODE> - The data format string<DD><CODE>format</CODE> - A Format instance</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setExcelStyleRoundingMode(java.text.DecimalFormat)"><!-- --></A><H3>
+setExcelStyleRoundingMode</H3>
+<PRE>
+public static void <B>setExcelStyleRoundingMode</B>(java.text.DecimalFormat&nbsp;format)</PRE>
+<DL>
+<DD>Enables excel style rounding mode (round half up) on the 
+  Decimal Format given.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setExcelStyleRoundingMode(java.text.DecimalFormat, java.math.RoundingMode)"><!-- --></A><H3>
+setExcelStyleRoundingMode</H3>
+<PRE>
+public static void <B>setExcelStyleRoundingMode</B>(java.text.DecimalFormat&nbsp;format,
+                                             java.math.RoundingMode&nbsp;roundingMode)</PRE>
+<DL>
+<DD>Enables custom rounding mode on the given Decimal Format.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>format</CODE> - DecimalFormat<DD><CODE>roundingMode</CODE> - RoundingMode</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLocaleChangedObservable()"><!-- --></A><H3>
+getLocaleChangedObservable</H3>
+<PRE>
+public java.util.Observable <B>getLocaleChangedObservable</B>()</PRE>
+<DL>
+<DD>If the Locale has been changed via <A HREF="../../../../../org/apache/poi/util/LocaleUtil.html#setUserLocale(java.util.Locale)"><CODE>LocaleUtil.setUserLocale(Locale)</CODE></A> the stored
+ formats need to be refreshed. All formats which aren't originated from DataFormatter
+ itself, i.e. all Formats added via <A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#addFormat(java.lang.String, java.text.Format)"><CODE>addFormat(String, Format)</CODE></A> and
+ <A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormatter.html#setDefaultNumberFormat(java.text.Format)"><CODE>setDefaultNumberFormat(Format)</CODE></A>, need to be added again.
+ To notify callers, the returned <CODE>Observable</CODE> should be used.
+ The Object in <CODE>Observer.update(Observable, Object)</CODE> is the new Locale.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the listener object, where callers can register themselves</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="update(java.util.Observable, java.lang.Object)"><!-- --></A><H3>
+update</H3>
+<PRE>
+public void <B>update</B>(java.util.Observable&nbsp;observable,
+                   java.lang.Object&nbsp;localeObj)</PRE>
+<DL>
+<DD>Update formats when locale has been changed
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>update</CODE> in interface <CODE>java.util.Observer</CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>observable</CODE> - usually this is our own Observable instance<DD><CODE>localeObj</CODE> - only reacts on Locale objects</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataFormat.html" title="interface in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.html" title="interface in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/DataFormatter.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="DataFormatter.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

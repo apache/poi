@@ -1,0 +1,476 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+org.apache.poi.ss.formula.ptg (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="org.apache.poi.ss.formula.ptg (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/udf/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/ptg/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<H2>
+Package org.apache.poi.ss.formula.ptg
+</H2>
+formula package contains binary PTG structures used in Formulas
+<P>
+<B>See:</B>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<A HREF="#package_description"><B>Description</B></A>
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Interface Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.html" title="interface in org.apache.poi.ss.formula.ptg">AreaI</A></B></TD>
+<TD>Common interface for AreaPtg and Area3DPtg, and their child classes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Pxg.html" title="interface in org.apache.poi.ss.formula.ptg">Pxg</A></B></TD>
+<TD>An XSSF only special kind of Ptg, which stores the sheet / book 
+  reference in string form.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Pxg3D.html" title="interface in org.apache.poi.ss.formula.ptg">Pxg3D</A></B></TD>
+<TD>An XSSF only special kind of Ptg, which stores a range of 
+  sheet / book references in string form.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AbstractFunctionPtg.html" title="class in org.apache.poi.ss.formula.ptg">AbstractFunctionPtg</A></B></TD>
+<TD>This class provides the base functionality for Excel sheet functions
+ There are two kinds of function Ptgs - tFunc and tFuncVar
+ Therefore, this class will have ONLY two subclasses</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AddPtg.html" title="class in org.apache.poi.ss.formula.ptg">AddPtg</A></B></TD>
+<TD>Addition operator PTG the "+" binomial operator.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Area2DPtgBase.html" title="class in org.apache.poi.ss.formula.ptg">Area2DPtgBase</A></B></TD>
+<TD>Common superclass of 2-D area refs</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Area3DPtg.html" title="class in org.apache.poi.ss.formula.ptg">Area3DPtg</A></B></TD>
+<TD>Title:        Area 3D Ptg - 3D reference (Sheet + Area)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Area3DPxg.html" title="class in org.apache.poi.ss.formula.ptg">Area3DPxg</A></B></TD>
+<TD>Title:        XSSF Area 3D Reference (Sheet + Area)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaErrPtg.html" title="class in org.apache.poi.ss.formula.ptg">AreaErrPtg</A></B></TD>
+<TD>AreaErr - handles deleted cell area references.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaI.OffsetArea.html" title="class in org.apache.poi.ss.formula.ptg">AreaI.OffsetArea</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaNPtg.html" title="class in org.apache.poi.ss.formula.ptg">AreaNPtg</A></B></TD>
+<TD>Specifies a rectangular area of cells A1:A4 for instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtg.html" title="class in org.apache.poi.ss.formula.ptg">AreaPtg</A></B></TD>
+<TD>Specifies a rectangular area of cells A1:A4 for instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AreaPtgBase.html" title="class in org.apache.poi.ss.formula.ptg">AreaPtgBase</A></B></TD>
+<TD>Specifies a rectangular area of cells A1:A4 for instance.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/ArrayPtg.html" title="class in org.apache.poi.ss.formula.ptg">ArrayPtg</A></B></TD>
+<TD>ArrayPtg - handles arrays
+
+ The ArrayPtg is a little weird, the size of the Ptg when parsing initially only
+ includes the Ptg sid and the reserved bytes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AttrPtg.html" title="class in org.apache.poi.ss.formula.ptg">AttrPtg</A></B></TD>
+<TD>"Special Attributes"
+ This seems to be a Misc Stuff and Junk record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/AttrPtg.SpaceType.html" title="class in org.apache.poi.ss.formula.ptg">AttrPtg.SpaceType</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/BoolPtg.html" title="class in org.apache.poi.ss.formula.ptg">BoolPtg</A></B></TD>
+<TD>Boolean (boolean) Stores a (java) boolean value in a formula.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/ConcatPtg.html" title="class in org.apache.poi.ss.formula.ptg">ConcatPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/ControlPtg.html" title="class in org.apache.poi.ss.formula.ptg">ControlPtg</A></B></TD>
+<TD>Common superclass for 
+ tExp
+ tTbl
+ tParen
+ tNlr
+ tAttr
+ tSheet
+ tEndSheet</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Deleted3DPxg.html" title="class in org.apache.poi.ss.formula.ptg">Deleted3DPxg</A></B></TD>
+<TD>An XSSF only representation of a reference to a deleted area</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/DeletedArea3DPtg.html" title="class in org.apache.poi.ss.formula.ptg">DeletedArea3DPtg</A></B></TD>
+<TD>Title:        Deleted Area 3D Ptg - 3D referecnce (Sheet + Area)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/DeletedRef3DPtg.html" title="class in org.apache.poi.ss.formula.ptg">DeletedRef3DPtg</A></B></TD>
+<TD>Title:        Deleted Reference 3D Ptg</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/DividePtg.html" title="class in org.apache.poi.ss.formula.ptg">DividePtg</A></B></TD>
+<TD>This PTG implements the standard binomial divide "/"</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/EqualPtg.html" title="class in org.apache.poi.ss.formula.ptg">EqualPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/ErrPtg.html" title="class in org.apache.poi.ss.formula.ptg">ErrPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/ExpPtg.html" title="class in org.apache.poi.ss.formula.ptg">ExpPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/FuncPtg.html" title="class in org.apache.poi.ss.formula.ptg">FuncPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/FuncVarPtg.html" title="class in org.apache.poi.ss.formula.ptg">FuncVarPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/GreaterEqualPtg.html" title="class in org.apache.poi.ss.formula.ptg">GreaterEqualPtg</A></B></TD>
+<TD>PTG class to implement greater or equal to</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/GreaterThanPtg.html" title="class in org.apache.poi.ss.formula.ptg">GreaterThanPtg</A></B></TD>
+<TD>Greater than operator PTG ">"</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/IntersectionPtg.html" title="class in org.apache.poi.ss.formula.ptg">IntersectionPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/IntPtg.html" title="class in org.apache.poi.ss.formula.ptg">IntPtg</A></B></TD>
+<TD>Integer (unsigned short integer) Stores an unsigned short value (java int) in
+ a formula</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/LessEqualPtg.html" title="class in org.apache.poi.ss.formula.ptg">LessEqualPtg</A></B></TD>
+<TD>Ptg class to implement less than or equal</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/LessThanPtg.html" title="class in org.apache.poi.ss.formula.ptg">LessThanPtg</A></B></TD>
+<TD>Less than operator PTG "<".</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/MemAreaPtg.html" title="class in org.apache.poi.ss.formula.ptg">MemAreaPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/MemErrPtg.html" title="class in org.apache.poi.ss.formula.ptg">MemErrPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/MemFuncPtg.html" title="class in org.apache.poi.ss.formula.ptg">MemFuncPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/MissingArgPtg.html" title="class in org.apache.poi.ss.formula.ptg">MissingArgPtg</A></B></TD>
+<TD>Missing Function Arguments
+ 
+ Avik Sengupta &lt;avik at apache.org&gt;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/MultiplyPtg.html" title="class in org.apache.poi.ss.formula.ptg">MultiplyPtg</A></B></TD>
+<TD>Implements the standard mathmatical multiplication - *</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/NamePtg.html" title="class in org.apache.poi.ss.formula.ptg">NamePtg</A></B></TD>
+<TD>See the spec at 2.5.198.76 PtgName</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/NameXPtg.html" title="class in org.apache.poi.ss.formula.ptg">NameXPtg</A></B></TD>
+<TD>A Name, be that a Named Range or a Function / User Defined
+  Function, addressed in the HSSF External Sheet style.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/NameXPxg.html" title="class in org.apache.poi.ss.formula.ptg">NameXPxg</A></B></TD>
+<TD>A Name, be that a Named Range or a Function / User Defined
+  Function, addressed in the HSSF External Sheet style.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/NotEqualPtg.html" title="class in org.apache.poi.ss.formula.ptg">NotEqualPtg</A></B></TD>
+<TD>Ptg class to implement not equal</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/NumberPtg.html" title="class in org.apache.poi.ss.formula.ptg">NumberPtg</A></B></TD>
+<TD>Number Stores a floating point value in a formula value stored in a 8 byte
+ field using IEEE notation</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/OperandPtg.html" title="class in org.apache.poi.ss.formula.ptg">OperandPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/OperationPtg.html" title="class in org.apache.poi.ss.formula.ptg">OperationPtg</A></B></TD>
+<TD>defines a Ptg that is an operation instead of an operand</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/ParenthesisPtg.html" title="class in org.apache.poi.ss.formula.ptg">ParenthesisPtg</A></B></TD>
+<TD>While formula tokens are stored in RPN order and thus do not need parenthesis
+ for precedence reasons, Parenthesis tokens ARE written to ensure that user
+ entered parenthesis are displayed as-is on reading back
+ 
+ Avik Sengupta &lt;lists@aviksengupta.com&gt; Andrew C.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/PercentPtg.html" title="class in org.apache.poi.ss.formula.ptg">PercentPtg</A></B></TD>
+<TD>Percent PTG.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/PowerPtg.html" title="class in org.apache.poi.ss.formula.ptg">PowerPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg">Ptg</A></B></TD>
+<TD><tt>Ptg</tt> represents a syntactic token in a formula.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/RangePtg.html" title="class in org.apache.poi.ss.formula.ptg">RangePtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ref3DPtg.html" title="class in org.apache.poi.ss.formula.ptg">Ref3DPtg</A></B></TD>
+<TD>Title:        Reference 3D Ptg</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ref3DPxg.html" title="class in org.apache.poi.ss.formula.ptg">Ref3DPxg</A></B></TD>
+<TD>Title:        XSSF 3D Reference</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/RefErrorPtg.html" title="class in org.apache.poi.ss.formula.ptg">RefErrorPtg</A></B></TD>
+<TD>RefError - handles deleted cell reference</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/RefNPtg.html" title="class in org.apache.poi.ss.formula.ptg">RefNPtg</A></B></TD>
+<TD>RefNPtg</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/RefPtg.html" title="class in org.apache.poi.ss.formula.ptg">RefPtg</A></B></TD>
+<TD>ReferencePtg - handles references (such as A1, A2, IA4)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/RefPtgBase.html" title="class in org.apache.poi.ss.formula.ptg">RefPtgBase</A></B></TD>
+<TD>ReferencePtgBase - handles references (such as A1, A2, IA4)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/ScalarConstantPtg.html" title="class in org.apache.poi.ss.formula.ptg">ScalarConstantPtg</A></B></TD>
+<TD>Common superclass of all <A HREF="../../../../../../org/apache/poi/ss/formula/ptg/Ptg.html" title="class in org.apache.poi.ss.formula.ptg"><CODE>Ptg</CODE></A>s that represent simple constant values.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/StringPtg.html" title="class in org.apache.poi.ss.formula.ptg">StringPtg</A></B></TD>
+<TD>String Stores a String value in a formula value stored in the format
+ &lt;length 2 bytes&gt;char[]</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/SubtractPtg.html" title="class in org.apache.poi.ss.formula.ptg">SubtractPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/TblPtg.html" title="class in org.apache.poi.ss.formula.ptg">TblPtg</A></B></TD>
+<TD>This ptg indicates a data table.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/UnaryMinusPtg.html" title="class in org.apache.poi.ss.formula.ptg">UnaryMinusPtg</A></B></TD>
+<TD>Unary Plus operator
+ does not have any effect on the operand</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/UnaryPlusPtg.html" title="class in org.apache.poi.ss.formula.ptg">UnaryPlusPtg</A></B></TD>
+<TD>Unary Plus operator
+ does not have any effect on the operand</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/UnionPtg.html" title="class in org.apache.poi.ss.formula.ptg">UnionPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/UnknownPtg.html" title="class in org.apache.poi.ss.formula.ptg">UnknownPtg</A></B></TD>
+<TD>&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD WIDTH="15%"><B><A HREF="../../../../../../org/apache/poi/ss/formula/ptg/ValueOperatorPtg.html" title="class in org.apache.poi.ss.formula.ptg">ValueOperatorPtg</A></B></TD>
+<TD>Common superclass of all value operators.</TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<P>
+<A NAME="package_description"><!-- --></A><H2>
+Package org.apache.poi.ss.formula.ptg Description
+</H2>
+
+<P>
+formula package contains binary PTG structures used in Formulas 
+
+<h2>Related Documentation</h2>
+
+For overviews, tutorials, examples, guides, and tool documentation, please see:
+<ul>
+<li><a href="http://poi.apache.org">Apache POI Project</a>
+</ul>
+
+<!-- Put @see and @since tags down here. -->
+<P>
+
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/record/package-summary.html"><CODE>org.apache.poi.hssf.record</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/FormulaRecord.html" title="class in org.apache.poi.hssf.record"><CODE>FormulaRecord</CODE></A></DL>
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Package</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <FONT CLASS="NavBarFont1">Class</FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/functions/package-summary.html"><B>PREV PACKAGE</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/ss/formula/udf/package-summary.html"><B>NEXT PACKAGE</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/ss/formula/ptg/package-summary.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="package-summary.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

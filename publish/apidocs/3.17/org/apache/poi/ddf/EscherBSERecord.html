@@ -1,0 +1,1170 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+EscherBSERecord (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="EscherBSERecord (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherBoolProperty.html" title="class in org.apache.poi.ddf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherChildAnchorRecord.html" title="class in org.apache.poi.ddf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/ddf/EscherBSERecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EscherBSERecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ddf</FONT>
+<BR>
+Class EscherBSERecord</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">org.apache.poi.ddf.EscherRecord</A>
+      <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ddf.EscherBSERecord</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>EscherBSERecord</B><DT>extends <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></DL>
+</PRE>
+
+<P>
+The BSE record is related closely to the <code>EscherBlipRecord</code> and stores
+ extra information about the blip.  A blip record is actually stored inside
+ the BSE record even though the BSE record isn't actually a container record.
+<P>
+
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../org/apache/poi/ddf/EscherBlipRecord.html" title="class in org.apache.poi.ddf"><CODE>EscherBlipRecord</CODE></A></DL>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#BT_DIB">BT_DIB</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#BT_EMF">BT_EMF</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#BT_ERROR">BT_ERROR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#BT_JPEG">BT_JPEG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#BT_PICT">BT_PICT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#BT_PNG">BT_PNG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#BT_UNKNOWN">BT_UNKNOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#BT_WMF">BT_WMF</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#RECORD_DESCRIPTION">RECORD_DESCRIPTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#RECORD_ID">RECORD_ID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#EscherBSERecord()">EscherBSERecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)">fillFields</A></B>(byte[]&nbsp;data,
+           int&nbsp;offset,
+           <A HREF="../../../../org/apache/poi/ddf/EscherRecordFactory.html" title="interface in org.apache.poi.ddf">EscherRecordFactory</A>&nbsp;recordFactory)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The contract of this method is to deserialize an escher record including
+ it's children.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.lang.Object[][]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getAttributeMap()">getAttributeMap</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For the purpose of providing toString() and toXml() a subclass can either override those methods
+ or provide a Object[][] array in the form { { "Attribute Name (Header)", value, "optional attribute", value }, ...</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherBlipRecord.html" title="class in org.apache.poi.ddf">EscherBlipRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getBlipRecord()">getBlipRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getBlipType(byte)">getBlipType</A></B>(byte&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieve the string representation given a blip id.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getBlipTypeMacOS()">getBlipTypeMacOS</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expected blip type under MacOS (failure to match this blip type will result in
+ Excel converting to this format).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getBlipTypeWin32()">getBlipTypeWin32</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The expected blip type under windows (failure to match this blip type will result in
+ Excel converting to this format).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getName()">getName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The length in characters of the blip name.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getOffset()">getOffset</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;File offset in the delay stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getRecordName()">getRecordName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subclasses should return the short name for this escher record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getRecordSize()">getRecordSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subclasses should effeciently return the number of bytes required to
+ serialize the record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getRef()">getRef</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The reference count of this blip.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getRemainingData()">getRemainingData</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Any remaining data in this record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getSize()">getSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blip size in stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getTag()">getTag</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unused</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getUid()">getUid</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16 byte MD4 checksum.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getUnused2()">getUnused2</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getUnused3()">getUnused3</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;byte</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#getUsage()">getUsage</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defines the way this blip is used.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)">serialize</A></B>(int&nbsp;offset,
+          byte[]&nbsp;data,
+          <A HREF="../../../../org/apache/poi/ddf/EscherSerializationListener.html" title="interface in org.apache.poi.ddf">EscherSerializationListener</A>&nbsp;listener)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serializes the record to an existing byte array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#setBlipRecord(org.apache.poi.ddf.EscherBlipRecord)">setBlipRecord</A></B>(<A HREF="../../../../org/apache/poi/ddf/EscherBlipRecord.html" title="class in org.apache.poi.ddf">EscherBlipRecord</A>&nbsp;blipRecord)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#setBlipTypeMacOS(byte)">setBlipTypeMacOS</A></B>(byte&nbsp;blipTypeMacOS)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the expected MacOS blip type</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#setBlipTypeWin32(byte)">setBlipTypeWin32</A></B>(byte&nbsp;blipTypeWin32)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the expected win32 blip type</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#setName(byte)">setName</A></B>(byte&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The length in characters of the blip name.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#setOffset(int)">setOffset</A></B>(int&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;File offset in the delay stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#setRef(int)">setRef</A></B>(int&nbsp;ref)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The reference count of this blip.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#setRemainingData(byte[])">setRemainingData</A></B>(byte[]&nbsp;remainingData)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Any remaining data in this record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#setSize(int)">setSize</A></B>(int&nbsp;size)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blip size in stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#setTag(short)">setTag</A></B>(short&nbsp;tag)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;unused</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#setUid(byte[])">setUid</A></B>(byte[]&nbsp;uid)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;16 byte MD4 checksum.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#setUnused2(byte)">setUnused2</A></B>(byte&nbsp;unused2)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#setUnused3(byte)">setUnused3</A></B>(byte&nbsp;unused3)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherBSERecord.html#setUsage(byte)">setUsage</A></B>(byte&nbsp;usage)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Defines the way this blip is used.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.ddf.EscherRecord"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.ddf.<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#clone()">clone</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#display(java.io.PrintWriter, int)">display</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#fillFields(byte[], org.apache.poi.ddf.EscherRecordFactory)">fillFields</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getChild(int)">getChild</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getChildRecords()">getChildRecords</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getInstance()">getInstance</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getOptions()">getOptions</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordId()">getRecordId</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getVersion()">getVersion</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#isContainerRecord()">isContainerRecord</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#readHeader(byte[], int)">readHeader</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#readInstance(byte[], int)">readInstance</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize()">serialize</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize(int, byte[])">serialize</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setChildRecords(java.util.List)">setChildRecords</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setInstance(short)">setInstance</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setOptions(short)">setOptions</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setRecordId(short)">setRecordId</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setVersion(short)">setVersion</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#toString()">toString</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#toXml()">toXml</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#toXml(java.lang.String)">toXml</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="RECORD_ID"><!-- --></A><H3>
+RECORD_ID</H3>
+<PRE>
+public static final short <B>RECORD_ID</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherBSERecord.RECORD_ID">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="RECORD_DESCRIPTION"><!-- --></A><H3>
+RECORD_DESCRIPTION</H3>
+<PRE>
+public static final java.lang.String <B>RECORD_DESCRIPTION</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherBSERecord.RECORD_DESCRIPTION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BT_ERROR"><!-- --></A><H3>
+BT_ERROR</H3>
+<PRE>
+public static final byte <B>BT_ERROR</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherBSERecord.BT_ERROR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BT_UNKNOWN"><!-- --></A><H3>
+BT_UNKNOWN</H3>
+<PRE>
+public static final byte <B>BT_UNKNOWN</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherBSERecord.BT_UNKNOWN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BT_EMF"><!-- --></A><H3>
+BT_EMF</H3>
+<PRE>
+public static final byte <B>BT_EMF</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherBSERecord.BT_EMF">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BT_WMF"><!-- --></A><H3>
+BT_WMF</H3>
+<PRE>
+public static final byte <B>BT_WMF</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherBSERecord.BT_WMF">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BT_PICT"><!-- --></A><H3>
+BT_PICT</H3>
+<PRE>
+public static final byte <B>BT_PICT</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherBSERecord.BT_PICT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BT_JPEG"><!-- --></A><H3>
+BT_JPEG</H3>
+<PRE>
+public static final byte <B>BT_JPEG</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherBSERecord.BT_JPEG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BT_PNG"><!-- --></A><H3>
+BT_PNG</H3>
+<PRE>
+public static final byte <B>BT_PNG</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherBSERecord.BT_PNG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BT_DIB"><!-- --></A><H3>
+BT_DIB</H3>
+<PRE>
+public static final byte <B>BT_DIB</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherBSERecord.BT_DIB">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="EscherBSERecord()"><!-- --></A><H3>
+EscherBSERecord</H3>
+<PRE>
+public <B>EscherBSERecord</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)"><!-- --></A><H3>
+fillFields</H3>
+<PRE>
+public int <B>fillFields</B>(byte[]&nbsp;data,
+                      int&nbsp;offset,
+                      <A HREF="../../../../org/apache/poi/ddf/EscherRecordFactory.html" title="interface in org.apache.poi.ddf">EscherRecordFactory</A>&nbsp;recordFactory)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)">EscherRecord</A></CODE></B></DD>
+<DD>The contract of this method is to deserialize an escher record including
+ it's children.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)">fillFields</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - The byte array containing the serialized escher
+                  records.<DD><CODE>offset</CODE> - The offset into the byte array.<DD><CODE>recordFactory</CODE> - A factory for creating new escher records.
+<DT><B>Returns:</B><DD>The number of bytes written.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)"><!-- --></A><H3>
+serialize</H3>
+<PRE>
+public int <B>serialize</B>(int&nbsp;offset,
+                     byte[]&nbsp;data,
+                     <A HREF="../../../../org/apache/poi/ddf/EscherSerializationListener.html" title="interface in org.apache.poi.ddf">EscherSerializationListener</A>&nbsp;listener)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)">EscherRecord</A></CODE></B></DD>
+<DD>Serializes the record to an existing byte array.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)">serialize</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - the offset within the byte array<DD><CODE>data</CODE> - the data array to serialize to<DD><CODE>listener</CODE> - a listener for begin and end serialization events.  This
+                  is useful because the serialization is
+                  hierarchical/recursive and sometimes you need to be able
+                  break into that.
+<DT><B>Returns:</B><DD>the number of bytes written.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRecordSize()"><!-- --></A><H3>
+getRecordSize</H3>
+<PRE>
+public int <B>getRecordSize</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordSize()">EscherRecord</A></CODE></B></DD>
+<DD>Subclasses should effeciently return the number of bytes required to
+ serialize the record.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordSize()">getRecordSize</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>number of bytes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRecordName()"><!-- --></A><H3>
+getRecordName</H3>
+<PRE>
+public java.lang.String <B>getRecordName</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordName()">EscherRecord</A></CODE></B></DD>
+<DD>Subclasses should return the short name for this escher record.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordName()">getRecordName</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the short name for this escher record</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBlipTypeWin32()"><!-- --></A><H3>
+getBlipTypeWin32</H3>
+<PRE>
+public byte <B>getBlipTypeWin32</B>()</PRE>
+<DL>
+<DD>The expected blip type under windows (failure to match this blip type will result in
+ Excel converting to this format).
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>win32 blip type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBlipTypeWin32(byte)"><!-- --></A><H3>
+setBlipTypeWin32</H3>
+<PRE>
+public void <B>setBlipTypeWin32</B>(byte&nbsp;blipTypeWin32)</PRE>
+<DL>
+<DD>Set the expected win32 blip type
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>blipTypeWin32</CODE> - win32 blip type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBlipTypeMacOS()"><!-- --></A><H3>
+getBlipTypeMacOS</H3>
+<PRE>
+public byte <B>getBlipTypeMacOS</B>()</PRE>
+<DL>
+<DD>The expected blip type under MacOS (failure to match this blip type will result in
+ Excel converting to this format).
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>MacOS blip type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBlipTypeMacOS(byte)"><!-- --></A><H3>
+setBlipTypeMacOS</H3>
+<PRE>
+public void <B>setBlipTypeMacOS</B>(byte&nbsp;blipTypeMacOS)</PRE>
+<DL>
+<DD>Set the expected MacOS blip type
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>blipTypeMacOS</CODE> - MacOS blip type</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUid()"><!-- --></A><H3>
+getUid</H3>
+<PRE>
+public byte[] <B>getUid</B>()</PRE>
+<DL>
+<DD>16 byte MD4 checksum.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>16 byte MD4 checksum</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setUid(byte[])"><!-- --></A><H3>
+setUid</H3>
+<PRE>
+public void <B>setUid</B>(byte[]&nbsp;uid)</PRE>
+<DL>
+<DD>16 byte MD4 checksum.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>uid</CODE> - 16 byte MD4 checksum</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTag()"><!-- --></A><H3>
+getTag</H3>
+<PRE>
+public short <B>getTag</B>()</PRE>
+<DL>
+<DD>unused
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an unknown tag</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTag(short)"><!-- --></A><H3>
+setTag</H3>
+<PRE>
+public void <B>setTag</B>(short&nbsp;tag)</PRE>
+<DL>
+<DD>unused
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>tag</CODE> - unknown tag</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSize()"><!-- --></A><H3>
+getSize</H3>
+<PRE>
+public int <B>getSize</B>()</PRE>
+<DL>
+<DD>Blip size in stream.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the blip size</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setSize(int)"><!-- --></A><H3>
+setSize</H3>
+<PRE>
+public void <B>setSize</B>(int&nbsp;size)</PRE>
+<DL>
+<DD>Blip size in stream.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>size</CODE> - blip size</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRef()"><!-- --></A><H3>
+getRef</H3>
+<PRE>
+public int <B>getRef</B>()</PRE>
+<DL>
+<DD>The reference count of this blip.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the reference count</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRef(int)"><!-- --></A><H3>
+setRef</H3>
+<PRE>
+public void <B>setRef</B>(int&nbsp;ref)</PRE>
+<DL>
+<DD>The reference count of this blip.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ref</CODE> - the reference count</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getOffset()"><!-- --></A><H3>
+getOffset</H3>
+<PRE>
+public int <B>getOffset</B>()</PRE>
+<DL>
+<DD>File offset in the delay stream.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the file offset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setOffset(int)"><!-- --></A><H3>
+setOffset</H3>
+<PRE>
+public void <B>setOffset</B>(int&nbsp;offset)</PRE>
+<DL>
+<DD>File offset in the delay stream.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - the file offset</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUsage()"><!-- --></A><H3>
+getUsage</H3>
+<PRE>
+public byte <B>getUsage</B>()</PRE>
+<DL>
+<DD>Defines the way this blip is used.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the blip usage</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setUsage(byte)"><!-- --></A><H3>
+setUsage</H3>
+<PRE>
+public void <B>setUsage</B>(byte&nbsp;usage)</PRE>
+<DL>
+<DD>Defines the way this blip is used.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>usage</CODE> - the blip usae</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getName()"><!-- --></A><H3>
+getName</H3>
+<PRE>
+public byte <B>getName</B>()</PRE>
+<DL>
+<DD>The length in characters of the blip name.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the blip name length</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setName(byte)"><!-- --></A><H3>
+setName</H3>
+<PRE>
+public void <B>setName</B>(byte&nbsp;name)</PRE>
+<DL>
+<DD>The length in characters of the blip name.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the blip name length</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUnused2()"><!-- --></A><H3>
+getUnused2</H3>
+<PRE>
+public byte <B>getUnused2</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setUnused2(byte)"><!-- --></A><H3>
+setUnused2</H3>
+<PRE>
+public void <B>setUnused2</B>(byte&nbsp;unused2)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUnused3()"><!-- --></A><H3>
+getUnused3</H3>
+<PRE>
+public byte <B>getUnused3</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setUnused3(byte)"><!-- --></A><H3>
+setUnused3</H3>
+<PRE>
+public void <B>setUnused3</B>(byte&nbsp;unused3)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBlipRecord()"><!-- --></A><H3>
+getBlipRecord</H3>
+<PRE>
+public <A HREF="../../../../org/apache/poi/ddf/EscherBlipRecord.html" title="class in org.apache.poi.ddf">EscherBlipRecord</A> <B>getBlipRecord</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBlipRecord(org.apache.poi.ddf.EscherBlipRecord)"><!-- --></A><H3>
+setBlipRecord</H3>
+<PRE>
+public void <B>setBlipRecord</B>(<A HREF="../../../../org/apache/poi/ddf/EscherBlipRecord.html" title="class in org.apache.poi.ddf">EscherBlipRecord</A>&nbsp;blipRecord)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRemainingData()"><!-- --></A><H3>
+getRemainingData</H3>
+<PRE>
+public byte[] <B>getRemainingData</B>()</PRE>
+<DL>
+<DD>Any remaining data in this record.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the remaining bytes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRemainingData(byte[])"><!-- --></A><H3>
+setRemainingData</H3>
+<PRE>
+public void <B>setRemainingData</B>(byte[]&nbsp;remainingData)</PRE>
+<DL>
+<DD>Any remaining data in this record.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>remainingData</CODE> - the remaining bytes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBlipType(byte)"><!-- --></A><H3>
+getBlipType</H3>
+<PRE>
+public static java.lang.String <B>getBlipType</B>(byte&nbsp;b)</PRE>
+<DL>
+<DD>Retrieve the string representation given a blip id.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - the blip type byte-encoded
+<DT><B>Returns:</B><DD>the blip type as string</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAttributeMap()"><!-- --></A><H3>
+getAttributeMap</H3>
+<PRE>
+protected java.lang.Object[][] <B>getAttributeMap</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getAttributeMap()">EscherRecord</A></CODE></B></DD>
+<DD>For the purpose of providing toString() and toXml() a subclass can either override those methods
+ or provide a Object[][] array in the form <code>{ { "Attribute Name (Header)", value, "optional attribute", value }, ... } </code>.<p>
+
+ Null values won't be printed.<p>
+
+ The attributes record, version, instance, options must not be returned.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getAttributeMap()">getAttributeMap</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the attribute map</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherBoolProperty.html" title="class in org.apache.poi.ddf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherChildAnchorRecord.html" title="class in org.apache.poi.ddf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/ddf/EscherBSERecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EscherBSERecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

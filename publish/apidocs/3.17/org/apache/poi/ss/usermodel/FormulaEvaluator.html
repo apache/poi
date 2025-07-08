@@ -1,0 +1,541 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+FormulaEvaluator (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="FormulaEvaluator (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaError.html" title="enum in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/FractionFormat.html" title="class in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/FormulaEvaluator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="FormulaEvaluator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.usermodel</FONT>
+<BR>
+Interface FormulaEvaluator</H2>
+<DL>
+<DT><B>All Known Implementing Classes:</B> <DD><A HREF="../../../../../org/apache/poi/ss/formula/BaseFormulaEvaluator.html" title="class in org.apache.poi.ss.formula">BaseFormulaEvaluator</A>, <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFormulaEvaluator.html" title="class in org.apache.poi.hssf.usermodel">HSSFFormulaEvaluator</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>FormulaEvaluator</B></DL>
+</PRE>
+
+<P>
+Evaluates formula cells.<p>
+ 
+ For performance reasons, this class keeps a cache of all previously calculated intermediate
+ cell values.  Be sure to call <A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#clearAllCachedResultValues()"><CODE>clearAllCachedResultValues()</CODE></A> if any workbook cells are changed between
+ calls to evaluate~ methods on this class.
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#clearAllCachedResultValues()">clearAllCachedResultValues</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should be called whenever there are changes to input cells in the evaluated workbook.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellValue.html" title="class in org.apache.poi.ss.usermodel">CellValue</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#evaluate(org.apache.poi.ss.usermodel.Cell)">evaluate</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If cell contains a formula, the formula is evaluated and returned,
+ else the CellValue simply copies the appropriate cell value from
+ the cell and also its cell type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#evaluateAll()">evaluateAll</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loops over all cells in all sheets of the associated workbook.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#evaluateFormulaCell(org.apache.poi.ss.usermodel.Cell)">evaluateFormulaCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>3.15. Will return a <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>CellType</CODE></A> enum in the future</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#evaluateFormulaCellEnum(org.apache.poi.ss.usermodel.Cell)">evaluateFormulaCellEnum</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If cell contains formula, it evaluates the formula,
+  and saves the result of the formula.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#evaluateInCell(org.apache.poi.ss.usermodel.Cell)">evaluateInCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If cell contains formula, it evaluates the formula, and
+  puts the formula result back into the cell, in place
+  of the old formula.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#notifyDeleteCell(org.apache.poi.ss.usermodel.Cell)">notifyDeleteCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should be called to tell the cell value cache that the specified cell has just become a
+ formula cell, or the formula text has changed</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#notifySetFormula(org.apache.poi.ss.usermodel.Cell)">notifySetFormula</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should be called to tell the cell value cache that the specified (value or formula) cell 
+ has changed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#notifyUpdateCell(org.apache.poi.ss.usermodel.Cell)">notifyUpdateCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Should be called to tell the cell value cache that the specified (value or formula) cell
+ has changed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#setDebugEvaluationOutputForNextEval(boolean)">setDebugEvaluationOutputForNextEval</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Perform detailed output of formula evaluation for next evaluation only?
+ Is for developer use only (also developers using POI for their XLS files).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#setIgnoreMissingWorkbooks(boolean)">setIgnoreMissingWorkbooks</A></B>(boolean&nbsp;ignore)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether to ignore missing references to external workbooks and
+ use cached formula results in the main workbook instead.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#setupReferencedWorkbooks(java.util.Map)">setupReferencedWorkbooks</A></B>(java.util.Map&lt;java.lang.String,<A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel">FormulaEvaluator</A>&gt;&nbsp;workbooks)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets up the Formula Evaluator to be able to reference and resolve
+  links to other workbooks, eg [Test.xls]Sheet1!A1.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="clearAllCachedResultValues()"><!-- --></A><H3>
+clearAllCachedResultValues</H3>
+<PRE>
+void <B>clearAllCachedResultValues</B>()</PRE>
+<DL>
+<DD>Should be called whenever there are changes to input cells in the evaluated workbook.
+ Failure to call this method after changing cell values will cause incorrect behaviour
+ of the evaluate~ methods of this class
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="notifySetFormula(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+notifySetFormula</H3>
+<PRE>
+void <B>notifySetFormula</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Should be called to tell the cell value cache that the specified (value or formula) cell 
+ has changed.
+ Failure to call this method after changing cell values will cause incorrect behaviour
+ of the evaluate~ methods of this class
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="notifyDeleteCell(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+notifyDeleteCell</H3>
+<PRE>
+void <B>notifyDeleteCell</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Should be called to tell the cell value cache that the specified cell has just become a
+ formula cell, or the formula text has changed
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="notifyUpdateCell(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+notifyUpdateCell</H3>
+<PRE>
+void <B>notifyUpdateCell</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>Should be called to tell the cell value cache that the specified (value or formula) cell
+ has changed.
+ Failure to call this method after changing cell values will cause incorrect behaviour
+ of the evaluate~ methods of this class
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluateAll()"><!-- --></A><H3>
+evaluateAll</H3>
+<PRE>
+void <B>evaluateAll</B>()</PRE>
+<DL>
+<DD>Loops over all cells in all sheets of the associated workbook.
+ For cells that contain formulas, their formulas are evaluated, 
+  and the results are saved. These cells remain as formula cells.
+ For cells that do not contain formulas, no changes are made.
+ This is a helpful wrapper around looping over all cells, and 
+  calling evaluateFormulaCell on each one.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluate(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+evaluate</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/CellValue.html" title="class in org.apache.poi.ss.usermodel">CellValue</A> <B>evaluate</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>If cell contains a formula, the formula is evaluated and returned,
+ else the CellValue simply copies the appropriate cell value from
+ the cell and also its cell type. This method should be preferred over
+ evaluateInCell() when the call should not modify the contents of the
+ original cell.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluateFormulaCell(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+evaluateFormulaCell</H3>
+<PRE>
+int <B>evaluateFormulaCell</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>3.15. Will return a <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel"><CODE>CellType</CODE></A> enum in the future</I>
+<P>
+<DD>If cell contains formula, it evaluates the formula,
+  and saves the result of the formula. The cell
+  remains as a formula cell.
+ Else if cell does not contain formula, this method leaves
+  the cell unchanged.
+ Note that the type of the formula result is returned,
+  so you know what kind of value is also stored with
+  the formula.
+ <pre>
+ int evaluatedCellType = evaluator.evaluateFormulaCell(cell);
+ </pre>
+ Be aware that your cell will hold both the formula,
+  and the result. If you want the cell replaced with
+  the result of the formula, use <A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#evaluateInCell(org.apache.poi.ss.usermodel.Cell)"><CODE>evaluateInCell(Cell)</CODE></A>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - The cell to evaluate
+<DT><B>Returns:</B><DD>The type of the formula result, i.e. -1 if the cell is not a formula, 
+      or one of <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#NUMERIC"><CODE>CellType.NUMERIC</CODE></A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#STRING"><CODE>CellType.STRING</CODE></A>,
+      <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#BOOLEAN"><CODE>CellType.BOOLEAN</CODE></A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#ERROR"><CODE>CellType.ERROR</CODE></A>
+      Note: the cell's type remains as CellType.FORMULA however.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluateFormulaCellEnum(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+evaluateFormulaCellEnum</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html" title="enum in org.apache.poi.ss.usermodel">CellType</A> <B>evaluateFormulaCellEnum</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>If cell contains formula, it evaluates the formula,
+  and saves the result of the formula. The cell
+  remains as a formula cell.
+ Else if cell does not contain formula, this method leaves
+  the cell unchanged.
+ Note that the type of the formula result is returned,
+  so you know what kind of value is also stored with
+  the formula.
+ <pre>
+ CellType evaluatedCellType = evaluator.evaluateFormulaCellEnum(cell);
+ </pre>
+ Be aware that your cell will hold both the formula,
+  and the result. If you want the cell replaced with
+  the result of the formula, use <A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#evaluateInCell(org.apache.poi.ss.usermodel.Cell)"><CODE>evaluateInCell(Cell)</CODE></A>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - The cell to evaluate
+<DT><B>Returns:</B><DD>The type of the formula result, i.e. -1 if the cell is not a formula, 
+      or one of <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#NUMERIC"><CODE>CellType.NUMERIC</CODE></A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#STRING"><CODE>CellType.STRING</CODE></A>,
+      <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#BOOLEAN"><CODE>CellType.BOOLEAN</CODE></A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/CellType.html#ERROR"><CODE>CellType.ERROR</CODE></A>
+      Note: the cell's type remains as CellType.FORMULA however.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="evaluateInCell(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+evaluateInCell</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A> <B>evaluateInCell</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>If cell contains formula, it evaluates the formula, and
+  puts the formula result back into the cell, in place
+  of the old formula.
+ Else if cell does not contain formula, this method leaves
+  the cell unchanged.
+ Note that the same instance of Cell is returned to
+ allow chained calls like:
+ <pre>
+ int evaluatedCellType = evaluator.evaluateInCell(cell).getCellType();
+ </pre>
+ Be aware that your cell value will be changed to hold the
+  result of the formula. If you simply want the formula
+  value computed for you, use <A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html#evaluateFormulaCellEnum(org.apache.poi.ss.usermodel.Cell)"><CODE>evaluateFormulaCellEnum(Cell)</CODE></A>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - </DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setupReferencedWorkbooks(java.util.Map)"><!-- --></A><H3>
+setupReferencedWorkbooks</H3>
+<PRE>
+void <B>setupReferencedWorkbooks</B>(java.util.Map&lt;java.lang.String,<A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel">FormulaEvaluator</A>&gt;&nbsp;workbooks)</PRE>
+<DL>
+<DD>Sets up the Formula Evaluator to be able to reference and resolve
+  links to other workbooks, eg [Test.xls]Sheet1!A1.
+ <p>For a workbook referenced as [Test.xls]Sheet1!A1, you should
+  supply a map containing the key Test.xls (no square brackets),
+  and an open FormulaEvaluator onto that Workbook.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>workbooks</CODE> - Map of workbook names (no square brackets) to an evaluator on that workbook</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setIgnoreMissingWorkbooks(boolean)"><!-- --></A><H3>
+setIgnoreMissingWorkbooks</H3>
+<PRE>
+void <B>setIgnoreMissingWorkbooks</B>(boolean&nbsp;ignore)</PRE>
+<DL>
+<DD>Whether to ignore missing references to external workbooks and
+ use cached formula results in the main workbook instead.
+ <p>
+ In some cases external workbooks referenced by formulas in the main workbook are not available.
+ With this method you can control how POI handles such missing references:
+ <ul>
+     <li>by default ignoreMissingWorkbooks=false and POI throws 
+     <A HREF="../../../../../org/apache/poi/ss/formula/CollaboratingWorkbooksEnvironment.WorkbookNotFoundException.html" title="class in org.apache.poi.ss.formula"><CODE>CollaboratingWorkbooksEnvironment.WorkbookNotFoundException</CODE></A>
+     if an external reference cannot be resolved</li>
+     <li>if ignoreMissingWorkbooks=true then POI uses cached formula result
+     that already exists in the main workbook</li>
+ </ul>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ignore</CODE> - whether to ignore missing references to external workbooks</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDebugEvaluationOutputForNextEval(boolean)"><!-- --></A><H3>
+setDebugEvaluationOutputForNextEval</H3>
+<PRE>
+void <B>setDebugEvaluationOutputForNextEval</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Perform detailed output of formula evaluation for next evaluation only?
+ Is for developer use only (also developers using POI for their XLS files).
+ Log-Level WARN is for basic info, INFO for detailed information. These quite
+ high levels are used because you have to explicitly enable this specific logging.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - whether to perform detailed output</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaError.html" title="enum in org.apache.poi.ss.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/FractionFormat.html" title="class in org.apache.poi.ss.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/usermodel/FormulaEvaluator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="FormulaEvaluator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

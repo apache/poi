@@ -1,0 +1,306 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>Apache POI&trade; - Security guidance</title>
+<link type="text/css" href="skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="skin/print.css" rel="stylesheet">
+<link type="text/css" href="skin/profile.css" rel="stylesheet">
+<script src="skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li class="current">
+<a class="selected" href="index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="help/index.html">Help</a>
+</li>
+<li>
+<a class="unselected" href="components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', 'skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('skin/images/chapter_open.gif');">Overview</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="index.html">Home</a>
+</div>
+<div class="menuitem">
+<a href="download.html">Download</a>
+</div>
+<div class="menuitem">
+<a href="changes.html">Changelog</a>
+</div>
+<div class="menuitem">
+<a href="apidocs/index.html">Javadocs</a>
+</div>
+<div class="menuitem">
+<a href="text-extraction.html">Text Extraction</a>
+</div>
+<div class="menuitem">
+<a href="encryption.html">Encryption support</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">Secure processing</div>
+</div>
+<div class="menuitem">
+<a href="casestudies.html">Case Studies</a>
+</div>
+<div class="menuitem">
+<a href="related-projects.html">Related projects</a>
+</div>
+<div class="menuitem">
+<a href="legal.html">Legal</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.2', 'skin/')" id="menu_1.2Title" class="menutitle">Apache Wide</div>
+<div id="menu_1.2" class="menuitemgroup">
+<div class="menuitem">
+<a href="https://www.apache.org/">Apache Software Foundation</a>
+</div>
+<div class="menuitem">
+<a href="https://www.apache.org/licenses/">License</a>
+</div>
+<div class="menuitem">
+<a href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a>
+</div>
+<div class="menuitem">
+<a href="https://www.apache.org/foundation/thanks.html">Thanks</a>
+</div>
+<div class="menuitem">
+<a href="https://www.apache.org/security/">Security</a>
+</div>
+<div class="menuitem">
+<a href="https://privacy.apache.org/policies/privacy-policy-public.html">Privacy</a>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>Apache POI&trade; - Security guidance</h1>
+<div id="front-matter"></div>
+    
+<a name="Overview"></a>
+<h2 class="boxed">Overview</h2>
+<div class="section">
+<p>This page provides some guidance about how Apache POI can be used in security-sensible areas.</p>
+</div>
+
+    
+<a name="Information+about+related+security+vulnerabilities"></a>
+<h2 class="boxed">Information about related security vulnerabilities</h2>
+<div class="section">
+<p>Information about security issues is included in the <a href="index.html">Project News</a>.</p>
+</div>
+
+    
+<a name="Reporting+security+vulnerabilities"></a>
+<h2 class="boxed">Reporting security vulnerabilities</h2>
+<div class="section">
+<p>Apache POI will try to fix security-related bugs with priority.</p>
+<p>Please follow the general <a href="https://www.apache.org/security/">Apache Security Guidelines</a>
+            for proper handling.</p>
+<p>But please note that by the nature of processing external files, you should design your application
+            in a way which limits impact of malicious documents as much as possible. The higher your security-related
+            requirements are, the more you likely need to invest in your application to contain effects.
+        </p>
+</div>
+
+    
+<a name="Architecting+your+Application"></a>
+<h2 class="boxed">Architecting your Application</h2>
+<div class="section">
+<p>If you are processing documents from an untrusted source, you should add a number of safeguards to
+        your application to contain any unexpected side effects.</p>
+<p>Apache POI cannot fully protect against some documents causing impact on the current process, therefore
+        we suggest the following additional layers of security.</p>
+<ul>
+            
+<li>
+<strong>Expect any type of Exception when processing documents</strong>
+<br>
+                As parsing the various formats is very complex and involved, there are some unexpected types of
+                exceptions which can be thrown. E.g. StackOverflowError or many different types of RuntimeException.
+                <br>
+                Make sure to have a broad catch-statement around your document-parsing functionality and be prepared
+                to handle all those gracefully.
+            </li>
+            
+<li>
+<strong>Expect long parsing time</strong>
+<br>
+                As parsing the various formats is very complex and involved, some documents might cause prolonged CPU
+                usage and long parsing time.
+                <br>
+                If this is a concern, make sure to have a way to stop processing after some time, maybe by the
+                sandboxing approach described below.
+            </li>
+            
+<li>
+<strong>Memory use can be very high</strong>
+<br>
+                The data in Microsoft format files is usually compressed so even small files can have a lot of data.
+                <br>
+                The core POI APIs are not optimized to avoid excessive memory use. POI has streaming APIs for reading
+                and writing xlsx files - so if you are working with large xlsx files, you should consider using the
+                streaming APIs.
+            </li>
+            
+<li>
+<strong>Consider sandboxing document-parsing</strong>
+<br>
+                If you operate in a highly sensitive environment and would like to avoid any side effect from
+                parsing documents on your application, then consider extracting the parsing logic into a separate
+                process which is configured with appropriate memory settings and which you stop after some timeout.
+                It is a good idea to be able to auto-restart the process in case of a crash.
+                <br>
+            
+</li>
+            
+<li>
+<strong>Keep up to date with releases</strong>
+<br>
+                Apache POI does occasionally issue CVEs for security issues. There are also other bug fixes and
+                improvements in each release. Some of these fixes will be to make POI more robust against malicious
+                inputs, even if they are not explicitly security-related.
+                <br>
+            
+</li>
+        
+</ul>
+</div>
+    
+<p align="right">
+<font size="-2">by&nbsp;Dominik Stadler</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0security.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

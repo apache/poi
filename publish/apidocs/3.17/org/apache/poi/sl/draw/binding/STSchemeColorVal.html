@@ -1,0 +1,660 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+STSchemeColorVal (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="STSchemeColorVal (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STRectAlignment.html" title="enum in org.apache.poi.sl.draw.binding"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/sl/draw/binding/STSchemeColorVal.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="STSchemeColorVal.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#enum_constant_summary">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#enum_constant_detail">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.sl.draw.binding</FONT>
+<BR>
+Enum STSchemeColorVal</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by ">java.lang.Enum&lt;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A>&gt;
+      <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.sl.draw.binding.STSchemeColorVal</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.io.Serializable, java.lang.Comparable&lt;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A>&gt;</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public enum <B>STSchemeColorVal</B><DT>extends java.lang.Enum&lt;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A>&gt;</DL>
+</PRE>
+
+<P>
+<p>Java class for ST_SchemeColorVal.
+ 
+ <p>The following schema fragment specifies the expected content contained within this class.
+ <p>
+ <pre>
+ &lt;simpleType name="ST_SchemeColorVal">
+   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
+     &lt;enumeration value="bg1"/>
+     &lt;enumeration value="tx1"/>
+     &lt;enumeration value="bg2"/>
+     &lt;enumeration value="tx2"/>
+     &lt;enumeration value="accent1"/>
+     &lt;enumeration value="accent2"/>
+     &lt;enumeration value="accent3"/>
+     &lt;enumeration value="accent4"/>
+     &lt;enumeration value="accent5"/>
+     &lt;enumeration value="accent6"/>
+     &lt;enumeration value="hlink"/>
+     &lt;enumeration value="folHlink"/>
+     &lt;enumeration value="phClr"/>
+     &lt;enumeration value="dk1"/>
+     &lt;enumeration value="lt1"/>
+     &lt;enumeration value="dk2"/>
+     &lt;enumeration value="lt2"/>
+   &lt;/restriction>
+ &lt;/simpleType>
+ </pre>
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== ENUM CONSTANT SUMMARY =========== -->
+
+<A NAME="enum_constant_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Enum Constant Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#ACCENT_1">ACCENT_1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accent Color 1</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#ACCENT_2">ACCENT_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accent Color 2</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#ACCENT_3">ACCENT_3</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accent Color 3</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#ACCENT_4">ACCENT_4</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accent Color 4</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#ACCENT_5">ACCENT_5</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accent Color 5</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#ACCENT_6">ACCENT_6</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Accent Color 6</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#BG_1">BG_1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Background Color 1</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#BG_2">BG_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Background Color 2</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#DK_1">DK_1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Color 1</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#DK_2">DK_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Color 2</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#FOL_HLINK">FOL_HLINK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Followed Hyperlink Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#HLINK">HLINK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hyperlink Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#LT_1">LT_1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Color 1</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#LT_2">LT_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Color 2</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#PH_CLR">PH_CLR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Style Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#TX_1">TX_1</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Text Color 1</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#TX_2">TX_2</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Text Color 2</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#fromValue(java.lang.String)">fromValue</A></B>(java.lang.String&nbsp;v)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#value()">value</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#valueOf(java.lang.String)">valueOf</A></B>(java.lang.String&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the enum constant of this type with the specified name.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html#values()">values</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an array containing the constants of this enum type, in
+the order they are declared.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Enum"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Enum</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, compareTo, equals, finalize, getDeclaringClass, hashCode, name, ordinal, toString, valueOf</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ ENUM CONSTANT DETAIL =========== -->
+
+<A NAME="enum_constant_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Enum Constant Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="BG_1"><!-- --></A><H3>
+BG_1</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>BG_1</B></PRE>
+<DL>
+<DD>Background Color 1
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="TX_1"><!-- --></A><H3>
+TX_1</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>TX_1</B></PRE>
+<DL>
+<DD>Text Color 1
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BG_2"><!-- --></A><H3>
+BG_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>BG_2</B></PRE>
+<DL>
+<DD>Background Color 2
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="TX_2"><!-- --></A><H3>
+TX_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>TX_2</B></PRE>
+<DL>
+<DD>Text Color 2
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACCENT_1"><!-- --></A><H3>
+ACCENT_1</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>ACCENT_1</B></PRE>
+<DL>
+<DD>Accent Color 1
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACCENT_2"><!-- --></A><H3>
+ACCENT_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>ACCENT_2</B></PRE>
+<DL>
+<DD>Accent Color 2
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACCENT_3"><!-- --></A><H3>
+ACCENT_3</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>ACCENT_3</B></PRE>
+<DL>
+<DD>Accent Color 3
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACCENT_4"><!-- --></A><H3>
+ACCENT_4</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>ACCENT_4</B></PRE>
+<DL>
+<DD>Accent Color 4
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACCENT_5"><!-- --></A><H3>
+ACCENT_5</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>ACCENT_5</B></PRE>
+<DL>
+<DD>Accent Color 5
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ACCENT_6"><!-- --></A><H3>
+ACCENT_6</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>ACCENT_6</B></PRE>
+<DL>
+<DD>Accent Color 6
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="HLINK"><!-- --></A><H3>
+HLINK</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>HLINK</B></PRE>
+<DL>
+<DD>Hyperlink Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FOL_HLINK"><!-- --></A><H3>
+FOL_HLINK</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>FOL_HLINK</B></PRE>
+<DL>
+<DD>Followed Hyperlink Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PH_CLR"><!-- --></A><H3>
+PH_CLR</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>PH_CLR</B></PRE>
+<DL>
+<DD>Style Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_1"><!-- --></A><H3>
+DK_1</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>DK_1</B></PRE>
+<DL>
+<DD>Dark Color 1
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_1"><!-- --></A><H3>
+LT_1</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>LT_1</B></PRE>
+<DL>
+<DD>Light Color 1
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_2"><!-- --></A><H3>
+DK_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>DK_2</B></PRE>
+<DL>
+<DD>Dark Color 2
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_2"><!-- --></A><H3>
+LT_2</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>LT_2</B></PRE>
+<DL>
+<DD>Light Color 2
+<P>
+<DL>
+</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="values()"><!-- --></A><H3>
+values</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A>[] <B>values</B>()</PRE>
+<DL>
+<DD>Returns an array containing the constants of this enum type, in
+the order they are declared.  This method may be used to iterate
+over the constants as follows:
+<pre>
+for (STSchemeColorVal c : STSchemeColorVal.values())
+&nbsp;   System.out.println(c);
+</pre>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an array containing the constants of this enum type, in
+the order they are declared</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="valueOf(java.lang.String)"><!-- --></A><H3>
+valueOf</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>valueOf</B>(java.lang.String&nbsp;name)</PRE>
+<DL>
+<DD>Returns the enum constant of this type with the specified name.
+The string must match <I>exactly</I> an identifier used to declare an
+enum constant in this type.  (Extraneous whitespace characters are 
+not permitted.)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the enum constant to be returned.
+<DT><B>Returns:</B><DD>the enum constant with the specified name
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if this enum type has no constant
+with the specified name
+<DD><CODE>java.lang.NullPointerException</CODE> - if the argument is null</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="value()"><!-- --></A><H3>
+value</H3>
+<PRE>
+public java.lang.String <B>value</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="fromValue(java.lang.String)"><!-- --></A><H3>
+fromValue</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STSchemeColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STSchemeColorVal</A> <B>fromValue</B>(java.lang.String&nbsp;v)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STRectAlignment.html" title="enum in org.apache.poi.sl.draw.binding"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STShapeType.html" title="enum in org.apache.poi.sl.draw.binding"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/sl/draw/binding/STSchemeColorVal.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="STSchemeColorVal.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#enum_constant_summary">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#enum_constant_detail">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

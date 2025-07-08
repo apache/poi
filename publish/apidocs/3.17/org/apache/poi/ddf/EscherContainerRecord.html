@@ -1,0 +1,865 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+EscherContainerRecord (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="EscherContainerRecord (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherComplexProperty.html" title="class in org.apache.poi.ddf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherDggRecord.html" title="class in org.apache.poi.ddf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/ddf/EscherContainerRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EscherContainerRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ddf</FONT>
+<BR>
+Class EscherContainerRecord</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">org.apache.poi.ddf.EscherRecord</A>
+      <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ddf.EscherContainerRecord</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable, java.lang.Iterable&lt;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt;</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>EscherContainerRecord</B><DT>extends <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A><DT>implements java.lang.Iterable&lt;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt;</DL>
+</PRE>
+
+<P>
+Escher container records store other escher records as children.
+ The container records themselves never store any information beyond
+ the standard header used by all escher records.  This one record is
+ used to represent many different types of records.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#BSTORE_CONTAINER">BSTORE_CONTAINER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#DG_CONTAINER">DG_CONTAINER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#DGG_CONTAINER">DGG_CONTAINER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#SOLVER_CONTAINER">SOLVER_CONTAINER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#SP_CONTAINER">SP_CONTAINER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#SPGR_CONTAINER">SPGR_CONTAINER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#EscherContainerRecord()">EscherContainerRecord</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#addChildBefore(org.apache.poi.ddf.EscherRecord, int)">addChildBefore</A></B>(<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&nbsp;record,
+               int&nbsp;insertBeforeRecordId)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Add a child record before the record with given recordId</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#addChildRecord(org.apache.poi.ddf.EscherRecord)">addChildRecord</A></B>(<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&nbsp;record)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Append a child record</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#display(java.io.PrintWriter, int)">display</A></B>(java.io.PrintWriter&nbsp;w,
+        int&nbsp;indent)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The display methods allows escher variables to print the record names
+ according to their hierarchy.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)">fillFields</A></B>(byte[]&nbsp;data,
+           int&nbsp;pOffset,
+           <A HREF="../../../../org/apache/poi/ddf/EscherRecordFactory.html" title="interface in org.apache.poi.ddf">EscherRecordFactory</A>&nbsp;recordFactory)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The contract of this method is to deserialize an escher record including
+ it's children.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.lang.Object[][]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#getAttributeMap()">getAttributeMap</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For the purpose of providing toString() and toXml() a subclass can either override those methods
+ or provide a Object[][] array in the form { { "Attribute Name (Header)", value, "optional attribute", value }, ...</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#getChild(int)">getChild</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the indexed child record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="0" SUMMARY="">
+<TR ALIGN="right" VALIGN="">
+<TD NOWRAP><FONT SIZE="-1">
+<CODE>&lt;T extends <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt; 
+<BR>
+T</CODE></FONT></TD>
+</TR>
+</TABLE>
+</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#getChildById(short)">getChildById</A></B>(short&nbsp;recordId)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html" title="class in org.apache.poi.ddf">EscherContainerRecord</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#getChildContainers()">getChildContainers</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns all of our children which are also
+ EscherContainers (may be 0, 1, or vary rarely 2 or 3)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Iterator&lt;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#getChildIterator()">getChildIterator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.16 beta 1. use iterator() or loop over the container record instead,
+     e.g. "for (EscherRecord r : container) ..."</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#getChildRecords()">getChildRecords</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#getRecordName()">getRecordName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subclasses should return the short name for this escher record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#getRecordsById(short, java.util.List)">getRecordsById</A></B>(short&nbsp;recordId,
+               java.util.List&lt;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt;&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Recursively find records with the specified record ID</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#getRecordSize()">getRecordSize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subclasses should effeciently return the number of bytes required to
+ serialize the record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#hasChildOfType(short)">hasChildOfType</A></B>(short&nbsp;recordId)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Do any of our (top level) children have the given recordId?</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Iterator&lt;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#iterator()">iterator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#removeChildRecord(org.apache.poi.ddf.EscherRecord)">removeChildRecord</A></B>(<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&nbsp;toBeRemoved)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the given escher record from the child list</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)">serialize</A></B>(int&nbsp;offset,
+          byte[]&nbsp;data,
+          <A HREF="../../../../org/apache/poi/ddf/EscherSerializationListener.html" title="interface in org.apache.poi.ddf">EscherSerializationListener</A>&nbsp;listener)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serializes the record to an existing byte array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html#setChildRecords(java.util.List)">setChildRecords</A></B>(java.util.List&lt;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt;&nbsp;childRecords)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;replaces the internal child list with the contents of the supplied <tt>childRecords</tt></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.ddf.EscherRecord"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.ddf.<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#clone()">clone</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#fillFields(byte[], org.apache.poi.ddf.EscherRecordFactory)">fillFields</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getInstance()">getInstance</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getOptions()">getOptions</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordId()">getRecordId</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getVersion()">getVersion</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#isContainerRecord()">isContainerRecord</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#readHeader(byte[], int)">readHeader</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#readInstance(byte[], int)">readInstance</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize()">serialize</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize(int, byte[])">serialize</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setInstance(short)">setInstance</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setOptions(short)">setOptions</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setRecordId(short)">setRecordId</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setVersion(short)">setVersion</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#toString()">toString</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#toXml()">toXml</A>, <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#toXml(java.lang.String)">toXml</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DGG_CONTAINER"><!-- --></A><H3>
+DGG_CONTAINER</H3>
+<PRE>
+public static final short <B>DGG_CONTAINER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherContainerRecord.DGG_CONTAINER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BSTORE_CONTAINER"><!-- --></A><H3>
+BSTORE_CONTAINER</H3>
+<PRE>
+public static final short <B>BSTORE_CONTAINER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherContainerRecord.BSTORE_CONTAINER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DG_CONTAINER"><!-- --></A><H3>
+DG_CONTAINER</H3>
+<PRE>
+public static final short <B>DG_CONTAINER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherContainerRecord.DG_CONTAINER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SPGR_CONTAINER"><!-- --></A><H3>
+SPGR_CONTAINER</H3>
+<PRE>
+public static final short <B>SPGR_CONTAINER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherContainerRecord.SPGR_CONTAINER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SP_CONTAINER"><!-- --></A><H3>
+SP_CONTAINER</H3>
+<PRE>
+public static final short <B>SP_CONTAINER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherContainerRecord.SP_CONTAINER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SOLVER_CONTAINER"><!-- --></A><H3>
+SOLVER_CONTAINER</H3>
+<PRE>
+public static final short <B>SOLVER_CONTAINER</B></PRE>
+<DL>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../constant-values.html#org.apache.poi.ddf.EscherContainerRecord.SOLVER_CONTAINER">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="EscherContainerRecord()"><!-- --></A><H3>
+EscherContainerRecord</H3>
+<PRE>
+public <B>EscherContainerRecord</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)"><!-- --></A><H3>
+fillFields</H3>
+<PRE>
+public int <B>fillFields</B>(byte[]&nbsp;data,
+                      int&nbsp;pOffset,
+                      <A HREF="../../../../org/apache/poi/ddf/EscherRecordFactory.html" title="interface in org.apache.poi.ddf">EscherRecordFactory</A>&nbsp;recordFactory)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)">EscherRecord</A></CODE></B></DD>
+<DD>The contract of this method is to deserialize an escher record including
+ it's children.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#fillFields(byte[], int, org.apache.poi.ddf.EscherRecordFactory)">fillFields</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - The byte array containing the serialized escher
+                  records.<DD><CODE>pOffset</CODE> - The offset into the byte array.<DD><CODE>recordFactory</CODE> - A factory for creating new escher records.
+<DT><B>Returns:</B><DD>The number of bytes written.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)"><!-- --></A><H3>
+serialize</H3>
+<PRE>
+public int <B>serialize</B>(int&nbsp;offset,
+                     byte[]&nbsp;data,
+                     <A HREF="../../../../org/apache/poi/ddf/EscherSerializationListener.html" title="interface in org.apache.poi.ddf">EscherSerializationListener</A>&nbsp;listener)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)">EscherRecord</A></CODE></B></DD>
+<DD>Serializes the record to an existing byte array.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#serialize(int, byte[], org.apache.poi.ddf.EscherSerializationListener)">serialize</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>offset</CODE> - the offset within the byte array<DD><CODE>data</CODE> - the data array to serialize to<DD><CODE>listener</CODE> - a listener for begin and end serialization events.  This
+                  is useful because the serialization is
+                  hierarchical/recursive and sometimes you need to be able
+                  break into that.
+<DT><B>Returns:</B><DD>the number of bytes written.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRecordSize()"><!-- --></A><H3>
+getRecordSize</H3>
+<PRE>
+public int <B>getRecordSize</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordSize()">EscherRecord</A></CODE></B></DD>
+<DD>Subclasses should effeciently return the number of bytes required to
+ serialize the record.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordSize()">getRecordSize</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>number of bytes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hasChildOfType(short)"><!-- --></A><H3>
+hasChildOfType</H3>
+<PRE>
+public boolean <B>hasChildOfType</B>(short&nbsp;recordId)</PRE>
+<DL>
+<DD>Do any of our (top level) children have the given recordId?
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>recordId</CODE> - the recordId of the child
+<DT><B>Returns:</B><DD>true, if any child has the given recordId</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getChild(int)"><!-- --></A><H3>
+getChild</H3>
+<PRE>
+public <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A> <B>getChild</B>(int&nbsp;index)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getChild(int)">EscherRecord</A></CODE></B></DD>
+<DD>Returns the indexed child record.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getChild(int)">getChild</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>index</CODE> - the index of the child within the child records
+<DT><B>Returns:</B><DD>the indexed child record</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getChildRecords()"><!-- --></A><H3>
+getChildRecords</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt; <B>getChildRecords</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getChildRecords()">getChildRecords</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>a copy of the list of all the child records of the container.<DT><B>See Also:</B><DD><A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html" title="class in org.apache.poi.ddf"><CODE>EscherContainerRecord</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getChildIterator()"><!-- --></A><H3>
+getChildIterator</H3>
+<PRE>
+<FONT SIZE="-1"><A HREF="../../../../org/apache/poi/util/Removal.html" title="annotation in org.apache.poi.util">@Removal</A>(<A HREF="../../../../org/apache/poi/util/Removal.html#version()">version</A>="3.18")
+@Deprecated
+</FONT>public java.util.Iterator&lt;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt; <B>getChildIterator</B>()</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.16 beta 1. use iterator() or loop over the container record instead,
+     e.g. "for (EscherRecord r : container) ..."</I>
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an iterator over the child records</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="iterator()"><!-- --></A><H3>
+iterator</H3>
+<PRE>
+public java.util.Iterator&lt;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt; <B>iterator</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>iterator</CODE> in interface <CODE>java.lang.Iterable&lt;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt;</CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an iterator over the child records</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setChildRecords(java.util.List)"><!-- --></A><H3>
+setChildRecords</H3>
+<PRE>
+public void <B>setChildRecords</B>(java.util.List&lt;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt;&nbsp;childRecords)</PRE>
+<DL>
+<DD>replaces the internal child list with the contents of the supplied <tt>childRecords</tt>
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#setChildRecords(java.util.List)">setChildRecords</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>childRecords</CODE> - Not used in base implementation.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeChildRecord(org.apache.poi.ddf.EscherRecord)"><!-- --></A><H3>
+removeChildRecord</H3>
+<PRE>
+public boolean <B>removeChildRecord</B>(<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&nbsp;toBeRemoved)</PRE>
+<DL>
+<DD>Removes the given escher record from the child list
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>toBeRemoved</CODE> - the escher record to be removed
+<DT><B>Returns:</B><DD>true, if the record was found and removed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getChildContainers()"><!-- --></A><H3>
+getChildContainers</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../org/apache/poi/ddf/EscherContainerRecord.html" title="class in org.apache.poi.ddf">EscherContainerRecord</A>&gt; <B>getChildContainers</B>()</PRE>
+<DL>
+<DD>Returns all of our children which are also
+ EscherContainers (may be 0, 1, or vary rarely 2 or 3)
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>EscherContainer children</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRecordName()"><!-- --></A><H3>
+getRecordName</H3>
+<PRE>
+public java.lang.String <B>getRecordName</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordName()">EscherRecord</A></CODE></B></DD>
+<DD>Subclasses should return the short name for this escher record.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getRecordName()">getRecordName</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the short name for this escher record</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="display(java.io.PrintWriter, int)"><!-- --></A><H3>
+display</H3>
+<PRE>
+public void <B>display</B>(java.io.PrintWriter&nbsp;w,
+                    int&nbsp;indent)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#display(java.io.PrintWriter, int)">EscherRecord</A></CODE></B></DD>
+<DD>The display methods allows escher variables to print the record names
+ according to their hierarchy.
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#display(java.io.PrintWriter, int)">display</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>w</CODE> - The print writer to output to.<DD><CODE>indent</CODE> - The current indent level.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addChildRecord(org.apache.poi.ddf.EscherRecord)"><!-- --></A><H3>
+addChildRecord</H3>
+<PRE>
+public void <B>addChildRecord</B>(<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&nbsp;record)</PRE>
+<DL>
+<DD>Append a child record
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>record</CODE> - the record to be added</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addChildBefore(org.apache.poi.ddf.EscherRecord, int)"><!-- --></A><H3>
+addChildBefore</H3>
+<PRE>
+public void <B>addChildBefore</B>(<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&nbsp;record,
+                           int&nbsp;insertBeforeRecordId)</PRE>
+<DL>
+<DD>Add a child record before the record with given recordId
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>record</CODE> - the record to be added<DD><CODE>insertBeforeRecordId</CODE> - the recordId of the next sibling</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getChildById(short)"><!-- --></A><H3>
+getChildById</H3>
+<PRE>
+public &lt;T extends <A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt; T <B>getChildById</B>(short&nbsp;recordId)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRecordsById(short, java.util.List)"><!-- --></A><H3>
+getRecordsById</H3>
+<PRE>
+public void <B>getRecordsById</B>(short&nbsp;recordId,
+                           java.util.List&lt;<A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A>&gt;&nbsp;out)</PRE>
+<DL>
+<DD>Recursively find records with the specified record ID
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>recordId</CODE> - the recordId to be searched for<DD><CODE>out</CODE> - - list to store found records</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAttributeMap()"><!-- --></A><H3>
+getAttributeMap</H3>
+<PRE>
+protected java.lang.Object[][] <B>getAttributeMap</B>()</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getAttributeMap()">EscherRecord</A></CODE></B></DD>
+<DD>For the purpose of providing toString() and toXml() a subclass can either override those methods
+ or provide a Object[][] array in the form <code>{ { "Attribute Name (Header)", value, "optional attribute", value }, ... } </code>.<p>
+
+ Null values won't be printed.<p>
+
+ The attributes record, version, instance, options must not be returned.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html#getAttributeMap()">getAttributeMap</A></CODE> in class <CODE><A HREF="../../../../org/apache/poi/ddf/EscherRecord.html" title="class in org.apache.poi.ddf">EscherRecord</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the attribute map</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherComplexProperty.html" title="class in org.apache.poi.ddf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/ddf/EscherDggRecord.html" title="class in org.apache.poi.ddf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/ddf/EscherContainerRecord.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="EscherContainerRecord.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

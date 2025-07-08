@@ -1,0 +1,447 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+SectionIDMap (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="SectionIDMap (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hpsf/wellknown/SectionIDMap.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SectionIDMap.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hpsf.wellknown</FONT>
+<BR>
+Class SectionIDMap</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hpsf.wellknown.SectionIDMap</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE><FONT SIZE="-1"><A HREF="../../../../../org/apache/poi/util/Internal.html" title="annotation in org.apache.poi.util">@Internal</A>
+</FONT>public class <B>SectionIDMap</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+<p>Maps section format IDs to <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><CODE>PropertyIDMap</CODE></A>s. It is
+ initialized with two well-known section format IDs: those of the
+ <tt>\005SummaryInformation</tt> stream and the
+ <tt>\005DocumentSummaryInformation</tt> stream.</p>
+
+ <p>If you have a section format ID you can use it as a key to query
+ this map.  If you get a <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><CODE>PropertyIDMap</CODE></A> returned your section
+ is well-known and you can query the <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><CODE>PropertyIDMap</CODE></A> for PID
+ strings. If you get back <code>null</code> you are on your own.</p>
+
+ <p>This <CODE>Map</CODE> expects the byte arrays of section format IDs
+ as keys. A key maps to a <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><CODE>PropertyIDMap</CODE></A> describing the
+ property IDs in sections with the specified section format ID.</p>
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html#DOCUMENT_SUMMARY_INFORMATION_ID">DOCUMENT_SUMMARY_INFORMATION_ID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html#SUMMARY_INFORMATION_ID">SUMMARY_INFORMATION_ID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The SummaryInformation's section's format ID.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html#UNDEFINED">UNDEFINED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;A property without a known name is described by this string.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html#SectionIDMap()">SectionIDMap</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html#get(org.apache.poi.hpsf.ClassID)">get</A></B>(<A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A>&nbsp;sectionFormatID)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><CODE>PropertyIDMap</CODE></A> for a given section format
+ ID.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html" title="class in org.apache.poi.hpsf.wellknown">SectionIDMap</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html#getInstance()">getInstance</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the singleton instance of the default <A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><CODE>SectionIDMap</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html#getPIDString(org.apache.poi.hpsf.ClassID, long)">getPIDString</A></B>(<A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A>&nbsp;sectionFormatID,
+             long&nbsp;pid)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the property ID string that is associated with a
+ given property ID in a section format ID's namespace.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html#put(org.apache.poi.hpsf.ClassID, org.apache.poi.hpsf.wellknown.PropertyIDMap)">put</A></B>(<A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A>&nbsp;sectionFormatID,
+    <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A>&nbsp;propertyIDMap)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Associates a section format ID with a <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><CODE>PropertyIDMap</CODE></A>.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html#put(java.lang.String, org.apache.poi.hpsf.wellknown.PropertyIDMap)">put</A></B>(java.lang.String&nbsp;key,
+    <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A>&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Associates the string representation of a section format ID with a <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><CODE>PropertyIDMap</CODE></A></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SUMMARY_INFORMATION_ID"><!-- --></A><H3>
+SUMMARY_INFORMATION_ID</H3>
+<PRE>
+public static final <A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A> <B>SUMMARY_INFORMATION_ID</B></PRE>
+<DL>
+<DD><p>The SummaryInformation's section's format ID.</p>
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DOCUMENT_SUMMARY_INFORMATION_ID"><!-- --></A><H3>
+DOCUMENT_SUMMARY_INFORMATION_ID</H3>
+<PRE>
+public static final <A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A>[] <B>DOCUMENT_SUMMARY_INFORMATION_ID</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="UNDEFINED"><!-- --></A><H3>
+UNDEFINED</H3>
+<PRE>
+public static final java.lang.String <B>UNDEFINED</B></PRE>
+<DL>
+<DD>A property without a known name is described by this string.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.SectionIDMap.UNDEFINED">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SectionIDMap()"><!-- --></A><H3>
+SectionIDMap</H3>
+<PRE>
+public <B>SectionIDMap</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getInstance()"><!-- --></A><H3>
+getInstance</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html" title="class in org.apache.poi.hpsf.wellknown">SectionIDMap</A> <B>getInstance</B>()</PRE>
+<DL>
+<DD><p>Returns the singleton instance of the default <A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><CODE>SectionIDMap</CODE></A>.</p>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The instance value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPIDString(org.apache.poi.hpsf.ClassID, long)"><!-- --></A><H3>
+getPIDString</H3>
+<PRE>
+public static java.lang.String <B>getPIDString</B>(<A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A>&nbsp;sectionFormatID,
+                                            long&nbsp;pid)</PRE>
+<DL>
+<DD><p>Returns the property ID string that is associated with a
+ given property ID in a section format ID's namespace.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sectionFormatID</CODE> - Each section format ID has its own name
+ space of property ID strings and thus must be specified.<DD><CODE>pid</CODE> - The property ID
+<DT><B>Returns:</B><DD>The well-known property ID string associated with the
+ property ID <var>pid</var> in the name space spanned by <var>
+ sectionFormatID</var> . If the <var>pid</var>
+ /<var>sectionFormatID </var> combination is not well-known, the
+ string "[undefined]" is returned.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="get(org.apache.poi.hpsf.ClassID)"><!-- --></A><H3>
+get</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A> <B>get</B>(<A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A>&nbsp;sectionFormatID)</PRE>
+<DL>
+<DD><p>Returns the <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><CODE>PropertyIDMap</CODE></A> for a given section format
+ ID.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sectionFormatID</CODE> - the section format ID
+<DT><B>Returns:</B><DD>the property ID map</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="put(org.apache.poi.hpsf.ClassID, org.apache.poi.hpsf.wellknown.PropertyIDMap)"><!-- --></A><H3>
+put</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A> <B>put</B>(<A HREF="../../../../../org/apache/poi/hpsf/ClassID.html" title="class in org.apache.poi.hpsf">ClassID</A>&nbsp;sectionFormatID,
+                         <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A>&nbsp;propertyIDMap)</PRE>
+<DL>
+<DD>Associates a section format ID with a <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><CODE>PropertyIDMap</CODE></A>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sectionFormatID</CODE> - the section format ID<DD><CODE>propertyIDMap</CODE> - the property ID map
+<DT><B>Returns:</B><DD>as defined by <CODE>Map.put(K, V)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="put(java.lang.String, org.apache.poi.hpsf.wellknown.PropertyIDMap)"><!-- --></A><H3>
+put</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A> <B>put</B>(java.lang.String&nbsp;key,
+                            <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A>&nbsp;value)</PRE>
+<DL>
+<DD>Associates the string representation of a section format ID with a <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><CODE>PropertyIDMap</CODE></A>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>key</CODE> - the key of the PropertyIDMap<DD><CODE>value</CODE> - the PropertyIDMap itself
+<DT><B>Returns:</B><DD>the previous PropertyIDMap stored under this key, or <code>null</code> if there wasn't one</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hpsf/wellknown/SectionIDMap.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SectionIDMap.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

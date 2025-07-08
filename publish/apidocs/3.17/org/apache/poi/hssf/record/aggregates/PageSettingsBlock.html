@@ -1,0 +1,906 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+PageSettingsBlock (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="PageSettingsBlock (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/MergedCellsTable.html" title="class in org.apache.poi.hssf.record.aggregates"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PageSettingsBlock.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_org.apache.poi.hssf.record.aggregates.RecordAggregate">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.record.aggregates</FONT>
+<BR>
+Class PageSettingsBlock</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.RecordBase</A>
+      <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">org.apache.poi.hssf.record.aggregates.RecordAggregate</A>
+          <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.record.aggregates.PageSettingsBlock</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public final class <B>PageSettingsBlock</B><DT>extends <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">RecordAggregate</A></DL>
+</PRE>
+
+<P>
+Groups the page settings records for a worksheet.<p>
+
+ See OOO excelfileformat.pdf sec 4.4 'Page Settings Block'
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_org.apache.poi.hssf.record.aggregates.RecordAggregate"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from class org.apache.poi.hssf.record.aggregates.<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">RecordAggregate</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.PositionTrackingVisitor.html" title="class in org.apache.poi.hssf.record.aggregates">RecordAggregate.PositionTrackingVisitor</A>, <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.RecordVisitor.html" title="interface in org.apache.poi.hssf.record.aggregates">RecordAggregate.RecordVisitor</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#PageSettingsBlock()">PageSettingsBlock</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a PageSettingsBlock with default settings</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#PageSettingsBlock(org.apache.poi.hssf.model.RecordStream)">PageSettingsBlock</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/model/RecordStream.html" title="class in org.apache.poi.hssf.model">RecordStream</A>&nbsp;rs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#addLateHeaderFooter(org.apache.poi.hssf.record.HeaderFooterRecord)">addLateHeaderFooter</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/record/HeaderFooterRecord.html" title="class in org.apache.poi.hssf.record">HeaderFooterRecord</A>&nbsp;rec)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HEADERFOOTER is new in 2007.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#addLateRecords(org.apache.poi.hssf.model.RecordStream)">addLateRecords</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/model/RecordStream.html" title="class in org.apache.poi.hssf.model">RecordStream</A>&nbsp;rs)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This method reads PageSettingsBlock records from the supplied RecordStream until the first
+ non-PageSettingsBlock record is encountered.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#getColumnBreaks()">getColumnBreaks</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/FooterRecord.html" title="class in org.apache.poi.hssf.record">FooterRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#getFooter()">getFooter</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the FooterRecord.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/HCenterRecord.html" title="class in org.apache.poi.hssf.record">HCenterRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#getHCenter()">getHCenter</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/HeaderRecord.html" title="class in org.apache.poi.hssf.record">HeaderRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#getHeader()">getHeader</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the HeaderRecord.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#getMargin(short)">getMargin</A></B>(short&nbsp;margin)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the size of the margin in inches.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#getNumColumnBreaks()">getNumColumnBreaks</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#getNumRowBreaks()">getNumRowBreaks</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/PrintSetupRecord.html" title="class in org.apache.poi.hssf.record">PrintSetupRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#getPrintSetup()">getPrintSetup</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the PrintSetupRecord.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#getRowBreaks()">getRowBreaks</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/VCenterRecord.html" title="class in org.apache.poi.hssf.record">VCenterRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#getVCenter()">getVCenter</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#isColumnBroken(int)">isColumnBroken</A></B>(int&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Queries if the specified column has a page break</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#isComponentRecord(int)">isComponentRecord</A></B>(int&nbsp;sid)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#isRowBroken(int)">isRowBroken</A></B>(int&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Queries if the specified row has a page break</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#positionRecords(java.util.List)">positionRecords</A></B>(java.util.List&lt;<A HREF="../../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">RecordBase</A>&gt;&nbsp;sheetRecords)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Some apps can define multiple HeaderFooterRecord records for a sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#removeColumnBreak(int)">removeColumnBreak</A></B>(int&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes a page break at the indicated column</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#removeRowBreak(int)">removeRowBreak</A></B>(int&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes a page break at the indicated row</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#setColumnBreak(short, short, short)">setColumnBreak</A></B>(short&nbsp;column,
+               short&nbsp;fromRow,
+               short&nbsp;toRow)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets a page break at the indicated column</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#setFooter(org.apache.poi.hssf.record.FooterRecord)">setFooter</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/record/FooterRecord.html" title="class in org.apache.poi.hssf.record">FooterRecord</A>&nbsp;newFooter)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the FooterRecord.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#setHeader(org.apache.poi.hssf.record.HeaderRecord)">setHeader</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/record/HeaderRecord.html" title="class in org.apache.poi.hssf.record">HeaderRecord</A>&nbsp;newHeader)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the HeaderRecord.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#setMargin(short, double)">setMargin</A></B>(short&nbsp;margin,
+          double&nbsp;size)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the size of the margin in inches.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#setPrintSetup(org.apache.poi.hssf.record.PrintSetupRecord)">setPrintSetup</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/record/PrintSetupRecord.html" title="class in org.apache.poi.hssf.record">PrintSetupRecord</A>&nbsp;newPrintSetup)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the PrintSetupRecord.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#setRowBreak(int, short, short)">setRowBreak</A></B>(int&nbsp;row,
+            short&nbsp;fromCol,
+            short&nbsp;toCol)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets a page break at the indicated row</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#shiftColumnBreaks(short, short, short)">shiftColumnBreaks</A></B>(short&nbsp;startingCol,
+                  short&nbsp;endingCol,
+                  short&nbsp;count)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts the vertical page breaks for the indicated count</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#shiftRowBreaks(int, int, int)">shiftRowBreaks</A></B>(int&nbsp;startingRow,
+               int&nbsp;endingRow,
+               int&nbsp;count)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts the horizontal page breaks for the indicated count</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html#visitContainedRecords(org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor)">visitContainedRecords</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.RecordVisitor.html" title="interface in org.apache.poi.hssf.record.aggregates">RecordAggregate.RecordVisitor</A>&nbsp;rv)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visit each of the atomic BIFF records contained in this <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates"><CODE>RecordAggregate</CODE></A> in the order
+ that they should be written to file.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.aggregates.RecordAggregate"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.aggregates.<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">RecordAggregate</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html#getRecordSize()">getRecordSize</A>, <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html#serialize(int, byte[])">serialize</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="PageSettingsBlock(org.apache.poi.hssf.model.RecordStream)"><!-- --></A><H3>
+PageSettingsBlock</H3>
+<PRE>
+public <B>PageSettingsBlock</B>(<A HREF="../../../../../../org/apache/poi/hssf/model/RecordStream.html" title="class in org.apache.poi.hssf.model">RecordStream</A>&nbsp;rs)</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="PageSettingsBlock()"><!-- --></A><H3>
+PageSettingsBlock</H3>
+<PRE>
+public <B>PageSettingsBlock</B>()</PRE>
+<DL>
+<DD>Creates a PageSettingsBlock with default settings
+<P>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="isComponentRecord(int)"><!-- --></A><H3>
+isComponentRecord</H3>
+<PRE>
+public static boolean <B>isComponentRecord</B>(int&nbsp;sid)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sid</CODE> - the record sid
+<DT><B>Returns:</B><DD><code>true</code> if the specified Record sid is one belonging to the
+ 'Page Settings Block'.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColumnBreak(short, short, short)"><!-- --></A><H3>
+setColumnBreak</H3>
+<PRE>
+public void <B>setColumnBreak</B>(short&nbsp;column,
+                           short&nbsp;fromRow,
+                           short&nbsp;toRow)</PRE>
+<DL>
+<DD>Sets a page break at the indicated column
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - the column to add page breaks to<DD><CODE>fromRow</CODE> - the starting row<DD><CODE>toRow</CODE> - the ending row</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeColumnBreak(int)"><!-- --></A><H3>
+removeColumnBreak</H3>
+<PRE>
+public void <B>removeColumnBreak</B>(int&nbsp;column)</PRE>
+<DL>
+<DD>Removes a page break at the indicated column
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - the column to check for page breaks</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="visitContainedRecords(org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor)"><!-- --></A><H3>
+visitContainedRecords</H3>
+<PRE>
+public void <B>visitContainedRecords</B>(<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.RecordVisitor.html" title="interface in org.apache.poi.hssf.record.aggregates">RecordAggregate.RecordVisitor</A>&nbsp;rv)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html#visitContainedRecords(org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor)">RecordAggregate</A></CODE></B></DD>
+<DD>Visit each of the atomic BIFF records contained in this <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates"><CODE>RecordAggregate</CODE></A> in the order
+ that they should be written to file.  Implementors may or may not return the actual
+ <A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record"><CODE>Record</CODE></A>s being used to manage POI's internal implementation.  Callers should not
+ assume either way, and therefore only attempt to modify those <A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record"><CODE>Record</CODE></A>s after cloning
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html#visitContainedRecords(org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor)">visitContainedRecords</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">RecordAggregate</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHeader()"><!-- --></A><H3>
+getHeader</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/hssf/record/HeaderRecord.html" title="class in org.apache.poi.hssf.record">HeaderRecord</A> <B>getHeader</B>()</PRE>
+<DL>
+<DD>Returns the HeaderRecord.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>HeaderRecord for the sheet.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHeader(org.apache.poi.hssf.record.HeaderRecord)"><!-- --></A><H3>
+setHeader</H3>
+<PRE>
+public void <B>setHeader</B>(<A HREF="../../../../../../org/apache/poi/hssf/record/HeaderRecord.html" title="class in org.apache.poi.hssf.record">HeaderRecord</A>&nbsp;newHeader)</PRE>
+<DL>
+<DD>Sets the HeaderRecord.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>newHeader</CODE> - The new HeaderRecord for the sheet.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFooter()"><!-- --></A><H3>
+getFooter</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/hssf/record/FooterRecord.html" title="class in org.apache.poi.hssf.record">FooterRecord</A> <B>getFooter</B>()</PRE>
+<DL>
+<DD>Returns the FooterRecord.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>FooterRecord for the sheet.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFooter(org.apache.poi.hssf.record.FooterRecord)"><!-- --></A><H3>
+setFooter</H3>
+<PRE>
+public void <B>setFooter</B>(<A HREF="../../../../../../org/apache/poi/hssf/record/FooterRecord.html" title="class in org.apache.poi.hssf.record">FooterRecord</A>&nbsp;newFooter)</PRE>
+<DL>
+<DD>Sets the FooterRecord.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>newFooter</CODE> - The new FooterRecord for the sheet.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPrintSetup()"><!-- --></A><H3>
+getPrintSetup</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/hssf/record/PrintSetupRecord.html" title="class in org.apache.poi.hssf.record">PrintSetupRecord</A> <B>getPrintSetup</B>()</PRE>
+<DL>
+<DD>Returns the PrintSetupRecord.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>PrintSetupRecord for the sheet.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPrintSetup(org.apache.poi.hssf.record.PrintSetupRecord)"><!-- --></A><H3>
+setPrintSetup</H3>
+<PRE>
+public void <B>setPrintSetup</B>(<A HREF="../../../../../../org/apache/poi/hssf/record/PrintSetupRecord.html" title="class in org.apache.poi.hssf.record">PrintSetupRecord</A>&nbsp;newPrintSetup)</PRE>
+<DL>
+<DD>Sets the PrintSetupRecord.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>newPrintSetup</CODE> - The new PrintSetupRecord for the sheet.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMargin(short)"><!-- --></A><H3>
+getMargin</H3>
+<PRE>
+public double <B>getMargin</B>(short&nbsp;margin)</PRE>
+<DL>
+<DD>Gets the size of the margin in inches.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>margin</CODE> - which margin to get
+<DT><B>Returns:</B><DD>the size of the margin</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setMargin(short, double)"><!-- --></A><H3>
+setMargin</H3>
+<PRE>
+public void <B>setMargin</B>(short&nbsp;margin,
+                      double&nbsp;size)</PRE>
+<DL>
+<DD>Sets the size of the margin in inches.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>margin</CODE> - which margin to get<DD><CODE>size</CODE> - the size of the margin</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRowBreak(int, short, short)"><!-- --></A><H3>
+setRowBreak</H3>
+<PRE>
+public void <B>setRowBreak</B>(int&nbsp;row,
+                        short&nbsp;fromCol,
+                        short&nbsp;toCol)</PRE>
+<DL>
+<DD>Sets a page break at the indicated row
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - the row<DD><CODE>fromCol</CODE> - the starting column<DD><CODE>toCol</CODE> - the ending column</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeRowBreak(int)"><!-- --></A><H3>
+removeRowBreak</H3>
+<PRE>
+public void <B>removeRowBreak</B>(int&nbsp;row)</PRE>
+<DL>
+<DD>Removes a page break at the indicated row
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - the row</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isRowBroken(int)"><!-- --></A><H3>
+isRowBroken</H3>
+<PRE>
+public boolean <B>isRowBroken</B>(int&nbsp;row)</PRE>
+<DL>
+<DD>Queries if the specified row has a page break
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - the row to check for
+<DT><B>Returns:</B><DD>true if the specified row has a page break</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isColumnBroken(int)"><!-- --></A><H3>
+isColumnBroken</H3>
+<PRE>
+public boolean <B>isColumnBroken</B>(int&nbsp;column)</PRE>
+<DL>
+<DD>Queries if the specified column has a page break
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - the column to check for
+<DT><B>Returns:</B><DD><code>true</code> if the specified column has a page break</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="shiftRowBreaks(int, int, int)"><!-- --></A><H3>
+shiftRowBreaks</H3>
+<PRE>
+public void <B>shiftRowBreaks</B>(int&nbsp;startingRow,
+                           int&nbsp;endingRow,
+                           int&nbsp;count)</PRE>
+<DL>
+<DD>Shifts the horizontal page breaks for the indicated count
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>startingRow</CODE> - the starting row<DD><CODE>endingRow</CODE> - the ending row<DD><CODE>count</CODE> - the number of rows to shift by</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="shiftColumnBreaks(short, short, short)"><!-- --></A><H3>
+shiftColumnBreaks</H3>
+<PRE>
+public void <B>shiftColumnBreaks</B>(short&nbsp;startingCol,
+                              short&nbsp;endingCol,
+                              short&nbsp;count)</PRE>
+<DL>
+<DD>Shifts the vertical page breaks for the indicated count
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>startingCol</CODE> - the starting column<DD><CODE>endingCol</CODE> - the ending column<DD><CODE>count</CODE> - the number of columns to shift by</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRowBreaks()"><!-- --></A><H3>
+getRowBreaks</H3>
+<PRE>
+public int[] <B>getRowBreaks</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>all the horizontal page breaks, never <code>null</code></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNumRowBreaks()"><!-- --></A><H3>
+getNumRowBreaks</H3>
+<PRE>
+public int <B>getNumRowBreaks</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the number of row page breaks</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColumnBreaks()"><!-- --></A><H3>
+getColumnBreaks</H3>
+<PRE>
+public int[] <B>getColumnBreaks</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>all the column page breaks, never <code>null</code></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNumColumnBreaks()"><!-- --></A><H3>
+getNumColumnBreaks</H3>
+<PRE>
+public int <B>getNumColumnBreaks</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the number of column page breaks</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVCenter()"><!-- --></A><H3>
+getVCenter</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/hssf/record/VCenterRecord.html" title="class in org.apache.poi.hssf.record">VCenterRecord</A> <B>getVCenter</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHCenter()"><!-- --></A><H3>
+getHCenter</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/hssf/record/HCenterRecord.html" title="class in org.apache.poi.hssf.record">HCenterRecord</A> <B>getHCenter</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addLateHeaderFooter(org.apache.poi.hssf.record.HeaderFooterRecord)"><!-- --></A><H3>
+addLateHeaderFooter</H3>
+<PRE>
+public void <B>addLateHeaderFooter</B>(<A HREF="../../../../../../org/apache/poi/hssf/record/HeaderFooterRecord.html" title="class in org.apache.poi.hssf.record">HeaderFooterRecord</A>&nbsp;rec)</PRE>
+<DL>
+<DD>HEADERFOOTER is new in 2007.  Some apps seem to have scattered this record long after
+ the <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html" title="class in org.apache.poi.hssf.record.aggregates"><CODE>PageSettingsBlock</CODE></A> where it belongs.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rec</CODE> - the HeaderFooterRecord to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addLateRecords(org.apache.poi.hssf.model.RecordStream)"><!-- --></A><H3>
+addLateRecords</H3>
+<PRE>
+public void <B>addLateRecords</B>(<A HREF="../../../../../../org/apache/poi/hssf/model/RecordStream.html" title="class in org.apache.poi.hssf.model">RecordStream</A>&nbsp;rs)</PRE>
+<DL>
+<DD>This method reads PageSettingsBlock records from the supplied RecordStream until the first
+ non-PageSettingsBlock record is encountered.  As each record is read, it is incorporated
+ into this PageSettingsBlock.<p>
+ 
+ The latest Excel version seems to write the PageSettingsBlock uninterrupted. However there
+ are several examples (that Excel reads OK) where these records are not written together:
+ 
+ <ul>
+ <li><b>HEADER_FOOTER(0x089C) after WINDOW2</b> - This record is new in 2007.  Some apps
+ seem to have scattered this record long after the PageSettingsBlock where it belongs
+ test samples: SharedFormulaTest.xls, ex44921-21902.xls, ex42570-20305.xls</li>
+ <li><b>PLS, WSBOOL, PageSettingsBlock</b> - WSBOOL is not a PSB record.
+ This happens in the test sample file "NoGutsRecords.xls" and "WORKBOOK_in_capitals.xls"</li>
+ <li><b>Margins after DIMENSION</b> - All of PSB should be before DIMENSION. (Bug-47199)</li>
+ </ul>
+ 
+ These were probably written by other applications (or earlier versions of Excel). It was
+ decided to not write specific code for detecting each of these cases.  POI now tolerates
+ PageSettingsBlock records scattered all over the sheet record stream, and in any order, but
+ does not allow duplicates of any of those records.<p>
+
+ <b>Note</b> - when POI writes out this PageSettingsBlock, the records will always be written
+ in one consolidated block (in the standard ordering) regardless of how scattered the records
+ were when they were originally read.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rs</CODE> - the RecordStream to read from
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../../../org/apache/poi/util/RecordFormatException.html" title="class in org.apache.poi.util">RecordFormatException</A></CODE> - if any PSB record encountered has the same type (sid) as
+ a record that is already part of this PageSettingsBlock</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="positionRecords(java.util.List)"><!-- --></A><H3>
+positionRecords</H3>
+<PRE>
+public void <B>positionRecords</B>(java.util.List&lt;<A HREF="../../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">RecordBase</A>&gt;&nbsp;sheetRecords)</PRE>
+<DL>
+<DD>Some apps can define multiple HeaderFooterRecord records for a sheet.
+ When saving such a file Excel 2007 re-positions them according to the following rules:
+  - take a HeaderFooterRecord and read 16-byte GUID at offset 12. If it is zero,
+    it means the current sheet and the given HeaderFooterRecord belongs to this PageSettingsBlock
+  - If GUID is not zero then search in preceding CustomViewSettingsRecordAggregates.
+    Compare first 16 bytes of UserSViewBegin with the HeaderFooterRecord's GUID. If match,
+    then append the HeaderFooterRecord to this CustomViewSettingsRecordAggregates
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sheetRecords</CODE> - the list of sheet records read so far</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/MergedCellsTable.html" title="class in org.apache.poi.hssf.record.aggregates"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/hssf/record/aggregates/PageSettingsBlock.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PageSettingsBlock.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_org.apache.poi.hssf.record.aggregates.RecordAggregate">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

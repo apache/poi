@@ -1,0 +1,621 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>POI-HMEF - Java API To Access Microsoft Transport Neutral Encoding Files (TNEF)</title>
+<link type="text/css" href="../../skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="../../skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="../../skin/print.css" rel="stylesheet">
+<link type="text/css" href="../../skin/profile.css" rel="stylesheet">
+<script src="../../skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="../../skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="../../skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="../../images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="../../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="../../images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="../../images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li>
+<a class="unselected" href="../../index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="../../help/index.html">Help</a>
+</li>
+<li class="current">
+<a class="selected" href="../../components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="../../devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', '../../skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Component APIs</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../apidocs/index.html">Javadocs</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.3', '../../skin/')" id="menu_1.1.3Title" class="menutitle">Excel (HSSF/XSSF)</div>
+<div id="menu_1.1.3" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/spreadsheet/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/how-to.html">HOWTO</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/converting.html">HSSF to SS Converting</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/formula.html">Formula Support</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval.html">Formula Evaluation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval-devguide.html">Eval Dev Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/examples.html">Examples</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/use-case.html">Use Case</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/diagrams.html">Pictorial Docs</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/limitations.html">Limitations</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/user-defined-functions.html">User Defined Functions</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/excelant.html">ExcelAnt Tests</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/hacking-hssf.html">Hacking HSSF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/record-generator.html">Record Generator</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/chart.html">Charts</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.4', '../../skin/')" id="menu_1.1.4Title" class="menutitle">PowerPoint (HSLF/XSLF)</div>
+<div id="menu_1.1.4" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/slideshow/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/how-to-shapes.html">HSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/xslf-cookbook.html">XSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-wmf-emf-renderer.html">Render SL/WMF/EMF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-file-format.html">PPT File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.5', '../../skin/')" id="menu_1.1.5Title" class="menutitle">Word (HWPF/XWPF)</div>
+<div id="menu_1.1.5" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/document/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide.html">HWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide-xwpf.html">XWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/docoverview.html">HWPF Format</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/projectplan.html">HWPF Project plan</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hsmf/index.html">Outlook (HSMF)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/diagram/index.html">Visio (HDGF+XDGF)</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.8', '../../skin/')" id="menu_1.1.8Title" class="menutitle">Publisher (HPBF)</div>
+<div id="menu_1.1.8" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpbf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpbf/file-format.html">File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.9', '../../skin/')" id="menu_1.1.9Title" class="menutitle">OLE2 Filesystem (POIFS)</div>
+<div id="menu_1.1.9" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/poifs/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/embeded.html">Embedded Documents</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/fileformat.html">File System Documentation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/usecases.html">Use Cases</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/design.html">Design</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.10', '../../skin/')" id="menu_1.1.10Title" class="menutitle">OLE2 Document Props (HPSF)</div>
+<div id="menu_1.1.10" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpsf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/thumbnails.html">Thumbnails</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/internals.html">Internals</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/todo.html">To Do</a>
+</div>
+</div>
+<div class="menupage">
+<div class="menupagetitle">TNEF (HMEF) for winmail.dat</div>
+</div>
+<div class="menuitem">
+<a href="../../components/oxml4j/index.html">OpenXML4J (OOXML)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/logging.html">Logging framework</a>
+</div>
+<div class="menuitem">
+<a href="../../components/configuration.html">Configuration</a>
+</div>
+</div>
+<div id="credit">
+<hr>
+<a href="https://www.apache.org/events/current-event.html"><img border="0" title="Apache Event" alt="Apache Event - logo" src="https://www.apache.org/events/current-event-125x125.png" style="width: 125px;height: 125px;"></a>
+</div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="../../skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="../../images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="../../images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>POI-HMEF - Java API To Access Microsoft Transport Neutral Encoding Files (TNEF)</h1>
+<h3>Overview</h3>
+<div id="front-matter"></div>
+       
+<a name="Overview"></a>
+<h2 class="boxed">Overview</h2>
+<div class="section">
+<p>HMEF is the POI Project's pure Java implementation of Microsoft's
+            TNEF (Transport Neutral Encoding Format), aka winmail.dat,
+            which is used by Outlook and Exchange in some situations.</p>
+<p>Currently, HMEF provides a read-only api for accessing common
+            message and attachment attributes, including the message body
+            and attachment files. In addition, it's possible to have
+            read-only access to all of the underlying TNEF and MAPI
+            attributes of the message and attachments.</p>
+<p>HMEF also provides a command line tool for extracting out
+            the message body and attachment files from a TNEF (winmail.dat)
+            file.</p>
+<p>Write support, both for saving changes and for creating new
+            files, is currently unavailable. Anyone interested in working
+            on these areas is advised to read the
+            <a href="../../devel/guidelines.html">Contribution Guidelines</a> then
+            <a href="../../help/index.html">join the dev list</a>!</p>
+<div class="note">
+<div class="label">Note</div>
+<div class="content">
+            This code currently lives the
+            <a href="https://svn.apache.org/viewvc/poi/trunk/poi-scratchpad/">scratchpad area</a>
+            of the POI SVN repository. To use this component, ensure
+            you have the Scratchpad Jar on your classpath, or a dependency
+            defined on the <em>poi-scratchpad</em> artifact - the main POI
+            jar is not enough! See the
+            <a href="../../components/">POI Components Map</a>
+            for more details.
+			</div>
+</div>
+</div>
+
+       
+<a name="Using+HMEF+to+access+TNEF+%28winmail.dat%29+files"></a>
+<h2 class="boxed">Using HMEF to access TNEF (winmail.dat) files</h2>
+<div class="section">
+<a name="Easy+extraction+of+message+body+and+attachment+files"></a>
+<h3 class="boxed">Easy extraction of message body and attachment files</h3>
+<p>The class <em>org.apache.poi.hmef.extractor.HMEFContentsExtractor</em>
+             provides both command line and Java extraction. It allows the
+             saving of the message body (an RTF file), and all of the
+             attachment files, to a single directory as specified.</p>
+<p>From the command line, simply call the class specifying the
+             TNEF file to extract, and the directory to place the extracted
+             files into, eg:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">java -classpath poi-5.4.1.jar:poi-scratchpad-5.4.1.jar org.apache.poi.hmef.extractor.HMEFContentsExtractor winmail.dat /tmp/extracted/</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+<p>From Java, there are two method calls on the class, one to
+             extract the message body RTF to a file, and the other to extract
+             all the attachments to a directory. A typical use would be:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">public void extract(String winmailFilename, String directoryName) throws Exception {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   HMEFContentsExtractor ext = new HMEFContentsExtractor(new File(winmailFilename));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   File dir = new File(directoryName);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   File rtf = new File(dir, "message.rtf");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   if(! dir.exists()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">       throw new FileNotFoundException("Output directory " + dir.getName() + " not found");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   System.out.println("Extracting...");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   ext.extractMessageBody(rtf);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   ext.extractAttachments(dir);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   System.out.println("Extraction completed");</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">           </span>
+</div>
+</div>
+<a name="Attachment+attributes+and+contents"></a>
+<h3 class="boxed">Attachment attributes and contents</h3>
+<p>To get at your attachments, simply call the
+             <em>getAttachments()</em> method on a <em>HMEFMessage</em>
+             instance, and you'll receive a list of all the attachments.</p>
+<p>When you have a <em>org.apache.poi.hmef.Attachment</em> object,
+             there are several helper methods available. These will all
+             return the value of the appropriate underlying attachment
+             attributes, or null if for some reason the attribute isn't
+             present in your file.</p>
+<ul>
+            
+<li>
+<em>getFilename()</em> - returns the name of the attachment
+              file, possibly in 8.3 format</li>
+            
+<li>
+<em>getLongFilename()</em> - returns the full name of the
+              attachment file</li>
+            
+<li>
+<em>getExtension()</em> - returns the extension of the
+              attachment file, including the "."</li>
+            
+<li>
+<em>getModifiedDate()</em> - returns the date that the
+              attachment file was last edited on</li>
+            
+<li>
+<em>getContents()</em> - returns a byte array of the contents
+              of the attached file</li>
+            
+<li>
+<em>getRenderedMetaFile()</em> - returns a byte array of
+              a windows meta file representation of the attached file</li>
+           
+</ul>
+<a name="Message+attributes+and+message+body"></a>
+<h3 class="boxed">Message attributes and message body</h3>
+<p>A <em>org.apache.poi.hmef.HMEFMessage</em> instance is created
+             from an <em>InputStream</em> of the underlying TNEF (winmail.dat)
+             file.</p>
+<p>From a <em>HMEFMessage</em>, there are three main methods of
+            interest to call:</p>
+<ul>
+             
+<li>
+<em>getBody()</em> - returns a String containing the RTF
+               contents of the message body. </li>
+             
+<li>
+<em>getSubject()</em> - returns the message subject</li>
+             
+<li>
+<em>getAttachments()</em> - returns the list of
+               <em>Attachment</em> objects for the message</li>
+           
+</ul>
+<a name="Low+level+attribute+access"></a>
+<h3 class="boxed">Low level attribute access</h3>
+<p>Both Messages and Attachments contain two kinds of attributes.
+             These are <em>TNEFAttribute</em> and <em>MAPIAttribute</em>.</p>
+<p>TNEFAttribute is specific to TNEF files in terms of the
+             available types and properties. In general, Attachments have a
+             few more useful ones of these then Messages.</p>
+<p>MAPIAttributes hold standard MAPI properties and values, and
+             work in a similar way to <a href="../hsmf/">HSMF
+             (Outlook)</a> does. There are typically many of these on both
+             Messages and Attachments. <em>Note - see limitations</em>
+</p>
+<p>Both <em>HMEFMessage</em> and <em>Attachment</em> supports
+             support two different ways of getting to attributes of interest.
+             Firstly, they support list getters, to return all attributes
+             (either TNEF or MAPI). Secondly, they support specific getters by
+             TNEF or MAPI property.</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HMEFMessage msg = new HMEFMessage(new FileInputStream(file));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for(TNEFAttribute attr : msg.getMessageAttributes()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   System.out.println("TNEF : " + attr);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for(MAPIAttribute attr : msg.getMessageMAPIAttributes()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   System.out.println("MAPI : " + attr);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">System.out.println("Subject is " + msg.getMessageMAPIAttribute(MAPIProperty.CONVERSATION_TOPIC));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">for(Attachment attach : msg.getAttachments()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   for(TNEFAttribute attr : attach.getAttributes()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      System.out.println("A.TNEF : " + attr);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   for(MAPIAttribute attr : attach.getMAPIAttributes()) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      System.out.println("A.MAPI : " + attr);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   System.out.println("Filename is " + attach.getAttribute(TNEFProperty.ID_ATTACHTITLE));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">   System.out.println("Extension is " + attach.getMAPIAttribute(MAPIProperty.ATTACH_EXTENSION));</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">           </span>
+</div>
+</div>
+</div>
+
+       
+<a name="Investigating+a+TNEF+file"></a>
+<h2 class="boxed">Investigating a TNEF file</h2>
+<div class="section">
+<p>To get a feel for the contents of a file, and to track down
+			 where data of interest is stored, HMEF comes with
+			 <a href="https://svn.apache.org/repos/asf/poi/trunk/poi-scratchpad/src/main/java/org/apache/poi/hmef/dev/">HMEFDumper</a>
+			 to print out the contents of the file.</p>
+</div>
+
+       
+<a name="Limitations"></a>
+<h2 class="boxed">Limitations</h2>
+<div class="section">
+<p>HMEF is currently a work-in-progress, and not everything
+            works yet. The current limitations are:</p>
+<ul>
+            
+<li>Non-standard MAPI properties from the range 0x8000 to 0x8fff
+              may not be being quite correctly turned into attributes.
+              The values show up, but the name and type may not always
+              be correct.</li>
+            
+<li>All testing so far has been performed on a small number of
+              English documents. We think we're correctly turning bytes into
+              Java unicode strings, but we need a few non-English sample
+              files in the test suite to verify this!</li>
+            
+<li>There is no support for saving changes, nor for creating new
+              files</li>
+          
+</ul>
+</div>
+    
+<p align="right">
+<font size="-2">by&nbsp;Nick Burch</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="logos">
+<a href="https://validator.w3.org/check/referer"><img style="height: 31px; width: 88px;" title="Valid HTML 4.01!" alt="Valid HTML 4.01!" src="../../skin/images/valid-html401.png" class="logoImage"></a><a href="https://jigsaw.w3.org/css-validator/check/referer"><img style="height: 31px; width: 88px;" title="Valid CSS!" alt="Valid CSS!" src="../../skin/images/vcss.png" class="logoImage"></a>
+</div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0components/hmef/index.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

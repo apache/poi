@@ -1,0 +1,4182 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+HSSFSheet (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="HSSFSheet (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeTypes.html" title="interface in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheetConditionalFormatting.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFSheet.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFSheet.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.usermodel</FONT>
+<BR>
+Class HSSFSheet</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.usermodel.HSSFSheet</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Iterable&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&gt;, <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>HSSFSheet</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></DL>
+</PRE>
+
+<P>
+High level representation of a worksheet.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/model/InternalWorkbook.html" title="class in org.apache.poi.hssf.model">InternalWorkbook</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#_book">_book</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#_workbook">_workbook</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#INITIAL_CAPACITY">INITIAL_CAPACITY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used for compile-time optimization.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_org.apache.poi.ss.usermodel.Sheet"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface org.apache.poi.ss.usermodel.<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#BottomMargin">BottomMargin</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#FooterMargin">FooterMargin</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#HeaderMargin">HeaderMargin</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#LeftMargin">LeftMargin</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#PANE_LOWER_LEFT">PANE_LOWER_LEFT</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#PANE_LOWER_RIGHT">PANE_LOWER_RIGHT</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#PANE_UPPER_LEFT">PANE_UPPER_LEFT</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#PANE_UPPER_RIGHT">PANE_UPPER_RIGHT</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#RightMargin">RightMargin</A>, <A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#TopMargin">TopMargin</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#HSSFSheet(org.apache.poi.hssf.usermodel.HSSFWorkbook)">HSSFSheet</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates new HSSFSheet   - called by HSSFWorkbook to create a sheet from
+ scratch.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected </CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#HSSFSheet(org.apache.poi.hssf.usermodel.HSSFWorkbook, org.apache.poi.hssf.model.InternalSheet)">HSSFSheet</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook,
+          <A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html" title="class in org.apache.poi.hssf.model">InternalSheet</A>&nbsp;sheet)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates an HSSFSheet representing the given Sheet object.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#addMergedRegion(org.apache.poi.ss.util.CellRangeAddress)">addMergedRegion</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;region)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds a merged region of cells on a sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#addMergedRegionUnsafe(org.apache.poi.ss.util.CellRangeAddress)">addMergedRegionUnsafe</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;region)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adds a merged region of cells (hence those cells form one).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#addValidationData(org.apache.poi.ss.usermodel.DataValidation)">addValidationData</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.html" title="interface in org.apache.poi.ss.usermodel">DataValidation</A>&nbsp;dataValidation)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a data validation object</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#autoSizeColumn(int)">autoSizeColumn</A></B>(int&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adjusts the column width to fit the contents.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#autoSizeColumn(int, boolean)">autoSizeColumn</A></B>(int&nbsp;column,
+               boolean&nbsp;useMergedCells)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Adjusts the column width to fit the contents.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#createDrawingPatriarch()">createDrawingPatriarch</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates the top-level drawing patriarch.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#createFreezePane(int, int)">createFreezePane</A></B>(int&nbsp;colSplit,
+                 int&nbsp;rowSplit)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a split (freezepane).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#createFreezePane(int, int, int, int)">createFreezePane</A></B>(int&nbsp;colSplit,
+                 int&nbsp;rowSplit,
+                 int&nbsp;leftmostColumn,
+                 int&nbsp;topRow)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a split (freezepane).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html" title="class in org.apache.poi.hssf.usermodel">HSSFRow</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#createRow(int)">createRow</A></B>(int&nbsp;rownum)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new row within the sheet and return the high level representation</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#createSplitPane(int, int, int, int, int)">createSplitPane</A></B>(int&nbsp;xSplitPos,
+                int&nbsp;ySplitPos,
+                int&nbsp;leftmostColumn,
+                int&nbsp;topRow,
+                int&nbsp;activePane)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a split pane.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#dumpDrawingRecords(boolean, java.io.PrintWriter)">dumpDrawingRecords</A></B>(boolean&nbsp;fat,
+                   java.io.PrintWriter&nbsp;pw)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aggregates the drawing records and dumps the escher record hierarchy
+ to the standard output.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFComment.html" title="class in org.apache.poi.hssf.usermodel">HSSFComment</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#findCellComment(int, int)">findCellComment</A></B>(int&nbsp;row,
+                int&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getActiveCell()">getActiveCell</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return location of the active cell, e.g.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getAlternateExpression()">getAlternateExpression</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;whether alternate expression evaluation is on</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getAlternateFormula()">getAlternateFormula</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;whether alternative formula entry is on</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getAutobreaks()">getAutobreaks</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show automatic page breaks or not</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFComment.html" title="class in org.apache.poi.hssf.usermodel">HSSFComment</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getCellComment(org.apache.poi.ss.util.CellAddress)">getCellComment</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;ref)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns cell comment for the specified row and column</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Map&lt;<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>,<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFComment.html" title="class in org.apache.poi.hssf.usermodel">HSSFComment</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getCellComments()">getCellComments</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns all cell comments on this sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getColumnBreaks()">getColumnBreaks</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves all the vertical page breaks</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getColumnOutlineLevel(int)">getColumnOutlineLevel</A></B>(int&nbsp;columnIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the column outline level.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html" title="class in org.apache.poi.hssf.usermodel">HSSFCellStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getColumnStyle(int)">getColumnStyle</A></B>(int&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the HSSFCellStyle that applies to the given
+ (0 based) column, or null if no style has been
+ set for that column</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getColumnWidth(int)">getColumnWidth</A></B>(int&nbsp;columnIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the width (in units of 1/256th of a character width )</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getColumnWidthInPixels(int)">getColumnWidthInPixels</A></B>(int&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the width in pixel</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getDataValidationHelper()">getDataValidationHelper</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidation.html" title="class in org.apache.poi.hssf.usermodel">HSSFDataValidation</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getDataValidations()">getDataValidations</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the list of DataValidation in the sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getDefaultColumnWidth()">getDefaultColumnWidth</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the default column width for the sheet (if the columns do not define their own width) in
+ characters</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getDefaultRowHeight()">getDefaultRowHeight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the default row height for the sheet (if the rows do not define their own height) in
+ twips (1/20 of  a point)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getDefaultRowHeightInPoints()">getDefaultRowHeightInPoints</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the default row height for the sheet (if the rows do not define their own height) in
+ points.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getDialog()">getDialog</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether sheet is a dialog sheet or not</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getDisplayGuts()">getDisplayGuts</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether to display the guts or not</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html" title="class in org.apache.poi.hssf.record">EscherAggregate</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getDrawingEscherAggregate()">getDrawingEscherAggregate</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the agregate escher records for this sheet,
+ it there is one.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getDrawingPatriarch()">getDrawingPatriarch</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This will hold any graphics or charts for the sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getFirstRowNum()">getFirstRowNum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the first row on the sheet</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getFitToPage()">getFitToPage</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fit to page option is on</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFooter.html" title="class in org.apache.poi.hssf.usermodel">HSSFFooter</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getFooter()">getFooter</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the user model for the default document footer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getForceFormulaRecalculation()">getForceFormulaRecalculation</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether a record must be inserted or not at generation to indicate that
+ formula must be recalculated when workbook is opened.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHeader.html" title="class in org.apache.poi.hssf.usermodel">HSSFHeader</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getHeader()">getHeader</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the user model for the default document header.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getHorizontallyCenter()">getHorizontallyCenter</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Determine whether printed output for this sheet will be horizontally centered.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHyperlink.html" title="class in org.apache.poi.hssf.usermodel">HSSFHyperlink</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getHyperlink(org.apache.poi.ss.util.CellAddress)">getHyperlink</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;addr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get a Hyperlink in this sheet located in a cell specified by {code addr}</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHyperlink.html" title="class in org.apache.poi.hssf.usermodel">HSSFHyperlink</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getHyperlink(int, int)">getHyperlink</A></B>(int&nbsp;row,
+             int&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get a Hyperlink in this sheet anchored at row, column</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHyperlink.html" title="class in org.apache.poi.hssf.usermodel">HSSFHyperlink</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getHyperlinkList()">getHyperlinkList</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get a list of Hyperlinks in this sheet</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getLastRowNum()">getLastRowNum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the number last row on the sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getLeftCol()">getLeftCol</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The left col in the visible view when the sheet is
+ first viewed after opening it in a viewer</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getMargin(short)">getMargin</A></B>(short&nbsp;margin)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the size of the margin in inches.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getMergedRegion(int)">getMergedRegion</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the merged region at the specified index</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getMergedRegions()">getMergedRegions</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the list of merged regions.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getNumMergedRegions()">getNumMergedRegions</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;returns the number of merged regions</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getObjectProtect()">getObjectProtect</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Answer whether object protection is enabled or disabled</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/PaneInformation.html" title="class in org.apache.poi.ss.util">PaneInformation</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getPaneInformation()">getPaneInformation</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the information regarding the currently configured pane (split or freeze).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getPassword()">getPassword</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getPhysicalNumberOfRows()">getPhysicalNumberOfRows</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the number of physically defined rows (NOT the number of rows in the sheet)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPrintSetup.html" title="class in org.apache.poi.hssf.usermodel">HSSFPrintSetup</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getPrintSetup()">getPrintSetup</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the print setup object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getProtect()">getProtect</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Answer whether protection is enabled or disabled</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getRepeatingColumns()">getRepeatingColumns</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the repeating columns used when printing the sheet, as found in 
+ File-&gt;PageSetup-&gt;Sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getRepeatingRows()">getRepeatingRows</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the repeating rows used when printing the sheet, as found in 
+ File-&gt;PageSetup-&gt;Sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html" title="class in org.apache.poi.hssf.usermodel">HSSFRow</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getRow(int)">getRow</A></B>(int&nbsp;rowIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the logical row (not physical) 0-based.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getRowBreaks()">getRowBreaks</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves all the horizontal page breaks</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getRowSumsBelow()">getRowSumsBelow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get if row summaries appear below detail in the outline</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getRowSumsRight()">getRowSumsRight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get if col summaries appear right of the detail in the outline</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getScenarioProtect()">getScenarioProtect</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Answer whether scenario protection is enabled or disabled</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheetConditionalFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheetConditionalFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getSheetConditionalFormatting()">getSheetConditionalFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The 'Conditional Formatting' facet for this <tt>Sheet</tt></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getSheetName()">getSheetName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the name of this sheet</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getTopRow()">getTopRow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The top row in the visible view when the sheet is
+ first viewed after opening it in a viewer</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getVerticallyCenter()">getVerticallyCenter</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Determine whether printed output for this sheet will be vertically centered.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getWorkbook()">getWorkbook</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Return the parent workbook</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#groupColumn(int, int)">groupColumn</A></B>(int&nbsp;fromColumn,
+            int&nbsp;toColumn)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an outline for the provided column range.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#groupRow(int, int)">groupRow</A></B>(int&nbsp;fromRow,
+         int&nbsp;toRow)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tie a range of cell together so that they can be collapsed or expanded</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#insertChartRecords(java.util.List)">insertChartRecords</A></B>(java.util.List&lt;<A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A>&gt;&nbsp;records)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#isActive()">isActive</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#isColumnBroken(int)">isColumnBroken</A></B>(int&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Determines if there is a page break at the indicated column</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#isColumnHidden(int)">isColumnHidden</A></B>(int&nbsp;columnIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the hidden state for a given column.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#isDisplayFormulas()">isDisplayFormulas</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns if formulas are displayed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#isDisplayGridlines()">isDisplayGridlines</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns if gridlines are displayed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#isDisplayRowColHeadings()">isDisplayRowColHeadings</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns if RowColHeadings are displayed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#isDisplayZeros()">isDisplayZeros</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the flag indicating whether the window should show 0 (zero) in cells containing zero value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#isGridsPrinted()">isGridsPrinted</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get whether gridlines are printed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#isPrintGridlines()">isPrintGridlines</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns whether gridlines are printed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#isPrintRowAndColumnHeadings()">isPrintRowAndColumnHeadings</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns whether row and column headings are printed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#isRightToLeft()">isRightToLeft</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Whether the text is displayed in right-to-left mode in the window</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#isRowBroken(int)">isRowBroken</A></B>(int&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Determines if there is a page break at the indicated row</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#isSelected()">isSelected</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Note - this is not the same as whether the sheet is focused (isActive)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#iterator()">iterator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alias for <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#rowIterator()"><CODE>rowIterator()</CODE></A> to allow
+ foreach loops</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#preSerialize()">preSerialize</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;check whether the data of sheet can be serialized</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#protectSheet(java.lang.String)">protectSheet</A></B>(java.lang.String&nbsp;password)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the protection enabled as well as the password</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellRange.html" title="interface in org.apache.poi.ss.usermodel">CellRange</A>&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html" title="class in org.apache.poi.hssf.usermodel">HSSFCell</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#removeArrayFormula(org.apache.poi.ss.usermodel.Cell)">removeArrayFormula</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove a Array Formula from this sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#removeColumnBreak(int)">removeColumnBreak</A></B>(int&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes a page break at the indicated column</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#removeHyperlink(org.apache.poi.hssf.usermodel.HSSFHyperlink)">removeHyperlink</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHyperlink.html" title="class in org.apache.poi.hssf.usermodel">HSSFHyperlink</A>&nbsp;link)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove the underlying HyperlinkRecord from this sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#removeHyperlink(org.apache.poi.hssf.record.HyperlinkRecord)">removeHyperlink</A></B>(<A HREF="../../../../../org/apache/poi/hssf/record/HyperlinkRecord.html" title="class in org.apache.poi.hssf.record">HyperlinkRecord</A>&nbsp;link)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove the underlying HyperlinkRecord from this sheet</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#removeMergedRegion(int)">removeMergedRegion</A></B>(int&nbsp;index)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;removes a merged region of cells (hence letting them free)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#removeMergedRegions(java.util.Collection)">removeMergedRegions</A></B>(java.util.Collection&lt;java.lang.Integer&gt;&nbsp;indices)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes a number of merged regions of cells (hence letting them free)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#removeRow(org.apache.poi.ss.usermodel.Row)">removeRow</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove a row from this sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#removeRowBreak(int)">removeRowBreak</A></B>(int&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the page break at the indicated row</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#rowIterator()">rowIterator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an iterator of the physical rows</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setActive(boolean)">setActive</A></B>(boolean&nbsp;sel)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets whether sheet is selected.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setActiveCell(org.apache.poi.ss.util.CellAddress)">setActiveCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;address)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets location of the active cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setAlternativeExpression(boolean)">setAlternativeExpression</A></B>(boolean&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;whether alternate expression evaluation is on</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setAlternativeFormula(boolean)">setAlternativeFormula</A></B>(boolean&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;whether alternative formula entry is on</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/CellRange.html" title="interface in org.apache.poi.ss.usermodel">CellRange</A>&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html" title="class in org.apache.poi.hssf.usermodel">HSSFCell</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setArrayFormula(java.lang.String, org.apache.poi.ss.util.CellRangeAddress)">setArrayFormula</A></B>(java.lang.String&nbsp;formula,
+                <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;range)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets array formula to specified region for result.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setAutobreaks(boolean)">setAutobreaks</A></B>(boolean&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;show automatic page breaks or not</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFAutoFilter.html" title="class in org.apache.poi.hssf.usermodel">HSSFAutoFilter</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setAutoFilter(org.apache.poi.ss.util.CellRangeAddress)">setAutoFilter</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;range)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Enable filtering for a range of cells</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setColumnBreak(int)">setColumnBreak</A></B>(int&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets a page break at the indicated column.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setColumnGroupCollapsed(int, boolean)">setColumnGroupCollapsed</A></B>(int&nbsp;columnNumber,
+                        boolean&nbsp;collapsed)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Expands or collapses a column group.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setColumnHidden(int, boolean)">setColumnHidden</A></B>(int&nbsp;columnIndex,
+                boolean&nbsp;hidden)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Get the visibility state for a given column.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setColumnWidth(int, int)">setColumnWidth</A></B>(int&nbsp;columnIndex,
+               int&nbsp;width)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set the width (in units of 1/256th of a character width)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setDefaultColumnStyle(int, org.apache.poi.ss.usermodel.CellStyle)">setDefaultColumnStyle</A></B>(int&nbsp;column,
+                      <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A>&nbsp;style)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the default column style for a given column.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setDefaultColumnWidth(int)">setDefaultColumnWidth</A></B>(int&nbsp;width)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the default column width for the sheet (if the columns do not define their own width) in
+ characters</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setDefaultRowHeight(short)">setDefaultRowHeight</A></B>(short&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the default row height for the sheet (if the rows do not define their own height) in
+ twips (1/20 of  a point)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setDefaultRowHeightInPoints(float)">setDefaultRowHeightInPoints</A></B>(float&nbsp;height)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the default row height for the sheet (if the rows do not define their own height) in
+ points</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setDialog(boolean)">setDialog</A></B>(boolean&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether sheet is a dialog sheet or not</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setDisplayFormulas(boolean)">setDisplayFormulas</A></B>(boolean&nbsp;show)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets whether the formulas are shown in a viewer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setDisplayGridlines(boolean)">setDisplayGridlines</A></B>(boolean&nbsp;show)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets whether the gridlines are shown in a viewer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setDisplayGuts(boolean)">setDisplayGuts</A></B>(boolean&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether to display the guts or not</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setDisplayRowColHeadings(boolean)">setDisplayRowColHeadings</A></B>(boolean&nbsp;show)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets whether the RowColHeadings are shown in a viewer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setDisplayZeros(boolean)">setDisplayZeros</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set whether the window should show 0 (zero) in cells containing zero value.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setFitToPage(boolean)">setFitToPage</A></B>(boolean&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;fit to page option is on</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setForceFormulaRecalculation(boolean)">setForceFormulaRecalculation</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Control if Excel should be asked to recalculate all formulas on this sheet
+ when the workbook is opened.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setGridsPrinted(boolean)">setGridsPrinted</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set whether gridlines printed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setHorizontallyCenter(boolean)">setHorizontallyCenter</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;determines whether the output is horizontally centered on the page.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setMargin(short, double)">setMargin</A></B>(short&nbsp;margin,
+          double&nbsp;size)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the size of the margin in inches.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setPrintGridlines(boolean)">setPrintGridlines</A></B>(boolean&nbsp;show)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Turns on or off the printing of gridlines.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setPrintRowAndColumnHeadings(boolean)">setPrintRowAndColumnHeadings</A></B>(boolean&nbsp;show)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Turns on or off the printing of row and column headings.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setRepeatingColumns(org.apache.poi.ss.util.CellRangeAddress)">setRepeatingColumns</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;columnRangeRef)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the repeating columns used when printing the sheet, as found in 
+ File-&gt;PageSetup-&gt;Sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setRepeatingRows(org.apache.poi.ss.util.CellRangeAddress)">setRepeatingRows</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;rowRangeRef)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the repeating rows used when printing the sheet, as found in 
+ File-&gt;PageSetup-&gt;Sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setRightToLeft(boolean)">setRightToLeft</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets whether the worksheet is displayed from right to left instead of from left to right.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setRowBreak(int)">setRowBreak</A></B>(int&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets a page break at the indicated row
+ Breaks occur above the specified row and left of the specified column inclusive.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setRowGroupCollapsed(int, boolean)">setRowGroupCollapsed</A></B>(int&nbsp;rowIndex,
+                     boolean&nbsp;collapse)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Set view state of a grouped range of rows</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setRowSumsBelow(boolean)">setRowSumsBelow</A></B>(boolean&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set if row summaries appear below detail in the outline</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setRowSumsRight(boolean)">setRowSumsRight</A></B>(boolean&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set if col summaries appear right of the detail in the outline</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setSelected(boolean)">setSelected</A></B>(boolean&nbsp;sel)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets whether sheet is selected.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setVerticallyCenter(boolean)">setVerticallyCenter</A></B>(boolean&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;determines whether the output is vertically centered on the page.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setZoom(int)">setZoom</A></B>(int&nbsp;scale)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Window zoom magnification for current view representing percent values.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setZoom(int, int)">setZoom</A></B>(int&nbsp;numerator,
+        int&nbsp;denominator)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the zoom magnification for the sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#shiftMerged(int, int, int, boolean)">shiftMerged</A></B>(int&nbsp;startRow,
+            int&nbsp;endRow,
+            int&nbsp;n,
+            boolean&nbsp;isRow)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/helpers/RowShifter.html#shiftMergedRegions(int, int, int)"><CODE>RowShifter.shiftMergedRegions(int, int, int)</CODE></A>.</I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#shiftRows(int, int, int)">shiftRows</A></B>(int&nbsp;startRow,
+          int&nbsp;endRow,
+          int&nbsp;n)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts rows between startRow and endRow n number of rows.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#shiftRows(int, int, int, boolean, boolean)">shiftRows</A></B>(int&nbsp;startRow,
+          int&nbsp;endRow,
+          int&nbsp;n,
+          boolean&nbsp;copyRowHeight,
+          boolean&nbsp;resetOriginalRowHeight)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts rows between startRow and endRow n number of rows.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#shiftRows(int, int, int, boolean, boolean, boolean)">shiftRows</A></B>(int&nbsp;startRow,
+          int&nbsp;endRow,
+          int&nbsp;n,
+          boolean&nbsp;copyRowHeight,
+          boolean&nbsp;resetOriginalRowHeight,
+          boolean&nbsp;moveComments)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Shifts rows between startRow and endRow n number of rows.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#showInPane(int, int)">showInPane</A></B>(int&nbsp;toprow,
+           int&nbsp;leftcol)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets desktop window pane display area, when the
+ file is first opened in a viewer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#ungroupColumn(int, int)">ungroupColumn</A></B>(int&nbsp;fromColumn,
+              int&nbsp;toColumn)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ungroup a range of columns that were previously grouped</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#ungroupRow(int, int)">ungroupRow</A></B>(int&nbsp;fromRow,
+           int&nbsp;toRow)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ungroup a range of rows that were previously grouped</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#validateColumn(int)">validateColumn</A></B>(int&nbsp;column)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Runs a bounds check for column numbers</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#validateMergedRegions()">validateMergedRegions</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Verify that merged regions do not intersect multi-cell array formulas and
+ no merged regions intersect another merged region in this sheet.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#validateRow(int)">validateRow</A></B>(int&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Runs a bounds check for row numbers</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="INITIAL_CAPACITY"><!-- --></A><H3>
+INITIAL_CAPACITY</H3>
+<PRE>
+public static final int <B>INITIAL_CAPACITY</B></PRE>
+<DL>
+<DD>Used for compile-time optimization.  This is the initial size for the collection of
+ rows.  It is currently set to 20.  If you generate larger sheets you may benefit
+ by setting this to a higher number and recompiling a custom edition of HSSFSheet.
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="_book"><!-- --></A><H3>
+_book</H3>
+<PRE>
+protected final <A HREF="../../../../../org/apache/poi/hssf/model/InternalWorkbook.html" title="class in org.apache.poi.hssf.model">InternalWorkbook</A> <B>_book</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="_workbook"><!-- --></A><H3>
+_workbook</H3>
+<PRE>
+protected final <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A> <B>_workbook</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="HSSFSheet(org.apache.poi.hssf.usermodel.HSSFWorkbook)"><!-- --></A><H3>
+HSSFSheet</H3>
+<PRE>
+protected <B>HSSFSheet</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook)</PRE>
+<DL>
+<DD>Creates new HSSFSheet   - called by HSSFWorkbook to create a sheet from
+ scratch.  You should not be calling this from application code (its protected anyhow).
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>workbook</CODE> - - The HSSF Workbook object associated with the sheet.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html#createSheet()"><CODE>HSSFWorkbook.createSheet()</CODE></A></DL>
+</DL>
+<HR>
+
+<A NAME="HSSFSheet(org.apache.poi.hssf.usermodel.HSSFWorkbook, org.apache.poi.hssf.model.InternalSheet)"><!-- --></A><H3>
+HSSFSheet</H3>
+<PRE>
+protected <B>HSSFSheet</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A>&nbsp;workbook,
+                    <A HREF="../../../../../org/apache/poi/hssf/model/InternalSheet.html" title="class in org.apache.poi.hssf.model">InternalSheet</A>&nbsp;sheet)</PRE>
+<DL>
+<DD>Creates an HSSFSheet representing the given Sheet object.  Should only be
+ called by HSSFWorkbook when reading in an exisiting file.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>workbook</CODE> - - The HSSF Workbook object associated with the sheet.<DD><CODE>sheet</CODE> - - lowlevel Sheet object this sheet will represent<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html#createSheet()"><CODE>HSSFWorkbook.createSheet()</CODE></A></DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="preSerialize()"><!-- --></A><H3>
+preSerialize</H3>
+<PRE>
+protected void <B>preSerialize</B>()</PRE>
+<DL>
+<DD>check whether the data of sheet can be serialized
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getWorkbook()"><!-- --></A><H3>
+getWorkbook</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFWorkbook.html" title="class in org.apache.poi.hssf.usermodel">HSSFWorkbook</A> <B>getWorkbook</B>()</PRE>
+<DL>
+<DD>Return the parent workbook
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getWorkbook()">getWorkbook</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the parent workbook</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createRow(int)"><!-- --></A><H3>
+createRow</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html" title="class in org.apache.poi.hssf.usermodel">HSSFRow</A> <B>createRow</B>(int&nbsp;rownum)</PRE>
+<DL>
+<DD>Create a new row within the sheet and return the high level representation
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#createRow(int)">createRow</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rownum</CODE> - row number
+<DT><B>Returns:</B><DD>High level HSSFRow object representing a row in the sheet<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html" title="class in org.apache.poi.hssf.usermodel"><CODE>HSSFRow</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#removeRow(org.apache.poi.ss.usermodel.Row)"><CODE>removeRow(org.apache.poi.ss.usermodel.Row)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeRow(org.apache.poi.ss.usermodel.Row)"><!-- --></A><H3>
+removeRow</H3>
+<PRE>
+public void <B>removeRow</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&nbsp;row)</PRE>
+<DL>
+<DD>Remove a row from this sheet.  All cells contained in the row are removed as well
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#removeRow(org.apache.poi.ss.usermodel.Row)">removeRow</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - representing a row to remove.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRow(int)"><!-- --></A><H3>
+getRow</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFRow.html" title="class in org.apache.poi.hssf.usermodel">HSSFRow</A> <B>getRow</B>(int&nbsp;rowIndex)</PRE>
+<DL>
+<DD>Returns the logical row (not physical) 0-based.  If you ask for a row that is not
+ defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getRow(int)">getRow</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rowIndex</CODE> - row to get
+<DT><B>Returns:</B><DD>HSSFRow representing the row number or null if its not defined on the sheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPhysicalNumberOfRows()"><!-- --></A><H3>
+getPhysicalNumberOfRows</H3>
+<PRE>
+public int <B>getPhysicalNumberOfRows</B>()</PRE>
+<DL>
+<DD>Returns the number of physically defined rows (NOT the number of rows in the sheet)
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getPhysicalNumberOfRows()">getPhysicalNumberOfRows</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the number of physically defined rows in this sheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFirstRowNum()"><!-- --></A><H3>
+getFirstRowNum</H3>
+<PRE>
+public int <B>getFirstRowNum</B>()</PRE>
+<DL>
+<DD>Gets the first row on the sheet
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getFirstRowNum()">getFirstRowNum</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the number of the first logical row on the sheet, zero based</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastRowNum()"><!-- --></A><H3>
+getLastRowNum</H3>
+<PRE>
+public int <B>getLastRowNum</B>()</PRE>
+<DL>
+<DD>Gets the number last row on the sheet.
+ Owing to idiosyncrasies in the excel file
+ format, if the result of calling this method
+ is zero, you can't tell if that means there
+ are zero rows on the sheet, or one at
+ position zero. For that case, additionally
+ call <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#getPhysicalNumberOfRows()"><CODE>getPhysicalNumberOfRows()</CODE></A> to
+ tell if there is a row at position zero
+ or not.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getLastRowNum()">getLastRowNum</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the number of the last row contained in this sheet, zero based.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataValidations()"><!-- --></A><H3>
+getDataValidations</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidation.html" title="class in org.apache.poi.hssf.usermodel">HSSFDataValidation</A>&gt; <B>getDataValidations</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getDataValidations()">Sheet</A></CODE></B></DD>
+<DD>Returns the list of DataValidation in the sheet.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getDataValidations()">getDataValidations</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>list of DataValidation in the sheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addValidationData(org.apache.poi.ss.usermodel.DataValidation)"><!-- --></A><H3>
+addValidationData</H3>
+<PRE>
+public void <B>addValidationData</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.html" title="interface in org.apache.poi.ss.usermodel">DataValidation</A>&nbsp;dataValidation)</PRE>
+<DL>
+<DD>Creates a data validation object
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#addValidationData(org.apache.poi.ss.usermodel.DataValidation)">addValidationData</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>dataValidation</CODE> - The Data validation object settings</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColumnHidden(int, boolean)"><!-- --></A><H3>
+setColumnHidden</H3>
+<PRE>
+public void <B>setColumnHidden</B>(int&nbsp;columnIndex,
+                            boolean&nbsp;hidden)</PRE>
+<DL>
+<DD>Get the visibility state for a given column.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setColumnHidden(int, boolean)">setColumnHidden</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>columnIndex</CODE> - - the column to get (0-based)<DD><CODE>hidden</CODE> - - the visiblity state of the column</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isColumnHidden(int)"><!-- --></A><H3>
+isColumnHidden</H3>
+<PRE>
+public boolean <B>isColumnHidden</B>(int&nbsp;columnIndex)</PRE>
+<DL>
+<DD>Get the hidden state for a given column.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#isColumnHidden(int)">isColumnHidden</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>columnIndex</CODE> - - the column to set (0-based)
+<DT><B>Returns:</B><DD>hidden - <code>false</code> if the column is visible</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColumnWidth(int, int)"><!-- --></A><H3>
+setColumnWidth</H3>
+<PRE>
+public void <B>setColumnWidth</B>(int&nbsp;columnIndex,
+                           int&nbsp;width)</PRE>
+<DL>
+<DD>Set the width (in units of 1/256th of a character width)<p>
+ 
+ The maximum column width for an individual cell is 255 characters.
+ This value represents the number of characters that can be displayed
+ in a cell that is formatted with the standard font (first font in the workbook).<p>
+ 
+ Character width is defined as the maximum digit width
+ of the numbers <code>0, 1, 2, ... 9</code> as rendered
+ using the default font (first font in the workbook).<p>
+ 
+ Unless you are using a very special font, the default character is '0' (zero),
+ this is true for Arial (default font font in HSSF) and Calibri (default font in XSSF)<p>
+ 
+ Please note, that the width set by this method includes 4 pixels of margin padding (two on each side),
+ plus 1 pixel padding for the gridlines (Section 3.3.1.12 of the OOXML spec).
+ This results is a slightly less value of visible characters than passed to this method (approx. 1/2 of a character).<p>
+ 
+ To compute the actual number of visible characters,
+ Excel uses the following formula (Section 3.3.1.12 of the OOXML spec):<p>
+ 
+ <code>
+ width = Truncate([{Number of Visible Characters} *
+ {Maximum Digit Width} + {5 pixel padding}]/{Maximum Digit Width}*256)/256
+ </code>
+ <p>Using the Calibri font as an example, the maximum digit width of 11 point font size is 7 pixels (at 96 dpi).
+ If you set a column width to be eight characters wide, e.g. <code>setColumnWidth(columnIndex, 8*256)</code>,
+ then the actual value of visible characters (the value shown in Excel) is derived from the following equation:
+ <code>
+ Truncate([numChars*7+5]/7*256)/256 = 8;
+ </code>
+ <p>
+ which gives <code>7.29</code>.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setColumnWidth(int, int)">setColumnWidth</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>columnIndex</CODE> - - the column to set (0-based)<DD><CODE>width</CODE> - - the width in units of 1/256th of a character width
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if width &gt; 255*256 (the maximum column width in Excel is 255 characters)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColumnWidth(int)"><!-- --></A><H3>
+getColumnWidth</H3>
+<PRE>
+public int <B>getColumnWidth</B>(int&nbsp;columnIndex)</PRE>
+<DL>
+<DD>get the width (in units of 1/256th of a character width )
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getColumnWidth(int)">getColumnWidth</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>columnIndex</CODE> - - the column to set (0-based)
+<DT><B>Returns:</B><DD>width - the width in units of 1/256th of a character width</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColumnWidthInPixels(int)"><!-- --></A><H3>
+getColumnWidthInPixels</H3>
+<PRE>
+public float <B>getColumnWidthInPixels</B>(int&nbsp;column)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getColumnWidthInPixels(int)">Sheet</A></CODE></B></DD>
+<DD>get the width in pixel
+ 
+ <p>
+ Please note, that this method works correctly only for workbooks
+ with the default font size (Arial 10pt for .xls and Calibri 11pt for .xlsx).
+ If the default font is changed the column width can be streched
+ </p>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getColumnWidthInPixels(int)">getColumnWidthInPixels</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - - the column to set (0-based)
+<DT><B>Returns:</B><DD>width in pixels</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDefaultColumnWidth()"><!-- --></A><H3>
+getDefaultColumnWidth</H3>
+<PRE>
+public int <B>getDefaultColumnWidth</B>()</PRE>
+<DL>
+<DD>get the default column width for the sheet (if the columns do not define their own width) in
+ characters
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getDefaultColumnWidth()">getDefaultColumnWidth</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>default column width</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDefaultColumnWidth(int)"><!-- --></A><H3>
+setDefaultColumnWidth</H3>
+<PRE>
+public void <B>setDefaultColumnWidth</B>(int&nbsp;width)</PRE>
+<DL>
+<DD>set the default column width for the sheet (if the columns do not define their own width) in
+ characters
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setDefaultColumnWidth(int)">setDefaultColumnWidth</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>width</CODE> - default column width</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDefaultRowHeight()"><!-- --></A><H3>
+getDefaultRowHeight</H3>
+<PRE>
+public short <B>getDefaultRowHeight</B>()</PRE>
+<DL>
+<DD>get the default row height for the sheet (if the rows do not define their own height) in
+ twips (1/20 of  a point)
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getDefaultRowHeight()">getDefaultRowHeight</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>default row height</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDefaultRowHeightInPoints()"><!-- --></A><H3>
+getDefaultRowHeightInPoints</H3>
+<PRE>
+public float <B>getDefaultRowHeightInPoints</B>()</PRE>
+<DL>
+<DD>get the default row height for the sheet (if the rows do not define their own height) in
+ points.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getDefaultRowHeightInPoints()">getDefaultRowHeightInPoints</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>default row height in points</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDefaultRowHeight(short)"><!-- --></A><H3>
+setDefaultRowHeight</H3>
+<PRE>
+public void <B>setDefaultRowHeight</B>(short&nbsp;height)</PRE>
+<DL>
+<DD>set the default row height for the sheet (if the rows do not define their own height) in
+ twips (1/20 of  a point)
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setDefaultRowHeight(short)">setDefaultRowHeight</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>height</CODE> - default row height</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDefaultRowHeightInPoints(float)"><!-- --></A><H3>
+setDefaultRowHeightInPoints</H3>
+<PRE>
+public void <B>setDefaultRowHeightInPoints</B>(float&nbsp;height)</PRE>
+<DL>
+<DD>set the default row height for the sheet (if the rows do not define their own height) in
+ points
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setDefaultRowHeightInPoints(float)">setDefaultRowHeightInPoints</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>height</CODE> - default row height</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColumnStyle(int)"><!-- --></A><H3>
+getColumnStyle</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCellStyle.html" title="class in org.apache.poi.hssf.usermodel">HSSFCellStyle</A> <B>getColumnStyle</B>(int&nbsp;column)</PRE>
+<DL>
+<DD>Returns the HSSFCellStyle that applies to the given
+ (0 based) column, or null if no style has been
+ set for that column
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getColumnStyle(int)">getColumnStyle</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isGridsPrinted()"><!-- --></A><H3>
+isGridsPrinted</H3>
+<PRE>
+public boolean <B>isGridsPrinted</B>()</PRE>
+<DL>
+<DD>get whether gridlines are printed.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if printed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setGridsPrinted(boolean)"><!-- --></A><H3>
+setGridsPrinted</H3>
+<PRE>
+public void <B>setGridsPrinted</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>set whether gridlines printed.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - false if not printed.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addMergedRegion(org.apache.poi.ss.util.CellRangeAddress)"><!-- --></A><H3>
+addMergedRegion</H3>
+<PRE>
+public int <B>addMergedRegion</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;region)</PRE>
+<DL>
+<DD>Adds a merged region of cells on a sheet.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#addMergedRegion(org.apache.poi.ss.util.CellRangeAddress)">addMergedRegion</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>region</CODE> - to merge
+<DT><B>Returns:</B><DD>index of this region
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if region contains fewer than 2 cells
+<DD><CODE>java.lang.IllegalStateException</CODE> - if region intersects with a multi-cell array formula
+<DD><CODE>java.lang.IllegalStateException</CODE> - if region intersects with an existing region on this sheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addMergedRegionUnsafe(org.apache.poi.ss.util.CellRangeAddress)"><!-- --></A><H3>
+addMergedRegionUnsafe</H3>
+<PRE>
+public int <B>addMergedRegionUnsafe</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;region)</PRE>
+<DL>
+<DD>Adds a merged region of cells (hence those cells form one).
+ Skips validation. It is possible to create overlapping merged regions
+ or create a merged region that intersects a multi-cell array formula
+ with this formula, which may result in a corrupt workbook.
+
+ To check for merged regions overlapping array formulas or other merged regions
+ after addMergedRegionUnsafe has been called, call <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#validateMergedRegions()"><CODE>validateMergedRegions()</CODE></A>, which runs in O(n^2) time.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#addMergedRegionUnsafe(org.apache.poi.ss.util.CellRangeAddress)">addMergedRegionUnsafe</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>region</CODE> - to merge
+<DT><B>Returns:</B><DD>index of this region
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if region contains fewer than 2 cells</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="validateMergedRegions()"><!-- --></A><H3>
+validateMergedRegions</H3>
+<PRE>
+public void <B>validateMergedRegions</B>()</PRE>
+<DL>
+<DD>Verify that merged regions do not intersect multi-cell array formulas and
+ no merged regions intersect another merged region in this sheet.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#validateMergedRegions()">validateMergedRegions</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalStateException</CODE> - if region intersects with a multi-cell array formula
+<DD><CODE>java.lang.IllegalStateException</CODE> - if at least one region intersects with another merged region in this sheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setForceFormulaRecalculation(boolean)"><!-- --></A><H3>
+setForceFormulaRecalculation</H3>
+<PRE>
+public void <B>setForceFormulaRecalculation</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Control if Excel should be asked to recalculate all formulas on this sheet
+ when the workbook is opened.<p>
+ 
+ Calculating the formula values with <A HREF="../../../../../org/apache/poi/ss/usermodel/FormulaEvaluator.html" title="interface in org.apache.poi.ss.usermodel"><CODE>FormulaEvaluator</CODE></A> is the
+ recommended solution, but this may be used for certain cases where
+ evaluation in POI is not possible.<p>
+ 
+ It is recommended to force recalcuation of formulas on workbook level using
+ <A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html#setForceFormulaRecalculation(boolean)"><CODE>Workbook.setForceFormulaRecalculation(boolean)</CODE></A>
+ to ensure that all cross-worksheet formuals and external dependencies are updated.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setForceFormulaRecalculation(boolean)">setForceFormulaRecalculation</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - true if the application will perform a full recalculation of
+              this worksheet values when the workbook is opened<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html#setForceFormulaRecalculation(boolean)"><CODE>Workbook.setForceFormulaRecalculation(boolean)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getForceFormulaRecalculation()"><!-- --></A><H3>
+getForceFormulaRecalculation</H3>
+<PRE>
+public boolean <B>getForceFormulaRecalculation</B>()</PRE>
+<DL>
+<DD>Whether a record must be inserted or not at generation to indicate that
+ formula must be recalculated when workbook is opened.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getForceFormulaRecalculation()">getForceFormulaRecalculation</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true if an uncalced record must be inserted or not at generation</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setVerticallyCenter(boolean)"><!-- --></A><H3>
+setVerticallyCenter</H3>
+<PRE>
+public void <B>setVerticallyCenter</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>determines whether the output is vertically centered on the page.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setVerticallyCenter(boolean)">setVerticallyCenter</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - true to vertically center, false otherwise.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getVerticallyCenter()"><!-- --></A><H3>
+getVerticallyCenter</H3>
+<PRE>
+public boolean <B>getVerticallyCenter</B>()</PRE>
+<DL>
+<DD>Determine whether printed output for this sheet will be vertically centered.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getVerticallyCenter()">getVerticallyCenter</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setHorizontallyCenter(boolean)"><!-- --></A><H3>
+setHorizontallyCenter</H3>
+<PRE>
+public void <B>setHorizontallyCenter</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>determines whether the output is horizontally centered on the page.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setHorizontallyCenter(boolean)">setHorizontallyCenter</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - true to horizontally center, false otherwise.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHorizontallyCenter()"><!-- --></A><H3>
+getHorizontallyCenter</H3>
+<PRE>
+public boolean <B>getHorizontallyCenter</B>()</PRE>
+<DL>
+<DD>Determine whether printed output for this sheet will be horizontally centered.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getHorizontallyCenter()">getHorizontallyCenter</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRightToLeft(boolean)"><!-- --></A><H3>
+setRightToLeft</H3>
+<PRE>
+public void <B>setRightToLeft</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Sets whether the worksheet is displayed from right to left instead of from left to right.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setRightToLeft(boolean)">setRightToLeft</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - true for right to left, false otherwise.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isRightToLeft()"><!-- --></A><H3>
+isRightToLeft</H3>
+<PRE>
+public boolean <B>isRightToLeft</B>()</PRE>
+<DL>
+<DD>Whether the text is displayed in right-to-left mode in the window
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#isRightToLeft()">isRightToLeft</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether the text is displayed in right-to-left mode in the window</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeMergedRegion(int)"><!-- --></A><H3>
+removeMergedRegion</H3>
+<PRE>
+public void <B>removeMergedRegion</B>(int&nbsp;index)</PRE>
+<DL>
+<DD>removes a merged region of cells (hence letting them free)
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#removeMergedRegion(int)">removeMergedRegion</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>index</CODE> - of the region to unmerge</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeMergedRegions(java.util.Collection)"><!-- --></A><H3>
+removeMergedRegions</H3>
+<PRE>
+public void <B>removeMergedRegions</B>(java.util.Collection&lt;java.lang.Integer&gt;&nbsp;indices)</PRE>
+<DL>
+<DD>Removes a number of merged regions of cells (hence letting them free)
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#removeMergedRegions(java.util.Collection)">removeMergedRegions</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>indices</CODE> - A set of the regions to unmerge</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getNumMergedRegions()"><!-- --></A><H3>
+getNumMergedRegions</H3>
+<PRE>
+public int <B>getNumMergedRegions</B>()</PRE>
+<DL>
+<DD>returns the number of merged regions
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getNumMergedRegions()">getNumMergedRegions</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>number of merged regions</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMergedRegion(int)"><!-- --></A><H3>
+getMergedRegion</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A> <B>getMergedRegion</B>(int&nbsp;index)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getMergedRegion(int)">Sheet</A></CODE></B></DD>
+<DD>Returns the merged region at the specified index
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getMergedRegion(int)">getMergedRegion</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the merged region at the specified index</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMergedRegions()"><!-- --></A><H3>
+getMergedRegions</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&gt; <B>getMergedRegions</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getMergedRegions()">Sheet</A></CODE></B></DD>
+<DD>Returns the list of merged regions.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getMergedRegions()">getMergedRegions</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the list of merged regions</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="rowIterator()"><!-- --></A><H3>
+rowIterator</H3>
+<PRE>
+public java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&gt; <B>rowIterator</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#rowIterator()">Sheet</A></CODE></B></DD>
+<DD>Returns an iterator of the physical rows
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#rowIterator()">rowIterator</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an iterator of the PHYSICAL rows.  Meaning the 3rd element may not
+         be the third row if say for instance the second row is undefined.
+         Call getRowNum() on each row if you care which one it is.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="iterator()"><!-- --></A><H3>
+iterator</H3>
+<PRE>
+public java.util.Iterator&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&gt; <B>iterator</B>()</PRE>
+<DL>
+<DD>Alias for <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#rowIterator()"><CODE>rowIterator()</CODE></A> to allow
+ foreach loops
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>iterator</CODE> in interface <CODE>java.lang.Iterable&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Row.html" title="interface in org.apache.poi.ss.usermodel">Row</A>&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAlternativeExpression(boolean)"><!-- --></A><H3>
+setAlternativeExpression</H3>
+<PRE>
+public void <B>setAlternativeExpression</B>(boolean&nbsp;b)</PRE>
+<DL>
+<DD>whether alternate expression evaluation is on
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - alternative expression evaluation or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAlternativeFormula(boolean)"><!-- --></A><H3>
+setAlternativeFormula</H3>
+<PRE>
+public void <B>setAlternativeFormula</B>(boolean&nbsp;b)</PRE>
+<DL>
+<DD>whether alternative formula entry is on
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - alternative formulas or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAutobreaks(boolean)"><!-- --></A><H3>
+setAutobreaks</H3>
+<PRE>
+public void <B>setAutobreaks</B>(boolean&nbsp;b)</PRE>
+<DL>
+<DD>show automatic page breaks or not
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setAutobreaks(boolean)">setAutobreaks</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - whether to show auto page breaks</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDialog(boolean)"><!-- --></A><H3>
+setDialog</H3>
+<PRE>
+public void <B>setDialog</B>(boolean&nbsp;b)</PRE>
+<DL>
+<DD>set whether sheet is a dialog sheet or not
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - isDialog or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDisplayGuts(boolean)"><!-- --></A><H3>
+setDisplayGuts</H3>
+<PRE>
+public void <B>setDisplayGuts</B>(boolean&nbsp;b)</PRE>
+<DL>
+<DD>set whether to display the guts or not
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setDisplayGuts(boolean)">setDisplayGuts</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - guts or no guts (or glory)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFitToPage(boolean)"><!-- --></A><H3>
+setFitToPage</H3>
+<PRE>
+public void <B>setFitToPage</B>(boolean&nbsp;b)</PRE>
+<DL>
+<DD>fit to page option is on
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setFitToPage(boolean)">setFitToPage</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - fit or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRowSumsBelow(boolean)"><!-- --></A><H3>
+setRowSumsBelow</H3>
+<PRE>
+public void <B>setRowSumsBelow</B>(boolean&nbsp;b)</PRE>
+<DL>
+<DD>set if row summaries appear below detail in the outline
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setRowSumsBelow(boolean)">setRowSumsBelow</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - below or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRowSumsRight(boolean)"><!-- --></A><H3>
+setRowSumsRight</H3>
+<PRE>
+public void <B>setRowSumsRight</B>(boolean&nbsp;b)</PRE>
+<DL>
+<DD>set if col summaries appear right of the detail in the outline
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setRowSumsRight(boolean)">setRowSumsRight</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - right or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAlternateExpression()"><!-- --></A><H3>
+getAlternateExpression</H3>
+<PRE>
+public boolean <B>getAlternateExpression</B>()</PRE>
+<DL>
+<DD>whether alternate expression evaluation is on
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>alternative expression evaluation or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAlternateFormula()"><!-- --></A><H3>
+getAlternateFormula</H3>
+<PRE>
+public boolean <B>getAlternateFormula</B>()</PRE>
+<DL>
+<DD>whether alternative formula entry is on
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>alternative formulas or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAutobreaks()"><!-- --></A><H3>
+getAutobreaks</H3>
+<PRE>
+public boolean <B>getAutobreaks</B>()</PRE>
+<DL>
+<DD>show automatic page breaks or not
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getAutobreaks()">getAutobreaks</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether to show auto page breaks</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDialog()"><!-- --></A><H3>
+getDialog</H3>
+<PRE>
+public boolean <B>getDialog</B>()</PRE>
+<DL>
+<DD>get whether sheet is a dialog sheet or not
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>isDialog or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDisplayGuts()"><!-- --></A><H3>
+getDisplayGuts</H3>
+<PRE>
+public boolean <B>getDisplayGuts</B>()</PRE>
+<DL>
+<DD>get whether to display the guts or not
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getDisplayGuts()">getDisplayGuts</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>guts or no guts (or glory)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDisplayZeros()"><!-- --></A><H3>
+isDisplayZeros</H3>
+<PRE>
+public boolean <B>isDisplayZeros</B>()</PRE>
+<DL>
+<DD>Gets the flag indicating whether the window should show 0 (zero) in cells containing zero value.
+ When false, cells with zero value appear blank instead of showing the number zero.
+ <p>
+ In Excel 2003 this option can be changed in the Options dialog on the View tab.
+ </p>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#isDisplayZeros()">isDisplayZeros</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether all zero values on the worksheet are displayed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDisplayZeros(boolean)"><!-- --></A><H3>
+setDisplayZeros</H3>
+<PRE>
+public void <B>setDisplayZeros</B>(boolean&nbsp;value)</PRE>
+<DL>
+<DD>Set whether the window should show 0 (zero) in cells containing zero value.
+ When false, cells with zero value appear blank instead of showing the number zero.
+ <p>
+ In Excel 2003 this option can be set in the Options dialog on the View tab.
+ </p>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setDisplayZeros(boolean)">setDisplayZeros</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - whether to display or hide all zero values on the worksheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFitToPage()"><!-- --></A><H3>
+getFitToPage</H3>
+<PRE>
+public boolean <B>getFitToPage</B>()</PRE>
+<DL>
+<DD>fit to page option is on
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getFitToPage()">getFitToPage</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>fit or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRowSumsBelow()"><!-- --></A><H3>
+getRowSumsBelow</H3>
+<PRE>
+public boolean <B>getRowSumsBelow</B>()</PRE>
+<DL>
+<DD>get if row summaries appear below detail in the outline
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getRowSumsBelow()">getRowSumsBelow</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>below or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRowSumsRight()"><!-- --></A><H3>
+getRowSumsRight</H3>
+<PRE>
+public boolean <B>getRowSumsRight</B>()</PRE>
+<DL>
+<DD>get if col summaries appear right of the detail in the outline
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getRowSumsRight()">getRowSumsRight</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>right or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isPrintGridlines()"><!-- --></A><H3>
+isPrintGridlines</H3>
+<PRE>
+public boolean <B>isPrintGridlines</B>()</PRE>
+<DL>
+<DD>Returns whether gridlines are printed.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#isPrintGridlines()">isPrintGridlines</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>Gridlines are printed<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#isDisplayGridlines()"><CODE>to check if gridlines are displayed on screen</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPrintGridlines(boolean)"><!-- --></A><H3>
+setPrintGridlines</H3>
+<PRE>
+public void <B>setPrintGridlines</B>(boolean&nbsp;show)</PRE>
+<DL>
+<DD>Turns on or off the printing of gridlines.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setPrintGridlines(boolean)">setPrintGridlines</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>show</CODE> - boolean to turn on or off the printing of
+                          gridlines<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setDisplayGridlines(boolean)"><CODE>to display gridlines on screen</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isPrintRowAndColumnHeadings()"><!-- --></A><H3>
+isPrintRowAndColumnHeadings</H3>
+<PRE>
+public boolean <B>isPrintRowAndColumnHeadings</B>()</PRE>
+<DL>
+<DD>Returns whether row and column headings are printed.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#isPrintRowAndColumnHeadings()">isPrintRowAndColumnHeadings</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>row and column headings are printed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPrintRowAndColumnHeadings(boolean)"><!-- --></A><H3>
+setPrintRowAndColumnHeadings</H3>
+<PRE>
+public void <B>setPrintRowAndColumnHeadings</B>(boolean&nbsp;show)</PRE>
+<DL>
+<DD>Turns on or off the printing of row and column headings.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setPrintRowAndColumnHeadings(boolean)">setPrintRowAndColumnHeadings</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>show</CODE> - boolean to turn on or off the printing of
+                          row and column headings</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPrintSetup()"><!-- --></A><H3>
+getPrintSetup</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPrintSetup.html" title="class in org.apache.poi.hssf.usermodel">HSSFPrintSetup</A> <B>getPrintSetup</B>()</PRE>
+<DL>
+<DD>Gets the print setup object.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getPrintSetup()">getPrintSetup</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The user model for the print setup object.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHeader()"><!-- --></A><H3>
+getHeader</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHeader.html" title="class in org.apache.poi.hssf.usermodel">HSSFHeader</A> <B>getHeader</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getHeader()">Sheet</A></CODE></B></DD>
+<DD>Gets the user model for the default document header.<p>
+ 
+ Note that XSSF offers more kinds of document headers than HSSF does
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getHeader()">getHeader</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the document header. Never <code>null</code></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFooter()"><!-- --></A><H3>
+getFooter</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFFooter.html" title="class in org.apache.poi.hssf.usermodel">HSSFFooter</A> <B>getFooter</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getFooter()">Sheet</A></CODE></B></DD>
+<DD>Gets the user model for the default document footer.<p>
+ 
+ Note that XSSF offers more kinds of document footers than HSSF does.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getFooter()">getFooter</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the document footer. Never <code>null</code></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isSelected()"><!-- --></A><H3>
+isSelected</H3>
+<PRE>
+public boolean <B>isSelected</B>()</PRE>
+<DL>
+<DD>Note - this is not the same as whether the sheet is focused (isActive)
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#isSelected()">isSelected</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if this sheet is currently selected</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setSelected(boolean)"><!-- --></A><H3>
+setSelected</H3>
+<PRE>
+public void <B>setSelected</B>(boolean&nbsp;sel)</PRE>
+<DL>
+<DD>Sets whether sheet is selected.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setSelected(boolean)">setSelected</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sel</CODE> - Whether to select the sheet or deselect the sheet.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html#setActiveSheet(int)"><CODE>Workbook.setActiveSheet(int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isActive()"><!-- --></A><H3>
+isActive</H3>
+<PRE>
+public boolean <B>isActive</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if this sheet is currently focused</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setActive(boolean)"><!-- --></A><H3>
+setActive</H3>
+<PRE>
+public void <B>setActive</B>(boolean&nbsp;sel)</PRE>
+<DL>
+<DD>Sets whether sheet is selected.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sel</CODE> - Whether to select the sheet or deselect the sheet.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMargin(short)"><!-- --></A><H3>
+getMargin</H3>
+<PRE>
+public double <B>getMargin</B>(short&nbsp;margin)</PRE>
+<DL>
+<DD>Gets the size of the margin in inches.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getMargin(short)">getMargin</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>margin</CODE> - which margin to get
+<DT><B>Returns:</B><DD>the size of the margin</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setMargin(short, double)"><!-- --></A><H3>
+setMargin</H3>
+<PRE>
+public void <B>setMargin</B>(short&nbsp;margin,
+                      double&nbsp;size)</PRE>
+<DL>
+<DD>Sets the size of the margin in inches.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setMargin(short, double)">setMargin</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>margin</CODE> - which margin to get<DD><CODE>size</CODE> - the size of the margin</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getProtect()"><!-- --></A><H3>
+getProtect</H3>
+<PRE>
+public boolean <B>getProtect</B>()</PRE>
+<DL>
+<DD>Answer whether protection is enabled or disabled
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getProtect()">getProtect</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true =&gt; protection enabled; false =&gt; protection disabled</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPassword()"><!-- --></A><H3>
+getPassword</H3>
+<PRE>
+public short <B>getPassword</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>hashed password</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getObjectProtect()"><!-- --></A><H3>
+getObjectProtect</H3>
+<PRE>
+public boolean <B>getObjectProtect</B>()</PRE>
+<DL>
+<DD>Answer whether object protection is enabled or disabled
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true =&gt; protection enabled; false =&gt; protection disabled</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getScenarioProtect()"><!-- --></A><H3>
+getScenarioProtect</H3>
+<PRE>
+public boolean <B>getScenarioProtect</B>()</PRE>
+<DL>
+<DD>Answer whether scenario protection is enabled or disabled
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getScenarioProtect()">getScenarioProtect</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>true =&gt; protection enabled; false =&gt; protection disabled</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="protectSheet(java.lang.String)"><!-- --></A><H3>
+protectSheet</H3>
+<PRE>
+public void <B>protectSheet</B>(java.lang.String&nbsp;password)</PRE>
+<DL>
+<DD>Sets the protection enabled as well as the password
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#protectSheet(java.lang.String)">protectSheet</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>password</CODE> - to set for protection. Pass <code>null</code> to remove protection</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setZoom(int, int)"><!-- --></A><H3>
+setZoom</H3>
+<PRE>
+public void <B>setZoom</B>(int&nbsp;numerator,
+                    int&nbsp;denominator)</PRE>
+<DL>
+<DD>Sets the zoom magnification for the sheet.  The zoom is expressed as a
+ fraction.  For example to express a zoom of 75% use 3 for the numerator
+ and 4 for the denominator.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>numerator</CODE> - The numerator for the zoom magnification.<DD><CODE>denominator</CODE> - The denominator for the zoom magnification.<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html#setZoom(int)"><CODE>setZoom(int)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setZoom(int)"><!-- --></A><H3>
+setZoom</H3>
+<PRE>
+public void <B>setZoom</B>(int&nbsp;scale)</PRE>
+<DL>
+<DD>Window zoom magnification for current view representing percent values.
+ Valid values range from 10 to 400. Horizontal &amp; Vertical scale together.
+
+ For example:
+ <pre>
+ 10 - 10%
+ 20 - 20%
+ ...
+ 100 - 100%
+ ...
+ 400 - 400%
+ </pre>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setZoom(int)">setZoom</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>scale</CODE> - window zoom magnification
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if scale is invalid</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTopRow()"><!-- --></A><H3>
+getTopRow</H3>
+<PRE>
+public short <B>getTopRow</B>()</PRE>
+<DL>
+<DD>The top row in the visible view when the sheet is
+ first viewed after opening it in a viewer
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getTopRow()">getTopRow</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>short indicating the rownum (0 based) of the top row</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLeftCol()"><!-- --></A><H3>
+getLeftCol</H3>
+<PRE>
+public short <B>getLeftCol</B>()</PRE>
+<DL>
+<DD>The left col in the visible view when the sheet is
+ first viewed after opening it in a viewer
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getLeftCol()">getLeftCol</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>short indicating the rownum (0 based) of the top row</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="showInPane(int, int)"><!-- --></A><H3>
+showInPane</H3>
+<PRE>
+public void <B>showInPane</B>(int&nbsp;toprow,
+                       int&nbsp;leftcol)</PRE>
+<DL>
+<DD>Sets desktop window pane display area, when the
+ file is first opened in a viewer.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#showInPane(int, int)">showInPane</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>toprow</CODE> - the top row to show in desktop window pane<DD><CODE>leftcol</CODE> - the left column to show in desktop window pane</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="shiftMerged(int, int, int, boolean)"><!-- --></A><H3>
+shiftMerged</H3>
+<PRE>
+protected void <B>shiftMerged</B>(int&nbsp;startRow,
+                           int&nbsp;endRow,
+                           int&nbsp;n,
+                           boolean&nbsp;isRow)</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.15 beta 2. Use <A HREF="../../../../../org/apache/poi/ss/usermodel/helpers/RowShifter.html#shiftMergedRegions(int, int, int)"><CODE>RowShifter.shiftMergedRegions(int, int, int)</CODE></A>.</I>
+<P>
+<DD>Shifts, grows, or shrinks the merged regions due to a row shift
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>startRow</CODE> - the start-index of the rows to shift, zero-based<DD><CODE>endRow</CODE> - the end-index of the rows to shift, zero-based<DD><CODE>n</CODE> - how far to shift, negative to shift up<DD><CODE>isRow</CODE> - unused, kept for backwards compatibility</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="shiftRows(int, int, int)"><!-- --></A><H3>
+shiftRows</H3>
+<PRE>
+public void <B>shiftRows</B>(int&nbsp;startRow,
+                      int&nbsp;endRow,
+                      int&nbsp;n)</PRE>
+<DL>
+<DD>Shifts rows between startRow and endRow n number of rows.
+ If you use a negative number, it will shift rows up.
+ Code ensures that rows don't wrap around.<p>
+ 
+ Calls <code>shiftRows(startRow, endRow, n, false, false);</code><p>
+ 
+ Additionally shifts merged regions that are completely defined in these
+ rows (ie. merged 2 cells on a row to be shifted).
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#shiftRows(int, int, int)">shiftRows</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>startRow</CODE> - the row to start shifting<DD><CODE>endRow</CODE> - the row to end shifting<DD><CODE>n</CODE> - the number of rows to shift</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="shiftRows(int, int, int, boolean, boolean)"><!-- --></A><H3>
+shiftRows</H3>
+<PRE>
+public void <B>shiftRows</B>(int&nbsp;startRow,
+                      int&nbsp;endRow,
+                      int&nbsp;n,
+                      boolean&nbsp;copyRowHeight,
+                      boolean&nbsp;resetOriginalRowHeight)</PRE>
+<DL>
+<DD>Shifts rows between startRow and endRow n number of rows.
+ If you use a negative number, it will shift rows up.
+ Code ensures that rows don't wrap around<p>
+ 
+ Additionally shifts merged regions that are completely defined in these
+ rows (ie. merged 2 cells on a row to be shifted). All merged regions that are
+ completely overlaid by shifting will be deleted.<p>
+ 
+ TODO Might want to add bounds checking here
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#shiftRows(int, int, int, boolean, boolean)">shiftRows</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>startRow</CODE> - the row to start shifting<DD><CODE>endRow</CODE> - the row to end shifting<DD><CODE>n</CODE> - the number of rows to shift<DD><CODE>copyRowHeight</CODE> - whether to copy the row height during the shift<DD><CODE>resetOriginalRowHeight</CODE> - whether to set the original row's height to the default</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="shiftRows(int, int, int, boolean, boolean, boolean)"><!-- --></A><H3>
+shiftRows</H3>
+<PRE>
+public void <B>shiftRows</B>(int&nbsp;startRow,
+                      int&nbsp;endRow,
+                      int&nbsp;n,
+                      boolean&nbsp;copyRowHeight,
+                      boolean&nbsp;resetOriginalRowHeight,
+                      boolean&nbsp;moveComments)</PRE>
+<DL>
+<DD>Shifts rows between startRow and endRow n number of rows.
+ If you use a negative number, it will shift rows up.
+ Code ensures that rows don't wrap around<p>
+ 
+ Additionally shifts merged regions that are completely defined in these
+ rows (ie. merged 2 cells on a row to be shifted).<p>
+ 
+ TODO Might want to add bounds checking here
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>startRow</CODE> - the row to start shifting<DD><CODE>endRow</CODE> - the row to end shifting<DD><CODE>n</CODE> - the number of rows to shift<DD><CODE>copyRowHeight</CODE> - whether to copy the row height during the shift<DD><CODE>resetOriginalRowHeight</CODE> - whether to set the original row's height to the default<DD><CODE>moveComments</CODE> - whether to move comments at the same time as the cells they are attached to</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="insertChartRecords(java.util.List)"><!-- --></A><H3>
+insertChartRecords</H3>
+<PRE>
+protected void <B>insertChartRecords</B>(java.util.List&lt;<A HREF="../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record">Record</A>&gt;&nbsp;records)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createFreezePane(int, int, int, int)"><!-- --></A><H3>
+createFreezePane</H3>
+<PRE>
+public void <B>createFreezePane</B>(int&nbsp;colSplit,
+                             int&nbsp;rowSplit,
+                             int&nbsp;leftmostColumn,
+                             int&nbsp;topRow)</PRE>
+<DL>
+<DD>Creates a split (freezepane). Any existing freezepane or split pane is overwritten.<p>
+ 
+ If both colSplit and rowSplit are zero then the existing freeze pane is removed
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#createFreezePane(int, int, int, int)">createFreezePane</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>colSplit</CODE> - Horizonatal position of split.<DD><CODE>rowSplit</CODE> - Vertical position of split.<DD><CODE>leftmostColumn</CODE> - Left column visible in right pane.<DD><CODE>topRow</CODE> - Top row visible in bottom pane</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createFreezePane(int, int)"><!-- --></A><H3>
+createFreezePane</H3>
+<PRE>
+public void <B>createFreezePane</B>(int&nbsp;colSplit,
+                             int&nbsp;rowSplit)</PRE>
+<DL>
+<DD>Creates a split (freezepane). Any existing freezepane or split pane is overwritten.<p>
+ 
+ If both colSplit and rowSplit are zero then the existing freeze pane is removed
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#createFreezePane(int, int)">createFreezePane</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>colSplit</CODE> - Horizonatal position of split.<DD><CODE>rowSplit</CODE> - Vertical position of split.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createSplitPane(int, int, int, int, int)"><!-- --></A><H3>
+createSplitPane</H3>
+<PRE>
+public void <B>createSplitPane</B>(int&nbsp;xSplitPos,
+                            int&nbsp;ySplitPos,
+                            int&nbsp;leftmostColumn,
+                            int&nbsp;topRow,
+                            int&nbsp;activePane)</PRE>
+<DL>
+<DD>Creates a split pane. Any existing freezepane or split pane is overwritten.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#createSplitPane(int, int, int, int, int)">createSplitPane</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>xSplitPos</CODE> - Horizonatal position of split (in 1/20th of a point).<DD><CODE>ySplitPos</CODE> - Vertical position of split (in 1/20th of a point).<DD><CODE>topRow</CODE> - Top row visible in bottom pane<DD><CODE>leftmostColumn</CODE> - Left column visible in right pane.<DD><CODE>activePane</CODE> - Active pane.  One of: PANE_LOWER_RIGHT,
+                       PANE_UPPER_RIGHT, PANE_LOWER_LEFT, PANE_UPPER_LEFT<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#PANE_LOWER_LEFT"><CODE>Sheet.PANE_LOWER_LEFT</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#PANE_LOWER_RIGHT"><CODE>Sheet.PANE_LOWER_RIGHT</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#PANE_UPPER_LEFT"><CODE>Sheet.PANE_UPPER_LEFT</CODE></A>, 
+<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#PANE_UPPER_RIGHT"><CODE>Sheet.PANE_UPPER_RIGHT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPaneInformation()"><!-- --></A><H3>
+getPaneInformation</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/util/PaneInformation.html" title="class in org.apache.poi.ss.util">PaneInformation</A> <B>getPaneInformation</B>()</PRE>
+<DL>
+<DD>Returns the information regarding the currently configured pane (split or freeze).
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getPaneInformation()">getPaneInformation</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>null if no pane configured, or the pane information.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDisplayGridlines(boolean)"><!-- --></A><H3>
+setDisplayGridlines</H3>
+<PRE>
+public void <B>setDisplayGridlines</B>(boolean&nbsp;show)</PRE>
+<DL>
+<DD>Sets whether the gridlines are shown in a viewer.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setDisplayGridlines(boolean)">setDisplayGridlines</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>show</CODE> - whether to show gridlines or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDisplayGridlines()"><!-- --></A><H3>
+isDisplayGridlines</H3>
+<PRE>
+public boolean <B>isDisplayGridlines</B>()</PRE>
+<DL>
+<DD>Returns if gridlines are displayed.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#isDisplayGridlines()">isDisplayGridlines</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether gridlines are displayed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDisplayFormulas(boolean)"><!-- --></A><H3>
+setDisplayFormulas</H3>
+<PRE>
+public void <B>setDisplayFormulas</B>(boolean&nbsp;show)</PRE>
+<DL>
+<DD>Sets whether the formulas are shown in a viewer.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setDisplayFormulas(boolean)">setDisplayFormulas</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>show</CODE> - whether to show formulas or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDisplayFormulas()"><!-- --></A><H3>
+isDisplayFormulas</H3>
+<PRE>
+public boolean <B>isDisplayFormulas</B>()</PRE>
+<DL>
+<DD>Returns if formulas are displayed.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#isDisplayFormulas()">isDisplayFormulas</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether formulas are displayed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDisplayRowColHeadings(boolean)"><!-- --></A><H3>
+setDisplayRowColHeadings</H3>
+<PRE>
+public void <B>setDisplayRowColHeadings</B>(boolean&nbsp;show)</PRE>
+<DL>
+<DD>Sets whether the RowColHeadings are shown in a viewer.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setDisplayRowColHeadings(boolean)">setDisplayRowColHeadings</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>show</CODE> - whether to show RowColHeadings or not</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isDisplayRowColHeadings()"><!-- --></A><H3>
+isDisplayRowColHeadings</H3>
+<PRE>
+public boolean <B>isDisplayRowColHeadings</B>()</PRE>
+<DL>
+<DD>Returns if RowColHeadings are displayed.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#isDisplayRowColHeadings()">isDisplayRowColHeadings</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>whether RowColHeadings are displayed</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRowBreak(int)"><!-- --></A><H3>
+setRowBreak</H3>
+<PRE>
+public void <B>setRowBreak</B>(int&nbsp;row)</PRE>
+<DL>
+<DD>Sets a page break at the indicated row
+ Breaks occur above the specified row and left of the specified column inclusive.<p>
+ 
+ For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
+ with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+ breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
+ and rows starting with rownum=4 in the second.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setRowBreak(int)">setRowBreak</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - the row to break, inclusive</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isRowBroken(int)"><!-- --></A><H3>
+isRowBroken</H3>
+<PRE>
+public boolean <B>isRowBroken</B>(int&nbsp;row)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#isRowBroken(int)">Sheet</A></CODE></B></DD>
+<DD>Determines if there is a page break at the indicated row
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#isRowBroken(int)">isRowBroken</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - FIXME: Document this!
+<DT><B>Returns:</B><DD><code>true</code> if there is a page break at the indicated row</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeRowBreak(int)"><!-- --></A><H3>
+removeRowBreak</H3>
+<PRE>
+public void <B>removeRowBreak</B>(int&nbsp;row)</PRE>
+<DL>
+<DD>Removes the page break at the indicated row
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#removeRowBreak(int)">removeRowBreak</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRowBreaks()"><!-- --></A><H3>
+getRowBreaks</H3>
+<PRE>
+public int[] <B>getRowBreaks</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getRowBreaks()">Sheet</A></CODE></B></DD>
+<DD>Retrieves all the horizontal page breaks
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getRowBreaks()">getRowBreaks</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>row indexes of all the horizontal page breaks, never <code>null</code></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColumnBreaks()"><!-- --></A><H3>
+getColumnBreaks</H3>
+<PRE>
+public int[] <B>getColumnBreaks</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getColumnBreaks()">Sheet</A></CODE></B></DD>
+<DD>Retrieves all the vertical page breaks
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getColumnBreaks()">getColumnBreaks</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>column indexes of all the vertical page breaks, never <code>null</code></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColumnBreak(int)"><!-- --></A><H3>
+setColumnBreak</H3>
+<PRE>
+public void <B>setColumnBreak</B>(int&nbsp;column)</PRE>
+<DL>
+<DD>Sets a page break at the indicated column.
+ Breaks occur above the specified row and left of the specified column inclusive.<p>
+ 
+ For example, <code>sheet.setColumnBreak(2);</code> breaks the sheet into two parts
+ with columns A,B,C in the first and D,E,... in the second. Simuilar, <code>sheet.setRowBreak(2);</code>
+ breaks the sheet into two parts with first three rows (rownum=1...3) in the first part
+ and rows starting with rownum=4 in the second.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setColumnBreak(int)">setColumnBreak</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - the column to break, inclusive</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isColumnBroken(int)"><!-- --></A><H3>
+isColumnBroken</H3>
+<PRE>
+public boolean <B>isColumnBroken</B>(int&nbsp;column)</PRE>
+<DL>
+<DD>Determines if there is a page break at the indicated column
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#isColumnBroken(int)">isColumnBroken</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - FIXME: Document this!
+<DT><B>Returns:</B><DD>FIXME: Document this!</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeColumnBreak(int)"><!-- --></A><H3>
+removeColumnBreak</H3>
+<PRE>
+public void <B>removeColumnBreak</B>(int&nbsp;column)</PRE>
+<DL>
+<DD>Removes a page break at the indicated column
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#removeColumnBreak(int)">removeColumnBreak</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - The index of the column for which to remove a page-break, zero-based</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="validateRow(int)"><!-- --></A><H3>
+validateRow</H3>
+<PRE>
+protected void <B>validateRow</B>(int&nbsp;row)</PRE>
+<DL>
+<DD>Runs a bounds check for row numbers
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - the index of the row to validate, zero-based</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="validateColumn(int)"><!-- --></A><H3>
+validateColumn</H3>
+<PRE>
+protected void <B>validateColumn</B>(int&nbsp;column)</PRE>
+<DL>
+<DD>Runs a bounds check for column numbers
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - the index of the column to validate, zero-based</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="dumpDrawingRecords(boolean, java.io.PrintWriter)"><!-- --></A><H3>
+dumpDrawingRecords</H3>
+<PRE>
+public void <B>dumpDrawingRecords</B>(boolean&nbsp;fat,
+                               java.io.PrintWriter&nbsp;pw)</PRE>
+<DL>
+<DD>Aggregates the drawing records and dumps the escher record hierarchy
+ to the standard output.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawingEscherAggregate()"><!-- --></A><H3>
+getDrawingEscherAggregate</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/record/EscherAggregate.html" title="class in org.apache.poi.hssf.record">EscherAggregate</A> <B>getDrawingEscherAggregate</B>()</PRE>
+<DL>
+<DD>Returns the agregate escher records for this sheet,
+ it there is one.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDrawingPatriarch()"><!-- --></A><H3>
+getDrawingPatriarch</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A> <B>getDrawingPatriarch</B>()</PRE>
+<DL>
+<DD>This will hold any graphics or charts for the sheet.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getDrawingPatriarch()">getDrawingPatriarch</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the top-level drawing patriarch, if there is one, else returns null</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createDrawingPatriarch()"><!-- --></A><H3>
+createDrawingPatriarch</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFPatriarch.html" title="class in org.apache.poi.hssf.usermodel">HSSFPatriarch</A> <B>createDrawingPatriarch</B>()</PRE>
+<DL>
+<DD>Creates the top-level drawing patriarch. 
+ <p>This may then be used to add graphics or charts.</p>
+ <p>Note that this will normally have the effect of removing 
+  any existing drawings on this sheet.</p>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#createDrawingPatriarch()">createDrawingPatriarch</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The new patriarch.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setColumnGroupCollapsed(int, boolean)"><!-- --></A><H3>
+setColumnGroupCollapsed</H3>
+<PRE>
+public void <B>setColumnGroupCollapsed</B>(int&nbsp;columnNumber,
+                                    boolean&nbsp;collapsed)</PRE>
+<DL>
+<DD>Expands or collapses a column group.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setColumnGroupCollapsed(int, boolean)">setColumnGroupCollapsed</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>columnNumber</CODE> - One of the columns in the group.<DD><CODE>collapsed</CODE> - true = collapse group, false = expand group.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="groupColumn(int, int)"><!-- --></A><H3>
+groupColumn</H3>
+<PRE>
+public void <B>groupColumn</B>(int&nbsp;fromColumn,
+                        int&nbsp;toColumn)</PRE>
+<DL>
+<DD>Create an outline for the provided column range.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#groupColumn(int, int)">groupColumn</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>fromColumn</CODE> - beginning of the column range.<DD><CODE>toColumn</CODE> - end of the column range.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ungroupColumn(int, int)"><!-- --></A><H3>
+ungroupColumn</H3>
+<PRE>
+public void <B>ungroupColumn</B>(int&nbsp;fromColumn,
+                          int&nbsp;toColumn)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#ungroupColumn(int, int)">Sheet</A></CODE></B></DD>
+<DD>Ungroup a range of columns that were previously grouped
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#ungroupColumn(int, int)">ungroupColumn</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>fromColumn</CODE> - start column (0-based)<DD><CODE>toColumn</CODE> - end column (0-based)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="groupRow(int, int)"><!-- --></A><H3>
+groupRow</H3>
+<PRE>
+public void <B>groupRow</B>(int&nbsp;fromRow,
+                     int&nbsp;toRow)</PRE>
+<DL>
+<DD>Tie a range of cell together so that they can be collapsed or expanded
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#groupRow(int, int)">groupRow</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>fromRow</CODE> - start row (0-based)<DD><CODE>toRow</CODE> - end row (0-based)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ungroupRow(int, int)"><!-- --></A><H3>
+ungroupRow</H3>
+<PRE>
+public void <B>ungroupRow</B>(int&nbsp;fromRow,
+                       int&nbsp;toRow)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#ungroupRow(int, int)">Sheet</A></CODE></B></DD>
+<DD>Ungroup a range of rows that were previously grouped
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#ungroupRow(int, int)">ungroupRow</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>fromRow</CODE> - start row (0-based)<DD><CODE>toRow</CODE> - end row (0-based)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRowGroupCollapsed(int, boolean)"><!-- --></A><H3>
+setRowGroupCollapsed</H3>
+<PRE>
+public void <B>setRowGroupCollapsed</B>(int&nbsp;rowIndex,
+                                 boolean&nbsp;collapse)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setRowGroupCollapsed(int, boolean)">Sheet</A></CODE></B></DD>
+<DD>Set view state of a grouped range of rows
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setRowGroupCollapsed(int, boolean)">setRowGroupCollapsed</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rowIndex</CODE> - start row of a grouped range of rows (0-based)<DD><CODE>collapse</CODE> - whether to expand/collapse the detail rows</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDefaultColumnStyle(int, org.apache.poi.ss.usermodel.CellStyle)"><!-- --></A><H3>
+setDefaultColumnStyle</H3>
+<PRE>
+public void <B>setDefaultColumnStyle</B>(int&nbsp;column,
+                                  <A HREF="../../../../../org/apache/poi/ss/usermodel/CellStyle.html" title="interface in org.apache.poi.ss.usermodel">CellStyle</A>&nbsp;style)</PRE>
+<DL>
+<DD>Sets the default column style for a given column.  POI will only apply this style to new cells added to the sheet.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setDefaultColumnStyle(int, org.apache.poi.ss.usermodel.CellStyle)">setDefaultColumnStyle</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - the column index<DD><CODE>style</CODE> - the style to set</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="autoSizeColumn(int)"><!-- --></A><H3>
+autoSizeColumn</H3>
+<PRE>
+public void <B>autoSizeColumn</B>(int&nbsp;column)</PRE>
+<DL>
+<DD>Adjusts the column width to fit the contents.<p>
+ 
+ This process can be relatively slow on large sheets, so this should
+ normally only be called once per column, at the end of your
+ processing.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#autoSizeColumn(int)">autoSizeColumn</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - the column index</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="autoSizeColumn(int, boolean)"><!-- --></A><H3>
+autoSizeColumn</H3>
+<PRE>
+public void <B>autoSizeColumn</B>(int&nbsp;column,
+                           boolean&nbsp;useMergedCells)</PRE>
+<DL>
+<DD>Adjusts the column width to fit the contents.<p>
+ 
+ This process can be relatively slow on large sheets, so this should
+ normally only be called once per column, at the end of your
+ processing.<p>
+ 
+ You can specify whether the content of merged cells should be considered or ignored.
+ Default is to ignore merged cells.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#autoSizeColumn(int, boolean)">autoSizeColumn</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>column</CODE> - the column index<DD><CODE>useMergedCells</CODE> - whether to use the contents of merged cells when calculating the width of the column</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCellComment(org.apache.poi.ss.util.CellAddress)"><!-- --></A><H3>
+getCellComment</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFComment.html" title="class in org.apache.poi.hssf.usermodel">HSSFComment</A> <B>getCellComment</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;ref)</PRE>
+<DL>
+<DD>Returns cell comment for the specified row and column
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getCellComment(org.apache.poi.ss.util.CellAddress)">getCellComment</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>cell comment or <code>null</code> if not found</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHyperlink(int, int)"><!-- --></A><H3>
+getHyperlink</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHyperlink.html" title="class in org.apache.poi.hssf.usermodel">HSSFHyperlink</A> <B>getHyperlink</B>(int&nbsp;row,
+                                  int&nbsp;column)</PRE>
+<DL>
+<DD>Get a Hyperlink in this sheet anchored at row, column
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getHyperlink(int, int)">getHyperlink</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>row</CODE> - The index of the row of the hyperlink, zero-based<DD><CODE>column</CODE> - the index of the column of the hyperlink, zero-based
+<DT><B>Returns:</B><DD>hyperlink if there is a hyperlink anchored at row, column; otherwise returns null</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHyperlink(org.apache.poi.ss.util.CellAddress)"><!-- --></A><H3>
+getHyperlink</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHyperlink.html" title="class in org.apache.poi.hssf.usermodel">HSSFHyperlink</A> <B>getHyperlink</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;addr)</PRE>
+<DL>
+<DD>Get a Hyperlink in this sheet located in a cell specified by {code addr}
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getHyperlink(org.apache.poi.ss.util.CellAddress)">getHyperlink</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>addr</CODE> - The address of the cell containing the hyperlink
+<DT><B>Returns:</B><DD>hyperlink if there is a hyperlink anchored at <code>addr</code>; otherwise returns <code>null</code><DT><B>Since:</B></DT>
+  <DD>POI 3.15 beta 3</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHyperlinkList()"><!-- --></A><H3>
+getHyperlinkList</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHyperlink.html" title="class in org.apache.poi.hssf.usermodel">HSSFHyperlink</A>&gt; <B>getHyperlinkList</B>()</PRE>
+<DL>
+<DD>Get a list of Hyperlinks in this sheet
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getHyperlinkList()">getHyperlinkList</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>Hyperlinks for the sheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeHyperlink(org.apache.poi.hssf.usermodel.HSSFHyperlink)"><!-- --></A><H3>
+removeHyperlink</H3>
+<PRE>
+protected void <B>removeHyperlink</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFHyperlink.html" title="class in org.apache.poi.hssf.usermodel">HSSFHyperlink</A>&nbsp;link)</PRE>
+<DL>
+<DD>Remove the underlying HyperlinkRecord from this sheet.
+ If multiple HSSFHyperlinks refer to the same HyperlinkRecord, all HSSFHyperlinks will be removed.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>link</CODE> - the HSSFHyperlink wrapper around the HyperlinkRecord to remove</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeHyperlink(org.apache.poi.hssf.record.HyperlinkRecord)"><!-- --></A><H3>
+removeHyperlink</H3>
+<PRE>
+protected void <B>removeHyperlink</B>(<A HREF="../../../../../org/apache/poi/hssf/record/HyperlinkRecord.html" title="class in org.apache.poi.hssf.record">HyperlinkRecord</A>&nbsp;link)</PRE>
+<DL>
+<DD>Remove the underlying HyperlinkRecord from this sheet
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>link</CODE> - the underlying HyperlinkRecord to remove from this sheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSheetConditionalFormatting()"><!-- --></A><H3>
+getSheetConditionalFormatting</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheetConditionalFormatting.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheetConditionalFormatting</A> <B>getSheetConditionalFormatting</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getSheetConditionalFormatting()">Sheet</A></CODE></B></DD>
+<DD>The 'Conditional Formatting' facet for this <tt>Sheet</tt>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getSheetConditionalFormatting()">getSheetConditionalFormatting</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>conditional formatting rule for this sheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSheetName()"><!-- --></A><H3>
+getSheetName</H3>
+<PRE>
+public java.lang.String <B>getSheetName</B>()</PRE>
+<DL>
+<DD>Returns the name of this sheet
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getSheetName()">getSheetName</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the name of this sheet</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setArrayFormula(java.lang.String, org.apache.poi.ss.util.CellRangeAddress)"><!-- --></A><H3>
+setArrayFormula</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/CellRange.html" title="interface in org.apache.poi.ss.usermodel">CellRange</A>&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html" title="class in org.apache.poi.hssf.usermodel">HSSFCell</A>&gt; <B>setArrayFormula</B>(java.lang.String&nbsp;formula,
+                                           <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;range)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setArrayFormula(java.lang.String, org.apache.poi.ss.util.CellRangeAddress)">Sheet</A></CODE></B></DD>
+<DD>Sets array formula to specified region for result.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setArrayFormula(java.lang.String, org.apache.poi.ss.util.CellRangeAddress)">setArrayFormula</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>formula</CODE> - text representation of the formula<DD><CODE>range</CODE> - Region of array formula for result.
+<DT><B>Returns:</B><DD>the <A HREF="../../../../../org/apache/poi/ss/usermodel/CellRange.html" title="interface in org.apache.poi.ss.usermodel"><CODE>CellRange</CODE></A> of cells affected by this change</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeArrayFormula(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+removeArrayFormula</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/CellRange.html" title="interface in org.apache.poi.ss.usermodel">CellRange</A>&lt;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFCell.html" title="class in org.apache.poi.hssf.usermodel">HSSFCell</A>&gt; <B>removeArrayFormula</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#removeArrayFormula(org.apache.poi.ss.usermodel.Cell)">Sheet</A></CODE></B></DD>
+<DD>Remove a Array Formula from this sheet.  All cells contained in the Array Formula range are removed as well
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#removeArrayFormula(org.apache.poi.ss.usermodel.Cell)">removeArrayFormula</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - any cell within Array Formula range
+<DT><B>Returns:</B><DD>the <A HREF="../../../../../org/apache/poi/ss/usermodel/CellRange.html" title="interface in org.apache.poi.ss.usermodel"><CODE>CellRange</CODE></A> of cells affected by this change</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDataValidationHelper()"><!-- --></A><H3>
+getDataValidationHelper</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A> <B>getDataValidationHelper</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getDataValidationHelper()">getDataValidationHelper</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setAutoFilter(org.apache.poi.ss.util.CellRangeAddress)"><!-- --></A><H3>
+setAutoFilter</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFAutoFilter.html" title="class in org.apache.poi.hssf.usermodel">HSSFAutoFilter</A> <B>setAutoFilter</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;range)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setAutoFilter(org.apache.poi.ss.util.CellRangeAddress)">Sheet</A></CODE></B></DD>
+<DD>Enable filtering for a range of cells
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setAutoFilter(org.apache.poi.ss.util.CellRangeAddress)">setAutoFilter</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>range</CODE> - the range of cells to filter</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="findCellComment(int, int)"><!-- --></A><H3>
+findCellComment</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFComment.html" title="class in org.apache.poi.hssf.usermodel">HSSFComment</A> <B>findCellComment</B>(int&nbsp;row,
+                                      int&nbsp;column)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCellComments()"><!-- --></A><H3>
+getCellComments</H3>
+<PRE>
+public java.util.Map&lt;<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>,<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFComment.html" title="class in org.apache.poi.hssf.usermodel">HSSFComment</A>&gt; <B>getCellComments</B>()</PRE>
+<DL>
+<DD>Returns all cell comments on this sheet.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getCellComments()">getCellComments</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>A map of each Comment in the sheet, keyed on the cell address where
+ the comment is located.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRepeatingRows()"><!-- --></A><H3>
+getRepeatingRows</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A> <B>getRepeatingRows</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getRepeatingRows()">Sheet</A></CODE></B></DD>
+<DD>Gets the repeating rows used when printing the sheet, as found in 
+ File-&gt;PageSetup-&gt;Sheet.<p>
+ 
+ Repeating rows cover a range of contiguous rows, e.g.:
+ <pre>
+ Sheet1!$1:$1
+ Sheet2!$5:$8
+ </pre>
+ The <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddress</CODE></A> returned contains a column part which spans 
+ all columns, and a row part which specifies the contiguous range of 
+ repeating rows.<p>
+ 
+ If the Sheet does not have any repeating rows defined, null is returned.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getRepeatingRows()">getRepeatingRows</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddress</CODE></A> containing the repeating rows for the 
+         Sheet, or null.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRepeatingColumns()"><!-- --></A><H3>
+getRepeatingColumns</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A> <B>getRepeatingColumns</B>()</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getRepeatingColumns()">Sheet</A></CODE></B></DD>
+<DD>Gets the repeating columns used when printing the sheet, as found in 
+ File-&gt;PageSetup-&gt;Sheet.<p>
+ 
+ Repeating columns cover a range of contiguous columns, e.g.:
+ <pre>
+ Sheet1!$A:$A
+ Sheet2!$C:$F
+ </pre>
+ The <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddress</CODE></A> returned contains a row part which spans all 
+ rows, and a column part which specifies the contiguous range of 
+ repeating columns.<p>
+ 
+ If the Sheet does not have any repeating columns defined, null is 
+ returned.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getRepeatingColumns()">getRepeatingColumns</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddress</CODE></A> containing the repeating columns for 
+         the Sheet, or null.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRepeatingRows(org.apache.poi.ss.util.CellRangeAddress)"><!-- --></A><H3>
+setRepeatingRows</H3>
+<PRE>
+public void <B>setRepeatingRows</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;rowRangeRef)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setRepeatingRows(org.apache.poi.ss.util.CellRangeAddress)">Sheet</A></CODE></B></DD>
+<DD>Sets the repeating rows used when printing the sheet, as found in 
+ File-&gt;PageSetup-&gt;Sheet.<p>
+ 
+ Repeating rows cover a range of contiguous rows, e.g.:
+ <pre>
+ Sheet1!$1:$1
+ Sheet2!$5:$8</pre>
+ The parameter <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddress</CODE></A> should specify a column part 
+ which spans all columns, and a row part which specifies the contiguous 
+ range of repeating rows, e.g.:
+ <pre>
+ sheet.setRepeatingRows(CellRangeAddress.valueOf("2:3"));</pre>
+ A null parameter value indicates that repeating rows should be removed 
+ from the Sheet:
+ <pre>
+ sheet.setRepeatingRows(null);</pre>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setRepeatingRows(org.apache.poi.ss.util.CellRangeAddress)">setRepeatingRows</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rowRangeRef</CODE> - a <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddress</CODE></A> containing the repeating 
+        rows for the Sheet, or null.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRepeatingColumns(org.apache.poi.ss.util.CellRangeAddress)"><!-- --></A><H3>
+setRepeatingColumns</H3>
+<PRE>
+public void <B>setRepeatingColumns</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util">CellRangeAddress</A>&nbsp;columnRangeRef)</PRE>
+<DL>
+<DD><B>Description copied from interface: <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setRepeatingColumns(org.apache.poi.ss.util.CellRangeAddress)">Sheet</A></CODE></B></DD>
+<DD>Sets the repeating columns used when printing the sheet, as found in 
+ File-&gt;PageSetup-&gt;Sheet.<p>
+ 
+ Repeating columns cover a range of contiguous columns, e.g.:
+ <pre>
+ Sheet1!$A:$A
+ Sheet2!$C:$F</pre>
+ The parameter <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddress</CODE></A> should specify a row part 
+ which spans all rows, and a column part which specifies the contiguous 
+ range of repeating columns, e.g.:
+ <pre>
+ sheet.setRepeatingColumns(CellRangeAddress.valueOf("B:C"));</pre>
+ A null parameter value indicates that repeating columns should be removed 
+ from the Sheet:
+ <pre>
+ sheet.setRepeatingColumns(null);</pre>
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setRepeatingColumns(org.apache.poi.ss.util.CellRangeAddress)">setRepeatingColumns</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>columnRangeRef</CODE> - a <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddress.html" title="class in org.apache.poi.ss.util"><CODE>CellRangeAddress</CODE></A> containing the repeating 
+        columns for the Sheet, or null.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getColumnOutlineLevel(int)"><!-- --></A><H3>
+getColumnOutlineLevel</H3>
+<PRE>
+public int <B>getColumnOutlineLevel</B>(int&nbsp;columnIndex)</PRE>
+<DL>
+<DD>Returns the column outline level. Increased as you
+  put it into more groups (outlines), reduced as
+  you take it out of them.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getColumnOutlineLevel(int)">getColumnOutlineLevel</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getActiveCell()"><!-- --></A><H3>
+getActiveCell</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A> <B>getActiveCell</B>()</PRE>
+<DL>
+<DD>Return location of the active cell, e.g. <code>A1</code>.
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#getActiveCell()">getActiveCell</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the location of the active cell.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setActiveCell(org.apache.poi.ss.util.CellAddress)"><!-- --></A><H3>
+setActiveCell</H3>
+<PRE>
+public void <B>setActiveCell</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util">CellAddress</A>&nbsp;address)</PRE>
+<DL>
+<DD>Sets location of the active cell
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html#setActiveCell(org.apache.poi.ss.util.CellAddress)">setActiveCell</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A></CODE></DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>address</CODE> - the location of the active cell, e.g. <code>A1</code>.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFShapeTypes.html" title="interface in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheetConditionalFormatting.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFSheet.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFSheet.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

@@ -1,0 +1,540 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+VariantSupport (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="VariantSupport (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/Variant.html" title="class in org.apache.poi.hpsf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/VariantTypeException.html" title="class in org.apache.poi.hpsf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/hpsf/VariantSupport.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="VariantSupport.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hpsf</FONT>
+<BR>
+Class VariantSupport</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../org/apache/poi/hpsf/Variant.html" title="class in org.apache.poi.hpsf">org.apache.poi.hpsf.Variant</A>
+      <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hpsf.VariantSupport</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public class <B>VariantSupport</B><DT>extends <A HREF="../../../../org/apache/poi/hpsf/Variant.html" title="class in org.apache.poi.hpsf">Variant</A></DL>
+</PRE>
+
+<P>
+Supports reading and writing of variant data.<p>
+
+ <strong>FIXME (3):</strong> Reading and writing should be made more
+ uniform than it is now. The following items should be resolved:<p>
+
+ <ul>
+
+ <li>Reading requires a length parameter that is 4 byte greater than the
+ actual data, because the variant type field is included.
+
+ <li>Reading reads from a byte array while writing writes to an byte array
+ output stream.
+
+ </ul>
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/VariantSupport.html#SUPPORTED_TYPES">SUPPORTED_TYPES</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;HPSF is able to read these <A HREF="../../../../org/apache/poi/hpsf/Variant.html" title="class in org.apache.poi.hpsf"><CODE>Variant</CODE></A> types.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_org.apache.poi.hpsf.Variant"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class org.apache.poi.hpsf.<A HREF="../../../../org/apache/poi/hpsf/Variant.html" title="class in org.apache.poi.hpsf">Variant</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../org/apache/poi/hpsf/Variant.html#LENGTH_0">LENGTH_0</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#LENGTH_2">LENGTH_2</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#LENGTH_4">LENGTH_4</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#LENGTH_8">LENGTH_8</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#LENGTH_UNKNOWN">LENGTH_UNKNOWN</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#LENGTH_VARIABLE">LENGTH_VARIABLE</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_ARRAY">VT_ARRAY</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_BLOB">VT_BLOB</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_BLOB_OBJECT">VT_BLOB_OBJECT</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_BOOL">VT_BOOL</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_BSTR">VT_BSTR</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_BYREF">VT_BYREF</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_CARRAY">VT_CARRAY</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_CF">VT_CF</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_CLSID">VT_CLSID</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_CY">VT_CY</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_DATE">VT_DATE</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_DECIMAL">VT_DECIMAL</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_DISPATCH">VT_DISPATCH</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_EMPTY">VT_EMPTY</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_ERROR">VT_ERROR</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_FILETIME">VT_FILETIME</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_HRESULT">VT_HRESULT</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_I1">VT_I1</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_I2">VT_I2</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_I4">VT_I4</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_I8">VT_I8</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_ILLEGAL">VT_ILLEGAL</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_ILLEGALMASKED">VT_ILLEGALMASKED</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_INT">VT_INT</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_LPSTR">VT_LPSTR</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_LPWSTR">VT_LPWSTR</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_NULL">VT_NULL</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_PTR">VT_PTR</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_R4">VT_R4</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_R8">VT_R8</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_RESERVED">VT_RESERVED</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_SAFEARRAY">VT_SAFEARRAY</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_STORAGE">VT_STORAGE</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_STORED_OBJECT">VT_STORED_OBJECT</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_STREAM">VT_STREAM</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_STREAMED_OBJECT">VT_STREAMED_OBJECT</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_TYPEMASK">VT_TYPEMASK</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_UI1">VT_UI1</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_UI2">VT_UI2</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_UI4">VT_UI4</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_UI8">VT_UI8</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_UINT">VT_UINT</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_UNKNOWN">VT_UNKNOWN</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_USERDEFINED">VT_USERDEFINED</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_VARIANT">VT_VARIANT</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_VECTOR">VT_VECTOR</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_VERSIONED_STREAM">VT_VERSIONED_STREAM</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#VT_VOID">VT_VOID</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/VariantSupport.html#VariantSupport()">VariantSupport</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/VariantSupport.html#codepageToEncoding(int)">codepageToEncoding</A></B>(int&nbsp;codepage)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Deprecated.</B>&nbsp;<I>POI 3.16 - use <A HREF="../../../../org/apache/poi/util/CodePageUtil.html#codepageToEncoding(int)"><CODE>CodePageUtil.codepageToEncoding(int)</CODE></A></I></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/VariantSupport.html#isLogUnsupportedTypes()">isLogUnsupportedTypes</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks whether logging of unsupported variant types warning is turned
+ on or off.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/VariantSupport.html#isSupportedType(int)">isSupportedType</A></B>(int&nbsp;variantType)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks whether HPSF supports the specified variant type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.Object</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/VariantSupport.html#read(byte[], int, int, long, int)">read</A></B>(byte[]&nbsp;src,
+     int&nbsp;offset,
+     int&nbsp;length,
+     long&nbsp;type,
+     int&nbsp;codepage)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads a variant type from a byte array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.Object</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/VariantSupport.html#read(org.apache.poi.util.LittleEndianByteArrayInputStream, int, long, int)">read</A></B>(<A HREF="../../../../org/apache/poi/util/LittleEndianByteArrayInputStream.html" title="class in org.apache.poi.util">LittleEndianByteArrayInputStream</A>&nbsp;lei,
+     int&nbsp;length,
+     long&nbsp;type,
+     int&nbsp;codepage)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/VariantSupport.html#setLogUnsupportedTypes(boolean)">setLogUnsupportedTypes</A></B>(boolean&nbsp;logUnsupportedTypes)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies whether warnings about unsupported variant types are to be
+ written to <code>System.err</code> or not.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/VariantSupport.html#write(java.io.OutputStream, long, java.lang.Object, int)">write</A></B>(java.io.OutputStream&nbsp;out,
+      long&nbsp;type,
+      java.lang.Object&nbsp;value,
+      int&nbsp;codepage)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Writes a variant value to an output stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/hpsf/VariantSupport.html#writeUnsupportedTypeMessage(org.apache.poi.hpsf.UnsupportedVariantTypeException)">writeUnsupportedTypeMessage</A></B>(<A HREF="../../../../org/apache/poi/hpsf/UnsupportedVariantTypeException.html" title="class in org.apache.poi.hpsf">UnsupportedVariantTypeException</A>&nbsp;ex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Writes a warning to <code>System.err</code> that a variant type is
+ unsupported by HPSF.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hpsf.Variant"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hpsf.<A HREF="../../../../org/apache/poi/hpsf/Variant.html" title="class in org.apache.poi.hpsf">Variant</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../org/apache/poi/hpsf/Variant.html#getVariantLength(long)">getVariantLength</A>, <A HREF="../../../../org/apache/poi/hpsf/Variant.html#getVariantName(long)">getVariantName</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SUPPORTED_TYPES"><!-- --></A><H3>
+SUPPORTED_TYPES</H3>
+<PRE>
+public static final int[] <B>SUPPORTED_TYPES</B></PRE>
+<DL>
+<DD>HPSF is able to read these <A HREF="../../../../org/apache/poi/hpsf/Variant.html" title="class in org.apache.poi.hpsf"><CODE>Variant</CODE></A> types.
+<P>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="VariantSupport()"><!-- --></A><H3>
+VariantSupport</H3>
+<PRE>
+public <B>VariantSupport</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="setLogUnsupportedTypes(boolean)"><!-- --></A><H3>
+setLogUnsupportedTypes</H3>
+<PRE>
+public static void <B>setLogUnsupportedTypes</B>(boolean&nbsp;logUnsupportedTypes)</PRE>
+<DL>
+<DD>Specifies whether warnings about unsupported variant types are to be
+ written to <code>System.err</code> or not.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>logUnsupportedTypes</CODE> - If <code>true</code> warnings will be written,
+ if <code>false</code> they won't.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isLogUnsupportedTypes()"><!-- --></A><H3>
+isLogUnsupportedTypes</H3>
+<PRE>
+public static boolean <B>isLogUnsupportedTypes</B>()</PRE>
+<DL>
+<DD>Checks whether logging of unsupported variant types warning is turned
+ on or off.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if logging is turned on, else
+ <code>false</code>.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writeUnsupportedTypeMessage(org.apache.poi.hpsf.UnsupportedVariantTypeException)"><!-- --></A><H3>
+writeUnsupportedTypeMessage</H3>
+<PRE>
+protected static void <B>writeUnsupportedTypeMessage</B>(<A HREF="../../../../org/apache/poi/hpsf/UnsupportedVariantTypeException.html" title="class in org.apache.poi.hpsf">UnsupportedVariantTypeException</A>&nbsp;ex)</PRE>
+<DL>
+<DD>Writes a warning to <code>System.err</code> that a variant type is
+ unsupported by HPSF. Such a warning is written only once for each variant
+ type. Log messages can be turned on or off by
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ex</CODE> - The exception to log</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isSupportedType(int)"><!-- --></A><H3>
+isSupportedType</H3>
+<PRE>
+public boolean <B>isSupportedType</B>(int&nbsp;variantType)</PRE>
+<DL>
+<DD>Checks whether HPSF supports the specified variant type. Unsupported
+ types should be implemented included in the <A HREF="../../../../org/apache/poi/hpsf/VariantSupport.html#SUPPORTED_TYPES"><CODE>SUPPORTED_TYPES</CODE></A>
+ array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>variantType</CODE> - the variant type to check
+<DT><B>Returns:</B><DD><code>true</code> if HPFS supports this type, else
+         <code>false</code><DT><B>See Also:</B><DD><A HREF="../../../../org/apache/poi/hpsf/Variant.html" title="class in org.apache.poi.hpsf"><CODE>Variant</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(byte[], int, int, long, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public static java.lang.Object <B>read</B>(byte[]&nbsp;src,
+                                    int&nbsp;offset,
+                                    int&nbsp;length,
+                                    long&nbsp;type,
+                                    int&nbsp;codepage)
+                             throws <A HREF="../../../../org/apache/poi/hpsf/ReadingNotSupportedException.html" title="class in org.apache.poi.hpsf">ReadingNotSupportedException</A>,
+                                    java.io.UnsupportedEncodingException</PRE>
+<DL>
+<DD>Reads a variant type from a byte array.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>src</CODE> - The byte array<DD><CODE>offset</CODE> - The offset in the byte array where the variant starts<DD><CODE>length</CODE> - The length of the variant including the variant type field<DD><CODE>type</CODE> - The variant type to read<DD><CODE>codepage</CODE> - The codepage to use for non-wide strings
+<DT><B>Returns:</B><DD>A Java object that corresponds best to the variant field. For
+         example, a VT_I4 is returned as a <CODE>Long</CODE>, a VT_LPSTR as a
+         <CODE>String</CODE>.
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/ReadingNotSupportedException.html" title="class in org.apache.poi.hpsf">ReadingNotSupportedException</A></CODE> - if a property is to be written
+            who's variant type HPSF does not yet support
+<DD><CODE>java.io.UnsupportedEncodingException</CODE> - if the specified codepage is not
+            supported.<DT><B>See Also:</B><DD><A HREF="../../../../org/apache/poi/hpsf/Variant.html" title="class in org.apache.poi.hpsf"><CODE>Variant</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="read(org.apache.poi.util.LittleEndianByteArrayInputStream, int, long, int)"><!-- --></A><H3>
+read</H3>
+<PRE>
+public static java.lang.Object <B>read</B>(<A HREF="../../../../org/apache/poi/util/LittleEndianByteArrayInputStream.html" title="class in org.apache.poi.util">LittleEndianByteArrayInputStream</A>&nbsp;lei,
+                                    int&nbsp;length,
+                                    long&nbsp;type,
+                                    int&nbsp;codepage)
+                             throws <A HREF="../../../../org/apache/poi/hpsf/ReadingNotSupportedException.html" title="class in org.apache.poi.hpsf">ReadingNotSupportedException</A>,
+                                    java.io.UnsupportedEncodingException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/ReadingNotSupportedException.html" title="class in org.apache.poi.hpsf">ReadingNotSupportedException</A></CODE>
+<DD><CODE>java.io.UnsupportedEncodingException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="codepageToEncoding(int)"><!-- --></A><H3>
+codepageToEncoding</H3>
+<PRE>
+<FONT SIZE="-1">@Deprecated
+<A HREF="../../../../org/apache/poi/util/Removal.html" title="annotation in org.apache.poi.util">@Removal</A>(<A HREF="../../../../org/apache/poi/util/Removal.html#version()">version</A>="3.18")
+</FONT>public static java.lang.String <B>codepageToEncoding</B>(int&nbsp;codepage)
+                                           throws java.io.UnsupportedEncodingException</PRE>
+<DL>
+<DD><B>Deprecated.</B>&nbsp;<I>POI 3.16 - use <A HREF="../../../../org/apache/poi/util/CodePageUtil.html#codepageToEncoding(int)"><CODE>CodePageUtil.codepageToEncoding(int)</CODE></A></I>
+<P>
+<DD>Turns a codepage number into the equivalent character encoding's
+ name.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>codepage</CODE> - The codepage number
+<DT><B>Returns:</B><DD>The character encoding's name. If the codepage number is 65001,
+ the encoding name is "UTF-8". All other positive numbers are mapped to
+ "cp" followed by the number, e.g. if the codepage number is 1252 the
+ returned character encoding name will be "cp1252".
+<DT><B>Throws:</B>
+<DD><CODE>java.io.UnsupportedEncodingException</CODE> - if the specified codepage is
+ less than zero.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(java.io.OutputStream, long, java.lang.Object, int)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public static int <B>write</B>(java.io.OutputStream&nbsp;out,
+                        long&nbsp;type,
+                        java.lang.Object&nbsp;value,
+                        int&nbsp;codepage)
+                 throws java.io.IOException,
+                        <A HREF="../../../../org/apache/poi/hpsf/WritingNotSupportedException.html" title="class in org.apache.poi.hpsf">WritingNotSupportedException</A></PRE>
+<DL>
+<DD>Writes a variant value to an output stream. This method ensures that
+ always a multiple of 4 bytes is written.<p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>out</CODE> - The stream to write the value to.<DD><CODE>type</CODE> - The variant's type.<DD><CODE>value</CODE> - The variant's value.<DD><CODE>codepage</CODE> - The codepage to use to write non-wide strings
+<DT><B>Returns:</B><DD>The number of entities that have been written. In many cases an
+ "entity" is a byte but this is not always the case.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O exceptions occurs
+<DD><CODE><A HREF="../../../../org/apache/poi/hpsf/WritingNotSupportedException.html" title="class in org.apache.poi.hpsf">WritingNotSupportedException</A></CODE> - if a property is to be written
+ who's variant type HPSF does not yet support</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/Variant.html" title="class in org.apache.poi.hpsf"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/hpsf/VariantTypeException.html" title="class in org.apache.poi.hpsf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/hpsf/VariantSupport.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="VariantSupport.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

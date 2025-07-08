@@ -1,0 +1,556 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+SimpleShape (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="SimpleShape (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/Sheet.html" title="interface in org.apache.poi.sl.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/Slide.html" title="interface in org.apache.poi.sl.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/usermodel/SimpleShape.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SimpleShape.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.sl.usermodel</FONT>
+<BR>
+Interface SimpleShape&lt;S extends <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;S,P&gt;,P extends <A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="interface in org.apache.poi.sl.usermodel">TextParagraph</A>&lt;S,P,?&gt;&gt;</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../org/apache/poi/sl/draw/geom/IAdjustableShape.html" title="interface in org.apache.poi.sl.draw.geom">IAdjustableShape</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="interface in org.apache.poi.sl.usermodel">PlaceableShape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;S,P&gt;</DD>
+</DL>
+<DL>
+<DT><B>All Known Subinterfaces:</B> <DD><A HREF="../../../../../org/apache/poi/sl/usermodel/AutoShape.html" title="interface in org.apache.poi.sl.usermodel">AutoShape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/ConnectorShape.html" title="interface in org.apache.poi.sl.usermodel">ConnectorShape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/FreeformShape.html" title="interface in org.apache.poi.sl.usermodel">FreeformShape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/Line.html" title="interface in org.apache.poi.sl.usermodel">Line</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/PictureShape.html" title="interface in org.apache.poi.sl.usermodel">PictureShape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/TableCell.html" title="interface in org.apache.poi.sl.usermodel">TableCell</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/TextBox.html" title="interface in org.apache.poi.sl.usermodel">TextBox</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/TextShape.html" title="interface in org.apache.poi.sl.usermodel">TextShape</A>&lt;S,P&gt;</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>SimpleShape&lt;S extends <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;S,P&gt;,P extends <A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="interface in org.apache.poi.sl.usermodel">TextParagraph</A>&lt;S,P,?&gt;&gt;</B><DT>extends <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/draw/geom/IAdjustableShape.html" title="interface in org.apache.poi.sl.draw.geom">IAdjustableShape</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="interface in org.apache.poi.sl.usermodel">PlaceableShape</A>&lt;S,P&gt;</DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/Hyperlink.html" title="interface in org.apache.poi.sl.usermodel">Hyperlink</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="type parameter in SimpleShape">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="type parameter in SimpleShape">P</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#createHyperlink()">createHyperlink</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a hyperlink and asigns it to this shape.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.awt.Color</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#getFillColor()">getFillColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the solid color fill.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/FillStyle.html" title="interface in org.apache.poi.sl.usermodel">FillStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#getFillStyle()">getFillStyle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/draw/geom/CustomGeometry.html" title="class in org.apache.poi.sl.draw.geom">CustomGeometry</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#getGeometry()">getGeometry</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/Hyperlink.html" title="interface in org.apache.poi.sl.usermodel">Hyperlink</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="type parameter in SimpleShape">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="type parameter in SimpleShape">P</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#getHyperlink()">getHyperlink</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the hyperlink assigned to this shape</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/LineDecoration.html" title="interface in org.apache.poi.sl.usermodel">LineDecoration</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#getLineDecoration()">getLineDecoration</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/Placeholder.html" title="enum in org.apache.poi.sl.usermodel">Placeholder</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#getPlaceholder()">getPlaceholder</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/Shadow.html" title="interface in org.apache.poi.sl.usermodel">Shadow</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="type parameter in SimpleShape">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="type parameter in SimpleShape">P</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#getShadow()">getShadow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeType.html" title="enum in org.apache.poi.sl.usermodel">ShapeType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#getShapeType()">getShapeType</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/StrokeStyle.html" title="interface in org.apache.poi.sl.usermodel">StrokeStyle</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#getStrokeStyle()">getStrokeStyle</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#setFillColor(java.awt.Color)">setFillColor</A></B>(java.awt.Color&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies a solid color fill.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#setPlaceholder(org.apache.poi.sl.usermodel.Placeholder)">setPlaceholder</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/Placeholder.html" title="enum in org.apache.poi.sl.usermodel">Placeholder</A>&nbsp;placeholder)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Specifies that the corresponding shape should be represented by the generating application
+ as a placeholder.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#setShapeType(org.apache.poi.sl.usermodel.ShapeType)">setShapeType</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeType.html" title="enum in org.apache.poi.sl.usermodel">ShapeType</A>&nbsp;type)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#setStrokeStyle(java.lang.Object...)">setStrokeStyle</A></B>(java.lang.Object...&nbsp;styles)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sets the line attributes.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.sl.usermodel.Shape"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from interface org.apache.poi.sl.usermodel.<A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html#draw(java.awt.Graphics2D, java.awt.geom.Rectangle2D)">draw</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html#getAnchor()">getAnchor</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html#getParent()">getParent</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html#getSheet()">getSheet</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.sl.draw.geom.IAdjustableShape"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from interface org.apache.poi.sl.draw.geom.<A HREF="../../../../../org/apache/poi/sl/draw/geom/IAdjustableShape.html" title="interface in org.apache.poi.sl.draw.geom">IAdjustableShape</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/sl/draw/geom/IAdjustableShape.html#getAdjustValue(java.lang.String)">getAdjustValue</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.sl.usermodel.PlaceableShape"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from interface org.apache.poi.sl.usermodel.<A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html" title="interface in org.apache.poi.sl.usermodel">PlaceableShape</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#getAnchor()">getAnchor</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#getFlipHorizontal()">getFlipHorizontal</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#getFlipVertical()">getFlipVertical</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#getParent()">getParent</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#getRotation()">getRotation</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#getSheet()">getSheet</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#setAnchor(java.awt.geom.Rectangle2D)">setAnchor</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#setFlipHorizontal(boolean)">setFlipHorizontal</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#setFlipVertical(boolean)">setFlipVertical</A>, <A HREF="../../../../../org/apache/poi/sl/usermodel/PlaceableShape.html#setRotation(double)">setRotation</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getFillStyle()"><!-- --></A><H3>
+getFillStyle</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/FillStyle.html" title="interface in org.apache.poi.sl.usermodel">FillStyle</A> <B>getFillStyle</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLineDecoration()"><!-- --></A><H3>
+getLineDecoration</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/LineDecoration.html" title="interface in org.apache.poi.sl.usermodel">LineDecoration</A> <B>getLineDecoration</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getStrokeStyle()"><!-- --></A><H3>
+getStrokeStyle</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/StrokeStyle.html" title="interface in org.apache.poi.sl.usermodel">StrokeStyle</A> <B>getStrokeStyle</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setStrokeStyle(java.lang.Object...)"><!-- --></A><H3>
+setStrokeStyle</H3>
+<PRE>
+void <B>setStrokeStyle</B>(java.lang.Object...&nbsp;styles)</PRE>
+<DL>
+<DD>Sets the line attributes.
+ Possible attributes are Double (width), LineCap, LineDash, LineCompound, Color
+ (implementations of PaintStyle aren't yet supported ...)
+ 
+ If no styles are given, the line will be hidden
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>styles</CODE> - the line attributes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getGeometry()"><!-- --></A><H3>
+getGeometry</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/draw/geom/CustomGeometry.html" title="class in org.apache.poi.sl.draw.geom">CustomGeometry</A> <B>getGeometry</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShapeType()"><!-- --></A><H3>
+getShapeType</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeType.html" title="enum in org.apache.poi.sl.usermodel">ShapeType</A> <B>getShapeType</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setShapeType(org.apache.poi.sl.usermodel.ShapeType)"><!-- --></A><H3>
+setShapeType</H3>
+<PRE>
+void <B>setShapeType</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeType.html" title="enum in org.apache.poi.sl.usermodel">ShapeType</A>&nbsp;type)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPlaceholder()"><!-- --></A><H3>
+getPlaceholder</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/Placeholder.html" title="enum in org.apache.poi.sl.usermodel">Placeholder</A> <B>getPlaceholder</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the placeholder or null if none is assigned<DT><B>See Also:</B><DD><A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html#setPlaceholder(org.apache.poi.sl.usermodel.Placeholder)"><CODE>setPlaceholder(Placeholder)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setPlaceholder(org.apache.poi.sl.usermodel.Placeholder)"><!-- --></A><H3>
+setPlaceholder</H3>
+<PRE>
+void <B>setPlaceholder</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/Placeholder.html" title="enum in org.apache.poi.sl.usermodel">Placeholder</A>&nbsp;placeholder)</PRE>
+<DL>
+<DD>Specifies that the corresponding shape should be represented by the generating application
+ as a placeholder. When a shape is considered a placeholder by the generating application
+ it can have special properties to alert the user that they may enter content into the shape.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>placeholder</CODE> - the placeholder or null to remove the reference to the placeholder</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShadow()"><!-- --></A><H3>
+getShadow</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/Shadow.html" title="interface in org.apache.poi.sl.usermodel">Shadow</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="type parameter in SimpleShape">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="type parameter in SimpleShape">P</A>&gt; <B>getShadow</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFillColor()"><!-- --></A><H3>
+getFillColor</H3>
+<PRE>
+java.awt.Color <B>getFillColor</B>()</PRE>
+<DL>
+<DD>Returns the solid color fill.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>solid fill color of null if not set or fill color
+ is not solid (pattern or gradient)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setFillColor(java.awt.Color)"><!-- --></A><H3>
+setFillColor</H3>
+<PRE>
+void <B>setFillColor</B>(java.awt.Color&nbsp;color)</PRE>
+<DL>
+<DD>Specifies a solid color fill. The shape is filled entirely with the
+ specified color.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - the solid color fill. The value of <code>null</code> unsets
+              the solid fill attribute from the underlying implementation</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getHyperlink()"><!-- --></A><H3>
+getHyperlink</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/Hyperlink.html" title="interface in org.apache.poi.sl.usermodel">Hyperlink</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="type parameter in SimpleShape">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="type parameter in SimpleShape">P</A>&gt; <B>getHyperlink</B>()</PRE>
+<DL>
+<DD>Returns the hyperlink assigned to this shape
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the hyperlink assigned to this shape
+ or <code>null</code> if not found.<DT><B>Since:</B></DT>
+  <DD>POI 3.14-Beta1</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createHyperlink()"><!-- --></A><H3>
+createHyperlink</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/Hyperlink.html" title="interface in org.apache.poi.sl.usermodel">Hyperlink</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="type parameter in SimpleShape">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/SimpleShape.html" title="type parameter in SimpleShape">P</A>&gt; <B>createHyperlink</B>()</PRE>
+<DL>
+<DD>Creates a hyperlink and asigns it to this shape.
+ If the shape has already a hyperlink assigned, return it instead
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the hyperlink assigned to this shape<DT><B>Since:</B></DT>
+  <DD>POI 3.14-Beta1</DD>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/Sheet.html" title="interface in org.apache.poi.sl.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/Slide.html" title="interface in org.apache.poi.sl.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/usermodel/SimpleShape.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="SimpleShape.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

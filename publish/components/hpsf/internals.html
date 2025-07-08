@@ -1,0 +1,1680 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>Apache POI&trade; - HPSF Internals</title>
+<link type="text/css" href="../../skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="../../skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="../../skin/print.css" rel="stylesheet">
+<link type="text/css" href="../../skin/profile.css" rel="stylesheet">
+<script src="../../skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="../../skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="../../skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="../../images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="../../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="../../images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="../../images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li>
+<a class="unselected" href="../../index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="../../help/index.html">Help</a>
+</li>
+<li class="current">
+<a class="selected" href="../../components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="../../devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', '../../skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Component APIs</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../apidocs/index.html">Javadocs</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.3', '../../skin/')" id="menu_1.1.3Title" class="menutitle">Excel (HSSF/XSSF)</div>
+<div id="menu_1.1.3" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/spreadsheet/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/how-to.html">HOWTO</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/converting.html">HSSF to SS Converting</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/formula.html">Formula Support</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval.html">Formula Evaluation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval-devguide.html">Eval Dev Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/examples.html">Examples</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/use-case.html">Use Case</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/diagrams.html">Pictorial Docs</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/limitations.html">Limitations</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/user-defined-functions.html">User Defined Functions</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/excelant.html">ExcelAnt Tests</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/hacking-hssf.html">Hacking HSSF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/record-generator.html">Record Generator</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/chart.html">Charts</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.4', '../../skin/')" id="menu_1.1.4Title" class="menutitle">PowerPoint (HSLF/XSLF)</div>
+<div id="menu_1.1.4" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/slideshow/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/how-to-shapes.html">HSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/xslf-cookbook.html">XSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-wmf-emf-renderer.html">Render SL/WMF/EMF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-file-format.html">PPT File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.5', '../../skin/')" id="menu_1.1.5Title" class="menutitle">Word (HWPF/XWPF)</div>
+<div id="menu_1.1.5" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/document/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide.html">HWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide-xwpf.html">XWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/docoverview.html">HWPF Format</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/projectplan.html">HWPF Project plan</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hsmf/index.html">Outlook (HSMF)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/diagram/index.html">Visio (HDGF+XDGF)</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.8', '../../skin/')" id="menu_1.1.8Title" class="menutitle">Publisher (HPBF)</div>
+<div id="menu_1.1.8" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpbf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpbf/file-format.html">File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.9', '../../skin/')" id="menu_1.1.9Title" class="menutitle">OLE2 Filesystem (POIFS)</div>
+<div id="menu_1.1.9" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/poifs/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/embeded.html">Embedded Documents</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/fileformat.html">File System Documentation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/usecases.html">Use Cases</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/design.html">Design</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_selected_1.1.10', '../../skin/')" id="menu_selected_1.1.10Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">OLE2 Document Props (HPSF)</div>
+<div id="menu_selected_1.1.10" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/hpsf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/thumbnails.html">Thumbnails</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">Internals</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/todo.html">To Do</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hmef/index.html">TNEF (HMEF) for winmail.dat</a>
+</div>
+<div class="menuitem">
+<a href="../../components/oxml4j/index.html">OpenXML4J (OOXML)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/logging.html">Logging framework</a>
+</div>
+<div class="menuitem">
+<a href="../../components/configuration.html">Configuration</a>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="../../skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="../../images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="../../images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>Apache POI&trade; - HPSF Internals</h1>
+<div id="front-matter"></div>
+    
+<a name="HPSF+Internals"></a>
+<h2 class="boxed">HPSF Internals</h2>
+<div class="section">
+<a name="Introduction"></a>
+<h3 class="boxed">Introduction</h3>
+<p>A Microsoft Office document is internally organized like a filesystem
+     with directory and files. Microsoft calls these files
+     <strong>streams</strong>. A document can have properties attached to it,
+     like author, title, number of words etc. These metadata are not stored in
+     the main stream of, say, a Word document, but instead in a dedicated
+     stream with a special format. Usually this stream's name is
+     <span class="codefrag">\005SummaryInformation</span>, where <span class="codefrag">\005</span> represents
+     the character with a decimal value of 5.</p>
+<p>A single piece of information in the stream is called a
+     <strong>property</strong>, for example the document title. Each property
+     has an integral <strong>ID</strong> (e.g. 2 for title), a
+     <strong>type</strong> (telling that the title is a string of bytes) and a
+     <strong>value</strong> (what this is should be obvious). A stream
+     containing properties is called a
+     <strong>property set stream</strong>.</p>
+<p>This document describes the internal structure of a property set stream,
+     i.e. the <strong>HPSF</strong>. It does
+     not describe how a Microsoft Office document is organized internally and
+     how to retrieve a stream from it. See the <a href="../poifs/index.html">POIFS documentation</a> for that kind of
+     stuff.</p>
+<p>The HPSF is not only used in the Summary
+     Information stream in the top-level document of a Microsoft Office
+     document. Often there is also a property set stream named
+     <span class="codefrag">\005DocumentSummaryInformation</span> with additional properties.
+     Embedded documents may have their own property set streams. You cannot
+     tell by a stream's name whether it is a property set stream or not.
+     Instead you have to open the stream and look at its bytes.</p>
+<a name="Data+Types"></a>
+<h3 class="boxed">Data Types</h3>
+<p>Before delving into the details of the property set stream format we
+     have to have a short look at data types. Integral values are stored in the
+     so-called <strong>little endian</strong> format. In this format the bytes
+     that make out an integral value are stored in the "wrong" order. For
+     example, the decimal value 4660 is 0x1234 in the hexadecimal notation. If
+     you think this should be represented by a byte 0x12 followed by another
+     byte 0x34, you are right. This is called the <strong>big endian</strong>
+     format. In the little endian format, however, this order is reversed and
+     the low-value byte comes first: 0x3412.
+    </p>
+<p>The following table gives an overview about some important data
+     types:</p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+
+     
+<tr>
+      
+<th colspan="1" rowspan="1">Name</th>
+      <th colspan="1" rowspan="1">Length</th>
+      <th colspan="1" rowspan="1">Example (Big Endian)</th>
+      <th colspan="1" rowspan="1">Example (Little Endian)</th>
+     
+</tr>
+
+     
+<tr>
+      
+<td colspan="1" rowspan="1"><strong>Bytes</strong></td>
+      <td colspan="1" rowspan="1">1 byte</td>
+      <td colspan="1" rowspan="1"><span class="codefrag">0x12</span></td>
+      <td colspan="1" rowspan="1"><span class="codefrag">0x12</span></td>
+     
+</tr>
+
+     
+<tr>
+      
+<td colspan="1" rowspan="1"><strong>Word</strong></td>
+      <td colspan="1" rowspan="1">2 bytes</td>
+      <td colspan="1" rowspan="1"><span class="codefrag">0x1234</span></td>
+      <td colspan="1" rowspan="1"><span class="codefrag">0x3412</span></td>
+     
+</tr>
+
+     
+<tr>
+      
+<td colspan="1" rowspan="1"><strong>DWord</strong></td>
+      <td colspan="1" rowspan="1">4 bytes</td>
+      <td colspan="1" rowspan="1"><span class="codefrag">0x12345678</span></td>
+      <td colspan="1" rowspan="1"><span class="codefrag">0x78563412</span></td>
+     
+</tr>
+
+     
+<tr>
+      
+<td colspan="1" rowspan="1"><strong>ClassID</strong>
+<br>
+       A sequence of one DWord, two Words and eight Bytes</td>
+
+      <td colspan="1" rowspan="1">16 bytes</td>
+
+      <td colspan="1" rowspan="1"><span class="codefrag">0xE0859FF2F94F6810AB9108002B27B3D9</span> resp.
+	<span class="codefrag">E0859FF2-F94F-6810-AB-91-08-00-2B-27-B3-D9</span></td>
+
+      <td colspan="1" rowspan="1"><span class="codefrag">0xF29F85E04FF91068AB9108002B27B3D9</span> resp.
+	<span class="codefrag">F29F85E0-4FF9-1068-AB-91-08-00-2B-27-B3-D9</span></td>
+     
+</tr>
+
+     
+<tr>
+      
+<td colspan="1" rowspan="1"></td>
+      <td colspan="1" rowspan="1"></td>
+      <td colspan="1" rowspan="1">The ClassID examples are given here in two different notations. The
+	second notation without the "0x" at the beginning and with dashes
+	inside shows the internal grouping into one DWord, two Words and eight
+	Bytes.</td>
+      <td colspan="1" rowspan="1"><em>Watch out:</em> Microsoft documentation and tools show class IDs
+	a little bit differently like
+	<span class="codefrag">F29F85E0-4FF9-1068-AB91-08002B27B3D9</span>.
+	However, that representation is (intentionally?) misleading with
+	respect to endianess.</td>
+     
+</tr>
+    
+</table>
+<a name="HPSF+Overview"></a>
+<h3 class="boxed">HPSF Overview</h3>
+<p>A property set stream consists of three main parts:</p>
+<ol>
+     
+<li>The <strong>header</strong> and</li>
+     
+<li>the <strong>section(s)</strong> containing the properties.</li>
+    
+</ol>
+<a name="The+Header"></a>
+<h3 class="boxed">The Header</h3>
+<p>The first bytes in a property set stream is the <strong>header</strong>.
+     It has a fixed length and looks like this:</p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+      
+<tr>
+       
+<th colspan="1" rowspan="1">Offset</th>
+       <th colspan="1" rowspan="1">Type</th>
+       <th colspan="1" rowspan="1">Contents</th>
+       <th colspan="1" rowspan="1">Remarks</th>
+      
+</tr>
+
+      
+<tr>
+       
+<td colspan="1" rowspan="1">0</td>
+       <td colspan="1" rowspan="1">Word</td>
+       <td colspan="1" rowspan="1"><span class="codefrag">0xFFFE</span></td>
+       <td colspan="1" rowspan="1">If the first four bytes of a stream do not contain these values, the
+	 stream is not a property set stream.</td>
+      
+</tr>
+
+      
+<tr>
+       
+<td colspan="1" rowspan="1">2</td>
+       <td colspan="1" rowspan="1">Word</td>
+       <td colspan="1" rowspan="1"><span class="codefrag">0x0000</span></td>
+      <td colspan="1" rowspan="1"></td>
+      
+</tr>
+
+      
+<tr>
+       
+<td colspan="1" rowspan="1">4</td>
+       <td colspan="1" rowspan="1">DWord</td>
+       <td colspan="1" rowspan="1">Denotes the operating system and the OS version under which this
+	 stream was created. The operating system ID is in the DWord's higher
+	 word (after little endian decoding): <span class="codefrag">0x0000</span> for Win16,
+	 <span class="codefrag">0x0001</span> for Macintosh and <span class="codefrag">0x0002</span> for Win32 -
+         that's all. The reader is most likely aware of the fact that there are
+         some more operating systems. However, Microsoft does not seem to
+       know.</td>
+      <td colspan="1" rowspan="1"></td>
+      
+</tr>
+
+      
+<tr>
+       
+<td colspan="1" rowspan="1">8</td>
+       <td colspan="1" rowspan="1">ClassID</td>
+       <td colspan="1" rowspan="1"><span class="codefrag">0x00000000000000000000000000000000</span></td>
+       <td colspan="1" rowspan="1">Most property set streams have this value but this is not
+	 required.</td>
+      
+</tr>
+
+      
+<tr>
+       
+<td colspan="1" rowspan="1">24</td>
+       <td colspan="1" rowspan="1">DWord</td>
+       <td colspan="1" rowspan="1"><span class="codefrag">0x01000000</span> or greater</td>
+       <td colspan="1" rowspan="1">Section count. This field's value should be equal to 1 or greater.
+	 Microsoft claims that this is a "reserved" field, but it seems to tell
+	 how many sections (see below) are following in the stream. This would
+	 really make sense because otherwise you could not know where and how
+	 far you should read section data.</td>
+     
+</tr>
+    
+</table>
+<a name="Section+List"></a>
+<h3 class="boxed">Section List</h3>
+<p>Following the header is the section list. This is an array of pairs each
+     consisting of a section format ID and an offset. This array has as many
+     pairs of ClassID and and DWord fields as the section count field in the
+     header says. The Summary Information stream contains a single section, the
+     Document Summary Information stream contains two.</p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+      
+<tr>
+       
+<th colspan="1" rowspan="1">Type</th>
+       <th colspan="1" rowspan="1">Contents</th>
+       <th colspan="1" rowspan="1">Remarks</th>
+      
+</tr>
+
+      
+<tr>
+       
+<td colspan="1" rowspan="1">ClassID</td>
+       <td colspan="1" rowspan="1">Section format ID</td>
+       <td colspan="1" rowspan="1"><span class="codefrag">0xF29F85E04FF91068AB9108002B27B3D9</span> for the single section
+	 in the Summary Information stream.<br>
+<br>
+
+	
+<span class="codefrag">0xD5CDD5022E9C101B939708002B2CF9AE</span> for the first
+	 section in the Document Summary Information stream.</td>
+      
+</tr>
+
+      
+<tr>
+       
+<td colspan="1" rowspan="1">DWord</td>
+       <td colspan="1" rowspan="1">Offset</td>
+       <td colspan="1" rowspan="1">The number of bytes between the beginning of the stream and the
+	 beginning of the section within the stream.</td>
+      
+</tr>
+
+      
+<tr>
+       
+<td colspan="1" rowspan="1">ClassID</td>
+       <td colspan="1" rowspan="1">Section format ID</td>
+       <td colspan="1" rowspan="1">...</td>
+      
+</tr>
+
+      
+<tr>
+       
+<td colspan="1" rowspan="1">DWord</td>
+       <td colspan="1" rowspan="1">Offset</td>
+       <td colspan="1" rowspan="1">...</td>
+      
+</tr>
+
+      
+<tr>
+       
+<td colspan="1" rowspan="1">...</td>
+       <td colspan="1" rowspan="1">...</td>
+       <td colspan="1" rowspan="1">...</td>
+      
+</tr>
+    
+</table>
+<a name="Section"></a>
+<h3 class="boxed">Section</h3>
+<p>A section is divided into three parts: the section header (with the
+     section length and the number of properties in the section), the
+     properties list (with type and offset of each property), and the
+     properties themselves. Here are the details:</p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+      
+<tr>
+       
+<th colspan="1" rowspan="1">&nbsp;</th>
+       <th colspan="1" rowspan="1">Type</th>
+       <th colspan="1" rowspan="1">Contents</th>
+       <th colspan="1" rowspan="1">Remarks</th>
+      
+</tr>
+
+      
+<tr>
+       
+<td colspan="1" rowspan="1">Section header</td>
+
+       <td colspan="1" rowspan="1">DWord</td>
+       <td colspan="1" rowspan="1">Length</td>
+       <td colspan="1" rowspan="1">The length of the section in bytes.</td>
+      
+</tr>
+
+     
+<tr>
+      
+<td colspan="1" rowspan="1"></td>
+      <td colspan="1" rowspan="1">DWord</td>
+       <td colspan="1" rowspan="1">Property count</td>
+       <td colspan="1" rowspan="1">The number of properties in the section.</td>
+      
+</tr>
+
+      
+<tr>
+
+       
+<td colspan="1" rowspan="1">Properties list</td>
+
+       <td colspan="1" rowspan="1">DWord</td>
+       <td colspan="1" rowspan="1">Property ID</td>
+       <td colspan="1" rowspan="1">The property ID tells what the property means. For example, an ID of
+	 <span class="codefrag">0x0002</span> in the Summary Information stands for the document's
+	title. See the <a href="#property_ids">Property IDs</a>
+	 chapter below for more details.</td>
+      
+</tr>
+
+      
+<tr>
+      
+<td colspan="1" rowspan="1"></td>
+       <td colspan="1" rowspan="1">DWord</td>
+       <td colspan="1" rowspan="1">Offset</td>
+       <td colspan="1" rowspan="1">The number of bytes between the beginning of the section and the
+	 property.</td>
+      
+</tr>
+
+      
+<tr>
+      
+<td colspan="1" rowspan="1"></td>
+       <td colspan="1" rowspan="1">...</td>
+       <td colspan="1" rowspan="1">...</td>
+       <td colspan="1" rowspan="1">...</td>
+      
+</tr>
+
+      
+<tr>
+       
+<td colspan="1" rowspan="1">Properties</td>
+
+       <td colspan="1" rowspan="1">DWord</td>
+       <td colspan="1" rowspan="1">Property type ("variant")</td>
+       <td colspan="1" rowspan="1">This is the property's data type, e.g. an integer value, a byte
+	 string or a Unicode string. See the
+	 <a href="#property_types"><em>Property Types</em></a> chapter
+         for details!</td>
+      
+</tr>
+
+      
+<tr>
+      
+<td colspan="1" rowspan="1"></td>
+       <td colspan="1" rowspan="1"><em>Field length depends on the property type
+	  ("variant")</em></td>
+       <td colspan="1" rowspan="1">Property value</td>
+       <td colspan="1" rowspan="1">This field's length depends on the property's type. These are the
+	 bytes that make out the DWord, the byte string or some other data of
+	 fixed or variable length.<br>
+<br>
+
+	    The  property value's length is always stored in an area which is a
+	 multiple of 4 in length. If the property is shorter, e.g. a byte
+	 string of 13 bytes, the remaining bytes are padded with <span class="codefrag">0x00</span>
+	 bytes.</td>
+      
+</tr>
+
+      
+<tr>
+      
+<td colspan="1" rowspan="1"></td>
+       <td colspan="1" rowspan="1">...</td>
+       <td colspan="1" rowspan="1">...</td>
+       <td colspan="1" rowspan="1">...</td>
+      
+</tr>
+    
+</table>
+<a name="Property+IDs"></a>
+<h3 class="boxed">Property IDs</h3>
+<a name="property_ids" id="property_ids"></a>
+<p>As seen above, a section holds a property list: an array with property
+     IDs and offsets. The property ID gives each property a meaning. For
+     example, in the Summary Information stream the property ID 2 says that
+     this property is the document's title.</p>
+<p>If you want to know a property ID's meaning, it is not sufficient to
+     know the ID itself. You must also know the
+     <strong>section format ID</strong>.  For example, in the Document Summary
+     Information stream the property ID 2 means not the document's title but
+     its category. Due to Microsoft's infinite wisdom the section format ID is
+     not part of the section. Thus if you have only a section without the
+     stream it is in, you cannot make any sense of the properties because you
+     do not know what they mean.</p>
+<p>So each section format ID has its own name space of property IDs.
+     Microsoft defined some "well-known" property IDs for the Summary
+     Information and the Document Summary Information streams. You can extend
+     them by your own additional IDs. This will be described below.</p>
+<a name="Property+IDs+in+The+Summary+Information+Stream"></a>
+<h4>Property IDs in The Summary Information Stream</h4>
+<p>The Summary Information stream has a single section with a section
+      format ID of <span class="codefrag">0xF29F85E04FF91068AB9108002B27B3D9</span>. The following
+      table defines the meaning of its property IDs. Each row associates a
+      property ID with a <em>name</em> and an <em>ID string</em>. (The property
+      <em>type</em> is just for informational purposes given here. As we have
+      seen above, the type is always given along with the value.)</p>
+<p>The property <em>name</em> is a readable string which could be
+      displayed to the user. However, this string is useful only for users who
+      understand English. The property name does not help with other
+      languages.</p>
+<p>The property <em>ID string</em> is about the same but looks more
+      technically and is nothing a user should bother with. You could the ID
+      string and map it to an appropriate display string in a particular
+      language.  Of course you could do that with the property ID as well and
+      with less overhead, but people (including software developers) tend to be
+      better in remembering symbolic constants than remembering numbers.</p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+      
+<tr>
+       
+<th colspan="1" rowspan="1">Property ID</th>
+       <th colspan="1" rowspan="1">Property Name</th>
+       <th colspan="1" rowspan="1">Property ID String</th>
+       <th colspan="1" rowspan="1">Property Type</th>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">2</td>
+       <td colspan="1" rowspan="1">Title</td>
+       <td colspan="1" rowspan="1">PID_TITLE</td>
+       <td colspan="1" rowspan="1">VT_LPSTR</td>
+      
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">3</td>
+	<td colspan="1" rowspan="1">Subject</td>
+	<td colspan="1" rowspan="1">PID_SUBJECT</td>
+	<td colspan="1" rowspan="1">VT_LPSTR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">4</td>
+	<td colspan="1" rowspan="1">Author</td>
+	<td colspan="1" rowspan="1">PID_AUTHOR</td>
+	<td colspan="1" rowspan="1">VT_LPSTR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">5</td>
+	<td colspan="1" rowspan="1">Keywords</td>
+	<td colspan="1" rowspan="1">PID_KEYWORDS</td>
+	<td colspan="1" rowspan="1">VT_LPSTR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">6</td>
+	<td colspan="1" rowspan="1">Comments</td>
+	<td colspan="1" rowspan="1">PID_COMMENTS</td>
+	<td colspan="1" rowspan="1">VT_LPSTR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">7</td>
+	<td colspan="1" rowspan="1">Template</td>
+	<td colspan="1" rowspan="1">PID_TEMPLATE</td>
+	<td colspan="1" rowspan="1">VT_LPSTR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">8</td>
+	<td colspan="1" rowspan="1">Last Saved By</td>
+	<td colspan="1" rowspan="1">PID_LASTAUTHOR</td>
+	<td colspan="1" rowspan="1">VT_LPSTR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">9</td>
+	<td colspan="1" rowspan="1">Revision Number</td>
+	<td colspan="1" rowspan="1">PID_REVNUMBER</td>
+	<td colspan="1" rowspan="1">VT_LPSTR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">10</td>
+	<td colspan="1" rowspan="1">Total Editing Time</td>
+	<td colspan="1" rowspan="1">PID_EDITTIME</td>
+	<td colspan="1" rowspan="1">VT_FILETIME</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">11</td>
+	<td colspan="1" rowspan="1">Last Printed</td>
+	<td colspan="1" rowspan="1">PID_LASTPRINTED</td>
+	<td colspan="1" rowspan="1">VT_FILETIME</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">12</td>
+	<td colspan="1" rowspan="1">Create Time/Date</td>
+	<td colspan="1" rowspan="1">PID_CREATE_DTM</td>
+	<td colspan="1" rowspan="1">VT_FILETIME</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">13</td>
+	<td colspan="1" rowspan="1">Last Saved Time/Date</td>
+	<td colspan="1" rowspan="1">PID_LASTSAVE_DTM</td>
+	<td colspan="1" rowspan="1">VT_FILETIME</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">14</td>
+	<td colspan="1" rowspan="1">Number of Pages</td>
+	<td colspan="1" rowspan="1">PID_PAGECOUNT</td>
+	<td colspan="1" rowspan="1">VT_I4</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">15</td>
+	<td colspan="1" rowspan="1">Number of Words</td>
+	<td colspan="1" rowspan="1">PID_WORDCOUNT</td>
+	<td colspan="1" rowspan="1">VT_I4</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">16</td>
+	<td colspan="1" rowspan="1">Number of Characters</td>
+	<td colspan="1" rowspan="1">PID_CHARCOUNT</td>
+	<td colspan="1" rowspan="1">VT_I4</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">17</td>
+	<td colspan="1" rowspan="1">Thumbnail</td>
+	<td colspan="1" rowspan="1">PID_THUMBNAIL</td>
+	<td colspan="1" rowspan="1">VT_CF</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">18</td>
+	<td colspan="1" rowspan="1">Name of Creating Application</td>
+	<td colspan="1" rowspan="1">PID_APPNAME</td>
+	<td colspan="1" rowspan="1">VT_LPSTR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">19</td>
+	<td colspan="1" rowspan="1">Security</td>
+	<td colspan="1" rowspan="1">PID_SECURITY</td>
+	<td colspan="1" rowspan="1">VT_I4</td>
+      
+</tr>
+     
+</table>
+<a name="Property+IDs+in+The+Document+Summary+Information+Stream"></a>
+<h4>Property IDs in The Document Summary Information Stream</h4>
+<p>The Document Summary Information stream has two sections with a section
+      format ID of <span class="codefrag">0xD5CDD5022E9C101B939708002B2CF9AE</span> for the first
+      one.  The following table defines the meaning of the property IDs in the
+      first section. See the preceding section for interpreting the table.</p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+       
+<tr>
+	
+<th colspan="1" rowspan="1">Property ID</th>
+	<th colspan="1" rowspan="1">Property name</th>
+	<th colspan="1" rowspan="1">Property ID string</th>
+	<th colspan="1" rowspan="1">VT type</th>
+       
+</tr>
+
+       
+<tr>
+	
+<td colspan="1" rowspan="1">0</td>
+	<td colspan="1" rowspan="1">Dictionary</td>
+	<td colspan="1" rowspan="1">PID_DICTIONARY</td>
+	<td colspan="1" rowspan="1">[Special format]</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">1</td>
+	<td colspan="1" rowspan="1">Code page</td>
+	<td colspan="1" rowspan="1">PID_CODEPAGE</td>
+	<td colspan="1" rowspan="1">VT_I2</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">2</td>
+	<td colspan="1" rowspan="1">Category</td>
+	<td colspan="1" rowspan="1">PID_CATEGORY</td>
+	<td colspan="1" rowspan="1">VT_LPSTR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">3</td>
+	<td colspan="1" rowspan="1">PresentationTarget</td>
+	<td colspan="1" rowspan="1">PID_PRESFORMAT</td>
+	<td colspan="1" rowspan="1">VT_LPSTR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">4</td>
+	<td colspan="1" rowspan="1">Bytes</td>
+	<td colspan="1" rowspan="1">PID_BYTECOUNT</td>
+	<td colspan="1" rowspan="1">VT_I4</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">5</td>
+	<td colspan="1" rowspan="1">Lines</td>
+	<td colspan="1" rowspan="1">PID_LINECOUNT</td>
+	<td colspan="1" rowspan="1">VT_I4</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">6</td>
+	<td colspan="1" rowspan="1">Paragraphs</td>
+	<td colspan="1" rowspan="1">PID_PARCOUNT</td>
+	<td colspan="1" rowspan="1">VT_I4</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">7</td>
+	<td colspan="1" rowspan="1">Slides</td>
+	<td colspan="1" rowspan="1">PID_SLIDECOUNT</td>
+	<td colspan="1" rowspan="1">VT_I4</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">8</td>
+	<td colspan="1" rowspan="1">Notes</td>
+	<td colspan="1" rowspan="1">PID_NOTECOUNT</td>
+	<td colspan="1" rowspan="1">VT_I4</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">9</td>
+	<td colspan="1" rowspan="1">HiddenSlides</td>
+	<td colspan="1" rowspan="1">PID_HIDDENCOUNT</td>
+	<td colspan="1" rowspan="1">VT_I4</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">10</td>
+	<td colspan="1" rowspan="1">MMClips</td>
+	<td colspan="1" rowspan="1">PID_MMCLIPCOUNT</td>
+	<td colspan="1" rowspan="1">VT_I4</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">11</td>
+	<td colspan="1" rowspan="1">ScaleCrop</td>
+	<td colspan="1" rowspan="1">PID_SCALE</td>
+	<td colspan="1" rowspan="1">VT_BOOL</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">12</td>
+	<td colspan="1" rowspan="1">HeadingPairs</td>
+	<td colspan="1" rowspan="1">PID_HEADINGPAIR</td>
+	<td colspan="1" rowspan="1">VT_VARIANT | VT_VECTOR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">13</td>
+	<td colspan="1" rowspan="1">TitlesofParts</td>
+	<td colspan="1" rowspan="1">PID_DOCPARTS</td>
+	<td colspan="1" rowspan="1">VT_LPSTR | VT_VECTOR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">14</td>
+	<td colspan="1" rowspan="1">Manager</td>
+	<td colspan="1" rowspan="1">PID_MANAGER</td>
+	<td colspan="1" rowspan="1">VT_LPSTR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">15</td>
+	<td colspan="1" rowspan="1">Company</td>
+	<td colspan="1" rowspan="1">PID_COMPANY</td>
+	<td colspan="1" rowspan="1">VT_LPSTR</td>
+       
+</tr>
+       
+<tr>
+	
+<td colspan="1" rowspan="1">16</td>
+	<td colspan="1" rowspan="1">LinksUpTo Date</td>
+	<td colspan="1" rowspan="1">PID_LINKSDIRTY</td>
+	<td colspan="1" rowspan="1">VT_BOOL</td>
+       
+</tr>
+     
+</table>
+<a name="Property+Types"></a>
+<h3 class="boxed">Property Types</h3>
+<a name="property_types" id="property_types"></a>
+<p>A property consists of a DWord <em>type field</em> followed by the
+     property value. The property type is an integer value and tells how the
+     data byte following it are to be interpreted. In the Microsoft world it is
+     also known as the <em>variant</em>.</p>
+<p>The <em>Usage</em> column says where a variant type may occur. Not all
+     of them are allowed in a property set but just those marked with a [P].
+     <strong>[V]</strong> - may appear in a VARIANT, <strong>[T]</strong> - may
+     appear in a TYPEDESC, <strong>[P]</strong> - may appear in an OLE property
+     set, <strong>[S]</strong> - may appear in a Safe Array.</p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+      
+<tr>
+       
+<th colspan="1" rowspan="1">Variant ID</th>
+       <th colspan="1" rowspan="1">Variant Type</th>
+       <th colspan="1" rowspan="1">Usage</th>
+       <th colspan="1" rowspan="1">Description</th>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">0</td>
+       <td colspan="1" rowspan="1">VT_EMPTY</td>
+       <td colspan="1" rowspan="1">[V] [P]</td>
+       <td colspan="1" rowspan="1">nothing</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">1</td>
+       <td colspan="1" rowspan="1">VT_NULL</td>
+       <td colspan="1" rowspan="1">[V] [P]</td>
+       <td colspan="1" rowspan="1">SQL style Null</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">2</td>
+       <td colspan="1" rowspan="1">VT_I2</td>
+       <td colspan="1" rowspan="1">[V] [T] [P] [S]</td>
+       <td colspan="1" rowspan="1">2 byte signed int</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">3</td>
+       <td colspan="1" rowspan="1">VT_I4</td>
+       <td colspan="1" rowspan="1">[V] [T] [P] [S]</td>
+       <td colspan="1" rowspan="1">4 byte signed int</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">4</td>
+       <td colspan="1" rowspan="1">VT_R4</td>
+       <td colspan="1" rowspan="1">[V] [T] [P] [S]</td>
+       <td colspan="1" rowspan="1">4 byte real</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">5</td>
+       <td colspan="1" rowspan="1">VT_R8</td>
+       <td colspan="1" rowspan="1">[V] [T] [P] [S]</td>
+       <td colspan="1" rowspan="1">8 byte real</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">6</td>
+       <td colspan="1" rowspan="1">VT_CY</td>
+       <td colspan="1" rowspan="1">[V] [T] [P] [S]</td>
+       <td colspan="1" rowspan="1">currency</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">7</td>
+       <td colspan="1" rowspan="1">VT_DATE</td>
+       <td colspan="1" rowspan="1">[V] [T] [P] [S]</td>
+       <td colspan="1" rowspan="1">date</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">8</td>
+       <td colspan="1" rowspan="1">VT_BSTR</td>
+       <td colspan="1" rowspan="1">[V] [T] [P] [S]</td>
+       <td colspan="1" rowspan="1">OLE Automation string</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">9</td>
+       <td colspan="1" rowspan="1">VT_DISPATCH</td>
+       <td colspan="1" rowspan="1">[V] [T] [P] [S]</td>
+       <td colspan="1" rowspan="1">IDispatch *</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">10</td>
+       <td colspan="1" rowspan="1">VT_ERROR</td>
+       <td colspan="1" rowspan="1">[V] [T] [S]</td>
+       <td colspan="1" rowspan="1">SCODE</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">11</td>
+       <td colspan="1" rowspan="1">VT_BOOL</td>
+       <td colspan="1" rowspan="1">[V] [T] [P] [S]</td>
+       <td colspan="1" rowspan="1">True=-1, False=0</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">12</td>
+       <td colspan="1" rowspan="1">VT_VARIANT</td>
+       <td colspan="1" rowspan="1">[V] [T] [P] [S]</td>
+       <td colspan="1" rowspan="1">VARIANT *</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">13</td>
+       <td colspan="1" rowspan="1">VT_UNKNOWN</td>
+       <td colspan="1" rowspan="1">[V] [T] [S]</td>
+       <td colspan="1" rowspan="1">IUnknown *</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">14</td>
+       <td colspan="1" rowspan="1">VT_DECIMAL</td>
+       <td colspan="1" rowspan="1">[V] [T] [S]</td>
+       <td colspan="1" rowspan="1">16 byte fixed point</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">16</td>
+       <td colspan="1" rowspan="1">VT_I1</td>
+       <td colspan="1" rowspan="1">[T]</td>
+       <td colspan="1" rowspan="1">signed char</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">17</td>
+       <td colspan="1" rowspan="1">VT_UI1</td>
+       <td colspan="1" rowspan="1">[V] [T] [P] [S]</td>
+       <td colspan="1" rowspan="1">unsigned char</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">18</td>
+       <td colspan="1" rowspan="1">VT_UI2</td>
+       <td colspan="1" rowspan="1">[T] [P]</td>
+       <td colspan="1" rowspan="1">unsigned short</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">19</td>
+       <td colspan="1" rowspan="1">VT_UI4</td>
+       <td colspan="1" rowspan="1">[T] [P]</td>
+       <td colspan="1" rowspan="1">unsigned short</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">20</td>
+       <td colspan="1" rowspan="1">VT_I8</td>
+       <td colspan="1" rowspan="1">[T] [P]</td>
+       <td colspan="1" rowspan="1">signed 64-bit int</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">21</td>
+       <td colspan="1" rowspan="1">VT_UI8</td>
+       <td colspan="1" rowspan="1">[T] [P]</td>
+       <td colspan="1" rowspan="1">unsigned 64-bit int</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">22</td>
+       <td colspan="1" rowspan="1">VT_INT</td>
+       <td colspan="1" rowspan="1">[T]</td>
+       <td colspan="1" rowspan="1">signed machine int</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">23</td>
+       <td colspan="1" rowspan="1">VT_UINT</td>
+       <td colspan="1" rowspan="1">[T]</td>
+       <td colspan="1" rowspan="1">unsigned machine int</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">24</td>
+       <td colspan="1" rowspan="1">VT_VOID</td>
+       <td colspan="1" rowspan="1">[T]</td>
+       <td colspan="1" rowspan="1">C style void</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">25</td>
+       <td colspan="1" rowspan="1">VT_HRESULT</td>
+       <td colspan="1" rowspan="1">[T]</td>
+       <td colspan="1" rowspan="1">Standard return type</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">26</td>
+       <td colspan="1" rowspan="1">VT_PTR</td>
+       <td colspan="1" rowspan="1">[T]</td>
+       <td colspan="1" rowspan="1">pointer type</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">27</td>
+       <td colspan="1" rowspan="1">VT_SAFEARRAY</td>
+       <td colspan="1" rowspan="1">[T]</td>
+       <td colspan="1" rowspan="1">(use VT_ARRAY in VARIANT)</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">28</td>
+       <td colspan="1" rowspan="1">VT_CARRAY</td>
+       <td colspan="1" rowspan="1">[T]</td>
+       <td colspan="1" rowspan="1">C style array</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">29</td>
+       <td colspan="1" rowspan="1">VT_USERDEFINED</td>
+       <td colspan="1" rowspan="1">[T]</td>
+       <td colspan="1" rowspan="1">user defined type</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">30</td>
+       <td colspan="1" rowspan="1">VT_LPSTR</td>
+       <td colspan="1" rowspan="1">[T] [P]</td>
+       <td colspan="1" rowspan="1">null terminated string</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">31</td>
+       <td colspan="1" rowspan="1">VT_LPWSTR</td>
+       <td colspan="1" rowspan="1">[T] [P]</td>
+       <td colspan="1" rowspan="1">wide null terminated string</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">64</td>
+       <td colspan="1" rowspan="1">VT_FILETIME</td>
+       <td colspan="1" rowspan="1">[P]</td>
+       <td colspan="1" rowspan="1">FILETIME</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">65</td>
+       <td colspan="1" rowspan="1">VT_BLOB</td>
+       <td colspan="1" rowspan="1">[P]</td>
+       <td colspan="1" rowspan="1">Length prefixed bytes</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">66</td>
+       <td colspan="1" rowspan="1">VT_STREAM</td>
+       <td colspan="1" rowspan="1">[P]</td>
+       <td colspan="1" rowspan="1">Name of the stream follows</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">67</td>
+       <td colspan="1" rowspan="1">VT_STORAGE</td>
+       <td colspan="1" rowspan="1">[P]</td>
+       <td colspan="1" rowspan="1">Name of the storage follows</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">68</td>
+       <td colspan="1" rowspan="1">VT_STREAMED_OBJECT</td>
+       <td colspan="1" rowspan="1">[P]</td>
+       <td colspan="1" rowspan="1">Stream contains an object</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">69</td>
+       <td colspan="1" rowspan="1">VT_STORED_OBJECT</td>
+       <td colspan="1" rowspan="1">[P]</td>
+       <td colspan="1" rowspan="1">Storage contains an object</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">70</td>
+       <td colspan="1" rowspan="1">VT_BLOB_OBJECT</td>
+       <td colspan="1" rowspan="1">[P]</td>
+       <td colspan="1" rowspan="1">Blob contains an object</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">71</td>
+       <td colspan="1" rowspan="1">VT_CF</td>
+       <td colspan="1" rowspan="1">[P]</td>
+       <td colspan="1" rowspan="1">Clipboard format</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">72</td>
+       <td colspan="1" rowspan="1">VT_CLSID</td>
+       <td colspan="1" rowspan="1">[P]</td>
+       <td colspan="1" rowspan="1">A Class ID</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">0x1000</td>
+       <td colspan="1" rowspan="1">VT_VECTOR</td>
+       <td colspan="1" rowspan="1">[P]</td>
+       <td colspan="1" rowspan="1">simple counted array</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">0x2000</td>
+       <td colspan="1" rowspan="1">VT_ARRAY</td>
+       <td colspan="1" rowspan="1">[V]</td>
+       <td colspan="1" rowspan="1">SAFEARRAY*</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">0x4000</td>
+       <td colspan="1" rowspan="1">VT_BYREF</td>
+       <td colspan="1" rowspan="1">[V]</td>
+       <td colspan="1" rowspan="1">void* for local use</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">0x8000</td>
+       <td colspan="1" rowspan="1">VT_RESERVED</td>
+       <td colspan="1" rowspan="1">
+<br>
+</td>
+       <td colspan="1" rowspan="1">
+<br>
+</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">0xFFFF</td>
+       <td colspan="1" rowspan="1">VT_ILLEGAL</td>
+       <td colspan="1" rowspan="1">
+<br>
+</td>
+       <td colspan="1" rowspan="1">
+<br>
+</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">0xFFF</td>
+       <td colspan="1" rowspan="1">VT_ILLEGALMASKED</td>
+       <td colspan="1" rowspan="1">
+<br>
+</td>
+       <td colspan="1" rowspan="1">
+<br>
+</td>
+      
+</tr>
+      
+<tr>
+       
+<td colspan="1" rowspan="1">0xFFF</td>
+       <td colspan="1" rowspan="1">VT_TYPEMASK</td>
+       <td colspan="1" rowspan="1">
+<br>
+</td>
+       <td colspan="1" rowspan="1">
+<br>
+</td>
+      
+</tr>
+    
+</table>
+<a name="The+Dictionary"></a>
+<h3 class="boxed">The Dictionary</h3>
+<p>What a dictionary is good for is explained in the <a href="how-to.html">HPSF HOW-TO</a>. This chapter explains how it is
+     organized internally.</p>
+<p>The dictionary has a simple header consisting of a single UInt value. It
+    tells how many entries the dictionary comprises:</p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+     
+<tr>
+      
+<th colspan="1" rowspan="1">Name</th>
+      <th colspan="1" rowspan="1">Data type</th>
+      <th colspan="1" rowspan="1">Description</th>
+     
+</tr>
+     
+<tr>
+      
+<td colspan="1" rowspan="1">nrEntries</td>
+      <th colspan="1" rowspan="1">UInt</th>
+      <td colspan="1" rowspan="1">Number of dictionary entries</td>
+     
+</tr>
+    
+</table>
+<p>The dictionary entries follow the header. Each one looks like this:</p>
+<table class="ForrestTable" cellspacing="1" cellpadding="4">
+     
+<tr>
+      
+<th colspan="1" rowspan="1">Name</th>
+      <td colspan="1" rowspan="1">Data type</td>
+      <th colspan="1" rowspan="1">Description</th>
+     
+</tr>
+     
+<tr>
+      
+<td colspan="1" rowspan="1">key</td>
+      <td colspan="1" rowspan="1">UInt</td>
+      <td colspan="1" rowspan="1">The unique number of this property, i.e. the PID</td>
+     
+</tr>
+     
+<tr>
+      
+<td colspan="1" rowspan="1">length</td>
+      <td colspan="1" rowspan="1">UInt</td>
+      <td colspan="1" rowspan="1">The length of the property name associated with the key</td>
+     
+</tr>
+     
+<tr>
+      
+<td colspan="1" rowspan="1">value</td>
+      <td colspan="1" rowspan="1">String</td>
+      <td colspan="1" rowspan="1">The property's name, terminated with a 0x00 character</td>
+     
+</tr>
+    
+</table>
+<p>The entries are not aligned, i.e. each one follows its predecessor
+     without any gap or fill characters.</p>
+<a name="References"></a>
+<h3 class="boxed">References</h3>
+<p>In order to assemble the HPSF description I used information publically
+     available on the Internet only. The references given below have been very
+     helpful. If you have any amendments or corrections, please let us know!
+     Thank you!</p>
+<ol>
+
+     
+<li>In
+      <a href="https://www.kyler.com/pubs/ddj9894.html"><em>Understanding OLE
+	documents</em></a>, Ken Kyler gives an introduction to OLE2
+      documents and especially to property sets. He names the property names,
+      types, and IDs of the Summary Information and Document Summary
+      Information stream.</li>
+
+     
+<li>The <a href="https://www.dwam.net/docs/oleref/"><em>ActiveX
+	Programmer's Reference</em></a> at <a href="https://www.dwam.net/docs/oleref/">https://www.dwam.net/docs/oleref/</a>
+      seems a little outdated, but that's what I have found.</li>
+
+     
+<li>An overview of the <span class="codefrag">VT_</span> types is in
+      <a href="https://www.marin.clara.net/COM/variant_type_definitions.htm"><em>Variant
+	Type Definitions</em></a>.</li>
+
+     
+<li>What is a <span class="codefrag">FILETIME</span>? The answer can be found
+      under <a href="https://msdn.microsoft.com/library/default.asp?url=/library/en-us/sysinfo/base/filetime_str.asp"></a>, <a href="https://www.vbapi.com/ref/f/filetime.html">https://www.vbapi.com/ref/f/filetime.html</a> or
+      <a href="https://www.cs.rpi.edu/courses/fall01/os/FILETIME.html">https://www.cs.rpi.edu/courses/fall01/os/FILETIME.html</a>.
+      In short: <em>The FILETIME structure holds a date and time associated
+       with a file. The structure identifies a 64-bit integer specifying the
+       number of 100-nanosecond intervals which have passed since January 1,
+       1601. This 64-bit value is split into the two dwords stored in the
+       structure.</em>
+</li>
+
+     
+<li>Microsoft provides some public information in the <a href="https://msdn.microsoft.com/library/default.asp">MSDN
+       Library</a>. Use the search function to try to find what you are
+      looking for, e.g. "codepage" or "document summary information" etc.</li>
+    
+</ol>
+</div>
+ 
+<p align="right">
+<font size="-2">by&nbsp;Rainer Klute</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0components/hpsf/internals.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

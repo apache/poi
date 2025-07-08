@@ -1,0 +1,449 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+ShapeContainer (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="ShapeContainer (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeType.html" title="enum in org.apache.poi.sl.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/usermodel/ShapeContainer.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ShapeContainer.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.sl.usermodel</FONT>
+<BR>
+Interface ShapeContainer&lt;S extends <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;S,P&gt;,P extends <A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="interface in org.apache.poi.sl.usermodel">TextParagraph</A>&lt;S,P,?&gt;&gt;</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD>java.lang.Iterable&lt;S&gt;</DD>
+</DL>
+<DL>
+<DT><B>All Known Subinterfaces:</B> <DD><A HREF="../../../../../org/apache/poi/sl/usermodel/GroupShape.html" title="interface in org.apache.poi.sl.usermodel">GroupShape</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/MasterSheet.html" title="interface in org.apache.poi.sl.usermodel">MasterSheet</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/Notes.html" title="interface in org.apache.poi.sl.usermodel">Notes</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/Sheet.html" title="interface in org.apache.poi.sl.usermodel">Sheet</A>&lt;S,P&gt;, <A HREF="../../../../../org/apache/poi/sl/usermodel/Slide.html" title="interface in org.apache.poi.sl.usermodel">Slide</A>&lt;S,P&gt;</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>ShapeContainer&lt;S extends <A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel">Shape</A>&lt;S,P&gt;,P extends <A HREF="../../../../../org/apache/poi/sl/usermodel/TextParagraph.html" title="interface in org.apache.poi.sl.usermodel">TextParagraph</A>&lt;S,P,?&gt;&gt;</B><DT>extends java.lang.Iterable&lt;S&gt;</DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html#addShape(S)">addShape</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/AutoShape.html" title="interface in org.apache.poi.sl.usermodel">AutoShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html#createAutoShape()">createAutoShape</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a new shape with a predefined geometry and add it to this shape container</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/ConnectorShape.html" title="interface in org.apache.poi.sl.usermodel">ConnectorShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html#createConnector()">createConnector</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a connector</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/FreeformShape.html" title="interface in org.apache.poi.sl.usermodel">FreeformShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html#createFreeform()">createFreeform</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a new shape with a custom geometry</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/GroupShape.html" title="interface in org.apache.poi.sl.usermodel">GroupShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html#createGroup()">createGroup</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a group of shapes belonging to this container</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/PictureShape.html" title="interface in org.apache.poi.sl.usermodel">PictureShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html#createPicture(org.apache.poi.sl.usermodel.PictureData)">createPicture</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PictureData.html" title="interface in org.apache.poi.sl.usermodel">PictureData</A>&nbsp;pictureData)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a picture belonging to this container</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/TableShape.html" title="interface in org.apache.poi.sl.usermodel">TableShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html#createTable(int, int)">createTable</A></B>(int&nbsp;numRows,
+            int&nbsp;numCols)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a new Table of the given number of rows and columns</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/TextBox.html" title="interface in org.apache.poi.sl.usermodel">TextBox</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html#createTextBox()">createTextBox</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;create a text box</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html#getShapes()">getShapes</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an list containing all of the elements in this container in proper
+ sequence (from first to last element).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html#removeShape(S)">removeShape</A></B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>&nbsp;shape)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Removes the specified shape from this sheet, if it is present
+ (optional operation).</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Iterable"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from interface java.lang.Iterable</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>iterator</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getShapes()"><!-- --></A><H3>
+getShapes</H3>
+<PRE>
+java.util.List&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>&gt; <B>getShapes</B>()</PRE>
+<DL>
+<DD>Returns an list containing all of the elements in this container in proper
+ sequence (from first to last element).
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an list containing all of the elements in this container in proper
+         sequence</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="addShape(org.apache.poi.sl.usermodel.Shape)"><!-- --></A><A NAME="addShape(S)"><!-- --></A><H3>
+addShape</H3>
+<PRE>
+void <B>addShape</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>&nbsp;shape)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeShape(org.apache.poi.sl.usermodel.Shape)"><!-- --></A><A NAME="removeShape(S)"><!-- --></A><H3>
+removeShape</H3>
+<PRE>
+boolean <B>removeShape</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>&nbsp;shape)</PRE>
+<DL>
+<DD>Removes the specified shape from this sheet, if it is present
+ (optional operation).  If this sheet does not contain the element,
+ it is unchanged.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>shape</CODE> - the shape to be removed from this sheet, if present
+<DT><B>Returns:</B><DD><tt>true</tt> if this sheet contained the specified element
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if the type of the specified shape
+         is incompatible with this sheet (optional)</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createAutoShape()"><!-- --></A><H3>
+createAutoShape</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/AutoShape.html" title="interface in org.apache.poi.sl.usermodel">AutoShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt; <B>createAutoShape</B>()</PRE>
+<DL>
+<DD>create a new shape with a predefined geometry and add it to this shape container
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createFreeform()"><!-- --></A><H3>
+createFreeform</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/FreeformShape.html" title="interface in org.apache.poi.sl.usermodel">FreeformShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt; <B>createFreeform</B>()</PRE>
+<DL>
+<DD>create a new shape with a custom geometry
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createTextBox()"><!-- --></A><H3>
+createTextBox</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/TextBox.html" title="interface in org.apache.poi.sl.usermodel">TextBox</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt; <B>createTextBox</B>()</PRE>
+<DL>
+<DD>create a text box
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createConnector()"><!-- --></A><H3>
+createConnector</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/ConnectorShape.html" title="interface in org.apache.poi.sl.usermodel">ConnectorShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt; <B>createConnector</B>()</PRE>
+<DL>
+<DD>create a connector
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createGroup()"><!-- --></A><H3>
+createGroup</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/GroupShape.html" title="interface in org.apache.poi.sl.usermodel">GroupShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt; <B>createGroup</B>()</PRE>
+<DL>
+<DD>create a group of shapes belonging to this container
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createPicture(org.apache.poi.sl.usermodel.PictureData)"><!-- --></A><H3>
+createPicture</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/PictureShape.html" title="interface in org.apache.poi.sl.usermodel">PictureShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt; <B>createPicture</B>(<A HREF="../../../../../org/apache/poi/sl/usermodel/PictureData.html" title="interface in org.apache.poi.sl.usermodel">PictureData</A>&nbsp;pictureData)</PRE>
+<DL>
+<DD>create a picture belonging to this container
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createTable(int, int)"><!-- --></A><H3>
+createTable</H3>
+<PRE>
+<A HREF="../../../../../org/apache/poi/sl/usermodel/TableShape.html" title="interface in org.apache.poi.sl.usermodel">TableShape</A>&lt;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">S</A>,<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeContainer.html" title="type parameter in ShapeContainer">P</A>&gt; <B>createTable</B>(int&nbsp;numRows,
+                            int&nbsp;numCols)</PRE>
+<DL>
+<DD>Create a new Table of the given number of rows and columns
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>numRows</CODE> - the number of rows<DD><CODE>numCols</CODE> - the number of columns</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/Shape.html" title="interface in org.apache.poi.sl.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/sl/usermodel/ShapeType.html" title="enum in org.apache.poi.sl.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/sl/usermodel/ShapeContainer.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ShapeContainer.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

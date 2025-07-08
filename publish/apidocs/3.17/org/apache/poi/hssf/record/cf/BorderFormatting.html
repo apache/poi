@@ -1,0 +1,1376 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+BorderFormatting (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="BorderFormatting (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/cf/ColorGradientFormatting.html" title="class in org.apache.poi.hssf.record.cf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/hssf/record/cf/BorderFormatting.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="BorderFormatting.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.record.cf</FONT>
+<BR>
+Class BorderFormatting</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.record.cf.BorderFormatting</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.lang.Cloneable</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public final class <B>BorderFormatting</B><DT>extends java.lang.Object<DT>implements java.lang.Cloneable</DL>
+</PRE>
+
+<P>
+Border Formatting Block of the Conditional Formatting Rule Record.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT">BORDER_DASH_DOT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dash-dot border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT_DOT">BORDER_DASH_DOT_DOT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dash-dot-dot border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASHED">BORDER_DASHED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dash border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOTTED">BORDER_DOTTED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;hair-line border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOUBLE">BORDER_DOUBLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;double-line border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_HAIR">BORDER_HAIR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dot border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM">BORDER_MEDIUM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medium border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT">BORDER_MEDIUM_DASH_DOT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;medium dash-dot border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT_DOT">BORDER_MEDIUM_DASH_DOT_DOT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;medium dash-dot-dot border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASHED">BORDER_MEDIUM_DASHED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medium dashed border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_NONE">BORDER_NONE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;No border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_SLANTED_DASH_DOT">BORDER_SLANTED_DASH_DOT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;slanted dash-dot border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THICK">BORDER_THICK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thick border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THIN">BORDER_THIN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thin border</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BorderFormatting()">BorderFormatting</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BorderFormatting(org.apache.poi.util.LittleEndianInput)">BorderFormatting</A></B>(<A HREF="../../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;in)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates new FontFormatting</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html" title="class in org.apache.poi.hssf.record.cf">BorderFormatting</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#clone()">clone</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#getBorderBottom()">getBorderBottom</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of border to use for the bottom border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#getBorderDiagonal()">getBorderDiagonal</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of border to use for the diagonal border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#getBorderLeft()">getBorderLeft</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of border to use for the left border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#getBorderRight()">getBorderRight</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of border to use for the right border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#getBorderTop()">getBorderTop</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the type of border to use for the top border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#getBottomBorderColor()">getBottomBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color to use for the bottom border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#getDataLength()">getDataLength</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#getDiagonalBorderColor()">getDiagonalBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color to use for the diagonal border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#getLeftBorderColor()">getLeftBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color to use for the left border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#getRightBorderColor()">getRightBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color to use for the right border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#getTopBorderColor()">getTopBorderColor</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the color to use for the top border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#isBackwardDiagonalOn()">isBackwardDiagonalOn</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#isForwardDiagonalOn()">isForwardDiagonalOn</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#serialize(int, byte[])">serialize</A></B>(int&nbsp;offset,
+          byte[]&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#serialize(org.apache.poi.util.LittleEndianOutput)">serialize</A></B>(<A HREF="../../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#setBackwardDiagonalOn(boolean)">setBackwardDiagonalOn</A></B>(boolean&nbsp;on)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Of/off top left to bottom right line</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#setBorderBottom(int)">setBorderBottom</A></B>(int&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of border to use for the bottom border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#setBorderDiagonal(int)">setBorderDiagonal</A></B>(int&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of border to use for the diagonal border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#setBorderLeft(int)">setBorderLeft</A></B>(int&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of border to use for the left border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#setBorderRight(int)">setBorderRight</A></B>(int&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of border to use for the right border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#setBorderTop(int)">setBorderTop</A></B>(int&nbsp;border)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the type of border to use for the top border of the cell</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#setBottomBorderColor(int)">setBottomBorderColor</A></B>(int&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color to use for the bottom border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#setDiagonalBorderColor(int)">setDiagonalBorderColor</A></B>(int&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color to use for the diagonal borders</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#setForwardDiagonalOn(boolean)">setForwardDiagonalOn</A></B>(boolean&nbsp;on)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Of/off bottom left to top right line</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#setLeftBorderColor(int)">setLeftBorderColor</A></B>(int&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color to use for the left border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#setRightBorderColor(int)">setRightBorderColor</A></B>(int&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color to use for the right border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#setTopBorderColor(int)">setTopBorderColor</A></B>(int&nbsp;color)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;set the color to use for the top border</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="BORDER_NONE"><!-- --></A><H3>
+BORDER_NONE</H3>
+<PRE>
+public static final short <B>BORDER_NONE</B></PRE>
+<DL>
+<DD>No border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_NONE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_THIN"><!-- --></A><H3>
+BORDER_THIN</H3>
+<PRE>
+public static final short <B>BORDER_THIN</B></PRE>
+<DL>
+<DD>Thin border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_THIN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_MEDIUM"><!-- --></A><H3>
+BORDER_MEDIUM</H3>
+<PRE>
+public static final short <B>BORDER_MEDIUM</B></PRE>
+<DL>
+<DD>Medium border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_MEDIUM">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_DASHED"><!-- --></A><H3>
+BORDER_DASHED</H3>
+<PRE>
+public static final short <B>BORDER_DASHED</B></PRE>
+<DL>
+<DD>dash border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_DASHED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_HAIR"><!-- --></A><H3>
+BORDER_HAIR</H3>
+<PRE>
+public static final short <B>BORDER_HAIR</B></PRE>
+<DL>
+<DD>dot border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_HAIR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_THICK"><!-- --></A><H3>
+BORDER_THICK</H3>
+<PRE>
+public static final short <B>BORDER_THICK</B></PRE>
+<DL>
+<DD>Thick border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_THICK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_DOUBLE"><!-- --></A><H3>
+BORDER_DOUBLE</H3>
+<PRE>
+public static final short <B>BORDER_DOUBLE</B></PRE>
+<DL>
+<DD>double-line border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_DOUBLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_DOTTED"><!-- --></A><H3>
+BORDER_DOTTED</H3>
+<PRE>
+public static final short <B>BORDER_DOTTED</B></PRE>
+<DL>
+<DD>hair-line border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_DOTTED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_MEDIUM_DASHED"><!-- --></A><H3>
+BORDER_MEDIUM_DASHED</H3>
+<PRE>
+public static final short <B>BORDER_MEDIUM_DASHED</B></PRE>
+<DL>
+<DD>Medium dashed border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_MEDIUM_DASHED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_DASH_DOT"><!-- --></A><H3>
+BORDER_DASH_DOT</H3>
+<PRE>
+public static final short <B>BORDER_DASH_DOT</B></PRE>
+<DL>
+<DD>dash-dot border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_DASH_DOT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_MEDIUM_DASH_DOT"><!-- --></A><H3>
+BORDER_MEDIUM_DASH_DOT</H3>
+<PRE>
+public static final short <B>BORDER_MEDIUM_DASH_DOT</B></PRE>
+<DL>
+<DD>medium dash-dot border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_MEDIUM_DASH_DOT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_DASH_DOT_DOT"><!-- --></A><H3>
+BORDER_DASH_DOT_DOT</H3>
+<PRE>
+public static final short <B>BORDER_DASH_DOT_DOT</B></PRE>
+<DL>
+<DD>dash-dot-dot border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_DASH_DOT_DOT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_MEDIUM_DASH_DOT_DOT"><!-- --></A><H3>
+BORDER_MEDIUM_DASH_DOT_DOT</H3>
+<PRE>
+public static final short <B>BORDER_MEDIUM_DASH_DOT_DOT</B></PRE>
+<DL>
+<DD>medium dash-dot-dot border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_MEDIUM_DASH_DOT_DOT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BORDER_SLANTED_DASH_DOT"><!-- --></A><H3>
+BORDER_SLANTED_DASH_DOT</H3>
+<PRE>
+public static final short <B>BORDER_SLANTED_DASH_DOT</B></PRE>
+<DL>
+<DD>slanted dash-dot border
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#org.apache.poi.hssf.record.cf.BorderFormatting.BORDER_SLANTED_DASH_DOT">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="BorderFormatting()"><!-- --></A><H3>
+BorderFormatting</H3>
+<PRE>
+public <B>BorderFormatting</B>()</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="BorderFormatting(org.apache.poi.util.LittleEndianInput)"><!-- --></A><H3>
+BorderFormatting</H3>
+<PRE>
+public <B>BorderFormatting</B>(<A HREF="../../../../../../org/apache/poi/util/LittleEndianInput.html" title="interface in org.apache.poi.util">LittleEndianInput</A>&nbsp;in)</PRE>
+<DL>
+<DD>Creates new FontFormatting
+<P>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getDataLength()"><!-- --></A><H3>
+getDataLength</H3>
+<PRE>
+public int <B>getDataLength</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderLeft(int)"><!-- --></A><H3>
+setBorderLeft</H3>
+<PRE>
+public void <B>setBorderLeft</B>(int&nbsp;border)</PRE>
+<DL>
+<DD>set the type of border to use for the left border of the cell
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - type<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_NONE"><CODE>BORDER_NONE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THIN"><CODE>BORDER_THIN</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM"><CODE>BORDER_MEDIUM</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASHED"><CODE>BORDER_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOTTED"><CODE>BORDER_DOTTED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THICK"><CODE>BORDER_THICK</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOUBLE"><CODE>BORDER_DOUBLE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_HAIR"><CODE>BORDER_HAIR</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASHED"><CODE>BORDER_MEDIUM_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT"><CODE>BORDER_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT"><CODE>BORDER_MEDIUM_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT_DOT"><CODE>BORDER_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT_DOT"><CODE>BORDER_MEDIUM_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_SLANTED_DASH_DOT"><CODE>BORDER_SLANTED_DASH_DOT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderLeft()"><!-- --></A><H3>
+getBorderLeft</H3>
+<PRE>
+public int <B>getBorderLeft</B>()</PRE>
+<DL>
+<DD>get the type of border to use for the left border of the cell
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_NONE"><CODE>BORDER_NONE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THIN"><CODE>BORDER_THIN</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM"><CODE>BORDER_MEDIUM</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASHED"><CODE>BORDER_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOTTED"><CODE>BORDER_DOTTED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THICK"><CODE>BORDER_THICK</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOUBLE"><CODE>BORDER_DOUBLE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_HAIR"><CODE>BORDER_HAIR</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASHED"><CODE>BORDER_MEDIUM_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT"><CODE>BORDER_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT"><CODE>BORDER_MEDIUM_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT_DOT"><CODE>BORDER_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT_DOT"><CODE>BORDER_MEDIUM_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_SLANTED_DASH_DOT"><CODE>BORDER_SLANTED_DASH_DOT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderRight(int)"><!-- --></A><H3>
+setBorderRight</H3>
+<PRE>
+public void <B>setBorderRight</B>(int&nbsp;border)</PRE>
+<DL>
+<DD>set the type of border to use for the right border of the cell
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - type<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_NONE"><CODE>BORDER_NONE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THIN"><CODE>BORDER_THIN</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM"><CODE>BORDER_MEDIUM</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASHED"><CODE>BORDER_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOTTED"><CODE>BORDER_DOTTED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THICK"><CODE>BORDER_THICK</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOUBLE"><CODE>BORDER_DOUBLE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_HAIR"><CODE>BORDER_HAIR</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASHED"><CODE>BORDER_MEDIUM_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT"><CODE>BORDER_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT"><CODE>BORDER_MEDIUM_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT_DOT"><CODE>BORDER_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT_DOT"><CODE>BORDER_MEDIUM_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_SLANTED_DASH_DOT"><CODE>BORDER_SLANTED_DASH_DOT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderRight()"><!-- --></A><H3>
+getBorderRight</H3>
+<PRE>
+public int <B>getBorderRight</B>()</PRE>
+<DL>
+<DD>get the type of border to use for the right border of the cell
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_NONE"><CODE>BORDER_NONE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THIN"><CODE>BORDER_THIN</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM"><CODE>BORDER_MEDIUM</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASHED"><CODE>BORDER_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOTTED"><CODE>BORDER_DOTTED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THICK"><CODE>BORDER_THICK</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOUBLE"><CODE>BORDER_DOUBLE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_HAIR"><CODE>BORDER_HAIR</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASHED"><CODE>BORDER_MEDIUM_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT"><CODE>BORDER_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT"><CODE>BORDER_MEDIUM_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT_DOT"><CODE>BORDER_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT_DOT"><CODE>BORDER_MEDIUM_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_SLANTED_DASH_DOT"><CODE>BORDER_SLANTED_DASH_DOT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderTop(int)"><!-- --></A><H3>
+setBorderTop</H3>
+<PRE>
+public void <B>setBorderTop</B>(int&nbsp;border)</PRE>
+<DL>
+<DD>set the type of border to use for the top border of the cell
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - type<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_NONE"><CODE>BORDER_NONE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THIN"><CODE>BORDER_THIN</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM"><CODE>BORDER_MEDIUM</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASHED"><CODE>BORDER_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOTTED"><CODE>BORDER_DOTTED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THICK"><CODE>BORDER_THICK</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOUBLE"><CODE>BORDER_DOUBLE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_HAIR"><CODE>BORDER_HAIR</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASHED"><CODE>BORDER_MEDIUM_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT"><CODE>BORDER_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT"><CODE>BORDER_MEDIUM_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT_DOT"><CODE>BORDER_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT_DOT"><CODE>BORDER_MEDIUM_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_SLANTED_DASH_DOT"><CODE>BORDER_SLANTED_DASH_DOT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderTop()"><!-- --></A><H3>
+getBorderTop</H3>
+<PRE>
+public int <B>getBorderTop</B>()</PRE>
+<DL>
+<DD>get the type of border to use for the top border of the cell
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_NONE"><CODE>BORDER_NONE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THIN"><CODE>BORDER_THIN</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM"><CODE>BORDER_MEDIUM</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASHED"><CODE>BORDER_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOTTED"><CODE>BORDER_DOTTED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THICK"><CODE>BORDER_THICK</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOUBLE"><CODE>BORDER_DOUBLE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_HAIR"><CODE>BORDER_HAIR</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASHED"><CODE>BORDER_MEDIUM_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT"><CODE>BORDER_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT"><CODE>BORDER_MEDIUM_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT_DOT"><CODE>BORDER_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT_DOT"><CODE>BORDER_MEDIUM_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_SLANTED_DASH_DOT"><CODE>BORDER_SLANTED_DASH_DOT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderBottom(int)"><!-- --></A><H3>
+setBorderBottom</H3>
+<PRE>
+public void <B>setBorderBottom</B>(int&nbsp;border)</PRE>
+<DL>
+<DD>set the type of border to use for the bottom border of the cell
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - type<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_NONE"><CODE>BORDER_NONE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THIN"><CODE>BORDER_THIN</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM"><CODE>BORDER_MEDIUM</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASHED"><CODE>BORDER_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOTTED"><CODE>BORDER_DOTTED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THICK"><CODE>BORDER_THICK</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOUBLE"><CODE>BORDER_DOUBLE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_HAIR"><CODE>BORDER_HAIR</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASHED"><CODE>BORDER_MEDIUM_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT"><CODE>BORDER_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT"><CODE>BORDER_MEDIUM_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT_DOT"><CODE>BORDER_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT_DOT"><CODE>BORDER_MEDIUM_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_SLANTED_DASH_DOT"><CODE>BORDER_SLANTED_DASH_DOT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderBottom()"><!-- --></A><H3>
+getBorderBottom</H3>
+<PRE>
+public int <B>getBorderBottom</B>()</PRE>
+<DL>
+<DD>get the type of border to use for the bottom border of the cell
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_NONE"><CODE>BORDER_NONE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THIN"><CODE>BORDER_THIN</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM"><CODE>BORDER_MEDIUM</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASHED"><CODE>BORDER_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOTTED"><CODE>BORDER_DOTTED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THICK"><CODE>BORDER_THICK</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOUBLE"><CODE>BORDER_DOUBLE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_HAIR"><CODE>BORDER_HAIR</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASHED"><CODE>BORDER_MEDIUM_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT"><CODE>BORDER_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT"><CODE>BORDER_MEDIUM_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT_DOT"><CODE>BORDER_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT_DOT"><CODE>BORDER_MEDIUM_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_SLANTED_DASH_DOT"><CODE>BORDER_SLANTED_DASH_DOT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBorderDiagonal(int)"><!-- --></A><H3>
+setBorderDiagonal</H3>
+<PRE>
+public void <B>setBorderDiagonal</B>(int&nbsp;border)</PRE>
+<DL>
+<DD>set the type of border to use for the diagonal border of the cell
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>border</CODE> - type<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_NONE"><CODE>BORDER_NONE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THIN"><CODE>BORDER_THIN</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM"><CODE>BORDER_MEDIUM</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASHED"><CODE>BORDER_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOTTED"><CODE>BORDER_DOTTED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THICK"><CODE>BORDER_THICK</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOUBLE"><CODE>BORDER_DOUBLE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_HAIR"><CODE>BORDER_HAIR</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASHED"><CODE>BORDER_MEDIUM_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT"><CODE>BORDER_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT"><CODE>BORDER_MEDIUM_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT_DOT"><CODE>BORDER_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT_DOT"><CODE>BORDER_MEDIUM_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_SLANTED_DASH_DOT"><CODE>BORDER_SLANTED_DASH_DOT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBorderDiagonal()"><!-- --></A><H3>
+getBorderDiagonal</H3>
+<PRE>
+public int <B>getBorderDiagonal</B>()</PRE>
+<DL>
+<DD>get the type of border to use for the diagonal border of the cell
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>border type<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_NONE"><CODE>BORDER_NONE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THIN"><CODE>BORDER_THIN</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM"><CODE>BORDER_MEDIUM</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASHED"><CODE>BORDER_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOTTED"><CODE>BORDER_DOTTED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_THICK"><CODE>BORDER_THICK</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DOUBLE"><CODE>BORDER_DOUBLE</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_HAIR"><CODE>BORDER_HAIR</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASHED"><CODE>BORDER_MEDIUM_DASHED</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT"><CODE>BORDER_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT"><CODE>BORDER_MEDIUM_DASH_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_DASH_DOT_DOT"><CODE>BORDER_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_MEDIUM_DASH_DOT_DOT"><CODE>BORDER_MEDIUM_DASH_DOT_DOT</CODE></A>, 
+<A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html#BORDER_SLANTED_DASH_DOT"><CODE>BORDER_SLANTED_DASH_DOT</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setLeftBorderColor(int)"><!-- --></A><H3>
+setLeftBorderColor</H3>
+<PRE>
+public void <B>setLeftBorderColor</B>(int&nbsp;color)</PRE>
+<DL>
+<DD>set the color to use for the left border
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - The index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLeftBorderColor()"><!-- --></A><H3>
+getLeftBorderColor</H3>
+<PRE>
+public int <B>getLeftBorderColor</B>()</PRE>
+<DL>
+<DD>get the color to use for the left border
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The index of the color definition<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/usermodel/HSSFPalette.html#getColor(short)"><CODE>HSSFPalette.getColor(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setRightBorderColor(int)"><!-- --></A><H3>
+setRightBorderColor</H3>
+<PRE>
+public void <B>setRightBorderColor</B>(int&nbsp;color)</PRE>
+<DL>
+<DD>set the color to use for the right border
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - The index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRightBorderColor()"><!-- --></A><H3>
+getRightBorderColor</H3>
+<PRE>
+public int <B>getRightBorderColor</B>()</PRE>
+<DL>
+<DD>get the color to use for the right border
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The index of the color definition<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/usermodel/HSSFPalette.html#getColor(short)"><CODE>HSSFPalette.getColor(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setTopBorderColor(int)"><!-- --></A><H3>
+setTopBorderColor</H3>
+<PRE>
+public void <B>setTopBorderColor</B>(int&nbsp;color)</PRE>
+<DL>
+<DD>set the color to use for the top border
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - The index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getTopBorderColor()"><!-- --></A><H3>
+getTopBorderColor</H3>
+<PRE>
+public int <B>getTopBorderColor</B>()</PRE>
+<DL>
+<DD>get the color to use for the top border
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The index of the color definition<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/usermodel/HSSFPalette.html#getColor(short)"><CODE>HSSFPalette.getColor(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBottomBorderColor(int)"><!-- --></A><H3>
+setBottomBorderColor</H3>
+<PRE>
+public void <B>setBottomBorderColor</B>(int&nbsp;color)</PRE>
+<DL>
+<DD>set the color to use for the bottom border
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - The index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getBottomBorderColor()"><!-- --></A><H3>
+getBottomBorderColor</H3>
+<PRE>
+public int <B>getBottomBorderColor</B>()</PRE>
+<DL>
+<DD>get the color to use for the bottom border
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The index of the color definition<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/usermodel/HSSFPalette.html#getColor(short)"><CODE>HSSFPalette.getColor(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setDiagonalBorderColor(int)"><!-- --></A><H3>
+setDiagonalBorderColor</H3>
+<PRE>
+public void <B>setDiagonalBorderColor</B>(int&nbsp;color)</PRE>
+<DL>
+<DD>set the color to use for the diagonal borders
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>color</CODE> - The index of the color definition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDiagonalBorderColor()"><!-- --></A><H3>
+getDiagonalBorderColor</H3>
+<PRE>
+public int <B>getDiagonalBorderColor</B>()</PRE>
+<DL>
+<DD>get the color to use for the diagonal border
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The index of the color definition<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/usermodel/HSSFPalette.html#getColor(short)"><CODE>HSSFPalette.getColor(short)</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setForwardDiagonalOn(boolean)"><!-- --></A><H3>
+setForwardDiagonalOn</H3>
+<PRE>
+public void <B>setForwardDiagonalOn</B>(boolean&nbsp;on)</PRE>
+<DL>
+<DD>Of/off bottom left to top right line
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>on</CODE> - - if <code>true</code> - on, otherwise off</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="setBackwardDiagonalOn(boolean)"><!-- --></A><H3>
+setBackwardDiagonalOn</H3>
+<PRE>
+public void <B>setBackwardDiagonalOn</B>(boolean&nbsp;on)</PRE>
+<DL>
+<DD>Of/off top left to bottom right line
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>on</CODE> - - if <code>true</code> - on, otherwise off</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isForwardDiagonalOn()"><!-- --></A><H3>
+isForwardDiagonalOn</H3>
+<PRE>
+public boolean <B>isForwardDiagonalOn</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if forward diagonal is on</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isBackwardDiagonalOn()"><!-- --></A><H3>
+isBackwardDiagonalOn</H3>
+<PRE>
+public boolean <B>isBackwardDiagonalOn</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD><code>true</code> if backward diagonal is on</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clone()"><!-- --></A><H3>
+clone</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/hssf/record/cf/BorderFormatting.html" title="class in org.apache.poi.hssf.record.cf">BorderFormatting</A> <B>clone</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>clone</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="serialize(int, byte[])"><!-- --></A><H3>
+serialize</H3>
+<PRE>
+public int <B>serialize</B>(int&nbsp;offset,
+                     byte[]&nbsp;data)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="serialize(org.apache.poi.util.LittleEndianOutput)"><!-- --></A><H3>
+serialize</H3>
+<PRE>
+public void <B>serialize</B>(<A HREF="../../../../../../org/apache/poi/util/LittleEndianOutput.html" title="interface in org.apache.poi.util">LittleEndianOutput</A>&nbsp;out)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/cf/ColorGradientFormatting.html" title="class in org.apache.poi.hssf.record.cf"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/hssf/record/cf/BorderFormatting.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="BorderFormatting.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

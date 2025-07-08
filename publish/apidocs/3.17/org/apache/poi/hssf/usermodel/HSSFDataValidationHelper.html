@@ -1,0 +1,486 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+HSSFDataValidationHelper (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="HSSFDataValidationHelper (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidation.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDateUtil.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFDataValidationHelper.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFDataValidationHelper.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.usermodel</FONT>
+<BR>
+Class HSSFDataValidationHelper</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.usermodel.HSSFDataValidationHelper</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>HSSFDataValidationHelper</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A></DL>
+</PRE>
+
+<P>
+Helper for working with Data Validation
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidationHelper.html#HSSFDataValidationHelper(org.apache.poi.hssf.usermodel.HSSFSheet)">HSSFDataValidationHelper</A></B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheet</A>&nbsp;sheet)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidationHelper.html#createCustomConstraint(java.lang.String)">createCustomConstraint</A></B>(java.lang.String&nbsp;formula)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidationHelper.html#createDateConstraint(int, java.lang.String, java.lang.String, java.lang.String)">createDateConstraint</A></B>(int&nbsp;operatorType,
+                     java.lang.String&nbsp;formula1,
+                     java.lang.String&nbsp;formula2,
+                     java.lang.String&nbsp;dateFormat)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidationHelper.html#createDecimalConstraint(int, java.lang.String, java.lang.String)">createDecimalConstraint</A></B>(int&nbsp;operatorType,
+                        java.lang.String&nbsp;formula1,
+                        java.lang.String&nbsp;formula2)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidationHelper.html#createExplicitListConstraint(java.lang.String[])">createExplicitListConstraint</A></B>(java.lang.String[]&nbsp;listOfValues)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidationHelper.html#createFormulaListConstraint(java.lang.String)">createFormulaListConstraint</A></B>(java.lang.String&nbsp;listFormula)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidationHelper.html#createIntegerConstraint(int, java.lang.String, java.lang.String)">createIntegerConstraint</A></B>(int&nbsp;operatorType,
+                        java.lang.String&nbsp;formula1,
+                        java.lang.String&nbsp;formula2)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidationHelper.html#createNumericConstraint(int, int, java.lang.String, java.lang.String)">createNumericConstraint</A></B>(int&nbsp;validationType,
+                        int&nbsp;operatorType,
+                        java.lang.String&nbsp;formula1,
+                        java.lang.String&nbsp;formula2)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidationHelper.html#createTextLengthConstraint(int, java.lang.String, java.lang.String)">createTextLengthConstraint</A></B>(int&nbsp;operatorType,
+                           java.lang.String&nbsp;formula1,
+                           java.lang.String&nbsp;formula2)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidationHelper.html#createTimeConstraint(int, java.lang.String, java.lang.String)">createTimeConstraint</A></B>(int&nbsp;operatorType,
+                     java.lang.String&nbsp;formula1,
+                     java.lang.String&nbsp;formula2)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.html" title="interface in org.apache.poi.ss.usermodel">DataValidation</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidationHelper.html#createValidation(org.apache.poi.ss.usermodel.DataValidationConstraint, org.apache.poi.ss.util.CellRangeAddressList)">createValidation</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A>&nbsp;constraint,
+                 <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressList.html" title="class in org.apache.poi.ss.util">CellRangeAddressList</A>&nbsp;cellRangeAddressList)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="HSSFDataValidationHelper(org.apache.poi.hssf.usermodel.HSSFSheet)"><!-- --></A><H3>
+HSSFDataValidationHelper</H3>
+<PRE>
+public <B>HSSFDataValidationHelper</B>(<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFSheet.html" title="class in org.apache.poi.hssf.usermodel">HSSFSheet</A>&nbsp;sheet)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="createDateConstraint(int, java.lang.String, java.lang.String, java.lang.String)"><!-- --></A><H3>
+createDateConstraint</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A> <B>createDateConstraint</B>(int&nbsp;operatorType,
+                                                     java.lang.String&nbsp;formula1,
+                                                     java.lang.String&nbsp;formula2,
+                                                     java.lang.String&nbsp;dateFormat)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html#createDateConstraint(int, java.lang.String, java.lang.String, java.lang.String)">createDateConstraint</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createExplicitListConstraint(java.lang.String[])"><!-- --></A><H3>
+createExplicitListConstraint</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A> <B>createExplicitListConstraint</B>(java.lang.String[]&nbsp;listOfValues)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html#createExplicitListConstraint(java.lang.String[])">createExplicitListConstraint</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createFormulaListConstraint(java.lang.String)"><!-- --></A><H3>
+createFormulaListConstraint</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A> <B>createFormulaListConstraint</B>(java.lang.String&nbsp;listFormula)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html#createFormulaListConstraint(java.lang.String)">createFormulaListConstraint</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createNumericConstraint(int, int, java.lang.String, java.lang.String)"><!-- --></A><H3>
+createNumericConstraint</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A> <B>createNumericConstraint</B>(int&nbsp;validationType,
+                                                        int&nbsp;operatorType,
+                                                        java.lang.String&nbsp;formula1,
+                                                        java.lang.String&nbsp;formula2)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html#createNumericConstraint(int, int, java.lang.String, java.lang.String)">createNumericConstraint</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createIntegerConstraint(int, java.lang.String, java.lang.String)"><!-- --></A><H3>
+createIntegerConstraint</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A> <B>createIntegerConstraint</B>(int&nbsp;operatorType,
+                                                        java.lang.String&nbsp;formula1,
+                                                        java.lang.String&nbsp;formula2)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html#createIntegerConstraint(int, java.lang.String, java.lang.String)">createIntegerConstraint</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createDecimalConstraint(int, java.lang.String, java.lang.String)"><!-- --></A><H3>
+createDecimalConstraint</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A> <B>createDecimalConstraint</B>(int&nbsp;operatorType,
+                                                        java.lang.String&nbsp;formula1,
+                                                        java.lang.String&nbsp;formula2)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html#createDecimalConstraint(int, java.lang.String, java.lang.String)">createDecimalConstraint</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createTextLengthConstraint(int, java.lang.String, java.lang.String)"><!-- --></A><H3>
+createTextLengthConstraint</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A> <B>createTextLengthConstraint</B>(int&nbsp;operatorType,
+                                                           java.lang.String&nbsp;formula1,
+                                                           java.lang.String&nbsp;formula2)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html#createTextLengthConstraint(int, java.lang.String, java.lang.String)">createTextLengthConstraint</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createTimeConstraint(int, java.lang.String, java.lang.String)"><!-- --></A><H3>
+createTimeConstraint</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A> <B>createTimeConstraint</B>(int&nbsp;operatorType,
+                                                     java.lang.String&nbsp;formula1,
+                                                     java.lang.String&nbsp;formula2)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html#createTimeConstraint(int, java.lang.String, java.lang.String)">createTimeConstraint</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createCustomConstraint(java.lang.String)"><!-- --></A><H3>
+createCustomConstraint</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A> <B>createCustomConstraint</B>(java.lang.String&nbsp;formula)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html#createCustomConstraint(java.lang.String)">createCustomConstraint</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createValidation(org.apache.poi.ss.usermodel.DataValidationConstraint, org.apache.poi.ss.util.CellRangeAddressList)"><!-- --></A><H3>
+createValidation</H3>
+<PRE>
+public <A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidation.html" title="interface in org.apache.poi.ss.usermodel">DataValidation</A> <B>createValidation</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationConstraint.html" title="interface in org.apache.poi.ss.usermodel">DataValidationConstraint</A>&nbsp;constraint,
+                                       <A HREF="../../../../../org/apache/poi/ss/util/CellRangeAddressList.html" title="class in org.apache.poi.ss.util">CellRangeAddressList</A>&nbsp;cellRangeAddressList)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html#createValidation(org.apache.poi.ss.usermodel.DataValidationConstraint, org.apache.poi.ss.util.CellRangeAddressList)">createValidation</A></CODE> in interface <CODE><A HREF="../../../../../org/apache/poi/ss/usermodel/DataValidationHelper.html" title="interface in org.apache.poi.ss.usermodel">DataValidationHelper</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDataValidation.html" title="class in org.apache.poi.hssf.usermodel"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hssf/usermodel/HSSFDateUtil.html" title="class in org.apache.poi.hssf.usermodel"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hssf/usermodel/HSSFDataValidationHelper.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="HSSFDataValidationHelper.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

@@ -1,0 +1,1621 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+PropertyIDMap (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="PropertyIDMap (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hpsf/wellknown/PropertyIDMap.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PropertyIDMap.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hpsf.wellknown</FONT>
+<BR>
+Class PropertyIDMap</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hpsf.wellknown.PropertyIDMap</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.util.Map&lt;java.lang.Long,java.lang.String&gt;</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>PropertyIDMap</B><DT>extends java.lang.Object<DT>implements java.util.Map&lt;java.lang.Long,java.lang.String&gt;</DL>
+</PRE>
+
+<P>
+This is a dictionary which maps property ID values to property
+ ID strings.
+
+ The methods <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#getSummaryInformationProperties()"><CODE>getSummaryInformationProperties()</CODE></A> and <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#getDocumentSummaryInformationProperties()"><CODE>getDocumentSummaryInformationProperties()</CODE></A> return singleton <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><CODE>PropertyIDMap</CODE></A>s. An application that wants to extend these maps
+ should treat them as unmodifiable, copy them and modifiy the
+ copies.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_java.util.Map"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface java.util.Map</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>java.util.Map.Entry&lt;K,V&gt;</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_APPNAME">PID_APPNAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the application that created the
+ document</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_AUTHOR">PID_AUTHOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the document's author</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_BEHAVIOUR">PID_BEHAVIOUR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Behavior property, if present, MUST have the property identifier 0x80000003,
+ MUST NOT have a property name, and MUST have type VT_UI4 (0x0013).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_BYTECOUNT">PID_BYTECOUNT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of bytes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_CATEGORY">PID_CATEGORY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The entry is a string denoting the category the file belongs
+ to, e.g.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_CCHWITHSPACES">PID_CCHWITHSPACES</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The entry specifies an estimate of the number of characters 
+  in the document, including whitespace, as an integer</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_CHARCOUNT">PID_CHARCOUNT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the number of characters in the
+ document</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_CODEPAGE">PID_CODEPAGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The entry denotes a code page.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_COMMENTS">PID_COMMENTS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the document's comments</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_COMPANY">PID_COMPANY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This entry contains the company name.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_CONTENTSTATUS">PID_CONTENTSTATUS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This entry contains a string of the document status.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_CONTENTTYPE">PID_CONTENTTYPE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This entry contains a string of the content type of the file.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_CREATE_DTM">PID_CREATE_DTM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the date and time the document was
+ created.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_DICTIONARY">PID_DICTIONARY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The entry is a dictionary.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_DIGSIG">PID_DIGSIG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This entry contains the VBA digital signature for the VBA project 
+  embedded in the document.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_DOCPARTS">PID_DOCPARTS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This entry contains the names of document parts (word: names
+ of the documents in the master document, excel: sheet names,
+ power point: slide titles, binder: document names).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_DOCVERSION">PID_DOCVERSION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This entry contains a string of the document version, but
+  normally should be empty</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_EDITTIME">PID_EDITTIME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the document's edit time</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_HEADINGPAIR">PID_HEADINGPAIR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This entry denotes an internally used property.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_HIDDENCOUNT">PID_HIDDENCOUNT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of hidden slides.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_HYPERLINKSCHANGED">PID_HYPERLINKSCHANGED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This entry contains a boolean which marks if the User Defined
+  Property Set has been updated outside of the Application, if so the
+  hyperlinks should be updated on document load.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_KEYWORDS">PID_KEYWORDS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the document's keywords</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_LANGUAGE">PID_LANGUAGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This entry contains a string of the document language, but
+  normally should be empty.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_LASTAUTHOR">PID_LASTAUTHOR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the document's last author</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_LASTPRINTED">PID_LASTPRINTED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the date and time the document was
+ last printed</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_LASTSAVE_DTM">PID_LASTSAVE_DTM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the date and time the document was
+ saved</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_LINECOUNT">PID_LINECOUNT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of lines.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_LINKSDIRTY">PID_LINKSDIRTY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If this entry is -1 the links are dirty and should be
+ re-evaluated.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_LOCALE">PID_LOCALE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Locale property, if present, MUST have the property identifier 0x80000000,
+ MUST NOT have a property name, and MUST have type VT_UI4 (0x0013).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_MANAGER">PID_MANAGER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This entry contains the name of the project manager.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_MAX">PID_MAX</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The highest well-known property ID.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_MMCLIPCOUNT">PID_MMCLIPCOUNT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of multimedia clips, e.g.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_NOTECOUNT">PID_NOTECOUNT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of slides with notes.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_PAGECOUNT">PID_PAGECOUNT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the number of pages in the
+ document</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_PARCOUNT">PID_PARCOUNT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of paragraphs.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_PRESFORMAT">PID_PRESFORMAT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Target format for power point presentation, e.g.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_REVNUMBER">PID_REVNUMBER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the document's revision number</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_SCALE">PID_SCALE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This entry is set to -1 when scaling of the thumbnail is
+ desired.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_SECURITY">PID_SECURITY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes whether read/write access to the
+ document is allowed or whether is should be opened as read-only.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_SLIDECOUNT">PID_SLIDECOUNT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Number of slides in a power point presentation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_SUBJECT">PID_SUBJECT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the document's subject</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_TEMPLATE">PID_TEMPLATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the document's template</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_THUMBNAIL">PID_THUMBNAIL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the document's thumbnail</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_TITLE">PID_TITLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the document's title</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_VERSION">PID_VERSION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This entry contains the version of the Application which wrote the
+  Property set, stored with the two high order bytes having the major
+  version number, and the two low order bytes the minor version number.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#PID_WORDCOUNT">PID_WORDCOUNT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ID of the property that denotes the number of words in the
+ document</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#clear()">clear</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#containsKey(java.lang.Object)">containsKey</A></B>(java.lang.Object&nbsp;key)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#containsValue(java.lang.Object)">containsValue</A></B>(java.lang.Object&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Set&lt;java.util.Map.Entry&lt;java.lang.Long,java.lang.String&gt;&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#entrySet()">entrySet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#get(java.lang.Object)">get</A></B>(java.lang.Object&nbsp;key)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#getDocumentSummaryInformationProperties()">getDocumentSummaryInformationProperties</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#getFallbackProperties()">getFallbackProperties</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a property map, which is only used as a fallback, i.e.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#getSummaryInformationProperties()">getSummaryInformationProperties</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#isEmpty()">isEmpty</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Set&lt;java.lang.Long&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#keySet()">keySet</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#main(java.lang.String[])">main</A></B>(java.lang.String[]&nbsp;args)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;For the most basic testing.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#put(java.lang.Long, java.lang.String)">put</A></B>(java.lang.Long&nbsp;key,
+    java.lang.String&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#putAll(java.util.Map)">putAll</A></B>(java.util.Map&lt;? extends java.lang.Long,? extends java.lang.String&gt;&nbsp;m)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#remove(java.lang.Object)">remove</A></B>(java.lang.Object&nbsp;key)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#size()">size</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Collection&lt;java.lang.String&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html#values()">values</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.util.Map"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from interface java.util.Map</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>equals, hashCode</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="PID_TITLE"><!-- --></A><H3>
+PID_TITLE</H3>
+<PRE>
+public static final int <B>PID_TITLE</B></PRE>
+<DL>
+<DD>ID of the property that denotes the document's title
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_TITLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_SUBJECT"><!-- --></A><H3>
+PID_SUBJECT</H3>
+<PRE>
+public static final int <B>PID_SUBJECT</B></PRE>
+<DL>
+<DD>ID of the property that denotes the document's subject
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_SUBJECT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_AUTHOR"><!-- --></A><H3>
+PID_AUTHOR</H3>
+<PRE>
+public static final int <B>PID_AUTHOR</B></PRE>
+<DL>
+<DD>ID of the property that denotes the document's author
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_AUTHOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_KEYWORDS"><!-- --></A><H3>
+PID_KEYWORDS</H3>
+<PRE>
+public static final int <B>PID_KEYWORDS</B></PRE>
+<DL>
+<DD>ID of the property that denotes the document's keywords
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_KEYWORDS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_COMMENTS"><!-- --></A><H3>
+PID_COMMENTS</H3>
+<PRE>
+public static final int <B>PID_COMMENTS</B></PRE>
+<DL>
+<DD>ID of the property that denotes the document's comments
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_COMMENTS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_TEMPLATE"><!-- --></A><H3>
+PID_TEMPLATE</H3>
+<PRE>
+public static final int <B>PID_TEMPLATE</B></PRE>
+<DL>
+<DD>ID of the property that denotes the document's template
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_TEMPLATE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_LASTAUTHOR"><!-- --></A><H3>
+PID_LASTAUTHOR</H3>
+<PRE>
+public static final int <B>PID_LASTAUTHOR</B></PRE>
+<DL>
+<DD>ID of the property that denotes the document's last author
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_LASTAUTHOR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_REVNUMBER"><!-- --></A><H3>
+PID_REVNUMBER</H3>
+<PRE>
+public static final int <B>PID_REVNUMBER</B></PRE>
+<DL>
+<DD>ID of the property that denotes the document's revision number
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_REVNUMBER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_EDITTIME"><!-- --></A><H3>
+PID_EDITTIME</H3>
+<PRE>
+public static final int <B>PID_EDITTIME</B></PRE>
+<DL>
+<DD>ID of the property that denotes the document's edit time
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_EDITTIME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_LASTPRINTED"><!-- --></A><H3>
+PID_LASTPRINTED</H3>
+<PRE>
+public static final int <B>PID_LASTPRINTED</B></PRE>
+<DL>
+<DD>ID of the property that denotes the date and time the document was
+ last printed
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_LASTPRINTED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_CREATE_DTM"><!-- --></A><H3>
+PID_CREATE_DTM</H3>
+<PRE>
+public static final int <B>PID_CREATE_DTM</B></PRE>
+<DL>
+<DD>ID of the property that denotes the date and time the document was
+ created.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_CREATE_DTM">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_LASTSAVE_DTM"><!-- --></A><H3>
+PID_LASTSAVE_DTM</H3>
+<PRE>
+public static final int <B>PID_LASTSAVE_DTM</B></PRE>
+<DL>
+<DD>ID of the property that denotes the date and time the document was
+ saved
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_LASTSAVE_DTM">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_PAGECOUNT"><!-- --></A><H3>
+PID_PAGECOUNT</H3>
+<PRE>
+public static final int <B>PID_PAGECOUNT</B></PRE>
+<DL>
+<DD>ID of the property that denotes the number of pages in the
+ document
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_PAGECOUNT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_WORDCOUNT"><!-- --></A><H3>
+PID_WORDCOUNT</H3>
+<PRE>
+public static final int <B>PID_WORDCOUNT</B></PRE>
+<DL>
+<DD>ID of the property that denotes the number of words in the
+ document
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_WORDCOUNT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_CHARCOUNT"><!-- --></A><H3>
+PID_CHARCOUNT</H3>
+<PRE>
+public static final int <B>PID_CHARCOUNT</B></PRE>
+<DL>
+<DD>ID of the property that denotes the number of characters in the
+ document
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_CHARCOUNT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_THUMBNAIL"><!-- --></A><H3>
+PID_THUMBNAIL</H3>
+<PRE>
+public static final int <B>PID_THUMBNAIL</B></PRE>
+<DL>
+<DD>ID of the property that denotes the document's thumbnail
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_THUMBNAIL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_APPNAME"><!-- --></A><H3>
+PID_APPNAME</H3>
+<PRE>
+public static final int <B>PID_APPNAME</B></PRE>
+<DL>
+<DD>ID of the property that denotes the application that created the
+ document
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_APPNAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_SECURITY"><!-- --></A><H3>
+PID_SECURITY</H3>
+<PRE>
+public static final int <B>PID_SECURITY</B></PRE>
+<DL>
+<DD>ID of the property that denotes whether read/write access to the
+ document is allowed or whether is should be opened as read-only. It can
+ have the following values:
+
+ <table summary="">
+  <tbody>
+   <tr>
+    <th>Value</th>
+    <th>Description</th>
+   </tr>
+   <tr>
+    <th>0</th>
+    <th>No restriction</th>
+   </tr>
+   <tr>
+    <th>2</th>
+    <th>Read-only recommended</th>
+   </tr>
+   <tr>
+    <th>4</th>
+    <th>Read-only enforced</th>
+   </tr>
+  </tbody>
+ </table>
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_SECURITY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_DICTIONARY"><!-- --></A><H3>
+PID_DICTIONARY</H3>
+<PRE>
+public static final int <B>PID_DICTIONARY</B></PRE>
+<DL>
+<DD>The entry is a dictionary.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_DICTIONARY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_CODEPAGE"><!-- --></A><H3>
+PID_CODEPAGE</H3>
+<PRE>
+public static final int <B>PID_CODEPAGE</B></PRE>
+<DL>
+<DD>The entry denotes a code page.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_CODEPAGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_CATEGORY"><!-- --></A><H3>
+PID_CATEGORY</H3>
+<PRE>
+public static final int <B>PID_CATEGORY</B></PRE>
+<DL>
+<DD>The entry is a string denoting the category the file belongs
+ to, e.g. review, memo, etc. This is useful to find documents of
+ same type.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_CATEGORY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_PRESFORMAT"><!-- --></A><H3>
+PID_PRESFORMAT</H3>
+<PRE>
+public static final int <B>PID_PRESFORMAT</B></PRE>
+<DL>
+<DD>Target format for power point presentation, e.g. 35mm,
+ printer, video etc.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_PRESFORMAT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_BYTECOUNT"><!-- --></A><H3>
+PID_BYTECOUNT</H3>
+<PRE>
+public static final int <B>PID_BYTECOUNT</B></PRE>
+<DL>
+<DD>Number of bytes.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_BYTECOUNT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_LINECOUNT"><!-- --></A><H3>
+PID_LINECOUNT</H3>
+<PRE>
+public static final int <B>PID_LINECOUNT</B></PRE>
+<DL>
+<DD>Number of lines.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_LINECOUNT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_PARCOUNT"><!-- --></A><H3>
+PID_PARCOUNT</H3>
+<PRE>
+public static final int <B>PID_PARCOUNT</B></PRE>
+<DL>
+<DD>Number of paragraphs.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_PARCOUNT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_SLIDECOUNT"><!-- --></A><H3>
+PID_SLIDECOUNT</H3>
+<PRE>
+public static final int <B>PID_SLIDECOUNT</B></PRE>
+<DL>
+<DD>Number of slides in a power point presentation.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_SLIDECOUNT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_NOTECOUNT"><!-- --></A><H3>
+PID_NOTECOUNT</H3>
+<PRE>
+public static final int <B>PID_NOTECOUNT</B></PRE>
+<DL>
+<DD>Number of slides with notes.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_NOTECOUNT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_HIDDENCOUNT"><!-- --></A><H3>
+PID_HIDDENCOUNT</H3>
+<PRE>
+public static final int <B>PID_HIDDENCOUNT</B></PRE>
+<DL>
+<DD>Number of hidden slides.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_HIDDENCOUNT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_MMCLIPCOUNT"><!-- --></A><H3>
+PID_MMCLIPCOUNT</H3>
+<PRE>
+public static final int <B>PID_MMCLIPCOUNT</B></PRE>
+<DL>
+<DD>Number of multimedia clips, e.g. sound or video.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_MMCLIPCOUNT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_SCALE"><!-- --></A><H3>
+PID_SCALE</H3>
+<PRE>
+public static final int <B>PID_SCALE</B></PRE>
+<DL>
+<DD>This entry is set to -1 when scaling of the thumbnail is
+ desired. Otherwise the thumbnail should be cropped.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_SCALE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_HEADINGPAIR"><!-- --></A><H3>
+PID_HEADINGPAIR</H3>
+<PRE>
+public static final int <B>PID_HEADINGPAIR</B></PRE>
+<DL>
+<DD>This entry denotes an internally used property. It is a
+ vector of variants consisting of pairs of a string (VT_LPSTR)
+ and a number (VT_I4). The string is a heading name, and the
+ number tells how many document parts are under that
+ heading.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_HEADINGPAIR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_DOCPARTS"><!-- --></A><H3>
+PID_DOCPARTS</H3>
+<PRE>
+public static final int <B>PID_DOCPARTS</B></PRE>
+<DL>
+<DD>This entry contains the names of document parts (word: names
+ of the documents in the master document, excel: sheet names,
+ power point: slide titles, binder: document names).
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_DOCPARTS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_MANAGER"><!-- --></A><H3>
+PID_MANAGER</H3>
+<PRE>
+public static final int <B>PID_MANAGER</B></PRE>
+<DL>
+<DD>This entry contains the name of the project manager.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_MANAGER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_COMPANY"><!-- --></A><H3>
+PID_COMPANY</H3>
+<PRE>
+public static final int <B>PID_COMPANY</B></PRE>
+<DL>
+<DD>This entry contains the company name.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_COMPANY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_LINKSDIRTY"><!-- --></A><H3>
+PID_LINKSDIRTY</H3>
+<PRE>
+public static final int <B>PID_LINKSDIRTY</B></PRE>
+<DL>
+<DD>If this entry is -1 the links are dirty and should be
+ re-evaluated.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_LINKSDIRTY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_CCHWITHSPACES"><!-- --></A><H3>
+PID_CCHWITHSPACES</H3>
+<PRE>
+public static final int <B>PID_CCHWITHSPACES</B></PRE>
+<DL>
+<DD>The entry specifies an estimate of the number of characters 
+  in the document, including whitespace, as an integer
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_CCHWITHSPACES">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_HYPERLINKSCHANGED"><!-- --></A><H3>
+PID_HYPERLINKSCHANGED</H3>
+<PRE>
+public static final int <B>PID_HYPERLINKSCHANGED</B></PRE>
+<DL>
+<DD>This entry contains a boolean which marks if the User Defined
+  Property Set has been updated outside of the Application, if so the
+  hyperlinks should be updated on document load.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_HYPERLINKSCHANGED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_VERSION"><!-- --></A><H3>
+PID_VERSION</H3>
+<PRE>
+public static final int <B>PID_VERSION</B></PRE>
+<DL>
+<DD>This entry contains the version of the Application which wrote the
+  Property set, stored with the two high order bytes having the major
+  version number, and the two low order bytes the minor version number.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_VERSION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_DIGSIG"><!-- --></A><H3>
+PID_DIGSIG</H3>
+<PRE>
+public static final int <B>PID_DIGSIG</B></PRE>
+<DL>
+<DD>This entry contains the VBA digital signature for the VBA project 
+  embedded in the document.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_DIGSIG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_CONTENTTYPE"><!-- --></A><H3>
+PID_CONTENTTYPE</H3>
+<PRE>
+public static final int <B>PID_CONTENTTYPE</B></PRE>
+<DL>
+<DD>This entry contains a string of the content type of the file.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_CONTENTTYPE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_CONTENTSTATUS"><!-- --></A><H3>
+PID_CONTENTSTATUS</H3>
+<PRE>
+public static final int <B>PID_CONTENTSTATUS</B></PRE>
+<DL>
+<DD>This entry contains a string of the document status.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_CONTENTSTATUS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_LANGUAGE"><!-- --></A><H3>
+PID_LANGUAGE</H3>
+<PRE>
+public static final int <B>PID_LANGUAGE</B></PRE>
+<DL>
+<DD>This entry contains a string of the document language, but
+  normally should be empty.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_LANGUAGE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_DOCVERSION"><!-- --></A><H3>
+PID_DOCVERSION</H3>
+<PRE>
+public static final int <B>PID_DOCVERSION</B></PRE>
+<DL>
+<DD>This entry contains a string of the document version, but
+  normally should be empty
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_DOCVERSION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_MAX"><!-- --></A><H3>
+PID_MAX</H3>
+<PRE>
+public static final int <B>PID_MAX</B></PRE>
+<DL>
+<DD>The highest well-known property ID. Applications are free to use 
+  higher values for custom purposes. (This value is based on Office 12,
+  earlier versions of Office had lower values)
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_MAX">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_LOCALE"><!-- --></A><H3>
+PID_LOCALE</H3>
+<PRE>
+public static final int <B>PID_LOCALE</B></PRE>
+<DL>
+<DD>The Locale property, if present, MUST have the property identifier 0x80000000,
+ MUST NOT have a property name, and MUST have type VT_UI4 (0x0013).
+ If present, its value MUST be a valid language code identifier as specified in [MS-LCID].
+ Its value is selected in an implementation-specific manner.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_LOCALE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PID_BEHAVIOUR"><!-- --></A><H3>
+PID_BEHAVIOUR</H3>
+<PRE>
+public static final int <B>PID_BEHAVIOUR</B></PRE>
+<DL>
+<DD>The Behavior property, if present, MUST have the property identifier 0x80000003,
+ MUST NOT have a property name, and MUST have type VT_UI4 (0x0013).
+ A version 0 property set, indicated by the value 0x0000 for the Version field of
+ the PropertySetStream packet, MUST NOT have a Behavior property.
+ If the Behavior property is present, it MUST have one of the following values.
+ 
+ <ul>
+ <li>0x00000000 = Property names are case-insensitive (default)
+ <li>0x00000001 = Property names are case-sensitive.
+ </ul>
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.hpsf.wellknown.PropertyIDMap.PID_BEHAVIOUR">Constant Field Values</A></DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getSummaryInformationProperties()"><!-- --></A><H3>
+getSummaryInformationProperties</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A> <B>getSummaryInformationProperties</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the Summary Information properties singleton</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDocumentSummaryInformationProperties()"><!-- --></A><H3>
+getDocumentSummaryInformationProperties</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A> <B>getDocumentSummaryInformationProperties</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>The Document Summary Information properties singleton.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFallbackProperties()"><!-- --></A><H3>
+getFallbackProperties</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/hpsf/wellknown/PropertyIDMap.html" title="class in org.apache.poi.hpsf.wellknown">PropertyIDMap</A> <B>getFallbackProperties</B>()</PRE>
+<DL>
+<DD>Returns a property map, which is only used as a fallback, i.e. if available, the correct map
+ for <A HREF="../../../../../org/apache/poi/hpsf/DocumentSummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>DocumentSummaryInformation</CODE></A> or <A HREF="../../../../../org/apache/poi/hpsf/SummaryInformation.html" title="class in org.apache.poi.hpsf"><CODE>SummaryInformation</CODE></A> should be used.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="size()"><!-- --></A><H3>
+size</H3>
+<PRE>
+public int <B>size</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>size</CODE> in interface <CODE>java.util.Map&lt;java.lang.Long,java.lang.String&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isEmpty()"><!-- --></A><H3>
+isEmpty</H3>
+<PRE>
+public boolean <B>isEmpty</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>isEmpty</CODE> in interface <CODE>java.util.Map&lt;java.lang.Long,java.lang.String&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="containsKey(java.lang.Object)"><!-- --></A><H3>
+containsKey</H3>
+<PRE>
+public boolean <B>containsKey</B>(java.lang.Object&nbsp;key)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>containsKey</CODE> in interface <CODE>java.util.Map&lt;java.lang.Long,java.lang.String&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="containsValue(java.lang.Object)"><!-- --></A><H3>
+containsValue</H3>
+<PRE>
+public boolean <B>containsValue</B>(java.lang.Object&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>containsValue</CODE> in interface <CODE>java.util.Map&lt;java.lang.Long,java.lang.String&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="get(java.lang.Object)"><!-- --></A><H3>
+get</H3>
+<PRE>
+public java.lang.String <B>get</B>(java.lang.Object&nbsp;key)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>get</CODE> in interface <CODE>java.util.Map&lt;java.lang.Long,java.lang.String&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="put(java.lang.Long, java.lang.String)"><!-- --></A><H3>
+put</H3>
+<PRE>
+public java.lang.String <B>put</B>(java.lang.Long&nbsp;key,
+                            java.lang.String&nbsp;value)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>put</CODE> in interface <CODE>java.util.Map&lt;java.lang.Long,java.lang.String&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="remove(java.lang.Object)"><!-- --></A><H3>
+remove</H3>
+<PRE>
+public java.lang.String <B>remove</B>(java.lang.Object&nbsp;key)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>remove</CODE> in interface <CODE>java.util.Map&lt;java.lang.Long,java.lang.String&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putAll(java.util.Map)"><!-- --></A><H3>
+putAll</H3>
+<PRE>
+public void <B>putAll</B>(java.util.Map&lt;? extends java.lang.Long,? extends java.lang.String&gt;&nbsp;m)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>putAll</CODE> in interface <CODE>java.util.Map&lt;java.lang.Long,java.lang.String&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clear()"><!-- --></A><H3>
+clear</H3>
+<PRE>
+public void <B>clear</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>clear</CODE> in interface <CODE>java.util.Map&lt;java.lang.Long,java.lang.String&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="keySet()"><!-- --></A><H3>
+keySet</H3>
+<PRE>
+public java.util.Set&lt;java.lang.Long&gt; <B>keySet</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>keySet</CODE> in interface <CODE>java.util.Map&lt;java.lang.Long,java.lang.String&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="values()"><!-- --></A><H3>
+values</H3>
+<PRE>
+public java.util.Collection&lt;java.lang.String&gt; <B>values</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>values</CODE> in interface <CODE>java.util.Map&lt;java.lang.Long,java.lang.String&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="entrySet()"><!-- --></A><H3>
+entrySet</H3>
+<PRE>
+public java.util.Set&lt;java.util.Map.Entry&lt;java.lang.Long,java.lang.String&gt;&gt; <B>entrySet</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE>entrySet</CODE> in interface <CODE>java.util.Map&lt;java.lang.Long,java.lang.String&gt;</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="main(java.lang.String[])"><!-- --></A><H3>
+main</H3>
+<PRE>
+public static void <B>main</B>(java.lang.String[]&nbsp;args)</PRE>
+<DL>
+<DD>For the most basic testing.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>args</CODE> - The command-line arguments</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;PREV CLASS&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/hpsf/wellknown/SectionIDMap.html" title="class in org.apache.poi.hpsf.wellknown"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/hpsf/wellknown/PropertyIDMap.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="PropertyIDMap.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

@@ -1,0 +1,804 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+CellReference (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="CellReference (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html" title="class in org.apache.poi.ss.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellReference.NameType.html" title="enum in org.apache.poi.ss.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/util/CellReference.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CellReference.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.util</FONT>
+<BR>
+Class CellReference</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.util.CellReference</B>
+</PRE>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../org/apache/poi/hssf/util/CellReference.html" title="class in org.apache.poi.hssf.util">CellReference</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>CellReference</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+<p>Common conversion functions between Excel style A1, C27 style
+  cell references, and POI usermodel style row=0, column=0
+  style references. Handles sheet-based and sheet-free references
+  as well, eg "Sheet1!A1" and "$B$72"</p>
+  
+  <p>Use <tt>CellReference</tt> when the concept of
+ relative/absolute does apply (such as a cell reference in a formula).
+ Use <A HREF="../../../../../org/apache/poi/ss/util/CellAddress.html" title="class in org.apache.poi.ss.util"><CODE>CellAddress</CODE></A> when you want to refer to the location of a cell in a sheet
+ when the concept of relative/absolute does not apply (such as the anchor location 
+ of a cell comment).
+ <tt>CellReference</tt>s have a concept of "sheet", while <tt>CellAddress</tt>es do not.</p>
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.NameType.html" title="enum in org.apache.poi.ss.util">CellReference.NameType</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used to classify identifiers found in formulas as cell references or not.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#CellReference(org.apache.poi.ss.usermodel.Cell)">CellReference</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#CellReference(int, int)">CellReference</A></B>(int&nbsp;pRow,
+              int&nbsp;pCol)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#CellReference(int, int, boolean, boolean)">CellReference</A></B>(int&nbsp;pRow,
+              int&nbsp;pCol,
+              boolean&nbsp;pAbsRow,
+              boolean&nbsp;pAbsCol)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#CellReference(int, short)">CellReference</A></B>(int&nbsp;pRow,
+              short&nbsp;pCol)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#CellReference(java.lang.String)">CellReference</A></B>(java.lang.String&nbsp;cellRef)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create an cell ref from a string representation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#CellReference(java.lang.String, int, int, boolean, boolean)">CellReference</A></B>(java.lang.String&nbsp;pSheetName,
+              int&nbsp;pRow,
+              int&nbsp;pCol,
+              boolean&nbsp;pAbsRow,
+              boolean&nbsp;pAbsCol)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#cellReferenceIsWithinRange(java.lang.String, java.lang.String, org.apache.poi.ss.SpreadsheetVersion)">cellReferenceIsWithinRange</A></B>(java.lang.String&nbsp;colStr,
+                           java.lang.String&nbsp;rowStr,
+                           <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;ssVersion)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Used to decide whether a name of the form "[A-Z]*[0-9]*" that appears in a formula can be
+ interpreted as a cell reference.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellReference.NameType.html" title="enum in org.apache.poi.ss.util">CellReference.NameType</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#classifyCellReference(java.lang.String, org.apache.poi.ss.SpreadsheetVersion)">classifyCellReference</A></B>(java.lang.String&nbsp;str,
+                      <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;ssVersion)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Classifies an identifier as either a simple (2D) cell reference or a named range name</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#convertColStringToIndex(java.lang.String)">convertColStringToIndex</A></B>(java.lang.String&nbsp;ref)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;takes in a column reference portion of a CellRef and converts it from
+ ALPHA-26 number format to 0-based base 10.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#convertNumToColString(int)">convertNumToColString</A></B>(int&nbsp;col)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Takes in a 0-based base-10 column and returns a ALPHA-26
+  representation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#equals(java.lang.Object)">equals</A></B>(java.lang.Object&nbsp;o)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks whether this cell reference is equal to another object.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#formatAsString()">formatAsString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns a text representation of this cell reference.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#getCellRefParts()">getCellRefParts</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the three parts of the cell reference, the
+  Sheet name (or null if none supplied), the 1 based
+  row number, and the A based column letter.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#getCol()">getCol</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#getRow()">getRow</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#getSheetName()">getSheetName</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#hashCode()">hashCode</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#isColAbsolute()">isColAbsolute</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#isColumnWithinRange(java.lang.String, org.apache.poi.ss.SpreadsheetVersion)">isColumnWithinRange</A></B>(java.lang.String&nbsp;colStr,
+                    <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;ssVersion)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#isPartAbsolute(java.lang.String)">isPartAbsolute</A></B>(java.lang.String&nbsp;part)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#isRowAbsolute()">isRowAbsolute</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#isRowWithinRange(int, org.apache.poi.ss.SpreadsheetVersion)">isRowWithinRange</A></B>(int&nbsp;rowNum,
+                 <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;ssVersion)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Determines whether <code>row</code> is a valid row number for a given SpreadsheetVersion.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#isRowWithinRange(java.lang.String, org.apache.poi.ss.SpreadsheetVersion)">isRowWithinRange</A></B>(java.lang.String&nbsp;rowStr,
+                 <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;ssVersion)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Determines whether <code>rowStr</code> is a valid row number for a given SpreadsheetVersion.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#toString()">toString</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="CellReference(java.lang.String)"><!-- --></A><H3>
+CellReference</H3>
+<PRE>
+public <B>CellReference</B>(java.lang.String&nbsp;cellRef)</PRE>
+<DL>
+<DD>Create an cell ref from a string representation.  Sheet names containing special characters should be
+ delimited and escaped as per normal syntax rules for formulas.
+<P>
+</DL>
+<HR>
+
+<A NAME="CellReference(int, int)"><!-- --></A><H3>
+CellReference</H3>
+<PRE>
+public <B>CellReference</B>(int&nbsp;pRow,
+                     int&nbsp;pCol)</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="CellReference(int, short)"><!-- --></A><H3>
+CellReference</H3>
+<PRE>
+public <B>CellReference</B>(int&nbsp;pRow,
+                     short&nbsp;pCol)</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="CellReference(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+CellReference</H3>
+<PRE>
+public <B>CellReference</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="CellReference(int, int, boolean, boolean)"><!-- --></A><H3>
+CellReference</H3>
+<PRE>
+public <B>CellReference</B>(int&nbsp;pRow,
+                     int&nbsp;pCol,
+                     boolean&nbsp;pAbsRow,
+                     boolean&nbsp;pAbsCol)</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="CellReference(java.lang.String, int, int, boolean, boolean)"><!-- --></A><H3>
+CellReference</H3>
+<PRE>
+public <B>CellReference</B>(java.lang.String&nbsp;pSheetName,
+                     int&nbsp;pRow,
+                     int&nbsp;pCol,
+                     boolean&nbsp;pAbsRow,
+                     boolean&nbsp;pAbsCol)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getRow()"><!-- --></A><H3>
+getRow</H3>
+<PRE>
+public int <B>getRow</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCol()"><!-- --></A><H3>
+getCol</H3>
+<PRE>
+public short <B>getCol</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isRowAbsolute()"><!-- --></A><H3>
+isRowAbsolute</H3>
+<PRE>
+public boolean <B>isRowAbsolute</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isColAbsolute()"><!-- --></A><H3>
+isColAbsolute</H3>
+<PRE>
+public boolean <B>isColAbsolute</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getSheetName()"><!-- --></A><H3>
+getSheetName</H3>
+<PRE>
+public java.lang.String <B>getSheetName</B>()</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>possibly <code>null</code> if this is a 2D reference.  Special characters are not
+ escaped or delimited</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isPartAbsolute(java.lang.String)"><!-- --></A><H3>
+isPartAbsolute</H3>
+<PRE>
+public static boolean <B>isPartAbsolute</B>(java.lang.String&nbsp;part)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="convertColStringToIndex(java.lang.String)"><!-- --></A><H3>
+convertColStringToIndex</H3>
+<PRE>
+public static int <B>convertColStringToIndex</B>(java.lang.String&nbsp;ref)</PRE>
+<DL>
+<DD>takes in a column reference portion of a CellRef and converts it from
+ ALPHA-26 number format to 0-based base 10.
+ 'A' -&gt; 0
+ 'Z' -&gt; 25
+ 'AA' -&gt; 26
+ 'IV' -&gt; 255
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>zero based column index</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="classifyCellReference(java.lang.String, org.apache.poi.ss.SpreadsheetVersion)"><!-- --></A><H3>
+classifyCellReference</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/util/CellReference.NameType.html" title="enum in org.apache.poi.ss.util">CellReference.NameType</A> <B>classifyCellReference</B>(java.lang.String&nbsp;str,
+                                                           <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;ssVersion)</PRE>
+<DL>
+<DD>Classifies an identifier as either a simple (2D) cell reference or a named range name
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>one of the values from <tt>NameType</tt></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="cellReferenceIsWithinRange(java.lang.String, java.lang.String, org.apache.poi.ss.SpreadsheetVersion)"><!-- --></A><H3>
+cellReferenceIsWithinRange</H3>
+<PRE>
+public static boolean <B>cellReferenceIsWithinRange</B>(java.lang.String&nbsp;colStr,
+                                                 java.lang.String&nbsp;rowStr,
+                                                 <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;ssVersion)</PRE>
+<DL>
+<DD>Used to decide whether a name of the form "[A-Z]*[0-9]*" that appears in a formula can be
+ interpreted as a cell reference.  Names of that form can be also used for sheets and/or
+ named ranges, and in those circumstances, the question of whether the potential cell
+ reference is valid (in range) becomes important.
+ <p>
+ Note - that the maximum sheet size varies across Excel versions:
+ <p>
+ <blockquote><table border="0" cellpadding="1" cellspacing="0"
+                 summary="Notable cases.">
+   <tr><th>Version&nbsp;&nbsp;</th><th>File Format&nbsp;&nbsp;</th>
+        <th>Last Column&nbsp;&nbsp;</th><th>Last Row</th></tr>
+   <tr><td>97-2003</td><td>BIFF8</td><td>"IV" (2^8)</td><td>65536 (2^14)</td></tr>
+   <tr><td>2007</td><td>BIFF12</td><td>"XFD" (2^14)</td><td>1048576 (2^20)</td></tr>
+ </table></blockquote>
+ POI currently targets BIFF8 (Excel 97-2003), so the following behaviour can be observed for
+ this method:
+ <blockquote><table border="0" cellpadding="1" cellspacing="0"
+                 summary="Notable cases.">
+   <tr><th>Input&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+       <th>Result&nbsp;</th></tr>
+   <tr><td>"A", "1"</td><td>true</td></tr>
+   <tr><td>"a", "111"</td><td>true</td></tr>
+   <tr><td>"A", "65536"</td><td>true</td></tr>
+   <tr><td>"A", "65537"</td><td>false</td></tr>
+   <tr><td>"iv", "1"</td><td>true</td></tr>
+   <tr><td>"IW", "1"</td><td>false</td></tr>
+   <tr><td>"AAA", "1"</td><td>false</td></tr>
+   <tr><td>"a", "111"</td><td>true</td></tr>
+   <tr><td>"Sheet", "1"</td><td>false</td></tr>
+ </table></blockquote>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>colStr</CODE> - a string of only letter characters<DD><CODE>rowStr</CODE> - a string of only digit characters
+<DT><B>Returns:</B><DD><code>true</code> if the row and col parameters are within range of a BIFF8 spreadsheet.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isColumnWithinRange(java.lang.String, org.apache.poi.ss.SpreadsheetVersion)"><!-- --></A><H3>
+isColumnWithinRange</H3>
+<PRE>
+public static boolean <B>isColumnWithinRange</B>(java.lang.String&nbsp;colStr,
+                                          <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;ssVersion)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isRowWithinRange(java.lang.String, org.apache.poi.ss.SpreadsheetVersion)"><!-- --></A><H3>
+isRowWithinRange</H3>
+<PRE>
+public static boolean <B>isRowWithinRange</B>(java.lang.String&nbsp;rowStr,
+                                       <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;ssVersion)</PRE>
+<DL>
+<DD>Determines whether <code>rowStr</code> is a valid row number for a given SpreadsheetVersion.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rowStr</CODE> - the numeric portion of an A1-style cell reference (1-based index)<DD><CODE>ssVersion</CODE> - the spreadsheet version
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.NumberFormatException</CODE> - if rowStr is not parseable as an integer</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isRowWithinRange(int, org.apache.poi.ss.SpreadsheetVersion)"><!-- --></A><H3>
+isRowWithinRange</H3>
+<PRE>
+public static boolean <B>isRowWithinRange</B>(int&nbsp;rowNum,
+                                       <A HREF="../../../../../org/apache/poi/ss/SpreadsheetVersion.html" title="enum in org.apache.poi.ss">SpreadsheetVersion</A>&nbsp;ssVersion)</PRE>
+<DL>
+<DD>Determines whether <code>row</code> is a valid row number for a given SpreadsheetVersion.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rowNum</CODE> - the row number (0-based index)<DD><CODE>ssVersion</CODE> - the spreadsheet version<DT><B>Since:</B></DT>
+  <DD>3.17 beta 1</DD>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="convertNumToColString(int)"><!-- --></A><H3>
+convertNumToColString</H3>
+<PRE>
+public static java.lang.String <B>convertNumToColString</B>(int&nbsp;col)</PRE>
+<DL>
+<DD>Takes in a 0-based base-10 column and returns a ALPHA-26
+  representation.
+ eg <code>convertNumToColString(3)</code> returns <code>"D"</code>
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="formatAsString()"><!-- --></A><H3>
+formatAsString</H3>
+<PRE>
+public java.lang.String <B>formatAsString</B>()</PRE>
+<DL>
+<DD>Returns a text representation of this cell reference.
+ <p>
+  Example return values:
+        <table border="0" cellpadding="1" cellspacing="0" summary="Example return values">
+          <tr><th align='left'>Result</th><th align='left'>Comment</th></tr>
+          <tr><td>A1</td><td>Cell reference without sheet</td></tr>
+          <tr><td>Sheet1!A1</td><td>Standard sheet name</td></tr>
+          <tr><td>'O''Brien''s Sales'!A1'&nbsp;</td><td>Sheet name with special characters</td></tr>
+        </table>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the text representation of this cell reference as it would appear in a formula.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toString()"><!-- --></A><H3>
+toString</H3>
+<PRE>
+public java.lang.String <B>toString</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>toString</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCellRefParts()"><!-- --></A><H3>
+getCellRefParts</H3>
+<PRE>
+public java.lang.String[] <B>getCellRefParts</B>()</PRE>
+<DL>
+<DD>Returns the three parts of the cell reference, the
+  Sheet name (or null if none supplied), the 1 based
+  row number, and the A based column letter.
+ This will not include any markers for absolute
+  references, so use <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#formatAsString()"><CODE>formatAsString()</CODE></A>
+  to properly turn references into strings.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>String array of { sheetName, rowString, colString }</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="equals(java.lang.Object)"><!-- --></A><H3>
+equals</H3>
+<PRE>
+public boolean <B>equals</B>(java.lang.Object&nbsp;o)</PRE>
+<DL>
+<DD>Checks whether this cell reference is equal to another object.
+ <p>
+  Two cells references are assumed to be equal if their string representations
+  (<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html#formatAsString()"><CODE>formatAsString()</CODE></A>  are equal.
+ </p>
+<P>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>equals</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="hashCode()"><!-- --></A><H3>
+hashCode</H3>
+<PRE>
+public int <B>hashCode</B>()</PRE>
+<DL>
+<DD><DL>
+<DT><B>Overrides:</B><DD><CODE>hashCode</CODE> in class <CODE>java.lang.Object</CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellRangeUtil.html" title="class in org.apache.poi.ss.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellReference.NameType.html" title="enum in org.apache.poi.ss.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/util/CellReference.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="CellReference.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

@@ -1,0 +1,531 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>Apache POI&trade; - Source Code Repository</title>
+<link type="text/css" href="../skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="../skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="../skin/print.css" rel="stylesheet">
+<link type="text/css" href="../skin/profile.css" rel="stylesheet">
+<script src="../skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="../skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="../skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="../images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="../images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="../images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li>
+<a class="unselected" href="../index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="../help/index.html">Help</a>
+</li>
+<li>
+<a class="unselected" href="../components/index.html">Component APIs</a>
+</li>
+<li class="current">
+<a class="selected" href="../devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', '../skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('../skin/images/chapter_open.gif');">Getting Involved</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../devel/index.html">How To Build</a>
+</div>
+<div class="menuitem">
+<a href="../devel/nightly.html">Nightly Builds</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">Subversion Repository</div>
+</div>
+<div class="menuitem">
+<a href="../devel/guidelines.html">Contribution Guidelines</a>
+</div>
+<div class="menuitem">
+<a href="../devel/who.html">Who We Are</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.6', '../skin/')" id="menu_1.1.6Title" class="menutitle">Planning Documents</div>
+<div id="menu_1.1.6" class="menuitemgroup">
+<div class="menuitem">
+<a href="../devel/plan/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../devel/plan/vision10.html">1.0 Vision</a>
+</div>
+<div class="menuitem">
+<a href="../devel/plan/vision20.html">2.0 Vision</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.7', '../skin/')" id="menu_1.1.7Title" class="menutitle">References</div>
+<div id="menu_1.1.7" class="menuitemgroup">
+<div class="menuitem">
+<a href="../devel/references/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../devel/references/logocontest.html">Logo Submissions</a>
+</div>
+<div class="menuitem">
+<a href="https://sc.openoffice.org/excelfileformat.pdf">XLS spec [PDF]</a>
+</div>
+<div class="menuitem">
+<a href="https://xml.apache.org/cocoon/">Apache Cocoon</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.8', '../skin/')" id="menu_1.1.8Title" class="menutitle">Resolutions</div>
+<div id="menu_1.1.8" class="menuitemgroup">
+<div class="menuitem">
+<a href="../devel/resolutions/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../devel/resolutions/res001.html">Minimal Coding Standards</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.9', '../skin/')" id="menu_1.1.9Title" class="menutitle">History</div>
+<div id="menu_1.1.9" class="menuitemgroup">
+<div class="menuitem">
+<a href="../devel/history/index.html">The early years</a>
+</div>
+<div class="menuitem">
+<a href="../devel/history/changes-3x.html">Changelog 3.x</a>
+</div>
+<div class="menuitem">
+<a href="../devel/history/changes-pre3x.html">Changelog 0-2.x</a>
+</div>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="../skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="../images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="../images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>Apache POI&trade; - Source Code Repository</h1>
+<div id="front-matter"></div>
+    
+<a name="Download+the+Source"></a>
+<h2 class="boxed">Download the Source</h2>
+<div class="section">
+<p>
+         Most users of the source code probably don't need to have day to
+         day access to the source code as it changes. Therefore most users will want
+         to make use of our <a href="../download.html">source release</a>
+         packages, which contain the complete source tree for each binary
+         release, suitable for browsing or debugging. These source releases
+         are available from our
+         <a href="../download.html">download page.</a>
+      
+</p>
+<p>
+         The Apache POI source code is also available as source artifacts
+         in the <a href="https://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.apache.poi%22">Maven Central repository</a>,
+         which may be helpful for those users who make use of POI via Maven
+         and wish to inspect the source (eg when debugging in an IDE).
+      </p>
+</div>
+    
+<a name="Access+the+Version+Controlled+Source+Code"></a>
+<h2 class="boxed">Access the Version Controlled Source Code</h2>
+<div class="section">
+<p>
+         For general information on connecting to the ASF Subversion,
+         repositories, see the
+         <a href="https://www.apache.org/dev/version-control.html">version control page.</a>
+      
+</p>
+<p>Apache POI uses <a href="https://subversion.apache.org">Subversion</a> as its version control system,
+      but also has a read-only git mirror
+      </p>
+<p>
+<strong>NOTE</strong>: When checking out a subproject using
+       subversion, either perform a sparse checkout or check out
+       the trunk or a single branch or tag to avoid filling up
+       your hard-disk and wasting bandwidth.
+      </p>
+<ul>
+       
+<li>For read only access to the latest Apache POI code, please use
+        <a href="https://svn.apache.org/repos/asf/poi/trunk/">https://svn.apache.org/repos/asf/poi/trunk/</a>
+</li>
+       
+<li>To browse the svn repository in your web browser, please use
+        <a href="https://svn.apache.org/viewvc/poi/">ViewVC</a>
+</li>
+      
+</ul>
+<p>If you are not a <em>Committer</em>, but you want to submit patches
+       or even request commit privileges, please see our
+       <a href="../devel/guidelines.html">Contribution Guidelines</a> for more
+       information.</p>
+</div>
+    
+<a name="Git+access+to+POI+sources"></a>
+<h2 class="boxed">Git access to POI sources</h2>
+<div class="section">
+<p>
+        The master source repository for Apache POI is the Subversion
+        one listed above. To support those users and developers who prefer
+        to use the Git tooling, read-only access to the POI source tree is
+        also available via Git. The Git mirrors normally track SVN to
+        within a few minutes.
+      </p>
+<p>
+        The official read-only Git repository for Apache POI is available
+        from <a href="https://git.apache.org/">git.apache.org/</a> .
+        The Git Clone URL is: <a href="git://git.apache.org/poi.git">git://git.apache.org/poi.git</a>
+        and Https Clone URL: <a href="https://git.apache.org/poi.git">https://git.apache.org/poi.git</a> .
+        Please see the <a href="https://git.apache.org/">Git at
+        Apache</a> page for more details on the service.
+      </p>
+<p>
+        In addition to the <a href="https://git.apache.org/">git.apache.org</a>
+        repository, changes are also mirrored in near-realtime to GitHub.
+        The GitHub repository is available at
+        <a href="https://github.com/apache/poi">https://github.com/apache/poi</a> .
+        Please note that the GitHub repository is read-only, but pull requests sent
+        to it will result in an email being sent to the mailing list. A Git-formatted
+        patch added to Bugzilla is generally preferred though, as it can be tracked
+        along with all the other contributions. Please see the
+        <a href="../devel/guidelines.html">contribution guidelines</a> for more
+        information on getting involved in the project.</p>
+</div>
+    
+<a name="Using+Git+via+the+SVN-Git+bridge"></a>
+<h2 class="boxed">Using Git via the SVN-Git bridge</h2>
+<div class="section">
+<a name="General+information"></a>
+<h3 class="boxed">General information</h3>
+<p>
+        Git provides a nice functionality "git-svn" which allows to read the history
+        of a Subversion repository and convert it into a full Git repository. This
+        will keep information from the SVN revisions so that the Git repository can
+        be updated with newer revisions from Subversion as well as allowing to push
+        commits from Git "upstream" into the Subversion repository. See the
+        <a href="https://www.kernel.org/pub/software/scm/git/docs/git-svn.html">
+        official documentation</a> for more details.
+      </p>
+<a name="Set+up+the+repository"></a>
+<h3 class="boxed">Set up the repository</h3>
+<p>
+            The git-svn functionality is provided as a set of sub-commands to
+            "git svn". To start retrieving information from SVN and create the
+            initial Git repository run the following command:
+
+        </p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">git svn clone https://svn.apache.org/repos/asf/poi/trunk poisvngit --revision </span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+<p>
+            Running without <span class="codefrag">--revision from:HEAD</span> will run for a long time and will retrieve the full version history of
+            the Subversion repository. If you need more repository history, change the <span class="codefrag">from</span> revision to an
+            <a href="https://svn.apache.org/viewvc/poi/tags/">earlier release</a> or omit the <span class="codefrag">--revision</span>
+            specifier altogether.
+        </p>
+<p>
+            When this finishes you have a Git repository whose "master" branch
+            mirrors the SVN "trunk".
+            <br>
+            From here you can use the full power of Git, i.e. quick branching,
+            rebasing, merging, ...
+            <br>
+            See below for some common usage hints.
+        </p>
+<a name="Fetching+newer+SVN+revisions"></a>
+<h3 class="boxed">Fetching newer SVN revisions</h3>
+<p>
+            In order to fetch the latest SVN revisions, you need to "rebase" onto
+                the SVN trunk:
+        </p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">git checkout master</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">git svn rebase</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+<p>
+            This will fetch the latest changes from Subversion and will rebase
+            the master-branch onto them.
+        </p>
+<a name="Pushing+Git+commits+to+Subversion"></a>
+<h3 class="boxed">Pushing Git commits to Subversion</h3>
+<p>
+            The following command will push all changes on <span class="codefrag">master</span> back to
+            Subversion:
+        </p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">git svn dcommit</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+<p>
+            Note that usually all commits on master will be sent to Subversion
+            in one go, so it's similar to a "push" to another Git repository.
+
+            The dcommit may fail if there are newer revisions in Subversion, you
+            will need to run a <span class="codefrag">git svn rebase</span> first in this case.
+        </p>
+<a name="General+usage+guidelines"></a>
+<h3 class="boxed">General usage guidelines</h3>
+<p>
+            Although you can use the full power of Git, there are a few
+            things that work well and some things that will get you into
+            trouble:
+        </p>
+<p>
+            You should not develop on master, rather use some branching
+            concept where you do work on sub-branches and only merge/cherry-pick the
+            changes that are ready for being sent upstream.
+            It seems to work better to constantly rebase changes onto the
+            master branch as this will keep the history clean compared to
+            the SVN repository and will avoid sending useless "Merge" commits to
+            Subversion.
+        </p>
+<p>
+            You can keep some changes that are only useful locally by using
+            two branches that are rebased onto each other. E.g.
+            something like the following has proven to work well:
+        </p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">master</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    -&gt; localchanges - commits that should not be sent upstream -&gt;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        -&gt; workbranch - place for doing development work</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+<p>
+            When things are ready in the workbranch do a
+        </p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">git checkout master</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">git cherry-pick commitid ...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+<p>
+            to get all the finished commits onto master as preparation for pushing them upstream.
+
+            Then you can <span class="codefrag">git svn dcommit</span> to send the changes upstream
+            and a <span class="codefrag">git svn rebase</span> to get master updated with the newly
+            created SVN revisions.
+
+            Finally do the following to update both branches onto the new SVN head
+        </p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"># rebase you local changes onto the latest SVN state</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">git checkout localchanges</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">git rebase master</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"># also set the working branch to the latest state from SVN.</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">git checkout workbranch</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">git rebase workbranch</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+</div>
+<p>
+            Sounds like too much work? Put these steps into a small script and all
+            this will become a simple <span class="codefrag">poiupdate</span> to get all branches
+            rebased onto HEAD from Subversion.
+        </p>
+</div>
+    
+<a name="Code+metrics"></a>
+<h2 class="boxed">Code metrics </h2>
+<div class="section">
+<p>
+        Code quality reports for Apache POI are available on the
+        <a href="https://sonarcloud.io/dashboard?id=poi-parent">Apache Sonar instance</a>.
+      </p>
+<p>
+        Sonar provides lots of useful numbers and statistics, especially
+        watching the project over time shows how some of the indicators evolve
+        and allows to see which areas need some polishing.
+      </p>
+</div>
+  
+<p align="right">
+<font size="-2">by&nbsp;Nick Burch</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0devel/subversion.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

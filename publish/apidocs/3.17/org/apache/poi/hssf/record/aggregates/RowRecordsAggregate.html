@@ -1,0 +1,764 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+RowRecordsAggregate (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="RowRecordsAggregate (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.RecordVisitor.html" title="interface in org.apache.poi.hssf.record.aggregates"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/SharedValueManager.html" title="class in org.apache.poi.hssf.record.aggregates"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="RowRecordsAggregate.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_org.apache.poi.hssf.record.aggregates.RecordAggregate">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.hssf.record.aggregates</FONT>
+<BR>
+Class RowRecordsAggregate</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../org/apache/poi/hssf/record/RecordBase.html" title="class in org.apache.poi.hssf.record">org.apache.poi.hssf.record.RecordBase</A>
+      <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">org.apache.poi.hssf.record.aggregates.RecordAggregate</A>
+          <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.hssf.record.aggregates.RowRecordsAggregate</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public final class <B>RowRecordsAggregate</B><DT>extends <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">RecordAggregate</A></DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_org.apache.poi.hssf.record.aggregates.RecordAggregate"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from class org.apache.poi.hssf.record.aggregates.<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">RecordAggregate</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.PositionTrackingVisitor.html" title="class in org.apache.poi.hssf.record.aggregates">RecordAggregate.PositionTrackingVisitor</A>, <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.RecordVisitor.html" title="interface in org.apache.poi.hssf.record.aggregates">RecordAggregate.RecordVisitor</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#RowRecordsAggregate()">RowRecordsAggregate</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new instance of ValueRecordsAggregate</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#RowRecordsAggregate(org.apache.poi.hssf.model.RecordStream, org.apache.poi.hssf.record.aggregates.SharedValueManager)">RowRecordsAggregate</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/model/RecordStream.html" title="class in org.apache.poi.hssf.model">RecordStream</A>&nbsp;rs,
+                    <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/SharedValueManager.html" title="class in org.apache.poi.hssf.record.aggregates">SharedValueManager</A>&nbsp;svm)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#collapseRow(int)">collapseRow</A></B>(int&nbsp;rowNumber)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/DimensionsRecord.html" title="class in org.apache.poi.hssf.record">DimensionsRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#createDimensions()">createDimensions</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/FormulaRecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">FormulaRecordAggregate</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#createFormula(int, int)">createFormula</A></B>(int&nbsp;row,
+              int&nbsp;col)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/IndexRecord.html" title="class in org.apache.poi.hssf.record">IndexRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#createIndexRecord(int, int)">createIndexRecord</A></B>(int&nbsp;indexRecordOffset,
+                  int&nbsp;sizeOfInitialSheetRecords)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#createRow(int)">createRow</A></B>(int&nbsp;rowNumber)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Create a row record.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#expandRow(int)">expandRow</A></B>(int&nbsp;rowNumber)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#findEndOfRowOutlineGroup(int)">findEndOfRowOutlineGroup</A></B>(int&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#findStartOfRowOutlineGroup(int)">findStartOfRowOutlineGroup</A></B>(int&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Iterator&lt;<A HREF="../../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#getCellValueIterator()">getCellValueIterator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an iterator for the cell values</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#getFirstRowNum()">getFirstRowNum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.Iterator&lt;<A HREF="../../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#getIterator()">getIterator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#getLastRowNum()">getLastRowNum</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#getPhysicalNumberOfRows()">getPhysicalNumberOfRows</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#getRow(int)">getRow</A></B>(int&nbsp;rowIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#getRowBlockCount()">getRowBlockCount</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the number of row blocks.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#getRowCountForBlock(int)">getRowCountForBlock</A></B>(int&nbsp;block)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the number of physical rows within a block</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#insertCell(org.apache.poi.hssf.record.CellValueRecordInterface)">insertCell</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&nbsp;cvRec)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#insertRow(org.apache.poi.hssf.record.RowRecord)">insertRow</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A>&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#isRowGroupCollapsed(int)">isRowGroupCollapsed</A></B>(int&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#isRowGroupHiddenByParent(int)">isRowGroupHiddenByParent</A></B>(int&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#removeCell(org.apache.poi.hssf.record.CellValueRecordInterface)">removeCell</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&nbsp;cvRec)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#removeRow(org.apache.poi.hssf.record.RowRecord)">removeRow</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A>&nbsp;row)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#updateFormulasAfterRowShift(org.apache.poi.ss.formula.FormulaShifter, int)">updateFormulasAfterRowShift</A></B>(<A HREF="../../../../../../org/apache/poi/ss/formula/FormulaShifter.html" title="class in org.apache.poi.ss.formula">FormulaShifter</A>&nbsp;formulaShifter,
+                            int&nbsp;currentExternSheetIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html#visitContainedRecords(org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor)">visitContainedRecords</A></B>(<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.RecordVisitor.html" title="interface in org.apache.poi.hssf.record.aggregates">RecordAggregate.RecordVisitor</A>&nbsp;rv)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Visit each of the atomic BIFF records contained in this <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates"><CODE>RecordAggregate</CODE></A> in the order
+ that they should be written to file.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_org.apache.poi.hssf.record.aggregates.RecordAggregate"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class org.apache.poi.hssf.record.aggregates.<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">RecordAggregate</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html#getRecordSize()">getRecordSize</A>, <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html#serialize(int, byte[])">serialize</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="RowRecordsAggregate()"><!-- --></A><H3>
+RowRecordsAggregate</H3>
+<PRE>
+public <B>RowRecordsAggregate</B>()</PRE>
+<DL>
+<DD>Creates a new instance of ValueRecordsAggregate
+<P>
+</DL>
+<HR>
+
+<A NAME="RowRecordsAggregate(org.apache.poi.hssf.model.RecordStream, org.apache.poi.hssf.record.aggregates.SharedValueManager)"><!-- --></A><H3>
+RowRecordsAggregate</H3>
+<PRE>
+public <B>RowRecordsAggregate</B>(<A HREF="../../../../../../org/apache/poi/hssf/model/RecordStream.html" title="class in org.apache.poi.hssf.model">RecordStream</A>&nbsp;rs,
+                           <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/SharedValueManager.html" title="class in org.apache.poi.hssf.record.aggregates">SharedValueManager</A>&nbsp;svm)</PRE>
+<DL>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>rs</CODE> - record stream with all <A HREF="../../../../../../org/apache/poi/hssf/record/SharedFormulaRecord.html" title="class in org.apache.poi.hssf.record"><CODE>SharedFormulaRecord</CODE></A>
+ <A HREF="../../../../../../org/apache/poi/hssf/record/ArrayRecord.html" title="class in org.apache.poi.hssf.record"><CODE>ArrayRecord</CODE></A>, <A HREF="../../../../../../org/apache/poi/hssf/record/TableRecord.html" title="class in org.apache.poi.hssf.record"><CODE>TableRecord</CODE></A> <A HREF="../../../../../../org/apache/poi/hssf/record/MergeCellsRecord.html" title="class in org.apache.poi.hssf.record"><CODE>MergeCellsRecord</CODE></A> Records removed<DD><CODE>svm</CODE> - an initialised <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/SharedValueManager.html" title="class in org.apache.poi.hssf.record.aggregates"><CODE>SharedValueManager</CODE></A> (from the shared formula, array
+ and table records of the current sheet).  Never <code>null</code>.</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="insertRow(org.apache.poi.hssf.record.RowRecord)"><!-- --></A><H3>
+insertRow</H3>
+<PRE>
+public void <B>insertRow</B>(<A HREF="../../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A>&nbsp;row)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeRow(org.apache.poi.hssf.record.RowRecord)"><!-- --></A><H3>
+removeRow</H3>
+<PRE>
+public void <B>removeRow</B>(<A HREF="../../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A>&nbsp;row)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRow(int)"><!-- --></A><H3>
+getRow</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A> <B>getRow</B>(int&nbsp;rowIndex)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getPhysicalNumberOfRows()"><!-- --></A><H3>
+getPhysicalNumberOfRows</H3>
+<PRE>
+public int <B>getPhysicalNumberOfRows</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFirstRowNum()"><!-- --></A><H3>
+getFirstRowNum</H3>
+<PRE>
+public int <B>getFirstRowNum</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLastRowNum()"><!-- --></A><H3>
+getLastRowNum</H3>
+<PRE>
+public int <B>getLastRowNum</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRowBlockCount()"><!-- --></A><H3>
+getRowBlockCount</H3>
+<PRE>
+public int <B>getRowBlockCount</B>()</PRE>
+<DL>
+<DD>Returns the number of row blocks.
+ <p>The row blocks are goupings of rows that contain the DBCell record
+ after them
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRowCountForBlock(int)"><!-- --></A><H3>
+getRowCountForBlock</H3>
+<PRE>
+public int <B>getRowCountForBlock</B>(int&nbsp;block)</PRE>
+<DL>
+<DD>Returns the number of physical rows within a block
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="visitContainedRecords(org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor)"><!-- --></A><H3>
+visitContainedRecords</H3>
+<PRE>
+public void <B>visitContainedRecords</B>(<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.RecordVisitor.html" title="interface in org.apache.poi.hssf.record.aggregates">RecordAggregate.RecordVisitor</A>&nbsp;rv)</PRE>
+<DL>
+<DD><B>Description copied from class: <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html#visitContainedRecords(org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor)">RecordAggregate</A></CODE></B></DD>
+<DD>Visit each of the atomic BIFF records contained in this <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates"><CODE>RecordAggregate</CODE></A> in the order
+ that they should be written to file.  Implementors may or may not return the actual
+ <A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record"><CODE>Record</CODE></A>s being used to manage POI's internal implementation.  Callers should not
+ assume either way, and therefore only attempt to modify those <A HREF="../../../../../../org/apache/poi/hssf/record/Record.html" title="class in org.apache.poi.hssf.record"><CODE>Record</CODE></A>s after cloning
+<P>
+<DD><DL>
+<DT><B>Specified by:</B><DD><CODE><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html#visitContainedRecords(org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor)">visitContainedRecords</A></CODE> in class <CODE><A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">RecordAggregate</A></CODE></DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getIterator()"><!-- --></A><H3>
+getIterator</H3>
+<PRE>
+public java.util.Iterator&lt;<A HREF="../../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A>&gt; <B>getIterator</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="findStartOfRowOutlineGroup(int)"><!-- --></A><H3>
+findStartOfRowOutlineGroup</H3>
+<PRE>
+public int <B>findStartOfRowOutlineGroup</B>(int&nbsp;row)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="findEndOfRowOutlineGroup(int)"><!-- --></A><H3>
+findEndOfRowOutlineGroup</H3>
+<PRE>
+public int <B>findEndOfRowOutlineGroup</B>(int&nbsp;row)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="collapseRow(int)"><!-- --></A><H3>
+collapseRow</H3>
+<PRE>
+public void <B>collapseRow</B>(int&nbsp;rowNumber)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createRow(int)"><!-- --></A><H3>
+createRow</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record">RowRecord</A> <B>createRow</B>(int&nbsp;rowNumber)</PRE>
+<DL>
+<DD>Create a row record.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rowNumber</CODE> - row number
+<DT><B>Returns:</B><DD>RowRecord created for the passed in row number<DT><B>See Also:</B><DD><A HREF="../../../../../../org/apache/poi/hssf/record/RowRecord.html" title="class in org.apache.poi.hssf.record"><CODE>RowRecord</CODE></A></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isRowGroupCollapsed(int)"><!-- --></A><H3>
+isRowGroupCollapsed</H3>
+<PRE>
+public boolean <B>isRowGroupCollapsed</B>(int&nbsp;row)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="expandRow(int)"><!-- --></A><H3>
+expandRow</H3>
+<PRE>
+public void <B>expandRow</B>(int&nbsp;rowNumber)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="isRowGroupHiddenByParent(int)"><!-- --></A><H3>
+isRowGroupHiddenByParent</H3>
+<PRE>
+public boolean <B>isRowGroupHiddenByParent</B>(int&nbsp;row)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getCellValueIterator()"><!-- --></A><H3>
+getCellValueIterator</H3>
+<PRE>
+public java.util.Iterator&lt;<A HREF="../../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&gt; <B>getCellValueIterator</B>()</PRE>
+<DL>
+<DD>Returns an iterator for the cell values
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createIndexRecord(int, int)"><!-- --></A><H3>
+createIndexRecord</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/hssf/record/IndexRecord.html" title="class in org.apache.poi.hssf.record">IndexRecord</A> <B>createIndexRecord</B>(int&nbsp;indexRecordOffset,
+                                     int&nbsp;sizeOfInitialSheetRecords)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="insertCell(org.apache.poi.hssf.record.CellValueRecordInterface)"><!-- --></A><H3>
+insertCell</H3>
+<PRE>
+public void <B>insertCell</B>(<A HREF="../../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&nbsp;cvRec)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="removeCell(org.apache.poi.hssf.record.CellValueRecordInterface)"><!-- --></A><H3>
+removeCell</H3>
+<PRE>
+public void <B>removeCell</B>(<A HREF="../../../../../../org/apache/poi/hssf/record/CellValueRecordInterface.html" title="interface in org.apache.poi.hssf.record">CellValueRecordInterface</A>&nbsp;cvRec)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createFormula(int, int)"><!-- --></A><H3>
+createFormula</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/FormulaRecordAggregate.html" title="class in org.apache.poi.hssf.record.aggregates">FormulaRecordAggregate</A> <B>createFormula</B>(int&nbsp;row,
+                                            int&nbsp;col)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="updateFormulasAfterRowShift(org.apache.poi.ss.formula.FormulaShifter, int)"><!-- --></A><H3>
+updateFormulasAfterRowShift</H3>
+<PRE>
+public void <B>updateFormulasAfterRowShift</B>(<A HREF="../../../../../../org/apache/poi/ss/formula/FormulaShifter.html" title="class in org.apache.poi.ss.formula">FormulaShifter</A>&nbsp;formulaShifter,
+                                        int&nbsp;currentExternSheetIndex)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="createDimensions()"><!-- --></A><H3>
+createDimensions</H3>
+<PRE>
+public <A HREF="../../../../../../org/apache/poi/hssf/record/DimensionsRecord.html" title="class in org.apache.poi.hssf.record">DimensionsRecord</A> <B>createDimensions</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/RecordAggregate.RecordVisitor.html" title="interface in org.apache.poi.hssf.record.aggregates"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/hssf/record/aggregates/SharedValueManager.html" title="class in org.apache.poi.hssf.record.aggregates"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/hssf/record/aggregates/RowRecordsAggregate.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="RowRecordsAggregate.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_org.apache.poi.hssf.record.aggregates.RecordAggregate">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

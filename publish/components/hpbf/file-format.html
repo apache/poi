@@ -1,0 +1,687 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>POI-HPBF - A Guide to the Publisher File Format</title>
+<link type="text/css" href="../../skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="../../skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="../../skin/print.css" rel="stylesheet">
+<link type="text/css" href="../../skin/profile.css" rel="stylesheet">
+<script src="../../skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="../../skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="../../skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="../../images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="../../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="../../images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="../../images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li>
+<a class="unselected" href="../../index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="../../help/index.html">Help</a>
+</li>
+<li class="current">
+<a class="selected" href="../../components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="../../devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', '../../skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Component APIs</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../apidocs/index.html">Javadocs</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.3', '../../skin/')" id="menu_1.1.3Title" class="menutitle">Excel (HSSF/XSSF)</div>
+<div id="menu_1.1.3" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/spreadsheet/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/how-to.html">HOWTO</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/converting.html">HSSF to SS Converting</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/formula.html">Formula Support</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval.html">Formula Evaluation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval-devguide.html">Eval Dev Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/examples.html">Examples</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/use-case.html">Use Case</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/diagrams.html">Pictorial Docs</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/limitations.html">Limitations</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/user-defined-functions.html">User Defined Functions</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/excelant.html">ExcelAnt Tests</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/hacking-hssf.html">Hacking HSSF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/record-generator.html">Record Generator</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/chart.html">Charts</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.4', '../../skin/')" id="menu_1.1.4Title" class="menutitle">PowerPoint (HSLF/XSLF)</div>
+<div id="menu_1.1.4" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/slideshow/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/how-to-shapes.html">HSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/xslf-cookbook.html">XSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-wmf-emf-renderer.html">Render SL/WMF/EMF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-file-format.html">PPT File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.5', '../../skin/')" id="menu_1.1.5Title" class="menutitle">Word (HWPF/XWPF)</div>
+<div id="menu_1.1.5" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/document/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide.html">HWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide-xwpf.html">XWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/docoverview.html">HWPF Format</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/projectplan.html">HWPF Project plan</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hsmf/index.html">Outlook (HSMF)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/diagram/index.html">Visio (HDGF+XDGF)</a>
+</div>
+<div onclick="SwitchMenu('menu_selected_1.1.8', '../../skin/')" id="menu_selected_1.1.8Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Publisher (HPBF)</div>
+<div id="menu_selected_1.1.8" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/hpbf/index.html">Overview</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">File Format</div>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.9', '../../skin/')" id="menu_1.1.9Title" class="menutitle">OLE2 Filesystem (POIFS)</div>
+<div id="menu_1.1.9" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/poifs/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/embeded.html">Embedded Documents</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/fileformat.html">File System Documentation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/usecases.html">Use Cases</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/design.html">Design</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.10', '../../skin/')" id="menu_1.1.10Title" class="menutitle">OLE2 Document Props (HPSF)</div>
+<div id="menu_1.1.10" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpsf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/thumbnails.html">Thumbnails</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/internals.html">Internals</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/todo.html">To Do</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hmef/index.html">TNEF (HMEF) for winmail.dat</a>
+</div>
+<div class="menuitem">
+<a href="../../components/oxml4j/index.html">OpenXML4J (OOXML)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/logging.html">Logging framework</a>
+</div>
+<div class="menuitem">
+<a href="../../components/configuration.html">Configuration</a>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="../../skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="../../images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="../../images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>POI-HPBF - A Guide to the Publisher File Format</h1>
+<h3>Overview</h3>
+<div id="front-matter"></div>
+        
+<a name="Document+Streams"></a>
+<h2 class="boxed">Document Streams</h2>
+<div class="section">
+<p>
+		The file is made up of a number of POIFS streams. A typical
+        file will be made up as follows:
+		</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Root Entry -</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">  Objects -</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    (no children)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">  SummaryInformation &lt;(0x05)SummaryInformation&gt;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">  DocumentSummaryInformation &lt;(0x05)DocumentSummaryInformation&gt;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">  Escher -</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    EscherStm</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    EscherDelayStm</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">  Quill -</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    QuillSub -</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      CONTENTS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">      CompObj &lt;(0x01)CompObj&gt;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">  Envelope</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">  Contents</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">  Internal &lt;(0x03)Internal&gt;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">  CompObj &lt;(0x01)CompObj&gt;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">  VBA -</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    (no children)</span>
+</div>
+</div>
+</div>
+        
+<a name="Changing+Text"></a>
+<h2 class="boxed">Changing Text</h2>
+<div class="section">
+<p>If you make a change to the text of a file, but not change
+          how much text there is, then the <em>CONTENTS</em> stream
+          will undergo a small change, and the <em>Contents</em> stream
+          will undergo a large change.</p>
+<p>If you make a change to the text of a file, and change the
+          amount of text there is, then both the <em>Contents</em> and
+          the <em>CONTENTS</em> streams change.</p>
+</div>
+        
+<a name="Changing+Shapes"></a>
+<h2 class="boxed">Changing Shapes</h2>
+<div class="section">
+<p>If you alter the size of a textbox, but make no text changes,
+          then both <em>Contents</em> and <em>CONTENTS</em> streams
+          change. There are no changes to the Escher streams.</p>
+<p>If you set the background colour of a textbox, but make
+          no changes to the text, (to finish off)</p>
+</div>
+        
+<a name="Structure+of+CONTENTS"></a>
+<h2 class="boxed">Structure of CONTENTS</h2>
+<div class="section">
+<p>First we have "CHNKINK ", followed by 24 bytes.</p>
+<p>Next we have 20 sequences of 24 bytes each. If the first two bytes
+         at 0x1800, then that sequence entry exists, but if it's 0x0000 then
+         the entry doesn't exist. If it does exist, we then have 4 bytes of
+         upper case ASCII text, followed by three little endian shorts.
+         The first of these seems to be the count of that type, the second is
+         usually 1, the third is usually zero. The we have another 4 bytes of
+         upper case ASCII text, normally but not always the same as the first
+         text. Finally, we have an unsigned little endian 32 bit offset to
+         the start of the data for this, then an unsigned little endian
+         32 bit offset of the length of this section.</p>
+<p>Normally, the first sequence entry is for TEXT, and the text data
+         will start at 0x200. After that is normally two or three STSH entries
+         (so the first short has values 0, then 1, then 2). After that it
+         seems to vary.</p>
+<p>At 0x200 we have the text, stored as little endian 16 bit unicode.</p>
+<p>After the text comes all sorts of other stuff, presumably as
+         described by the sequences.</p>
+<p>For a contents stream of length 7168 / 0x1c00 bytes, the start
+         looks something like:</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">CHNKINK       // "CHNKINK "</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">04 00 07 00   // Normally 04 00 07 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">13 00 00 03   // Normally ## 00 00 03</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">00 02 00 00   // Normally 00 ## 00 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">00 1c 00 00   // Normally length of the stream</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">f8 01 13 00   // Normally f8 01 11/13 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ff ff ff ff   // Normally seems to be ffffffff</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TEXT 00 00 01 00 00 00       // TEXT 0 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TEXT 00 02 00 00 d0 03 00 00 // TEXT from: 200 (512), len: 3d0 (976)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">STSH 00 00 01 00 00 00       // STSH 0 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">STSH d0 05 00 00 1e 00 00 00 // STSH from: 5d0 (1488), len: 1e (30)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">STSH 01 00 01 00 00 00       // STSH 1 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">STSH ee 05 00 00 b8 01 00 00 // STSH from: 5ee (1518), len: 1b8 (440)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">STSH 02 00 01 00 00 00       // STSH 2 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">STSH a6 07 00 00 3c 00 00 00 // STSH from: 7a6 (1958), len: 3c (60)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FDPP 00 00 01 00 00 00       // FDPP 0 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FDPP 00 08 00 00 00 02 00 00 // FDPP from: 800 (2048), len: 200 (512)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FDPC 00 00 01 00 00 00       // FDPC 0 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FDPC 00 0a 00 00 00 02 00 00 // FDPC from: a00 (2560), len: 200 (512)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FDPC 01 00 01 00 00 00       // FDPC 1 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FDPC 00 0c 00 00 00 02 00 00 // FDPC from: c00 (3072), len: 200 (512)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SYID 00 00 01 00 00 00       // SYID 0 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SYID 00 0e 00 00 20 00 00 00 // SYID from: e00 (3584), len: 20 (32)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SGP  00 00 01 00 00 00       // SGP  0 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SGP  20 0e 00 00 0a 00 00 00 // SGP  from: e20 (3616), len: a (10)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">INK  00 00 01 00 00 00       // INK  0 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">INK  2a 0e 00 00 04 00 00 00 // INK  from: e2a (3626), len: 4 (4)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">BTEP 00 00 01 00 00 00       // BTEP 0 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PLC  2e 0e 00 00 18 00 00 00 // PLC  from: e2e (3630), len: 18 (24)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">BTEC 00 00 01 00 00 00       // BTEC 0 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PLC  46 0e 00 00 20 00 00 00 // PLC  from: e46 (3654), len: 20 (32)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FONT 00 00 01 00 00 00       // FONT 0 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FONT 66 0e 00 00 48 03 00 00 // FONT from: e66 (3686), len: 348 (840)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TCD  03 00 01 00 00 00       // TCD  3 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PLC  ae 11 00 00 24 00 00 00 // PLC  from: 11ae (4526), len: 24 (36)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TOKN 04 00 01 00 00 00       // TOKN 4 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PLC  d2 11 00 00 0a 01 00 00 // PLC  from: 11d2 (4562), len: 10a (266)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TOKN 05 00 01 00 00 00       // TOKN 5 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PLC  dc 12 00 00 2a 01 00 00 // PLC  from: 12dc (4828), len: 12a (298)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">STRS 00 00 01 00 00 00       // STRS 0 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PLC  06 14 00 00 46 00 00 00 // PLC  from: 1406 (5126), len: 46 (70)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MCLD 00 00 01 00 00 00       // MCLD 0 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MCLD 4c 14 00 00 16 06 00 00 // MCLD from: 144c (5196), len: 616 (1558)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">18 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PL   00 00 01 00 00 00       // PL   0 1 0</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PL   62 1a 00 00 48 00 00 00 // PL   from: 1a62 (6754), len: 48 (72)</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">00 00                        // Blank entry follows</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">00 00 00 00 00 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">00 00 00 00 00 00 00 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">00 00 00 00 00 00 00 00</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">(the text will then start)</span>
+</div>
+</div>
+<p>We think that the first 4 bytes of text describes the
+		 the function of the data at the offset. The first short is
+		 then the count of that type, eg the 2nd will have 1. We
+		 think that the second 4 bytes of text describes the format
+		 of data block at the offset. The format of the text block
+		 is easy, but we're still trying to figure out the others.</p>
+<a name="Structure+of+TEXT+bit"></a>
+<h3 class="boxed">Structure of TEXT bit</h3>
+<p>This is very simple. All the text for the document is
+            stored in a single bit of the Quill CONTENTS. The text
+            is stored as little endian 16 bit unicode strings.</p>
+<a name="Structure+of+PLC+bit"></a>
+<h3 class="boxed">Structure of PLC bit</h3>
+<p>The first four bytes seem to hold the count of the
+            entries in the bit, and the second four bytes seem to hold
+            the type. There is then some pre-data, and then data for
+            each of the entries, the exact format dependant on the type.</p>
+<p>Type 0 has 4 2 byte unsigned ints, then a pair of 2 byte
+            unsigned ints for each entry.</p>
+<p>Type 4 has 4 2 byte unsigned ints, then a pair of 4 byte
+            unsigned ints for each entry.</p>
+<p>Type 8 has 7 2 byte unsigned ints, then a pair of 4 byte
+            unsigned ints for each entry.</p>
+<p>Type 12 holds hyperlinks, and is very much more complex.
+            See <a href="https://svn.apache.org/viewvc/poi/trunk/poi-scratchpad/src/main/java/org/apache/poi/hpbf/model/qcbits/QCPLCBit.java?view=markup"><span class="codefrag">org.apache.poi.hpbf.model.qcbits.QCPLCBit</span></a>
+            for our best guess as to how the contents match up.</p>
+</div>
+	
+<p align="right">
+<font size="-2">by&nbsp;Nick Burch</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0components/hpbf/file-format.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

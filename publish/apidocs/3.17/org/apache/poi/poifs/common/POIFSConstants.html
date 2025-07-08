@@ -1,0 +1,465 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+POIFSConstants (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="POIFSConstants (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/common/POIFSConstants.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="POIFSConstants.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.poifs.common</FONT>
+<BR>
+Interface POIFSConstants</H2>
+<HR>
+<DL>
+<DT><PRE>public interface <B>POIFSConstants</B></DL>
+</PRE>
+
+<P>
+<p>A repository for constants shared by POI classes.</p>
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#BIG_BLOCK_MINIMUM_DOCUMENT_SIZE">BIG_BLOCK_MINIMUM_DOCUMENT_SIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The minimum size of a document before it's stored using 
+  Big Blocks (normal streams).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#DIFAT_SECTOR_BLOCK">DIFAT_SECTOR_BLOCK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicates the sector holds a DIFAT block (0xFFFFFFFC)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#END_OF_CHAIN">END_OF_CHAIN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicates the sector is the end of a chain (0xFFFFFFFE)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#FAT_SECTOR_BLOCK">FAT_SECTOR_BLOCK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicates the sector holds a FAT block (0xFFFFFFFD)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#LARGER_BIG_BLOCK_SIZE">LARGER_BIG_BLOCK_SIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Some use 4096 bytes</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#LARGER_BIG_BLOCK_SIZE_DETAILS">LARGER_BIG_BLOCK_SIZE_DETAILS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#LARGEST_REGULAR_SECTOR_NUMBER">LARGEST_REGULAR_SECTOR_NUMBER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The highest sector number you're allowed, 0xFFFFFFFA</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#OOXML_FILE_HEADER">OOXML_FILE_HEADER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The first 4 bytes of an OOXML file, used in detection</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#PROPERTY_SIZE">PROPERTY_SIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;How big a single property is</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#RAW_XML_FILE_HEADER">RAW_XML_FILE_HEADER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The first 5 bytes of a raw XML file, used in detection</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#SMALL_BLOCK_SIZE">SMALL_BLOCK_SIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;How big a block in the small block stream is.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#SMALLER_BIG_BLOCK_SIZE">SMALLER_BIG_BLOCK_SIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Most files use 512 bytes as their big block size</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#SMALLER_BIG_BLOCK_SIZE_DETAILS">SMALLER_BIG_BLOCK_SIZE_DETAILS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/poifs/common/POIFSConstants.html#UNUSED_BLOCK">UNUSED_BLOCK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indicates the sector is not used (0xFFFFFFFF)</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SMALLER_BIG_BLOCK_SIZE"><!-- --></A><H3>
+SMALLER_BIG_BLOCK_SIZE</H3>
+<PRE>
+static final int <B>SMALLER_BIG_BLOCK_SIZE</B></PRE>
+<DL>
+<DD>Most files use 512 bytes as their big block size
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.common.POIFSConstants.SMALLER_BIG_BLOCK_SIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="SMALLER_BIG_BLOCK_SIZE_DETAILS"><!-- --></A><H3>
+SMALLER_BIG_BLOCK_SIZE_DETAILS</H3>
+<PRE>
+static final <A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A> <B>SMALLER_BIG_BLOCK_SIZE_DETAILS</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LARGER_BIG_BLOCK_SIZE"><!-- --></A><H3>
+LARGER_BIG_BLOCK_SIZE</H3>
+<PRE>
+static final int <B>LARGER_BIG_BLOCK_SIZE</B></PRE>
+<DL>
+<DD>Some use 4096 bytes
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.common.POIFSConstants.LARGER_BIG_BLOCK_SIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LARGER_BIG_BLOCK_SIZE_DETAILS"><!-- --></A><H3>
+LARGER_BIG_BLOCK_SIZE_DETAILS</H3>
+<PRE>
+static final <A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common">POIFSBigBlockSize</A> <B>LARGER_BIG_BLOCK_SIZE_DETAILS</B></PRE>
+<DL>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SMALL_BLOCK_SIZE"><!-- --></A><H3>
+SMALL_BLOCK_SIZE</H3>
+<PRE>
+static final int <B>SMALL_BLOCK_SIZE</B></PRE>
+<DL>
+<DD>How big a block in the small block stream is. Fixed size
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.common.POIFSConstants.SMALL_BLOCK_SIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="PROPERTY_SIZE"><!-- --></A><H3>
+PROPERTY_SIZE</H3>
+<PRE>
+static final int <B>PROPERTY_SIZE</B></PRE>
+<DL>
+<DD>How big a single property is
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.common.POIFSConstants.PROPERTY_SIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="BIG_BLOCK_MINIMUM_DOCUMENT_SIZE"><!-- --></A><H3>
+BIG_BLOCK_MINIMUM_DOCUMENT_SIZE</H3>
+<PRE>
+static final int <B>BIG_BLOCK_MINIMUM_DOCUMENT_SIZE</B></PRE>
+<DL>
+<DD>The minimum size of a document before it's stored using 
+  Big Blocks (normal streams). Smaller documents go in the 
+  Mini Stream (SBAT / Small Blocks)
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.common.POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="LARGEST_REGULAR_SECTOR_NUMBER"><!-- --></A><H3>
+LARGEST_REGULAR_SECTOR_NUMBER</H3>
+<PRE>
+static final int <B>LARGEST_REGULAR_SECTOR_NUMBER</B></PRE>
+<DL>
+<DD>The highest sector number you're allowed, 0xFFFFFFFA
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.common.POIFSConstants.LARGEST_REGULAR_SECTOR_NUMBER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DIFAT_SECTOR_BLOCK"><!-- --></A><H3>
+DIFAT_SECTOR_BLOCK</H3>
+<PRE>
+static final int <B>DIFAT_SECTOR_BLOCK</B></PRE>
+<DL>
+<DD>Indicates the sector holds a DIFAT block (0xFFFFFFFC)
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.common.POIFSConstants.DIFAT_SECTOR_BLOCK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FAT_SECTOR_BLOCK"><!-- --></A><H3>
+FAT_SECTOR_BLOCK</H3>
+<PRE>
+static final int <B>FAT_SECTOR_BLOCK</B></PRE>
+<DL>
+<DD>Indicates the sector holds a FAT block (0xFFFFFFFD)
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.common.POIFSConstants.FAT_SECTOR_BLOCK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="END_OF_CHAIN"><!-- --></A><H3>
+END_OF_CHAIN</H3>
+<PRE>
+static final int <B>END_OF_CHAIN</B></PRE>
+<DL>
+<DD>Indicates the sector is the end of a chain (0xFFFFFFFE)
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.common.POIFSConstants.END_OF_CHAIN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="UNUSED_BLOCK"><!-- --></A><H3>
+UNUSED_BLOCK</H3>
+<PRE>
+static final int <B>UNUSED_BLOCK</B></PRE>
+<DL>
+<DD>Indicates the sector is not used (0xFFFFFFFF)
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#org.apache.poi.poifs.common.POIFSConstants.UNUSED_BLOCK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="OOXML_FILE_HEADER"><!-- --></A><H3>
+OOXML_FILE_HEADER</H3>
+<PRE>
+static final byte[] <B>OOXML_FILE_HEADER</B></PRE>
+<DL>
+<DD>The first 4 bytes of an OOXML file, used in detection
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="RAW_XML_FILE_HEADER"><!-- --></A><H3>
+RAW_XML_FILE_HEADER</H3>
+<PRE>
+static final byte[] <B>RAW_XML_FILE_HEADER</B></PRE>
+<DL>
+<DD>The first 5 bytes of a raw XML file, used in detection
+<P>
+<DL>
+</DL>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/poifs/common/POIFSBigBlockSize.html" title="class in org.apache.poi.poifs.common"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;NEXT CLASS</FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/poifs/common/POIFSConstants.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="POIFSConstants.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;METHOD</FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

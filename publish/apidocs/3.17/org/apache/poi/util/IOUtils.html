@@ -1,0 +1,769 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+IOUtils (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="IOUtils (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/util/IntMapper.html" title="class in org.apache.poi.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/util/JvmBugs.html" title="class in org.apache.poi.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/util/IOUtils.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="IOUtils.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.util</FONT>
+<BR>
+Class IOUtils</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.util.IOUtils</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public final class <B>IOUtils</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#calculateChecksum(byte[])">calculateChecksum</A></B>(byte[]&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculate checksum on input data</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#calculateChecksum(java.io.InputStream)">calculateChecksum</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Calculate checksum on all the data read from input stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#closeQuietly(java.io.Closeable)">closeQuietly</A></B>(java.io.Closeable&nbsp;closeable)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Quietly (no exceptions) close Closable resource.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#copy(java.io.InputStream, java.io.OutputStream)">copy</A></B>(java.io.InputStream&nbsp;inp,
+     java.io.OutputStream&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copies all the data from the given InputStream to the OutputStream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#peekFirst8Bytes(java.io.InputStream)">peekFirst8Bytes</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Peeks at the first 8 bytes of the stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#peekFirstNBytes(java.io.InputStream, int)">peekFirstNBytes</A></B>(java.io.InputStream&nbsp;stream,
+                int&nbsp;limit)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Peeks at the first N bytes of the stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#readFully(java.io.InputStream, byte[])">readFully</A></B>(java.io.InputStream&nbsp;in,
+          byte[]&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Helper method, just calls <tt>readFully(in, b, 0, b.length)</tt></TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#readFully(java.io.InputStream, byte[], int, int)">readFully</A></B>(java.io.InputStream&nbsp;in,
+          byte[]&nbsp;b,
+          int&nbsp;off,
+          int&nbsp;len)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Same as the normal <CODE>InputStream.read(byte[], int, int)</CODE>, but tries to ensure
+ that the entire len number of bytes is read.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#readFully(java.nio.channels.ReadableByteChannel, java.nio.ByteBuffer)">readFully</A></B>(java.nio.channels.ReadableByteChannel&nbsp;channel,
+          java.nio.ByteBuffer&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Same as the normal <tt>channel.read(b)</tt>, but tries to ensure
+ that the buffer is filled completely if possible, i.e.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#safelyAllocate(long, int)">safelyAllocate</A></B>(long&nbsp;length,
+               int&nbsp;maxLength)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#skipFully(java.io.InputStream, long)">skipFully</A></B>(java.io.InputStream&nbsp;input,
+          long&nbsp;toSkip)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Skips bytes from an input byte stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#toByteArray(java.nio.ByteBuffer, int)">toByteArray</A></B>(java.nio.ByteBuffer&nbsp;buffer,
+            int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an array (that shouldn't be written to!) of the
+  ByteBuffer.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#toByteArray(java.io.InputStream)">toByteArray</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads all the data from the input stream, and returns the bytes read.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#toByteArray(java.io.InputStream, int)">toByteArray</A></B>(java.io.InputStream&nbsp;stream,
+            int&nbsp;length)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reads up to <code>length</code> bytes from the input stream, and returns the bytes read.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#write(org.apache.poi.POIDocument, java.io.OutputStream)">write</A></B>(<A HREF="../../../../org/apache/poi/POIDocument.html" title="class in org.apache.poi">POIDocument</A>&nbsp;doc,
+      java.io.OutputStream&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write a POI Document (<A HREF="../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel"><CODE>Workbook</CODE></A>, <A HREF="../../../../org/apache/poi/sl/usermodel/SlideShow.html" title="interface in org.apache.poi.sl.usermodel"><CODE>SlideShow</CODE></A>, etc) to an output stream and close the output stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#write(org.apache.poi.ss.usermodel.Workbook, java.io.OutputStream)">write</A></B>(<A HREF="../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;doc,
+      java.io.OutputStream&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write a (<A HREF="../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel"><CODE>Workbook</CODE></A>) to an output stream and close the output stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#writeAndClose(org.apache.poi.POIDocument)">writeAndClose</A></B>(<A HREF="../../../../org/apache/poi/POIDocument.html" title="class in org.apache.poi">POIDocument</A>&nbsp;doc)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like <A HREF="../../../../org/apache/poi/util/IOUtils.html#writeAndClose(org.apache.poi.POIDocument, java.io.File)"><CODE>writeAndClose(POIDocument, File)</CODE></A>, but for writing a POI Document in place (to the same file that it was opened from).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#writeAndClose(org.apache.poi.POIDocument, java.io.File)">writeAndClose</A></B>(<A HREF="../../../../org/apache/poi/POIDocument.html" title="class in org.apache.poi">POIDocument</A>&nbsp;doc,
+              java.io.File&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Like <A HREF="../../../../org/apache/poi/util/IOUtils.html#writeAndClose(org.apache.poi.POIDocument, java.io.OutputStream)"><CODE>writeAndClose(POIDocument, OutputStream)</CODE></A>, but for writing to a File instead of an OutputStream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#writeAndClose(org.apache.poi.POIDocument, java.io.OutputStream)">writeAndClose</A></B>(<A HREF="../../../../org/apache/poi/POIDocument.html" title="class in org.apache.poi">POIDocument</A>&nbsp;doc,
+              java.io.OutputStream&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Write a POI Document (<A HREF="../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel"><CODE>Workbook</CODE></A>, <A HREF="../../../../org/apache/poi/sl/usermodel/SlideShow.html" title="interface in org.apache.poi.sl.usermodel"><CODE>SlideShow</CODE></A>, etc) to an output stream and close the output stream.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/IOUtils.html#writeAndClose(org.apache.poi.ss.usermodel.Workbook, java.io.OutputStream)">writeAndClose</A></B>(<A HREF="../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;doc,
+              java.io.OutputStream&nbsp;out)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="peekFirst8Bytes(java.io.InputStream)"><!-- --></A><H3>
+peekFirst8Bytes</H3>
+<PRE>
+public static byte[] <B>peekFirst8Bytes</B>(java.io.InputStream&nbsp;stream)
+                              throws java.io.IOException,
+                                     <A HREF="../../../../org/apache/poi/EmptyFileException.html" title="class in org.apache.poi">EmptyFileException</A></PRE>
+<DL>
+<DD>Peeks at the first 8 bytes of the stream. Returns those bytes, but
+  with the stream unaffected. Requires a stream that supports mark/reset,
+  or a PushbackInputStream. If the stream has &gt;0 but &lt;8 bytes, 
+  remaining bytes will be zero.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/EmptyFileException.html" title="class in org.apache.poi">EmptyFileException</A></CODE> - if the stream is empty
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="peekFirstNBytes(java.io.InputStream, int)"><!-- --></A><H3>
+peekFirstNBytes</H3>
+<PRE>
+public static byte[] <B>peekFirstNBytes</B>(java.io.InputStream&nbsp;stream,
+                                     int&nbsp;limit)
+                              throws java.io.IOException,
+                                     <A HREF="../../../../org/apache/poi/EmptyFileException.html" title="class in org.apache.poi">EmptyFileException</A></PRE>
+<DL>
+<DD>Peeks at the first N bytes of the stream. Returns those bytes, but
+  with the stream unaffected. Requires a stream that supports mark/reset,
+  or a PushbackInputStream. If the stream has &gt;0 but &lt;N bytes, 
+  remaining bytes will be zero.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE><A HREF="../../../../org/apache/poi/EmptyFileException.html" title="class in org.apache.poi">EmptyFileException</A></CODE> - if the stream is empty
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toByteArray(java.io.InputStream)"><!-- --></A><H3>
+toByteArray</H3>
+<PRE>
+public static byte[] <B>toByteArray</B>(java.io.InputStream&nbsp;stream)
+                          throws java.io.IOException</PRE>
+<DL>
+<DD>Reads all the data from the input stream, and returns the bytes read.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toByteArray(java.io.InputStream, int)"><!-- --></A><H3>
+toByteArray</H3>
+<PRE>
+public static byte[] <B>toByteArray</B>(java.io.InputStream&nbsp;stream,
+                                 int&nbsp;length)
+                          throws java.io.IOException</PRE>
+<DL>
+<DD>Reads up to <code>length</code> bytes from the input stream, and returns the bytes read.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="toByteArray(java.nio.ByteBuffer, int)"><!-- --></A><H3>
+toByteArray</H3>
+<PRE>
+public static byte[] <B>toByteArray</B>(java.nio.ByteBuffer&nbsp;buffer,
+                                 int&nbsp;length)</PRE>
+<DL>
+<DD>Returns an array (that shouldn't be written to!) of the
+  ByteBuffer. Will be of the requested length, or possibly
+  longer if that's easier.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readFully(java.io.InputStream, byte[])"><!-- --></A><H3>
+readFully</H3>
+<PRE>
+public static int <B>readFully</B>(java.io.InputStream&nbsp;in,
+                            byte[]&nbsp;b)
+                     throws java.io.IOException</PRE>
+<DL>
+<DD>Helper method, just calls <tt>readFully(in, b, 0, b.length)</tt>
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readFully(java.io.InputStream, byte[], int, int)"><!-- --></A><H3>
+readFully</H3>
+<PRE>
+public static int <B>readFully</B>(java.io.InputStream&nbsp;in,
+                            byte[]&nbsp;b,
+                            int&nbsp;off,
+                            int&nbsp;len)
+                     throws java.io.IOException</PRE>
+<DL>
+<DD><p>Same as the normal <CODE>InputStream.read(byte[], int, int)</CODE>, but tries to ensure
+ that the entire len number of bytes is read.</p>
+ 
+ <p>If the end of file is reached before any bytes are read, returns <tt>-1</tt>. If
+ the end of the file is reached after some bytes are read, returns the
+ number of bytes read. If the end of the file isn't reached before <tt>len</tt>
+ bytes have been read, will return <tt>len</tt> bytes.</p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>in</CODE> - the stream from which the data is read.<DD><CODE>b</CODE> - the buffer into which the data is read.<DD><CODE>off</CODE> - the start offset in array <tt>b</tt> at which the data is written.<DD><CODE>len</CODE> - the maximum number of bytes to read.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readFully(java.nio.channels.ReadableByteChannel, java.nio.ByteBuffer)"><!-- --></A><H3>
+readFully</H3>
+<PRE>
+public static int <B>readFully</B>(java.nio.channels.ReadableByteChannel&nbsp;channel,
+                            java.nio.ByteBuffer&nbsp;b)
+                     throws java.io.IOException</PRE>
+<DL>
+<DD>Same as the normal <tt>channel.read(b)</tt>, but tries to ensure
+ that the buffer is filled completely if possible, i.e. b.remaining()
+ returns 0.
+ <p>
+ If the end of file is reached before any bytes are read, returns -1. If
+ the end of the file is reached after some bytes are read, returns the
+ number of bytes read. If the end of the file isn't reached before the
+ buffer has no more remaining capacity, will return the number of bytes
+ that were read.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(org.apache.poi.POIDocument, java.io.OutputStream)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public static void <B>write</B>(<A HREF="../../../../org/apache/poi/POIDocument.html" title="class in org.apache.poi">POIDocument</A>&nbsp;doc,
+                         java.io.OutputStream&nbsp;out)
+                  throws java.io.IOException</PRE>
+<DL>
+<DD>Write a POI Document (<A HREF="../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel"><CODE>Workbook</CODE></A>, <A HREF="../../../../org/apache/poi/sl/usermodel/SlideShow.html" title="interface in org.apache.poi.sl.usermodel"><CODE>SlideShow</CODE></A>, etc) to an output stream and close the output stream.
+ This will attempt to close the output stream at the end even if there was a problem writing the document to the stream.
+ 
+ If you are using Java 7 or higher, you may prefer to use a try-with-resources statement instead.
+ This function exists for Java 6 code.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>doc</CODE> - a writeable document to write to the output stream<DD><CODE>out</CODE> - the output stream that the document is written to
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - thrown on errors writing to the stream</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="write(org.apache.poi.ss.usermodel.Workbook, java.io.OutputStream)"><!-- --></A><H3>
+write</H3>
+<PRE>
+public static void <B>write</B>(<A HREF="../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;doc,
+                         java.io.OutputStream&nbsp;out)
+                  throws java.io.IOException</PRE>
+<DL>
+<DD>Write a (<A HREF="../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel"><CODE>Workbook</CODE></A>) to an output stream and close the output stream.
+ This will attempt to close the output stream at the end even if there was a problem writing the document to the stream.
+ 
+ If you are using Java 7 or higher, you may prefer to use a try-with-resources statement instead.
+ This function exists for Java 6 code.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>doc</CODE> - a writeable document to write to the output stream<DD><CODE>out</CODE> - the output stream that the document is written to
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - thrown on errors writing to the stream</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writeAndClose(org.apache.poi.POIDocument, java.io.OutputStream)"><!-- --></A><H3>
+writeAndClose</H3>
+<PRE>
+public static void <B>writeAndClose</B>(<A HREF="../../../../org/apache/poi/POIDocument.html" title="class in org.apache.poi">POIDocument</A>&nbsp;doc,
+                                 java.io.OutputStream&nbsp;out)
+                          throws java.io.IOException</PRE>
+<DL>
+<DD>Write a POI Document (<A HREF="../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel"><CODE>Workbook</CODE></A>, <A HREF="../../../../org/apache/poi/sl/usermodel/SlideShow.html" title="interface in org.apache.poi.sl.usermodel"><CODE>SlideShow</CODE></A>, etc) to an output stream and close the output stream.
+ This will attempt to close the output stream at the end even if there was a problem writing the document to the stream.
+ This will also attempt to close the document, even if an error occurred while writing the document or closing the output stream.
+ 
+ If you are using Java 7 or higher, you may prefer to use a try-with-resources statement instead.
+ This function exists for Java 6 code.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>doc</CODE> - a writeable and closeable document to write to the output stream, then close<DD><CODE>out</CODE> - the output stream that the document is written to
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - thrown on errors writing to the stream</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writeAndClose(org.apache.poi.POIDocument, java.io.File)"><!-- --></A><H3>
+writeAndClose</H3>
+<PRE>
+public static void <B>writeAndClose</B>(<A HREF="../../../../org/apache/poi/POIDocument.html" title="class in org.apache.poi">POIDocument</A>&nbsp;doc,
+                                 java.io.File&nbsp;out)
+                          throws java.io.IOException</PRE>
+<DL>
+<DD>Like <A HREF="../../../../org/apache/poi/util/IOUtils.html#writeAndClose(org.apache.poi.POIDocument, java.io.OutputStream)"><CODE>writeAndClose(POIDocument, OutputStream)</CODE></A>, but for writing to a File instead of an OutputStream.
+ This will attempt to close the document, even if an error occurred while writing the document.
+ 
+ If you are using Java 7 or higher, you may prefer to use a try-with-resources statement instead.
+ This function exists for Java 6 code.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>doc</CODE> - a writeable and closeable document to write to the output file, then close<DD><CODE>out</CODE> - the output file that the document is written to
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - thrown on errors writing to the stream</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writeAndClose(org.apache.poi.POIDocument)"><!-- --></A><H3>
+writeAndClose</H3>
+<PRE>
+public static void <B>writeAndClose</B>(<A HREF="../../../../org/apache/poi/POIDocument.html" title="class in org.apache.poi">POIDocument</A>&nbsp;doc)
+                          throws java.io.IOException</PRE>
+<DL>
+<DD>Like <A HREF="../../../../org/apache/poi/util/IOUtils.html#writeAndClose(org.apache.poi.POIDocument, java.io.File)"><CODE>writeAndClose(POIDocument, File)</CODE></A>, but for writing a POI Document in place (to the same file that it was opened from).
+ This will attempt to close the document, even if an error occurred while writing the document.
+ 
+ If you are using Java 7 or higher, you may prefer to use a try-with-resources statement instead.
+ This function exists for Java 6 code.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>doc</CODE> - a writeable document to write in-place
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - thrown on errors writing to the file</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="writeAndClose(org.apache.poi.ss.usermodel.Workbook, java.io.OutputStream)"><!-- --></A><H3>
+writeAndClose</H3>
+<PRE>
+public static void <B>writeAndClose</B>(<A HREF="../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;doc,
+                                 java.io.OutputStream&nbsp;out)
+                          throws java.io.IOException</PRE>
+<DL>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="copy(java.io.InputStream, java.io.OutputStream)"><!-- --></A><H3>
+copy</H3>
+<PRE>
+public static void <B>copy</B>(java.io.InputStream&nbsp;inp,
+                        java.io.OutputStream&nbsp;out)
+                 throws java.io.IOException</PRE>
+<DL>
+<DD>Copies all the data from the given InputStream to the OutputStream. It
+ leaves both streams open, so you will still need to close them once done.
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="calculateChecksum(byte[])"><!-- --></A><H3>
+calculateChecksum</H3>
+<PRE>
+public static long <B>calculateChecksum</B>(byte[]&nbsp;data)</PRE>
+<DL>
+<DD>Calculate checksum on input data
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="calculateChecksum(java.io.InputStream)"><!-- --></A><H3>
+calculateChecksum</H3>
+<PRE>
+public static long <B>calculateChecksum</B>(java.io.InputStream&nbsp;stream)
+                              throws java.io.IOException</PRE>
+<DL>
+<DD>Calculate checksum on all the data read from input stream.
+
+ This should be more efficient than the equivalent code
+ <code>IOUtils.calculateChecksum(IOUtils.toByteArray(stream))</code>
+<P>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="closeQuietly(java.io.Closeable)"><!-- --></A><H3>
+closeQuietly</H3>
+<PRE>
+public static void <B>closeQuietly</B>(java.io.Closeable&nbsp;closeable)</PRE>
+<DL>
+<DD>Quietly (no exceptions) close Closable resource. In case of error it will
+ be printed to <A HREF="../../../../org/apache/poi/util/IOUtils.html" title="class in org.apache.poi.util"><CODE>IOUtils</CODE></A> class logger.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>closeable</CODE> - resource to close</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="skipFully(java.io.InputStream, long)"><!-- --></A><H3>
+skipFully</H3>
+<PRE>
+public static long <B>skipFully</B>(java.io.InputStream&nbsp;input,
+                             long&nbsp;toSkip)
+                      throws java.io.IOException</PRE>
+<DL>
+<DD>Skips bytes from an input byte stream.
+ This implementation guarantees that it will read as many bytes
+ as possible before giving up; this may not always be the case for
+ skip() implementations in subclasses of <CODE>InputStream</CODE>.
+ <p>
+ Note that the implementation uses <CODE>InputStream.read(byte[], int, int)</CODE> rather
+ than delegating to <CODE>InputStream.skip(long)</CODE>.
+ This means that the method may be considerably less efficient than using the actual skip implementation,
+ this is done to guarantee that the correct number of bytes are skipped.
+ </p>
+ <p>
+ This mimics POI's <A HREF="../../../../org/apache/poi/util/IOUtils.html#readFully(java.io.InputStream, byte[])"><CODE>readFully(InputStream, byte[])</CODE></A>.
+ If the end of file is reached before any bytes are read, returns <tt>-1</tt>. If
+ the end of the file is reached after some bytes are read, returns the
+ number of bytes read. If the end of the file isn't reached before <tt>len</tt>
+ bytes have been read, will return <tt>len</tt> bytes.</p>
+
+ </p>
+ <p>
+ Copied nearly verbatim from commons-io 41a3e9c
+ </p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>input</CODE> - byte stream to skip<DD><CODE>toSkip</CODE> - number of bytes to skip.
+<DT><B>Returns:</B><DD>number of bytes actually skipped.
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if there is a problem reading the file
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if toSkip is negative<DT><B>See Also:</B><DD><CODE>InputStream.skip(long)</CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="safelyAllocate(long, int)"><!-- --></A><H3>
+safelyAllocate</H3>
+<PRE>
+public static byte[] <B>safelyAllocate</B>(long&nbsp;length,
+                                    int&nbsp;maxLength)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/util/IntMapper.html" title="class in org.apache.poi.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/util/JvmBugs.html" title="class in org.apache.poi.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/util/IOUtils.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="IOUtils.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

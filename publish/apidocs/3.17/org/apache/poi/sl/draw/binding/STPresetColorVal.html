@@ -1,0 +1,2997 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+STPresetColorVal (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="STPresetColorVal (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPathFillMode.html" title="enum in org.apache.poi.sl.draw.binding"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STRectAlignment.html" title="enum in org.apache.poi.sl.draw.binding"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/sl/draw/binding/STPresetColorVal.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="STPresetColorVal.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#enum_constant_summary">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#enum_constant_detail">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.sl.draw.binding</FONT>
+<BR>
+Enum STPresetColorVal</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by ">java.lang.Enum&lt;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A>&gt;
+      <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.sl.draw.binding.STPresetColorVal</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD>java.io.Serializable, java.lang.Comparable&lt;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A>&gt;</DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public enum <B>STPresetColorVal</B><DT>extends java.lang.Enum&lt;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A>&gt;</DL>
+</PRE>
+
+<P>
+<p>Java class for ST_PresetColorVal.
+ 
+ <p>The following schema fragment specifies the expected content contained within this class.
+ <p>
+ <pre>
+ &lt;simpleType name="ST_PresetColorVal">
+   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
+     &lt;enumeration value="aliceBlue"/>
+     &lt;enumeration value="antiqueWhite"/>
+     &lt;enumeration value="aqua"/>
+     &lt;enumeration value="aquamarine"/>
+     &lt;enumeration value="azure"/>
+     &lt;enumeration value="beige"/>
+     &lt;enumeration value="bisque"/>
+     &lt;enumeration value="black"/>
+     &lt;enumeration value="blanchedAlmond"/>
+     &lt;enumeration value="blue"/>
+     &lt;enumeration value="blueViolet"/>
+     &lt;enumeration value="brown"/>
+     &lt;enumeration value="burlyWood"/>
+     &lt;enumeration value="cadetBlue"/>
+     &lt;enumeration value="chartreuse"/>
+     &lt;enumeration value="chocolate"/>
+     &lt;enumeration value="coral"/>
+     &lt;enumeration value="cornflowerBlue"/>
+     &lt;enumeration value="cornsilk"/>
+     &lt;enumeration value="crimson"/>
+     &lt;enumeration value="cyan"/>
+     &lt;enumeration value="dkBlue"/>
+     &lt;enumeration value="dkCyan"/>
+     &lt;enumeration value="dkGoldenrod"/>
+     &lt;enumeration value="dkGray"/>
+     &lt;enumeration value="dkGreen"/>
+     &lt;enumeration value="dkKhaki"/>
+     &lt;enumeration value="dkMagenta"/>
+     &lt;enumeration value="dkOliveGreen"/>
+     &lt;enumeration value="dkOrange"/>
+     &lt;enumeration value="dkOrchid"/>
+     &lt;enumeration value="dkRed"/>
+     &lt;enumeration value="dkSalmon"/>
+     &lt;enumeration value="dkSeaGreen"/>
+     &lt;enumeration value="dkSlateBlue"/>
+     &lt;enumeration value="dkSlateGray"/>
+     &lt;enumeration value="dkTurquoise"/>
+     &lt;enumeration value="dkViolet"/>
+     &lt;enumeration value="deepPink"/>
+     &lt;enumeration value="deepSkyBlue"/>
+     &lt;enumeration value="dimGray"/>
+     &lt;enumeration value="dodgerBlue"/>
+     &lt;enumeration value="firebrick"/>
+     &lt;enumeration value="floralWhite"/>
+     &lt;enumeration value="forestGreen"/>
+     &lt;enumeration value="fuchsia"/>
+     &lt;enumeration value="gainsboro"/>
+     &lt;enumeration value="ghostWhite"/>
+     &lt;enumeration value="gold"/>
+     &lt;enumeration value="goldenrod"/>
+     &lt;enumeration value="gray"/>
+     &lt;enumeration value="green"/>
+     &lt;enumeration value="greenYellow"/>
+     &lt;enumeration value="honeydew"/>
+     &lt;enumeration value="hotPink"/>
+     &lt;enumeration value="indianRed"/>
+     &lt;enumeration value="indigo"/>
+     &lt;enumeration value="ivory"/>
+     &lt;enumeration value="khaki"/>
+     &lt;enumeration value="lavender"/>
+     &lt;enumeration value="lavenderBlush"/>
+     &lt;enumeration value="lawnGreen"/>
+     &lt;enumeration value="lemonChiffon"/>
+     &lt;enumeration value="ltBlue"/>
+     &lt;enumeration value="ltCoral"/>
+     &lt;enumeration value="ltCyan"/>
+     &lt;enumeration value="ltGoldenrodYellow"/>
+     &lt;enumeration value="ltGray"/>
+     &lt;enumeration value="ltGreen"/>
+     &lt;enumeration value="ltPink"/>
+     &lt;enumeration value="ltSalmon"/>
+     &lt;enumeration value="ltSeaGreen"/>
+     &lt;enumeration value="ltSkyBlue"/>
+     &lt;enumeration value="ltSlateGray"/>
+     &lt;enumeration value="ltSteelBlue"/>
+     &lt;enumeration value="ltYellow"/>
+     &lt;enumeration value="lime"/>
+     &lt;enumeration value="limeGreen"/>
+     &lt;enumeration value="linen"/>
+     &lt;enumeration value="magenta"/>
+     &lt;enumeration value="maroon"/>
+     &lt;enumeration value="medAquamarine"/>
+     &lt;enumeration value="medBlue"/>
+     &lt;enumeration value="medOrchid"/>
+     &lt;enumeration value="medPurple"/>
+     &lt;enumeration value="medSeaGreen"/>
+     &lt;enumeration value="medSlateBlue"/>
+     &lt;enumeration value="medSpringGreen"/>
+     &lt;enumeration value="medTurquoise"/>
+     &lt;enumeration value="medVioletRed"/>
+     &lt;enumeration value="midnightBlue"/>
+     &lt;enumeration value="mintCream"/>
+     &lt;enumeration value="mistyRose"/>
+     &lt;enumeration value="moccasin"/>
+     &lt;enumeration value="navajoWhite"/>
+     &lt;enumeration value="navy"/>
+     &lt;enumeration value="oldLace"/>
+     &lt;enumeration value="olive"/>
+     &lt;enumeration value="oliveDrab"/>
+     &lt;enumeration value="orange"/>
+     &lt;enumeration value="orangeRed"/>
+     &lt;enumeration value="orchid"/>
+     &lt;enumeration value="paleGoldenrod"/>
+     &lt;enumeration value="paleGreen"/>
+     &lt;enumeration value="paleTurquoise"/>
+     &lt;enumeration value="paleVioletRed"/>
+     &lt;enumeration value="papayaWhip"/>
+     &lt;enumeration value="peachPuff"/>
+     &lt;enumeration value="peru"/>
+     &lt;enumeration value="pink"/>
+     &lt;enumeration value="plum"/>
+     &lt;enumeration value="powderBlue"/>
+     &lt;enumeration value="purple"/>
+     &lt;enumeration value="red"/>
+     &lt;enumeration value="rosyBrown"/>
+     &lt;enumeration value="royalBlue"/>
+     &lt;enumeration value="saddleBrown"/>
+     &lt;enumeration value="salmon"/>
+     &lt;enumeration value="sandyBrown"/>
+     &lt;enumeration value="seaGreen"/>
+     &lt;enumeration value="seaShell"/>
+     &lt;enumeration value="sienna"/>
+     &lt;enumeration value="silver"/>
+     &lt;enumeration value="skyBlue"/>
+     &lt;enumeration value="slateBlue"/>
+     &lt;enumeration value="slateGray"/>
+     &lt;enumeration value="snow"/>
+     &lt;enumeration value="springGreen"/>
+     &lt;enumeration value="steelBlue"/>
+     &lt;enumeration value="tan"/>
+     &lt;enumeration value="teal"/>
+     &lt;enumeration value="thistle"/>
+     &lt;enumeration value="tomato"/>
+     &lt;enumeration value="turquoise"/>
+     &lt;enumeration value="violet"/>
+     &lt;enumeration value="wheat"/>
+     &lt;enumeration value="white"/>
+     &lt;enumeration value="whiteSmoke"/>
+     &lt;enumeration value="yellow"/>
+     &lt;enumeration value="yellowGreen"/>
+   &lt;/restriction>
+ &lt;/simpleType>
+ </pre>
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- =========== ENUM CONSTANT SUMMARY =========== -->
+
+<A NAME="enum_constant_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Enum Constant Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#ALICE_BLUE">ALICE_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alice Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#ANTIQUE_WHITE">ANTIQUE_WHITE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Antique White Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#AQUA">AQUA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aqua Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#AQUAMARINE">AQUAMARINE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Aquamarine Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#AZURE">AZURE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Azure Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#BEIGE">BEIGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Beige Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#BISQUE">BISQUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bisque Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#BLACK">BLACK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Black Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#BLANCHED_ALMOND">BLANCHED_ALMOND</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blanched Almond Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#BLUE">BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#BLUE_VIOLET">BLUE_VIOLET</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Blue Violet Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#BROWN">BROWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Brown Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#BURLY_WOOD">BURLY_WOOD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Burly Wood Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#CADET_BLUE">CADET_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cadet Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#CHARTREUSE">CHARTREUSE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chartreuse Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#CHOCOLATE">CHOCOLATE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Chocolate Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#CORAL">CORAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Coral Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#CORNFLOWER_BLUE">CORNFLOWER_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cornflower Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#CORNSILK">CORNSILK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cornsilk Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#CRIMSON">CRIMSON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Crimson Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#CYAN">CYAN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Cyan Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DEEP_PINK">DEEP_PINK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Deep Pink Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DEEP_SKY_BLUE">DEEP_SKY_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Deep Sky Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DIM_GRAY">DIM_GRAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dim Gray Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_BLUE">DK_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_CYAN">DK_CYAN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Cyan Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_GOLDENROD">DK_GOLDENROD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Goldenrod Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_GRAY">DK_GRAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Gray Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_GREEN">DK_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_KHAKI">DK_KHAKI</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Khaki Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_MAGENTA">DK_MAGENTA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Magenta Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_OLIVE_GREEN">DK_OLIVE_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Olive Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_ORANGE">DK_ORANGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Orange Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_ORCHID">DK_ORCHID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Orchid Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_RED">DK_RED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Red Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_SALMON">DK_SALMON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Salmon Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_SEA_GREEN">DK_SEA_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Sea Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_SLATE_BLUE">DK_SLATE_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Slate Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_SLATE_GRAY">DK_SLATE_GRAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Slate Gray Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_TURQUOISE">DK_TURQUOISE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Turquoise Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DK_VIOLET">DK_VIOLET</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dark Violet Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#DODGER_BLUE">DODGER_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dodger Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#FIREBRICK">FIREBRICK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Firebrick Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#FLORAL_WHITE">FLORAL_WHITE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Floral White Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#FOREST_GREEN">FOREST_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Forest Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#FUCHSIA">FUCHSIA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Fuchsia Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#GAINSBORO">GAINSBORO</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gainsboro Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#GHOST_WHITE">GHOST_WHITE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ghost White Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#GOLD">GOLD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gold Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#GOLDENROD">GOLDENROD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Goldenrod Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#GRAY">GRAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gray Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#GREEN">GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#GREEN_YELLOW">GREEN_YELLOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Green Yellow Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#HONEYDEW">HONEYDEW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Honeydew Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#HOT_PINK">HOT_PINK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Hot Pink Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#INDIAN_RED">INDIAN_RED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indian Red Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#INDIGO">INDIGO</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Indigo Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#IVORY">IVORY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ivory Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#KHAKI">KHAKI</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Khaki Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LAVENDER">LAVENDER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lavender Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LAVENDER_BLUSH">LAVENDER_BLUSH</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lavender Blush Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LAWN_GREEN">LAWN_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lawn Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LEMON_CHIFFON">LEMON_CHIFFON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lemon Chiffon Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LIME">LIME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lime Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LIME_GREEN">LIME_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Lime Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LINEN">LINEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Linen Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LT_BLUE">LT_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LT_CORAL">LT_CORAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Coral Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LT_CYAN">LT_CYAN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Cyan Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LT_GOLDENROD_YELLOW">LT_GOLDENROD_YELLOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Goldenrod Yellow Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LT_GRAY">LT_GRAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Gray Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LT_GREEN">LT_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LT_PINK">LT_PINK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Pink Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LT_SALMON">LT_SALMON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Salmon Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LT_SEA_GREEN">LT_SEA_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Sea Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LT_SKY_BLUE">LT_SKY_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Sky Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LT_SLATE_GRAY">LT_SLATE_GRAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Slate Gray Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LT_STEEL_BLUE">LT_STEEL_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Steel Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#LT_YELLOW">LT_YELLOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Light Yellow Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MAGENTA">MAGENTA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Magenta Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MAROON">MAROON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Maroon Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MED_AQUAMARINE">MED_AQUAMARINE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medium Aquamarine Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MED_BLUE">MED_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medium Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MED_ORCHID">MED_ORCHID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medium Orchid Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MED_PURPLE">MED_PURPLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medium Purple Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MED_SEA_GREEN">MED_SEA_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medium Sea Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MED_SLATE_BLUE">MED_SLATE_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medium Slate Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MED_SPRING_GREEN">MED_SPRING_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medium Spring Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MED_TURQUOISE">MED_TURQUOISE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medium Turquoise Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MED_VIOLET_RED">MED_VIOLET_RED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Medium Violet Red Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MIDNIGHT_BLUE">MIDNIGHT_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Midnight Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MINT_CREAM">MINT_CREAM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mint Cream Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MISTY_ROSE">MISTY_ROSE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Misty Rose Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#MOCCASIN">MOCCASIN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Moccasin Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#NAVAJO_WHITE">NAVAJO_WHITE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Navajo White Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#NAVY">NAVY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Navy Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#OLD_LACE">OLD_LACE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Old Lace Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#OLIVE">OLIVE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Olive Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#OLIVE_DRAB">OLIVE_DRAB</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Olive Drab Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#ORANGE">ORANGE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orange Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#ORANGE_RED">ORANGE_RED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orange Red Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#ORCHID">ORCHID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Orchid Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#PALE_GOLDENROD">PALE_GOLDENROD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pale Goldenrod Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#PALE_GREEN">PALE_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pale Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#PALE_TURQUOISE">PALE_TURQUOISE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pale Turquoise Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#PALE_VIOLET_RED">PALE_VIOLET_RED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pale Violet Red Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#PAPAYA_WHIP">PAPAYA_WHIP</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Papaya Whip Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#PEACH_PUFF">PEACH_PUFF</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Peach Puff Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#PERU">PERU</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Peru Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#PINK">PINK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pink Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#PLUM">PLUM</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Plum Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#POWDER_BLUE">POWDER_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Powder Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#PURPLE">PURPLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Purple Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#RED">RED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Red Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#ROSY_BROWN">ROSY_BROWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rosy Brown Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#ROYAL_BLUE">ROYAL_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Royal Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#SADDLE_BROWN">SADDLE_BROWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Saddle Brown Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#SALMON">SALMON</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Salmon Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#SANDY_BROWN">SANDY_BROWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sandy Brown Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#SEA_GREEN">SEA_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sea Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#SEA_SHELL">SEA_SHELL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sea Shell Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#SIENNA">SIENNA</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sienna Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#SILVER">SILVER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Silver Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#SKY_BLUE">SKY_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sky Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#SLATE_BLUE">SLATE_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Slate Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#SLATE_GRAY">SLATE_GRAY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Slate Gray Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#SNOW">SNOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Snow Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#SPRING_GREEN">SPRING_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Spring Green Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#STEEL_BLUE">STEEL_BLUE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Steel Blue Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#TAN">TAN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tan Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#TEAL">TEAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Teal Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#THISTLE">THISTLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Thistle Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#TOMATO">TOMATO</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tomato Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#TURQUOISE">TURQUOISE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Turquoise Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#VIOLET">VIOLET</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Violet Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#WHEAT">WHEAT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Wheat Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#WHITE">WHITE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;White Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#WHITE_SMOKE">WHITE_SMOKE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;White Smoke Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#YELLOW">YELLOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yellow Preset Color</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#YELLOW_GREEN">YELLOW_GREEN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Yellow Green Preset Color</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#fromValue(java.lang.String)">fromValue</A></B>(java.lang.String&nbsp;v)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.lang.String</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#value()">value</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#valueOf(java.lang.String)">valueOf</A></B>(java.lang.String&nbsp;name)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns the enum constant of this type with the specified name.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A>[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html#values()">values</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Returns an array containing the constants of this enum type, in
+the order they are declared.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Enum"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Enum</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, compareTo, equals, finalize, getDeclaringClass, hashCode, name, ordinal, toString, valueOf</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>getClass, notify, notifyAll, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ ENUM CONSTANT DETAIL =========== -->
+
+<A NAME="enum_constant_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Enum Constant Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="ALICE_BLUE"><!-- --></A><H3>
+ALICE_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>ALICE_BLUE</B></PRE>
+<DL>
+<DD>Alice Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ANTIQUE_WHITE"><!-- --></A><H3>
+ANTIQUE_WHITE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>ANTIQUE_WHITE</B></PRE>
+<DL>
+<DD>Antique White Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="AQUA"><!-- --></A><H3>
+AQUA</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>AQUA</B></PRE>
+<DL>
+<DD>Aqua Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="AQUAMARINE"><!-- --></A><H3>
+AQUAMARINE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>AQUAMARINE</B></PRE>
+<DL>
+<DD>Aquamarine Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="AZURE"><!-- --></A><H3>
+AZURE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>AZURE</B></PRE>
+<DL>
+<DD>Azure Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BEIGE"><!-- --></A><H3>
+BEIGE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>BEIGE</B></PRE>
+<DL>
+<DD>Beige Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BISQUE"><!-- --></A><H3>
+BISQUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>BISQUE</B></PRE>
+<DL>
+<DD>Bisque Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BLACK"><!-- --></A><H3>
+BLACK</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>BLACK</B></PRE>
+<DL>
+<DD>Black Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BLANCHED_ALMOND"><!-- --></A><H3>
+BLANCHED_ALMOND</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>BLANCHED_ALMOND</B></PRE>
+<DL>
+<DD>Blanched Almond Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BLUE"><!-- --></A><H3>
+BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>BLUE</B></PRE>
+<DL>
+<DD>Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BLUE_VIOLET"><!-- --></A><H3>
+BLUE_VIOLET</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>BLUE_VIOLET</B></PRE>
+<DL>
+<DD>Blue Violet Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BROWN"><!-- --></A><H3>
+BROWN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>BROWN</B></PRE>
+<DL>
+<DD>Brown Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="BURLY_WOOD"><!-- --></A><H3>
+BURLY_WOOD</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>BURLY_WOOD</B></PRE>
+<DL>
+<DD>Burly Wood Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CADET_BLUE"><!-- --></A><H3>
+CADET_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>CADET_BLUE</B></PRE>
+<DL>
+<DD>Cadet Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CHARTREUSE"><!-- --></A><H3>
+CHARTREUSE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>CHARTREUSE</B></PRE>
+<DL>
+<DD>Chartreuse Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CHOCOLATE"><!-- --></A><H3>
+CHOCOLATE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>CHOCOLATE</B></PRE>
+<DL>
+<DD>Chocolate Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CORAL"><!-- --></A><H3>
+CORAL</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>CORAL</B></PRE>
+<DL>
+<DD>Coral Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CORNFLOWER_BLUE"><!-- --></A><H3>
+CORNFLOWER_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>CORNFLOWER_BLUE</B></PRE>
+<DL>
+<DD>Cornflower Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CORNSILK"><!-- --></A><H3>
+CORNSILK</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>CORNSILK</B></PRE>
+<DL>
+<DD>Cornsilk Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CRIMSON"><!-- --></A><H3>
+CRIMSON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>CRIMSON</B></PRE>
+<DL>
+<DD>Crimson Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="CYAN"><!-- --></A><H3>
+CYAN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>CYAN</B></PRE>
+<DL>
+<DD>Cyan Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_BLUE"><!-- --></A><H3>
+DK_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_BLUE</B></PRE>
+<DL>
+<DD>Dark Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_CYAN"><!-- --></A><H3>
+DK_CYAN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_CYAN</B></PRE>
+<DL>
+<DD>Dark Cyan Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_GOLDENROD"><!-- --></A><H3>
+DK_GOLDENROD</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_GOLDENROD</B></PRE>
+<DL>
+<DD>Dark Goldenrod Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_GRAY"><!-- --></A><H3>
+DK_GRAY</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_GRAY</B></PRE>
+<DL>
+<DD>Dark Gray Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_GREEN"><!-- --></A><H3>
+DK_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_GREEN</B></PRE>
+<DL>
+<DD>Dark Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_KHAKI"><!-- --></A><H3>
+DK_KHAKI</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_KHAKI</B></PRE>
+<DL>
+<DD>Dark Khaki Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_MAGENTA"><!-- --></A><H3>
+DK_MAGENTA</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_MAGENTA</B></PRE>
+<DL>
+<DD>Dark Magenta Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_OLIVE_GREEN"><!-- --></A><H3>
+DK_OLIVE_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_OLIVE_GREEN</B></PRE>
+<DL>
+<DD>Dark Olive Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_ORANGE"><!-- --></A><H3>
+DK_ORANGE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_ORANGE</B></PRE>
+<DL>
+<DD>Dark Orange Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_ORCHID"><!-- --></A><H3>
+DK_ORCHID</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_ORCHID</B></PRE>
+<DL>
+<DD>Dark Orchid Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_RED"><!-- --></A><H3>
+DK_RED</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_RED</B></PRE>
+<DL>
+<DD>Dark Red Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_SALMON"><!-- --></A><H3>
+DK_SALMON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_SALMON</B></PRE>
+<DL>
+<DD>Dark Salmon Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_SEA_GREEN"><!-- --></A><H3>
+DK_SEA_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_SEA_GREEN</B></PRE>
+<DL>
+<DD>Dark Sea Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_SLATE_BLUE"><!-- --></A><H3>
+DK_SLATE_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_SLATE_BLUE</B></PRE>
+<DL>
+<DD>Dark Slate Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_SLATE_GRAY"><!-- --></A><H3>
+DK_SLATE_GRAY</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_SLATE_GRAY</B></PRE>
+<DL>
+<DD>Dark Slate Gray Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_TURQUOISE"><!-- --></A><H3>
+DK_TURQUOISE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_TURQUOISE</B></PRE>
+<DL>
+<DD>Dark Turquoise Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DK_VIOLET"><!-- --></A><H3>
+DK_VIOLET</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DK_VIOLET</B></PRE>
+<DL>
+<DD>Dark Violet Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DEEP_PINK"><!-- --></A><H3>
+DEEP_PINK</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DEEP_PINK</B></PRE>
+<DL>
+<DD>Deep Pink Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DEEP_SKY_BLUE"><!-- --></A><H3>
+DEEP_SKY_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DEEP_SKY_BLUE</B></PRE>
+<DL>
+<DD>Deep Sky Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DIM_GRAY"><!-- --></A><H3>
+DIM_GRAY</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DIM_GRAY</B></PRE>
+<DL>
+<DD>Dim Gray Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="DODGER_BLUE"><!-- --></A><H3>
+DODGER_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>DODGER_BLUE</B></PRE>
+<DL>
+<DD>Dodger Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FIREBRICK"><!-- --></A><H3>
+FIREBRICK</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>FIREBRICK</B></PRE>
+<DL>
+<DD>Firebrick Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FLORAL_WHITE"><!-- --></A><H3>
+FLORAL_WHITE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>FLORAL_WHITE</B></PRE>
+<DL>
+<DD>Floral White Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FOREST_GREEN"><!-- --></A><H3>
+FOREST_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>FOREST_GREEN</B></PRE>
+<DL>
+<DD>Forest Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="FUCHSIA"><!-- --></A><H3>
+FUCHSIA</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>FUCHSIA</B></PRE>
+<DL>
+<DD>Fuchsia Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="GAINSBORO"><!-- --></A><H3>
+GAINSBORO</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>GAINSBORO</B></PRE>
+<DL>
+<DD>Gainsboro Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="GHOST_WHITE"><!-- --></A><H3>
+GHOST_WHITE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>GHOST_WHITE</B></PRE>
+<DL>
+<DD>Ghost White Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="GOLD"><!-- --></A><H3>
+GOLD</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>GOLD</B></PRE>
+<DL>
+<DD>Gold Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="GOLDENROD"><!-- --></A><H3>
+GOLDENROD</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>GOLDENROD</B></PRE>
+<DL>
+<DD>Goldenrod Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="GRAY"><!-- --></A><H3>
+GRAY</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>GRAY</B></PRE>
+<DL>
+<DD>Gray Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="GREEN"><!-- --></A><H3>
+GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>GREEN</B></PRE>
+<DL>
+<DD>Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="GREEN_YELLOW"><!-- --></A><H3>
+GREEN_YELLOW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>GREEN_YELLOW</B></PRE>
+<DL>
+<DD>Green Yellow Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="HONEYDEW"><!-- --></A><H3>
+HONEYDEW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>HONEYDEW</B></PRE>
+<DL>
+<DD>Honeydew Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="HOT_PINK"><!-- --></A><H3>
+HOT_PINK</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>HOT_PINK</B></PRE>
+<DL>
+<DD>Hot Pink Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="INDIAN_RED"><!-- --></A><H3>
+INDIAN_RED</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>INDIAN_RED</B></PRE>
+<DL>
+<DD>Indian Red Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="INDIGO"><!-- --></A><H3>
+INDIGO</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>INDIGO</B></PRE>
+<DL>
+<DD>Indigo Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="IVORY"><!-- --></A><H3>
+IVORY</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>IVORY</B></PRE>
+<DL>
+<DD>Ivory Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="KHAKI"><!-- --></A><H3>
+KHAKI</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>KHAKI</B></PRE>
+<DL>
+<DD>Khaki Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LAVENDER"><!-- --></A><H3>
+LAVENDER</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LAVENDER</B></PRE>
+<DL>
+<DD>Lavender Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LAVENDER_BLUSH"><!-- --></A><H3>
+LAVENDER_BLUSH</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LAVENDER_BLUSH</B></PRE>
+<DL>
+<DD>Lavender Blush Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LAWN_GREEN"><!-- --></A><H3>
+LAWN_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LAWN_GREEN</B></PRE>
+<DL>
+<DD>Lawn Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LEMON_CHIFFON"><!-- --></A><H3>
+LEMON_CHIFFON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LEMON_CHIFFON</B></PRE>
+<DL>
+<DD>Lemon Chiffon Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_BLUE"><!-- --></A><H3>
+LT_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LT_BLUE</B></PRE>
+<DL>
+<DD>Light Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_CORAL"><!-- --></A><H3>
+LT_CORAL</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LT_CORAL</B></PRE>
+<DL>
+<DD>Light Coral Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_CYAN"><!-- --></A><H3>
+LT_CYAN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LT_CYAN</B></PRE>
+<DL>
+<DD>Light Cyan Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_GOLDENROD_YELLOW"><!-- --></A><H3>
+LT_GOLDENROD_YELLOW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LT_GOLDENROD_YELLOW</B></PRE>
+<DL>
+<DD>Light Goldenrod Yellow Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_GRAY"><!-- --></A><H3>
+LT_GRAY</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LT_GRAY</B></PRE>
+<DL>
+<DD>Light Gray Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_GREEN"><!-- --></A><H3>
+LT_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LT_GREEN</B></PRE>
+<DL>
+<DD>Light Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_PINK"><!-- --></A><H3>
+LT_PINK</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LT_PINK</B></PRE>
+<DL>
+<DD>Light Pink Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_SALMON"><!-- --></A><H3>
+LT_SALMON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LT_SALMON</B></PRE>
+<DL>
+<DD>Light Salmon Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_SEA_GREEN"><!-- --></A><H3>
+LT_SEA_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LT_SEA_GREEN</B></PRE>
+<DL>
+<DD>Light Sea Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_SKY_BLUE"><!-- --></A><H3>
+LT_SKY_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LT_SKY_BLUE</B></PRE>
+<DL>
+<DD>Light Sky Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_SLATE_GRAY"><!-- --></A><H3>
+LT_SLATE_GRAY</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LT_SLATE_GRAY</B></PRE>
+<DL>
+<DD>Light Slate Gray Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_STEEL_BLUE"><!-- --></A><H3>
+LT_STEEL_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LT_STEEL_BLUE</B></PRE>
+<DL>
+<DD>Light Steel Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LT_YELLOW"><!-- --></A><H3>
+LT_YELLOW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LT_YELLOW</B></PRE>
+<DL>
+<DD>Light Yellow Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LIME"><!-- --></A><H3>
+LIME</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LIME</B></PRE>
+<DL>
+<DD>Lime Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LIME_GREEN"><!-- --></A><H3>
+LIME_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LIME_GREEN</B></PRE>
+<DL>
+<DD>Lime Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="LINEN"><!-- --></A><H3>
+LINEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>LINEN</B></PRE>
+<DL>
+<DD>Linen Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MAGENTA"><!-- --></A><H3>
+MAGENTA</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MAGENTA</B></PRE>
+<DL>
+<DD>Magenta Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MAROON"><!-- --></A><H3>
+MAROON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MAROON</B></PRE>
+<DL>
+<DD>Maroon Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MED_AQUAMARINE"><!-- --></A><H3>
+MED_AQUAMARINE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MED_AQUAMARINE</B></PRE>
+<DL>
+<DD>Medium Aquamarine Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MED_BLUE"><!-- --></A><H3>
+MED_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MED_BLUE</B></PRE>
+<DL>
+<DD>Medium Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MED_ORCHID"><!-- --></A><H3>
+MED_ORCHID</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MED_ORCHID</B></PRE>
+<DL>
+<DD>Medium Orchid Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MED_PURPLE"><!-- --></A><H3>
+MED_PURPLE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MED_PURPLE</B></PRE>
+<DL>
+<DD>Medium Purple Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MED_SEA_GREEN"><!-- --></A><H3>
+MED_SEA_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MED_SEA_GREEN</B></PRE>
+<DL>
+<DD>Medium Sea Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MED_SLATE_BLUE"><!-- --></A><H3>
+MED_SLATE_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MED_SLATE_BLUE</B></PRE>
+<DL>
+<DD>Medium Slate Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MED_SPRING_GREEN"><!-- --></A><H3>
+MED_SPRING_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MED_SPRING_GREEN</B></PRE>
+<DL>
+<DD>Medium Spring Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MED_TURQUOISE"><!-- --></A><H3>
+MED_TURQUOISE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MED_TURQUOISE</B></PRE>
+<DL>
+<DD>Medium Turquoise Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MED_VIOLET_RED"><!-- --></A><H3>
+MED_VIOLET_RED</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MED_VIOLET_RED</B></PRE>
+<DL>
+<DD>Medium Violet Red Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MIDNIGHT_BLUE"><!-- --></A><H3>
+MIDNIGHT_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MIDNIGHT_BLUE</B></PRE>
+<DL>
+<DD>Midnight Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MINT_CREAM"><!-- --></A><H3>
+MINT_CREAM</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MINT_CREAM</B></PRE>
+<DL>
+<DD>Mint Cream Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MISTY_ROSE"><!-- --></A><H3>
+MISTY_ROSE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MISTY_ROSE</B></PRE>
+<DL>
+<DD>Misty Rose Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="MOCCASIN"><!-- --></A><H3>
+MOCCASIN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>MOCCASIN</B></PRE>
+<DL>
+<DD>Moccasin Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="NAVAJO_WHITE"><!-- --></A><H3>
+NAVAJO_WHITE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>NAVAJO_WHITE</B></PRE>
+<DL>
+<DD>Navajo White Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="NAVY"><!-- --></A><H3>
+NAVY</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>NAVY</B></PRE>
+<DL>
+<DD>Navy Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="OLD_LACE"><!-- --></A><H3>
+OLD_LACE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>OLD_LACE</B></PRE>
+<DL>
+<DD>Old Lace Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="OLIVE"><!-- --></A><H3>
+OLIVE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>OLIVE</B></PRE>
+<DL>
+<DD>Olive Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="OLIVE_DRAB"><!-- --></A><H3>
+OLIVE_DRAB</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>OLIVE_DRAB</B></PRE>
+<DL>
+<DD>Olive Drab Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ORANGE"><!-- --></A><H3>
+ORANGE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>ORANGE</B></PRE>
+<DL>
+<DD>Orange Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ORANGE_RED"><!-- --></A><H3>
+ORANGE_RED</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>ORANGE_RED</B></PRE>
+<DL>
+<DD>Orange Red Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ORCHID"><!-- --></A><H3>
+ORCHID</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>ORCHID</B></PRE>
+<DL>
+<DD>Orchid Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PALE_GOLDENROD"><!-- --></A><H3>
+PALE_GOLDENROD</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>PALE_GOLDENROD</B></PRE>
+<DL>
+<DD>Pale Goldenrod Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PALE_GREEN"><!-- --></A><H3>
+PALE_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>PALE_GREEN</B></PRE>
+<DL>
+<DD>Pale Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PALE_TURQUOISE"><!-- --></A><H3>
+PALE_TURQUOISE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>PALE_TURQUOISE</B></PRE>
+<DL>
+<DD>Pale Turquoise Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PALE_VIOLET_RED"><!-- --></A><H3>
+PALE_VIOLET_RED</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>PALE_VIOLET_RED</B></PRE>
+<DL>
+<DD>Pale Violet Red Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PAPAYA_WHIP"><!-- --></A><H3>
+PAPAYA_WHIP</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>PAPAYA_WHIP</B></PRE>
+<DL>
+<DD>Papaya Whip Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PEACH_PUFF"><!-- --></A><H3>
+PEACH_PUFF</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>PEACH_PUFF</B></PRE>
+<DL>
+<DD>Peach Puff Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PERU"><!-- --></A><H3>
+PERU</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>PERU</B></PRE>
+<DL>
+<DD>Peru Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PINK"><!-- --></A><H3>
+PINK</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>PINK</B></PRE>
+<DL>
+<DD>Pink Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PLUM"><!-- --></A><H3>
+PLUM</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>PLUM</B></PRE>
+<DL>
+<DD>Plum Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="POWDER_BLUE"><!-- --></A><H3>
+POWDER_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>POWDER_BLUE</B></PRE>
+<DL>
+<DD>Powder Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="PURPLE"><!-- --></A><H3>
+PURPLE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>PURPLE</B></PRE>
+<DL>
+<DD>Purple Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="RED"><!-- --></A><H3>
+RED</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>RED</B></PRE>
+<DL>
+<DD>Red Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ROSY_BROWN"><!-- --></A><H3>
+ROSY_BROWN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>ROSY_BROWN</B></PRE>
+<DL>
+<DD>Rosy Brown Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="ROYAL_BLUE"><!-- --></A><H3>
+ROYAL_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>ROYAL_BLUE</B></PRE>
+<DL>
+<DD>Royal Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SADDLE_BROWN"><!-- --></A><H3>
+SADDLE_BROWN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>SADDLE_BROWN</B></PRE>
+<DL>
+<DD>Saddle Brown Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SALMON"><!-- --></A><H3>
+SALMON</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>SALMON</B></PRE>
+<DL>
+<DD>Salmon Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SANDY_BROWN"><!-- --></A><H3>
+SANDY_BROWN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>SANDY_BROWN</B></PRE>
+<DL>
+<DD>Sandy Brown Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SEA_GREEN"><!-- --></A><H3>
+SEA_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>SEA_GREEN</B></PRE>
+<DL>
+<DD>Sea Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SEA_SHELL"><!-- --></A><H3>
+SEA_SHELL</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>SEA_SHELL</B></PRE>
+<DL>
+<DD>Sea Shell Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SIENNA"><!-- --></A><H3>
+SIENNA</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>SIENNA</B></PRE>
+<DL>
+<DD>Sienna Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SILVER"><!-- --></A><H3>
+SILVER</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>SILVER</B></PRE>
+<DL>
+<DD>Silver Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SKY_BLUE"><!-- --></A><H3>
+SKY_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>SKY_BLUE</B></PRE>
+<DL>
+<DD>Sky Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SLATE_BLUE"><!-- --></A><H3>
+SLATE_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>SLATE_BLUE</B></PRE>
+<DL>
+<DD>Slate Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SLATE_GRAY"><!-- --></A><H3>
+SLATE_GRAY</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>SLATE_GRAY</B></PRE>
+<DL>
+<DD>Slate Gray Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SNOW"><!-- --></A><H3>
+SNOW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>SNOW</B></PRE>
+<DL>
+<DD>Snow Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="SPRING_GREEN"><!-- --></A><H3>
+SPRING_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>SPRING_GREEN</B></PRE>
+<DL>
+<DD>Spring Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="STEEL_BLUE"><!-- --></A><H3>
+STEEL_BLUE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>STEEL_BLUE</B></PRE>
+<DL>
+<DD>Steel Blue Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="TAN"><!-- --></A><H3>
+TAN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>TAN</B></PRE>
+<DL>
+<DD>Tan Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="TEAL"><!-- --></A><H3>
+TEAL</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>TEAL</B></PRE>
+<DL>
+<DD>Teal Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="THISTLE"><!-- --></A><H3>
+THISTLE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>THISTLE</B></PRE>
+<DL>
+<DD>Thistle Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="TOMATO"><!-- --></A><H3>
+TOMATO</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>TOMATO</B></PRE>
+<DL>
+<DD>Tomato Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="TURQUOISE"><!-- --></A><H3>
+TURQUOISE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>TURQUOISE</B></PRE>
+<DL>
+<DD>Turquoise Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="VIOLET"><!-- --></A><H3>
+VIOLET</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>VIOLET</B></PRE>
+<DL>
+<DD>Violet Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="WHEAT"><!-- --></A><H3>
+WHEAT</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>WHEAT</B></PRE>
+<DL>
+<DD>Wheat Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="WHITE"><!-- --></A><H3>
+WHITE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>WHITE</B></PRE>
+<DL>
+<DD>White Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="WHITE_SMOKE"><!-- --></A><H3>
+WHITE_SMOKE</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>WHITE_SMOKE</B></PRE>
+<DL>
+<DD>White Smoke Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="YELLOW"><!-- --></A><H3>
+YELLOW</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>YELLOW</B></PRE>
+<DL>
+<DD>Yellow Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+<HR>
+
+<A NAME="YELLOW_GREEN"><!-- --></A><H3>
+YELLOW_GREEN</H3>
+<PRE>
+public static final <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>YELLOW_GREEN</B></PRE>
+<DL>
+<DD>Yellow Green Preset Color
+<P>
+<DL>
+</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="values()"><!-- --></A><H3>
+values</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A>[] <B>values</B>()</PRE>
+<DL>
+<DD>Returns an array containing the constants of this enum type, in
+the order they are declared.  This method may be used to iterate
+over the constants as follows:
+<pre>
+for (STPresetColorVal c : STPresetColorVal.values())
+&nbsp;   System.out.println(c);
+</pre>
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>an array containing the constants of this enum type, in
+the order they are declared</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="valueOf(java.lang.String)"><!-- --></A><H3>
+valueOf</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>valueOf</B>(java.lang.String&nbsp;name)</PRE>
+<DL>
+<DD>Returns the enum constant of this type with the specified name.
+The string must match <I>exactly</I> an identifier used to declare an
+enum constant in this type.  (Extraneous whitespace characters are 
+not permitted.)
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>name</CODE> - the name of the enum constant to be returned.
+<DT><B>Returns:</B><DD>the enum constant with the specified name
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IllegalArgumentException</CODE> - if this enum type has no constant
+with the specified name
+<DD><CODE>java.lang.NullPointerException</CODE> - if the argument is null</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="value()"><!-- --></A><H3>
+value</H3>
+<PRE>
+public java.lang.String <B>value</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="fromValue(java.lang.String)"><!-- --></A><H3>
+fromValue</H3>
+<PRE>
+public static <A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPresetColorVal.html" title="enum in org.apache.poi.sl.draw.binding">STPresetColorVal</A> <B>fromValue</B>(java.lang.String&nbsp;v)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STPathFillMode.html" title="enum in org.apache.poi.sl.draw.binding"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../org/apache/poi/sl/draw/binding/STRectAlignment.html" title="enum in org.apache.poi.sl.draw.binding"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?org/apache/poi/sl/draw/binding/STPresetColorVal.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="STPresetColorVal.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;<A HREF="#enum_constant_summary">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#enum_constant_detail">ENUM CONSTANTS</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

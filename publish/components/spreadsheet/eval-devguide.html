@@ -1,0 +1,1551 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta content="Apache Forrest" name="Generator">
+<meta name="Forrest-version" content="0.9">
+<meta name="Forrest-skin-name" content="pelt">
+<title>Developing Formula Evaluation</title>
+<link type="text/css" href="../../skin/basic.css" rel="stylesheet">
+<link media="screen" type="text/css" href="../../skin/screen.css" rel="stylesheet">
+<link media="print" type="text/css" href="../../skin/print.css" rel="stylesheet">
+<link type="text/css" href="../../skin/profile.css" rel="stylesheet">
+<script src="../../skin/getBlank.js" language="javascript" type="text/javascript"></script><script src="../../skin/getMenu.js" language="javascript" type="text/javascript"></script><script src="../../skin/fontsize.js" language="javascript" type="text/javascript"></script>
+<link rel="shortcut icon" href="../../images/favicon.ico">
+</head>
+<body onload="init()">
+<script type="text/javascript">ndeSetTextSize();</script>
+<div id="top">
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+<a href="https://www.apache.org">Apache Software Foundation</a> &gt; <a href="https://poi.apache.org">Apache POI</a><script src="../../skin/breadcrumbs.js" language="JavaScript" type="text/javascript"></script>
+</div>
+<!--+
+    |header
+    +-->
+<div class="header">
+<!--+
+    |start group logo
+    +-->
+<div class="grouplogo">
+<a href="https://www.apache.org"><img class="logoImage" alt="Apache Software Foundation" src="../../images/group-logo.png" title="The Apache Software Foundation is a cornerstone of the modern Open Source software ecosystem &ndash; supporting some of the most widely used and important software solutions powering today's Internet economy."></a>
+</div>
+<!--+
+    |end group logo
+    +-->
+<!--+
+    |start Project Logo
+    +-->
+<div class="projectlogo">
+<a href="https://poi.apache.org"><img class="logoImage" alt="Apache POI" src="../../images/project-header.png" title="Apache POI is well-known in the Java field as a library for reading and writing Microsoft Office file formats, such as Excel, PowerPoint, Word, Visio, Publisher and Outlook. It supports both the older (OLE2) and new (OOXML - Office Open XML) formats."></a>
+</div>
+<!--+
+    |end Project Logo
+    +-->
+<!--+
+    |start Search
+    +-->
+<div class="searchbox">
+<form action="https://www.google.com/search" method="get" class="roundtopsmall">
+<input value="poi.apache.org" name="sitesearch" type="hidden"><input onFocus="getBlank (this, 'Search the site with google');" size="25" name="q" id="query" type="text" value="Search the site with google">&nbsp; 
+                    <input name="Search" value="Search" type="submit">
+</form>
+</div>
+<!--+
+    |end search
+    +-->
+<!--+
+    |start Tabs
+    +-->
+<ul id="tabs">
+<li>
+<a class="unselected" href="../../index.html">Home</a>
+</li>
+<li>
+<a class="unselected" href="../../help/index.html">Help</a>
+</li>
+<li class="current">
+<a class="selected" href="../../components/index.html">Component APIs</a>
+</li>
+<li>
+<a class="unselected" href="../../devel/index.html">Getting Involved</a>
+</li>
+</ul>
+<!--+
+    |end Tabs
+    +-->
+</div>
+</div>
+<div id="main">
+<div id="publishedStrip">
+<!--+
+    |start Subtabs
+    +-->
+<div id="level2tabs"></div>
+<!--+
+    |end Endtabs
+    +-->
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<!--+
+    |breadtrail
+    +-->
+<div class="breadtrail">
+
+             &nbsp;
+           </div>
+<!--+
+    |start Menu, mainarea
+    +-->
+<!--+
+    |start Menu
+    +-->
+<div id="menu">
+<div onclick="SwitchMenu('menu_selected_1.1', '../../skin/')" id="menu_selected_1.1Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Component APIs</div>
+<div id="menu_selected_1.1" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../apidocs/index.html">Javadocs</a>
+</div>
+<div onclick="SwitchMenu('menu_selected_1.1.3', '../../skin/')" id="menu_selected_1.1.3Title" class="menutitle" style="background-image: url('../../skin/images/chapter_open.gif');">Excel (HSSF/XSSF)</div>
+<div id="menu_selected_1.1.3" class="selectedmenuitemgroup" style="display: block;">
+<div class="menuitem">
+<a href="../../components/spreadsheet/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/how-to.html">HOWTO</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/converting.html">HSSF to SS Converting</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/formula.html">Formula Support</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/eval.html">Formula Evaluation</a>
+</div>
+<div class="menupage">
+<div class="menupagetitle">Eval Dev Guide</div>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/examples.html">Examples</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/use-case.html">Use Case</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/diagrams.html">Pictorial Docs</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/limitations.html">Limitations</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/user-defined-functions.html">User Defined Functions</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/excelant.html">ExcelAnt Tests</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/hacking-hssf.html">Hacking HSSF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/record-generator.html">Record Generator</a>
+</div>
+<div class="menuitem">
+<a href="../../components/spreadsheet/chart.html">Charts</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.4', '../../skin/')" id="menu_1.1.4Title" class="menutitle">PowerPoint (HSLF/XSLF)</div>
+<div id="menu_1.1.4" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/slideshow/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/quick-guide.html">Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/how-to-shapes.html">HSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/xslf-cookbook.html">XSLF Cookbook</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-wmf-emf-renderer.html">Render SL/WMF/EMF</a>
+</div>
+<div class="menuitem">
+<a href="../../components/slideshow/ppt-file-format.html">PPT File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.5', '../../skin/')" id="menu_1.1.5Title" class="menutitle">Word (HWPF/XWPF)</div>
+<div id="menu_1.1.5" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/document/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide.html">HWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/quick-guide-xwpf.html">XWPF Quick Guide</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/docoverview.html">HWPF Format</a>
+</div>
+<div class="menuitem">
+<a href="../../components/document/projectplan.html">HWPF Project plan</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hsmf/index.html">Outlook (HSMF)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/diagram/index.html">Visio (HDGF+XDGF)</a>
+</div>
+<div onclick="SwitchMenu('menu_1.1.8', '../../skin/')" id="menu_1.1.8Title" class="menutitle">Publisher (HPBF)</div>
+<div id="menu_1.1.8" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpbf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpbf/file-format.html">File Format</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.9', '../../skin/')" id="menu_1.1.9Title" class="menutitle">OLE2 Filesystem (POIFS)</div>
+<div id="menu_1.1.9" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/poifs/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/embeded.html">Embedded Documents</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/fileformat.html">File System Documentation</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/usecases.html">Use Cases</a>
+</div>
+<div class="menuitem">
+<a href="../../components/poifs/design.html">Design</a>
+</div>
+</div>
+<div onclick="SwitchMenu('menu_1.1.10', '../../skin/')" id="menu_1.1.10Title" class="menutitle">OLE2 Document Props (HPSF)</div>
+<div id="menu_1.1.10" class="menuitemgroup">
+<div class="menuitem">
+<a href="../../components/hpsf/index.html">Overview</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/how-to.html">How To</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/thumbnails.html">Thumbnails</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/internals.html">Internals</a>
+</div>
+<div class="menuitem">
+<a href="../../components/hpsf/todo.html">To Do</a>
+</div>
+</div>
+<div class="menuitem">
+<a href="../../components/hmef/index.html">TNEF (HMEF) for winmail.dat</a>
+</div>
+<div class="menuitem">
+<a href="../../components/oxml4j/index.html">OpenXML4J (OOXML)</a>
+</div>
+<div class="menuitem">
+<a href="../../components/logging.html">Logging framework</a>
+</div>
+<div class="menuitem">
+<a href="../../components/configuration.html">Configuration</a>
+</div>
+</div>
+<div id="credit"></div>
+<div id="roundbottom">
+<img style="display: none" class="corner" height="15" width="15" alt="" src="../../skin/images/rc-b-l-15-1body-2menu-3menu.png"></div>
+<!--+
+  |alternative credits
+  +-->
+<div id="credit2">
+<a href="https://donate.apache.org/"><img border="0" title="Support Apache" alt="Support Apache - logo" src="../../images/support-asf.png" style="width: 125px;height: 125px;"></a><a href="https://www.apache.org/foundation/press/kit/#poweredby"><img border="0" title="powered by POI" alt="powered by POI - logo" src="../../images/poweredby-poi-logo.png" style="width: 125px;height: 125px;"></a>
+</div>
+</div>
+<!--+
+    |end Menu
+    +-->
+<!--+
+    |start content
+    +-->
+<div id="content">
+<h1>Developing Formula Evaluation</h1>
+<div id="front-matter"></div>
+		
+<a name="Introduction"></a>
+<h2 class="boxed">Introduction</h2>
+<div class="section">
+<p>
+				This document is for developers wishing to contribute to the
+				FormulaEvaluator API functionality.
+			</p>
+<p>
+				When evaluating workbooks you may encounter an <span class="codefrag">org.apache.poi.ss.formula.eval.NotImplementedException</span>
+				which indicates that a function is not (yet) supported by POI. Is there a workaround?
+				Yes, the POI framework  makes it easy to add implementation of new functions. Prior to POI-3.8
+				you had to checkout the source code from svn and make a custom build with your function implementation.
+				Since POI-3.8 you can register new functions in run-time.
+			</p>
+<p>
+				Currently, contribution is desired for implementing the standard MS
+				Excel functions. Placeholder classes for these have been created,
+				contributors only need to insert implementation for the
+				individual <span class="codefrag">evaluate()</span> methods that do the actual evaluation.
+			</p>
+</div>
+		
+<a name="Overview+of+FormulaEvaluator"></a>
+<h2 class="boxed">Overview of FormulaEvaluator </h2>
+<div class="section">
+<p>
+				Briefly, a formula string (along with the sheet and workbook that
+				form the context in which the formula is evaluated) is first parsed
+				into Reverse Polish Notation (RPN) tokens using the <span class="codefrag">FormulaParser</span> class.
+				(If you don't know what RPN tokens are, now is a good time to
+				read <a href="http://www-stone.ch.cam.ac.uk/documentation/rrf/rpn.html">
+				Anthony Stone's description of RPN</a>.)
+			</p>
+<a name="The+big+picture"></a>
+<h3 class="boxed"> The big picture</h3>
+<p>
+					RPN tokens are mapped to <span class="codefrag">Eval</span> classes. (The class hierarchy for the <span class="codefrag">Eval</span>s
+					is best understood if you view it in a class diagram
+					viewer.) Depending on the type of RPN token (also called <span class="codefrag">Ptg</span>s
+					henceforth since that is what the <span class="codefrag">FormulaParser</span> calls the classes), a
+					specific type of <span class="codefrag">Eval</span> wrapper is constructed to wrap the RPN token and
+					is pushed on the stack, unless the <span class="codefrag">Ptg</span> is an <span class="codefrag">OperationPtg</span>. If it is an
+					<span class="codefrag">OperationPtg</span>, an <span class="codefrag">OperationEval</span> instance is created for the specific
+					type of <span class="codefrag">OperationPtg</span>. And depending on how many operands it takes,
+					that many <span class="codefrag">Eval</span>s are popped of the stack and passed in an array to
+					the <span class="codefrag">OperationEval</span> instance's evaluate method which returns an <span class="codefrag">Eval</span>
+					of subtype <span class="codefrag">ValueEval</span>. Thus an operation in the formula is evaluated.
+				</p>
+<div class="note">
+<div class="label">Note</div>
+<div class="content"> An <span class="codefrag">Eval</span> is of subinterface <span class="codefrag">ValueEval</span> or <span class="codefrag">OperationEval</span>.
+				Operands are always <span class="codefrag">ValueEval</span>s, and operations are always <span class="codefrag">OperationEval</span>s.</div>
+</div>
+<p>
+					
+<span class="codefrag">OperationEval.evaluate(Eval[])</span> returns an <span class="codefrag">Eval</span> which is supposed
+					to be an instance of one of the implementations of
+					<span class="codefrag">ValueEval</span>. The <span class="codefrag">ValueEval</span> resulting from <span class="codefrag">evaluate()</span> is pushed on the
+					stack and the next RPN token is evaluated. This continues until
+					eventually there are no more RPN tokens, at which point, if the formula
+					string was correctly parsed, there should be just one <span class="codefrag">Eval</span> on the
+					stack &mdash; which contains the result of evaluating the formula.
+				</p>
+<p>
+					Two special <span class="codefrag">Ptg</span>s &mdash; <span class="codefrag">AreaPtg</span> and <span class="codefrag">ReferencePtg</span> &mdash;
+					are handled a little differently, but the code should be self
+					explanatory for that. Very briefly, the cells included in <span class="codefrag">AreaPtg</span> and
+					<span class="codefrag">RefPtg</span> are examined and their values are populated in individual
+					<span class="codefrag">ValueEval</span> objects which are set into the implementations of
+					<span class="codefrag">AreaEval</span> and <span class="codefrag">RefEval</span>.
+				</p>
+<p>
+					
+<span class="codefrag">OperationEval</span>s for the standard operators have been implemented and tested.
+				</p>
+</div>
+		
+<a name="What+functions+are+supported%3F"></a>
+<h2 class="boxed">What functions are supported?</h2>
+<div class="section">
+<p>
+				As of release 5.2.0, POI implements 202 built-in functions,
+				see <a href="#appendixA">Appendix A</a> for the list of supported functions with an implementation.
+				You can programmatically list supported / unsupported functions using the following helper methods:
+			</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.ss.formula.WorkbookEvaluator;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// list of functions that POI can evaluate</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Collection&lt;String&gt; supportedFuncs = WorkbookEvaluator.getSupportedFunctionNames();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">// list of functions that are not supported by POI</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">Collection&lt;String&gt; unsupportedFuncs = WorkbookEvaluator.getNotSupportedFunctionNames();</span>
+</div>
+</div>
+<a name="I+need+a+function+that+isn%27t+supported%21"></a>
+<h3 class="boxed">I need a function that isn't supported!</h3>
+<p>
+					If you need a function that POI doesn't currently support, you have two options.
+					You can create the function yourself, and have your program add it to POI at
+					run-time.  Doing this will help you get the function you need as soon as possible.
+					The other option is to create the function yourself, and build it into the POI library,
+					possibly contributing the code to the POI project.  Doing this will help you get the
+					function you need, but you'll have to build POI from source yourself.  And if you
+					contribute the code, you'll help others who need the function in the future, because
+					it will already be supported in the next release of POI.  The two options require
+					almost identical code, but the process of deploying the function is different.
+					If your function is a User Defined Function, you'll always take the run-time option,
+					as POI doesn't distribute UDFs.
+				</p>
+<p>
+					In the sections ahead, we'll implement the Excel <span class="codefrag">SQRTPI()</span> function, first
+					at run-time, and then we'll show how change it to a library-based implementation.
+				</p>
+</div>
+		
+<a name="Two+base+interfaces+to+start+your+implementation"></a>
+<h2 class="boxed">Two base interfaces to start your implementation</h2>
+<div class="section">
+<p>
+				All Excel formula function classes implement either the
+				<span class="codefrag">org.apache.poi.hssf.record.formula.functions.Function</span> or the
+				<span class="codefrag">org.apache.poi.hssf.record.formula.functions.FreeRefFunction</span> interface.
+				<span class="codefrag">Function</span> is a common interface for the functions defined in the Binary Excel File Format (BIFF8): these are "classic" Excel functions like <span class="codefrag">SUM</span>, <span class="codefrag">COUNT</span>, <span class="codefrag">LOOKUP</span>, <em>etc</em>.
+				<span class="codefrag">FreeRefFunction</span> is a common interface for the functions from the Excel Analysis ToolPak, for User Defined Functions that you create,
+				and for Excel built-in functions that have been defined since BIFF8 was defined.
+				In the future these two interfaces are expected be unified into one, but for now you have to start your implementation from two slightly different roots.
+			</p>
+<a name="Which+interface+to+start+from%3F"></a>
+<h3 class="boxed">Which interface to start from?</h3>
+<p>
+					You are about to implement a function and don't know which interface to start from: <span class="codefrag">Function</span> or <span class="codefrag">FreeRefFunction</span>.
+					You should use <span class="codefrag">Function</span> if the function is part of the Excel BIFF8
+					definition, and <span class="codefrag">FreeRefFunction</span> for a function that is part of the Excel Analysis ToolPak, was added to Excel after BIFF8, or that you are creating yourself.
+				</p>
+<p>
+					You can check the list of Analysis ToolPak functions defined in <span class="codefrag">org.apache.poi.ss.formula.atp.AnalysisToolPak.createFunctionsMap()</span>
+					to see if the function is part of the Analysis ToolPak.
+					The list of BIFF8 functions is defined as a text file, in the
+					<span class="codefrag">src/resources/main/org/apache/poi/ss/formula/function/functionMetadata.txt</span> file.
+				</p>
+<p>
+					You can also use the following code to check which base class your function should implement, if it is not a User Defined function (UDFs must implement <span class="codefrag">FreeRefFunction</span>):
+				</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.hssf.record.formula.atp.AnalysisToolPak;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">if (!AnalysisToolPak.isATPFunction(functionName)){</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	// the function must implement org.apache.poi.hssf.record.formula.functions.Function</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">} else {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	// the function must implement org.apache.poi.hssf.record.formula.functions.FreeRefFunction</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+</div>
+</div>
+		
+<a name="Implementing+a+function."></a>
+<h2 class="boxed">Implementing a function.</h2>
+<div class="section">
+<p>
+				Here is the fun part: let's walk through the implementation of the Excel function <span class="codefrag">SQRTPI()</span>,
+				which POI doesn not currently support.
+			</p>
+<p>
+				
+<span class="codefrag">AnalysisToolPak.isATPFunction("SQRTPI")</span> returns true, so this is an Analysis ToolPak function.
+				Thus the base interface must be <span class="codefrag">FreeRefFunction</span>.  The same would be true if we were implementing
+				a UDF.
+			</p>
+<p>
+				Because we're taking the run-time deployment option, we'll create this new function in a source
+				file in our own program.  Our function will return an <span class="codefrag">Eval</span> that is either
+				it's proper result, or an <span class="codefrag">ErrorEval</span> that describes the error.  All that work
+				is done in the function's <span class="codefrag">evaluate()</span> method:
+			</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">package ...;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.EvaluationException;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.ErrorEval;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.NumberEval;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.OperandResolver;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.ValueEval;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.functions.FreeRefFunction;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">public final class SqrtPi implements FreeRefFunction {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">		ValueEval arg0 = args[0];</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">		int srcRowIndex = ec.getRowIndex();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">		int srcColumnIndex = ec.getColumnIndex();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">		try {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			// Retrieves a single value from a variety of different argument types according to standard</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			// Excel rules.  Does not perform any type conversion.</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			// Applies some conversion rules if the supplied value is not already a number.</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			// Throws EvaluationException(#VALUE!) if the supplied parameter is not a number</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			double arg = OperandResolver.coerceValueToDouble(ve);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			// this where all the heavy-lifting happens</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			double result = Math.sqrt(arg*Math.PI);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			// Excel uses the error code #NUM! instead of IEEE NaN and Infinity,</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			// so when a numeric function evaluates to Double.NaN or Double.Infinity,</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			// be sure to translate the result to the appropriate error code</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			if (Double.isNaN(result) || Double.isInfinite(result)) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">				throw new EvaluationException(ErrorEval.NUM_ERROR);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			return new NumberEval(result);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">		} catch (EvaluationException e){</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			return e.getErrorEval();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">		}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+</div>
+<p>
+				If our function had been one of the BIFF8 Excel built-ins, it would have been based on
+				the <span class="codefrag">Function</span> interface instead.
+				There are sub-interfaces of <span class="codefrag">Function</span> that make life easier when implementing numeric functions
+				or functions
+				with a small, fixed number of arguments:
+			</p>
+<ul>
+				
+<li>
+<span class="codefrag">org.apache.poi.hssf.record.formula.functions.NumericFunction</span>
+</li>
+				
+<li>
+<span class="codefrag">org.apache.poi.hssf.record.formula.functions.Fixed0ArgFunction</span>
+</li>
+				
+<li>
+<span class="codefrag">org.apache.poi.hssf.record.formula.functions.Fixed1ArgFunction</span>
+</li>
+				
+<li>
+<span class="codefrag">org.apache.poi.hssf.record.formula.functions.Fixed2ArgFunction</span>
+</li>
+				
+<li>
+<span class="codefrag">org.apache.poi.hssf.record.formula.functions.Fixed3ArgFunction</span>
+</li>
+				
+<li>
+<span class="codefrag">org.apache.poi.hssf.record.formula.functions.Fixed4ArgFunction</span>
+</li>
+			
+</ul>
+<p>
+				Since <span class="codefrag">SQRTPI()</span> takes exactly one argument, we would start our implementation from
+				<span class="codefrag">Fixed1ArgFunction</span>.  The differences for a BIFF8 <span class="codefrag">Fixed1ArgFunction</span>
+				are pretty small:
+			</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">package ...;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.EvaluationException;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.ErrorEval;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.NumberEval;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.OperandResolver;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.eval.ValueEval;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">import org.apache.poi.ss.formula.functions.Fixed1ArgFunction;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">public final class SqrtPi extends Fixed1ArgFunction {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">		try {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">			...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+</div>
+<p>
+				Now when the implementation is ready we need to register it with the formula evaluator.
+				This is the same no matter which kind of function we're creating.  We simply add the
+				following line to the program that is using POI:
+			</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">WorkbookEvaluator.registerFunction("SQRTPI", SqrtPi);</span>
+</div>
+</div>
+<p>
+				Voila! The formula evaluator now recognizes <span class="codefrag">SQRTPI()</span>!
+			</p>
+<a name="Moving+the+function+into+the+library"></a>
+<h3 class="boxed">Moving the function into the library</h3>
+<p>
+				If we choose instead to implement our function as part of the POI
+				library, the code is nearly identical.  All POI functions
+				are part of one of two Java packages: <span class="codefrag">org.apache.poi.ss.formula.functions</span>
+				for BIFF8 Excel built-in functions, and <span class="codefrag">org.apache.poi.ss.formula.atp</span>
+				for Analysis ToolPak functions.  The function still needs to implement the
+				appropriate base class, just as before.  To implement our <span class="codefrag">SQRTPI()</span>
+				function in the POI library, we need to move the source code to
+				<span class="codefrag">poi/src/main/java/org/apache/poi/ss/formula/atp/SqrtPi.java</span> in
+				the POI source code, change the <span class="codefrag">package</span> statement, and add a
+				singleton instance:
+			</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">package org.apache.poi.ss.formula.atp;</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">public final class SqrtPi implements FreeRefFunction {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    public static final FreeRefFunction instance = new SqrtPi();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody"></span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    private SqrtPi() {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">        // Enforce singleton</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">    }</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+</div>
+<p>
+				If our function had been one of the BIFF8 Excel built-ins, we would instead have moved
+				the source code to
+				<span class="codefrag">poi/src/main/java/org/apache/poi/ss/formula/functions/SqrtPi.java</span> in
+				the POI source code, and changed the <span class="codefrag">package</span> statement to:
+			</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">package org.apache.poi.ss.formula.functions;</span>
+</div>
+</div>
+<p>
+				POI library functions are registered differently from run-time-deployed functions.
+				Again, the techniques differ for the two types of library functions (remembering
+				that POI never releases the third type, UDFs).
+				For our Analysis ToolPak function, we have to update the list of functions in
+				<span class="codefrag">org.apache.poi.ss.formula.atp.AnalysisToolPak.createFunctionsMap()</span>:
+			</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">private Map&lt;String, FreeRefFunction&gt; createFunctionsMap() {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	Map&lt;String, FreeRefFunction&gt; m = new HashMap&lt;&gt;(114);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	r(m, "SQRTPI", SqrtPi.instance);</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">...</span>
+</div>
+</div>
+<p>
+				If our function had been one of the BIFF8 Excel built-ins,
+				the registration instead would require updating an entry in the formula-function table,
+				<span class="codefrag">poi/src/main/resources/org/apache/poi/ss/formula/function/functionMetadata.txt</span>:
+			</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">#Columns: (index, name, minParams, maxParams, returnClass, paramClasses, isVolatile, hasFootnote )</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">359	SQRTPI	1	1	V	V</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">...</span>
+</div>
+</div>
+<p>
+				and also updating the list of function implementation list in
+				<span class="codefrag">org.apache.poi.ss.formula.eval.FunctionEval.produceFunctions()</span>:
+			</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">private static Function[] produceFunctions() {</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	retval[359] = new SqrtPi();</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">	...</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">}</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">...</span>
+</div>
+</div>
+<a name="Floating+Point+Arithmetic+in+Excel"></a>
+<h3 class="boxed">Floating Point Arithmetic in Excel</h3>
+<p>
+					Excel uses the IEEE Standard for Double Precision Floating Point numbers
+					except two cases where it does not adhere to IEEE 754:
+				</p>
+<ol>
+					
+<li>Positive and Negative Infinities: Infinities occur when you divide by 0.
+						Excel does not support infinities, rather, it gives a #DIV/0! error in these cases.
+					</li>
+					
+<li>Not-a-Number (NaN): NaN is used to represent invalid operations
+						(such as infinity/infinity, infinity-infinity, or the square root of -1).
+						NaNs allow a program to continue past an invalid operation.
+						Excel instead immediately generates an error such as #NUM! or #DIV/0!.
+					</li>
+				
+</ol>
+<p>
+					Be aware of these two cases when saving results of your scientific calculations in Excel:
+					&ldquo;where are my Infinities and NaNs? They are gone!&rdquo;
+				</p>
+<a name="Testing+Framework"></a>
+<h3 class="boxed">Testing Framework</h3>
+<p>
+					Automated testing of the implemented Function is easy.
+					The source code for this is in the file: <span class="codefrag">org.apache.poi.hssf.record.formula.GenericFormulaTestCase.java</span>.
+					This class has a reference to the test xls file (not <em>a</em> test xls, <em>the</em> test xls :) )
+					which may need to be changed for your environment. Once you do that, in the test xls,
+					locate the entry for the function that you have implemented and enter different tests
+					in a cell in the FORMULA row. Then copy the "value of" the formula that you entered in the
+					cell just below it (this is easily done in excel as:
+					[copy the formula cell] &gt; [go to cell below] &gt; Edit &gt; Paste Special &gt; Values &gt; "ok").
+					You can enter multiple such formulas and paste their values in the cell below and the
+					test framework will automatically test if the formula evaluation matches the expected
+					value (Again, hard to put in words, so if you will, please take time to quickly look
+					at the code and the currently entered tests in the patch attachment "FormulaEvalTestData.xls"
+					file).
+				</p>
+<div class="note">
+<div class="label">Note</div>
+<div class="content">This style of testing appears to have been abandoned.  This section needs to be completely rewritten.</div>
+</div>
+</div>
+		
+<a name="appendixA" id="appendixA"></a>
+		<a name="Appendix+A+%E2%80%94+Functions+supported+by+POI"></a>
+<h2 class="boxed">Appendix A &mdash; Functions supported by POI</h2>
+<div class="section">
+<p>
+				Functions supported by POI (as of v5.2.0 release)
+			</p>
+<div class="code">
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ABS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ACOS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ACOSH</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ADDRESS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">AND</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">AREAS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ASIN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ASINH</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ATAN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ATAN2</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ATANH</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">AVEDEV</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">AVERAGE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">AVERAGEIFS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">BIN2DEC</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">CEILING</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">CHAR</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">CHOOSE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">CLEAN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">CODE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">COLUMN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">COLUMNS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">COMBIN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">COMPLEX</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">CONCAT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">CONCATENATE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">COS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">COSH</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">COUNT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">COUNTA</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">COUNTBLANK</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">COUNTIF</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">COUNTIFS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DATE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DATEVALUE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DAY</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DAYS360</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DEC2BIN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DEC2HEX</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DEGREES</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DELTA</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DEVSQ</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DGET</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DMAX</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DMIN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DOLLAR</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">DSUM</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">EDATE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">EOMONTH</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ERROR.TYPE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">EVEN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">EXACT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">EXP</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FACT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FACTDOUBLE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FALSE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FIND</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FIXED</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FLOOR</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FREQUENCY</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">FV</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">GEOMEAN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HEX2DEC</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HLOOKUP</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HOUR</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">HYPERLINK</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">IF</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">IFERROR</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">IFNA</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">IFS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">IMAGINARY</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">IMREAL</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">INDEX</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">INDIRECT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">INT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">INTERCEPT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">IPMT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">IRR</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ISBLANK</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ISERR</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ISERROR</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ISEVEN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ISLOGICAL</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ISNA</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ISNONTEXT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ISNUMBER</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ISODD</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ISREF</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ISTEXT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">LARGE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">LEFT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">LEN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">LN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">LOG</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">LOG10</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">LOOKUP</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">LOWER</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MATCH</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MAX</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MAXA</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MAXIFS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MDETERM</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MEDIAN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MID</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MIN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MINA</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MINIFS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MINUTE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MINVERSE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MIRR</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MMULT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MOD</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MODE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MONTH</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">MROUND</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">NA</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">NETWORKDAYS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">NOT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">NOW</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">NPER</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">NPV</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">OCT2DEC</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ODD</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">OFFSET</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">OR</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PERCENTILE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PERCENTRANK</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PERCENTRANK.EXC</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PERCENTRANK.INC</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PI</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PMT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">POISSON</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">POWER</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PPMT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PRODUCT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PROPER</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">PV</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">QUOTIENT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">RADIANS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">RAND</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">RANDBETWEEN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">RANK</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">RATE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">REPLACE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">REPT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">RIGHT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ROMAN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ROUND</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ROUNDDOWN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ROUNDUP</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ROW</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">ROWS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SEARCH</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SECOND</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SIGN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SIN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SINGLE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SINH</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SLOPE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SMALL</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SQRT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">STDEV</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SUBSTITUTE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SUBTOTAL</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SUM</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SUMIF</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SUMIFS</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SUMPRODUCT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SUMSQ</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SUMX2MY2</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SUMX2PY2</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SUMXMY2</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">SWITCH</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">T</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">T.DIST</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">T.DIST.2T</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">T.DIST.RT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TAN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TANH</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TDIST</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TEXT</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TEXTJOIN</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TIME</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TIMEVALUE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TODAY</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TRANSPOSE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TREND</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TRIM</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TRUE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">TRUNC</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">UPPER</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">VALUE</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">VAR</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">VARP</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">VLOOKUP</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">WEEKDAY</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">WEEKNUM</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">WORKDAY</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">XLOOKUP</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">XMATCH</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">YEAR</span>
+</div>
+<div class="codeline">
+<span class="lineno"></span><span class="codebody">YEARFRAC</span>
+</div>
+</div>
+</div>
+	
+<p align="right">
+<font size="-2">by&nbsp;Amol Deshmukh,&nbsp;Yegor Kozlov</font>
+</p>
+</div>
+<!--+
+    |end content
+    +-->
+<div class="clearboth">&nbsp;</div>
+</div>
+<div id="footer">
+<!--+
+    |start bottomstrip
+    +-->
+<div class="lastmodified">
+<script type="text/javascript"><!--
+document.write("Last Published: " + document.lastModified);
+//  --></script>
+</div>
+<div class="copyright">
+        Copyright &copy;
+         2001-2025 <a href="https://www.apache.org/">The Apache Software Foundation</a>
+<br>
+      Apache, Apache POI, the Apache feather logo, and the Apache POI
+      logos are trademarks of The Apache Software Foundation.
+    </div>
+<div id="feedback">
+        Send feedback about the website to:
+    <a id="feedbackto" href="mailto:dev@poi.apache.org?subject=Feedback%C2%A0components/spreadsheet/eval-devguide.html">dev@poi.apache.org</a>
+</div>
+<!--+
+    |end bottomstrip
+    +-->
+</div>
+</body>
+</html>

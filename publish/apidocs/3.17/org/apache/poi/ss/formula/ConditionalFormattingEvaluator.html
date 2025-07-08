@@ -1,0 +1,507 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+ConditionalFormattingEvaluator (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="ConditionalFormattingEvaluator (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/CollaboratingWorkbooksEnvironment.WorkbookNotFoundException.html" title="class in org.apache.poi.ss.formula"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html" title="class in org.apache.poi.ss.formula"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ConditionalFormattingEvaluator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.ss.formula</FONT>
+<BR>
+Class ConditionalFormattingEvaluator</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.ss.formula.ConditionalFormattingEvaluator</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public class <B>ConditionalFormattingEvaluator</B><DT>extends java.lang.Object</DL>
+</PRE>
+
+<P>
+Evaluates Conditional Formatting constraints.<p>
+
+ For performance reasons, this class keeps a cache of all previously evaluated rules and cells.  
+ Be sure to call <A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#clearAllCachedFormats()"><CODE>clearAllCachedFormats()</CODE></A> if any conditional formats are modified, added, or deleted,
+ and <A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#clearAllCachedValues()"><CODE>clearAllCachedValues()</CODE></A> whenever cell values change.
+ <p>
+<P>
+
+<P>
+<HR>
+
+<P>
+
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#ConditionalFormattingEvaluator(org.apache.poi.ss.usermodel.Workbook, org.apache.poi.ss.formula.WorkbookEvaluatorProvider)">ConditionalFormattingEvaluator</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;wb,
+                               <A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluatorProvider.html" title="interface in org.apache.poi.ss.formula">WorkbookEvaluatorProvider</A>&nbsp;provider)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#clearAllCachedFormats()">clearAllCachedFormats</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Call this whenever rules are added, reordered, or removed, or a rule formula is changed 
+ (not the formula inputs but the formula expression itself)</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#clearAllCachedValues()">clearAllCachedValues</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Call this whenever cell values change in the workbook, so condional formats are re-evaluated 
+ for all cells.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula">EvaluationConditionalFormatRule</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#getConditionalFormattingForCell(org.apache.poi.ss.usermodel.Cell)">getConditionalFormattingForCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This checks all applicable <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel"><CODE>ConditionalFormattingRule</CODE></A>s for the cell's sheet, 
+ in defined "priority" order, returning the matches if any.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula">EvaluationConditionalFormatRule</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#getConditionalFormattingForCell(org.apache.poi.ss.util.CellReference)">getConditionalFormattingForCell</A></B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;cellRef)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This checks all applicable <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel"><CODE>ConditionalFormattingRule</CODE></A>s for the cell's sheet, 
+ in defined "priority" order, returning the matches if any.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula">EvaluationConditionalFormatRule</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#getFormatRulesForSheet(org.apache.poi.ss.usermodel.Sheet)">getFormatRulesForSheet</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula">EvaluationConditionalFormatRule</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#getFormatRulesForSheet(java.lang.String)">getFormatRulesForSheet</A></B>(java.lang.String&nbsp;sheetName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#getMatchingCells(org.apache.poi.ss.formula.EvaluationConditionalFormatRule)">getMatchingCells</A></B>(<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula">EvaluationConditionalFormatRule</A>&nbsp;rule)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#getMatchingCells(org.apache.poi.ss.usermodel.Sheet, int, int)">getMatchingCells</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet,
+                 int&nbsp;conditionalFormattingIndex,
+                 int&nbsp;ruleIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Conditional formatting rules can apply only to cells in the sheet to which they are attached.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#getRef(org.apache.poi.ss.usermodel.Cell)">getRef</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula">EvaluationConditionalFormatRule</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#getRules(org.apache.poi.ss.usermodel.Sheet)">getRules</A></B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lazy load by sheet since reading can be expensive</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>protected &nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html" title="class in org.apache.poi.ss.formula">WorkbookEvaluator</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html#getWorkbookEvaluator()">getWorkbookEvaluator</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="ConditionalFormattingEvaluator(org.apache.poi.ss.usermodel.Workbook, org.apache.poi.ss.formula.WorkbookEvaluatorProvider)"><!-- --></A><H3>
+ConditionalFormattingEvaluator</H3>
+<PRE>
+public <B>ConditionalFormattingEvaluator</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Workbook.html" title="interface in org.apache.poi.ss.usermodel">Workbook</A>&nbsp;wb,
+                                      <A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluatorProvider.html" title="interface in org.apache.poi.ss.formula">WorkbookEvaluatorProvider</A>&nbsp;provider)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getWorkbookEvaluator()"><!-- --></A><H3>
+getWorkbookEvaluator</H3>
+<PRE>
+protected <A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html" title="class in org.apache.poi.ss.formula">WorkbookEvaluator</A> <B>getWorkbookEvaluator</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clearAllCachedFormats()"><!-- --></A><H3>
+clearAllCachedFormats</H3>
+<PRE>
+public void <B>clearAllCachedFormats</B>()</PRE>
+<DL>
+<DD>Call this whenever rules are added, reordered, or removed, or a rule formula is changed 
+ (not the formula inputs but the formula expression itself)
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="clearAllCachedValues()"><!-- --></A><H3>
+clearAllCachedValues</H3>
+<PRE>
+public void <B>clearAllCachedValues</B>()</PRE>
+<DL>
+<DD>Call this whenever cell values change in the workbook, so condional formats are re-evaluated 
+ for all cells.
+ <p>
+ TODO: eventually this should work like <CODE>EvaluationCache.notifyUpdateCell(int, int, EvaluationCell)</CODE>
+ and only clear values that need recalculation based on the formula dependency tree.
+<P>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRules(org.apache.poi.ss.usermodel.Sheet)"><!-- --></A><H3>
+getRules</H3>
+<PRE>
+protected java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula">EvaluationConditionalFormatRule</A>&gt; <B>getRules</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet)</PRE>
+<DL>
+<DD>lazy load by sheet since reading can be expensive
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sheet</CODE> - 
+<DT><B>Returns:</B><DD>unmodifiable list of rules</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getConditionalFormattingForCell(org.apache.poi.ss.util.CellReference)"><!-- --></A><H3>
+getConditionalFormattingForCell</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula">EvaluationConditionalFormatRule</A>&gt; <B>getConditionalFormattingForCell</B>(<A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A>&nbsp;cellRef)</PRE>
+<DL>
+<DD>This checks all applicable <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel"><CODE>ConditionalFormattingRule</CODE></A>s for the cell's sheet, 
+ in defined "priority" order, returning the matches if any.  This is a property currently
+ not exposed from <code>CTCfRule</code> in <code>XSSFConditionalFormattingRule</code>.  
+ <p>
+ Most cells will have zero or one applied rule, but it is possible to define multiple rules
+ that apply at the same time to the same cell, thus the List result.
+ <p>
+ Note that to properly apply conditional rules, care must be taken to offset the base 
+ formula by the relative position of the current cell, or the wrong value is checked.
+ This is handled by <A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#evaluate(java.lang.String, org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellRangeAddressBase)"><CODE>WorkbookEvaluator.evaluate(String, CellReference, CellRangeAddressBase)</CODE></A>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cellRef</CODE> - NOTE: if no sheet name is specified, this uses the workbook active sheet
+<DT><B>Returns:</B><DD>Unmodifiable List of <A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula"><CODE>EvaluationConditionalFormatRule</CODE></A>s that apply to the current cell value,
+         in priority order, as evaluated by Excel (smallest priority # for XSSF, definition order for HSSF), 
+         or null if none apply</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getConditionalFormattingForCell(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+getConditionalFormattingForCell</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula">EvaluationConditionalFormatRule</A>&gt; <B>getConditionalFormattingForCell</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD>This checks all applicable <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel"><CODE>ConditionalFormattingRule</CODE></A>s for the cell's sheet, 
+ in defined "priority" order, returning the matches if any.  This is a property currently
+ not exposed from <code>CTCfRule</code> in <code>XSSFConditionalFormattingRule</code>.  
+ <p>
+ Most cells will have zero or one applied rule, but it is possible to define multiple rules
+ that apply at the same time to the same cell, thus the List result.
+ <p>
+ Note that to properly apply conditional rules, care must be taken to offset the base 
+ formula by the relative position of the current cell, or the wrong value is checked.
+ This is handled by <A HREF="../../../../../org/apache/poi/ss/formula/WorkbookEvaluator.html#evaluate(java.lang.String, org.apache.poi.ss.util.CellReference, org.apache.poi.ss.util.CellRangeAddressBase)"><CODE>WorkbookEvaluator.evaluate(String, CellReference, CellRangeAddressBase)</CODE></A>.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>cell</CODE> - 
+<DT><B>Returns:</B><DD>Unmodifiable List of <A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula"><CODE>EvaluationConditionalFormatRule</CODE></A>s that apply to the current cell value,
+         in priority order, as evaluated by Excel (smallest priority # for XSSF, definition order for HSSF), 
+         or null if none apply</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getRef(org.apache.poi.ss.usermodel.Cell)"><!-- --></A><H3>
+getRef</H3>
+<PRE>
+public static <A HREF="../../../../../org/apache/poi/ss/util/CellReference.html" title="class in org.apache.poi.ss.util">CellReference</A> <B>getRef</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&nbsp;cell)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFormatRulesForSheet(java.lang.String)"><!-- --></A><H3>
+getFormatRulesForSheet</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula">EvaluationConditionalFormatRule</A>&gt; <B>getFormatRulesForSheet</B>(java.lang.String&nbsp;sheetName)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sheetName</CODE> - 
+<DT><B>Returns:</B><DD>unmodifiable list of all Conditional format rules for the given sheet, if any</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFormatRulesForSheet(org.apache.poi.ss.usermodel.Sheet)"><!-- --></A><H3>
+getFormatRulesForSheet</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula">EvaluationConditionalFormatRule</A>&gt; <B>getFormatRulesForSheet</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sheet</CODE> - 
+<DT><B>Returns:</B><DD>unmodifiable list of all Conditional format rules for the given sheet, if any</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMatchingCells(org.apache.poi.ss.usermodel.Sheet, int, int)"><!-- --></A><H3>
+getMatchingCells</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&gt; <B>getMatchingCells</B>(<A HREF="../../../../../org/apache/poi/ss/usermodel/Sheet.html" title="interface in org.apache.poi.ss.usermodel">Sheet</A>&nbsp;sheet,
+                                             int&nbsp;conditionalFormattingIndex,
+                                             int&nbsp;ruleIndex)</PRE>
+<DL>
+<DD>Conditional formatting rules can apply only to cells in the sheet to which they are attached.
+ The POI data model does not have a back-reference to the owning sheet, so it must be passed in separately.
+ <p>
+ We could overload this with convenience methods taking a sheet name and sheet index as well.
+ <p>
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sheet</CODE> - containing the rule<DD><CODE>conditionalFormattingIndex</CODE> - of the <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormatting.html" title="interface in org.apache.poi.ss.usermodel"><CODE>ConditionalFormatting</CODE></A> instance in the sheet's array<DD><CODE>ruleIndex</CODE> - of the <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormattingRule.html" title="interface in org.apache.poi.ss.usermodel"><CODE>ConditionalFormattingRule</CODE></A> instance within the <A HREF="../../../../../org/apache/poi/ss/usermodel/ConditionalFormatting.html" title="interface in org.apache.poi.ss.usermodel"><CODE>ConditionalFormatting</CODE></A>
+<DT><B>Returns:</B><DD>unmodifiable List of all cells in the rule's region matching the rule's condition</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getMatchingCells(org.apache.poi.ss.formula.EvaluationConditionalFormatRule)"><!-- --></A><H3>
+getMatchingCells</H3>
+<PRE>
+public java.util.List&lt;<A HREF="../../../../../org/apache/poi/ss/usermodel/Cell.html" title="interface in org.apache.poi.ss.usermodel">Cell</A>&gt; <B>getMatchingCells</B>(<A HREF="../../../../../org/apache/poi/ss/formula/EvaluationConditionalFormatRule.html" title="class in org.apache.poi.ss.formula">EvaluationConditionalFormatRule</A>&nbsp;rule)</PRE>
+<DL>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rule</CODE> - 
+<DT><B>Returns:</B><DD>unmodifiable List of all cells in the rule's region matching the rule's condition</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/CollaboratingWorkbooksEnvironment.WorkbookNotFoundException.html" title="class in org.apache.poi.ss.formula"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../org/apache/poi/ss/formula/DataValidationEvaluator.html" title="class in org.apache.poi.ss.formula"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?org/apache/poi/ss/formula/ConditionalFormattingEvaluator.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ConditionalFormattingEvaluator.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;NESTED&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>

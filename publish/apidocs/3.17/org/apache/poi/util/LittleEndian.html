@@ -1,0 +1,1401 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+LittleEndian (POI API Documentation)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="LittleEndian (POI API Documentation)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/util/JvmBugs.html" title="class in org.apache.poi.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/util/LittleEndian.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="LittleEndian.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+org.apache.poi.util</FONT>
+<BR>
+Class LittleEndian</H2>
+<PRE>
+java.lang.Object
+  <IMG SRC="../../../../resources/inherit.gif" ALT="extended by "><B>org.apache.poi.util.LittleEndian</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../org/apache/poi/util/LittleEndianConsts.html" title="interface in org.apache.poi.util">LittleEndianConsts</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>LittleEndian</B><DT>extends java.lang.Object<DT>implements <A HREF="../../../../org/apache/poi/util/LittleEndianConsts.html" title="interface in org.apache.poi.util">LittleEndianConsts</A></DL>
+</PRE>
+
+<P>
+a utility class for handling little-endian numbers, which the 80x86 world is
+ replete with. The methods are all static, and input/output is from/to byte
+ arrays, or from InputStreams.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util">LittleEndian.BufferUnderrunException</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Exception to handle buffer underruns</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_org.apache.poi.util.LittleEndianConsts"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface org.apache.poi.util.<A HREF="../../../../org/apache/poi/util/LittleEndianConsts.html" title="interface in org.apache.poi.util">LittleEndianConsts</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../org/apache/poi/util/LittleEndianConsts.html#BYTE_SIZE">BYTE_SIZE</A>, <A HREF="../../../../org/apache/poi/util/LittleEndianConsts.html#DOUBLE_SIZE">DOUBLE_SIZE</A>, <A HREF="../../../../org/apache/poi/util/LittleEndianConsts.html#INT_SIZE">INT_SIZE</A>, <A HREF="../../../../org/apache/poi/util/LittleEndianConsts.html#LONG_SIZE">LONG_SIZE</A>, <A HREF="../../../../org/apache/poi/util/LittleEndianConsts.html#SHORT_SIZE">SHORT_SIZE</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;byte[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getByteArray(byte[], int, int)">getByteArray</A></B>(byte[]&nbsp;data,
+             int&nbsp;offset,
+             int&nbsp;size)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Copy a portion of a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getDouble(byte[])">getDouble</A></B>(byte[]&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a double value from a byte array, reads it in little endian format
+ then converts the resulting revolting IEEE 754 (curse them) floating
+ point number to a happy java double</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;double</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getDouble(byte[], int)">getDouble</A></B>(byte[]&nbsp;data,
+          int&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a double value from a byte array, reads it in little endian format
+ then converts the resulting revolting IEEE 754 (curse them) floating
+ point number to a happy java double</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getFloat(byte[])">getFloat</A></B>(byte[]&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a float value from a byte array, reads it in little endian format
+ then converts the resulting revolting IEEE 754 (curse them) floating
+ point number to a happy java float</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;float</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getFloat(byte[], int)">getFloat</A></B>(byte[]&nbsp;data,
+         int&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a float value from a byte array, reads it in little endian format
+ then converts the resulting revolting IEEE 754 (curse them) floating
+ point number to a happy java float</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getInt(byte[])">getInt</A></B>(byte[]&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get an int value from the beginning of a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getInt(byte[], int)">getInt</A></B>(byte[]&nbsp;data,
+       int&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get an int value from a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getLong(byte[])">getLong</A></B>(byte[]&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a long value from a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getLong(byte[], int)">getLong</A></B>(byte[]&nbsp;data,
+        int&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a long value from a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getShort(byte[])">getShort</A></B>(byte[]&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a short value from the beginning of a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getShort(byte[], int)">getShort</A></B>(byte[]&nbsp;data,
+         int&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a short value from a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short[]</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getShortArray(byte[], int, int)">getShortArray</A></B>(byte[]&nbsp;data,
+              int&nbsp;offset,
+              int&nbsp;size)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Read short array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getUByte(byte[])">getUByte</A></B>(byte[]&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the unsigned value of a byte.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getUByte(byte[], int)">getUByte</A></B>(byte[]&nbsp;data,
+         int&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get the unsigned value of a byte.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getUInt(byte[])">getUInt</A></B>(byte[]&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get an unsigned int value from a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getUInt(byte[], int)">getUInt</A></B>(byte[]&nbsp;data,
+        int&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get an unsigned int value from a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getUShort(byte[])">getUShort</A></B>(byte[]&nbsp;data)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get an unsigned short value from the beginning of a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#getUShort(byte[], int)">getUShort</A></B>(byte[]&nbsp;data,
+          int&nbsp;offset)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get an unsigned short value from a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putByte(byte[], int, int)">putByte</A></B>(byte[]&nbsp;data,
+        int&nbsp;offset,
+        int&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;executes:</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putDouble(byte[], int, double)">putDouble</A></B>(byte[]&nbsp;data,
+          int&nbsp;offset,
+          double&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;put a double value into a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putDouble(double, java.io.OutputStream)">putDouble</A></B>(double&nbsp;value,
+          java.io.OutputStream&nbsp;outputStream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;put a double value into a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putFloat(byte[], int, float)">putFloat</A></B>(byte[]&nbsp;data,
+         int&nbsp;offset,
+         float&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;put a float value into a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putFloat(float, java.io.OutputStream)">putFloat</A></B>(float&nbsp;value,
+         java.io.OutputStream&nbsp;outputStream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;put a float value into a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putInt(byte[], int, int)">putInt</A></B>(byte[]&nbsp;data,
+       int&nbsp;offset,
+       int&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;put an int value into a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putInt(int, java.io.OutputStream)">putInt</A></B>(int&nbsp;value,
+       java.io.OutputStream&nbsp;outputStream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Put int into output stream</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putLong(byte[], int, long)">putLong</A></B>(byte[]&nbsp;data,
+        int&nbsp;offset,
+        long&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;put a long value into a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putLong(long, java.io.OutputStream)">putLong</A></B>(long&nbsp;value,
+        java.io.OutputStream&nbsp;outputStream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Put long into output stream</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putShort(byte[], int, short)">putShort</A></B>(byte[]&nbsp;data,
+         int&nbsp;offset,
+         short&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;put a short value into a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putShort(java.io.OutputStream, short)">putShort</A></B>(java.io.OutputStream&nbsp;outputStream,
+         short&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Put signed short into output stream</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putShortArray(byte[], int, short[])">putShortArray</A></B>(byte[]&nbsp;data,
+              int&nbsp;startOffset,
+              short[]&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Stores short array in buffer</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putUByte(byte[], int, short)">putUByte</A></B>(byte[]&nbsp;data,
+         int&nbsp;offset,
+         short&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;put an unsigned byte value into a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putUInt(byte[], int, long)">putUInt</A></B>(byte[]&nbsp;data,
+        int&nbsp;offset,
+        long&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;put an unsigned int value into a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putUInt(long, java.io.OutputStream)">putUInt</A></B>(long&nbsp;value,
+        java.io.OutputStream&nbsp;outputStream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Put unsigned int into output stream</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putUShort(byte[], int, int)">putUShort</A></B>(byte[]&nbsp;data,
+          int&nbsp;offset,
+          int&nbsp;value)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;put an unsigned short value into a byte array</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#putUShort(int, java.io.OutputStream)">putUShort</A></B>(int&nbsp;value,
+          java.io.OutputStream&nbsp;outputStream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Put unsigned short into output stream</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#readInt(java.io.InputStream)">readInt</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get an int value from an InputStream</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#readLong(java.io.InputStream)">readLong</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a long value from an InputStream</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;short</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#readShort(java.io.InputStream)">readShort</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get a short value from an InputStream</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;long</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#readUInt(java.io.InputStream)">readUInt</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;get an unsigned int value from an InputStream</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#readUShort(java.io.InputStream)">readUShort</A></B>(java.io.InputStream&nbsp;stream)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../org/apache/poi/util/LittleEndian.html#ubyteToInt(byte)">ubyteToInt</A></B>(byte&nbsp;b)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Convert an 'unsigned' byte to an integer.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.Object</B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="getByteArray(byte[], int, int)"><!-- --></A><H3>
+getByteArray</H3>
+<PRE>
+public static byte[] <B>getByteArray</B>(byte[]&nbsp;data,
+                                  int&nbsp;offset,
+                                  int&nbsp;size)</PRE>
+<DL>
+<DD>Copy a portion of a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the original byte array<DD><CODE>offset</CODE> - Where to start copying from.<DD><CODE>size</CODE> - Number of bytes to copy.
+<DT><B>Returns:</B><DD>The byteArray value
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IndexOutOfBoundsException</CODE> - - if copying would cause access of data outside array bounds.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDouble(byte[])"><!-- --></A><H3>
+getDouble</H3>
+<PRE>
+public static double <B>getDouble</B>(byte[]&nbsp;data)</PRE>
+<DL>
+<DD>get a double value from a byte array, reads it in little endian format
+ then converts the resulting revolting IEEE 754 (curse them) floating
+ point number to a happy java double
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array
+<DT><B>Returns:</B><DD>the double (64-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getDouble(byte[], int)"><!-- --></A><H3>
+getDouble</H3>
+<PRE>
+public static double <B>getDouble</B>(byte[]&nbsp;data,
+                               int&nbsp;offset)</PRE>
+<DL>
+<DD>get a double value from a byte array, reads it in little endian format
+ then converts the resulting revolting IEEE 754 (curse them) floating
+ point number to a happy java double
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array
+<DT><B>Returns:</B><DD>the double (64-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFloat(byte[])"><!-- --></A><H3>
+getFloat</H3>
+<PRE>
+public static float <B>getFloat</B>(byte[]&nbsp;data)</PRE>
+<DL>
+<DD>get a float value from a byte array, reads it in little endian format
+ then converts the resulting revolting IEEE 754 (curse them) floating
+ point number to a happy java float
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array
+<DT><B>Returns:</B><DD>the double (64-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getFloat(byte[], int)"><!-- --></A><H3>
+getFloat</H3>
+<PRE>
+public static float <B>getFloat</B>(byte[]&nbsp;data,
+                             int&nbsp;offset)</PRE>
+<DL>
+<DD>get a float value from a byte array, reads it in little endian format
+ then converts the resulting revolting IEEE 754 (curse them) floating
+ point number to a happy java float
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array
+<DT><B>Returns:</B><DD>the double (64-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getInt(byte[])"><!-- --></A><H3>
+getInt</H3>
+<PRE>
+public static int <B>getInt</B>(byte[]&nbsp;data)</PRE>
+<DL>
+<DD>get an int value from the beginning of a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array
+<DT><B>Returns:</B><DD>the int (32-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getInt(byte[], int)"><!-- --></A><H3>
+getInt</H3>
+<PRE>
+public static int <B>getInt</B>(byte[]&nbsp;data,
+                         int&nbsp;offset)</PRE>
+<DL>
+<DD>get an int value from a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array
+<DT><B>Returns:</B><DD>the int (32-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLong(byte[])"><!-- --></A><H3>
+getLong</H3>
+<PRE>
+public static long <B>getLong</B>(byte[]&nbsp;data)</PRE>
+<DL>
+<DD>get a long value from a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array
+<DT><B>Returns:</B><DD>the long (64-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getLong(byte[], int)"><!-- --></A><H3>
+getLong</H3>
+<PRE>
+public static long <B>getLong</B>(byte[]&nbsp;data,
+                           int&nbsp;offset)</PRE>
+<DL>
+<DD>get a long value from a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array
+<DT><B>Returns:</B><DD>the long (64-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShort(byte[])"><!-- --></A><H3>
+getShort</H3>
+<PRE>
+public static short <B>getShort</B>(byte[]&nbsp;data)</PRE>
+<DL>
+<DD>get a short value from the beginning of a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array
+<DT><B>Returns:</B><DD>the short (16-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShort(byte[], int)"><!-- --></A><H3>
+getShort</H3>
+<PRE>
+public static short <B>getShort</B>(byte[]&nbsp;data,
+                             int&nbsp;offset)</PRE>
+<DL>
+<DD>get a short value from a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array
+<DT><B>Returns:</B><DD>the short (16-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getShortArray(byte[], int, int)"><!-- --></A><H3>
+getShortArray</H3>
+<PRE>
+public static short[] <B>getShortArray</B>(byte[]&nbsp;data,
+                                    int&nbsp;offset,
+                                    int&nbsp;size)</PRE>
+<DL>
+<DD>Read short array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the original byte array<DD><CODE>offset</CODE> - Where to start copying from.<DD><CODE>size</CODE> - Number of bytes to copy.
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.IndexOutOfBoundsException</CODE> - - if read would cause access of data outside array bounds.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUByte(byte[])"><!-- --></A><H3>
+getUByte</H3>
+<PRE>
+public static short <B>getUByte</B>(byte[]&nbsp;data)</PRE>
+<DL>
+<DD>get the unsigned value of a byte.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array.
+<DT><B>Returns:</B><DD>the unsigned value of the byte as a 16 bit short</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUByte(byte[], int)"><!-- --></A><H3>
+getUByte</H3>
+<PRE>
+public static short <B>getUByte</B>(byte[]&nbsp;data,
+                             int&nbsp;offset)</PRE>
+<DL>
+<DD>get the unsigned value of a byte.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array.<DD><CODE>offset</CODE> - a starting offset into the byte array.
+<DT><B>Returns:</B><DD>the unsigned value of the byte as a 16 bit short</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUInt(byte[])"><!-- --></A><H3>
+getUInt</H3>
+<PRE>
+public static long <B>getUInt</B>(byte[]&nbsp;data)</PRE>
+<DL>
+<DD>get an unsigned int value from a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array
+<DT><B>Returns:</B><DD>the unsigned int (32-bit) value in a long</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUInt(byte[], int)"><!-- --></A><H3>
+getUInt</H3>
+<PRE>
+public static long <B>getUInt</B>(byte[]&nbsp;data,
+                           int&nbsp;offset)</PRE>
+<DL>
+<DD>get an unsigned int value from a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array
+<DT><B>Returns:</B><DD>the unsigned int (32-bit) value in a long</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUShort(byte[])"><!-- --></A><H3>
+getUShort</H3>
+<PRE>
+public static int <B>getUShort</B>(byte[]&nbsp;data)</PRE>
+<DL>
+<DD>get an unsigned short value from the beginning of a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array
+<DT><B>Returns:</B><DD>the unsigned short (16-bit) value in an int</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getUShort(byte[], int)"><!-- --></A><H3>
+getUShort</H3>
+<PRE>
+public static int <B>getUShort</B>(byte[]&nbsp;data,
+                            int&nbsp;offset)</PRE>
+<DL>
+<DD>get an unsigned short value from a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array
+<DT><B>Returns:</B><DD>the unsigned short (16-bit) value in an integer</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putByte(byte[], int, int)"><!-- --></A><H3>
+putByte</H3>
+<PRE>
+public static void <B>putByte</B>(byte[]&nbsp;data,
+                           int&nbsp;offset,
+                           int&nbsp;value)</PRE>
+<DL>
+<DD>executes:
+ <p>
+ <code>
+ data[offset] = (byte)value;
+ </code>
+ </p>
+ Added for consistency with other put~() methods
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putDouble(byte[], int, double)"><!-- --></A><H3>
+putDouble</H3>
+<PRE>
+public static void <B>putDouble</B>(byte[]&nbsp;data,
+                             int&nbsp;offset,
+                             double&nbsp;value)</PRE>
+<DL>
+<DD>put a double value into a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array<DD><CODE>value</CODE> - the double (64-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putDouble(double, java.io.OutputStream)"><!-- --></A><H3>
+putDouble</H3>
+<PRE>
+public static void <B>putDouble</B>(double&nbsp;value,
+                             java.io.OutputStream&nbsp;outputStream)
+                      throws java.io.IOException</PRE>
+<DL>
+<DD>put a double value into a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - the double (64-bit) value<DD><CODE>outputStream</CODE> - output stream
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putFloat(byte[], int, float)"><!-- --></A><H3>
+putFloat</H3>
+<PRE>
+public static void <B>putFloat</B>(byte[]&nbsp;data,
+                            int&nbsp;offset,
+                            float&nbsp;value)</PRE>
+<DL>
+<DD>put a float value into a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array<DD><CODE>value</CODE> - the float (32-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putFloat(float, java.io.OutputStream)"><!-- --></A><H3>
+putFloat</H3>
+<PRE>
+public static void <B>putFloat</B>(float&nbsp;value,
+                            java.io.OutputStream&nbsp;outputStream)
+                     throws java.io.IOException</PRE>
+<DL>
+<DD>put a float value into a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - the float (32-bit) value<DD><CODE>outputStream</CODE> - output stream
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putInt(byte[], int, int)"><!-- --></A><H3>
+putInt</H3>
+<PRE>
+public static void <B>putInt</B>(byte[]&nbsp;data,
+                          int&nbsp;offset,
+                          int&nbsp;value)</PRE>
+<DL>
+<DD>put an int value into a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array<DD><CODE>value</CODE> - the int (32-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putInt(int, java.io.OutputStream)"><!-- --></A><H3>
+putInt</H3>
+<PRE>
+public static void <B>putInt</B>(int&nbsp;value,
+                          java.io.OutputStream&nbsp;outputStream)
+                   throws java.io.IOException</PRE>
+<DL>
+<DD>Put int into output stream
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - the int (32-bit) value<DD><CODE>outputStream</CODE> - output stream
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putLong(byte[], int, long)"><!-- --></A><H3>
+putLong</H3>
+<PRE>
+public static void <B>putLong</B>(byte[]&nbsp;data,
+                           int&nbsp;offset,
+                           long&nbsp;value)</PRE>
+<DL>
+<DD>put a long value into a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array<DD><CODE>value</CODE> - the long (64-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putLong(long, java.io.OutputStream)"><!-- --></A><H3>
+putLong</H3>
+<PRE>
+public static void <B>putLong</B>(long&nbsp;value,
+                           java.io.OutputStream&nbsp;outputStream)
+                    throws java.io.IOException</PRE>
+<DL>
+<DD>Put long into output stream
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - the long (64-bit) value<DD><CODE>outputStream</CODE> - output stream
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putShort(byte[], int, short)"><!-- --></A><H3>
+putShort</H3>
+<PRE>
+public static void <B>putShort</B>(byte[]&nbsp;data,
+                            int&nbsp;offset,
+                            short&nbsp;value)</PRE>
+<DL>
+<DD>put a short value into a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array<DD><CODE>value</CODE> - the short (16-bit) value</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putShort(java.io.OutputStream, short)"><!-- --></A><H3>
+putShort</H3>
+<PRE>
+public static void <B>putShort</B>(java.io.OutputStream&nbsp;outputStream,
+                            short&nbsp;value)
+                     throws java.io.IOException</PRE>
+<DL>
+<DD>Put signed short into output stream
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - the short (16-bit) value<DD><CODE>outputStream</CODE> - output stream
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putShortArray(byte[], int, short[])"><!-- --></A><H3>
+putShortArray</H3>
+<PRE>
+public static void <B>putShortArray</B>(byte[]&nbsp;data,
+                                 int&nbsp;startOffset,
+                                 short[]&nbsp;value)</PRE>
+<DL>
+<DD>Stores short array in buffer
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>startOffset</CODE> - a starting offset into the byte array<DD><CODE>value</CODE> - the short (16-bit) values</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putUByte(byte[], int, short)"><!-- --></A><H3>
+putUByte</H3>
+<PRE>
+public static void <B>putUByte</B>(byte[]&nbsp;data,
+                            int&nbsp;offset,
+                            short&nbsp;value)</PRE>
+<DL>
+<DD>put an unsigned byte value into a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array<DD><CODE>value</CODE> - the short (16-bit) value
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.ArrayIndexOutOfBoundsException</CODE> - may be thrown</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putUInt(byte[], int, long)"><!-- --></A><H3>
+putUInt</H3>
+<PRE>
+public static void <B>putUInt</B>(byte[]&nbsp;data,
+                           int&nbsp;offset,
+                           long&nbsp;value)</PRE>
+<DL>
+<DD>put an unsigned int value into a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array<DD><CODE>value</CODE> - the int (32-bit) value
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.ArrayIndexOutOfBoundsException</CODE> - may be thrown</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putUInt(long, java.io.OutputStream)"><!-- --></A><H3>
+putUInt</H3>
+<PRE>
+public static void <B>putUInt</B>(long&nbsp;value,
+                           java.io.OutputStream&nbsp;outputStream)
+                    throws java.io.IOException</PRE>
+<DL>
+<DD>Put unsigned int into output stream
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - the int (32-bit) value<DD><CODE>outputStream</CODE> - output stream
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putUShort(byte[], int, int)"><!-- --></A><H3>
+putUShort</H3>
+<PRE>
+public static void <B>putUShort</B>(byte[]&nbsp;data,
+                             int&nbsp;offset,
+                             int&nbsp;value)</PRE>
+<DL>
+<DD>put an unsigned short value into a byte array
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>data</CODE> - the byte array<DD><CODE>offset</CODE> - a starting offset into the byte array<DD><CODE>value</CODE> - the short (16-bit) value
+<DT><B>Throws:</B>
+<DD><CODE>java.lang.ArrayIndexOutOfBoundsException</CODE> - may be thrown</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="putUShort(int, java.io.OutputStream)"><!-- --></A><H3>
+putUShort</H3>
+<PRE>
+public static void <B>putUShort</B>(int&nbsp;value,
+                             java.io.OutputStream&nbsp;outputStream)
+                      throws java.io.IOException</PRE>
+<DL>
+<DD>Put unsigned short into output stream
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>value</CODE> - the unsigned short (16-bit) value<DD><CODE>outputStream</CODE> - output stream
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - if an I/O error occurs</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readInt(java.io.InputStream)"><!-- --></A><H3>
+readInt</H3>
+<PRE>
+public static int <B>readInt</B>(java.io.InputStream&nbsp;stream)
+                   throws java.io.IOException,
+                          <A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util">LittleEndian.BufferUnderrunException</A></PRE>
+<DL>
+<DD>get an int value from an InputStream
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>stream</CODE> - the InputStream from which the int is to be read
+<DT><B>Returns:</B><DD>the int (32-bit) value
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - will be propagated back to the caller
+<DD><CODE><A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util">LittleEndian.BufferUnderrunException</A></CODE> - if the stream cannot provide enough bytes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUInt(java.io.InputStream)"><!-- --></A><H3>
+readUInt</H3>
+<PRE>
+public static long <B>readUInt</B>(java.io.InputStream&nbsp;stream)
+                     throws java.io.IOException,
+                            <A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util">LittleEndian.BufferUnderrunException</A></PRE>
+<DL>
+<DD>get an unsigned int value from an InputStream
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>stream</CODE> - the InputStream from which the int is to be read
+<DT><B>Returns:</B><DD>the unsigned int (32-bit) value
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - will be propagated back to the caller
+<DD><CODE><A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util">LittleEndian.BufferUnderrunException</A></CODE> - if the stream cannot provide enough bytes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readLong(java.io.InputStream)"><!-- --></A><H3>
+readLong</H3>
+<PRE>
+public static long <B>readLong</B>(java.io.InputStream&nbsp;stream)
+                     throws java.io.IOException,
+                            <A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util">LittleEndian.BufferUnderrunException</A></PRE>
+<DL>
+<DD>get a long value from an InputStream
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>stream</CODE> - the InputStream from which the long is to be read
+<DT><B>Returns:</B><DD>the long (64-bit) value
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - will be propagated back to the caller
+<DD><CODE><A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util">LittleEndian.BufferUnderrunException</A></CODE> - if the stream cannot provide enough bytes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readShort(java.io.InputStream)"><!-- --></A><H3>
+readShort</H3>
+<PRE>
+public static short <B>readShort</B>(java.io.InputStream&nbsp;stream)
+                       throws java.io.IOException,
+                              <A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util">LittleEndian.BufferUnderrunException</A></PRE>
+<DL>
+<DD>get a short value from an InputStream
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>stream</CODE> - the InputStream from which the short is to be read
+<DT><B>Returns:</B><DD>the short (16-bit) value
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE> - will be propagated back to the caller
+<DD><CODE><A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util">LittleEndian.BufferUnderrunException</A></CODE> - if the stream cannot provide enough bytes</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="readUShort(java.io.InputStream)"><!-- --></A><H3>
+readUShort</H3>
+<PRE>
+public static int <B>readUShort</B>(java.io.InputStream&nbsp;stream)
+                      throws java.io.IOException,
+                             <A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util">LittleEndian.BufferUnderrunException</A></PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+
+<DT><B>Throws:</B>
+<DD><CODE>java.io.IOException</CODE>
+<DD><CODE><A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util">LittleEndian.BufferUnderrunException</A></CODE></DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ubyteToInt(byte)"><!-- --></A><H3>
+ubyteToInt</H3>
+<PRE>
+public static int <B>ubyteToInt</B>(byte&nbsp;b)</PRE>
+<DL>
+<DD>Convert an 'unsigned' byte to an integer. ie, don't carry across the
+ sign.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>b</CODE> - Description of the Parameter
+<DT><B>Returns:</B><DD>Description of the Return Value</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+</EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../org/apache/poi/util/JvmBugs.html" title="class in org.apache.poi.util"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../org/apache/poi/util/LittleEndian.BufferUnderrunException.html" title="class in org.apache.poi.util"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../index.html?org/apache/poi/util/LittleEndian.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="LittleEndian.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+
+</BODY>
+</HTML>
