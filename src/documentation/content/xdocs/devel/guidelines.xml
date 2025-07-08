@@ -118,7 +118,7 @@
      first and reference it in the PR.
    </p>
    <p>
-     For Subversion fans, you can add patch files to the Bugzilla issues at
+     You can add patch files to the Bugzilla issues at
      <a href="https://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bug Database</a>.
      If there is already a bug-report, attach it there, otherwise create a new bug,
      set the subject to [PATCH] followed by a brief description.
@@ -148,71 +148,12 @@
      is fairly similar as a starting point.
    </p>
   <p>You may create your patch file using either of the following approaches (the committers recommend the first):</p>
-  <section><title>Approach 1 - use Ant</title>
-  <p>Use Ant to generate a patch file to POI: </p>
-   <source>
-    ant -f patch.xml
-   </source>
-  <p>
-    This will create a file named <code>patch.tar.gz</code> that will contain a unified diff of files that have been modified
-    and also include files that have been added. Review the file for completeness and correctness. This approach
-    is recommended because it standardizes the way in which patch files are constructed. It also eliminates the
-    chance of you missing to submit new files that constitute part of the patch.
-  </p>
-  <p>
-    To apply a previously generated <code>patch.tar.gz</code> file to a clean subversion checkout, use the following command.
-    It will unpack the tarball and add new files to the subversion working copy.
-  </p>
-   <source>
-    ant -f patch.xml apply
-   </source>
-  </section>
-    <section><title>Approach 2 - the manual way</title>
-    <p>
-      Patches to existing files should be generated with <code>svn diff filename</code> and save the output to a file.
-      If you want to get the changes made to multiple files in a directory, just use <code>svn diff</code>.
-      then, tar and gzip the patch file as well as any new files that you have added.
-    </p>
-     <p>If you use a unix shell, you may find the following following
-      sequence of commands useful for building the files to attach.</p>
-     <source>
-  # run this in the root of the checkout, i.e. the directory holding
-  #  build.xml and poi.pom
-
-  # build the directory to hold new files
-  mkdir /tmp/poi-patch/
-  mkdir /tmp/poi-patch/new-files/
-
-  # get changes to existing files
-  svn diff > /tmp/poi-patch/diff.txt
-
-  # capture any new files, as svn diff won't include them
-  # preserve the path
-  svn status | grep "^\?" | awk '{printf "cp --parents %s /tmp/poi-patch/new-files/\n", $2 }' | sh -s
-
-  # tar up the new files
-  cd /tmp/poi-patch/new-files/
-  tar jcvf ../new-files.tar.bz2
-  cd ..
-
-  # upload these to bugzilla
-  echo "please upload to bugzilla:"
-  echo "   /tmp/poi-patch/diff.txt"
-  echo "   /tmp/poi-patch/new-files.tar.bz2"
-     </source>
-    </section>
-    <section><title>Approach 3 - the git way</title>
+    <section><title>Using Git</title>
     <p>
       If you are working on a Git clone of Apache POI (see the
       <a href="site:git">Version Control page</a> for
-      more on the read-only Git mirrors), it is possible to generate
+      more info), it is possible to generate
       a patch of your changes (including new binary files) using Git.
-    </p>
-    <p>
-      For new developers, we'd normally suggest using Subversion and
-      one of the methods above, as they tend to be simpler. For people
-      who are already proficient with Git, then generating a patch
-      from Git can be an easy way to contribute!
     </p>
     <p>
       When generating a patch / patch set from Git, for many related and
