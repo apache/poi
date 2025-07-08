@@ -327,7 +327,7 @@ document.write("Last Published: " + document.lastModified);
      first and reference it in the PR.
    </p>
 <p>
-     For Subversion fans, you can add patch files to the Bugzilla issues at
+     You can add patch files to the Bugzilla issues at
      <a href="https://issues.apache.org/bugzilla/buglist.cgi?product=POI">Bug Database</a>.
      If there is already a bug-report, attach it there, otherwise create a new bug,
      set the subject to [PATCH] followed by a brief description.
@@ -357,140 +357,13 @@ document.write("Last Published: " + document.lastModified);
      is fairly similar as a starting point.
    </p>
 <p>You may create your patch file using either of the following approaches (the committers recommend the first):</p>
-<a name="Approach+1+-+use+Ant"></a>
-<h3 class="boxed">Approach 1 - use Ant</h3>
-<p>Use Ant to generate a patch file to POI: </p>
-<div class="code">
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"></span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">ant -f patch.xml</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"></span>
-</div>
-</div>
-<p>
-    This will create a file named <span class="codefrag">patch.tar.gz</span> that will contain a unified diff of files that have been modified
-    and also include files that have been added. Review the file for completeness and correctness. This approach
-    is recommended because it standardizes the way in which patch files are constructed. It also eliminates the
-    chance of you missing to submit new files that constitute part of the patch.
-  </p>
-<p>
-    To apply a previously generated <span class="codefrag">patch.tar.gz</span> file to a clean subversion checkout, use the following command.
-    It will unpack the tarball and add new files to the subversion working copy.
-  </p>
-<div class="code">
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"></span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">ant -f patch.xml apply</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"></span>
-</div>
-</div>
-<a name="Approach+2+-+the+manual+way"></a>
-<h3 class="boxed">Approach 2 - the manual way</h3>
-<p>
-      Patches to existing files should be generated with <span class="codefrag">svn diff filename</span> and save the output to a file.
-      If you want to get the changes made to multiple files in a directory, just use <span class="codefrag">svn diff</span>.
-      then, tar and gzip the patch file as well as any new files that you have added.
-    </p>
-<p>If you use a unix shell, you may find the following following
-      sequence of commands useful for building the files to attach.</p>
-<div class="code">
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"></span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"># run this in the root of the checkout, i.e. the directory holding</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">#  build.xml and poi.pom</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"></span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"># build the directory to hold new files</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">mkdir /tmp/poi-patch/</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">mkdir /tmp/poi-patch/new-files/</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"></span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"># get changes to existing files</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">svn diff &gt; /tmp/poi-patch/diff.txt</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"></span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"># capture any new files, as svn diff won't include them</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"># preserve the path</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">svn status | grep "^\?" | awk '{printf "cp --parents %s /tmp/poi-patch/new-files/\n", $2 }' | sh -s</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"></span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"># tar up the new files</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">cd /tmp/poi-patch/new-files/</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">tar jcvf ../new-files.tar.bz2</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">cd ..</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"></span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody"># upload these to bugzilla</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">echo "please upload to bugzilla:"</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">echo "   /tmp/poi-patch/diff.txt"</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">echo "   /tmp/poi-patch/new-files.tar.bz2"</span>
-</div>
-<div class="codeline">
-<span class="lineno"></span><span class="codebody">   </span>
-</div>
-</div>
-<a name="Approach+3+-+the+git+way"></a>
-<h3 class="boxed">Approach 3 - the git way</h3>
+<a name="Using+Git"></a>
+<h3 class="boxed">Using Git</h3>
 <p>
       If you are working on a Git clone of Apache POI (see the
       <a href="../devel/git.html">Version Control page</a> for
-      more on the read-only Git mirrors), it is possible to generate
+      more info), it is possible to generate
       a patch of your changes (including new binary files) using Git.
-    </p>
-<p>
-      For new developers, we'd normally suggest using Subversion and
-      one of the methods above, as they tend to be simpler. For people
-      who are already proficient with Git, then generating a patch
-      from Git can be an easy way to contribute!
     </p>
 <p>
       When generating a patch / patch set from Git, for many related and
